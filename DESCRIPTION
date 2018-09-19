@@ -10,5 +10,4 @@ License: What license is it under?
 Imports: Rcpp (>= 0.12.18), RcppEigen (>= 0.3.3.4.0), beachmat
 LinkingTo: Rcpp, RcppEigen, Rhdf5lib, beachmat
 SystemRequirements: C++11
-Suggests: beachmat, HDF5Array, DelayedArray, Matrix 
-
+Suggests: beachmat, HDF5Array, DelayedArray, Matrix
