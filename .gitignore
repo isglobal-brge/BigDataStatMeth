@@ -35,10 +35,12 @@ vignettes/*.pdf
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
 
-# compiled filel
+# compiled files
 *.o
 *.so
 
 # Mac Files
 .DS_Store
 
+# RcppExport
+RcppExports.cpp

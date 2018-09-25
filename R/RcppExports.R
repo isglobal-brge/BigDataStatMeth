@@ -13,7 +13,3 @@ BDCInverse_Cholesky <- function(x) {
     .Call('_BigDataStatMeth_BDCInverse_Cholesky', PACKAGE = 'BigDataStatMeth', x)
 }
 
-timesTwo <- function(x) {
-    .Call('_BigDataStatMeth_timesTwo', PACKAGE = 'BigDataStatMeth', x)
-}
-
