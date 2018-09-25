@@ -1,4 +1,3 @@
 useDynLib(BigDataStatMeth)
-import(RcppEigen)
 importFrom(Rcpp, evalCpp, sourceCpp)
 exportPattern("^[[:alpha:]]+")

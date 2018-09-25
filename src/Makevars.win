@@ -4,7 +4,9 @@
 # PKG_LIBS = /Library/Frameworks/R.framework/Versions/3.5/Resources/library/beachmat/lib/libbeachmat.a /Library/Frameworks/R.framework/Versions/3.5/Resources/library/Rhdf5lib/lib/libhdf5_cpp.a /Library/Frameworks/R.framework/Versions/3.5/Resources/library/Rhdf5lib/lib/libhdf5.a /Library/Frameworks/R.framework/Versions/3.5/Resources/library/Rhdf5lib/lib/libsz.a -lz -pthread
 BEACHMAT_LIBS=$(shell echo 'beachmat::pkgconfig("PKG_LIBS")'|\
     "${R_HOME}/bin/R" --vanilla --slave)
-PKG_LIBS=$(BEACHMAT_LIBS)
+#.# PKG_LIBS=$(BEACHMAT_LIBS)
+PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) 
+PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(BEACHMAT_LIBS)
 
 ## With R 3.1.0 or later, you can uncomment the following line to tell R to 
 ## enable compilation with C++11 (or even C++14) where available
