@@ -13,3 +13,7 @@ BDCInverse_Cholesky <- function(x) {
     .Call('_BigDataStatMeth_BDCInverse_Cholesky', PACKAGE = 'BigDataStatMeth', x)
 }
 
+BDsvd <- function(x, k, nev) {
+    .Call('_BigDataStatMeth_BDsvd', PACKAGE = 'BigDataStatMeth', x, k, nev)
+}
+

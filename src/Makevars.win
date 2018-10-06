@@ -1,10 +1,8 @@
 ## With Rcpp 0.11.0 and later, we no longer need to set PKG_LIBS as there is
 ## no user-facing library. The include path to headers is already set by R.
 #PKG_LIBS = 
-# PKG_LIBS = /Library/Frameworks/R.framework/Versions/3.5/Resources/library/beachmat/lib/libbeachmat.a /Library/Frameworks/R.framework/Versions/3.5/Resources/library/Rhdf5lib/lib/libhdf5_cpp.a /Library/Frameworks/R.framework/Versions/3.5/Resources/library/Rhdf5lib/lib/libhdf5.a /Library/Frameworks/R.framework/Versions/3.5/Resources/library/Rhdf5lib/lib/libsz.a -lz -pthread
-BEACHMAT_LIBS=$(shell echo 'beachmat::pkgconfig("PKG_LIBS")'|\
-    "${R_HOME}/bin/R" --vanilla --slave)
-#.# PKG_LIBS=$(BEACHMAT_LIBS)
+
+BEACHMAT_LIBS=$(shell echo 'beachmat::pkgconfig("PKG_LIBS")'| "${R_HOME}/bin/R" --vanilla --slave)
 PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) 
 PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(BEACHMAT_LIBS)
 

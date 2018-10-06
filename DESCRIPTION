@@ -8,6 +8,6 @@ Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Imports: Rcpp (>= 0.12.18)
-LinkingTo: Rcpp, RcppArmadillo, beachmat, Rhdf5lib
+LinkingTo: Rcpp, RcppArmadillo, beachmat, Rhdf5lib, RcppEigen (>= 0.3.2.2.0), RSpectra
 SystemRequirements: C++11
-Suggests: beachmat, HDF5Array, DelayedArray, Matrix
+Suggests: beachmat, HDF5Array, DelayedArray, Matrix, RcppArmadillo, RcppEigen, RSpectra
