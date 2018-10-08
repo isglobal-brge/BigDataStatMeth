@@ -38,6 +38,7 @@ rsconnect/
 # compiled files
 *.o
 *.so
+*.dll
 
 # Mac Files
 .DS_Store
