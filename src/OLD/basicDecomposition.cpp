@@ -5,7 +5,6 @@
 #include "beachmat/numeric_matrix.h"  // To access numeric matrix
 #include "beachmat/integer_matrix.h"  // To access numeric matrix
 #include "include/BasicFunctions.h"
-// #include<cmath>
 #include "include/spectra/SymEigsSolver.h"  // To access symmetric matrix
 
 
@@ -94,7 +93,7 @@ Rcpp::RObject BDCInverse_Cholesky (const Rcpp::RObject & x )
     Rcpp::IntegerVector output(dmat->get_nrow());
     arma::mat mx(nrows, ncols);
     
-    bool tcprod = true;
+    // bool tcprod = true;
     
     for (size_t ccol=0; ccol<ncols; ++ccol) {
       dmat->get_col(ccol, output.begin());

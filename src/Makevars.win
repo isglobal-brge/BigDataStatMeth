@@ -2,11 +2,16 @@
 ## no user-facing library. The include path to headers is already set by R.
 #PKG_LIBS = 
 
+# RcppParallel
+PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \
+              -e "RcppParallel::RcppParallelLibs()")
+PKG_CXXFLAGS += -DRCPP_PARALLEL_USE_TBB=1
+
+# Beachmat
 BEACHMAT_LIBS=$(shell echo 'beachmat::pkgconfig("PKG_LIBS")'| "${R_HOME}/bin/R" --vanilla --slave)
 PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) 
 PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(BEACHMAT_LIBS)
 
 ## With R 3.1.0 or later, you can uncomment the following line to tell R to 
 ## enable compilation with C++11 (or even C++14) where available
-#CXX_STD = CXX11
 CXX_STD = CXX11

@@ -7,7 +7,7 @@ Author: Who wrote it
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
-Imports: Rcpp (>= 0.12.18)
-LinkingTo: Rcpp, RcppArmadillo, beachmat, Rhdf5lib, RcppEigen (>= 0.3.2.2.0), RSpectra
+Imports: Rcpp (>= 0.12.18), RcppEigen (>= 0.3.3.5.0), RcppParallel
+LinkingTo: Rcpp, beachmat, Rhdf5lib, RcppEigen (>= 0.3.2.2.0), RSpectra,  RcppParallel
 SystemRequirements: C++11
-Suggests: beachmat, HDF5Array, DelayedArray, Matrix, RcppArmadillo, RcppEigen, RSpectra
+Suggests: beachmat, HDF5Array, DelayedArray, Matrix, RcppEigen, RSpectra
