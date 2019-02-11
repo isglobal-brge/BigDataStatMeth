@@ -15,7 +15,10 @@ res <- benchmark(solprodparal <- Prodparal::LOOE(M,Y),
                  order="relative", replications = c(3))
 res[,1:4] 
 
+solprodparal
+
 rbind(solfin[1:10], solprodparal$coef[1:10])
+
 
 
 n <- 500
@@ -28,6 +31,8 @@ res <- benchmark(solprodparal2 <- Prodparal::LOOE(M,Y),
                  solfin2 <- LOOE.all(tcrossprod(M),Y),
                  order="relative", replications = c(3))
 res[,1:4] 
+
+solprodparal2
 
 rbind(solfin2[1:10], solprodparal2$coef[1:10])
 
