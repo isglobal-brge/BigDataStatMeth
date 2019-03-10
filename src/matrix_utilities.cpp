@@ -51,6 +51,16 @@ Eigen::MatrixXd RcppNormalize_Data ( Eigen::MatrixXd  X )
 
 
 
+Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
+{
+  Eigen::MatrixXd X = Rcpp::as<Eigen::MatrixXd> (x);
+  Eigen::RowVectorXd mean = X.colwise().mean();
+  Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+  return Rcpp::wrap((X.rowwise() - mean).array().rowwise() / std.array());
+}
+
+
+
 // [[Rcpp::export]]
 Rcpp::RObject Normalize_Data ( Rcpp::RObject & x )
 {

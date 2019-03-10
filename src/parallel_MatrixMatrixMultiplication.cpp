@@ -49,6 +49,50 @@ struct XYProd : public RcppParallel::Worker  {
 
 
 
+struct XYProdEig : public RcppParallel::Worker  {
+  
+  // input matrix to read from
+  //const RcppParallel::RMatrix<double> matX;
+  //const RcppParallel::RMatrix<double> matY;
+  Eigen::MatrixXd matX;
+  Eigen::MatrixXd matY;
+  
+  // output matrix to write to
+  RcppParallel::RMatrix<double> rmat;
+  
+  // other variables
+  std::size_t numcol;
+  
+  // Constructor
+  XYProdEig(const Eigen::MatrixXd matX, Eigen::MatrixXd matY, Rcpp::NumericMatrix rmat, std::size_t numcol)
+    : matX(matX), matY(matY), rmat(rmat), numcol(numcol) {}
+  
+  // function call operator that work for the specified range (begin/end)
+  void operator()(std::size_t begin, std::size_t end) 
+  {
+    // size_t ncmat = mat.ncol();
+    for (std::size_t i = begin; i < end; i++) 
+    {
+      // RcppParallel::RMatrix<double>::Row rowmat = matX.row(i); // rows we will operate on
+      Eigen::VectorXd rowmat = matX.row(i);
+      for (std::size_t j = 0; j < numcol ; j++) 
+      {
+        // RcppParallel::RMatrix<double>::Column coltmat = matY.column(j); // cols we will operate on 
+        ColumnVector coltmat = matY.col(j);
+        size_t selem = matY.col(j).size();
+        
+        for(std::size_t k = 0; k<selem; k++) 
+        {
+          rmat(i,j) =  rmat(i,j) + (rowmat[k] * coltmat[k]);
+          //if(i!=j)
+          //  rmat(j,i) =  rmat(i,j);
+        }
+      }
+    }
+  }
+};
+
+
 struct XYProdBlock : public RcppParallel::Worker  {
   
   // input matrix to read from
@@ -114,6 +158,38 @@ Rcpp::NumericMatrix rcpp_parallel_XYProd(Rcpp::NumericMatrix matX, Rcpp::Numeric
   }  
   
   return rmat;
+  
+}
+
+
+Eigen::MatrixXd rcpp_parallel_XYProd_eigen(Eigen::MatrixXd matX, Eigen::MatrixXd matY) {
+  
+  // allocate the matrix we will return
+  Rcpp::NumericMatrix rmat(matX.rows(), matY.cols());
+  
+  try
+  {
+    if(matX.cols()==matY.rows())
+    {
+      try{
+        
+        // create the worker
+        XYProdEig xyprod(matX, matY, rmat, matY.cols());
+        RcppParallel::parallelFor(0, matX.rows(), xyprod);
+        
+      }catch(std::exception &ex) {	
+        forward_exception_to_r(ex);
+      }
+      
+    } else
+    {
+      throw std::range_error("non-conformable arguments");
+    }
+  }catch(std::exception &ex) {	
+    forward_exception_to_r(ex);
+  }  
+  
+  return (Rcpp::as<Eigen::MatrixXd>(rmat));
   
 }
 
@@ -249,8 +325,6 @@ Rcpp::NumericMatrix rcpp_parallel_XYtProd(Rcpp::NumericMatrix matX, Rcpp::Numeri
 // [[Rcpp::export]]
 Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::string> op = R_NilValue)
 {
-  auto dmtypex = beachmat::find_sexp_type(X);
-  auto dmtypey = beachmat::find_sexp_type(Y);
 
   size_t ncols = 0, nrows=0;
   

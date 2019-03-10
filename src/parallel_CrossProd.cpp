@@ -49,6 +49,48 @@ struct tCrosProdd : public RcppParallel::Worker  {
 };
 
 
+
+
+struct tCrosProddEig : public RcppParallel::Worker  {
+  
+  // input matrix to read from
+  const Eigen::Map<Eigen::MatrixXd> mat;
+  const InversMat tmat;
+  
+  // output matrix to write to
+  RcppParallel::RMatrix<double> rmat;
+  
+  // other variables
+  std::size_t numcol;
+  
+  // Constructor
+  tCrosProddEig(const Eigen::Map<Eigen::MatrixXd> mat, InversMat tmat, Rcpp::NumericMatrix rmat, std::size_t numcol)
+    : mat(mat), tmat(tmat), rmat(rmat), numcol(numcol) {}
+  
+  // function call operator that work for the specified range (begin/end)
+  void operator()(std::size_t begin, std::size_t end) 
+  {
+    // size_t ncmat = mat.ncol();
+    for (std::size_t i = begin; i < end; i++) 
+    {
+      // RcppParallel::RMatrix<double>::Row rowmat = mat.row(i); // rows we will operate on
+      Eigen::VectorXd rowmat = mat.row(i);
+      
+      for (std::size_t j = 0; j < numcol ; j++) 
+      {
+        //..// RcppParallel::RMatrix<double>::Column coltmat = tmat.column(j); // cols we will operate on 
+        ColumnVector coltmat = tmat.col(j).transpose();
+        size_t selem = tmat.col(i).size() ;
+        for(std::size_t k = 0; k<selem; k++) 
+        {
+          rmat(i,j) =  rmat(i,j) + (rowmat[k] * coltmat[k]);
+        }
+      }
+    }
+  }
+};
+
+
 struct tCrosProdd_block : public RcppParallel::Worker  {
   
   // input matrix to read from
@@ -86,7 +128,7 @@ struct tCrosProdd_block : public RcppParallel::Worker  {
 };
 
 
-Rcpp::NumericMatrix rcpp_parallel_tCrossProd(Rcpp::NumericMatrix mat) {
+Rcpp::NumericMatrix rcpp_parallel_tCrossProd(const Rcpp::NumericMatrix& mat) {
   
   // Transpose de matrix
   Rcpp::NumericMatrix tmat(Rcpp::transpose(mat));
@@ -101,26 +143,9 @@ Rcpp::NumericMatrix rcpp_parallel_tCrossProd(Rcpp::NumericMatrix mat) {
     {
       try{
         
-        // create the worker
-        // create the worker
         tCrosProdd tcrossprod(mat, tmat, rmat, tmat.ncol());
         RcppParallel::parallelFor(0, mat.nrow(), tcrossprod );
-        /*
-        size_t sloop = size_t(mat.nrow()/500);
-        // call it with parallelFor
-        if(sloop>0)
-        {
-          for( size_t i = 0; i<sloop-1; i++)  {
-            RcppParallel::parallelFor(i*500, (i+1)*500, tcrossprod);
-          }
-        } else {
-          sloop = 1;
-        }
-        
-        // Tractament final
-        
-        RcppParallel::parallelFor((sloop-1)*500, mat.nrow(), tcrossprod);
-        */
+
       }catch(std::exception &ex) {	
         forward_exception_to_r(ex);
       }
@@ -136,6 +161,44 @@ Rcpp::NumericMatrix rcpp_parallel_tCrossProd(Rcpp::NumericMatrix mat) {
   return rmat;
   
 }
+
+
+
+Eigen::Map<Eigen::MatrixXd> rcpp_parallel_tCrossProd_eigen(const Eigen::Map<Eigen::MatrixXd>& mat) {
+  
+
+  InversMat tmat(mat.cols(), mat.rows());
+  tmat = mat.inverse();
+  Rcpp::Rcout<<"\n"<<mat<<"\n";
+  Rcpp::Rcout<<tmat<<"\n";
+  
+  
+  // Eigen::Map<Eigen::Matrix> tmat(double, mat.cols(), mat.rows()) = mat.transpose();
+  
+  // allocate the matrix we will return
+  Rcpp::NumericMatrix rmat(mat.rows(), mat.rows());
+  
+  
+  try
+  {
+    
+    try{
+      
+      tCrosProddEig tcrossprod(mat, tmat, rmat, mat.rows());
+      RcppParallel::parallelFor(0, mat.rows(), tcrossprod );
+
+    }catch(std::exception &ex) {	
+      forward_exception_to_r(ex);
+    }
+
+  }catch(std::exception &ex) {	
+    forward_exception_to_r(ex);
+  }  
+  
+  return (Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(rmat));
+  
+}
+
 
 
 Rcpp::NumericMatrix rcpp_parallel_tCrossProd_block(Rcpp::NumericMatrix mat) {
@@ -651,6 +714,29 @@ Rcpp::RObject parCrossProd_block(Rcpp::RObject X)
 
 
 
+// [[Rcpp::export]]
+Rcpp::RObject partCrossProdEigen(Rcpp::RObject X)
+{
+  
+  if( X.sexp_type() == INTSXP)
+  {
+    const Eigen::Map<Eigen::MatrixXi> eX(Rcpp::as<Eigen::Map<Eigen::MatrixXi> >(X)); 
+    Rcpp::Rcout<<"\n"<<eX<<"\n";
+  } else if(X.sexp_type() == REALSXP) {
+    const Eigen::Map<Eigen::MatrixXd> eX(Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X));
+    Rcpp::Rcout<<"\n"<<eX<<"\n";
+  }
+  /*
+  Eigen::MatrixXd eX = Rcpp::as<Eigen::MatrixXd>(X);
+  const Eigen::Map<Eigen::MatrixXd> A(Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X));
+  
+  Rcpp::Rcout<<"\n"<<A<<"\n";
+  //Eigen::Map<Eigen::MatrixXd> XX = rcpp_parallel_tCrossProd_eigen(eX);
+  Eigen::Map<Eigen::MatrixXd> XX = A;
+  return(Rcpp::wrap(XX));*/
+  return(Rcpp::wrap('2'));
+
+}
 
 
 
@@ -806,9 +892,11 @@ library(beachmat)
 # PROVES AMB INTEGERS
 
 set.seed(5)
-X <- matrix(sample(1:10,900, replace = TRUE), ncol = 3);dim(X)
+X <- matrix(sample(1:10,9, replace = TRUE), ncol = 3);dim(X)
 dim(t(X))
 X
+
+partCrossProdEigen(X)
 
 D <- DelayedArray::DelayedArray(X)
 w <- sample(1:10,ncol(X), replace = TRUE)
@@ -821,7 +909,7 @@ res[,1:4]
 
 res <- benchmark(tcrossprod(X),
                  partCrossProd(X),
-                 partCrossProd(D),
+                 partCrossProdEigen(X),
                  order="relative", replications = c(10))
 res[,1:4] 
 

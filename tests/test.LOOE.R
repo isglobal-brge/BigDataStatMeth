@@ -10,10 +10,13 @@ Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5]
 RcppParallel::setThreadOptions(numThreads = 40)
 
 
-res <- benchmark(solprodparal <- Prodparal::LOOE(M,Y),
-                 solfin <- LOOE.all(tcrossprod(M),Y),
+res <- benchmark(solprodparal <- BigDataStatMeth::LOOE(M,Y),
+                 solfin <- LOOE.all(M,Y),
                  order="relative", replications = c(3))
 res[,1:4] 
+solfin <- LOOE.all(tcrossprod(M),Y)
+solfin[1:10]
+
 
 solprodparal
 
@@ -27,7 +30,7 @@ M <- matrix(rnorm(n*p), nrow=n, ncol=p)
 Y <- 2.8*M[,1] + 1.1*M[,2] + 0.3*M[,5]
 
 
-res <- benchmark(solprodparal2 <- Prodparal::LOOE(M,Y),
+res <- benchmark(solprodparal2 <- BigDataStatMeth::LOOE(M,Y),
                  solfin2 <- LOOE.all(tcrossprod(M),Y),
                  order="relative", replications = c(3))
 res[,1:4] 
@@ -35,7 +38,9 @@ res[,1:4]
 solprodparal2
 
 rbind(solfin2[1:10], solprodparal2$coef[1:10])
-
+sol <- LOOE_orig(tcrossprod(M),Y)
+soleig <- solveEigen_orig(M, as.matrix(Y), lambda=sol$lambda.min)
+soleig[1:10]
 
 
 
@@ -106,7 +111,8 @@ LOOE_orig <- function(X, Y, nlambdas=100, max.lambda=1, lambdas){
   ans
 }
 
-LOOE.all <- function(X, Y, nlambdas=100, max.lambda=1, lambdas){
+LOOE.all <- function(X, Y){
   sol <- LOOE_orig(tcrossprod(X),Y)
-  return(solveEigen_orig(X, as.matrix(Y), lambda=sol$lambda.min))
+  solsolv <- solveEigen_orig(X, as.matrix(Y), lambda=sol$lambda.min)
+  return(solsolv)
 }
