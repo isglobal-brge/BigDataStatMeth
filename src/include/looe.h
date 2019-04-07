@@ -39,31 +39,17 @@
   };
   
 
-  Eigen::VectorXd rcpp_parallel_looei(const Eigen::Map<Eigen::VectorXd>& lambdas, const Eigen::Map<Eigen::VectorXd>& Lambda, 
-                                      const Eigen::Map<Eigen::MatrixXd>& Q, const Eigen::Map<Eigen::VectorXd>& eY );
-    
-  // Eigen data type
-  //..// Eigen::MatrixXd rcppinversecpp_eig ( double& lambda, const Eigen::Map<Eigen::VectorXd>* Lambda, const Eigen::Map<Eigen::VectorXd>* Q );
-  void rcppinversecpp_eig ( double& lambda, const Eigen::Map<Eigen::VectorXd>* Lambda, const Eigen::Map<Eigen::VectorXd>* Q, Eigen::Map<Eigen::MatrixXd>* Ginv );
-  double rcpplooei_eig( double& lambda, const Eigen::Map<Eigen::VectorXd>* Lambda, const Eigen::Map<Eigen::VectorXd>* Q,const Eigen::VectorXd& Y);
   
-  // Rcpp data type
-  Rcpp::NumericMatrix rcppinversecpp ( double& lambda, const Rcpp::NumericVector& Lambda, const Rcpp::NumericMatrix& Q );
-  double rcpplooei( double& lambda, const Rcpp::NumericVector& Lambda, const Rcpp::NumericMatrix& Q,const Rcpp::NumericVector& Y);
-  
-  
-  // Eigen - Blast
-  double rcpplooei_eig_blast( double lambda, const Eigen::VectorXd& Lambda, 
+  double rcpplooei( double lambda, const Eigen::VectorXd& Lambda, 
                               const Eigen::MatrixXd& Q, const Eigen::VectorXd& Y, 
                               bool paral);
-  Eigen::MatrixXd rcppinversecpp_eig_blast ( double lambda, const Eigen::VectorXd& Lambda, 
+
+  Eigen::MatrixXd rcppinversecpp( double lambda, const Eigen::VectorXd& Lambda, 
                                              const Eigen::MatrixXd& Q, bool paral );
   
-
-    
-  Rcpp::RObject LOOE(Rcpp::RObject& X, Rcpp::RObject& Y, Rcpp::Nullable<double> nl,
-                     Rcpp::Nullable<double> ml,
-                     Rcpp::Nullable<Rcpp::RObject> l);
+  Rcpp::RObject LOOE(Rcpp::RObject& X, Rcpp::RObject& Y, bool paral, 
+                       Rcpp::Nullable<double> nl, Rcpp::Nullable<double> ml,
+                       Rcpp::Nullable<Rcpp::RObject> l);
   
 
 

@@ -718,7 +718,7 @@ for ( i in seq(300, 1500, by=300))
   
   res <- microbenchmark( LOOE_BLAST(A,Y,paral=TRUE),
                          LOOE_BLAST(A,Y,paral=FALSE),
-                         LOOE.all(M,Y),
+                         LOOE.all(A,Y),
                          times = repet, unit = "s")
   
   resdata <- as.data.frame(summary(res)[, c(1:7)])
