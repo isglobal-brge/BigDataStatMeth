@@ -177,7 +177,7 @@ res <- microbenchmark( looe1 <- LOOE(M,Y,paral=TRUE),
                        looe2 <- LOOE(M,Y,paral=FALSE),
                        looe3 <- LOOE(MD,YD,paral=TRUE),
                        looe4 <- LOOE(MD,YD,paral=FALSE),
-                       looe5 <- LOOE.all(M,Y),
+                       # looe5 <- LOOE.all(M,Y),
                        times = 3L, unit = "s")
 
 print(summary(res)[, c(1:7)],digits=3)

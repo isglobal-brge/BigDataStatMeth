@@ -282,8 +282,8 @@ jsvd <- JacobianSVD(A)
 a <- c(1,3,2,5,6,4,7,8,9)
 
 
-n <- 500
-p <- 500
+n <- 1500
+p <- 1500
 A <- matrix(rnorm(n*p), nrow=n, ncol=p)
 AD <- DelayedArray(A);
 

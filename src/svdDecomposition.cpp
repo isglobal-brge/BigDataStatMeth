@@ -147,7 +147,7 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
 
 
 // [[Rcpp::export]]
-Eigen::MatrixXd bdInvCholesky_LDL_eigen (const Rcpp::RObject & x )
+Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 {
   
   svdeig result;

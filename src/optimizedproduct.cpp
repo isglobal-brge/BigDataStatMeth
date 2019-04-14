@@ -19,7 +19,7 @@ Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& X)
 }
 
 
-// Compute weighted crossproduct XwXi
+// Compute weighted crossproduct XwX'
 Eigen::MatrixXd xwxt(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
 {
   const int n(X.rows());
@@ -50,11 +50,10 @@ Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> tran
   bool btrans;
   
   if(transposed.isNotNull())
-    btrans = transposed;
+    btrans = Rcpp::as<bool> (transposed);
   else
     btrans = FALSE;
-  
-  
+
   // Read DelayedArray's a and b
   if ( a.isS4() == true)    
   {
@@ -83,7 +82,6 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
   Eigen::MatrixXd W;
   
   
-
   // Read DelayedArray's a and b
   if ( a.isS4() == true)    
   {
@@ -162,5 +160,30 @@ stopifnot(all.equal(bdcrossprod(X, transposed = TRUE),tcrossprod(X)),
 
 bdcrossprod(X,TRUE)
 bdcrossprod(XD,TRUE)
+
+n <- 500
+A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+DA <- DelayedArray(A)
+
+A[1:5,1:5]
+DA[1:5,1:5]
+  
+cpA <- bdcrossprod(A, transposed = FALSE)  
+
+cpDA <- bdcrossprod(DA, transposed = TRUE)  # With DelayedArray data type
+
+
+cpDA <- bdcrossprod(DA, transposed = FALSE)  # With DelayedArray data type
+  
+all.equal(cpDA, tcrossprod(A)) #
+all.equal(cpDA, crossprod(A))
+
+
+
+all.equal(cpDA, A%*%t(A))
+all.equal(cpA, A%*%t(A))
+
+
+
 
 */

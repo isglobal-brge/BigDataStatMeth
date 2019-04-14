@@ -97,9 +97,13 @@ return(C);
 
 
 
+
+//..// Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, int block_size, bool paral)
 // [[Rcpp::export]]
-Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, int block_size, bool paral)
+Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> block_size = R_NilValue, Rcpp::Nullable<bool> paral = R_NilValue)
 {
+  int iblock_size;
+  bool bparal;// = Rcpp::as<double>;
   
   Eigen::MatrixXd A;
   Eigen::MatrixXd B;
@@ -123,13 +127,32 @@ Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, int block_size, bool
     B = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(b);
   } 
   
+  if(block_size.isNotNull())
+  {
+    iblock_size = Rcpp::as<int> (block_size);
 
-  if(paral == true)
+    if( iblock_size > std::min(A.rows(),A.cols()) || iblock_size > std::min(B.rows(),B.cols()) )
+    {
+      iblock_size = std::min(  std::min(A.rows(),A.cols()), std::min(B.rows(),B.cols()));
+    }
+    
+  } else {
+    // iblock_size = std::min(  std::min(A.rows(),A.cols()), std::min(B.rows(),B.cols()));
+    iblock_size = 1;
+  }
+  
+  if( paral.isNull()) {
+    bparal = false;
+  } else {
+    bparal = Rcpp::as<bool> (paral);
+  }
+  
+  if(bparal == true)
   {
-    C = block_matrix_mul_parallel(A, B, block_size);
-  }else if (paral == false)
+    C = block_matrix_mul_parallel(A, B, iblock_size);
+  }else if (bparal == false)
   {
-    C = block_matrix_mul(A, B, block_size);
+    C = block_matrix_mul(A, B, iblock_size);
   }
   return(C);
 }
@@ -200,12 +223,23 @@ stopifnot(all.equal(CP2,CP2D),
   
   
   
-n <- 5000
-p <- 5000
+n <- 500
+p <- 750
 A <- matrix(rnorm(n*p), nrow=n, ncol=p)
+B <- matrix(rnorm(p*p), nrow=p, ncol=p)
+
+AD <- DelayedArray(A)
+BD <- DelayedArray(B)
+
 B <- t(A)
 
-CP2 <- blockmult(A,B,128, FALSE)
+CP2 <- blockmult(AD,BD)
+
+CP2[1:10,1:10]
+CPD <- A%*%B
+CPD[1:10,1:10]
+all.equal(CPD,CP2)
+
 CPP2 <- blockmult(A,B,128, TRUE)
 stopifnot( all.equal(blockmult(A,B,128, FALSE),A%*%B),
            all.equal(blockmult(A,B,128, TRUE),A%*%B))

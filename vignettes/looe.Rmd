@@ -1,0 +1,217 @@
+---
+title: "LOOE"
+author: "Dolors Pelegrí"
+date: "`r Sys.Date()`"
+#output: 
+#  rmarkdown::html_vignette:
+#    theme: Architect:
+#    toc_float: true
+output:
+  BiocStyle::html_document:
+    toc_float: true
+    
+pages:
+  markdown:
+    extra: true
+    
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Overview
+
+
+
+# Matrix Multiplication
+
+## Simple matrix multiplication (withou blocks) :
+
+If you want to perform a simple sequential matrix multiplication you can call the function `blockmult()` with DelayedArray data type or any other R data type. In the example bellow we perform a product with A(500x500) and B(500x750).
+
+```{r warning=FALSE, message=FALSE  }
+library(BigDataStatMeth)
+library(DelayedArray)
+n <- 500
+p <- 750
+
+A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+B <- matrix(rnorm(n*p), nrow=n, ncol=p)
+DA <- DelayedArray(A) # Get A as Delayed Array
+DB <- DelayedArray(B) # Get B as Delayed Array
+
+AxB <- blockmult(A, B)
+AxBDelay <- blockmult(DA, DB)
+
+AxBDelay [1:5,1:5]
+
+all.equal(AxB, AxBDelay)
+all.equal(A%*%B, AxBDelay)
+
+```
+
+you can optimize the performance making this calculus in parallel with `paral=true` .  
+
+```{r warning=FALSE, message=FALSE  }
+
+AxB <- blockmult(A, B, paral = TRUE)
+AxBDelay <- blockmult(DA, DB, paral = TRUE) # using Delayed Array data type
+
+all.equal(AxB, AxBDelay)
+
+```
+
+
+## Block matrix multiplication
+
+A block matrix or a partitioned matrix is a matrix that is interpreted as having been broken into sections called blocks or submatrices. Intuitively, a matrix interpreted as a block matrix can be visualized as the original matrix with a collection of horizontal and vertical lines,
+which break it up, or partition it, into a collection of smaller matrices [(more information on block matrix multiplication)](https://en.wikipedia.org/wiki/Block_matrix).
+
+The code bellow performs a matrix multiplication with A(500x500) and B(500x750) with (10x10) blocks. 
+
+```{r warning=FALSE, message=FALSE  }
+
+AxB <- blockmult(A, B, block_size = 10)
+AxBDelay <- blockmult(DA, DB, block_size = 10 )
+
+all.equal(AxBDelay,A%*%B)
+all.equal(AxB, AxBDelay)
+
+
+```
+
+if block_size > cols(A) and rows(A) and cols(B) and rows(B) then blocks_size is set to min( ols(A), rows(A), cols(B), rows(B)) 
+
+Like in simple matrix multiplication you can make operations in parallel with `paral = TRUE` .
+
+```{r warning=FALSE, message=FALSE  }
+
+AxB <- blockmult(A, B, block_size = 10, paral = TRUE)
+AxBDelay <- blockmult(DA, DB, block_size = 10, paral = TRUE )
+
+all.equal(AxBDelay,A%*%B)
+all.equal(AxB, AxBDelay)
+
+```
+
+
+# Cross-product and Transposed Cross-product
+
+To perform a cross-product $C = A^t A$ you can call `bdcrossprod()`.
+
+```{r warning=FALSE, message=FALSE  }
+n <- 500
+m <- 250
+A <- matrix(rnorm(n*m), nrow=n, ncol=m)
+DA <- DelayedArray(A)
+
+# Cross Product
+cpA <- bdcrossprod(A, transposed = FALSE)  
+cpDA <- bdcrossprod(DA)  # With DelayedArray data type and no transposed parameter
+
+all.equal(cpDA, crossprod(A))
+```
+
+you may also set `transposed=TRUE` (default value transposed=false) to perform a Transposed Cross-product $C = A A^t$
+
+```{r warning=FALSE, message=FALSE  }
+# Transposed Cross Product
+tcpA <- bdcrossprod(A, transposed = TRUE)
+tcpDA <- bdcrossprod(DA, transposed = TRUE) # With DelayeArray data type
+
+all.equal(tcpDA, tcrossprod(A))
+
+```
+
+# Matrix Vector Multiplication 
+
+You can perform a weighted cross-product $C = X^ t w X$ with `bdwcrossprod()` given a matrix X as argument and a vector or matrix of weights, w . 
+
+## Weighted Cross-product and Weighted Transposed Cross-product
+
+```{r warning=FALSE, message=FALSE  }
+n <- 250
+X <- matrix(rnorm(n*n), nrow=n, ncol=n)
+u <- runif(n)
+w <- u * (1 - u)
+DX <- DelayedArray(X)
+Dw <- DelayedArray(as.matrix(w))
+  
+wcpX <- bdwproduct(X, w,"xwxt")
+wcpDX <- bdwproduct(DX, Dw,"xwxt") # with DelayedArray
+
+wcpDX[1:5,1:5]
+
+all.equal(wcpDX, X%*%diag(w)%*%t(X))
+
+```
+
+## Weighted Transposed Cross Product 
+
+With argument `transposed=TRUE`, we can perform a transposed weighted cross-product $C = A w A^t$  
+
+```{r warning=FALSE, message=FALSE  }
+
+wtcpX <- bdwproduct(X, w,"xtwx")
+wtcpDX <- bdwproduct(DX, Dw,"xtwx") # with DelayedArray
+
+wtcpDX[1:5,1:5]
+
+all.equal(wtcpDX, t(X)%*%diag(w)%*%X)
+
+```
+
+# Inverse Cholesky
+<p> The Cholesky factorization is widely used for solving a system of linear equations whose coefficient matrix is symmetric and positive definite.</p>
+<p style="text-align: center;">$A = LL^t = U^tU$ </p>
+where $L$ is a lower triangular matrix and U is an upper triangular matrix.
+To get the Inverse Cholesky we can use the function `bdInvCholesky()`
+
+
+```{r warning=FALSE, message=FALSE  }
+
+# Generate a positive definite matrix
+Posdef <- function (n, ev = runif(n, 0, 10)) 
+{
+  Z <- matrix(ncol=n, rnorm(n^2))
+  decomp <- qr(Z)
+  Q <- qr.Q(decomp) 
+  R <- qr.R(decomp)
+  d <- diag(R)
+  ph <- d / abs(d)
+  O <- Q %*% diag(ph)
+  Z <- t(O) %*% diag(ev) %*% O
+  return(Z)
+}
+
+A <- Posdef(n=500, ev=1:500)
+DA <- DelayedArray(A)
+
+invchol <- bdInvCholesky(A)
+Dinvchol <- bdInvCholesky(DA)
+
+round(invchol[1:5,1:5],8)
+
+all.equal(Dinvchol, solve(A))
+
+```
+
+# SVD Decomposition
+
+## svd
+## Jacobi decomposition
+
+
+
+
+# LOOE
+
