@@ -3,7 +3,6 @@
 
   #include <RcppEigen.h>
   #include "ReadDelayedData.h"
-  #include <mpi.h>
   #include <cstdlib>
   #include <cmath>
   #include <omp.h>
