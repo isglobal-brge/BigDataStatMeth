@@ -51,7 +51,8 @@ for (k in 1:length(matrixsize))
             res <- microbenchmark(MPB <- blockmult(A,B,i, bparal), times = repet, unit = "s")
 
          resdata <- as.data.frame(summary(res)[, c(1:7)])
-         resdata <- cbind(resdata,tipusop[j],tipusdades[l],i,M=dim(A)[1], K=dim(A)[2], N=dim(B)[2], ncores, repet)
+         resdata <- cbind(resdata, tipusop[j], 
+                          tipusdades[l],i,M=dim(A)[1], K=dim(A)[2], N=dim(B)[2], ncores, repet)
          result.df <- rbind(result.df,resdata)
        }
       

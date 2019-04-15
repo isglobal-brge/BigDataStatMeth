@@ -1,6 +1,13 @@
 ---
 title: "LOOE"
-author: "Dolors Pelegrí"
+author:
+- name: Dolors Pelegrí-Sisó 
+  affiliation: Universitat Autònoma de Barcelona (UAB)
+- name: Juan R Gonzalez
+  affiliation: Barcelona Institute for Global Health (ISGlobal)
+  email: juanr.gonzalez@isglobal.org
+abstract: |
+  Instructions on enabling _Bioconductor_ style in R Markdown vignettes.    
 date: "`r Sys.Date()`"
 #output: 
 #  rmarkdown::html_vignette:
@@ -23,9 +30,13 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "", cache = TRUE, 
+  warning=FALSE, message=FALSE 
 )
 ```
+
+
+# Prerequisites
 
 
 # Overview
@@ -38,7 +49,7 @@ knitr::opts_chunk$set(
 
 If you want to perform a simple sequential matrix multiplication you can call the function `blockmult()` with DelayedArray data type or any other R data type. In the example bellow we perform a product with A(500x500) and B(500x750).
 
-```{r warning=FALSE, message=FALSE  }
+```{r load_libraries }
 library(BigDataStatMeth)
 library(DelayedArray)
 n <- 500
@@ -61,7 +72,7 @@ all.equal(A%*%B, AxBDelay)
 
 you can optimize the performance making this calculus in parallel with `paral=true` .  
 
-```{r warning=FALSE, message=FALSE  }
+```{r blockmult}
 
 AxB <- blockmult(A, B, paral = TRUE)
 AxBDelay <- blockmult(DA, DB, paral = TRUE) # using Delayed Array data type
