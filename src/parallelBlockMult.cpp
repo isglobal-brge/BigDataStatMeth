@@ -3,7 +3,7 @@
 // Documentació : http://www.netlib.org/lapack/lawnspdf/lawn129.pdf
 
 
-Eigen::MatrixXd block_matrix_mul(Eigen::MatrixXd& A, Eigen::MatrixXd& B, int block_size)
+Eigen::MatrixXd block_matrix_mul(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, int block_size)
 {
 
   int M = A.rows();
@@ -73,7 +73,7 @@ Eigen::MatrixXd block_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen:
   }
    */
   
-#pragma omp for schedule (static, chunk)
+#pragma omp for schedule (dynamic)
   
   
   for (int ii = 0; ii < M; ii += block_size)
@@ -163,15 +163,16 @@ Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> 
 /*** R
 
 library(microbenchmark)
+library(DelayedArray)
 # A <- matrix(sample(1:10,100, replace = TRUE), ncol = 10);A
 
-n <- 1400
-p <- 2200
+n <- 1000
+p <- 1500
 A <- matrix(rnorm(n*p), nrow=n, ncol=p)
   
   
-n <- 2200
-p <- 1500
+n <- 1500
+p <- 1000
 B <- matrix(rnorm(n*p), nrow=n, ncol=p)
 
 AD <- DelayedArray(A)
@@ -182,13 +183,17 @@ results <- microbenchmark( CP2 <- blockmult(A,B,128, FALSE),
                            CPP2 <- blockmult(A,B,128, TRUE),
                            CP2D <- blockmult(AD,BD,128, FALSE),
                            CPP2D <- blockmult(AD,BD,128, TRUE),
+                           dgemm <- matv_gemm(A,B),
+                           r <- A%*%B,
                            times = 2L)
   
 print(summary(results)[, c(1:7)],digits=3)
 
 stopifnot(all.equal(CP2,CP2D),
           all.equal(CPP2,CPP2D),
-          all.equal(CP2,CPP2))
+          all.equal(CP2,CPP2),
+          all.equal(CP2,dgemm),
+          all.equal(CP2,r))
 
 
   D <- block_matrix_mul_parallel(A,B,128)

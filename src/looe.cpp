@@ -21,11 +21,14 @@ Eigen::MatrixXd rcppinversecpp ( double lambda, const Eigen::VectorXd& Lambda,
 
   
   if(paral==true)  {
-    // Ginv =  block_matrix_mul_parallel(block_matrix_mul_parallel( Q, w.asDiagonal(),256), Q.transpose(), 256);
-    Ginv = Q*w.asDiagonal()*Q.transpose();
+    Eigen::MatrixXd tmp = Xwd_parallel(Q,w);
+    Ginv  = block_matrix_mul_parallel( tmp, Q.adjoint(), 128);
+    // Ginv = Q*w.asDiagonal()*Q.transpose();
   } else {
-    Ginv = Q*w.asDiagonal()*Q.transpose();
-    // Eigen::MatrixXd Ginv = xwxt(Q,w) ; // Opció força mes lenta. Perquè???
+    Eigen::MatrixXd tmp = Xwd(Q,w);
+    Ginv  = block_matrix_mul( tmp, Q.adjoint(), 128);
+    // Ginv = Q*w.asDiagonal()*Q.transpose();
+    //..// Ginv = Q*w.asDiagonal()*Q.transpose();
   };
   
   return(Ginv);
@@ -81,6 +84,7 @@ Rcpp::RObject LOOE(Rcpp::RObject& X, Rcpp::RObject& Y, bool paral,
       Eigen::MatrixXd rX;
       Eigen::VectorXd eY;
       Eigen::VectorXd  lambdas;
+      int tid, chunk=1;
       
       
       // Variable initialization
@@ -127,16 +131,36 @@ Rcpp::RObject LOOE(Rcpp::RObject& X, Rcpp::RObject& Y, bool paral,
       Eigen::VectorXd looei (lambdas.size());
       double lambdamin = 0; 
       
+      /*
       for(size_t i=0; i<lambdas.size(); i = i+1)
       {
         looei[i] = rcpplooei(lambdas[i], Lambda, Q, eY, paral);
       }
+       */
       
+      #pragma omp parallel shared(looei,lambdas, Lambda, Q, eY, paral) // private (tid)
+      {
+        // tid = omp_get_thread_num();
+        //només per fer proves dels threads i saber que està paralelitzant, sinó no cal tenir-ho descomentat
+        /*
+        if (tid == 0) {
+        Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
+        }
+        */
+        // #pragma omp for schedule (static, chunk)
+        #pragma omp for schedule (dynamic)
+        for(size_t i=0; i<lambdas.size(); i = i+1)
+        {
+          looei[i] = rcpplooei(lambdas[i], Lambda, Q, eY, paral);
+        }
+      }
+
       lambdamin = lambdas[index_val(looei.minCoeff(), looei)];
 
       Eigen::MatrixXd Ginv = rcppinversecpp(lambdamin, Lambda, Q, paral);
       
-      Eigen::MatrixXd coef = (Ginv * rX).adjoint() * eY;
+      //Eigen::MatrixXd coef = (Ginv * rX).adjoint() * eY;
+       Eigen::MatrixXd coef = block_matrix_mul_parallel(Ginv,rX,128).adjoint() * eY;
       
       return Rcpp::List::create(Rcpp::Named("coef") = coef,
                                 Rcpp::Named("Ginv") = Ginv,
@@ -161,10 +185,11 @@ Rcpp::RObject LOOE(Rcpp::RObject& X, Rcpp::RObject& Y, bool paral,
 
 library(microbenchmark)
 library(DelayedArray)
+library(BigDataStatMeth)
 
 
 
-n <- 300
+n <- 800
 p <- 100
 M <- matrix(rnorm(n*p), nrow=n, ncol=p)
 
@@ -173,20 +198,48 @@ Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5]
 MD <- DelayedArray(M)
 YD <- DelayedArray(as.matrix(Y))
 
+#looe1 <- LOOE(M,Y,paral=TRUE)
 res <- microbenchmark( looe1 <- LOOE(M,Y,paral=TRUE),
-                       looe2 <- LOOE(M,Y,paral=FALSE),
                        looe3 <- LOOE(MD,YD,paral=TRUE),
-                       looe4 <- LOOE(MD,YD,paral=FALSE),
-                       # looe5 <- LOOE.all(M,Y),
-                       times = 3L, unit = "s")
+                        times = 2L, unit = "s")
 
 print(summary(res)[, c(1:7)],digits=3)
 
 looe1$coef[1:10]
-looe2$coef[1:10]
+looe1$lambda.min
+
+
+
+
+n <- 1800
+p <- 700
+M <- matrix(rnorm(n*p), nrow=n, ncol=p)
+Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5]
+MD <- DelayedArray(M)
+YD <- DelayedArray(as.matrix(Y))
+
+res <- microbenchmark( looe1 <- LOOE(M,Y,paral=TRUE),
+                       # looe2 <- LOOE(M,Y,paral=FALSE),
+                       looe3 <- LOOE(MD,YD,paral=TRUE),
+                       # looe4 <- LOOE(MD,YD,paral=FALSE),
+                       # looe5 <- LOOE.all(M,Y),
+                       ans1 <- glmnet::cv.glmnet(M, Y),
+                       times = 2L, unit = "s")
+
+print(summary(res)[, c(1:7)],digits=3)
+
+looe1$coef[1:10]
+# looe2$coef[1:10]
 looe3$coef[1:10]
-looe4$coef[1:10]
+# looe4$coef[1:10]
 looe5[1:10]
+# el resultado es:
+mm <- which(ans1$lambda==ans1$lambda.min)
+ans1$glmnet.fit$beta[1:10,mm]
+
+
+
+
 
 
   

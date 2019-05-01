@@ -38,7 +38,68 @@ Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w)
   return (XtwX);
 }
 
+// Matirx - vector as diagonal matrix Multiplication
+Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
+{
+  int n = X.rows();
+  Eigen::MatrixXd C = Eigen::MatrixXd::Zero(n,X.cols()) ; 
 
+  for (int i=0; i<n; i++)
+  {
+    C.col(i) = X.col(i)*w(i);
+  }
+  return(C);
+}
+
+
+//vector as diagonal matrix -  Matirx Multiplication
+Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
+{
+  int n = X.cols();
+  Eigen::MatrixXd C = Eigen::MatrixXd::Zero(X.rows(),n) ; 
+  
+  for (int i=0; i<n; i++)
+  {
+    C.row(i) = w(i)*X.row(i);
+  }
+  return(C);
+}
+
+
+// Matirx - vector as diagonal matrix Multiplication (parallel)
+Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
+{
+  int n = X.rows();
+  Eigen::MatrixXd C = Eigen::MatrixXd::Zero(n,X.cols()) ; 
+
+#pragma omp parallel shared(X, w, C) 
+{
+#pragma omp for schedule (dynamic)
+  for (int i=0; i<n; i++)
+  {
+    C.col(i) = X.col(i)*w(i);
+  }  
+}
+  return(C);
+}
+
+
+//vector as diagonal matrix -  Matirx Multiplication (parallel)
+Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
+{
+  int n = X.cols();
+  Eigen::MatrixXd C = Eigen::MatrixXd::Zero(X.rows(),n);
+  
+#pragma omp parallel shared(X, w, C) 
+{
+#pragma omp for schedule (dynamic)
+  for (int i=0; i<n; i++)
+  {
+    C.row(i) = w(i)*X.row(i);
+  }
+}
+  return(C);
+}
 
 
 
@@ -108,6 +169,59 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
   {
     throw("Invalid option (valid options : xtwx or xwxt)");
   }
+}
+
+
+
+// Matrix - Weighted vector Multiplication
+// [[Rcpp::export]]
+Eigen::MatrixXd bdXwd(Rcpp::RObject a, Rcpp::RObject w, std::string op, Rcpp::Nullable<bool> bparal  = R_NilValue)
+{
+  
+  Eigen::MatrixXd A;
+  Eigen::MatrixXd W;
+  bool bpar=true;
+  
+  // Read DelayedArray's a and b
+  if ( a.isS4() == true)    
+  {
+    A = read_DelayedArray(a);
+  } else {
+    try{  
+      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+    }
+    catch(std::exception &ex) { }
+  }
+  
+  if ( w.isS4() == true)   
+  {
+    W = read_DelayedArray(w);
+  }  else {
+    W = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(w);
+  } 
+  
+  if(bparal.isNotNull())  bpar = Rcpp::as<bool> (bparal);
+
+  if(bpar == true)
+  {
+    if(op == "Xw") {
+      return(Xwd_parallel(A,W)) ;
+    }else if (op == "wX") {
+      return(wdX_parallel(A,W));
+    } else {
+      throw("Invalid option (valid options : Xw or wX)");
+    }
+  }else
+  {
+    if(op == "Xw") {
+      return(Xwd(A,W)) ;
+    }else if (op == "wX") {
+      return(wdX(A,W));
+    } else {
+      throw("Invalid option (valid options : Xw or wX)");
+    }
+  }
+
 }
 
 
