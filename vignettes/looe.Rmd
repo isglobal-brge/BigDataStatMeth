@@ -7,7 +7,7 @@ author:
   affiliation: Barcelona Institute for Global Health (ISGlobal)
   email: juanr.gonzalez@isglobal.org
 abstract: |
-  Instructions on enabling _Bioconductor_ style in R Markdown vignettes.    
+  
 date: "`r Sys.Date()`"
 #output: 
 #  rmarkdown::html_vignette:
@@ -49,7 +49,7 @@ knitr::opts_chunk$set(
 
 If you want to perform a simple sequential matrix multiplication you can call the function `blockmult()` with DelayedArray data type or any other R data type. In the example bellow we perform a product with A(500x500) and B(500x750).
 
-```{r load_libraries }
+```{r librarydef }
 library(BigDataStatMeth)
 library(DelayedArray)
 n <- 500
@@ -72,7 +72,7 @@ all.equal(A%*%B, AxBDelay)
 
 you can optimize the performance making this calculus in parallel with `paral=true` .  
 
-```{r blockmult}
+```{r noblockmultparal}
 
 AxB <- blockmult(A, B, paral = TRUE)
 AxBDelay <- blockmult(DA, DB, paral = TRUE) # using Delayed Array data type
@@ -89,7 +89,7 @@ which break it up, or partition it, into a collection of smaller matrices [(more
 
 The code bellow performs a matrix multiplication with A(500x500) and B(500x750) with (10x10) blocks. 
 
-```{r warning=FALSE, message=FALSE  }
+```{r blockmult }
 
 AxB <- blockmult(A, B, block_size = 10)
 AxBDelay <- blockmult(DA, DB, block_size = 10 )
@@ -104,7 +104,7 @@ if block_size > cols(A) and rows(A) and cols(B) and rows(B) then blocks_size is 
 
 Like in simple matrix multiplication you can make operations in parallel with `paral = TRUE` .
 
-```{r warning=FALSE, message=FALSE  }
+```{r blockmultparal }
 
 AxB <- blockmult(A, B, block_size = 10, paral = TRUE)
 AxBDelay <- blockmult(DA, DB, block_size = 10, paral = TRUE )
@@ -119,7 +119,7 @@ all.equal(AxB, AxBDelay)
 
 To perform a cross-product $C = A^t A$ you can call `bdcrossprod()`.
 
-```{r warning=FALSE, message=FALSE  }
+```{r crossprod }
 n <- 500
 m <- 250
 A <- matrix(rnorm(n*m), nrow=n, ncol=m)
@@ -134,7 +134,7 @@ all.equal(cpDA, crossprod(A))
 
 you may also set `transposed=TRUE` (default value transposed=false) to perform a Transposed Cross-product $C = A A^t$
 
-```{r warning=FALSE, message=FALSE  }
+```{r nocrossprod }
 # Transposed Cross Product
 tcpA <- bdcrossprod(A, transposed = TRUE)
 tcpDA <- bdcrossprod(DA, transposed = TRUE) # With DelayeArray data type
@@ -145,11 +145,11 @@ all.equal(tcpDA, tcrossprod(A))
 
 # Matrix Vector Multiplication 
 
-You can perform a weighted cross-product $C = X^ t w X$ with `bdwcrossprod()` given a matrix X as argument and a vector or matrix of weights, w . 
+You can perform a weighted cross-product $C = X^ t w X$ with `bdwcrossprod()` given a matrix X as argument and a vector or matrix of weights, w. 
 
 ## Weighted Cross-product and Weighted Transposed Cross-product
 
-```{r warning=FALSE, message=FALSE  }
+```{r wcrossprod }
 n <- 250
 X <- matrix(rnorm(n*n), nrow=n, ncol=n)
 u <- runif(n)
@@ -162,7 +162,7 @@ wcpDX <- bdwproduct(DX, Dw,"xwxt") # with DelayedArray
 
 wcpDX[1:5,1:5]
 
-all.equal(wcpDX, X%*%diag(w)%*%t(X))
+all.equal( wcpDX, X%*%diag(w)%*%t(X) )
 
 ```
 
@@ -170,7 +170,7 @@ all.equal(wcpDX, X%*%diag(w)%*%t(X))
 
 With argument `transposed=TRUE`, we can perform a transposed weighted cross-product $C = A w A^t$  
 
-```{r warning=FALSE, message=FALSE  }
+```{r wtcrossprod }
 
 wtcpX <- bdwproduct(X, w,"xtwx")
 wtcpDX <- bdwproduct(DX, Dw,"xtwx") # with DelayedArray
@@ -188,7 +188,7 @@ where $L$ is a lower triangular matrix and U is an upper triangular matrix.
 To get the Inverse Cholesky we can use the function `bdInvCholesky()`
 
 
-```{r warning=FALSE, message=FALSE  }
+```{r invChols }
 
 # Generate a positive definite matrix
 Posdef <- function (n, ev = runif(n, 0, 10)) 
@@ -204,7 +204,7 @@ Posdef <- function (n, ev = runif(n, 0, 10))
   return(Z)
 }
 
-A <- Posdef(n=500, ev=1:500)
+A <- Posdef(n = 500, ev = 1:500)
 DA <- DelayedArray(A)
 
 invchol <- bdInvCholesky(A)
@@ -218,11 +218,74 @@ all.equal(Dinvchol, solve(A))
 
 # SVD Decomposition
 
+<p>The singular-value decomposition of an $mxn$ real or complex matrix $A$ is a factorization of the form :</p>
+<p style="text-align: center;">$U\Sigma { V }^{ T }$</p>
+where : 
+$U$ is a $mxm$ real or complex unitary matrix
+$\Sigma $ is a $mxn$ rectangular diagonal matrix with non-negative real numbers on the diagonal
+$V$ is a $nxn$ real or complex unitary matrix.
+The diagonal entries $\sigma_i$ of $\Sigma$ are known as the singular values of $A$
+The columns of $U$ are called the left-singular vectors of $A$
+The columns of $V$ are called the right-singular vectorsof $A$
+
 ## svd
+
+The svd decomposition can be performed with the function `BDsvd()`, with BDsvd you can only perform a svd from real matrix $A$.  Given matrix A as argument 
+
+```{r svd_default}
+n <- 500
+A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+DA <- DelayedArray(A)
+
+bsvd <- BDsvd(A)
+Dbsvd <- BDsvd(DA)
+
+bsvd$d[1:10]
+bsvd$u[1:5,1:5]
+bsvd$v[1:5,1:5]
+
+all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), bsvd$d[1:10] ) 
+all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), Dbsvd$d[1:10] )
+
+```
+
+you get the $\sigma_i$, $U$ and $V$ of normalized matrix $A$, if you want to perform the SVD from not normalized matrix $A$ then you have to set the parameter `normalize = false`
+
+```{r svd_nonorm}
+bsvd <- BDsvd(A, normalize = FALSE)
+Dbsvd <- BDsvd(DA, normalize = FALSE)
+
+bsvd$d[1:10]
+bsvd$u[1:5,1:5]
+bsvd$v[1:5,1:5]
+
+all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), bsvd$d[1:10] ) 
+all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), Dbsvd$d[1:10] )
+  
+```
+
+
+
 ## Jacobi decomposition
+```{r jacobi}
+
+```
+
+
+# Leave-One-Out computation (LOO)
+
+
+# Ols-grid
 
 
 
 
-# LOOE
+
+
+
+# Session information
+
+```{r sesinfo }
+sessionInfo()
+```
 

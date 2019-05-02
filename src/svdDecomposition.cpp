@@ -182,7 +182,7 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
   
 }
 
-
+/*
 // [[Rcpp::export]]
 Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k, int nev, bool normalize )
 {
@@ -234,18 +234,12 @@ Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k, int nev, bool normalize )
   Eigen::MatrixXd Xcp;
   
   if(normalize==true )  {
-    //Rcpp::Rcout<<"Normalitzem\n";
     Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(RcppNormalize_Data(X))));
   } else
   {
-    //Rcpp::Rcout<<"NO Normalitzem\n";
     Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(X)));
   }
-  //. OPCIÓ BONA.// Eigen::MatrixXd Xcp = CrossProduct(Normalize_Data(Rcpp::wrap(X)),false); // Normalitzem matriu
-  // Eigen::MatrixXd Xcp = CrossProduct_eig(X,false); // No normalitzem matriu - matriu normalitzada prèviament
-  
 
-  
   Spectra::DenseSymMatProd<double> opv(Xcp);
   Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigsv(&opv, k, nev);
   
@@ -264,16 +258,27 @@ Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k, int nev, bool normalize )
   
 }
 
-
+*/
 
 
 
 
 // [[Rcpp::export]]
-Rcpp::RObject BDsvd2 (const Rcpp::RObject & x, int k, int nev, bool normalize )
+Rcpp::RObject BDsvd (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nullable<int> nev=0, Rcpp::Nullable<bool> normalize=true )
 {
   
   auto dmtype = beachmat::find_sexp_type(x);
+  int ks, nvs;
+  bool bnorm;
+  
+  if(k.isNull())  ks = 0 ;
+  else    ks = Rcpp::as<int>(k);
+  
+  if(nev.isNull())  nvs = 0 ;
+  else    nvs = Rcpp::as<int>(nev);
+  
+  if(normalize.isNull())  bnorm = true ;
+  else    bnorm = Rcpp::as<bool>(normalize);
   
   // size_t ncols = 0, nrows=0;
   Eigen::MatrixXd X;
@@ -295,7 +300,7 @@ Rcpp::RObject BDsvd2 (const Rcpp::RObject & x, int k, int nev, bool normalize )
   }
   
   svdeig retsvd;
-  retsvd = RcppBDsvd_eig(X,k,nev,normalize);
+  retsvd = RcppBDsvd_eig(X,ks,nvs,bnorm);
   
   ret["u"] = retsvd.u;
   ret["v"] = retsvd.v;
@@ -380,10 +385,33 @@ stopifnot(all.equal(solve(Z),bdInvCholesky_LDL(Z)$v ))
   p <- 10
   Z <- matrix(rnorm(n*p), nrow=n, ncol=p)
   
-  a <- BDsvd_eig(Z,9,10,FALSE )
+  a <- BDsvd(Z,9,10,FALSE )
   b <- eigen(tcrossprod(Z))
   a$d^2
   b$values
   ;
+  
+  n <- 500
+  A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+  AD <- DelayedArray(A)
+  
+  dim(A)
+  
+  
+  res <- microbenchmark( bdsvd <- BDsvd( A, n-1, n, FALSE), # No normalitza la matriu
+                         bdsvdD <- BDsvd( AD, n-1, n, FALSE), # No normalitza la matriu
+                         sbd <- svd(tcrossprod(A)),
+                         times = 5, unit = "s")
+  
+  print(summary(res)[, c(1:7)],digits=3)
+  
+  sqrt(sbd$d[1:10])
+  bdsvd$d[1:10]
+  rsv$d[1:10]
+  rsv <- rsvd::rsvd(A)
+  
+  bdsvd$u[1:5,1:5]
+  
+  svd(tcrossprod(A))$d[1:10]
   
 */
