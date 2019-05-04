@@ -41,7 +41,21 @@ knitr::opts_chunk$set(
 
 # Overview
 
-
+<!-- AQUÍ FER SECCIONS PRINCIPALS AMB : 
+  - Operacions bàsiques amb matrius:
+      . Producte de matrius
+      . Matriu x vector
+      . Crossprod i tCrossprod
+      . ...
+  - Algebra lineal:
+      . svd
+      . inversa matrius
+      . ...
+  - Aplicació algebra lineal:
+      . PCA
+      . OLS-GRID
+      . ...
+-->
 
 # Matrix Multiplication
 
@@ -266,13 +280,7 @@ all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), Dbsvd$d[1:10] )
 
 
 
-## Jacobi decomposition
-```{r jacobi}
-
-```
-
-
-# Leave-One-Out computation (LOO)
+# LOOE - Leave One Out Error
 
 
 # Ols-grid

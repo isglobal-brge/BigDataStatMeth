@@ -3,7 +3,8 @@
 
 
 
-svdeig RcppBDsvd_eig( Eigen::MatrixXd& X, int k, int nev, bool normalize )
+// svdeig RcppBDsvd_eig( Eigen::MatrixXd& X, int k, int nev, bool normalize )
+svdeig RcppBDsvd( Eigen::MatrixXd& X, int k, int nev, bool normalize )
 {
 
   svdeig retsvd;
@@ -64,7 +65,7 @@ svdeig RcppBDsvd_eig( Eigen::MatrixXd& X, int k, int nev, bool normalize )
 
 
 
-
+/*
 svd RcppBDsvd ( const Rcpp::NumericMatrix& X, int k, int nev, bool normalize )
 {
   
@@ -115,7 +116,7 @@ svd RcppBDsvd ( const Rcpp::NumericMatrix& X, int k, int nev, bool normalize )
   return retsvd;
   
 }
-
+*/
 
 svdeig RcppCholDec(const Eigen::MatrixXd& X)
 {
@@ -134,7 +135,8 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
     decomp.v = cholSolv.solve(preinv);
   } else {
     Rcpp::Rcout<<"No symetric positive matrix, Cholesky decomposition not viable.";
-    decomp = RcppBDsvd_eig(mX, int(), int(), false);
+    //..// decomp = RcppBDsvd_eig(mX, int(), int(), false);
+    decomp = RcppBDsvd(mX, int(), int(), false);
   }
   return(decomp);
 }
@@ -262,7 +264,15 @@ Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k, int nev, bool normalize )
 
 
 
-
+//' SVD of DelayedArray 
+//' 
+//' This function ....
+//' 
+//' @param x An integer vector
+//' @param k ....
+//' @param nev ... 
+//' @param normalize ... 
+//' @export
 // [[Rcpp::export]]
 Rcpp::RObject BDsvd (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nullable<int> nev=0, Rcpp::Nullable<bool> normalize=true )
 {
@@ -300,7 +310,8 @@ Rcpp::RObject BDsvd (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
   }
   
   svdeig retsvd;
-  retsvd = RcppBDsvd_eig(X,ks,nvs,bnorm);
+  //..// retsvd = RcppBDsvd_eig(X,ks,nvs,bnorm);
+  retsvd = RcppBDsvd(X,ks,nvs,bnorm);
   
   ret["u"] = retsvd.u;
   ret["v"] = retsvd.v;
