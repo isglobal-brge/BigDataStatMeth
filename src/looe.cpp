@@ -69,8 +69,37 @@ double rcpplooei( double lambda, const Eigen::VectorXd& Lambda,
 
 
 
-
-
+//' LOOE
+//' 
+//' This function performs ...
+//' 
+//' @param X ...
+//' @param Y ...
+//' @param paral ...
+//' @param nl ...
+//' @param ml ...
+//' @param l ...
+//' @return coef ...
+//' @return Ginv  ...
+//' @return lambda.min  ...
+//' @return lambdas  ...
+//' @return looe ...
+//' @examples
+//' n <- 500
+//' p <- 200
+//' M <- matrix(rnorm(n*p), nrow=n, ncol=p)
+//' Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5]
+//' 
+//' MD <- DelayedArray(M)
+//' YD <- DelayedArray(as.matrix(Y))
+//' 
+//' looe <- LOOE(M,Y,paral=TRUE),
+//' looe_delayed <- LOOE(MD,YD,paral=TRUE)
+//' 
+//' looe$lambda.min
+//' looe$lambdas
+//' looe_delayed$coef[1:10]
+//' @export
 // [[Rcpp::export]]
 Rcpp::RObject LOOE(Rcpp::RObject& X, Rcpp::RObject& Y, bool paral, 
                          Rcpp::Nullable<double> nl = R_NilValue,
@@ -190,8 +219,8 @@ library(BigDataStatMeth)
 
 
 
-n <- 800
-p <- 100
+n <- 500
+p <- 200
 M <- matrix(rnorm(n*p), nrow=n, ncol=p)
 
 Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5]

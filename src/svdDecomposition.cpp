@@ -65,59 +65,6 @@ svdeig RcppBDsvd( Eigen::MatrixXd& X, int k, int nev, bool normalize )
 
 
 
-/*
-svd RcppBDsvd ( const Rcpp::NumericMatrix& X, int k, int nev, bool normalize )
-{
-  
-  svd retsvd;
-  if( k==0 )    k = (std::min(X.rows(), X.cols()))-1;
-  if(nev == 0)  nev = k + 1 ;
-  
-  Eigen::MatrixXd Xtcp;
-  if(normalize ==true )  {
-    Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( RcppNormalize_Data_r(X)));
-  }else {
-    Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( X));
-  }
-  
-  Spectra::DenseSymMatProd<double> op(Xtcp);
-  Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigs(&op, k, nev);
-  
-  // Initialize and compute
-  eigs.init();
-  int nconv = eigs.compute();
-  
-  if(eigs.info() == Spectra::SUCCESSFUL)
-  {
-    retsvd.d = Rcpp::wrap(eigs.eigenvalues().cwiseSqrt());
-    retsvd.u = Rcpp::wrap(eigs.eigenvectors());
-  }
-  
-  Eigen::MatrixXd Xcp;
-  if(normalize ==true )  {
-    Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( RcppNormalize_Data_r(X)));  
-  }else {
-    Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( X));
-  }
-  
-  Spectra::DenseSymMatProd<double> opv(Xcp);
-  Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigsv(&opv, k, nev);
-  
-  // Initialize and compute
-  eigsv.init();
-  nconv = eigsv.compute();
-  
-  // Retrieve results
-  if(eigsv.info() == Spectra::SUCCESSFUL)
-  {
-    retsvd.v = Rcpp::wrap(eigsv.eigenvectors());
-  }
-  
-  return retsvd;
-  
-}
-*/
-
 svdeig RcppCholDec(const Eigen::MatrixXd& X)
 {
   Eigen::MatrixXd mX = X;
@@ -126,7 +73,7 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
   Eigen::LDLT<Eigen::MatrixXd> cholSolv = mX.ldlt();
 
   // if symetric + positive definite -> info = Success
-  // else no Cholesky Decomposition --> svd decomposition with Expectra
+  // else no Cholesky Decomposition --> svd decomposition with Spectra
   if(cholSolv.info()==Eigen::Success)
   {
     size_t n = cholSolv.cols();
@@ -135,7 +82,6 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
     decomp.v = cholSolv.solve(preinv);
   } else {
     Rcpp::Rcout<<"No symetric positive matrix, Cholesky decomposition not viable.";
-    //..// decomp = RcppBDsvd_eig(mX, int(), int(), false);
     decomp = RcppBDsvd(mX, int(), int(), false);
   }
   return(decomp);
@@ -147,7 +93,23 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
 
 
 
-
+//' Inverse Cholesky of Delayed Array
+//' 
+//' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then 
+//' performs get the inverse using Cholesky decomposition
+//' 
+//' @param x numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs 
+//' @return inverse matrix of d
+//' @examples
+//' 
+//' A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
+//' bdInvCholesky(A)
+//' 
+//' # with Delayed Array
+//' DA <- DelayedArray(A)
+//' bdInvCholesky(DA)
+//' 
+//' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 {
@@ -167,111 +129,37 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
   
   result = RcppCholDec(X);
   
-  /*
-  if(x.sexp_type()==13)
-  {
-    Eigen::MatrixXi eX(Rcpp::as<Eigen::Map<Eigen::MatrixXi> >(x));
-    result = RcppCholDec(eX.cast<double>());
-  }
-  else if (x.sexp_type()==14)
-  {
-    Eigen::MatrixXd eX(Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(x));
-    result = RcppCholDec(eX);
-  }
-  */
-  
   return (result.v);
   
 }
-
-/*
-// [[Rcpp::export]]
-Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k, int nev, bool normalize )
-{
-
-  auto dmtype = beachmat::find_sexp_type(x);
-
-  // size_t ncols = 0, nrows=0;
-  Eigen::MatrixXd X;
-  Rcpp::List ret;
-  
-  if ( dmtype == INTSXP || dmtype==REALSXP ) {
-    if ( x.isS4() == true){
-      X = read_DelayedArray(x);
-    }else {
-      try{
-        X = Rcpp::as<Eigen::MatrixXd >(x);
-      }catch(std::exception &ex) {
-        X = Rcpp::as<Eigen::VectorXd >(x);
-      }
-    }
-    
-  } else {
-    throw std::runtime_error("unacceptable matrix type");
-  }
-  
-  Eigen::MatrixXd Xtcp;
-
-  if( normalize == true)  {
-    Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( Rcpp::wrap(RcppNormalize_Data(X))));  
-  } else {
-    Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( Rcpp::wrap(X)));  
-  }
-  
-  
-  Spectra::DenseSymMatProd<double> op(Xtcp);
-  Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigs(&op, k, nev);
-  
-  // Initialize and compute
-  eigs.init();
-  int nconv = eigs.compute();
-  
-
-  if(eigs.info() == Spectra::SUCCESSFUL)
-  {
-    ret["d$"] = eigs.eigenvalues();
-    ret["u$"] = eigs.eigenvectors();
-  }
-  
-  Eigen::MatrixXd Xcp;
-  
-  if(normalize==true )  {
-    Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(RcppNormalize_Data(X))));
-  } else
-  {
-    Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(X)));
-  }
-
-  Spectra::DenseSymMatProd<double> opv(Xcp);
-  Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigsv(&opv, k, nev);
-  
-  // Initialize and compute
-  eigsv.init();
-  nconv = eigsv.compute();
-  
-
-  // Retrieve results
-  if(eigsv.info() == Spectra::SUCCESSFUL)
-  {
-    ret["v$"] = eigsv.eigenvectors();
-  }
-
-  return Rcpp::wrap(ret);
-  
-}
-
-*/
 
 
 
 //' SVD of DelayedArray 
 //' 
-//' This function ....
+//' This function performs a svd decomposition of numerical matrix or Delayed Array
 //' 
-//' @param x An integer vector
-//' @param k ....
-//' @param nev ... 
-//' @param normalize ... 
+//' @param x numerical or Delayed Array matrix
+//' @param k number of eigen values , this should satisfy k = min(n, m) - 1
+//' @param nev (optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1≤ nev ≤ n, where n is the size of matrix. 
+//' @param normalize (optional, defalut = TRUE) . If normalize = TRUE  we calculate the mean and standard deviation for a variable, then, for each observed value of the variable, we subtract the mean and divide by the standard deviation.
+//' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
+//' @return v eigenvectors of A^tA, nxn orthogonal matrix
+//' @return d singular values, nxn diagonal matrix (non-negative real values)
+//' @examples
+//' n <- 500
+//' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+//' AD <- DelayedArray(A)
+//' 
+//' # svd without normalization
+//' BDsvd( A, normalize = FALSE), # No normalitza la matriu
+//' 
+//' # svd with normalization
+//' decvsd <- BDsvd( A, normalize = TRUE), # No normalitza la matriu
+//' 
+//' decsvd$d
+//' decsvd$u
+//' 
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject BDsvd (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nullable<int> nev=0, Rcpp::Nullable<bool> normalize=true )
@@ -389,6 +277,7 @@ stopifnot(all.equal(solve(Z),bdInvCholesky_LDL(Z)$v ))
   invR <- solve(A) ; invR
   eigen(tcrossprod(A))
   invCpp <- bdInvCholesky(A); invCpp
+  
   
   LOOE_BLAST()
   

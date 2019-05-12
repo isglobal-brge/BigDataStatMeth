@@ -60,12 +60,45 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 }
 
 
-
+//' Normalize Delayed Array matrix
+//' 
+//' This function performs a numerical or Delayed Array matrix normalization
+//' 
+//' @param X numerical or Delayed Array Matrix
+//' @return numerical matrix
+//' @examples
+//' m <- 500
+//' n <- 100 
+//' x <- matrix(rnorm(m*n), nrow=m, ncol=n)
+//' 
+//' # with numeric matrix
+//' Normalize_Data(x)
+//' 
+//' # with Delaeyd Array
+//' Dx <- DelayedArray(x)
+//' Normalize_Data(Dx)
+//' 
+//' @export
 // [[Rcpp::export]]
 Rcpp::RObject Normalize_Data ( Rcpp::RObject & x )
 {
+  Eigen::MatrixXd X;
   
-  Eigen::MatrixXd X = Rcpp::as<Eigen::MatrixXd>(x);
+  // Read DelayedArray's x and b
+  if ( x.isS4() == true)    
+  {
+    X = read_DelayedArray(x);
+  } else {
+    try{  
+      if ( TYPEOF(x) == INTSXP ) {
+        X = Rcpp::as<Eigen::MatrixXi>(x).cast<double>()  ;
+      } else{
+        X = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(x);
+      }
+    }
+    catch(std::exception &ex) { }
+  }
+  
   Eigen::RowVectorXd mean = X.colwise().mean();
   Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
   X = (X.rowwise() - mean).array().rowwise() / std.array();
@@ -73,4 +106,15 @@ Rcpp::RObject Normalize_Data ( Rcpp::RObject & x )
 }
 
 
+
+/***R
+m <- 500
+n <- 100 
+x <- matrix(rnorm(m*n), nrow=m, ncol=n)
+
+Normalize_Data(x)
+Dx <- DelayedArray(x)
+Normalize_Data(Dx)
+
+*/
 

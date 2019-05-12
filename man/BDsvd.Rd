@@ -7,14 +7,36 @@
 BDsvd(x, k = 0L, nev = 0L, normalize = TRUE)
 }
 \arguments{
-\item{x}{An integer vector}
+\item{x}{numerical or Delayed Array matrix}
 
-\item{k}{....}
+\item{k}{number of eigen values , this should satisfy k = min(n, m) - 1}
 
-\item{nev}{...}
+\item{nev}{(optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1≤ nev ≤ n, where n is the size of matrix.}
 
-\item{normalize}{...}
+\item{normalize}{(optional, defalut = TRUE) . If normalize = TRUE  we calculate the mean and standard deviation for a variable, then, for each observed value of the variable, we subtract the mean and divide by the standard deviation.}
+}
+\value{
+u eigenvectors of AA^t, mxn and column orthogonal matrix
+
+v eigenvectors of A^tA, nxn orthogonal matrix
+
+d singular values, nxn diagonal matrix (non-negative real values)
 }
 \description{
-This function ....
+This function performs a svd decomposition of numerical matrix or Delayed Array
+}
+\examples{
+n <- 500
+A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+AD <- DelayedArray(A)
+
+# svd without normalization
+BDsvd( A, normalize = FALSE), # No normalitza la matriu
+
+# svd with normalization
+decvsd <- BDsvd( A, normalize = TRUE), # No normalitza la matriu
+
+decsvd$d
+decsvd$u
+
 }

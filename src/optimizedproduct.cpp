@@ -103,6 +103,29 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
 
 
 
+//' Crossproduct and transposed crossproduct of DelayedArray
+//' 
+//' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
+//' 
+//' @param X numerical or Delayed Array matrix
+//' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
+//' @return numerical matrix with crossproduct or transposed crossproduct 
+//' @examples
+//' n <- 100
+//' p <- 60
+//' 
+//' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+//' 
+//' # without DelayedArray
+//' bdcrossprod(X)
+//' bdcrossprod(X, transposed = TRUE)
+//' 
+//' # with DelayedArray
+//' XD <- DelayedArray(X)
+//' bdcrossprod(XD)
+//' bdcrossprod(XD, transpoded = TRUE)
+//' 
+//' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> transposed = R_NilValue)
 {
@@ -135,6 +158,35 @@ Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> tran
 
 
 // Weighted product
+//' Matrix - Weighted vector Multiplication with numerical or DelayedArray data
+//' 
+//' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
+//' 
+//' @param X numerical or Delayed Array matrix
+//' @param w vector with weights
+//' @param op string indicating if operation  "Xw" or "wX"
+//' @param bparal (optional, default = true) if bparal=true performs parallel computation.
+//' @return numerical matrix 
+//' @examples
+//' n <- 100
+//' p <- 60
+//' 
+//' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+//' 
+//' u <- runif(n)
+//' w <- u * (1 - u)
+//' bdwproduct(X, w,"xtwx")
+//' bdwproduct(X, w,"xwxt")
+//' 
+//' # with Delayed Array
+//' 
+//' DX <- DelayedArray(X)
+//' dw <- DelayedArray(w)
+//' 
+//' bdwproduct(DX, dw,"xtwx")
+//' bdwproduct(DX, dw,"xwxt")
+//' 
+//' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 {
@@ -172,23 +224,55 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 }
 
 
-
+/* Aquesta funció va lenta ..... no se si posar-la !!!
+ * 
+ *
 // Matrix - Weighted vector Multiplication
+//' Matrix - Weighted vector Multiplication with numerical or DelayedArray data
+//' 
+//' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
+//' 
+//' @param X numerical or Delayed Array matrix
+//' @param w vector with weights
+//' @param op string indicating if operation  "Xw" or "wX"
+//' @param bparal (optional, default = true) if bparal=true performs parallel computation.
+//' @return numerical matrix 
+//' @examples
+//' n <- 100
+//' p <- 60
+//' 
+//' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+//' 
+//' u <- runif(n)
+//' w <- u * (1 - u)
+//' bdwproduct(X, w,"xtwx")
+//' bdwproduct(X, w,"xwxt")
+//' 
+//' # with Delayed Array
+//' 
+//' DX <- DelayedArray(X)
+//' dw <- DelayedArray(w)
+//' 
+//' bdwproduct(DX, dw,"xtwx")
+//' bdwproduct(DX, dw,"xwxt")
+//' 
+//' @export
+*/ 
 // [[Rcpp::export]]
-Eigen::MatrixXd bdXwd(Rcpp::RObject a, Rcpp::RObject w, std::string op, Rcpp::Nullable<bool> bparal  = R_NilValue)
+Eigen::MatrixXd bdXwd(Rcpp::RObject X, Rcpp::RObject w, std::string op, Rcpp::Nullable<bool> bparal  = R_NilValue)
 {
   
   Eigen::MatrixXd A;
   Eigen::MatrixXd W;
   bool bpar=true;
   
-  // Read DelayedArray's a and b
-  if ( a.isS4() == true)    
+  // Read DelayedArray's X and b
+  if ( X.isS4() == true)    
   {
-    A = read_DelayedArray(a);
+    A = read_DelayedArray(X);
   } else {
     try{  
-      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
     }
     catch(std::exception &ex) { }
   }

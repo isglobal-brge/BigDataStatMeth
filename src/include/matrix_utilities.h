@@ -2,6 +2,7 @@
 #define matrix_utilities
 
   #include <RcppEigen.h>
+  #include "ReadDelayedData.h"
 
   Rcpp::NumericVector flatmatrm(Rcpp::NumericMatrix x);
   Rcpp::NumericVector flatmatcm(Rcpp::NumericMatrix x);

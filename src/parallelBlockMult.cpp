@@ -98,9 +98,37 @@ return(C);
 
 
 
-//..// Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, int block_size, bool paral)
+
+//' Block matrix multiplication with Delayed Array Object
+//' 
+//' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+//' 
+//' @param a a double matrix.
+//' @param b a double matrix.
+//' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
+//' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
+//' @return numerical matrix
+//' @examples
+//' # with numeric matrix
+//' m <- 500
+//' k <- 1500
+//' n <- 400
+//' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
+//' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+//' 
+//' blockmult(A,B,128, TRUE)
+//' 
+//' # with Delaeyd Array
+//' AD <- DelayedArray(A)
+//' BD <- DelayedArray(B)
+//' 
+//' blockmult(AD,BD,128, TRUE)
+//' 
+//' @export
 // [[Rcpp::export]]
-Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> block_size = R_NilValue, Rcpp::Nullable<bool> paral = R_NilValue)
+Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, 
+                          Rcpp::Nullable<int> block_size = R_NilValue, 
+                          Rcpp::Nullable<bool> paral = R_NilValue)
 {
   int iblock_size;
   bool bparal;// = Rcpp::as<double>;
@@ -115,7 +143,11 @@ Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> 
     A = read_DelayedArray(a);
   } else {
     try{  
-      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+      if ( TYPEOF(a) == INTSXP ) {
+        A = Rcpp::as<Eigen::MatrixXi>(a).cast<double>()  ;
+      } else{
+        A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+      }
     }
     catch(std::exception &ex) { }
   }
@@ -124,7 +156,13 @@ Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> 
   {
     B = read_DelayedArray(b);
   }  else {
-    B = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(b);
+    
+    if ( TYPEOF(b) == INTSXP ) {
+      B = Rcpp::as<Eigen::MatrixXi>(b).cast<double>()  ;
+    } else{
+      B = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(b);
+    }
+
   } 
   
   if(block_size.isNotNull())
@@ -138,7 +176,7 @@ Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> 
     
   } else {
     // iblock_size = std::min(  std::min(A.rows(),A.cols()), std::min(B.rows(),B.cols()));
-    iblock_size = 1;
+    iblock_size = 128;
   }
   
   if( paral.isNull()) {
@@ -164,20 +202,22 @@ Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> 
 
 library(microbenchmark)
 library(DelayedArray)
+library(BigDataStatMeth)
 # A <- matrix(sample(1:10,100, replace = TRUE), ncol = 10);A
 
-n <- 1000
-p <- 1500
+n <- 10
+p <- 4
 A <- matrix(rnorm(n*p), nrow=n, ncol=p)
   
   
-n <- 1500
-p <- 1000
-B <- matrix(rnorm(n*p), nrow=n, ncol=p)
+n <- 4
+p <- 10
+B <-  matrix(sample(1:10, 40, replace = TRUE), nrow = n, ncol = p)
+
+CPP2 <- blockmult(A,B,128, TRUE)
 
 AD <- DelayedArray(A)
 BD <- DelayedArray(B)
-
 
 results <- microbenchmark( CP2 <- blockmult(A,B,128, FALSE),
                            CPP2 <- blockmult(A,B,128, TRUE),
@@ -209,7 +249,7 @@ stopifnot(all.equal(CP2,CP2D),
                             CP3 <- blockmult(A,B,256, FALSE),
                             CP4 <- blockmult(A,B,512, FALSE),
                             CP5 <- blockmult(A,B,1024, FALSE),
-#C <- A%*%B,
+                            #C <- A%*%B,
                                                                   times = 2L)  # Proves multiplicacions x blocs
   
   print(summary(results)[, c(1:7)],digits=3)
@@ -219,76 +259,6 @@ stopifnot(all.equal(CP2,CP2D),
   stopifnot(all.equal(block_matrix_mul_parallel(A,B,64),A%*%B), 
             all.equal(blockmult(A,B,128), A%*%B))
   
-  CP <- particiona_matrius(A,B,2)
-  CP
-  C <- A%*%B
-  stopifnot(all.equal(particiona_matrius(A,B,2),A%*%B ))
-  
-  
-  
-  
-  
-n <- 500
-p <- 750
-A <- matrix(rnorm(n*p), nrow=n, ncol=p)
-B <- matrix(rnorm(p*p), nrow=p, ncol=p)
 
-AD <- DelayedArray(A)
-BD <- DelayedArray(B)
 
-B <- t(A)
-
-CP2 <- blockmult(AD,BD)
-
-CP2[1:10,1:10]
-CPD <- A%*%B
-CPD[1:10,1:10]
-all.equal(CPD,CP2)
-
-CPP2 <- blockmult(A,B,128, TRUE)
-stopifnot( all.equal(blockmult(A,B,128, FALSE),A%*%B),
-           all.equal(blockmult(A,B,128, TRUE),A%*%B))
-  
-  E <- rcppparallel_blockmult(A,B,32)
-  
-  D <- block_matrix_mul_parallel(A,B,2)
-  stopifnot(all.equal(block_matrix_mul_parallel(A,B,2),A%*%B))
-  
-  results <- microbenchmark(CP <- particiona_matrius(A,B),
-                            C <- A%*%B, 
-                               times = 5L)  # Prpves ,iñto`ñocacopms x blocs
-  
-  print(summary(results)[, c(1:7)],digits=3)
-  
-  
-  
-  
-  A <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16),byrow = TRUE, nrow = 4)
-  B <- t(A)
-  
-  particiona_matrius(A,B)
-  
-  C <- A%*%B
-  
-# Partim matrius en 4 blocks :
-#     1a Fila : A1  A2
-#     2a Fila : A3  A4
-  A00 <- A[1:2,1:2]
-A01 <- A[1:2,3:4]
-A10 <- A[3:4,1:2]
-A11 <- A[3:4,3:4]
-
-B00 <- B[1:2,1:2]
-B01 <- B[1:2,3:4]
-B10 <- B[3:4,1:2]
-B11 <- B[3:4,3:4]
-
-C00 <- A00%*%B00 + A01%*%B10;C00
-  C01 <- A00%*%B01 + A01%*%B11;C01
-    C10 <- A10%*%B00 + A11%*%B10;C10
-      C11 <- A10%*%B01 + A11%*%B11;C11
-        
-        CT <- rbind(cbind(C00,C01),cbind(C10,C11))
-        CT;CT
-          
-          */
+*/
