@@ -1,38 +1,37 @@
 ---
-title: "LOOE"
-author:
-- name: Dolors Pelegrí-Sisó 
-  affiliation: Universitat Autònoma de Barcelona (UAB)
-- name: Juan R Gonzalez
-  affiliation: Barcelona Institute for Global Health (ISGlobal)
+title: "Algebra and Statistical Methods for Big Data with Bioconductor"
+author: 
+- name: Dolors Pelegrí
+  affiliation: 
+  - &uab Autonomous University of Barcelona (UAB)
+  - &isglobal ISGlobal, Centre for Research in Environmental Epidemiology (CREAL)
+  - &brge Bioinformatics Research Group in Epidemiolgy (BRGE)
+- name: Juan R. Gonzalez
+  affiliation: 
+  - *isglobal
+  - *brge
+  - *uab
   email: juanr.gonzalez@isglobal.org
-abstract: |
-  
 date: "`r Sys.Date()`"
-#output: 
-#  rmarkdown::html_vignette:
-#    theme: Architect:
-#    toc_float: true
-output:
+package: "`r pkg_ver('BigDataStatMeth')`"
+output: 
   BiocStyle::html_document:
+    number_sections: true
+    toc: yes
+    fig_caption: yes
     toc_float: true
-    
-pages:
-  markdown:
-    extra: true
-    
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Algebra and Statistical Methods for Big Data with Bioconductor}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
+
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "", cache = TRUE, 
-  warning=FALSE, message=FALSE 
-)
+knitr::opts_chunk$set(collapse = TRUE, comment = "", 
+                      cache=TRUE, message = FALSE, 
+                      out.width = 100
+                      )
 ```
 
 
@@ -57,75 +56,120 @@ knitr::opts_chunk$set(
       . ...
 -->
 
-# Matrix Multiplication
+# Getting started
 
-## Simple matrix multiplication (withou blocks) :
+First, let us start by loading the required packages to describe the main capabilities of the package
 
-If you want to perform a simple sequential matrix multiplication you can call the function `blockmult()` with DelayedArray data type or any other R data type. In the example bellow we perform a product with A(500x500) and B(500x750).
-
-```{r librarydef }
+```{r load}
 library(BigDataStatMeth)
 library(DelayedArray)
+```
+
+These other packages are required to reproduce this vignette
+
+```{r load2}
+library(microbenchmark)
+```
+
+# Matrix Multiplication
+
+## Simple matrix multiplication
+
+The function `blockmult()` performs a simple sequential matrix multiplication [**explica lo que es sequential matrix multiplication**]. The function allows the use of `DelayedArray` objects as well as any other R data type. 
+
+Let us simulate to set of matrices to illustrate the use of the function accross the entire documment. First, we simulate a simple case with to matrices A and B with dimensions 500x500 and 500x750, respectively. Second, another example with dimensions 1000x10000 are use to evaluate the performance in large matrices. The examples with big datasets will be illustrated using real data belonging to different omic settings. We can simulate to matrices with the desired dimensions by
+
+```{r mat_sim}
+set.seed(123456)
 n <- 500
 p <- 750
-
 A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 B <- matrix(rnorm(n*p), nrow=n, ncol=p)
-DA <- DelayedArray(A) # Get A as Delayed Array
-DB <- DelayedArray(B) # Get B as Delayed Array
 
+n <- 1000
+p <- 10000
+Abig <- matrix(rnorm(n*n), nrow=n, ncol=n)
+Bbig <- matrix(rnorm(n*p), nrow=n, ncol=p)
+```
+
+They can be converted into `DelayedArray` objects by simply
+
+```{r getDelayed}
+DA <- DelayedArray(A)
+DB <- DelayedArray(B)
+```
+
+Matrix multiplication is then done by
+
+```{r mat_mult}
 AxB <- blockmult(A, B)
 AxBDelay <- blockmult(DA, DB)
-
 AxBDelay [1:5,1:5]
+```
 
+This verifies that computations are fine, even when comparing with matrix multiplication with R (i.e. using `%*%)
+
+```{r check}
 all.equal(AxB, AxBDelay)
 all.equal(A%*%B, AxBDelay)
-
 ```
 
-you can optimize the performance making this calculus in parallel with `paral=true` .  
+The process can be speed up by making computations in parallel using `paral=TRUE`. The algorithm is implemented ....  [**tienes que decir qué usa  .. si lo hace a bajo o alto nivel**]. [**¿usa todos los cores? - debería tener un parámetro**]  
 
 ```{r noblockmultparal}
-
 AxB <- blockmult(A, B, paral = TRUE)
-AxBDelay <- blockmult(DA, DB, paral = TRUE) # using Delayed Array data type
+AxBDelay <- blockmult(DA, DB, paral = TRUE) 
 
 all.equal(AxB, AxBDelay)
-
 ```
 
+We can show that the parallel version really improves the computational speed and also how the blockmult function improves the R implementation.
+
+```{r benchmark1}
+microbenchmark(
+  R = A%*%B,
+  noparallel = blockmult(A, B),
+  parallel = blockmult(A, B, paral=TRUE),
+  times = 10)
+```
 
 ## Block matrix multiplication
 
-A block matrix or a partitioned matrix is a matrix that is interpreted as having been broken into sections called blocks or submatrices. Intuitively, a matrix interpreted as a block matrix can be visualized as the original matrix with a collection of horizontal and vertical lines,
-which break it up, or partition it, into a collection of smaller matrices [(more information on block matrix multiplication)](https://en.wikipedia.org/wiki/Block_matrix).
+A block matrix or a partitioned matrix is a matrix that is interpreted as having been broken into sections called blocks or submatrices. Intuitively, a block matrix can be visualized as the original matrix with a collection of horizontal and vertical lines, which break it up, or partition it, into a collection of smaller matrices. More information can be found [here](https://en.wikipedia.org/wiki/Block_matrix). [**hay alguna ventaja de tener esto?** supongo que si, entonces hay que explicarlo]
 
-The code bellow performs a matrix multiplication with A(500x500) and B(500x750) with (10x10) blocks. 
+Matrix multiplication using block matrices is implemented in the `blockmult()` function. It only requires to setting the argument `block_size` different from 0 [**¿se puede optimizar en función de los cores?**]
 
 ```{r blockmult }
-
 AxB <- blockmult(A, B, block_size = 10)
 AxBDelay <- blockmult(DA, DB, block_size = 10 )
-
-all.equal(AxBDelay,A%*%B)
-all.equal(AxB, AxBDelay)
-
-
 ```
 
-if block_size > cols(A) and rows(A) and cols(B) and rows(B) then blocks_size is set to min( ols(A), rows(A), cols(B), rows(B)) 
+As expected the results obtained using this procedure are the correct ones
 
-Like in simple matrix multiplication you can make operations in parallel with `paral = TRUE` .
+```{r}
+all.equal(AxBDelay,A%*%B)
+all.equal(AxB, AxBDelay)
+```
 
-```{r blockmultparal }
+Note that when the argument `block_size` is larger than any of the dimensions of matrix A or B the `blocks_size` is set to `min(cols(A), rows(A), cols(B), rows(B))`. 
 
+As in the case of using a simple matrix multiplication, one can make the  operations in parallel with `paral = TRUE` .
+
+```{r blockmultparal}
 AxB <- blockmult(A, B, block_size = 10, paral = TRUE)
 AxBDelay <- blockmult(DA, DB, block_size = 10, paral = TRUE )
 
 all.equal(AxBDelay,A%*%B)
 all.equal(AxB, AxBDelay)
+```
 
+Here, we can compare the performace of this method with the one implemented in the simple case using big matrices. In a large benchmark we performed [**see ...**], the conclusion is that  can observe that ,,, [**lo pondremos ... si mejora con matrices grandes o qué**]
+
+```{r benchmark2}
+microbenchmark(
+  noblockParal = blockmult(Abig, Bbig, paral = TRUE),
+  blockParal = blockmult(Abig, Bbig, block_size = 100, paral=TRUE),
+  times = 10)
 ```
 
 
