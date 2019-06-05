@@ -98,8 +98,9 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
 //' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then 
 //' performs get the inverse using Cholesky decomposition
 //' 
-//' @param x numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs 
-//' @return inverse matrix of d
+//' 
+//' @param x numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
+//' @return inverse matrix of d 
 //' @examples
 //' 
 //' A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)

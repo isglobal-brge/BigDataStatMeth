@@ -2,9 +2,9 @@
 #define looe
 
   #include <RcppEigen.h>
-  #include <RcppParallel.h>
-  #include "parallel_MatrixVectorMultiplication.h"
-  #include "parallel_MatrixMatrixMultiplication.h"
+  // #include <RcppParallel.h>
+  // #include "parallel_MatrixVectorMultiplication.h"
+  // #include "parallel_MatrixMatrixMultiplication.h"
   #include "parallel_CrossProd.h"
   #include "vector_utilities.h"
   #include "ReadDelayedData.h"

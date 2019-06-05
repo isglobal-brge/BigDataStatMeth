@@ -7,7 +7,7 @@
 LOOE(X, Y, paral, nl = NULL, ml = NULL, l = NULL)
 }
 \arguments{
-\item{X}{...}
+\item{X}{......}
 
 \item{Y}{...}
 
