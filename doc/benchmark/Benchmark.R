@@ -579,7 +579,7 @@ for ( i in seq(300, 1500, by=300))
   A <- matrix(rnorm(n*n), nrow=n, ncol=n)
   AD <- DelayedArray(A)
   
-  res <- microbenchmark( BDsvd( A, n-1, n, FALSE), # No normalitza la matriu
+  res <- microbenchmark( bdSVD( A, n-1, n, FALSE), # No normalitza la matriu
                         svd(tcrossprod(A)),
                         times = repet, unit = "s")
   
@@ -588,7 +588,7 @@ for ( i in seq(300, 1500, by=300))
                    M=dim(A)[1], K=dim(A)[2], N=0, ncores, repet)
   results.df <- rbind(results.df,resdata)
   
-  res <- microbenchmark(BDsvd(AD, n-1,n,FALSE),
+  res <- microbenchmark(bdSVD(AD, n-1,n,FALSE),
                         times = repet, unit = "s")
   
   resdata <- as.data.frame(summary(res)[, c(1:7)])

@@ -2,7 +2,7 @@
 #define pseudoinv
 
   #include <RcppEigen.h>
-
+  #include "ReadDelayedData.h"
 
 
   // dgemm_ is a symbol in the LAPACK-BLAS library files 
@@ -26,7 +26,7 @@
   }
   
   
-  Rcpp::RObject bdpseudoinv(Eigen::MatrixXd A);
+  Eigen::MatrixXd rcpp_bdpseudoinv(Eigen::MatrixXd A);
 
 
 

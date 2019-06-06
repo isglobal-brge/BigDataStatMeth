@@ -149,7 +149,7 @@ Rcpp::RObject LOOE(Rcpp::RObject& X, Rcpp::RObject& Y, bool paral,
       Eigen::MatrixXd eX = bdtcrossproduct(rX);
       
       //..//svdeig ee = RcppBDsvd_eig(eX, int(), int(), false);
-      svdeig ee = RcppBDsvd(eX, int(), int(), false);
+      svdeig ee = RcppbdSVD(eX, int(), int(), false);
 
       Eigen::VectorXd Lambda(ee.d.size()+1);
       Lambda<<ee.d,0;

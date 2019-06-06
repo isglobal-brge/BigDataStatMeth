@@ -25,10 +25,10 @@
    */
 
   //..// svdeig RcppBDsvd_eig(  Eigen::MatrixXd& X, int k = 0, int nev = 0, bool normalize = true );
-  svdeig RcppBDsvd(  Eigen::MatrixXd& X, int k = 0, int nev = 0, bool normalize = true );
+  svdeig RcppbdSVD(  Eigen::MatrixXd& X, int k = 0, int nev = 0, bool normalize = true );
   // svd RcppBDsvd( const Rcpp::NumericMatrix& X, int k = 0, int nev = 0, bool normalize = true );
   Rcpp::RObject BDCInverse_Cholesky (const Rcpp::RObject & x );
-  Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k=0, int nev=0, bool normalize=true );
+  Rcpp::RObject bdSVD (const Rcpp::RObject & x, int k=0, int nev=0, bool normalize=true );
 
 
 #endif

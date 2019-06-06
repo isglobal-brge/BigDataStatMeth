@@ -1,10 +1,10 @@
 #ifndef qrdecomp
 #define qrdecomp
 
-  #include <RcppEigen.h>
-  #include "pseudoinv.h"
-  #include "parallelBlockMult.h"
-  
+   #include <RcppEigen.h>
+   #include "pseudoinv.h"
+   #include "parallelBlockMult.h"
+   #include "ReadDelayedData.h"
   
   
    // Symbols in the LAPACK library files : 
@@ -61,6 +61,13 @@
    extern "C" {
    extern void dscal_( int*, double*, double*, int*);
    }
+   
+   struct strQR {
+      Eigen::MatrixXd Q;
+      Eigen::MatrixXd R;
+   };
+   
+   strQR rcpp_bdQR( Eigen::MatrixXd & A, bool bthin);
 
 
 #endif

@@ -4,7 +4,7 @@
 
 
 // svdeig RcppBDsvd_eig( Eigen::MatrixXd& X, int k, int nev, bool normalize )
-svdeig RcppBDsvd( Eigen::MatrixXd& X, int k, int nev, bool normalize )
+svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int nev, bool normalize )
 {
 
   svdeig retsvd;
@@ -82,7 +82,7 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
     decomp.v = cholSolv.solve(preinv);
   } else {
     Rcpp::Rcout<<"No symetric positive matrix, Cholesky decomposition not viable.";
-    decomp = RcppBDsvd(mX, int(), int(), false);
+    decomp = RcppbdSVD(mX, int(), int(), false);
   }
   return(decomp);
 }
@@ -153,17 +153,17 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 //' AD <- DelayedArray(A)
 //' 
 //' # svd without normalization
-//' BDsvd( A, normalize = FALSE), # No normalitza la matriu
+//' bdSVD( A, normalize = FALSE), # No normalitza la matriu
 //' 
 //' # svd with normalization
-//' decvsd <- BDsvd( A, normalize = TRUE), # No normalitza la matriu
+//' decvsd <- bdSVD( A, normalize = TRUE), # No normalitza la matriu
 //' 
 //' decsvd$d
 //' decsvd$u
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject BDsvd (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nullable<int> nev=0, Rcpp::Nullable<bool> normalize=true )
+Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nullable<int> nev=0, Rcpp::Nullable<bool> normalize=true )
 {
   
   auto dmtype = beachmat::find_sexp_type(x);
@@ -199,8 +199,8 @@ Rcpp::RObject BDsvd (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
   }
   
   svdeig retsvd;
-  //..// retsvd = RcppBDsvd_eig(X,ks,nvs,bnorm);
-  retsvd = RcppBDsvd(X,ks,nvs,bnorm);
+  //..// retsvd = RcppbdSVD_eig(X,ks,nvs,bnorm);
+  retsvd = RcppbdSVD(X,ks,nvs,bnorm);
   
   ret["u"] = retsvd.u;
   ret["v"] = retsvd.v;
@@ -286,7 +286,7 @@ stopifnot(all.equal(solve(Z),bdInvCholesky_LDL(Z)$v ))
   p <- 10
   Z <- matrix(rnorm(n*p), nrow=n, ncol=p)
   
-  a <- BDsvd(Z,9,10,FALSE )
+  a <- bdSVD(Z,9,10,FALSE )
   b <- eigen(tcrossprod(Z))
   a$d^2
   b$values
@@ -299,8 +299,8 @@ stopifnot(all.equal(solve(Z),bdInvCholesky_LDL(Z)$v ))
   dim(A)
   
   
-  res <- microbenchmark( bdsvd <- BDsvd( A, n-1, n, FALSE), # No normalitza la matriu
-                         bdsvdD <- BDsvd( AD, n-1, n, FALSE), # No normalitza la matriu
+  res <- microbenchmark( bdsvd <- bdSVD( A, n-1, n, FALSE), # No normalitza la matriu
+                         bdsvdD <- bdSVD( AD, n-1, n, FALSE), # No normalitza la matriu
                          sbd <- svd(tcrossprod(A)),
                          times = 5, unit = "s")
   

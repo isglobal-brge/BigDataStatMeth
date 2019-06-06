@@ -146,7 +146,7 @@ Rcpp::RObject BDCInverse_Cholesky (const Rcpp::RObject & x )
 
 
 // [[Rcpp::export]]
-Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k, int nev )
+Rcpp::RObject bdSVD (const Rcpp::RObject & x, int k, int nev )
 {
   auto dmtype = beachmat::find_sexp_type(x);
   size_t ncols = 0, nrows=0;
@@ -278,7 +278,7 @@ Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k, int nev )
   A <- matrix(sample(1:100, 25, replace=TRUE), nrow=5);A
   Ad <- DelayedArray(seed = A) ; Ad
   results <- microbenchmark(svdR <- svds(scale(Ad,center = TRUE, scale = TRUE ), 2),  # SVD amb RSpectra - Passem matriu normalitzada
-                            svdCpp <- BDsvd(Ad, 2, 5), 
+                            svdCpp <- bdSVD(Ad, 2, 5), 
                             times = 10)  # SVD amb Spectra - passem matriu sense normalitzar
   print(summary(results)[, c(1:7)],digits=3)
   
@@ -286,7 +286,7 @@ Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k, int nev )
   A <- matrix(sample(1:100, 1000000, replace=TRUE), ncol = 125)
   Ad <- DelayedArray(seed = A) ; Ad
   results <- microbenchmark(svdR <- svds(scale(A,center = TRUE, scale=TRUE), 2, ncv = 100),  # SVD amb RSpectra - Passem matriu normalitzada
-                            svdCpp <- BDsvd(Ad, 2, 100),
+                            svdCpp <- bdSVD(Ad, 2, 100),
                             times=10L)  # SVD amb Spectra - passem matriu sense normalitzar
   print(summary(results)[, c(1:7)],digits=3)
   
@@ -294,7 +294,7 @@ Rcpp::RObject BDsvd (const Rcpp::RObject & x, int k, int nev )
   A <- matrix(runif(1000000), ncol=500)
   Ad <- DelayedArray(A)  # DelayedArray
   results <- microbenchmark(svdR <- svds(scale(Ad,center = TRUE, scale=TRUE), 2, ncv = 100),  # SVD amb RSpectra - Passem matriu normalitzada
-                            svdCpp <- BDsvd(Ad, 2, 100),
+                            svdCpp <- bdSVD(Ad, 2, 100),
                                     times=10L)  # SVD amb Spectra - passem matriu sense normalitzar
   print(summary(results)[, c(1:7)],digits=3)
   

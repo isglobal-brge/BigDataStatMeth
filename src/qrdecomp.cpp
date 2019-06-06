@@ -4,32 +4,139 @@
 using namespace std;
 
 
-// 
+strQR rcpp_bdQR( Eigen::MatrixXd & A, bool bthin)
+{
+  
+  int m = A.rows(), n = A.cols();
+  int irank;
+  strQR vQR;
+  
+  Eigen::MatrixXd R;
+  Eigen::MatrixXd Q;
+  
+  Eigen::FullPivLU<Eigen::MatrixXd>lu_decomp(A);
+  Eigen::HouseholderQR<Eigen::MatrixXd> qr(A);
+  
+  qr.compute(A);
+  irank = lu_decomp.rank();
+  
+  if (irank == m + 1 || irank == n + 1 )
+  {
+    vQR.R = qr.matrixQR().template triangularView<Eigen::Upper>();
+  } else {
+    vQR.R = qr.matrixQR().topLeftCorner(irank, irank).template triangularView<Eigen::Upper>(); 
+  }
+
+  if (bthin == false)
+  {
+    vQR.Q =  qr.householderQ();       // Full decomposition
+  } else {
+    
+    vQR.Q = Eigen::MatrixXd::Identity(m,n);
+    vQR.Q = qr.householderQ() * vQR.Q;    // Thin decomposition
+  }
+  
+  return(vQR);
+  
+}
+
+
+
+
 //' QR Decomposition 
 //' 
 //' This function compute QR decomposition (also called a QR factorization) 
 //' of a matrix \code{A} into a product \code{A = QR} of an 
 //' orthogonal matrix Q and an upper triangular matrix R.
 //' 
-//' @param A a real square matrix 
+//' @param X a real square matrix 
 //' @param boolean thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false
-//' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \codi{R}
+//' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdQR(Eigen::MatrixXd xl, Rcpp::Nullable<bool> thin = R_NilValue)
+Rcpp::RObject bdQR( const Rcpp::RObject & X, Rcpp::Nullable<bool> thin = R_NilValue)
 {
   
-  int m = xl.rows(), n = xl.cols();
+  auto dmtype = beachmat::find_sexp_type(X);
+  Eigen::MatrixXd A;
+  bool bthin;
+  strQR decQR;
+  
+  if ( dmtype == INTSXP || dmtype==REALSXP ) {
+    if ( X.isS4() == true){
+      A = read_DelayedArray(X);
+    }else {
+      try{
+        A = Rcpp::as<Eigen::MatrixXd >(X);
+      }catch(std::exception &ex) {
+        A = Rcpp::as<Eigen::VectorXd >(X);
+      }
+    }
+  } else {
+    throw std::runtime_error("unacceptable matrix type");
+  }
+  
+  
+  if( thin.isNull()) {
+    bthin = false;
+  } else {
+    bthin = Rcpp::as<bool> (thin);
+  }
+  
+  decQR = rcpp_bdQR(A, bthin);
+  
+  return Rcpp::List::create(Rcpp::Named("Q") = decQR.Q,
+                            Rcpp::Named("R") = decQR.R
+  );
+}
+
+
+
+
+/*
+//' QR Decomposition 
+//' 
+//' This function compute QR decomposition (also called a QR factorization) 
+//' of a matrix \code{A} into a product \code{A = QR} of an 
+//' orthogonal matrix Q and an upper triangular matrix R.
+//' 
+//' @param X a real square matrix 
+//' @param boolean thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false
+//' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
+//' @export
+// [[Rcpp::export]]
+Rcpp::RObject bdQR( const Rcpp::RObject & X, Rcpp::Nullable<bool> thin = R_NilValue)
+{
+  
+  auto dmtype = beachmat::find_sexp_type(X);
+  Eigen::MatrixXd A;
+  
+  if ( dmtype == INTSXP || dmtype==REALSXP ) {
+    if ( X.isS4() == true){
+      A = read_DelayedArray(X);
+    }else {
+      try{
+        A = Rcpp::as<Eigen::MatrixXd >(X);
+      }catch(std::exception &ex) {
+        A = Rcpp::as<Eigen::VectorXd >(X);
+      }
+    }
+    
+  } else {
+    throw std::runtime_error("unacceptable matrix type");
+  }
+  
+  int m = A.rows(), n = A.cols();
   int irank;
   bool bthin;
+  
   Eigen::MatrixXd R;
   Eigen::MatrixXd Q;
   
-  Eigen::FullPivLU<Eigen::MatrixXd>lu_decomp(xl);
-  Eigen::HouseholderQR<Eigen::MatrixXd> qr(xl);
+  Eigen::FullPivLU<Eigen::MatrixXd>lu_decomp(A);
+  Eigen::HouseholderQR<Eigen::MatrixXd> qr(A);
   
-  
-  qr.compute(xl);
+  qr.compute(A);
   irank = lu_decomp.rank();
   
   if (irank == m + 1 || irank == n + 1 )
@@ -59,7 +166,7 @@ Rcpp::RObject bdQR(Eigen::MatrixXd xl, Rcpp::Nullable<bool> thin = R_NilValue)
   );
 }
 
-
+*/
 
 // [[Rcpp::export]]
 Rcpp::RObject review_decomposition(Eigen::MatrixXd R, int n)
@@ -106,7 +213,7 @@ Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z)
 {
   char Nchar='N';
   char Uchar='U';
-  char Lchar='L'; //Nova def.
+  char Lchar='L';
   double done = 1.0;
   
   
@@ -122,7 +229,7 @@ Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z)
   {
     
     // dtrsm( char SIDE, char UPLO, char TRANSA, char DIAG, int M, int N, double ALPHA, double A, int LDA, double B, int LDB )
-    dtrsm_(&Lchar, &Uchar, &Nchar, &Nchar, &m, &n, &done, A.data(), &lda, B.data(), &ldb ); // La solució (X) es sobrescriu a (B) --> B es converteix en X
+    dtrsm_(&Lchar, &Uchar, &Nchar, &Nchar, &m, &n, &done, A.data(), &lda, B.data(), &ldb );
     return(Rcpp::wrap(B));
     
   } else {
@@ -132,7 +239,7 @@ Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z)
       block_size = std::min(  std::min(A.rows(),A.cols()), std::min(B.rows(),B.cols()));
     }
     // Eigen::MatrixXd X = Rcpp::as<Eigen::MatrixXd>( bdpseudoinv(A) )* B;
-    Eigen::MatrixXd X = block_matrix_mul_parallel( Rcpp::as<Eigen::MatrixXd>(bdpseudoinv(A)), B, block_size);
+    Eigen::MatrixXd X = block_matrix_mul_parallel( rcpp_bdpseudoinv(A), B, block_size);
     return(Rcpp::wrap(X));
   }
   
@@ -146,131 +253,17 @@ Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z)
 
 
 /***R
-library(microbenchmark)
-library(lapack)
-library(BigDataStatMeth)
-library(gdsfmt)
-library(SNPRelate)
 
-# Preparant dades .... 
-X1 <- read.table( "data/colorectalnna.txt", header = TRUE )  # (1)
-head(X1)
-Y <- as.data.frame(X1[,c(6)]);   # Variable resposta bmi  --> Desprès es pot provar d'augmentar a bmi, meat i chol
-colnames(Y) <- colnames(X1[6])
-head(Y);
-XL <- X1[,c(3:5)];  # Efectes fixats : sexe, edat i fumador
-#write.table(XL, "data/colorectal2.txt", sep="\t", row.names = FALSE)
-####
+a <- matrix(c(1,-1,4,1,4,-2,1,4,2,1,-1,0), byrow = TRUE, ncol = 3)
+bdQR(a)
+ad <- DelayedArray(a)
+bdQR(ad)
 
-snpgdsBED2GDS("data/colorectal.bed", "data/colorectal.fam", 
-              "data/colorectal.bim", "data/test.gds")
-
-sortida <- Ols_Grid5("data/colorectal2.txt", "data/test.gds", as.matrix(Y), 5000, 10, 1,1)
-
-sortida$beta[50:100]
-sortida$est[50:100]
-sortida$pvalue[50:100]
-sortida$est
-
-sortida$est
-
-genofile <- openfn.gds("data/test.gds")
-
-
-
-
-estimat <- get_pvalue( sortida$beta, genofile, Y )
-
-estimat[1:10]
-
-closefn.gds(genofile)
-
-which(is.na(sortida$beta), arr.ind=TRUE)
-which(is.na(Y), arr.ind=TRUE)
-sortida$
-  
-  
-  print(which(is.na(sortida$beta), arr.ind=TRUE)) # Detectar valors NA
-
-
-
-BBikj[ rfrom:rto, 1:tbmaxsize] <- bddtrsm( RBRi[[k]], as.matrix(ZBij[ rfrom:rto, cfrom:cto ]))
-
-
-as.matrix(sortida$ZBij[ 101:120, 1:1 ])
-bdpseudoinv(sortida$RBRi[[7]])
-solve( sortida$RBRi[[7]])
-
-# Comprovacions
-
-
-
-genofile <- openfn.gds("data/test.gds")
-
-snps <- gdsfmt::objdesp.gdsn(index.gdsn(genofile, "genotype") )$dim[2]
-n <- gdsfmt::objdesp.gdsn(index.gdsn(genofile, "genotype") )$dim[1]
-
-xi <- read.gdsn( index.gdsn(genofile, "genotype"),
-                 start = c( 1, 1 ),
-                 count = c( n, snps ) )
-
-
-est_vf <- BigDataStatMeth::blockmult(matrix(unlist(XL), ncol = 3, byrow = FALSE), 
-                                     as.matrix( sortida$beta[ 1 : (dim(as.matrix(sortida$beta))[1] - dim(xi)[2]) ]), paral = TRUE)
-
-cbind(Y,est_vf)[1:20,]
-
-estl2[1:10,]
-
-sorti <- xi[1:200,1:200] %*% as.matrix( sortida$beta[ 1:200])
-sorti[1:10]
-
-estr <- xi %*% as.matrix( sortida$beta[ (dim(as.matrix(sortida$beta))[1] + 1 - dim(xi)[2]) : dim(as.matrix(sortida$beta))[1]]) # Tenim estimacions
-
-which(is.na(sortida$beta), arr.ind=TRUE)
-
-
-est <- estl + estr
-# Tenim originals
-
-# print(which(is.na(xi), arr.ind=TRUE)) # Detectar valors NA
-
-residuals <- as.matrix(Y) - est
-
-RSS <- sum(residuals^2)
-
-se2 <- 1 / sum( est - mean(as.matrix(Y)))^2
-
-
-t <- betas / sqrt( se2 )
-pvalue <- 2*pt(-abs(t), df=n-1)
-
-
-
-
-
-bdQR()
-
-
-
-
-
-
-BigDataStatMeth::bdInvCholesky(sortida$NoInversa, triangular = TRUE)[1:10,1:10]
-
-
-genofile <- openfn.gds("data/test.gds")
-gdsfmt::objdesp.gdsn(index.gdsn(genofile, "genotype") )$dim
-
-read.gdsn( index.gdsn(genofile, "genotype"),
-           start = c( 1, 1 ),
-           count = c( 2133, 1000 ) )
-
-closefn.gds(genofile)
-
-
-
-
+b <- matrix(c(-1,2,2), byrow = TRUE, ncol = 3)
+solve(b)
+bdpseudoinv(b)
+bd <- DelayedArray(b)
+bdpseudoinv(bd)
 
 
 */

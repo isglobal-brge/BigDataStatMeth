@@ -6,9 +6,7 @@
 
 Eigen::MatrixXd read_DelayedArray_int( Rcpp::RObject A )
 {
-  // size_t ncols = 0, nrows=0;
-  // Eigen::MatrixXd eX;
-  
+
   auto dmat = beachmat::create_integer_matrix(A);
   size_t ncols = dmat->get_ncol();
   size_t nrows = dmat->get_nrow();

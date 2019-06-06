@@ -288,15 +288,15 @@ The columns of $V$ are called the right-singular vectorsof $A$
 
 ## svd
 
-The svd decomposition can be performed with the function `BDsvd()`, with BDsvd you can only perform a svd from real matrix $A$.  Given matrix A as argument 
+The svd decomposition can be performed with the function `bdSVD()`, with bdSVD you can only perform a svd from real matrix $A$.  Given matrix A as argument 
 
 ```{r svd_default}
 n <- 500
 A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 DA <- DelayedArray(A)
 
-bsvd <- BDsvd(A)
-Dbsvd <- BDsvd(DA)
+bsvd <- bdSVD(A)
+Dbsvd <- bdSVD(DA)
 
 bsvd$d[1:10]
 bsvd$u[1:5,1:5]
@@ -310,8 +310,8 @@ all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), Dbsvd$d[1:10] )
 you get the $\sigma_i$, $U$ and $V$ of normalized matrix $A$, if you want to perform the SVD from not normalized matrix $A$ then you have to set the parameter `normalize = false`
 
 ```{r svd_nonorm}
-bsvd <- BDsvd(A, normalize = FALSE)
-Dbsvd <- BDsvd(DA, normalize = FALSE)
+bsvd <- bdSVD(A, normalize = FALSE)
+Dbsvd <- bdSVD(DA, normalize = FALSE)
 
 bsvd$d[1:10]
 bsvd$u[1:5,1:5]
