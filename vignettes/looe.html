@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2019-05-17" />
+<meta name="date" content="2019-06-12" />
 
 <title>Algebra and Statistical Methods for Big Data with Bioconductor</title>
 
@@ -285,7 +285,7 @@ div.tocify {
 <p class="author-name">Dolors PelegrÃ­<span class="affil-mark">1,2,3</span> and Juan R. Gonzalez<span class="affil-mark">1,2,3*</span></p>
 <p class="author-affiliation"><span class="affil-mark">1</span>Autonomous University of Barcelona (UAB)<br><span class="affil-mark">2</span>ISGlobal, Centre for Research in Environmental Epidemiology (CREAL)<br><span class="affil-mark">3</span>Bioinformatics Research Group in Epidemiolgy (BRGE)</p>
 <p class="author-email"><span class="affil-mark">*</span><a href="mailto:juanr.gonzalez@isglobal.org">juanr.gonzalez@isglobal.org</a></p>
-<h4 class="date">2019-05-17</h4>
+<h4 class="date">2019-06-12</h4>
 <h4 class="package">Package</h4>
 <p>BigDataStatMeth 1.0</p>
 
@@ -323,6 +323,7 @@ library(DelayedArray)</code></pre>
 </div>
 <div id="matrix-multiplication" class="section level1">
 <h1><span class="header-section-number">4</span> Matrix Multiplication</h1>
+<p>In this section, different products of matrices and vectors are introduced. The methods implement different strategies including block multiplication algorithms and the use of parallel implementations.</p>
 <div id="simple-matrix-multiplication" class="section level2">
 <h2><span class="header-section-number">4.1</span> Simple matrix multiplication</h2>
 <p>The function <code>blockmult()</code> performs a simple sequential matrix multiplication [<strong>explica lo que es sequential matrix multiplication</strong>]. The function allows the use of <code>DelayedArray</code> objects as well as any other R data type.</p>
@@ -368,10 +369,10 @@ all.equal(AxB, AxBDelay)
   parallel = blockmult(A, B, paral=TRUE),
   times = 10)
 Unit: milliseconds
-       expr      min       lq     mean   median       uq       max neval cld
-          R 74.11787 75.29001 76.34325 75.75579 76.19036  82.97673    10   c
- noparallel 40.08451 40.93982 48.71913 41.77261 44.22476 107.69848    10  b 
-   parallel 24.02843 24.41164 25.51852 24.94023 25.95356  29.13420    10 a  </code></pre>
+       expr      min       lq     mean   median       uq      max neval cld
+          R 69.38661 70.73930 73.27338 72.23323 73.05318 85.95746    10   c
+ noparallel 39.77636 41.26140 47.08326 45.39295 47.77675 73.91757    10  b 
+   parallel 23.24778 23.51643 24.23544 24.16986 24.76798 25.59405    10 a  </code></pre>
 </div>
 <div id="block-matrix-multiplication" class="section level2">
 <h2><span class="header-section-number">4.2</span> Block matrix multiplication</h2>
@@ -400,8 +401,8 @@ all.equal(AxB, AxBDelay)
   times = 10)
 Unit: seconds
          expr      min       lq     mean   median       uq      max neval
- noblockParal 1.293045 1.370502 1.453971 1.467705 1.524505 1.597037    10
-   blockParal 1.217338 1.224561 1.429586 1.413992 1.458901 1.796990    10
+ noblockParal 1.114211 1.263759 1.424870 1.353093 1.567668 1.909958    10
+   blockParal 1.229217 1.295671 1.489072 1.388711 1.712085 2.060381    10
  cld
    a
    a</code></pre>
@@ -476,13 +477,8 @@ all.equal(wtcpDX, t(X)%*%diag(w)%*%X)
 </div>
 <div id="inverse-cholesky" class="section level1">
 <h1><span class="header-section-number">7</span> Inverse Cholesky</h1>
-<p>
-The Cholesky factorization is widely used for solving a system of linear equations whose coefficient matrix is symmetric and positive definite.
-</p>
-<p style="text-align: center;">
-<span class="math inline">\(A = LL^t = U^tU\)</span>
-</p>
-<p>where <span class="math inline">\(L\)</span> is a lower triangular matrix and U is an upper triangular matrix. To get the Inverse Cholesky we can use the function <code>bdInvCholesky()</code></p>
+<p>The Cholesky factorization is widely used for solving a system of linear equations whose coefficient matrix is symmetric and positive definite.</p>
+<p><span class="math display">\[A = LL^t = U^tU\]</span> where <span class="math inline">\(L\)</span> is a lower triangular matrix and U is an upper triangular matrix. To get the Inverse Cholesky we can use the function <code>bdInvCholesky()</code></p>
 <pre class="r"><code>
 # Generate a positive definite matrix
 Posdef &lt;- function (n, ev = runif(n, 0, 10)) 
@@ -526,13 +522,13 @@ The singular-value decomposition of an <span class="math inline">\(mxn\)</span> 
 <p>where : <span class="math inline">\(U\)</span> is a <span class="math inline">\(mxm\)</span> real or complex unitary matrix $$ is a <span class="math inline">\(mxn\)</span> rectangular diagonal matrix with non-negative real numbers on the diagonal <span class="math inline">\(V\)</span> is a <span class="math inline">\(nxn\)</span> real or complex unitary matrix. The diagonal entries <span class="math inline">\(\sigma_i\)</span> of <span class="math inline">\(\Sigma\)</span> are known as the singular values of <span class="math inline">\(A\)</span> The columns of <span class="math inline">\(U\)</span> are called the left-singular vectors of <span class="math inline">\(A\)</span> The columns of <span class="math inline">\(V\)</span> are called the right-singular vectorsof <span class="math inline">\(A\)</span></p>
 <div id="svd" class="section level2">
 <h2><span class="header-section-number">8.1</span> svd</h2>
-<p>The svd decomposition can be performed with the function <code>BDsvd()</code>, with BDsvd you can only perform a svd from real matrix <span class="math inline">\(A\)</span>. Given matrix A as argument</p>
+<p>The svd decomposition can be performed with the function <code>bdSVD()</code>, with bdSVD you can only perform a svd from real matrix <span class="math inline">\(A\)</span>. Given matrix A as argument</p>
 <pre class="r"><code>n &lt;- 500
 A &lt;- matrix(rnorm(n*n), nrow=n, ncol=n)
 DA &lt;- DelayedArray(A)
 
-bsvd &lt;- BDsvd(A)
-Dbsvd &lt;- BDsvd(DA)
+bsvd &lt;- bdSVD(A)
+Dbsvd &lt;- bdSVD(DA)
 
 bsvd$d[1:10]
  [1] 44.37367 44.10619 43.54784 43.06513 42.80271 42.73315 42.58083 42.14266
@@ -557,8 +553,8 @@ all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), bsvd$d[1:10] )
 all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), Dbsvd$d[1:10] )
 [1] TRUE</code></pre>
 <p>you get the <span class="math inline">\(\sigma_i\)</span>, <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> of normalized matrix <span class="math inline">\(A\)</span>, if you want to perform the SVD from not normalized matrix <span class="math inline">\(A\)</span> then you have to set the parameter <code>normalize = false</code></p>
-<pre class="r"><code>bsvd &lt;- BDsvd(A, normalize = FALSE)
-Dbsvd &lt;- BDsvd(DA, normalize = FALSE)
+<pre class="r"><code>bsvd &lt;- bdSVD(A, normalize = FALSE)
+Dbsvd &lt;- bdSVD(DA, normalize = FALSE)
 
 bsvd$d[1:10]
  [1] 44.48473 44.07657 43.47049 43.13594 42.90882 42.62455 42.61047 42.10416
@@ -605,26 +601,26 @@ locale:
 [5] LC_TIME=Spanish_Spain.1252    
 
 attached base packages:
-[1] parallel  stats4    stats     graphics  grDevices utils     datasets 
+[1] stats4    parallel  stats     graphics  grDevices utils     datasets 
 [8] methods   base     
 
 other attached packages:
-[1] BiocStyle_2.8.1      microbenchmark_1.4-4 BigDataStatMeth_1.0 
-[4] DelayedArray_0.6.6   BiocParallel_1.14.2  IRanges_2.14.10     
-[7] S4Vectors_0.18.3     BiocGenerics_0.28.0  matrixStats_0.53.1  
+[1] microbenchmark_1.4-4 DelayedArray_0.6.6   BiocParallel_1.14.2 
+[4] IRanges_2.14.10      S4Vectors_0.18.3     BiocGenerics_0.28.0 
+[7] matrixStats_0.54.0   BiocStyle_2.10.0     BigDataStatMeth_1.0 
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.1          compiler_3.5.0      tools_3.5.0        
- [4] digest_0.6.15       evaluate_0.13       rhdf5_2.24.0       
- [7] lattice_0.20-35     Matrix_1.2-14       yaml_2.2.0         
-[10] mvtnorm_1.0-10      xfun_0.5            stringr_1.3.1      
-[13] knitr_1.22          grid_3.5.0          HDF5Array_1.8.0    
-[16] survival_2.41-3     bookdown_0.7        rmarkdown_1.12     
-[19] multcomp_1.4-8      TH.data_1.0-8       magrittr_1.5       
-[22] Rhdf5lib_1.2.0      codetools_0.2-15    htmltools_0.3.6    
-[25] splines_3.5.0       MASS_7.3-50         beachmat_1.2.1     
-[28] sandwich_2.4-0      stringi_1.2.2       RcppParallel_4.4.1 
-[31] RcppEigen_0.3.3.5.0 zoo_1.8-1          </code></pre>
+ [1] Rcpp_1.0.1          compiler_3.5.0      BiocManager_1.30.4 
+ [4] tools_3.5.0         digest_0.6.15       evaluate_0.13      
+ [7] rhdf5_2.24.0        lattice_0.20-35     Matrix_1.2-14      
+[10] yaml_2.2.0          mvtnorm_1.0-10      xfun_0.7           
+[13] stringr_1.3.1       knitr_1.22          grid_3.5.0         
+[16] HDF5Array_1.8.0     survival_2.41-3     rmarkdown_1.12     
+[19] bookdown_0.11       multcomp_1.4-8      TH.data_1.0-8      
+[22] Rhdf5lib_1.2.0      magrittr_1.5        MASS_7.3-50        
+[25] splines_3.5.0       codetools_0.2-15    htmltools_0.3.6    
+[28] beachmat_1.2.1      sandwich_2.4-0      stringi_1.2.2      
+[31] RcppParallel_4.4.1  RcppEigen_0.3.3.5.0 zoo_1.8-1          </code></pre>
 </div>
 
 

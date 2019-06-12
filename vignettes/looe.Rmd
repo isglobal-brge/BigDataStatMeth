@@ -30,7 +30,7 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "", 
                       cache=TRUE, message = FALSE, 
-                      out.width = 100
+                      out.width = 140
                       )
 ```
 
@@ -72,6 +72,8 @@ library(microbenchmark)
 ```
 
 # Matrix Multiplication
+
+In this section, different products of matrices and vectors are introduced. The methods implement different strategies including block multiplication algorithms and the use of parallel implementations. 
 
 ## Simple matrix multiplication
 
@@ -163,19 +165,26 @@ all.equal(AxBDelay,A%*%B)
 all.equal(AxB, AxBDelay)
 ```
 
-Here, we can compare the performace of this method with the one implemented in the simple case using big matrices. In a large benchmark we performed [**see ...**], the conclusion is that  can observe that ,,, [**lo pondremos ... si mejora con matrices grandes o qué**]
+Here, we compare the performace of the block method with the one implemented with the simplest case. 
 
 ```{r benchmark2}
-microbenchmark(
+bench1 <- microbenchmark(
   noblockParal = blockmult(Abig, Bbig, paral = TRUE),
-  blockParal = blockmult(Abig, Bbig, block_size = 100, paral=TRUE),
+  blockParal = blockmult(Abig, Bbig, block_size = 100,
+                         paral=TRUE),
   times = 10)
+bench1
 ```
 
+The same information is depicted in Figure \ref{fig-bench_1} which illustrates the comparison between the different assessed methods
+
+```{r plot_bench1}
+autoplot.microbenchmark(bench1)
+```
 
 # Cross-product and Transposed Cross-product
 
-To perform a cross-product $C = A^t A$ you can call `bdcrossprod()`.
+To perform a cross-product $C = A^t A$ you can call `bdcrossprod()` function.
 
 ```{r crossprod }
 n <- 500
@@ -183,22 +192,31 @@ m <- 250
 A <- matrix(rnorm(n*m), nrow=n, ncol=m)
 DA <- DelayedArray(A)
 
-# Cross Product
-cpA <- bdcrossprod(A, transposed = FALSE)  
-cpDA <- bdcrossprod(DA)  # With DelayedArray data type and no transposed parameter
+# Cross Product of a standard R matrix
+cpA <- bdcrossprod(A)  
+# Result with DelayedArray data type
+cpDA <- bdcrossprod(DA)  
+```
 
+We obtain the expected values computed using `crossprod` function
+
+```{r check_cp}
 all.equal(cpDA, crossprod(A))
 ```
 
-you may also set `transposed=TRUE` (default value transposed=false) to perform a Transposed Cross-product $C = A A^t$
+you may also set `transposed=TRUE` (default value transposed=false) to get a transposed cross-product $C = A A^t$
 
-```{r nocrossprod }
-# Transposed Cross Product
+```{r nocrossprod}
+# Transposed Cross Product R matrices
 tcpA <- bdcrossprod(A, transposed = TRUE)
-tcpDA <- bdcrossprod(DA, transposed = TRUE) # With DelayeArray data type
+# With DelayeArray data types
+tcpDA <- bdcrossprod(DA, transposed = TRUE) 
+```
 
+We obtain the expected values computed using `tcrossprod` function
+
+```{r check_tcp}
 all.equal(tcpDA, tcrossprod(A))
-
 ```
 
 # Matrix Vector Multiplication 
@@ -219,9 +237,12 @@ wcpX <- bdwproduct(X, w,"xwxt")
 wcpDX <- bdwproduct(DX, Dw,"xwxt") # with DelayedArray
 
 wcpDX[1:5,1:5]
+```
 
+Those are the expected values as it is indicated by executing:
+
+```{r check_wcp}
 all.equal( wcpDX, X%*%diag(w)%*%t(X) )
-
 ```
 
 ## Weighted Transposed Cross Product 
@@ -229,25 +250,28 @@ all.equal( wcpDX, X%*%diag(w)%*%t(X) )
 With argument `transposed=TRUE`, we can perform a transposed weighted cross-product $C = A w A^t$  
 
 ```{r wtcrossprod }
-
 wtcpX <- bdwproduct(X, w,"xtwx")
 wtcpDX <- bdwproduct(DX, Dw,"xtwx") # with DelayedArray
 
 wtcpDX[1:5,1:5]
+```
 
+Those are the expected values as it is indicated by executing:
+
+```{r check_wtcp}
 all.equal(wtcpDX, t(X)%*%diag(w)%*%X)
-
 ```
 
 # Inverse Cholesky
-<p> The Cholesky factorization is widely used for solving a system of linear equations whose coefficient matrix is symmetric and positive definite.</p>
-<p style="text-align: center;">$A = LL^t = U^tU$ </p>
-where $L$ is a lower triangular matrix and U is an upper triangular matrix.
-To get the Inverse Cholesky we can use the function `bdInvCholesky()`
+
+The Cholesky factorization is widely used for solving a system of linear equations whose coefficient matrix is symmetric and positive definite.
+
+$$A = LL^t = U^tU$$
+
+where $L$ is a lower triangular matrix and U is an upper triangular matrix. To get the Inverse Cholesky we can use the function `bdInvCholesky()`. Let us start by illustrating how to do this computations in a simulated data:
 
 
 ```{r invChols }
-
 # Generate a positive definite matrix
 Posdef <- function (n, ev = runif(n, 0, 10)) 
 {
@@ -269,42 +293,55 @@ invchol <- bdInvCholesky(A)
 Dinvchol <- bdInvCholesky(DA)
 
 round(invchol[1:5,1:5],8)
-
-all.equal(Dinvchol, solve(A))
-
 ```
 
-# SVD Decomposition
+We can check whether this function returns the expected values obtained with the standard R function `solve`:
+```
+all.equal(Dinvchol, solve(A))
+```
 
-<p>The singular-value decomposition of an $mxn$ real or complex matrix $A$ is a factorization of the form :</p>
-<p style="text-align: center;">$U\Sigma { V }^{ T }$</p>
+# Singular Value Decomposition (SVD)
+
+The SBD of an $m \times n$ real or complex matrix $A$ is a factorization of the form:
+
+$$U\Sigma { V }^{ T }$$
+
 where : 
-$U$ is a $mxm$ real or complex unitary matrix
-$\Sigma $ is a $mxn$ rectangular diagonal matrix with non-negative real numbers on the diagonal
-$V$ is a $nxn$ real or complex unitary matrix.
-The diagonal entries $\sigma_i$ of $\Sigma$ are known as the singular values of $A$
-The columns of $U$ are called the left-singular vectors of $A$
-The columns of $V$ are called the right-singular vectorsof $A$
 
-## svd
+- $U$ is a $mxm$ real or complex unitary matrix
+- $\Sigma $ is a $mxn$ rectangular diagonal matrix with non-negative real numbers on the diagonal
+- $V$ is a $nxn$ real or complex unitary matrix.
 
-The svd decomposition can be performed with the function `bdSVD()`, with bdSVD you can only perform a svd from real matrix $A$.  Given matrix A as argument 
+Notice that:
+
+- The diagonal entries $\sigma_i$ of $\Sigma$ are known as the singular values of $A$.
+- The columns of $U$ are called the left-singular vectors of $A$.
+- The columns of $V$ are called the right-singular vectors of $A$.
+
+He have implemented the SVD for R matrices and Delayed Array objects in the function `bdSVD()`. The method, so far, only allows SVD of real matrices $A$.  This code illustrate how to perform such computations:
 
 ```{r svd_default}
+# Matrix simulation
 n <- 500
 A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+# Get a Delayed Array object
 DA <- DelayedArray(A)
 
+# SVD
 bsvd <- bdSVD(A)
 Dbsvd <- bdSVD(DA)
 
+# Singular values, and right and left singular vectors
 bsvd$d[1:10]
 bsvd$u[1:5,1:5]
 bsvd$v[1:5,1:5]
+```
 
+We get the expected results obtained with standard R functions: 
+
+```{r check_svd}
 all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), bsvd$d[1:10] ) 
 all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), Dbsvd$d[1:10] )
-
 ```
 
 you get the $\sigma_i$, $U$ and $V$ of normalized matrix $A$, if you want to perform the SVD from not normalized matrix $A$ then you have to set the parameter `normalize = false`
@@ -324,15 +361,14 @@ all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), Dbsvd$d[1:10] )
 
 
 
-# LOOE - Leave One Out Error
+# Application to statistical methods
 
 
-# Ols-grid
+## Principal component analysis
 
+## Solving linear systems 
 
-
-
-
+## Lasso regression 
 
 
 # Session information
