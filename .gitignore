@@ -23,6 +23,9 @@
 # knitr and R markdown default cache directories
 vignettes/*_cache*/
 vignettes/cache*/
+vignettes/*_file*/
+vignettes/*_file*/
+*.log
 
 # Temporary files created by R markdown
 *.utf8.md

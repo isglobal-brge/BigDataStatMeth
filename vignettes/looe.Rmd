@@ -1,7 +1,7 @@
 ---
 title: "Algebra and Statistical Methods for Big Data with Bioconductor"
 author: 
-- name: Dolors Pelegrí
+- name: Dolors Pelegri
   affiliation: 
   - &uab Autonomous University of Barcelona (UAB)
   - &isglobal ISGlobal, Centre for Research in Environmental Epidemiology (CREAL)
@@ -14,47 +14,39 @@ author:
   email: juanr.gonzalez@isglobal.org
 date: "`r Sys.Date()`"
 package: "`r pkg_ver('BigDataStatMeth')`"
-output: 
+output:
+  BiocStyle::pdf_document: default
   BiocStyle::html_document:
-    number_sections: true
-    toc: yes
-    fig_caption: yes
     toc_float: true
-vignette: >
+abstract: |
+  Description of functions to perform matrix operations, algebra and some statistical models using _DelayedMatrix_ objects.
+vignette: |
   %\VignetteIndexEntry{Algebra and Statistical Methods for Big Data with Bioconductor}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 
 ```{r setup, include = FALSE}
+library(BiocStyle)
 knitr::opts_chunk$set(collapse = TRUE, comment = "", 
-                      cache=TRUE, message = FALSE, 
-                      out.width = 140
-                      )
+                      cache=TRUE, message = FALSE
+                     )
 ```
 
+```{r r_setup, include = FALSE}
+options(width = 180)
+```
 
 # Prerequisites
 
+The package requires other `Bioconductor` packages to be installed. These include: `beachmat`, `HDF5Array`,
+`DelayedArray`. Other required R packages are: `Matrix`,
+`RcppEigen` and `RSpectra`. 
 
 # Overview
 
-<!-- AQUÍ FER SECCIONS PRINCIPALS AMB : 
-  - Operacions bàsiques amb matrius:
-      . Producte de matrius
-      . Matriu x vector
-      . Crossprod i tCrossprod
-      . ...
-  - Algebra lineal:
-      . svd
-      . inversa matrius
-      . ...
-  - Aplicació algebra lineal:
-      . PCA
-      . OLS-GRID
-      . ...
--->
+This package implements seveal matrix operations using `DelayMatrix`objects, as well as some basic algebra operations that can be used to carry out some statistical analyses using standard methodologies such as principal component analyses or least squares estimation. The package also contains specific statatistical method mainly used in `omic` data analysis such as lasso regression. 
 
 # Getting started
 
@@ -77,7 +69,7 @@ In this section, different products of matrices and vectors are introduced. The 
 
 ## Simple matrix multiplication
 
-The function `blockmult()` performs a simple sequential matrix multiplication [**explica lo que es sequential matrix multiplication**]. The function allows the use of `DelayedArray` objects as well as any other R data type. 
+The function `blockmult()` performs a simple sequential matrix multiplication. The function allows the use of `DelayedMAtrix` objects as well as standard R matrices. 
 
 Let us simulate to set of matrices to illustrate the use of the function accross the entire documment. First, we simulate a simple case with to matrices A and B with dimensions 500x500 and 500x750, respectively. Second, another example with dimensions 1000x10000 are use to evaluate the performance in large matrices. The examples with big datasets will be illustrated using real data belonging to different omic settings. We can simulate to matrices with the desired dimensions by
 
@@ -94,7 +86,7 @@ Abig <- matrix(rnorm(n*n), nrow=n, ncol=n)
 Bbig <- matrix(rnorm(n*p), nrow=n, ncol=p)
 ```
 
-They can be converted into `DelayedArray` objects by simply
+They can be converted into `DelayedMatrix` object by simply
 
 ```{r getDelayed}
 DA <- DelayedArray(A)
@@ -116,7 +108,7 @@ all.equal(AxB, AxBDelay)
 all.equal(A%*%B, AxBDelay)
 ```
 
-The process can be speed up by making computations in parallel using `paral=TRUE`. The algorithm is implemented ....  [**tienes que decir qué usa  .. si lo hace a bajo o alto nivel**]. [**¿usa todos los cores? - debería tener un parámetro**]  
+The process can be speed up by making computations in parallel using `paral=TRUE`. 
 
 ```{r noblockmultparal}
 AxB <- blockmult(A, B, paral = TRUE)
@@ -137,9 +129,9 @@ microbenchmark(
 
 ## Block matrix multiplication
 
-A block matrix or a partitioned matrix is a matrix that is interpreted as having been broken into sections called blocks or submatrices. Intuitively, a block matrix can be visualized as the original matrix with a collection of horizontal and vertical lines, which break it up, or partition it, into a collection of smaller matrices. More information can be found [here](https://en.wikipedia.org/wiki/Block_matrix). [**hay alguna ventaja de tener esto?** supongo que si, entonces hay que explicarlo]
+A block matrix or a partitioned matrix is a matrix that is interpreted as having been broken into sections called blocks or submatrices. Intuitively, a block matrix can be visualized as the original matrix with a collection of horizontal and vertical lines, which break it up, or partition it, into a collection of smaller matrices. More information can be found [here](https://en.wikipedia.org/wiki/Block_matrix). 
 
-Matrix multiplication using block matrices is implemented in the `blockmult()` function. It only requires to setting the argument `block_size` different from 0 [**¿se puede optimizar en función de los cores?**]
+Matrix multiplication using block matrices is implemented in the `blockmult()` function. It only requires to setting the argument `block_size` different from 0. 
 
 ```{r blockmult }
 AxB <- blockmult(A, B, block_size = 10)
@@ -176,9 +168,9 @@ bench1 <- microbenchmark(
 bench1
 ```
 
-The same information is depicted in Figure \ref{fig-bench_1} which illustrates the comparison between the different assessed methods
+The same information is depicted in the next Figure which illustrates the comparison between the different assessed methods
 
-```{r plot_bench1}
+```{r, bench1, fig.height=3, fig.width=3}
 autoplot.microbenchmark(bench1)
 ```
 
@@ -308,9 +300,9 @@ $$U\Sigma { V }^{ T }$$
 
 where : 
 
-- $U$ is a $mxm$ real or complex unitary matrix
-- $\Sigma $ is a $mxn$ rectangular diagonal matrix with non-negative real numbers on the diagonal
-- $V$ is a $nxn$ real or complex unitary matrix.
+-$U$ is a $m \times m$ real or complex unitary matrix
+-$\Sigma$ is a $m \times n$ rectangular diagonal matrix with non-negative real numbers on the diagonal
+-$V$ is a $n \times n$ real or complex unitary matrix.
 
 Notice that:
 
@@ -332,7 +324,7 @@ bsvd <- bdSVD(A)
 Dbsvd <- bdSVD(DA)
 
 # Singular values, and right and left singular vectors
-bsvd$d[1:10]
+bsvd$d[1:5]
 bsvd$u[1:5,1:5]
 bsvd$v[1:5,1:5]
 ```
@@ -350,7 +342,7 @@ you get the $\sigma_i$, $U$ and $V$ of normalized matrix $A$, if you want to per
 bsvd <- bdSVD(A, normalize = FALSE)
 Dbsvd <- bdSVD(DA, normalize = FALSE)
 
-bsvd$d[1:10]
+bsvd$d[1:5]
 bsvd$u[1:5,1:5]
 bsvd$v[1:5,1:5]
 
@@ -361,14 +353,117 @@ all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), Dbsvd$d[1:10] )
 
 
 
-# Application to statistical methods
+# Using algebra procedure for `DelayedMatrix` objects to implement basic statistical methods
 
 
-## Principal component analysis
+## Principal component analysis (PCA)
 
-## Solving linear systems 
+Let us illustrate how to perform a PCA using miRNA data obtained from TCGA corresponding to 3 different tumors: melanoma (ME), leukemia (LEU) and centran nervous system (CNS). Data is available at `BigDataStatMeth` and can be loaded by simply:
+
+```{r mirNA}
+data(miRNA)
+dim(miRNA)
+```
+
+We observe that there are a total of 21 individuals and 537 miRNAs. The vector `cancer` contains the type of tumor of each individual. For each type we have:
+
+```{r tab}
+table(cancer)
+```
+
+Now, the typical principal component analysis on the samples
+can be run on the `miRNA` matrix since it has miRNAs in columns and individuals in rows
+
+```{r pca}
+pc <- prcomp(miRNA)
+```
+
+We can plot the two first components with:
+
+```{r plot_pca}
+plot(pc$x[, 1], pc$x[, 2],  
+     main = "miRNA data on tumor samples", 
+     xlab = "PC1", ylab = "PC2", type="n")
+abline(h=0, v=0, lty=2)
+points(pc$x[, 1], pc$x[, 2], col = cancer, 
+       pch=16, cex=1.2)
+legend("topright", levels(cancer), pch=16, col=1:3)
+```
+
+The same analysis can be performed using SVD decomposition and having miRNAs as a `DelayedMatrix` object. The PCA is equivalent to performing the SVD on the centered data, where the centering occurs on the columns. In that case the function `bdSVD` requires to set the argument `normalize` equal to TRUE. Notice that `sweep()` and `colMeans()` functions can be applied to a `DelayedMAtrix` object since this method is implemented for that type of objects in the `DelayedArray` package. 
+
+```{r cia_da}
+miRNAD <- DelayedArray(miRNA)
+miRNAD.c <- DelayedArray::sweep(miRNAD, 2,
+      DelayedArray::colMeans(miRNAD), "-")
+svd.da <- bdSVD(miRNAD.c, normalize = FALSE)
+```
+
+
+The PCA plot for the two principal components can then be be obtained by:
+
+```{r plot_svd_da}
+plot(svd.da$u[, 1], svd.da$u[, 2],  
+     main = "miRNA data on tumor samples", 
+     xlab = "PC1", ylab = "PC2", type="n")
+abline(h=0, v=0, lty=2)
+points(svd.da$u[, 1], svd.da$u[, 2], col = cancer, 
+       pch=16, cex=1.2)
+legend("topright", levels(cancer), pch=16, col=1:3)
+```
+
+We can observe that both figures are equal irrespective to a sign change of second component (that can happen in SVD).
+
+# Statistical methods implemented for `DelayedMatrix` objects
+
+In this section we illustrate how to estimate some of the state of the art methods used in omic data analyses having a `DelayedMatrix` as the input object. So far, we have implemented the lasso regression, but other methods are going to be implemented in the near future.
 
 ## Lasso regression 
+
+The standard linear model (or the ordinary least squares method) performs poorly in a situation, where you have a large multivariate data set containing a number of variables superior to the number of samples. This is the case, for instance, of genomic, transcriptomic or epigenomic studies where the number of variables (SNPs, genes, CpGs) exceed the number of samples (i.e. transcriptomic analysis deals with ~20,000 genes on hundreds of individuals).
+
+A better alternative is the penalized regression allowing to create a linear regression model that is penalized, for having too many variables in the model, by adding a constraint in the equation. This is also known as shrinkage or regularization methods. Lasso regression is one of the methods which are based on this idea. Lasso stands for Least Absolute Shrinkage and Selection Operator. It shrinks the regression coefficients toward zero by penalizing the regression model with a penalty term called L1-norm, which is the sum of the absolute coefficients.
+
+In the case of lasso regression, the penalty has the effect of forcing some of the coefficient estimates, with a minor contribution to the model, to be exactly equal to zero. This means that, lasso can be also seen as an alternative to the subset selection methods for performing variable selection in order to reduce the complexity of the model, or in other words, the number of variables. Selecting a good value of $\lambda$ is critical. 
+
+This tunning parameter can be estimated using cross-validation. However, this procedure can be very time consuming since the inversion of a matrix is highly time consuming and it must be computed for each cross-validated sub-sample. In order to avoid this, we have implemented a method proposed by [Rifkin and Lippert]( http://cbcl.mit.edu/publications/ps/MIT-CSAIL-TR-2007-025.pdf) who stated that in the context of regularized least squares, one can search for a good regularization parameter $\lambda$
+at essentially no additional cost (i.e. estimating only one inverion matrix).
+
+Let us illustrate how this works in our package. Let us start by simulating a dataset with 200 variables when only 3 of them are associated with the outcome. 
+
+```{r simul_lasso}
+# number of samples
+n <- 500
+# number of variables
+p <- 200
+# covariates
+M <- matrix(rnorm(n*p, mean=8, sd=2), nrow=n, ncol=p)
+# outcome (only variables 1, 2 and 5 are different from 0)
+Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5] + rnorm(n, sd=0.1)
+```
+
+
+Then the model can be fitted (using `DelayedMatrix` objects) by
+
+```{r looe}
+# Get DealyedArray matrices
+MD <- DelayedArray(M)
+YD <- DelayedArray(as.matrix(Y))
+
+# Model
+mod <- LOOE(MD, YD, paral=FALSE, l=0.0001)
+mod$coef[abs(mod$coef)>mean(mod$coef)]
+```
+
+The argument `paral` is required to indicate whether paralell implementation is used or not. The `lambda` argument can be provided by the user, but it can also be estimated if `l` parameter is missing:
+
+
+```{r glmnet}
+library(glmnet)
+mod.cv <- cv.glmnet(M, Y)
+mod.glmnet <- glmnet(M, Y, lambda=mod.cv$lambda.min)
+mod.glmnet$beta[1:8,]
+```
 
 
 # Session information

@@ -17,6 +17,7 @@ Suggests:
     Matrix,
     RcppEigen,
     RSpectra,
+    BiocStyle,
     knitr,
     rmarkdown
 Encoding: UTF-8

@@ -5,7 +5,7 @@
 #' 
 #' This function performs ...
 #' 
-#' @param X ...
+#' @param X ......
 #' @param Y ...
 #' @param paral ...
 #' @param nl ...
@@ -241,13 +241,57 @@ bdsvd <- function(X) {
     .Call('_BigDataStatMeth_bdsvd', PACKAGE = 'BigDataStatMeth', X)
 }
 
+#' Pseudo-Inverse
+#' 
+#' Compute the pseudo-inverse of a singular matrix
+#' 
+#' @param Singular matrix (m x n)
+#' @return Pseudo-inverse matrix of A
+#' @export
+bdpseudoinv <- function(X) {
+    .Call('_BigDataStatMeth_bdpseudoinv', PACKAGE = 'BigDataStatMeth', X)
+}
+
+#' QR Decomposition 
+#' 
+#' This function compute QR decomposition (also called a QR factorization) 
+#' of a matrix \code{A} into a product \code{A = QR} of an 
+#' orthogonal matrix Q and an upper triangular matrix R.
+#' 
+#' @param X a real square matrix 
+#' @param boolean thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false
+#' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
+#' @export
+bdQR <- function(X, thin = NULL) {
+    .Call('_BigDataStatMeth_bdQR', PACKAGE = 'BigDataStatMeth', X, thin)
+}
+
+review_decomposition <- function(R, n) {
+    .Call('_BigDataStatMeth_review_decomposition', PACKAGE = 'BigDataStatMeth', R, n)
+}
+
+#' Solves matrix equations : A*X = B
+#' 
+#' 
+#' 
+#' @param R numerical or Delayed Array matrix. 
+#' @param Z numerical or Delayed Array matrix.
+#' @return X numerical matrix. 
+#' @examples
+#' 
+#' @export
+bddtrsm <- function(R, Z) {
+    .Call('_BigDataStatMeth_bddtrsm', PACKAGE = 'BigDataStatMeth', R, Z)
+}
+
 #' Inverse Cholesky of Delayed Array
 #' 
 #' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then 
 #' performs get the inverse using Cholesky decomposition
 #' 
-#' @param x numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs 
-#' @return inverse matrix of d
+#' 
+#' @param x numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
+#' @return inverse matrix of d 
 #' @examples
 #' 
 #' A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
@@ -279,16 +323,16 @@ bdInvCholesky <- function(x) {
 #' AD <- DelayedArray(A)
 #' 
 #' # svd without normalization
-#' BDsvd( A, normalize = FALSE), # No normalitza la matriu
+#' bdSVD( A, normalize = FALSE), # No normalitza la matriu
 #' 
 #' # svd with normalization
-#' decvsd <- BDsvd( A, normalize = TRUE), # No normalitza la matriu
+#' decvsd <- bdSVD( A, normalize = TRUE), # No normalitza la matriu
 #' 
 #' decsvd$d
 #' decsvd$u
 #' 
 #' @export
-BDsvd <- function(x, k = 0L, nev = 0L, normalize = TRUE) {
-    .Call('_BigDataStatMeth_BDsvd', PACKAGE = 'BigDataStatMeth', x, k, nev, normalize)
+bdSVD <- function(x, k = 0L, nev = 0L, normalize = TRUE) {
+    .Call('_BigDataStatMeth_bdSVD', PACKAGE = 'BigDataStatMeth', x, k, nev, normalize)
 }
 
