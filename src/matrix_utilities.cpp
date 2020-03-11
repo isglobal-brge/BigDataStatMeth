@@ -41,13 +41,45 @@ Rcpp::NumericVector flatmatcm(Rcpp::NumericMatrix x)
   return(fc);
 }
 
-
+/*
 Eigen::MatrixXd RcppNormalize_Data ( Eigen::MatrixXd  X )
 {
   Eigen::RowVectorXd mean = X.colwise().mean();
   Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
   return (X.rowwise() - mean).array().rowwise() / std.array();
 }
+ */
+
+
+Eigen::MatrixXd RcppNormalize_Data ( Eigen::MatrixXd  X, bool bc, bool bs )
+{
+  Eigen::MatrixXd rX;
+  
+  if( bc==true && bs==true )  {
+    
+    Eigen::RowVectorXd mean = X.colwise().mean();
+    Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+    rX = (X.rowwise() - mean).array().rowwise() / std.array();
+    
+  }   else if (bc == true)   {
+    
+    Eigen::RowVectorXd mean = X.colwise().mean();
+    rX = (X.rowwise() - mean);
+    
+  }  else if ( bs == true)   {
+    
+    Eigen::RowVectorXd mean = X.colwise().mean();
+    Eigen::RowVectorXd std = (X.array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+    rX = X.array().rowwise() / std.array();
+  } 
+
+  return(rX);
+}
+
+
+
+
+
 
 
 
@@ -65,6 +97,8 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' This function performs a numerical or Delayed Array matrix normalization
 //' 
 //' @param X numerical or Delayed Array Matrix
+//' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
+//' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @return numerical matrix
 //' @examples
 //' m <- 500
@@ -76,13 +110,24 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' 
 //' # with Delaeyd Array
 //' Dx <- DelayedArray(x)
+//' 
+//' # Center and scale
 //' Normalize_Data(Dx)
+//' 
+//' # Only scale
+//' Normalize_Data(Dx, bcenter = FALSE)
+//' 
+//' # Only center
+//' Normalize_Data(Dx, bscale = FALSE)
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Normalize_Data ( Rcpp::RObject & x )
+Rcpp::RObject Normalize_Data ( Rcpp::RObject & x, 
+                               Rcpp::Nullable<bool> bcenter = R_NilValue,
+                               Rcpp::Nullable<bool> bscale  = R_NilValue)
 {
   Eigen::MatrixXd X;
+  bool bc, bs;
   
   // Read DelayedArray's x and b
   if ( x.isS4() == true)    
@@ -99,22 +144,53 @@ Rcpp::RObject Normalize_Data ( Rcpp::RObject & x )
     catch(std::exception &ex) { }
   }
   
-  Eigen::RowVectorXd mean = X.colwise().mean();
-  Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
-  X = (X.rowwise() - mean).array().rowwise() / std.array();
+  if( bcenter.isNull()) {
+    bc = true;
+  } else {
+    bc = Rcpp::as<bool> (bcenter);
+  }
+  
+  if( bscale.isNull()) {
+    bs = true;
+  } else {
+    bs = Rcpp::as<bool> (bscale);
+  }
+  
+  if( bc==true && bs==true )  {
+    
+    Eigen::RowVectorXd mean = X.colwise().mean();
+    Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+    X = (X.rowwise() - mean).array().rowwise() / std.array();
+    
+  }   else if (bc == true)   {
+    
+    Eigen::RowVectorXd mean = X.colwise().mean();
+    X = (X.rowwise() - mean);
+    
+  }  else if ( bs == true)   {
+    
+    Eigen::RowVectorXd mean = X.colwise().mean();
+    Eigen::RowVectorXd std = (X.array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+    X = X.array().rowwise() / std.array();
+  } 
+
   return Rcpp::wrap(X);
 }
 
 
 
 /***R
-m <- 500
-n <- 100 
+m <- 10
+n <- 10 
 x <- matrix(rnorm(m*n), nrow=m, ncol=n)
 
-Normalize_Data(x)
+Normalize_Data(x, bscale = TRUE, bcenter = FALSE )
+
+scale(x, scale = TRUE, center = FALSE)
+
 Dx <- DelayedArray(x)
 Normalize_Data(Dx)
+
 
 */
 

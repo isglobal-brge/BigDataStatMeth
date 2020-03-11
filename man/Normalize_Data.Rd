@@ -4,9 +4,13 @@
 \alias{Normalize_Data}
 \title{Normalize Delayed Array matrix}
 \usage{
-Normalize_Data(x)
+Normalize_Data(x, bcenter = NULL, bscale = NULL)
 }
 \arguments{
+\item{bcenter}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
+
+\item{bscale}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
+
 \item{X}{numerical or Delayed Array Matrix}
 }
 \value{
@@ -25,6 +29,14 @@ Normalize_Data(x)
 
 # with Delaeyd Array
 Dx <- DelayedArray(x)
+
+# Center and scale
 Normalize_Data(Dx)
+
+# Only scale
+Normalize_Data(Dx, bcenter = FALSE)
+
+# Only center
+Normalize_Data(Dx, bscale = FALSE)
 
 }
