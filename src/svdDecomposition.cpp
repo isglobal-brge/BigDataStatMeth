@@ -1,66 +1,80 @@
 #include "include/svdDecomposition.h"
 #include "include/ReadDelayedData.h"
 
-
-
-// svdeig RcppBDsvd_eig( Eigen::MatrixXd& X, int k, int nev, bool normalize )
-svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int nev, bool normalize )
+// SVD decomposition 
+svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int nev, bool bcenter, bool bscale )
 {
-
+  
   svdeig retsvd;
   Eigen::MatrixXd nX;
+  int nconv;
   
   if( k==0 )    k = (std::min(X.rows(), X.cols()))-1;
+  else if (k > (std::min(X.rows(), X.cols()))-1 ) k = (std::min(X.rows(), X.cols()))-1;
+  
   if(nev == 0)  nev = k + 1 ;
+  if(nev<k) nev = k + 1;
   
-  Eigen::MatrixXd Xtcp;
-  if(normalize ==true )  {
-    // Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( Rcpp::wrap(RcppNormalize_Data(X))));
-    nX = RcppNormalize_Data(X);
-    Xtcp =  bdtcrossproduct(nX);
-  }else {
-    //Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( Rcpp::wrap(X)));
-    Xtcp =  bdtcrossproduct(X);
-
-  }
-  
-  Spectra::DenseSymMatProd<double> op(Xtcp);
-  Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigs(&op, k, nev);
-  
-  // Initialize and compute
-  eigs.init();
-  int nconv = eigs.compute();
-  
-  if(eigs.info() == Spectra::SUCCESSFUL)
   {
-    retsvd.d = eigs.eigenvalues().cwiseSqrt();
-    retsvd.u = eigs.eigenvectors();
+    Eigen::MatrixXd Xtcp;
+    //..//if(normalize ==true )  {
+    if(bcenter ==true || bscale == true)  {
+      // Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( Rcpp::wrap(RcppNormalize_Data(X))));
+      nX = RcppNormalize_Data(X, bcenter, bscale);
+      Xtcp =  bdtcrossproduct(nX);
+    }else {
+      //Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( Rcpp::wrap(X)));
+      Xtcp =  bdtcrossproduct(X);
+      
+    }
+    
+    Spectra::DenseSymMatProd<double> op(Xtcp);
+    Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigs(&op, k, nev);
+    
+    // Initialize and compute
+    eigs.init();
+    nconv = eigs.compute();
+    
+    if(eigs.info() == Spectra::SUCCESSFUL)
+    {
+      retsvd.d = eigs.eigenvalues().cwiseSqrt();
+      retsvd.u = eigs.eigenvectors();
+      retsvd.bokuv = true;
+    } else {
+      retsvd.bokuv = false;
+    }
+    
   }
   
-  Eigen::MatrixXd Xcp;
-  if(normalize ==true )  {
-    // Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(RcppNormalize_Data(X))));  
-    Xcp =  bdcrossproduct(nX);  
-  }else {
-    // Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(X)));
-    Xcp =  bdcrossproduct(X);
-  }
-  
-  Spectra::DenseSymMatProd<double> opv(Xcp);
-  Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigsv(&opv, k, nev);
-  
-  // Initialize and compute
-  eigsv.init();
-  nconv = eigsv.compute();
-
-  // Retrieve results
-  if(eigsv.info() == Spectra::SUCCESSFUL)
+  if(retsvd.bokuv == true)
   {
-    retsvd.v = eigsv.eigenvectors();
+    Eigen::MatrixXd Xcp;
+    if(bcenter ==true || bscale==true )  {
+      // Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(RcppNormalize_Data(X))));  
+      Xcp =  bdcrossproduct(nX);  
+    }else {
+      // Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(X)));
+      Xcp =  bdcrossproduct(X);
+    }  
+
+    Spectra::DenseSymMatProd<double> opv(Xcp);
+    Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigsv(&opv, k, nev);
+    
+    // Initialize and compute
+    eigsv.init();
+    nconv = eigsv.compute();
+    
+    // Retrieve results
+    if(eigsv.info() == Spectra::SUCCESSFUL)
+    {
+      retsvd.v = eigsv.eigenvectors();
+    } else {
+      retsvd.bokd = false;
+    }
+    
   }
   
   return retsvd;
-  
 }
 
 
@@ -143,7 +157,8 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 //' @param x numerical or Delayed Array matrix
 //' @param k number of eigen values , this should satisfy k = min(n, m) - 1
 //' @param nev (optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1≤ nev ≤ n, where n is the size of matrix. 
-//' @param normalize (optional, defalut = TRUE) . If normalize = TRUE  we calculate the mean and standard deviation for a variable, then, for each observed value of the variable, we subtract the mean and divide by the standard deviation.
+//' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
+//' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
 //' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
 //' @return v eigenvectors of A^tA, nxn orthogonal matrix
 //' @return d singular values, nxn diagonal matrix (non-negative real values)
@@ -153,22 +168,37 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 //' AD <- DelayedArray(A)
 //' 
 //' # svd without normalization
-//' bdSVD( A, normalize = FALSE), # No normalitza la matriu
+//' bdSVD( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+//' decsvd$d
+//' decsvd$u
 //' 
 //' # svd with normalization
-//' decvsd <- bdSVD( A, normalize = TRUE), # No normalitza la matriu
+//' decvsd <- bdSVD( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
 //' 
 //' decsvd$d
 //' decsvd$u
 //' 
+//' # svd with scaled matrix (sd)
+//' decvsd <- bdSVD( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+//' 
+//' decsvd$d
+//' decsvd$u
+
+//' # svd with centered matrix (sd)
+//' decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+//' decsvd$d
+//' decsvd$u
+
+//' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nullable<int> nev=0, Rcpp::Nullable<bool> normalize=true )
+Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nullable<int> nev=0,
+                     Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true)
 {
   
   auto dmtype = beachmat::find_sexp_type(x);
   int ks, nvs;
-  bool bnorm;
+  bool bnorm, bcent, bscal;
   
   if(k.isNull())  ks = 0 ;
   else    ks = Rcpp::as<int>(k);
@@ -176,8 +206,12 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
   if(nev.isNull())  nvs = 0 ;
   else    nvs = Rcpp::as<int>(nev);
   
-  if(normalize.isNull())  bnorm = true ;
-  else    bnorm = Rcpp::as<bool>(normalize);
+  
+  if(bcenter.isNull())  bcent = true ;
+  else    bcent = Rcpp::as<bool>(bcenter);
+  
+  if(bscale.isNull())  bscal = true ;
+  else    bscal = Rcpp::as<bool>(bscale);
   
   // size_t ncols = 0, nrows=0;
   Eigen::MatrixXd X;
@@ -199,8 +233,7 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
   }
   
   svdeig retsvd;
-  //..// retsvd = RcppbdSVD_eig(X,ks,nvs,bnorm);
-  retsvd = RcppbdSVD(X,ks,nvs,bnorm);
+  retsvd = RcppbdSVD(X,ks,nvs, bcent, bscal);
   
   ret["u"] = retsvd.u;
   ret["v"] = retsvd.v;
@@ -283,16 +316,32 @@ stopifnot(all.equal(solve(Z),bdInvCholesky_LDL(Z)$v ))
   LOOE_BLAST()
   
   n <- 10
-  p <- 10
+  p <- 20
   Z <- matrix(rnorm(n*p), nrow=n, ncol=p)
+  Zn <- scale(Z,center = TRUE, scale = TRUE)
   
-  a <- bdSVD(Z,9,10,FALSE )
+  library(BigDataStatMeth)
+  a <- bdSVD(Z,8,10, TRUE, TRUE)
   b <- eigen(tcrossprod(Z))
+  
+  svd(Zn)$d
+  a$d
+  
+  svd(Z)$d^2
   a$d^2
   b$values
+  
+  
+  
+  a$d
+  a$okd
+  
+  a$d^2
+  b$values
+  
   ;
   
-  n <- 500
+  n <- 1000
   A <- matrix(rnorm(n*n), nrow=n, ncol=n)
   AD <- DelayedArray(A)
   
@@ -314,5 +363,11 @@ stopifnot(all.equal(solve(Z),bdInvCholesky_LDL(Z)$v ))
   bdsvd$u[1:5,1:5]
   
   svd(tcrossprod(A))$d[1:10]
+  
+  A <- matrix(c(5,-3,4,-3,3,-4,4,-4,6,7,2,3), byrow = TRUE, ncol = 3)
+  svd(A)$u
+  
+  bdSVD(A)$u
+  
   
 */

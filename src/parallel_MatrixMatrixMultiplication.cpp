@@ -2,11 +2,6 @@
 #include "include/ReadDelayedData.h"
 
 
-// [[Rcpp::depends(RcppParallel)]]
-
-// [[Rcpp::depends(RcppEigen)]]
-
-
 /** MATRIX-MATRIX MULTIPLICATION **/
 
 struct XYProd : public RcppParallel::Worker  {
@@ -110,17 +105,14 @@ struct XYProdBlock : public RcppParallel::Worker  {
   XYProdBlock(const Rcpp::NumericVector vecX, Rcpp::NumericVector vecY, Rcpp::NumericMatrix rmat, std::size_t ncY, std::size_t ncX)
     : vecX(vecX), vecY(vecY), rmat(rmat), ncY(ncY), ncX(ncX) {}
   
-  // function call operator that work for the specified range (begin/end)
   void operator()(std::size_t begin, std::size_t end) 
   {
-    // size_t ncmat = mat.ncol();
     for (std::size_t i = begin; i < end; i++) 
     {
       for(std::size_t j = 0; j<ncY; j++) 
       {
         for( std::size_t k=0; k<ncX; k++)
         {
-          // Rcpp::Rcout<<vecY[k*ncY + j]<<"\n";
           rmat(i,j) =  rmat(i,j) + (vecX[i*ncX + k] * vecY[k*ncY + j]);
         }
       }
@@ -229,23 +221,6 @@ Rcpp::NumericMatrix rcpp_parallel_XYProdBlock(Rcpp::NumericMatrix matX, Rcpp::Nu
     forward_exception_to_r(ex);
   }  
   
-  /*
-  size_t sloop = size_t(nrX/500);
-  // call it with parallelFor
-  if(sloop>0)
-  {
-    for( size_t i = 0; i<sloop-1; i++)  {
-        RcppParallel::parallelFor(i*500, (i+1)*500, xyprodblock);
-    }
-  } else {
-    sloop = 1;
-  }
-  
-  // Tractament final
-
-  RcppParallel::parallelFor((sloop-1)*500, nrX, xyprodblock);
-*/
-  
   return rmat;
 }
 
@@ -320,8 +295,31 @@ Rcpp::NumericMatrix rcpp_parallel_XYtProd(Rcpp::NumericMatrix matX, Rcpp::Numeri
   
 }
 
-
-
+//' Matrix multiplication with Delayed Array Object (RcppParallel)
+//' 
+//' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+//' 
+//' @param a a double matrix.
+//' @param b a double matrix.
+//' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
+//' @return numerical matrix
+//' @examples
+//' # with numeric matrix
+//' m <- 500
+//' k <- 300
+//' n <- 400
+//' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
+//' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+//' 
+//' parXYProd(A,B,128, TRUE)
+//' 
+//' # with Delaeyd Array
+//' AD <- DelayedArray(A)
+//' BD <- DelayedArray(B)
+//' 
+//' parXYProd(AD,BD,128, TRUE)
+//' 
+//' @export
 // [[Rcpp::export]]
 Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::string> op = R_NilValue)
 {
@@ -394,7 +392,35 @@ Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::st
     return(wrap(XY));
   }
 }
+
+
+
   
+//' Block matrix multiplication with Delayed Array Object
+//' 
+//' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+//' 
+//' @param a a double matrix.
+//' @param b a double matrix.
+//' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
+//' @return numerical matrix
+//' @examples
+//' # with numeric matrix
+//' m <- 500
+//' k <- 1500
+//' n <- 400
+//' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
+//' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+//' 
+//' blockmult(A,B,128, TRUE)
+//' 
+//' # with Delaeyd Array
+//' AD <- DelayedArray(A)
+//' BD <- DelayedArray(B)
+//' 
+//' blockmult(AD,BD,128, TRUE)
+//' 
+//' @export
 // [[Rcpp::export]]
 Rcpp::RObject parXYProdBlock(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::string> op = R_NilValue)
 {
