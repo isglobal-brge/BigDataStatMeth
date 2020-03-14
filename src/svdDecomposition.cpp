@@ -183,12 +183,10 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 //' 
 //' decsvd$d
 //' decsvd$u
-
 //' # svd with centered matrix (sd)
 //' decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
 //' decsvd$d
 //' decsvd$u
-
 //' 
 //' @export
 // [[Rcpp::export]]

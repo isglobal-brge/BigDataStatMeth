@@ -375,7 +375,8 @@ Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::st
     ncols = XY.cols();
     nrows = XY.rows();
     
-    beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+    // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+    beachmat::output_param oparam(X);
     auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
     
     Rcpp::IntegerVector vint;
@@ -478,7 +479,8 @@ Rcpp::RObject parXYProdBlock(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<st
       ncols = XY.cols();
       nrows = XY.rows();
       
-      beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+      beachmat::output_param oparam(X);
       auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
       
       Rcpp::IntegerVector vint;

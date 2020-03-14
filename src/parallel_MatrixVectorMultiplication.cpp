@@ -401,7 +401,8 @@ Rcpp::RObject parxwxt(Rcpp::RObject X, Rcpp::RObject W)
       ncols = XX.cols();
       nrows = XX.rows();
       
-      beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+      //beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+      beachmat::output_param oparam(X);
       auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
       
       Rcpp::IntegerVector vint;
@@ -435,7 +436,8 @@ Rcpp::RObject parxwxt(Rcpp::RObject X, Rcpp::RObject W)
       ncols = XX.cols();
       nrows = XX.rows();
   
-      beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
+      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
+      beachmat::output_param oparam(X);
       auto out_dmat = beachmat::create_numeric_output(XX.rows(), XX.cols(), oparam);
       
       Rcpp::NumericVector vint;
@@ -496,7 +498,8 @@ Rcpp::RObject parxtwx(Rcpp::RObject X, Rcpp::RObject W)
       ncols = XX.cols();
       nrows = XX.rows();
       
-      beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+      beachmat::output_param oparam(X);
       auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
       
       Rcpp::IntegerVector vint;
@@ -530,7 +533,8 @@ Rcpp::RObject parxtwx(Rcpp::RObject X, Rcpp::RObject W)
       ncols = XX.cols();
       nrows = XX.rows();
       
-      beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
+      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
+      beachmat::output_param oparam(X);
       auto out_dmat = beachmat::create_numeric_output(XX.rows(), XX.cols(), oparam);
       
       Rcpp::NumericVector vint;
@@ -589,7 +593,8 @@ Rcpp::RObject parXy(Rcpp::RObject X, Rcpp::RObject Y)
       ncols = XX.cols();
       nrows = XX.rows();
       
-      beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+      beachmat::output_param oparam(X);
       auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
       
       Rcpp::IntegerVector vint;
@@ -617,7 +622,8 @@ Rcpp::RObject parXy(Rcpp::RObject X, Rcpp::RObject Y)
       ncols = XX.cols();
       nrows = XX.rows();
       
-      beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
+      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
+      beachmat::output_param oparam(X);
       auto out_dmat = beachmat::create_numeric_output(XX.rows(), XX.cols(), oparam);
       
       Rcpp::NumericVector vint;

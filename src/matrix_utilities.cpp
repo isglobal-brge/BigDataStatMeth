@@ -180,6 +180,7 @@ Rcpp::RObject Normalize_Data ( Rcpp::RObject & x,
 
 
 /***R
+library(BigDataStatMeth)
 m <- 10
 n <- 10 
 x <- matrix(rnorm(m*n), nrow=m, ncol=n)

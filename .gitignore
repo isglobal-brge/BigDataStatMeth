@@ -45,3 +45,4 @@ rsconnect/
 # RcppExport
 RcppExports.cpp
 .Rproj.user
+*.csv
