@@ -15,8 +15,8 @@ author:
 date: "`r Sys.Date()`"
 package: "`r pkg_ver('BigDataStatMeth')`"
 output:
-  BiocStyle::pdf_document: default
-  BiocStyle::html_document:
+  BiocStyle::html_document: default
+  BiocStyle::pdf_document:
     toc_float: true
 abstract: |
   Description of functions to perform matrix operations, algebra and some statistical models using _DelayedMatrix_ objects.

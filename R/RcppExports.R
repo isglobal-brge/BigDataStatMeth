@@ -41,6 +41,8 @@ LOOE <- function(X, Y, paral, nl = NULL, ml = NULL, l = NULL) {
 #' This function performs a numerical or Delayed Array matrix normalization
 #' 
 #' @param X numerical or Delayed Array Matrix
+#' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
+#' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 #' @return numerical matrix
 #' @examples
 #' m <- 500
@@ -52,11 +54,19 @@ LOOE <- function(X, Y, paral, nl = NULL, ml = NULL, l = NULL) {
 #' 
 #' # with Delaeyd Array
 #' Dx <- DelayedArray(x)
+#' 
+#' # Center and scale
 #' Normalize_Data(Dx)
 #' 
+#' # Only scale
+#' Normalize_Data(Dx, bcenter = FALSE)
+#' 
+#' # Only center
+#' Normalize_Data(Dx, bscale = FALSE)
+#' 
 #' @export
-Normalize_Data <- function(x) {
-    .Call('_BigDataStatMeth_Normalize_Data', PACKAGE = 'BigDataStatMeth', x)
+Normalize_Data <- function(x, bcenter = NULL, bscale = NULL) {
+    .Call('_BigDataStatMeth_Normalize_Data', PACKAGE = 'BigDataStatMeth', x, bcenter, bscale)
 }
 
 ols_grid <- function(X, y, l, r, m, t, mb, tb) {
@@ -209,10 +219,60 @@ partCrossProdEigen <- function(X) {
     .Call('_BigDataStatMeth_partCrossProdEigen', PACKAGE = 'BigDataStatMeth', X)
 }
 
+#' Matrix multiplication with Delayed Array Object (RcppParallel)
+#' 
+#' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+#' 
+#' @param a a double matrix.
+#' @param b a double matrix.
+#' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
+#' @return numerical matrix
+#' @examples
+#' # with numeric matrix
+#' m <- 500
+#' k <- 300
+#' n <- 400
+#' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
+#' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+#' 
+#' parXYProd(A,B,128, TRUE)
+#' 
+#' # with Delaeyd Array
+#' AD <- DelayedArray(A)
+#' BD <- DelayedArray(B)
+#' 
+#' parXYProd(AD,BD,128, TRUE)
+#' 
+#' @export
 parXYProd <- function(X, Y, op = NULL) {
     .Call('_BigDataStatMeth_parXYProd', PACKAGE = 'BigDataStatMeth', X, Y, op)
 }
 
+#' Block matrix multiplication with Delayed Array Object
+#' 
+#' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+#' 
+#' @param a a double matrix.
+#' @param b a double matrix.
+#' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
+#' @return numerical matrix
+#' @examples
+#' # with numeric matrix
+#' m <- 500
+#' k <- 1500
+#' n <- 400
+#' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
+#' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+#' 
+#' blockmult(A,B,128, TRUE)
+#' 
+#' # with Delaeyd Array
+#' AD <- DelayedArray(A)
+#' BD <- DelayedArray(B)
+#' 
+#' blockmult(AD,BD,128, TRUE)
+#' 
+#' @export
 parXYProdBlock <- function(X, Y, op = NULL) {
     .Call('_BigDataStatMeth_parXYProdBlock', PACKAGE = 'BigDataStatMeth', X, Y, op)
 }
@@ -284,6 +344,47 @@ bddtrsm <- function(R, Z) {
     .Call('_BigDataStatMeth_bddtrsm', PACKAGE = 'BigDataStatMeth', R, Z)
 }
 
+#' SVD of DelayedArray 
+#' 
+#' This function performs a svd decomposition of numerical matrix or Delayed Array
+#' 
+#' @param x numerical or Delayed Array matrix
+#' @param k number of eigen values , this should satisfy k = min(n, m) - 1
+#' @param nev (optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1≤ nev ≤ n, where n is the size of matrix. 
+#' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
+#' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+#' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
+#' @return v eigenvectors of A^tA, nxn orthogonal matrix
+#' @return d singular values, nxn diagonal matrix (non-negative real values)
+#' @examples
+#' n <- 500
+#' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+#' AD <- DelayedArray(A)
+#' 
+#' # svd without normalization
+#' bdSVD( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+#' decsvd$d
+#' decsvd$u
+#' 
+#' # svd with normalization
+#' decvsd <- bdSVD( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
+#' 
+#' decsvd$d
+#' decsvd$u
+#' 
+#' # svd with scaled matrix (sd)
+#' decvsd <- bdSVD( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+#' 
+#' decsvd$d
+#' decsvd$u
+NULL
+
+#' # svd with centered matrix (sd)
+#' decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+#' decsvd$d
+#' decsvd$u
+NULL
+
 #' Inverse Cholesky of Delayed Array
 #' 
 #' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then 
@@ -306,33 +407,9 @@ bdInvCholesky <- function(x) {
     .Call('_BigDataStatMeth_bdInvCholesky', PACKAGE = 'BigDataStatMeth', x)
 }
 
-#' SVD of DelayedArray 
-#' 
-#' This function performs a svd decomposition of numerical matrix or Delayed Array
-#' 
-#' @param x numerical or Delayed Array matrix
-#' @param k number of eigen values , this should satisfy k = min(n, m) - 1
-#' @param nev (optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1≤ nev ≤ n, where n is the size of matrix. 
-#' @param normalize (optional, defalut = TRUE) . If normalize = TRUE  we calculate the mean and standard deviation for a variable, then, for each observed value of the variable, we subtract the mean and divide by the standard deviation.
-#' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
-#' @return v eigenvectors of A^tA, nxn orthogonal matrix
-#' @return d singular values, nxn diagonal matrix (non-negative real values)
-#' @examples
-#' n <- 500
-#' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
-#' AD <- DelayedArray(A)
-#' 
-#' # svd without normalization
-#' bdSVD( A, normalize = FALSE), # No normalitza la matriu
-#' 
-#' # svd with normalization
-#' decvsd <- bdSVD( A, normalize = TRUE), # No normalitza la matriu
-#' 
-#' decsvd$d
-#' decsvd$u
 #' 
 #' @export
-bdSVD <- function(x, k = 0L, nev = 0L, normalize = TRUE) {
-    .Call('_BigDataStatMeth_bdSVD', PACKAGE = 'BigDataStatMeth', x, k, nev, normalize)
+bdSVD <- function(x, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
+    .Call('_BigDataStatMeth_bdSVD', PACKAGE = 'BigDataStatMeth', x, k, nev, bcenter, bscale)
 }
 
