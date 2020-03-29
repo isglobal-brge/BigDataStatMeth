@@ -42,8 +42,14 @@ void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::Mat
       
       C = Eigen::VectorXd::Zero(C.size());
       
-      if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
-      else    ithreads = std::thread::hardware_concurrency(); 
+      if(threads.isNotNull()) 
+      {
+        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+          ithreads = Rcpp::as<int> (threads);
+        else 
+          ithreads = std::thread::hardware_concurrency();
+      }
+      else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads(); 
       
       omp_set_num_threads(ithreads);
       

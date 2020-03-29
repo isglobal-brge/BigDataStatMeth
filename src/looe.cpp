@@ -166,10 +166,14 @@ Rcpp::RObject LOOE(Rcpp::RObject& X, Rcpp::RObject& Y, bool paral,
     double lambdamin = 0; 
     
 
-    if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+    if(threads.isNotNull()) 
+    {
+      if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+        ithreads = Rcpp::as<int> (threads);
+      else 
+        ithreads = std::thread::hardware_concurrency();
+    }
     else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads();
-    
-    Rcpp::Rcout << "Number of threads: " << ithreads << "\n";
     
     omp_set_num_threads(ithreads);
     

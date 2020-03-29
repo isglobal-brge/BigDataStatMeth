@@ -73,7 +73,13 @@ Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
   unsigned int ithreads;
   Eigen::MatrixXd C = Eigen::MatrixXd::Zero(n,X.cols()) ; 
   
-  if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+  if(threads.isNotNull()) 
+  {
+    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+      ithreads = Rcpp::as<int> (threads);
+    else 
+      ithreads = std::thread::hardware_concurrency();
+  }
   else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads();
   
   omp_set_num_threads(ithreads);
@@ -97,7 +103,13 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
   unsigned int ithreads;
   Eigen::MatrixXd C = Eigen::MatrixXd::Zero(X.rows(),n);
   
-  if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+  if(threads.isNotNull()) 
+  {
+    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+      ithreads = Rcpp::as<int> (threads);
+    else 
+      ithreads = std::thread::hardware_concurrency();
+  }
   else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads();
   
   omp_set_num_threads(ithreads);

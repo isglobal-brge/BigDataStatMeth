@@ -122,14 +122,33 @@ We can show that the parallel version really improves the computational speed an
 ```{r benchmark1}
 microbenchmark(
   R = A%*%B,
-  noparallel = blockmult(A, B),
-  parallel = blockmult(A, B, paral=TRUE),
+  noparal = blockmult(A, B),
+  paral = blockmult(A, B, paral=TRUE),
+  times = 10)
+```
+
+With `paral=TRUE`, an optional parameter threads can be used to indicate the number of `threads` to launch simultaneously, if `threads=NULL` the function takes the maximum number of available threads.  
+
+```{r noblockmultparalthreads}
+AxB <- blockmult(A, B, paral = TRUE, threads = 2)
+AxBDelay <- blockmult(DA, DB, paral = TRUE, threads = 3) 
+
+all.equal(AxB, AxBDelay)
+```
+
+We can show how the number of threads affects performance.
+
+```{r benchmark1b}
+microbenchmark(
+  AxBnThread2 = blockmult(DA, DB, paral = TRUE, threads = 2) ,
+  AxBnThread3 = blockmult(DA, DB, paral = TRUE, threads = 3) ,
+  AxBnThread4 = blockmult(DA, DB, paral = TRUE, threads = 4) ,
   times = 10)
 ```
 
 ## Block matrix multiplication
 
-A block matrix or a partitioned matrix is a matrix that is interpreted as having been broken into sections called blocks or submatrices. Intuitively, a block matrix can be visualized as the original matrix with a collection of horizontal and vertical lines, which break it up, or partition it, into a collection of smaller matrices. More information can be found [here](https://en.wikipedia.org/wiki/Block_matrix). 
+A block matrix or a partitioned matrix is a matrix that is interpreted as having been broken into sections called blocks or submatrices. Intuitively, a block matrix can be visualized as the original matrix with a collection of horizontal and vertical lines, which break it up, or partition it, into a collection of smaller matrices. the implementation has been made from the adaptation of the Fox algorithm [[1]](#1).
 
 Matrix multiplication using block matrices is implemented in the `blockmult()` function. It only requires to setting the argument `block_size` different from 0. 
 
@@ -147,14 +166,16 @@ all.equal(AxB, AxBDelay)
 
 Note that when the argument `block_size` is larger than any of the dimensions of matrix A or B the `blocks_size` is set to `min(cols(A), rows(A), cols(B), rows(B))`. 
 
-As in the case of using a simple matrix multiplication, one can make the  operations in parallel with `paral = TRUE` .
+As in the case of using a simple matrix multiplication, one can make the  operations in parallel with `paral = TRUE` and optionally indicating the number of threads to use in parallel computing .
 
 ```{r blockmultparal}
 AxB <- blockmult(A, B, block_size = 10, paral = TRUE)
 AxBDelay <- blockmult(DA, DB, block_size = 10, paral = TRUE )
+AxBDelayT <- blockmult(DA, DB, block_size = 10, paral = TRUE, threads =  3 )
 
 all.equal(AxBDelay,A%*%B)
 all.equal(AxB, AxBDelay)
+all.equal(AxBDelay, AxBDelayT)
 ```
 
 Here, we compare the performace of the block method with the one implemented with the simplest case. 
@@ -171,7 +192,7 @@ bench1
 The same information is depicted in the next Figure which illustrates the comparison between the different assessed methods
 
 ```{r, bench1, fig.height=3, fig.width=3}
-autoplot.microbenchmark(bench1)
+ggplot2::autoplot(bench1)
 ```
 
 # Cross-product and Transposed Cross-product
@@ -211,6 +232,16 @@ We obtain the expected values computed using `tcrossprod` function
 all.equal(tcpDA, tcrossprod(A))
 ```
 
+We can show that the implemented version really improves the  R implementation computational speed.
+
+```{r benchmark_bdcrossprod}
+bench <- microbenchmark(
+  bdcrossp = bdcrossprod(DA, transposed = TRUE),
+  rcrossp = tcrossprod(A),
+  times = 10)
+bench
+```
+
 # Matrix Vector Multiplication 
 
 You can perform a weighted cross-product $C = X^ t w X$ with `bdwcrossprod()` given a matrix X as argument and a vector or matrix of weights, w. 
@@ -236,6 +267,7 @@ Those are the expected values as it is indicated by executing:
 ```{r check_wcp}
 all.equal( wcpDX, X%*%diag(w)%*%t(X) )
 ```
+
 
 ## Weighted Transposed Cross Product 
 
@@ -294,7 +326,7 @@ all.equal(Dinvchol, solve(A))
 
 # Singular Value Decomposition (SVD)
 
-The SBD of an $m \times n$ real or complex matrix $A$ is a factorization of the form:
+The SVD of an $m \times n$ real or complex matrix $A$ is a factorization of the form:
 
 $$U\Sigma { V }^{ T }$$
 
@@ -336,11 +368,11 @@ all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), bsvd$d[1:10] )
 all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), Dbsvd$d[1:10] )
 ```
 
-you get the $\sigma_i$, $U$ and $V$ of normalized matrix $A$, if you want to perform the SVD from not normalized matrix $A$ then you have to set the parameter `normalize = false`
+you get the $\sigma_i$, $U$ and $V$ of normalized matrix $A$, if you want to perform the SVD from not normalized matrix $A$ then you have to set the parameter `bcenter = false` and `bscale = false`.
 
 ```{r svd_nonorm}
-bsvd <- bdSVD(A, normalize = FALSE)
-Dbsvd <- bdSVD(DA, normalize = FALSE)
+bsvd <- bdSVD(A)
+Dbsvd <- bdSVD(DA)
 
 bsvd$d[1:5]
 bsvd$u[1:5,1:5]
@@ -390,13 +422,13 @@ points(pc$x[, 1], pc$x[, 2], col = cancer,
 legend("topright", levels(cancer), pch=16, col=1:3)
 ```
 
-The same analysis can be performed using SVD decomposition and having miRNAs as a `DelayedMatrix` object. The PCA is equivalent to performing the SVD on the centered data, where the centering occurs on the columns. In that case the function `bdSVD` requires to set the argument `normalize` equal to TRUE. Notice that `sweep()` and `colMeans()` functions can be applied to a `DelayedMAtrix` object since this method is implemented for that type of objects in the `DelayedArray` package. 
+The same analysis can be performed using SVD decomposition and having miRNAs as a `DelayedMatrix` object. The PCA is equivalent to performing the SVD on the centered data, where the centering occurs on the columns. In that case the function `bdSVD` requires to set the argument `bcenter` and `bscale` equal to TRUE, the dafault values. Notice that `sweep()` and `colMeans()` functions can be applied to a `DelayedMAtrix` object since this method is implemented for that type of objects in the `DelayedArray` package. 
 
 ```{r cia_da}
 miRNAD <- DelayedArray(miRNA)
 miRNAD.c <- DelayedArray::sweep(miRNAD, 2,
       DelayedArray::colMeans(miRNAD), "-")
-svd.da <- bdSVD(miRNAD.c, normalize = FALSE)
+svd.da <- bdSVD(miRNAD.c, bcenter = FALSE, bscale = FALSE)
 ```
 
 
@@ -465,6 +497,12 @@ mod.glmnet <- glmnet(M, Y, lambda=mod.cv$lambda.min)
 mod.glmnet$beta[1:8,]
 ```
 
+# References
+
+<a id="1">[1]</a> 
+Fox L., Mayers D.F. (1987).
+Algorithms. In: Numerical Solution of Ordinary Differential Equations. (198-211)
+Springer, Dordrecht.
 
 # Session information
 

@@ -61,7 +61,13 @@ Eigen::MatrixXd block_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen:
   if(block_size > std::min( N, std::min(M,K)) )
     block_size = std::min( N, std::min(M,K)); 
   
-  if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+  if(threads.isNotNull()) 
+  {
+    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+      ithreads = Rcpp::as<int> (threads);
+    else 
+      ithreads = std::thread::hardware_concurrency();
+  }
   else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads();
 
   omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
