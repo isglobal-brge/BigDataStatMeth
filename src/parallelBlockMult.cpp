@@ -47,33 +47,36 @@ Eigen::MatrixXd block_matrix_mul(const Eigen::MatrixXd& A, const Eigen::MatrixXd
 }
 
 
-Eigen::MatrixXd block_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, int block_size)
+Eigen::MatrixXd block_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, 
+                                          int block_size, Rcpp::Nullable<int> threads  = R_NilValue)
 {
   int ii=0, jj=0, kk=0;
-  int chunk = 1;
-  int tid;
+  int chunk = 1, tid;
+  unsigned int ithreads;
   int M = A.rows();
   int K = A.cols();
   int N = B.cols();
   
   Eigen::MatrixXd C = Eigen::MatrixXd::Zero(M,N) ;
+  if(block_size > std::min( N, std::min(M,K)) )
+    block_size = std::min( N, std::min(M,K)); 
   
-  // Rcpp::Rcout << "Max threads: " << omp_get_max_threads() << "\n";
-  
+  if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+  else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads();
+
   omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
+  omp_set_num_threads(ithreads);
   
 #pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
 {
 
-  tid = omp_get_thread_num();
+  // tid = omp_get_thread_num();
   //només per fer proves dels threads i saber que està paralelitzant, sinó no cal tenir-ho descomentat
-  /*
-  if (tid == 0)   {
-    Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
-  }
-   */
-  
-#pragma omp for schedule (dynamic)
+  // if (tid == 0)   {
+  //   Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
+  // }
+   
+#pragma omp for schedule (static) 
   
   
   for (int ii = 0; ii < M; ii += block_size)
@@ -87,7 +90,6 @@ Eigen::MatrixXd block_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen:
           C.block(ii, jj, std::min(block_size,M - ii), std::min(block_size,N - jj)) + 
           (A.block(ii, kk, std::min(block_size,M - ii), std::min(block_size,K - kk)) * 
           B.block(kk, jj, std::min(block_size,K - kk), std::min(block_size,N - jj)));
-        
       }
     }
   }
@@ -107,6 +109,7 @@ return(C);
 //' @param b a double matrix.
 //' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 //' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
+//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 //' @return numerical matrix
 //' @examples
 //' # with numeric matrix
@@ -128,7 +131,8 @@ return(C);
 // [[Rcpp::export]]
 Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b, 
                           Rcpp::Nullable<int> block_size = R_NilValue, 
-                          Rcpp::Nullable<bool> paral = R_NilValue)
+                          Rcpp::Nullable<bool> paral = R_NilValue,
+                          Rcpp::Nullable<int> threads = R_NilValue)
 {
   int iblock_size;
   bool bparal;// = Rcpp::as<double>;
@@ -187,7 +191,7 @@ Eigen::MatrixXd blockmult(Rcpp::RObject a, Rcpp::RObject b,
   
   if(bparal == true)
   {
-    C = block_matrix_mul_parallel(A, B, iblock_size);
+    C = block_matrix_mul_parallel(A, B, iblock_size, threads);
   }else if (bparal == false)
   {
     C = block_matrix_mul(A, B, iblock_size);
@@ -205,13 +209,13 @@ library(DelayedArray)
 library(BigDataStatMeth)
 # A <- matrix(sample(1:10,100, replace = TRUE), ncol = 10);A
 
-n <- 10
-p <- 4
+n <- 1000
+p <- 400
 A <- matrix(rnorm(n*p), nrow=n, ncol=p)
   
   
-n <- 4
-p <- 10
+n <- 400
+p <- 1000
 B <-  matrix(sample(1:10, 40, replace = TRUE), nrow = n, ncol = p)
 
 CPP2 <- blockmult(A,B,128, TRUE)

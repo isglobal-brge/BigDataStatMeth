@@ -1,7 +1,7 @@
 #include "include/parallelCholesky.h"
 
 
-Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A )
+Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A, Rcpp::Nullable<int> threads = R_NilValue )
 {
   
   int dimensionSize = A.rows();
@@ -9,6 +9,7 @@ Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A )
   L.triangularView<Eigen::Lower>() = A.triangularView<Eigen::Lower>();
   int i,j,k,chunk = 1; 
   double sum = 0;
+  unsigned int ithreads;
   
   // int dimensionSize = A.rows();
   if( A.rows()== A.cols() )
@@ -19,6 +20,11 @@ Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A )
         L(j,j) = std::sqrt(A(j,j));
       else 
         L(j,j) = std::sqrt(A(j,j) - (L.row(j).head(j).array().pow(2).sum() ));
+      
+      if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+      else    ithreads = std::thread::hardware_concurrency();
+      
+      omp_set_num_threads(ithreads);
       
 #pragma omp parallel for private(i,k,sum) shared (A,L,j) schedule(static) if (j < dimensionSize - chunk)
       for (int i = j + 1; i < dimensionSize; i++) 
@@ -42,12 +48,18 @@ Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A )
 
 
 
-Eigen::VectorXd Forward_Substituion_parallel(Eigen::MatrixXd L, Eigen::VectorXd y)
+Eigen::VectorXd Forward_Substituion_parallel(Eigen::MatrixXd L, Eigen::VectorXd y, Rcpp::Nullable<int> threads = R_NilValue)
 {
   
   int i, j;
   int n = L.cols();
-  // Eigen::VectorXd y = b;
+  unsigned int ithreads;
+  
+  if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+  else    ithreads = std::thread::hardware_concurrency();
+  
+  omp_set_num_threads(ithreads);
+  
   if( L.rows()== L.cols() )
   {
     for( i=1; i<n; i++)
@@ -72,7 +84,7 @@ Eigen::MatrixXd Backward_Substitution()
 */
 
 
-Eigen::MatrixXd Inverse_of_Cholesky_decomposition_parallel( Eigen::MatrixXd& A, Eigen::MatrixXd& L )
+Eigen::MatrixXd Inverse_of_Cholesky_decomposition_parallel( Eigen::MatrixXd& A, Eigen::MatrixXd& L, Rcpp::Nullable<int> threads = R_NilValue )
 {
   
   int dimensionSize = A.rows();
@@ -82,6 +94,12 @@ Eigen::MatrixXd Inverse_of_Cholesky_decomposition_parallel( Eigen::MatrixXd& A, 
   
   int i,j,k, chunk = 1; 
   double sum = 0;
+  unsigned int ithreads;
+  
+  if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+  else    ithreads = std::thread::hardware_concurrency();
+  
+  omp_set_num_threads(ithreads);
   
   if( L.rows()== L.cols() )
   {
@@ -109,12 +127,19 @@ Eigen::MatrixXd Inverse_of_Cholesky_decomposition_parallel( Eigen::MatrixXd& A, 
 
 
 
-Eigen::MatrixXd Inverse_Matrix_Cholesky_parallel( Eigen::MatrixXd L )
+Eigen::MatrixXd Inverse_Matrix_Cholesky_parallel( Eigen::MatrixXd L, Rcpp::Nullable<int> threads = R_NilValue  )
 {
   int i, j, k, chunk=1;
   int dimensionSize = L.rows();
+  unsigned int ithreads;
+  
   Eigen::MatrixXd InvCh = Eigen::MatrixXd::Zero(dimensionSize,dimensionSize);
   InvCh = L.triangularView<Eigen::Lower>();
+  
+  if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+  else    ithreads = std::thread::hardware_concurrency();
+  
+  omp_set_num_threads(ithreads);
   
   if( L.rows()== L.cols() )
   {
@@ -141,7 +166,6 @@ Eigen::MatrixXd Inverse_Matrix_Cholesky_parallel( Eigen::MatrixXd L )
   } else {
     throw std::range_error("non-conformable arguments");
   }
-  
   
 }
 
@@ -186,7 +210,7 @@ Eigen::MatrixXd CholSolve(Rcpp::RObject a, Rcpp::RObject b)
 
 
 // [[Rcpp::export]]
-Eigen::MatrixXd inversechol_par(Rcpp::RObject a)
+Eigen::MatrixXd inversechol_par(Rcpp::RObject a, Rcpp::Nullable<int> threads = R_NilValue)
 {
   
   Eigen::MatrixXd A; // = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
@@ -211,7 +235,7 @@ Eigen::MatrixXd inversechol_par(Rcpp::RObject a)
     {
       Eigen::MatrixXd L = Cholesky_decomposition_parallel(A);
       Eigen::MatrixXd Z = Inverse_of_Cholesky_decomposition_parallel(A,L);
-      return(  Inverse_Matrix_Cholesky_parallel(Inverse_of_Cholesky_decomposition_parallel(A,L)));  
+      return(  Inverse_Matrix_Cholesky_parallel(Inverse_of_Cholesky_decomposition_parallel(A,L, threads)));  
     }
 
   } else   {

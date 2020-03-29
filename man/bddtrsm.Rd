@@ -4,7 +4,7 @@
 \alias{bddtrsm}
 \title{Solves matrix equations : A*X = B}
 \usage{
-bddtrsm(R, Z)
+bddtrsm(R, Z, threads = NULL)
 }
 \arguments{
 \item{R}{numerical or Delayed Array matrix.}

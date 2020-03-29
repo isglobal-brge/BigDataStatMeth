@@ -2,19 +2,17 @@
 //
 // https://github.com/lixueclaire/Parallel-SVD/blob/master/OMP_SVD.cpp
 
-// using namespace std;
 
 
-
-
-void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::MatrixXd& V, Eigen::VectorXd& S, double &error, int &iter)
+void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::MatrixXd& V, 
+               Eigen::VectorXd& S, double &error, int &iter, Rcpp::Nullable<int> threads = R_NilValue)
 {
   
   Eigen::MatrixXd V_t = Eigen::MatrixXd::Identity(N,M);
   double t, converge;
   Eigen::VectorXd C(100);
   int *I1, *I2;
-  int chunk = 1;
+  unsigned int ithreads;
   
   // int iter = 0;
   converge = 1.0;
@@ -44,7 +42,13 @@ void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::Mat
       
       C = Eigen::VectorXd::Zero(C.size());
       
-#pragma omp parallel for num_threads(omp_get_max_threads())
+      if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+      else    ithreads = std::thread::hardware_concurrency(); 
+      
+      omp_set_num_threads(ithreads);
+      
+// #pragma omp parallel for num_threads(omp_get_max_threads())
+#pragma omp parallel for num_threads(ithreads)
       for (int p = 1; p <= r1; p++)
       {
         // int k = omp_get_thread_num();
@@ -77,7 +81,7 @@ void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::Mat
         }
       }
       
-#pragma omp parallel for num_threads(omp_get_max_threads())
+#pragma omp parallel for num_threads(ithreads)
       for (int p = 1; p <= r2; p++){
         int k = omp_get_thread_num();
         int i = I2[p], j = i + l;
@@ -112,7 +116,7 @@ void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::Mat
     }
   }
   
-  // S
+  //
   for(int i =0; i<M; i++)
   {
     t = sqrt(U_t.row(i).array().pow(2).sum());
@@ -278,6 +282,7 @@ S <- diag(c(5,4))
 A <- U%*%S%*%V
 JacobianSVD(A)
 jsvd <- JacobianSVD(A)
+
 
 a <- c(1,3,2,5,6,4,7,8,9)
 

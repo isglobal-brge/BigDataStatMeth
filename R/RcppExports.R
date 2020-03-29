@@ -5,12 +5,13 @@
 #' 
 #' This function performs ...
 #' 
-#' @param X ......
-#' @param Y ...
-#' @param paral ...
+#' @param X numerical or Delayed Array matrix
+#' @param Y numerical or Delayed Array vector
+#' @param paral (optional, default = true) if paral=true performs parallel computation.
 #' @param nl ...
 #' @param ml ...
 #' @param l ...
+#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 #' @return coef ...
 #' @return Ginv  ...
 #' @return lambda.min  ...
@@ -32,8 +33,8 @@
 #' looe$lambdas
 #' looe_delayed$coef[1:10]
 #' @export
-LOOE <- function(X, Y, paral, nl = NULL, ml = NULL, l = NULL) {
-    .Call('_BigDataStatMeth_LOOE', PACKAGE = 'BigDataStatMeth', X, Y, paral, nl, ml, l)
+LOOE <- function(X, Y, paral, nl = NULL, ml = NULL, l = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_LOOE', PACKAGE = 'BigDataStatMeth', X, Y, paral, nl, ml, l, threads)
 }
 
 #' Normalize Delayed Array matrix
@@ -153,8 +154,8 @@ bdwproduct <- function(a, w, op) {
     .Call('_BigDataStatMeth_bdwproduct', PACKAGE = 'BigDataStatMeth', a, w, op)
 }
 
-bdXwd <- function(X, w, op, bparal = NULL) {
-    .Call('_BigDataStatMeth_bdXwd', PACKAGE = 'BigDataStatMeth', X, w, op, bparal)
+bdXwd <- function(X, w, op, bparal = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdXwd', PACKAGE = 'BigDataStatMeth', X, w, op, bparal, threads)
 }
 
 #' Block matrix multiplication with Delayed Array Object
@@ -165,6 +166,7 @@ bdXwd <- function(X, w, op, bparal = NULL) {
 #' @param b a double matrix.
 #' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 #' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
+#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 #' @return numerical matrix
 #' @examples
 #' # with numeric matrix
@@ -183,8 +185,8 @@ bdXwd <- function(X, w, op, bparal = NULL) {
 #' blockmult(AD,BD,128, TRUE)
 #' 
 #' @export
-blockmult <- function(a, b, block_size = NULL, paral = NULL) {
-    .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral)
+blockmult <- function(a, b, block_size = NULL, paral = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads)
 }
 
 CholFactor <- function(a) {
@@ -195,8 +197,8 @@ CholSolve <- function(a, b) {
     .Call('_BigDataStatMeth_CholSolve', PACKAGE = 'BigDataStatMeth', a, b)
 }
 
-inversechol_par <- function(a) {
-    .Call('_BigDataStatMeth_inversechol_par', PACKAGE = 'BigDataStatMeth', a)
+inversechol_par <- function(a, threads = NULL) {
+    .Call('_BigDataStatMeth_inversechol_par', PACKAGE = 'BigDataStatMeth', a, threads)
 }
 
 partCrossProd <- function(X) {
@@ -340,8 +342,30 @@ review_decomposition <- function(R, n) {
 #' @examples
 #' 
 #' @export
-bddtrsm <- function(R, Z) {
-    .Call('_BigDataStatMeth_bddtrsm', PACKAGE = 'BigDataStatMeth', R, Z)
+bddtrsm <- function(R, Z, threads = NULL) {
+    .Call('_BigDataStatMeth_bddtrsm', PACKAGE = 'BigDataStatMeth', R, Z, threads)
+}
+
+#' Inverse Cholesky of Delayed Array
+#' 
+#' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then 
+#' performs get the inverse using Cholesky decomposition
+#' 
+#' 
+#' @param x numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
+#' @return inverse matrix of d 
+#' @examples
+#' 
+#' A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
+#' bdInvCholesky(A)
+#' 
+#' # with Delayed Array
+#' DA <- DelayedArray(A)
+#' bdInvCholesky(DA)
+#' 
+#' @export
+bdInvCholesky <- function(x) {
+    .Call('_BigDataStatMeth_bdInvCholesky', PACKAGE = 'BigDataStatMeth', x)
 }
 
 #' SVD of DelayedArray 
@@ -377,36 +401,10 @@ bddtrsm <- function(R, Z) {
 #' 
 #' decsvd$d
 #' decsvd$u
-NULL
-
 #' # svd with centered matrix (sd)
 #' decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
 #' decsvd$d
 #' decsvd$u
-NULL
-
-#' Inverse Cholesky of Delayed Array
-#' 
-#' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then 
-#' performs get the inverse using Cholesky decomposition
-#' 
-#' 
-#' @param x numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
-#' @return inverse matrix of d 
-#' @examples
-#' 
-#' A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
-#' bdInvCholesky(A)
-#' 
-#' # with Delayed Array
-#' DA <- DelayedArray(A)
-#' bdInvCholesky(DA)
-#' 
-#' @export
-bdInvCholesky <- function(x) {
-    .Call('_BigDataStatMeth_bdInvCholesky', PACKAGE = 'BigDataStatMeth', x)
-}
-
 #' 
 #' @export
 bdSVD <- function(x, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {

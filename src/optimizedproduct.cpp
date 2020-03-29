@@ -67,10 +67,16 @@ Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
 
 
 // Matirx - vector as diagonal matrix Multiplication (parallel)
-Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
+Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads = R_NilValue)
 {
   int n = X.rows();
+  unsigned int ithreads;
   Eigen::MatrixXd C = Eigen::MatrixXd::Zero(n,X.cols()) ; 
+  
+  if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+  else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads();
+  
+  omp_set_num_threads(ithreads);
 
 #pragma omp parallel shared(X, w, C) 
 {
@@ -85,10 +91,16 @@ Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
 
 
 //vector as diagonal matrix -  Matirx Multiplication (parallel)
-Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
+Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads = R_NilValue)
 {
   int n = X.cols();
+  unsigned int ithreads;
   Eigen::MatrixXd C = Eigen::MatrixXd::Zero(X.rows(),n);
+  
+  if(threads.isNotNull())    ithreads = Rcpp::as<int> (threads);
+  else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads();
+  
+  omp_set_num_threads(ithreads);
   
 #pragma omp parallel shared(X, w, C) 
 {
@@ -236,6 +248,7 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 //' @param w vector with weights
 //' @param op string indicating if operation  "Xw" or "wX"
 //' @param bparal (optional, default = true) if bparal=true performs parallel computation.
+//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 //' @return numerical matrix 
 //' @examples
 //' n <- 100
@@ -259,7 +272,9 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 //' @export
 */ 
 // [[Rcpp::export]]
-Eigen::MatrixXd bdXwd(Rcpp::RObject X, Rcpp::RObject w, std::string op, Rcpp::Nullable<bool> bparal  = R_NilValue)
+Eigen::MatrixXd bdXwd(Rcpp::RObject X, Rcpp::RObject w, std::string op, 
+                      Rcpp::Nullable<bool> bparal  = R_NilValue,
+                      Rcpp::Nullable<int> threads = R_NilValue)
 {
   
   Eigen::MatrixXd A;
@@ -289,9 +304,9 @@ Eigen::MatrixXd bdXwd(Rcpp::RObject X, Rcpp::RObject w, std::string op, Rcpp::Nu
   if(bpar == true)
   {
     if(op == "Xw") {
-      return(Xwd_parallel(A,W)) ;
+      return(Xwd_parallel(A,W, threads)) ;
     }else if (op == "wX") {
-      return(wdX_parallel(A,W));
+      return(wdX_parallel(A,W, threads));
     } else {
       throw("Invalid option (valid options : Xw or wX)");
     }
@@ -319,7 +334,7 @@ u <- runif(n)
 w <- u * (1 - u)
 # OK
 
-bdwproduct(X, w,"xtwx")
+bdwproduct(X, w,"xtwx",)
 crossprod(X, w*X)
 t(X)%*%diag(w)%*%X
 

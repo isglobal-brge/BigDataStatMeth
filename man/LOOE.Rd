@@ -4,20 +4,22 @@
 \alias{LOOE}
 \title{LOOE}
 \usage{
-LOOE(X, Y, paral, nl = NULL, ml = NULL, l = NULL)
+LOOE(X, Y, paral, nl = NULL, ml = NULL, l = NULL, threads = NULL)
 }
 \arguments{
-\item{X}{......}
+\item{X}{numerical or Delayed Array matrix}
 
-\item{Y}{...}
+\item{Y}{numerical or Delayed Array vector}
 
-\item{paral}{...}
+\item{paral}{(optional, default = true) if paral=true performs parallel computation.}
 
 \item{nl}{...}
 
 \item{ml}{...}
 
 \item{l}{...}
+
+\item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
 }
 \value{
 coef ...

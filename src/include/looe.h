@@ -39,17 +39,19 @@
   };
   
 
-  
   double rcpplooei( double lambda, const Eigen::VectorXd& Lambda, 
-                              const Eigen::MatrixXd& Q, const Eigen::VectorXd& Y, 
-                              bool paral);
+                    const Eigen::MatrixXd& Q, const Eigen::VectorXd& Y, 
+                    bool paral, Rcpp::Nullable<int> threads);
 
-  Eigen::MatrixXd rcppinversecpp( double lambda, const Eigen::VectorXd& Lambda, 
-                                             const Eigen::MatrixXd& Q, bool paral );
+  Eigen::MatrixXd rcppinversecpp ( double lambda, const Eigen::VectorXd& Lambda, 
+                                   const Eigen::MatrixXd& Q, bool paral,
+                                   Rcpp::Nullable<int> threads);
   
   Rcpp::RObject LOOE(Rcpp::RObject& X, Rcpp::RObject& Y, bool paral, 
-                       Rcpp::Nullable<double> nl, Rcpp::Nullable<double> ml,
-                       Rcpp::Nullable<Rcpp::RObject> l);
+                     Rcpp::Nullable<double> nl ,
+                     Rcpp::Nullable<double> ml ,
+                     Rcpp::Nullable<Rcpp::RObject> l ,
+                     Rcpp::Nullable<int> threads );
   
 
 

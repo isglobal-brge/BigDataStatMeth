@@ -10,6 +10,7 @@
   #include <fstream>
   #include <sys/time.h>
   #include <omp.h>
+  #include <thread>
 
   #include "redsvd.h"
   #include "ReadDelayedData.h"
@@ -22,6 +23,7 @@
     return (val > T(0)) - (val < T(0));
   }
 
-  void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::MatrixXd& V, Eigen::VectorXd& S, double &error, int &iter);
+  void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::MatrixXd& V, 
+                 Eigen::VectorXd& S, double &error, int &iter, Rcpp::Nullable<int> threads);
   
 #endif

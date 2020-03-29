@@ -67,7 +67,10 @@
       Eigen::MatrixXd R;
    };
    
+   
+   
    strQR rcpp_bdQR( Eigen::MatrixXd & A, bool bthin);
+   Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z, Rcpp::Nullable<int> threads); 
 
 
 #endif

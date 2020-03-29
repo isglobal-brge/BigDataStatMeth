@@ -209,7 +209,7 @@ Rcpp::RObject review_decomposition(Eigen::MatrixXd R, int n)
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z) 
+Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z, Rcpp::Nullable<int> threads = R_NilValue) 
 {
   char Nchar='N';
   char Uchar='U';
@@ -239,7 +239,7 @@ Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z)
       block_size = std::min(  std::min(A.rows(),A.cols()), std::min(B.rows(),B.cols()));
     }
     // Eigen::MatrixXd X = Rcpp::as<Eigen::MatrixXd>( bdpseudoinv(A) )* B;
-    Eigen::MatrixXd X = block_matrix_mul_parallel( rcpp_bdpseudoinv(A), B, block_size);
+    Eigen::MatrixXd X = block_matrix_mul_parallel( rcpp_bdpseudoinv(A), B, block_size, threads );
     return(Rcpp::wrap(X));
   }
   
