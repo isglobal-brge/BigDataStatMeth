@@ -127,7 +127,7 @@ microbenchmark(
   times = 10)
 ```
 
-With `paral=TRUE`, an optional parameter threads can be used to indicate the number of `threads` to launch simultaneously, if `threads=NULL` the function takes the maximum number of available threads.  
+With `paral=TRUE`, an optional parameter threads can be used to indicate the number of `threads` to launch simultaneously, if `threads=NULL` the function takes the available threads - 1, leaving one available for user.
 
 ```{r noblockmultparalthreads}
 AxB <- blockmult(A, B, paral = TRUE, threads = 2)

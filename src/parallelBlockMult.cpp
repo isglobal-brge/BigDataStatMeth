@@ -68,7 +68,7 @@ Eigen::MatrixXd block_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen:
     else 
       ithreads = std::thread::hardware_concurrency();
   }
-  else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads();
+  else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads();
 
   omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
   omp_set_num_threads(ithreads);

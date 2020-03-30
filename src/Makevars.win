@@ -6,10 +6,6 @@
 PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppParallel::RcppParallelLibs()")
 PKG_CXXFLAGS += -DRCPP_PARALLEL_USE_TBB=1
 
-# Beachmat
-BEACHMAT_LIBS += $(shell echo 'beachmat::pkgconfig("PKG_LIBS")'| "${R_HOME}/bin/R" --vanilla --slave)
-PKG_LIBS += $(BEACHMAT_LIBS)
-
 #BEACHMAT_LIBS=$(shell echo 'beachmat::pkgconfig("PKG_LIBS")'| "${R_HOME}/bin/R" --vanilla --slave)
 PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) 
 # PKG_LIBS += $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(BEACHMAT_LIBS)
