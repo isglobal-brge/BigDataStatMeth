@@ -79,6 +79,30 @@ Eigen::MatrixXd read_DelayedArray( Rcpp::RObject A  )
 }
 
 
+ Eigen::Vector2i get_DelayedArray_size(Rcpp::RObject A)
+{
+  auto dmtypex = beachmat::find_sexp_type(A);
+  Eigen::Vector2i size;
+  
+  if ( dmtypex == INTSXP )
+  {
+    
+    auto dmat = beachmat::create_integer_matrix(A);
+    size[0] = dmat->get_nrow(); 
+    size[1] = dmat->get_ncol();
+    
+  } else if (dmtypex==REALSXP) {
+    
+    auto dmat = beachmat::create_numeric_matrix(A);
+    size[0] = dmat->get_nrow(); 
+    size[1] = dmat->get_ncol();
+    
+  }else {
+    throw std::runtime_error("unacceptable matrix type");
+  }
+  return(size);
+}
+
 
 
 
