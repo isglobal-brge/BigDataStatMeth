@@ -483,7 +483,7 @@ MD <- DelayedArray(M)
 YD <- DelayedArray(as.matrix(Y))
 
 # Model
-mod <- LOOE(MD, YD, paral=FALSE, l=0.0001)
+mod <- LOOE(MD, YD, paral=FALSE)
 mod$coef[abs(mod$coef)>mean(mod$coef)]
 ```
 
