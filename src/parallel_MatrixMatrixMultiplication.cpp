@@ -413,13 +413,13 @@ Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::st
 //' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
 //' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
 //' 
-//' blockmult(A,B,128, TRUE)
+//' Bblockmult(A,B,128, TRUE)
 //' 
 //' # with Delaeyd Array
 //' AD <- DelayedArray(A)
 //' BD <- DelayedArray(B)
 //' 
-//' blockmult(AD,BD,128, TRUE)
+//' Bblockmult(AD,BD,128, TRUE)
 //' 
 //' @export
 // [[Rcpp::export]]

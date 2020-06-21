@@ -23,13 +23,14 @@ Eigen::MatrixXd rcppinversecpp ( double lambda, const Eigen::VectorXd& Lambda,
   
   if(paral==true)  {
     Eigen::MatrixXd tmp = Xwd_parallel(Q,w, threads);
-    Ginv  = block_matrix_mul_parallel( tmp, Q.adjoint(), 128, Rcpp::wrap(threads));
-    // Ginv = Q*w.asDiagonal()*Q.transpose();
+    //.. MODIFICAT 06/2020 ..// Ginv  = block_matrix_mul_parallel( tmp, Q.adjoint(), 128, Rcpp::wrap(threads));
+    Ginv  = Bblock_matrix_mul_parallel( tmp, Q.adjoint(), 128, Rcpp::wrap(threads));
+    
   } else {
     Eigen::MatrixXd tmp = Xwd(Q,w);
-    Ginv  = block_matrix_mul( tmp, Q.adjoint(), 128);
-    // Ginv = Q*w.asDiagonal()*Q.transpose();
-    //..// Ginv = Q*w.asDiagonal()*Q.transpose();
+    //.. MODIFICAT 06/2020 ..// Ginv  = block_matrix_mul( tmp, Q.adjoint(), 128);
+    Ginv  = Bblock_matrix_mul( tmp, Q.adjoint(), 128);
+
   };
   
   return(Ginv);
@@ -46,7 +47,8 @@ double rcpplooei( double lambda, const Eigen::VectorXd& Lambda,
   Eigen::MatrixXd Ginv = rcppinversecpp( lambda, Lambda, Q, paral);
   
   if(paral==true)  {
-    Eigen::MatrixXd cte = block_matrix_mul_parallel(Ginv,Y.col(0),128, Rcpp::wrap(threads));
+    //.. MODIFICAT 06/2020 ..// Eigen::MatrixXd cte = block_matrix_mul_parallel(Ginv,Y.col(0),128, Rcpp::wrap(threads));
+    Eigen::MatrixXd cte = Bblock_matrix_mul_parallel(Ginv,Y.col(0),128, Rcpp::wrap(threads));
     Eigen::VectorXd dGinv = Ginv.diagonal();
     Eigen::VectorXd rans = (cte.array() / dGinv.array()).array().pow(2);
     
@@ -200,7 +202,8 @@ lambdamin = lambdas[index_val(looei.minCoeff(), looei)];
 Eigen::MatrixXd Ginv = rcppinversecpp(lambdamin, Lambda, Q, paral);
 
 //Eigen::MatrixXd coef = (Ginv * rX).adjoint() * eY;
-Eigen::MatrixXd coef = block_matrix_mul_parallel(Ginv,rX,128, Rcpp::wrap(threads)).adjoint() * eY;
+//.. MODIFICAT 06/2020 ..// Eigen::MatrixXd coef = block_matrix_mul_parallel(Ginv,rX,128, Rcpp::wrap(threads)).adjoint() * eY;
+Eigen::MatrixXd coef = Bblock_matrix_mul_parallel(Ginv,rX,128, Rcpp::wrap(threads)).adjoint() * eY;
 
 return Rcpp::List::create(Rcpp::Named("coef") = coef,
                           Rcpp::Named("Ginv") = Ginv,

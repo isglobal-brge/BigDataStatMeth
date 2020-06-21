@@ -146,7 +146,7 @@ extern "C" {
         dims[1] = as<NumericMatrix>(DatasetValues).cols();
         DataSpace dataspace(RANK2, dims);
         
-        std::vector<double> matHiCValues = as<std::vector<double> >(transpose(as<NumericMatrix>(DatasetValues)));
+        std::vector<double> matHiCValues = as<std::vector<double> >(as<NumericMatrix>(DatasetValues));
         
         DataSet dataset = file.createDataSet(CDatasetName,PredType::NATIVE_DOUBLE, dataspace);
         dataset = file.openDataSet(CDatasetName);
@@ -639,16 +639,18 @@ int Create_hdf5_file(std::string filename)
 //' Creates a hdf5 file with numerical data matrix,
 //' 
 //' @param filename, character array indicating the name of the file to create
+//' @param folder, character array indicating folder name to put the matrix in hdf5 file
 //' @param mat numerical data matrix
 //' @return none
 //' @export
 // [[Rcpp::export]]
-int Create_HDF5_matrix_file(std::string filename, RObject mat)
+int Create_HDF5_matrix_file(std::string filename, RObject mat, Rcpp::Nullable<std::string> folder = R_NilValue)
 {
   
   try
   {
     int res;
+    std::string strsubgroup;
     
     if ( mat.sexp_type()==0   )
       throw std::range_error("Data matrix must exsits and mustn't be null");
@@ -658,7 +660,12 @@ int Create_HDF5_matrix_file(std::string filename, RObject mat)
     // Create HDF5 file
     H5File file(filename, H5F_ACC_TRUNC);
     
-    std::string strsubgroup = "Base.matrices/";
+    if( folder.isNull()) {
+      strsubgroup = "Base.matrices";
+    } else {
+      strsubgroup = Rcpp::as<std::string> (folder);
+    }
+
     res = create_HDF5_group(filename, strsubgroup );
 
     res = write_HDF5_matrix(filename, strsubgroup + "/matrix", as<Rcpp::NumericMatrix>(mat) );

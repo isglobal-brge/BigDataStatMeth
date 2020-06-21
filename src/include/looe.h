@@ -11,7 +11,8 @@
   #include "svdDecomposition.h"
   #include "utilities.h"
   #include "matrix_utilities.h"
-  #include "parallelBlockMult.h"
+  //#include "parallelBlockMult.h"
+#include "parallelBlockMult_hdf5.h"
   // #include "optimizedproduct.h"
 
 

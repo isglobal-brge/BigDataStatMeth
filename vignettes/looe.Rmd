@@ -41,7 +41,7 @@ options(width = 180)
 # Prerequisites
 
 The package requires other `Bioconductor` packages to be installed. These include: `beachmat`, `HDF5Array`,
-`DelayedArray`. Other required R packages are: `Matrix`,
+`DelayedArray`, `rhdf5`. Other required R packages are: `Matrix`,
 `RcppEigen` and `RSpectra`. 
 
 # Overview
@@ -55,6 +55,7 @@ First, let us start by loading the required packages to describe the main capabi
 ```{r load}
 library(BigDataStatMeth)
 library(DelayedArray)
+library(rhdf5)
 ```
 
 These other packages are required to reproduce this vignette
@@ -69,7 +70,8 @@ In this section, different products of matrices and vectors are introduced. The 
 
 ## Simple matrix multiplication
 
-The function `blockmult()` performs a simple sequential matrix multiplication. The function allows the use of `DelayedMAtrix` objects as well as standard R matrices. 
+The function `blockmult()` performs a simple sequential matrix multiplication. The function allows the use of `DelayedMAtrix` objects as well as standard R matrices.
+
 
 Let us simulate to set of matrices to illustrate the use of the function accross the entire documment. First, we simulate a simple case with to matrices A and B with dimensions 500x500 and 500x750, respectively. Second, another example with dimensions 1000x10000 are use to evaluate the performance in large matrices. The examples with big datasets will be illustrated using real data belonging to different omic settings. We can simulate to matrices with the desired dimensions by
 
@@ -146,6 +148,8 @@ microbenchmark(
   times = 10)
 ```
 
+
+
 ## Block matrix multiplication
 
 A block matrix or a partitioned matrix is a matrix that is interpreted as having been broken into sections called blocks or submatrices. Intuitively, a block matrix can be visualized as the original matrix with a collection of horizontal and vertical lines, which break it up, or partition it, into a collection of smaller matrices. the implementation has been made from the adaptation of the Fox algorithm [[1]](#1).
@@ -178,14 +182,60 @@ all.equal(AxB, AxBDelay)
 all.equal(AxBDelay, AxBDelayT)
 ```
 
-Here, we compare the performace of the block method with the one implemented with the simplest case. 
+To work with big matrices `blockmult()` saves matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument.
+
+
+```{r blockmultbm1}
+
+DAbig <- DelayedArray(Abig)
+DBbig <- DelayedArray(Abig)
+
+# We consider a big matrix if number of rows or columns are > 500
+AxBBig3000 <- blockmult(DAbig, DBbig, bigmatrix = 500)
+
+# We want to force it to run in memory
+AxBNOBig <- blockmult(DAbig, DBbig, bigmatrix = 100000) 
+
+```
+
+Depending on whether the calculation has been performed directly in memory or from an hdf5 file, the returned object type is different.
+
+If we work in memory results are returned to a matrix object, 
+
+```{r blockmultresmat}
+class(AxBNOBig)
+AxBNOBig[1:5,1:5]
+```
+
+if we work in disk, we return an hdf5 object with two groups (hdf5 group is a container mechanism by which HDF5 files are organized), INPUT and OUTPUT, in INPUT group we have the input matrices A and B, in OUTPUT group we get the resulting matrix C.
+
+To work in R with hdf5 data object we can use the `rhdf5` function library from `bioconductor`,
+
+```{r blockmultresfile}
+class(AxBBig3000)
+
+# Assign hdf5 result content to R variable reshdf5
+reshdf5 <- AxBBig3000$res$OUTPUT$C
+reshdf5[1:5,1:5]
+
+all.equal(reshdf5, AxBNOBig)
+```
+
+Like in rhdf5 it is important to close all dataset, group, and file handles when not used anymore,
+
+```{r blockmultresfileclose}
+bdclose(AxBBig3000)
+```
+
+Here, we compare the performace of the block method with the different options. 
 
 ```{r benchmark2}
 bench1 <- microbenchmark(
   noblockParal = blockmult(Abig, Bbig, paral = TRUE),
-  blockParal = blockmult(Abig, Bbig, block_size = 100,
-                         paral=TRUE),
-  times = 10)
+  blockParalfile = blockmult(Abig, Bbig, block_size = 256, paral=TRUE),
+  blockParalmem = blockmult(Abig, Bbig, block_size = 256, paral=TRUE, bigmatrix = 100000),
+  times = 3 ) # Tornar-ho a posar a 10 quan tot OK per estalviar temps d'execució !!!
+
 bench1
 ```
 
@@ -194,6 +244,8 @@ The same information is depicted in the next Figure which illustrates the compar
 ```{r, bench1, fig.height=3, fig.width=3}
 ggplot2::autoplot(bench1)
 ```
+
+Plot shows that the execution time in hdf5 files is greater than memory execution time, this is due to the read and write time required to access to disk data. At higher disk speed better performance.
 
 # Cross-product and Transposed Cross-product
 

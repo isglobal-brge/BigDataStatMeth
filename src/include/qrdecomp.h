@@ -3,8 +3,9 @@
 
    #include <RcppEigen.h>
    #include "pseudoinv.h"
-   #include "parallelBlockMult.h"
+//   #include "parallelBlockMult.h"
    #include "ReadDelayedData.h"
+   #include "parallelBlockMult_hdf5.h"
   
   
    // Symbols in the LAPACK library files : 

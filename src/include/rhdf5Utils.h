@@ -53,6 +53,6 @@
                                          IntegerVector ivstride, IntegerVector ivblock,
                                          double* rdatablock);
   
-  int Create_HDF5_matrix_file(std::string filename, RObject mat);
+  int Create_HDF5_matrix_file(std::string filename, RObject mat, Rcpp::Nullable<std::string> folder);
 
 #endif

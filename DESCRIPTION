@@ -19,6 +19,7 @@ Suggests:
     RSpectra,
     BiocStyle,
     knitr,
+    rhdf5,
     rmarkdown
 Encoding: UTF-8
 VignetteBuilder: knitr

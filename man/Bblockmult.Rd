@@ -36,7 +36,16 @@ Block size for mixed computation in big matrix parallel. Size of the block to be
 memory of the block read from the disk being processed.}
 }
 \value{
-numerical matrix
+A List with : 
+\itemize{
+  \item{"matrix"}{ Result matrix if execution has been performed in memory}
+  \item{"filename"}{ HDF5 filename if execution has been performed in disk, HDF5 file contains : 
+    \itemize{
+      \item{"INPUT"}{hdf5 group with input matrix A and B}
+      \item{"OUTPUT"}{hdf5 group with output matrix C}
+    }with input and output matrix.
+  }
+}
 }
 \description{
 This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
@@ -49,12 +58,11 @@ n <- 400
 A <- matrix(rnorm(n*p), nrow=n, ncol=k)
 B <- matrix(rnorm(n*p), nrow=k, ncol=n)
 
-blockmult(A,B,128, TRUE)
+Bblockmult(A,B,128, TRUE)
 
 # with Delaeyd Array
 AD <- DelayedArray(A)
 BD <- DelayedArray(B)
 
-blockmult(AD,BD,128, TRUE)
-
+Bblockmult(AD,BD,128, TRUE)
 }

@@ -25,15 +25,27 @@
   //..//                          std::string filename, std::string strsubgroup,  
   //..//                               int mem_block_size, bool bparal, Rcpp::Nullable<int> threads);
   
+  //..//  int hdf5_block_matrix_mul_hdf5( IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
+  //..//                                  std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
+  //..//                                  int mem_block_size, bool bparal, Rcpp::Nullable<int> threads);
+  
   int hdf5_block_matrix_mul_hdf5( IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
-                                  std::string filename, std::string strsubgroup, 
+                                  std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT,
                                   int mem_block_size, bool bparal, Rcpp::Nullable<int> threads);
+
+  int hdf5_block_matrix_mul_hdf5_transposed( IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
+                                             std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
+                                             int mem_block_size, bool bparal, bool browmajor, 
+                                             Rcpp::Nullable<int> threads);
+  
+
+    
   
   Eigen::MatrixXd GetCurrentBlock_hdf5( H5File* file, DataSet* dataset,
                                         hsize_t offsetx, hsize_t offsety, 
                                         hsize_t countx, hsize_t county);
   
-  Eigen::MatrixXd Bblockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> block_size, 
+  Rcpp::List Bblockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> block_size, 
                              Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads,
                              Rcpp::Nullable<double> bigmatrix, Rcpp::Nullable<std::string> outfile);
 
