@@ -2,7 +2,7 @@
 
 // Documentació : http://www.netlib.org/lapack/lawnspdf/lawn129.pdf
 
-
+/*** MOVED TO hdf5_to_Eigen.cpp
 // Convert array with readed data in rowmajor to colmajor matrix : 
 //    Eigen and R works with ColMajor and hdf5 in RowMajor
 Eigen::MatrixXd RowMajorVector_to_ColMajorMatrix(double* datablock, int countx, int county)
@@ -15,30 +15,6 @@ Eigen::MatrixXd RowMajorVector_to_ColMajorMatrix(double* datablock, int countx, 
 
   return(mdata);
 }
-
-
-/**  --------------  VERSIÓ OBSOLETA  --------------
-// Only one instance reading
-Eigen::MatrixXd GetCurrentBlock_hdf5( std::string filename, std::string dataset,
-                                      int offsetx,int offsety, 
-                                      int countx, int county)
-{
-  
-  IntegerVector offset = IntegerVector::create(offsetx, offsety) ;
-  IntegerVector count = IntegerVector::create(countx, county) ;
-  IntegerVector stride = IntegerVector::create(1, 1) ;
-  IntegerVector block = IntegerVector::create(1, 1) ;
-  
-  NumericMatrix data(countx, county);
-  
-  read_HDF5_matrix_subset(filename, dataset, offset, count, stride, block, REAL(data));
-  
-  Eigen::MatrixXd mat = RowMajorVector_to_ColMajorMatrix(REAL(data), countx, county);
-
-  return( mat );
-  
-}
--------------------------------------------------- ***/
 
 
 // Read block from hdf5 matrix
@@ -62,30 +38,7 @@ Eigen::MatrixXd GetCurrentBlock_hdf5( H5File* file, DataSet* dataset,
   return( mat );
   
 }
-
-
-
-// Read block from hdf5 matrix
-Eigen::MatrixXd GetCurrenTransposedBlock_hdf5( H5File* file, DataSet* dataset,
-                                      hsize_t offsetx, hsize_t offsety, 
-                                      hsize_t countx, hsize_t county)
-{
-  
-  IntegerVector offset = IntegerVector::create(offsetx, offsety) ;
-  IntegerVector count = IntegerVector::create(countx, county) ;
-  IntegerVector stride = IntegerVector::create(1, 1) ;
-  IntegerVector block = IntegerVector::create(1, 1) ;
-  
-  NumericMatrix data(countx, county);
-  
-  // read_HDF5_matrix_subset(filename, dataset, offset, count, stride, block, REAL(data));
-  read_HDF5_matrix_subset(file, dataset, offset, count, stride, block, REAL(data));
-  
-  Eigen::MatrixXd mat = as<Eigen::MatrixXd>(data);
-  
-  return( mat );
-  
-}
+***/
 
 
 
@@ -974,9 +927,9 @@ print(summary(results)[, c(1:7)],digits=3)
 
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth/tmp")
 
-m <- 350
-n <- 150
-k <- 50
+m <- 49
+n <- 15
+k <- 25
 Abig <- matrix(rnorm(m*k), nrow=m, ncol=k)
 Bbig <- matrix(rnorm(k*n), nrow=k, ncol=n)
 
@@ -987,6 +940,8 @@ DBbig <- DelayedArray(Bbig)
 AxBBig3000 <- blockmult(DAbig, DBbig, bigmatrix = 1, paral = FALSE)
 
 AxBBig3000$res$OUTPUT$C[1:5,1:5]
+
+AxBBig3000$res$INPUT$A
 
 bdclose(AxBBig3000)
 

@@ -48,7 +48,7 @@ Eigen::MatrixXd rcpp_bdpseudoinv(Eigen::MatrixXd A)
   
   
   // dgesvd_( char JOBU, char JOBVT, int M, int N, double* A, int LDA, double* S, double* U, int LDU, double* VT, int LDVT, double WORK, int LWORK, int INFO  );
-  dgesvd_( &Schar, &Schar, &m, &n, A.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &k, work.data(), &lwork, &info);
+  dgesvd_( &Schar, &Schar, &m, &n, A.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
   
   double tempS;
   Eigen::MatrixXd pinv = Eigen::MatrixXd::Zero(m,n);
@@ -157,14 +157,7 @@ Rcpp::RObject bdpseudoinv(const Rcpp::RObject & X)
 {
   
   auto dmtype = beachmat::find_sexp_type(X);
-  char Schar='S';
-  char Cchar='C';
-  char Ochar='O';
-  int ione = 1;
-  double done = 1.0;
-  double dzero = 0.0;
-  int izero = 0;
-  
+
   Eigen::MatrixXd A;
   
   if ( dmtype == INTSXP || dmtype==REALSXP ) {
