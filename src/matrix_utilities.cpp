@@ -60,13 +60,13 @@ Eigen::MatrixXd RcppNormalize_Data ( Eigen::MatrixXd  X, bool bc, bool bs )
     Eigen::RowVectorXd mean = X.colwise().mean();
     Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
     rX = (X.rowwise() - mean).array().rowwise() / std.array();
-    
-  }   else if (bc == true)   {
+
+  }   else if (bc == true  && bs==false)   {
     
     Eigen::RowVectorXd mean = X.colwise().mean();
     rX = (X.rowwise() - mean);
     
-  }  else if ( bs == true)   {
+  }  else if ( bc == false && bs == true)   {
     
     Eigen::RowVectorXd mean = X.colwise().mean();
     Eigen::RowVectorXd std = (X.array().square().colwise().sum() / (X.rows() - 1)).sqrt();
@@ -77,6 +77,69 @@ Eigen::MatrixXd RcppNormalize_Data ( Eigen::MatrixXd  X, bool bc, bool bs )
 }
 
 
+
+Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata )
+{
+  Eigen::MatrixXd rX;
+  
+  if( btransp == true)
+  {
+    if( bc==true && bs==true )  {
+      
+      rX = (X.colwise() - normdata.row(0).transpose() ).array().colwise() / normdata.row(1).transpose().array();
+
+    }   else if (bc == true  && bs==false)   {
+      
+      Eigen::VectorXd mean = X.rowwise().mean();
+      rX = (X.colwise() - normdata.row(0).transpose());
+      
+    }  else if ( bc == false && bs == true)   {
+      rX = X.array().colwise() / normdata.row(1).transpose().array();
+    }
+    
+  } else {
+  
+    if( bc==true && bs==true )  {
+      
+      Eigen::VectorXd mean = X.rowwise().mean();
+      Eigen::VectorXd meanc = X.colwise().mean();
+      Eigen::VectorXd std = ((X.colwise() - mean).array().square().rowwise().sum() / (X.rows() - 1)).sqrt();
+      rX = (X.colwise() - mean).array().colwise() / std.array();
+      
+    }   else if (bc == true  && bs==false)   {
+      
+      Eigen::VectorXd mean = X.rowwise().mean();
+      rX = (X.colwise() - mean);
+      
+    }  else if ( bc == false && bs == true)   {
+      
+      Eigen::VectorXd mean = X.rowwise().mean();
+      Eigen::VectorXd std = (X.array().square().rowwise().sum() / (X.rows() - 1)).sqrt();
+      rX = X.array().colwise() / std.array();
+    }  
+  }
+  
+   
+  
+  return(rX);
+}
+
+
+// Get column means from Eigen::Matrix
+Eigen::RowVectorXd get_cols_mean(Eigen::MatrixXd X)
+{
+  Eigen::VectorXd mean = X.rowwise().mean();
+  return(mean);
+}
+
+
+// Get column std from Eigen::Matrix
+Eigen::RowVectorXd get_cols_std(Eigen::MatrixXd X)
+{
+  Eigen::VectorXd mean = X.rowwise().mean();
+  Eigen::VectorXd std = ((X.colwise() - mean).array().square().rowwise().sum() / (X.rows() - 1)).sqrt();
+  return(std);
+}
 
 
 

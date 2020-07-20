@@ -61,20 +61,27 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
   int maxsizetoread;
   bool transp = false;
   std::string strGroupName  = "tmpgroup";
+  Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2,icols);
   
-  
+
   if( exists_HDF5_element_ptr(file,strGroupName))
     remove_HDF5_element_ptr(file,strGroupName);
-  
+
   int ret = create_HDF5_group_ptr(file, strGroupName);
+  
   
   try{
     
     if(irows > icols) {
       // Work with transposed matrix
       n = icols;
-      p = irows;  
+      p = irows;
+      int i2 = 2;
       transp = true;
+      
+      // Get data to normalize matrix
+      get_HDF5_mean_sd_by_column_ptr( file, dataset, datanormal);
+
     } else {
       n = irows;
       p = icols;
@@ -85,7 +92,7 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
       throw std::runtime_error("k^q must not be greater than the number of columns of the matrix");
     
     double block_size = std::ceil((double)p/(double)M); // prèviament ja em controlat si p son files o columnes tenint en compte les 
-    
+
 
     // Get data from M blocks in initial matrix
     for( int i = 0; i< M ; i++) 
@@ -97,7 +104,7 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
       IntegerVector offset = getInitialPosition( transp, (unsigned long long)(i*block_size) ); // Posició inicial lectura
       IntegerVector count; // Tamany de block
       maxsizetoread = block_size;
-      
+
       // Get max block size to read - for blocks smaller than default block size 
       if(transp == true)
       {
@@ -107,29 +114,37 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
         if( ((i+1)*block_size) > icols)
           maxsizetoread = icols - (i*block_size);
       }
-      
+
       count = getSizetoRead(transp, (unsigned long long)(maxsizetoread), icols, irows );
       Eigen::MatrixXd X = GetCurrentBlock_hdf5( file, dataset, offset[0], offset[1], count[0], count[1]);
-      
-      //    b) SVD for each block
-      retsvd = RcppbdSVD_lapack(X, bcenter, bscale);
+
+      // Normalize data
+      if (bcenter==true || bscale==true)
+        X = RcppNormalize_Data_hdf5(X, bcenter, bscale, transp, datanormal);
       
 
+      //    b) SVD for each block
+      retsvd = RcppbdSVD_lapack(X, false, false);
+
+      
       //    c)  U*d
       // Create diagonal matrix from svd decomposition d
       int isize = (retsvd.d).size();
       Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
       d.diagonal() = retsvd.d;
       
+
       std::string strDatasetName = strGroupName + "/A" + std::to_string(i/(M/k));
       
       Eigen::MatrixXd restmp = Bblock_matrix_mul_parallel(retsvd.u, d, 128, threads);
+      
       
       //    d) Escriure els resultats provisionals en alguna part tmp del fitxer hdf5
       offset[0] = 0; offset[1] = 0;
       count[0] = restmp.rows();
       count[1] = restmp.cols();
       
+
       if(i%(M/k) == 0) {
         // If dataset exists --> remove dataset
         if( exists_HDF5_element_ptr(file,strDatasetName))
@@ -156,8 +171,26 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
       
     }
     
+    
+  }catch( FileIException error ){ // catch failure caused by the H5File operations
+    error.printErrorStack();
+    file->close();
+    return -1;
+  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+    error.printErrorStack();
+    file->close();
+    return -1;
+  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+    error.printErrorStack();
+    file->close();
+    return -1;
+  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+    error.printErrorStack();
+    file->close();
+    return -1;
   }catch(std::exception &ex) {
     Rcpp::Rcout<< ex.what();
+    file->close();
     return -1;
   }
   
@@ -205,7 +238,7 @@ int Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupNam
       Eigen::MatrixXd X = GetCurrentBlock_hdf5( file, &currentdataset, 0, 0, dims_out[0], dims_out[1]);
       
       //    b) Get dataset svd
-      retsvd = RcppbdSVD_lapack(X, bcenter, bscale);
+      retsvd = RcppbdSVD_lapack(X, false, false);
       
       //    c) U*d
       int isize = (retsvd.d).size();

@@ -86,7 +86,7 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X,  bool bcenter, bool bscale )
   
   svdeig retsvd;
   
-  char Schar='S';
+  char Schar='S', Nchar='N';
   int info = 0;
 
   if(bcenter ==true || bscale == true)
@@ -98,14 +98,27 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X,  bool bcenter, bool bscale )
   int ldu = std::max(1,m);
   int ldvt = std::min(m, n);
   int k = std::min(m,n);
-  int lwork = std::max( 1, 4*std::min(m,n)* std::min(m,n) + 7*std::min(m, n) );
+  int lwork;
+  
+  if(n>10*m)
+    lwork = std::max(1,5*std::min(m,n));
+  else
+    lwork = std::max( 1, 4*std::min(m,n)* std::min(m,n) + 7*std::min(m, n) );
+  
+  //. Normal .// int lwork = std::max( 1, 4*std::min(m,n)* std::min(m,n) + 7*std::min(m, n) );
+  //. coumnes >> Files .//lwork = std::max(1,5*std::min(m,n));
+  
   
   Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
   Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);
   Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
   Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
 
-  dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
+  if(n>10*m)
+    dgesvd_( &Schar, &Nchar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
+  else
+    dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
+
   
   retsvd.d = s;
   retsvd.u = u;
@@ -134,6 +147,8 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
   std::string strGroupName  = "tmpgroup";
   std::string strPrefix;
   
+  // Rcpp::Rcout<<"FILES I COLUMNES : \n\tFiles : "<<irows<<"\n\tColumnes : "<<icols<<"\n";
+  
   CharacterVector strvmatnames = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
   strPrefix = strvmatnames[q-1];
   
@@ -142,7 +157,6 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     if(irows > icols)
       transp = true;
     
-    // Rcpp::Rcout<<"\n First level\n";
 
     First_level_SvdBlock_decomposition_hdf5( file, dataset, k, q, nev, bcenter, bscale, irows, icols, threads);
 
@@ -151,8 +165,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
       Next_level_SvdBlock_decomposition_hdf5(file, strGroupName, k, j, bcenter, bscale, threads);
     }
     
-    // Rcpp::Rcout<<"\n Després First level\n";
-    
+
     // Get dataset names
     StringVector joindata =  get_dataset_names_from_group(file, strGroupName, strPrefix);
     // Rcpp::Rcout<<"\n Dades a joinar : \n"<<joindata<<"\n";
@@ -263,7 +276,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
     int ydim = (unsigned long long)dims_out[0];
     
     // Rcpp::Rcout<<"Valor k : "<<k<<"...\n";
-    // Rcpp::Rcout<<"GO to RcppbdSVD_hdf5_Block...\n";
+    //Rcpp::Rcout<<"GO to RcppbdSVD_hdf5_Block...\n";
     
     
     retsvd = RcppbdSVD_hdf5_Block( &file, &dataset, k, q, nev, bcenter, bscale, xdim, ydim);
@@ -480,10 +493,10 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
   else    bscal = Rcpp::as<bool>(bscale);
   
   if(group.isNull())  strgroup = "" ;
-  else    strgroup = Rcpp::as<CharacterVector>(group);
+  else    strgroup = Rcpp::as<std::string>(group);
   
   if(dataset.isNull())  strdataset = "";
-  else    strdataset = Rcpp::as<CharacterVector>(dataset);
+  else    strdataset = Rcpp::as<std::string>(dataset);
   
   if(is<CharacterVector>(x))
   {

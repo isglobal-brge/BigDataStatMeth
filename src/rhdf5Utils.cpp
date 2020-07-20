@@ -36,8 +36,6 @@ bool RemoveFile(std::string filename)
 extern "C" {
   
   
-  
-  
   // Create or open a file
   H5FilePtr Open_hdf5_file(const std::string& fname)
   {
@@ -228,7 +226,7 @@ extern "C" {
       
       // if group no exists -> Create group to file
       if(!pathExists( file->getId(), strgroup)) 
-        file->createGroup(mGroup);
+        file->createGroup("/"+ mGroup);
 
     } // end of try block
     catch(FileIException error) { // catch failure caused by the H5File operations
@@ -987,6 +985,82 @@ extern "C" {
   
   
   
+  // Get mean and sd from each column in dataset in the case of n<<m, this information is used
+  // to normalize data, center or scale.
+  int get_HDF5_mean_sd_by_column_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize )
+  {
+    
+    IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
+    Eigen::MatrixXd meansd (2,dims_out[0]);
+    
+    try
+    {
+      
+      // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
+      Exception::dontPrint();
+      
+      int block_size = 5;
+      
+      IntegerVector stride = IntegerVector::create(1, 1);
+      IntegerVector block = IntegerVector::create(1, 1);
+      IntegerVector offset = IntegerVector::create(0, 0);
+      IntegerVector count = IntegerVector::create(0, 0);
+      
+      
+      IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
+      Eigen::MatrixXd meansd (2,dims_out[0]);
+      
+      
+      count[1] = dims_out[1];
+      if( block_size < dims_out[0] )
+        count[0] = block_size;
+      else
+        count[0] = dims_out[0];
+      
+      // Read data in blocks of 5 columns
+      for(int i=0; i< dims_out[0]/block_size; i++)
+      {
+        if(i>0)
+          offset[0] = offset[0] + block_size;
+        
+        if( offset[0] + block_size <= dims_out[0] )
+          count[0] = block_size;
+        else
+          count[0] = dims_out[0] - offset[1]+block_size;
+        
+        Eigen::MatrixXd X = GetCurrentBlock_hdf5(file, dataset, offset[0], offset[1], count[0], count[1]);
+
+        Eigen::VectorXd mean = X.rowwise().mean();
+        Eigen::VectorXd std = ((X.colwise() - mean).array().square().rowwise().sum() / (X.cols() - 1)).sqrt();
+        
+        
+
+        meansd.block( 0, offset[0] , 1, mean.size()) = mean.transpose();
+        meansd.block( 1, offset[0], 1, std.size()) = std.transpose();
+        
+      }
+      
+      normalize = meansd;
+      
+    }  // end of try block
+    
+    catch( FileIException error ){ // catch failure caused by the H5File operations
+      error.printErrorStack();
+      return(-1);
+    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+      error.printErrorStack();
+      return(-1);
+    } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+      error.printErrorStack();
+      return(-1);
+    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+      error.printErrorStack();
+      return(-1);
+    }
+    
+    return(0);  // successfully terminated
+    
+  }
   
  
   
@@ -1191,34 +1265,85 @@ library(DelayedArray)
 library(microbenchmark)
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth/tmp")
 
-N <- 60
-M <- 20000
+N <- 10
+M <- 10
 A <- matrix(rnorm(N*M,mean=0,sd=1), N, M)
+
 Ad <- DelayedArray(A)
 B <- matrix(sample.int(15, 9*100, TRUE), 20, 20)
 
 A[1:10,1:10]
 
 # Creem el fitxer amb la matriu
-Create_HDF5_matrix_file("prova.hdf5", A, "INPUT", "A")
+Create_HDF5_matrix_file("prova2.hdf5", A, "INPUT", "A")
 
 
 # Obrim el fitxer i llegim la matriu --> Per poder fer proves amb les funcions svd i bdSVSD bdSVD_hdf5 ja la llegeix durant l'execució
-fprova <- H5Fopen("prova.hdf5")
+fprova <- H5Fopen("tmp_blockmult.hdf5")
 A <- fprova$INPUT$A
 h5closeAll()
 
 # Executem les proves
-res <- microbenchmark( bdsvdHDF5 <- bdSVD_hdf5("prova.hdf5", group = "INPUT", dataset = "A", bcenter=FALSE, bscale=FALSE),
-                       bdsvdHDF5 <- bdSVD_hdf5("prova.hdf5", group = "INPUT", dataset = "A", bcenter=FALSE, bscale=FALSE, k=4),
-                       bdsvdHDF5 <- bdSVD_hdf5("prova.hdf5", group = "INPUT", dataset = "A", bcenter=FALSE, bscale=FALSE, q=2, k=4),
+res <- microbenchmark( svdh5q1k2 <- bdSVD_hdf5("prova.hdf5",group="INPUT",dataset="A",bcenter=FALSE,bscale=FALSE),
+                       svdh5q1k2N <- bdSVD_hdf5("prova.hdf5",group="INPUT",dataset="A",bcenter=TRUE,bscale=TRUE),
+                       svdh5q1k4 <- bdSVD_hdf5("prova.hdf5",group="INPUT",dataset="A",bcenter=FALSE,bscale=FALSE,k=4),
+                       svdh5q2k4 <- bdSVD_hdf5("prova.hdf5",group="INPUT",dataset="A",bcenter=FALSE,bscale=FALSE,q=2,k=4),
                        svdA <- svd(A),
                        times = 3, unit = "s")
 
 print(summary(res)[, c(1:7)],digits=3)
 
 
+svdh5q1k2N <- bdSVD_hdf5("tmp_blockmult.hdf5",group="INPUT",dataset="A",bcenter=FALSE,bscale=FALSE)
+svdh5q1k2N <- bdSVD_hdf5("tmp_blockmult.hdf5",group="INPUT",dataset="A",bcenter=TRUE,bscale=TRUE)
+svdh5q1k2N$d
+svdh5q1k2N$u[1:5,1:5]
 
-h5f
+svd(A)$d
+
+svd(matrix(c(1,2,3,4,5,6,7,8,9,10,11,12),ncol = 4))
+
+AN <- svd(scale(A))
+AN$d
+
+#
+
+A[1:5,1:5]
+mA <- apply(A, 2,mean);mA
+sdA <- apply(A, 2,sd);sdA
+
+
+
+
+svdh5q1k2N <- bdSVD_hdf5("tmp_blockmult.hdf5",group="INPUT",dataset="A",bcenter=TRUE,bscale=TRUE)
+svdA <- svd(scale(A))
+svdh5q1k2N$d
+svdA$d
+
+
+ll <- bdSVD_lapack(A)
+bdSVD(A)$d
+
+
+ll$d
+svdA$d
+svdh5q1k2N$d
+
+ll$u[1:5,1:5]
+svdA$u[1:5,1:5]
+svdh5q1k2N$u[1:5,1:5]
+
+ll$v[1:5,1:5]
+svdA$v[1:5,1:5]
+svdh5q1k2N$v[1:5,1:5]
+
+
+A
+Normalize_Data(A, bcenter = TRUE, bscale = FALSE)
+Normalize_Data(A, bcenter = FALSE, bscale = TRUE)
+mean(A[,1])
+
+A1 <- A[,1]-mean(A[,1])
+A2 <- A[,1]/sd(A[,1])
 
 */

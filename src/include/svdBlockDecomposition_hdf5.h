@@ -7,6 +7,7 @@
   #include "svdutils.h"
   #include "H5Cpp.h"
   #include "rhdf5Utils.h"
+  #include "matrix_utilities.h"
 
 /*
   struct svdeig {
