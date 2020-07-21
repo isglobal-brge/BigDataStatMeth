@@ -19,12 +19,19 @@ output:
   BiocStyle::pdf_document:
     toc_float: true
 abstract: |
-  Description of functions to perform matrix operations, algebra and some statistical models using _DelayedMatrix_ objects.
+  Description of functions to perform matrix operations, algebra and some statistical models using _DelayedMatrix_ objects and HDF5 data files.
 vignette: |
   %\VignetteIndexEntry{Algebra and Statistical Methods for Big Data with Bioconductor}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
+
+```{r cleanup, echo=FALSE, include=FALSE}
+if(file.exists('delayed.hdf5'))
+    file.remove('delayed.hdf5')
+if(file.exists('robjects.hdf5'))
+    file.remove('robjects.hdf5')
+```
 
 
 ```{r setup, include = FALSE}
@@ -46,7 +53,7 @@ The package requires other `Bioconductor` packages to be installed. These includ
 
 # Overview
 
-This package implements seveal matrix operations using `DelayMatrix`objects, as well as some basic algebra operations that can be used to carry out some statistical analyses using standard methodologies such as principal component analyses or least squares estimation. The package also contains specific statatistical method mainly used in `omic` data analysis such as lasso regression. 
+This package implements seveal matrix operations using `DelayMatrix` objects and HDF5 data files as well as some basic algebra operations that can be used to carry out some statistical analyses using standard methodologies such as principal component analyses or least squares estimation. The package also contains specific statatistical method mainly used in `omic` data analysis such as lasso regression. 
 
 # Getting started
 
@@ -63,6 +70,109 @@ These other packages are required to reproduce this vignette
 ```{r load2}
 library(microbenchmark)
 ```
+
+# Previous knowledge
+
+## HDF5 data files
+
+Hierarchical Data Format (HDF) is a set of file formats  designed to store and organize large amounts of data. It is supported by The HDF Group, a non-profit corporation whose mission is to ensure continued development of HDF5 technologies and the continued accessibility of data stored in HDF.
+
+HDF5 is a technology suite that makes possible the management of extremely large and complex data collections, can accomodate virtually every kind of data in a single file, sequences, images, SNP matrices, and every other type of data and metadata associated with an experiment.
+
+There is no limit on the number or size of data objects in the collection, giving great flexibility for omic data. Is high-performance I/O with a rich set of integrated performance features that allow for access time and storage space optimizations
+
+HDF5 file structure include only *two major types of object*:
+
+- `Datasets`, which are multidimensional arrays of a homogeneous type, in datasets we can store omics data  associated to genomics, transcriptomics, epigonomics, proteomics, metabolomics experiments
+
+- `Groups`, which are container structures which can hold datasets and other groups
+
+This results in a truly hierarchical, filesystem-like data format
+
+<center> ![hierarchical structure](imgs/hdf5_squema.jpg)</center>
+
+## Basics in rhdf5
+
+**Create hdf5 file**
+
+The `Create_HDF5_matrix_file` function implemented in this package creates an hdf5 file with a group and a dataset in one step. This function allows to create datasets from `DelayedMAtrix` objects using `beachmat` library as well as standard R matrices.
+
+```{r hdf5Create}
+library(rhdf5)
+library(DelayedArray)
+
+n <- 100
+m <- 20000
+A <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
+
+Ad <- DelayedArray(A)
+
+# Create a file with a dataset from DelayedMatrix Ad in INPUT group
+Create_HDF5_matrix_file("delayed.hdf5", Ad, "INPUT", "A")
+
+# We also can create a dataset from R matrix object
+Create_HDF5_matrix_file("robjects.hdf5", A, "INPUT", "A")
+```
+
+**Add datasets in hdf5 file**
+
+The `Create_HDF5_matrix` allows to create a dataset in existing file. We can create the dataset in any group, if group doesn't exists in file, the group is created before append the dataset.
+
+```{r hdf5AddDataset}
+
+n <- 50
+m <- 12000
+B <- matrix(rnorm(n*m,mean=3,sd=0.5), n,m)
+
+Bd <- DelayedArray(B)
+
+# Create dataframe B with Bd matrix in delayed.hdf5 file at INPUT group
+Create_HDF5_matrix(Bd, "delayed.hdf5", "INPUT", "B");
+
+# Create dataframe data with Ad matrix in delayed.hdf5 file at OMIC group
+Create_HDF5_matrix(Ad, "delayed.hdf5", "OMICS", "data")
+
+```
+
+**Open and get hdf5 content file**
+
+We can open an existing file show contents and access data using functions from `rhdf5` package. `rhdf5` is an R interface for HDF5. The file must always be opened before working with it.
+
+```{r hdf5Open}
+# Examine hierarchy before open file
+h5ls("delayed.hdf5")
+
+# Open file
+h5fdelay = H5Fopen("delayed.hdf5")
+# Show hdf5 hierarchy (groups)
+h5fdelay
+
+```
+
+**Access datasets data**
+
+The \$ operator can be used to access the next group level, this operator reads the object from disk. We can assign the dataset contents to an R object in order to work with it.
+
+```{r hdf5Dataset}
+Adata = h5fdelay$OMICS$data
+```
+
+**Close hdf5 file**
+
+After work with hdf5 we always must close the file. We can close only one file with `H5Fclose` function or close all hdf5 opend files with `h5closeAll` function
+
+```{r hdf5Close}
+# Close delayed.hdf5 file
+H5Fclose(h5fdelay)
+
+# Open 2 files and close all
+h5fdelay = H5Fopen("delayed.hdf5")
+h5fr = H5Fopen("robjects.hdf5")
+
+h5closeAll()
+```
+
+More information about working with hdf5 files in r [rhdf5 - HDF5 interface for R](https://bioconductor.org/packages/release/bioc/vignettes/rhdf5/inst/doc/rhdf5.html)
 
 # Matrix Multiplication
 
@@ -154,7 +264,7 @@ microbenchmark(
 
 A block matrix or a partitioned matrix is a matrix that is interpreted as having been broken into sections called blocks or submatrices. Intuitively, a block matrix can be visualized as the original matrix with a collection of horizontal and vertical lines, which break it up, or partition it, into a collection of smaller matrices. the implementation has been made from the adaptation of the Fox algorithm [[1]](#1).
 
-Matrix multiplication using block matrices is implemented in the `blockmult()` function. It only requires to setting the argument `block_size` different from 0. 
+Matrix multiplication using block matrices is implemented in the `blockmult()` function. It only requires to setting the argument `block_size` different from 0, by default `block_size = 128`. 
 
 ```{r blockmult }
 AxB <- blockmult(A, B, block_size = 10)
@@ -182,11 +292,10 @@ all.equal(AxB, AxBDelay)
 all.equal(AxBDelay, AxBDelayT)
 ```
 
-To work with big matrices `blockmult()` saves matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument.
+To work with big matrices `blockmult()` saves matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument.
 
 
 ```{r blockmultbm1}
-
 DAbig <- DelayedArray(Abig)
 DBbig <- DelayedArray(Abig)
 
@@ -200,7 +309,7 @@ AxBNOBig <- blockmult(DAbig, DBbig, bigmatrix = 100000)
 
 Depending on whether the calculation has been performed directly in memory or from an hdf5 file, the returned object type is different.
 
-If we work in memory results are returned to a matrix object, 
+If we work in memory results are returned as a current r matrix object, 
 
 ```{r blockmultresmat}
 class(AxBNOBig)

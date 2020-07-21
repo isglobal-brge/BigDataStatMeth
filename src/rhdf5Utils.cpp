@@ -1166,58 +1166,6 @@ int Create_hdf5_file(std::string filename)
 }
 
 
-
-
-
-//' Write data to hdf5 file
-//'
-//' Creates a hdf5 file with numerical data matrix,
-//' 
-//' @param filename, character array indicating the name of the file to create
-//' @param folder, character array indicating folder name to put the matrix in hdf5 file
-//' @param mat numerical data matrix
-//' @return none
-//' @export
-// [[Rcpp::export]]
-void Create_HDF5_matrix_file(std::string filename, RObject mat, 
-                            Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue)
-{
-  
-  try
-  {
-    int res;
-    std::string strsubgroup, strdataset;
-    
-    if(group.isNull())  strsubgroup = "INPUT" ;
-    else    strsubgroup = Rcpp::as<std::string>(group);
-    
-    if(dataset.isNull())  strdataset = "A" ;
-    else    strdataset = Rcpp::as<std::string>(dataset);
-    
-    if ( mat.sexp_type()==0   )
-      throw std::range_error("Data matrix must exsits and mustn't be null");
-    
-    Eigen::MatrixXd matdat = as<Eigen::MatrixXd>(mat);
-    
-    // Create HDF5 file
-    H5File file(filename, H5F_ACC_TRUNC);
-    
-    res = create_HDF5_group(filename, strsubgroup );
-
-    res = write_HDF5_matrix(filename, strsubgroup + "/" + strdataset, as<Rcpp::NumericMatrix>(mat) );
-    
-    file.close();
-    
-  }
-  catch( FileIException error ) { // catch failure caused by the H5File operations
-    error.printErrorStack();
-  }
-  
-
-}
-
-
-
 int Create_hdf5_matrix_unlimited_ptr( H5File* file, const H5std_string dataset , RObject mat)
 {
   try
@@ -1257,6 +1205,156 @@ int Create_hdf5_matrix_unlimited_ptr( H5File* file, const H5std_string dataset ,
   
   
 }
+
+
+//' Create hdf5 data file and write data to it
+//'
+//' Creates a hdf5 file with numerical data matrix,
+//' 
+//' @param filename, character array indicating the name of the file to create
+//' @param folder, character array indicating folder name to put the matrix in hdf5 file
+//' @param mat numerical data matrix
+//' @return none
+//' @export
+// [[Rcpp::export]]
+void Create_HDF5_matrix_file(std::string filename, RObject mat, 
+                            Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue)
+{
+  
+  try
+  {
+    int res;
+    std::string strsubgroup, strdataset;
+    
+    if(group.isNull())  strsubgroup = "INPUT" ;
+    else    strsubgroup = Rcpp::as<std::string>(group);
+    
+    if(dataset.isNull())  strdataset = "A" ;
+    else    strdataset = Rcpp::as<std::string>(dataset);
+    
+    if ( mat.sexp_type()==0   )
+      throw std::range_error("Data matrix must exsits and mustn't be null");
+    
+    //..// Eigen::MatrixXd matdat = as<Eigen::MatrixXd>(mat);
+    
+    // Create HDF5 file
+    H5File file(filename, H5F_ACC_TRUNC);
+    
+    res = create_HDF5_group(filename, strsubgroup );
+
+    
+    if ( mat.isS4() == true)    
+    {
+      res = Create_hdf5_file(filename);
+      res = create_HDF5_group(filename, strsubgroup );
+      
+      write_DelayedArray_to_hdf5(filename, strsubgroup + "/" + strdataset, mat);
+      
+    } else {
+      
+      try{  
+        
+        if ( TYPEOF(mat) == INTSXP ) {
+          res = Create_hdf5_file(filename);
+          res = create_HDF5_group(filename, strsubgroup );
+          write_HDF5_matrix(filename, strsubgroup + "/" + strdataset, Rcpp::as<IntegerMatrix>(mat));
+        } else{
+          res = Create_hdf5_file(filename);
+          res = create_HDF5_group(filename, strsubgroup );
+          write_HDF5_matrix(filename, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(mat));
+        }
+      }
+      catch(std::exception &ex) { }
+    }
+    
+    
+    
+    
+    
+    //..// res = write_HDF5_matrix(filename, strsubgroup + "/" + strdataset, as<Rcpp::NumericMatrix>(mat) );
+    
+    file.close();
+    
+  }
+  catch( FileIException error ) { // catch failure caused by the H5File operations
+    error.printErrorStack();
+  }
+  
+
+}
+
+
+//' Write matrix to existing hdf5 file
+//'
+//' Creates a hdf5 file with numerical data matrix,
+//' 
+//' @param filename, character array indicating the name of the file to create
+//' @param mat numerical data matrix
+//' @param folder, character array indicating folder name to put the matrix in hdf5 file
+//' @param dataset, character array indicating the dataset name that contains the matix data
+//' @return none
+//' @export
+// [[Rcpp::export]]
+void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset )
+{
+    
+  try
+  {
+    int res;
+
+    if( mat.sexp_type()==0   )
+      throw std::range_error("Data matrix must exsits and mustn't be null");
+
+    if(!ResFileExist(filename))
+      throw std::range_error("File not exits, create file before add new dataset");
+
+    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    
+    if(!exists_HDF5_element_ptr(file, group)) 
+      create_HDF5_group_ptr(file, group);
+    
+    file->close();
+
+    if ( mat.isS4() == true)    
+    {
+      res = Create_hdf5_file(filename);
+      res = create_HDF5_group(filename, group );
+      
+      write_DelayedArray_to_hdf5(filename, group + "/" + dataset, mat);
+      
+    } else {
+      
+      try{  
+        
+        if ( TYPEOF(mat) == INTSXP ) {
+          res = Create_hdf5_file(filename);
+          res = create_HDF5_group(filename, group );
+          write_HDF5_matrix(filename, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
+        } else{
+          res = Create_hdf5_file(filename);
+          res = create_HDF5_group(filename, group );
+          write_HDF5_matrix(filename, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
+        }
+      }
+      catch(std::exception &ex) { }
+    }
+    
+   
+    //..// Eigen::MatrixXd matdat = as<Eigen::MatrixXd>(mat);
+    
+    //..// res = write_HDF5_matrix(filename, group + "/" + dataset, as<Rcpp::NumericMatrix>(mat) );
+
+    file->close();
+    
+  }
+  catch( FileIException error ) { // catch failure caused by the H5File operations
+    error.printErrorStack();
+  }
+  
+}
+
+
+
 
 /***R
 

@@ -80,5 +80,6 @@
 
   
   void Create_HDF5_matrix_file(std::string filename, RObject mat,Rcpp::Nullable<std::string> group , Rcpp::Nullable<std::string> dataset );
+  void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset );
 
 #endif
