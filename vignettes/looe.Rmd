@@ -101,8 +101,9 @@ The `Create_HDF5_matrix_file` function implemented in this package creates an hd
 library(rhdf5)
 library(DelayedArray)
 
+set.seed(5234)
 n <- 100
-m <- 20000
+m <- 10000
 A <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
 Ad <- DelayedArray(A)
@@ -119,7 +120,7 @@ Create_HDF5_matrix_file("robjects.hdf5", A, "INPUT", "A")
 The `Create_HDF5_matrix` allows to create a dataset in existing file. We can create the dataset in any group, if group doesn't exists in file, the group is created before append the dataset.
 
 ```{r hdf5AddDataset}
-
+set.seed(5234)
 n <- 50
 m <- 12000
 B <- matrix(rnorm(n*m,mean=3,sd=0.5), n,m)
@@ -130,7 +131,12 @@ Bd <- DelayedArray(B)
 Create_HDF5_matrix(Bd, "delayed.hdf5", "INPUT", "B");
 
 # Create dataframe data with Ad matrix in delayed.hdf5 file at OMIC group
-Create_HDF5_matrix(Ad, "delayed.hdf5", "OMICS", "data")
+set.seed(5234)
+n <- 150000
+m <- 50
+odata <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
+
+Create_HDF5_matrix(odata, "delayed.hdf5", "OMICS", "data")
 
 ```
 
@@ -155,6 +161,7 @@ The \$ operator can be used to access the next group level, this operator reads 
 
 ```{r hdf5Dataset}
 Adata = h5fdelay$OMICS$data
+Adata[1:3,1:6]
 ```
 
 **Close hdf5 file**
@@ -399,7 +406,8 @@ We can show that the implemented version really improves the  R implementation c
 bench <- microbenchmark(
   bdcrossp = bdcrossprod(DA, transposed = TRUE),
   rcrossp = tcrossprod(A),
-  times = 10)
+  times = 1)  # Only DEBUG MODE 
+  # times = 10) # PRODUCTION MODE
 bench
 ```
 
@@ -503,10 +511,12 @@ Notice that:
 - The columns of $U$ are called the left-singular vectors of $A$.
 - The columns of $V$ are called the right-singular vectors of $A$.
 
+## Simple Singular Values Decomposition
 He have implemented the SVD for R matrices and Delayed Array objects in the function `bdSVD()`. The method, so far, only allows SVD of real matrices $A$.  This code illustrate how to perform such computations:
 
 ```{r svd_default}
 # Matrix simulation
+set.seed(413)
 n <- 500
 A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 # Get a Delayed Array object
@@ -532,8 +542,9 @@ all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), Dbsvd$d[1:10] )
 you get the $\sigma_i$, $U$ and $V$ of normalized matrix $A$, if you want to perform the SVD from not normalized matrix $A$ then you have to set the parameter `bcenter = false` and `bscale = false`.
 
 ```{r svd_nonorm}
-bsvd <- bdSVD(A)
-Dbsvd <- bdSVD(DA)
+bsvd <- bdSVD(A, bcenter = FALSE, bscale = FALSE)
+Dbsvd <- bdSVD(DA, bcenter = FALSE, bscale = FALSE)
+
 
 bsvd$d[1:5]
 bsvd$u[1:5,1:5]
@@ -543,6 +554,77 @@ all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), bsvd$d[1:10] )
 all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), Dbsvd$d[1:10] )
   
 ```
+
+## Block Singular Values Decomposition
+
+This method was developed in June 2016 by M. A. Iwen and B. W. Ong. The authors describe it as a distributed and incremental SVD algorithm that is useful for agglomerative data analysis on large networks. The algorithm calculates the singular values and left singular vectors of a matrix A, by first, partitioning it by columns. This creates a set of submatrices of A with the same number of rows, but only some of its columns. After that, the SVD of each of the submatrices is computed. The final step consists of combining the results obtained by merging them again and computing the SVD of the resulting matrix.
+
+<center> ![Flowchart for a two-level hierarchical Block SVD algorithm](imgs/blocksvd.png )</center>
+
+This method is implemented in `bdSVD_hdf5` function, this function works directly on hdf5 data format, loading in memory only the data to perform calculations and saving the results again in the hdf5 file for later use.
+
+We have to indicate the file to work with, the dataset name and the group under the dataset is located :
+
+```{r BlockSVDNorm}
+# Direct from hdf5 data file
+svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data")
+svdh5$d[1:7]
+
+# with R implementation from data in memory
+fprova <- H5Fopen("delayed.hdf5")
+omdata <- fprova$OMICS$data
+h5closeAll()
+
+svd <- svd(scale(omdata))
+svd$d[1:7]
+
+all.equal(svd$d,svdh5$d )
+```
+
+Like in Simple Singular Value Decomposition we can normalize, center or scale data before proceed with SVD decomposition with `bscale` and `bcenter` parameters, by default this parameter are TRUE, data is normalized before SVD decomposition. To proceed with SVD without normalization :
+
+```{r BlockSVDNotNorm}
+# Direct from hdf5 data file
+svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", bcenter = FALSE, bscale = FALSE)
+svdh5$d[1:7]
+
+# with R implementation from data in memory
+svd <- svd(omdata)
+svd$d[1:7]
+
+all.equal(svd$d,svdh5$d )
+```
+
+In the SVD decomposition by blocks we can indicate the number of decomposition levels and number of local SVDs to concatenate at each level with parameters `q` and `k` respectively, by default `q = 1` one level with `k=2`.
+
+```{r BlockSVDk4}
+# Block decomposition with 1 level and 4 local SVDs at each level
+svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", q=1, k=4 )
+svdh5$d[1:7]
+
+# with R implementation from data in memory
+svd <- svd(scale(omdata))
+svd$d[1:7]
+
+all.equal(svd$d,svdh5$d )
+```
+
+We can show performance for distinct SVD functions.
+
+```{r svdperform}
+
+# With and without normalization
+res <- microbenchmark( bdSVD_hdf5("delayed.hdf5",group="OMICS",dataset="data"),
+                       bdSVD_hdf5("delayed.hdf5",group="OMICS",dataset="data",k=4),
+                       bdSVD_hdf5("delayed.hdf5",group="OMICS",dataset="data",q=2,k=4),
+                       svd(scale(omdata)), # Normalized
+                       bdSVD_hdf5("delayed.hdf5",group="OMICS",dataset="data",bcenter=FALSE,bscale=FALSE),
+                       svd(omdata), # Not normalized
+                       times = 3, unit = "s")
+
+print(summary(res)[, c(1:7)],digits=3)
+```
+
 
 
 
@@ -630,9 +712,9 @@ n <- 500
 # number of variables
 p <- 200
 # covariates
-M <- matrix(rnorm(n*p, mean=8, sd=2), nrow=n, ncol=p)
+M <- matrix(rnorm(n*p), nrow=n, ncol=p)
 # outcome (only variables 1, 2 and 5 are different from 0)
-Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5] + rnorm(n, sd=0.1)
+Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5] 
 ```
 
 
@@ -655,7 +737,7 @@ The argument `paral` is required to indicate whether paralell implementation is 
 library(glmnet)
 mod.cv <- cv.glmnet(M, Y)
 mod.glmnet <- glmnet(M, Y, lambda=mod.cv$lambda.min)
-mod.glmnet$beta[1:8,]
+mod.glmnet$beta[1:7,]
 ```
 
 # References

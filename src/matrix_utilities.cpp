@@ -101,25 +101,22 @@ Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, 
   
     if( bc==true && bs==true )  {
       
-      Eigen::VectorXd mean = X.rowwise().mean();
-      Eigen::VectorXd meanc = X.colwise().mean();
-      Eigen::VectorXd std = ((X.colwise() - mean).array().square().rowwise().sum() / (X.rows() - 1)).sqrt();
-      rX = (X.colwise() - mean).array().colwise() / std.array();
+      Eigen::RowVectorXd mean = X.colwise().mean();
+      Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+      rX = (X.rowwise() - mean).array().rowwise() / std.array();
       
     }   else if (bc == true  && bs==false)   {
       
-      Eigen::VectorXd mean = X.rowwise().mean();
-      rX = (X.colwise() - mean);
+      Eigen::RowVectorXd mean = X.colwise().mean();
+      rX = (X.rowwise() - mean);
       
     }  else if ( bc == false && bs == true)   {
       
-      Eigen::VectorXd mean = X.rowwise().mean();
-      Eigen::VectorXd std = (X.array().square().rowwise().sum() / (X.rows() - 1)).sqrt();
-      rX = X.array().colwise() / std.array();
-    }  
+      Eigen::RowVectorXd mean = X.colwise().mean();
+      Eigen::RowVectorXd std = (X.array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+      rX = X.array().rowwise() / std.array();
+    } 
   }
-  
-   
   
   return(rX);
 }

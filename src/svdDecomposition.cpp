@@ -81,17 +81,19 @@ svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale 
 
 
 // Lapack SVD decomposition
-svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X,  bool bcenter, bool bscale )
+svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
 {
   
   svdeig retsvd;
   
   char Schar='S', Nchar='N';
   int info = 0;
-
+  int zero = 0;
+  
   if(bcenter ==true || bscale == true)
     X = RcppNormalize_Data(X, bcenter, bscale);
-
+  
+  
   int m = X.rows();
   int n = X.cols();
   int lda = std::max(1,m);
@@ -100,23 +102,22 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X,  bool bcenter, bool bscale )
   int k = std::min(m,n);
   int lwork;
   
-  if(n>10*m)
+  /*if(n>5*m)
     lwork = std::max(1,5*std::min(m,n));
   else
     lwork = std::max( 1, 4*std::min(m,n)* std::min(m,n) + 7*std::min(m, n) );
+  */
+  lwork = std::max( 5*std::min(m,n)+ std::max(m,n), 9*std::min(m, n) );
   
-  //. Normal .// int lwork = std::max( 1, 4*std::min(m,n)* std::min(m,n) + 7*std::min(m, n) );
-  //. coumnes >> Files .//lwork = std::max(1,5*std::min(m,n));
-  
-  
+
   Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
   Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);
   Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
   Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
 
-  if(n>10*m)
+  /*if(n>5*m)
     dgesvd_( &Schar, &Nchar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
-  else
+  else*/
     dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
 
   
@@ -147,8 +148,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
   std::string strGroupName  = "tmpgroup";
   std::string strPrefix;
   
-  // Rcpp::Rcout<<"FILES I COLUMNES : \n\tFiles : "<<irows<<"\n\tColumnes : "<<icols<<"\n";
-  
+
   CharacterVector strvmatnames = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
   strPrefix = strvmatnames[q-1];
   
@@ -159,6 +159,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     
 
     First_level_SvdBlock_decomposition_hdf5( file, dataset, k, q, nev, bcenter, bscale, irows, icols, threads);
+    
 
     for(int j = 1; j < q; j++) // For each decomposition level : 
     {
@@ -168,7 +169,6 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
 
     // Get dataset names
     StringVector joindata =  get_dataset_names_from_group(file, strGroupName, strPrefix);
-    // Rcpp::Rcout<<"\n Dades a joinar : \n"<<joindata<<"\n";
 
     // 1.- Join matrix and remove parts from file
     std::string strnewdataset = std::string((joindata[0])).substr(0,1);
@@ -180,14 +180,25 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     DataSet datasetlast = file->openDataSet(strGroupName + "/" + strnewdataset);
     IntegerVector dims_out = get_HDF5_dataset_size(datasetlast);
 
-    Eigen::MatrixXd matlast = GetCurrentBlock_hdf5(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
+    Eigen::MatrixXd matlast;
+    if(transp==true)
+      matlast = GetCurrentBlock_hdf5(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
+    else
+      matlast = GetCurrentBlock_hdf5_Original(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
+    
     retsvd = RcppbdSVD_lapack(matlast, false, false);
+    
 
     // 3.- crossprod initial matrix and svdA$u
     IntegerVector dims_out_first = get_HDF5_dataset_size(*dataset);
     // Get initial matrix
     Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, dataset, 0, 0,dims_out_first[0], dims_out_first[1] );
-    Eigen::MatrixXd v = Bblock_matrix_mul(A.transpose(),retsvd.u,128);
+    
+    Eigen::MatrixXd v;
+    if(transp==1)
+      v = Bblock_matrix_mul(A.transpose(),retsvd.u,128);
+    else
+      v = Bblock_matrix_mul(A,retsvd.u,128);
     
     // 4.- resuls / svdA$d
     v = v.array().rowwise()/(retsvd.d).transpose().array();
@@ -247,21 +258,18 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
   DataSet dataset = file.openDataSet(strsubgroup + "/" + strdataset);
 
   // Get dataset dims
-  //..// hsize_t * dims_out = get_HDF5_dataset_size(dataset);
   IntegerVector dims_out = get_HDF5_dataset_size(dataset);
   
   hsize_t offset[2] = {0,0};
   //..// hsize_t count[2] = {as<hsize_t>(dims_out[0]), as<hsize_t>(dims_out[1])};
   hsize_t count[2] = { (unsigned long long)dims_out[0], (unsigned long long)dims_out[1]};
   
-  // Rcpp::Rcout<<"Que ens envia count ... "<<count[0]<<" , "<<count[1]<<"\n";
-  
+
   // In memory computation for small matrices (rows or columns<5000)
   // Block decomposition for big mattrix
   if( std::max(dims_out[0], dims_out[1])<25 )
   {
-    Rcpp::Rcout<<"Small matrix in memory process...\n";
-    
+
     X = GetCurrentBlock_hdf5( &file, &dataset, offset[0], offset[1], count[0], count[1]);
     X.transposeInPlace();
 
@@ -269,15 +277,10 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
 
   }
   else{
-    Rcpp::Rcout<<"Small matrix in file process...\n";
-    
+
     // data stored transposed in hdf5
     int xdim = (unsigned long long)dims_out[1];
     int ydim = (unsigned long long)dims_out[0];
-    
-    // Rcpp::Rcout<<"Valor k : "<<k<<"...\n";
-    //Rcpp::Rcout<<"GO to RcppbdSVD_hdf5_Block...\n";
-    
     
     retsvd = RcppbdSVD_hdf5_Block( &file, &dataset, k, q, nev, bcenter, bscale, xdim, ydim);
   }
@@ -460,17 +463,41 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
 
 
 
-
+//' Block SVD decomposition using an incremental algorithm.
+//'
+//' Singular values and left singular vectors of a real nxp matrix 
+//' @title Block SVD decomposition using an incremental algorithm.
+//' @param x a real nxp matrix in hdf5 file
+//' @param group group in hdf5 data file where dataset is located
+//' @param dataset matrix dataset with data to perform SVD
+//' @param k number of local SVDs to concatenate at each level 
+//' @param q number of levels
+//' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
+//' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+//' @param threads (optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.
+//' @return a list of three components with the singular values and left and right singular vectors of the matrix
+//' @return A List with : 
+//' \itemize{
+//'   \item{"u"}{ eigenvectors of AA^t, mxn and column orthogonal matrix }
+//'   \item{"v"}{ eigenvectors of A^tA, nxn orthogonal matrix }
+//'   \item{"v"}{ singular values, nxn diagonal matrix (non-negative real values) }
+//' }
+//' @examples
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVector> group = R_NilValue, 
-                                Rcpp::Nullable<CharacterVector> dataset = R_NilValue,
-                                Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1, Rcpp::Nullable<int> nev=0,
-                                Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
-                                Rcpp::Nullable<int> threads = R_NilValue)
+                          Rcpp::Nullable<CharacterVector> dataset = R_NilValue,
+                          Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
+                          Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
+                          Rcpp::Nullable<int> threads = R_NilValue)
+  //..// Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVector> group = R_NilValue, 
+  //..//                                Rcpp::Nullable<CharacterVector> dataset = R_NilValue,
+  //..//                                Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1, Rcpp::Nullable<int> nev=0,
+  //..//                                Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
+  //..//                                Rcpp::Nullable<int> threads = R_NilValue)
 {
   
-  int ks, qs, nvs;
+  int ks, qs, nvs = 0;
   bool bcent, bscal;
   CharacterVector strgroup, strdataset;
   std::string filename;
@@ -482,10 +509,6 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
   if(q.isNull())  qs = 1 ;
   else    qs = Rcpp::as<int>(q);
 
-  if(nev.isNull())  nvs = 0 ;
-  else    nvs = Rcpp::as<int>(nev);
-  
-  
   if(bcenter.isNull())  bcent = true ;
   else    bcent = Rcpp::as<bool>(bcenter);
   

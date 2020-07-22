@@ -252,6 +252,7 @@ print(summary(res)[, c(1:7)],digits=3)
 
 looe1$coef[1:10]
 looe3$coef[1:10]
+looe3$coef[abs(looe3$coef)>mean(looe3$coef)]
 looe1$lambda.min
 looe3$lambda.min
 

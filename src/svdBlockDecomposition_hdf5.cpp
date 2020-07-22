@@ -69,7 +69,6 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
 
   int ret = create_HDF5_group_ptr(file, strGroupName);
   
-  
   try{
     
     if(irows > icols) {
@@ -117,11 +116,15 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
 
       count = getSizetoRead(transp, (unsigned long long)(maxsizetoread), icols, irows );
       Eigen::MatrixXd X = GetCurrentBlock_hdf5( file, dataset, offset[0], offset[1], count[0], count[1]);
+      
+      if(transp==false)
+        X.transposeInPlace();
 
+      
       // Normalize data
       if (bcenter==true || bscale==true)
         X = RcppNormalize_Data_hdf5(X, bcenter, bscale, transp, datanormal);
-      
+
 
       //    b) SVD for each block
       retsvd = RcppbdSVD_lapack(X, false, false);
@@ -138,35 +141,64 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
       
       Eigen::MatrixXd restmp = Bblock_matrix_mul_parallel(retsvd.u, d, 128, threads);
       
-      
+
       //    d) Escriure els resultats provisionals en alguna part tmp del fitxer hdf5
       offset[0] = 0; offset[1] = 0;
-      count[0] = restmp.rows();
-      count[1] = restmp.cols();
-      
+      if(transp == 1 )
+      {
+        count[0] = restmp.rows();
+        count[1] = restmp.cols();
+      }else {
+        count[0] = restmp.cols();
+        count[1] = restmp.rows();
+      }
 
       if(i%(M/k) == 0) {
         // If dataset exists --> remove dataset
         if( exists_HDF5_element_ptr(file,strDatasetName))
           remove_HDF5_element_ptr(file,strDatasetName);
+        
+        
         // Create unlimited dataset in hdf5 file
-        create_HDF5_unlimited_dataset_ptr(file, strDatasetName, restmp.rows(), restmp.cols(), "numeric");
+        if( transp == true )
+          create_HDF5_unlimited_dataset_ptr(file, strDatasetName, count[0], count[1], "numeric");
+        else
+          create_HDF5_unlimited_dataset_ptr(file, strDatasetName, restmp.cols(), restmp.rows(), "numeric");
         
       } else {
         // Get write position
         if(maxsizetoread == block_size)
-          offset[1] = (i%(M/k))*block_size;
-        else
-          offset[1] = ( (i%(M/k))-1 )*block_size + maxsizetoread ;
-        
+        {
+          if(transp == 1)
+            offset[1] = (i%(M/k))*block_size;
+          else
+            offset[0] = (i%(M/k))*block_size;
+        }
+        else{
+          if(transp==1)
+            offset[1] = ( (i%(M/k))-1 )*block_size + maxsizetoread ;
+          else
+            offset[0] = ( (i%(M/k))-1 )*block_size + maxsizetoread ;
+        }
       }
       
       DataSet* unlimDataset = new DataSet(file->openDataSet(strDatasetName));
+      
       // Extend dataset before put data
       if((i%(M/k)) != 0)
-        extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, count[1]);
-
-      write_HDF5_matrix_subset_v2(file, unlimDataset, offset, count, stride, block, Rcpp::wrap(restmp)  );  
+      {
+        if(transp == true)
+          extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, count[1]);
+        else
+          extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, count[0]);
+        
+      }
+        
+      
+      if(transp == true)
+        write_HDF5_matrix_subset_v2(file, unlimDataset, offset, count, stride, block, Rcpp::wrap(restmp)  );  
+      else
+        write_HDF5_matrix_subset_v2(file, unlimDataset, offset, count, stride, block, Rcpp::wrap(restmp.transpose())  );  
       unlimDataset->close();
       
     }
@@ -223,7 +255,6 @@ int Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupNam
     
     // Get dataset names
     StringVector joindata =  get_dataset_names_from_group(file, strGroupName, (std::string)strvmatnames[q-1]);
-    // Rcpp::Rcout<<"\n Dades a joinar : \n"<<joindata<<"\n";
   
     M = joindata.size();
     
@@ -289,9 +320,3 @@ int Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupNam
   
 }
 
-
-
-
-/*** R
-timesTwo(42)
-*/
