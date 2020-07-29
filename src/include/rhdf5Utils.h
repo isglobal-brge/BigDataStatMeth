@@ -8,6 +8,7 @@
   #include <sys/stat.h>
   #include "ReadDelayedData.h"
   #include "hdf5_to_Eigen.h"
+  #include <boost/algorithm/string.hpp>
 
   // [[Rcpp::depends(RcppEigen)]]
 
@@ -32,6 +33,7 @@
   
   //..// extern "C" StringVector get_dataset_names_from_group( H5File* file, std::string strgroup);
   extern "C" StringVector get_dataset_names_from_group( H5File* file, std::string strgroup, std::string strprefix);
+  extern "C" StringVector get_dataset_names_from_dataset_ptr( DataSet* dataset);
   extern "C" int join_datasets(H5File* file, std::string strsubgroup, StringVector strinput, std::string strasout);
   
   extern "C" bool remove_HDF5_element_ptr(H5File* file, const H5std_string element);
@@ -52,6 +54,7 @@
     
   extern "C" int create_HDF5_group(H5std_string filename, const H5std_string hiCGroup);
   extern "C" int create_HDF5_group_ptr( H5File* file, const H5std_string mGroup);
+  extern "C" int create_HDF5_groups_ptr( H5File* file, const H5std_string mGroup);
   
   extern "C" int get_HDF5_mean_sd_by_column_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize );
   
@@ -81,5 +84,6 @@
   
   void Create_HDF5_matrix_file(std::string filename, RObject mat,Rcpp::Nullable<std::string> group , Rcpp::Nullable<std::string> dataset );
   void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset );
+  void Remove_HDF5_element(std::string filename, std::string element);
 
 #endif

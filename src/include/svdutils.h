@@ -11,6 +11,7 @@
     Eigen::MatrixXd v;
     bool bokuv;
     bool bokd;
+    std::string hdf5file = "";
   };
 
 

@@ -9,7 +9,7 @@ using namespace std;
 //' 
 //' @param X numerical or Delayed Array matrix
 //' @param w vector with weights
-//' @param op string indicating if operation  "Xw" or "wX"
+//' @param op string indicating if operation  "Xw" , "wX" or "wXw"
 //' @return numerical matrix 
 //' @examples
 //' n <- 100

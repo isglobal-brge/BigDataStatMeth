@@ -34,7 +34,7 @@
 blockmult <- function( a, b, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 5000, mixblock_size = 128, outfile = "./tmp_blockmult.hdf5")
 { 
   
-  res <- .Call('_BigDataStatMeth_Bblockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads, bigmatrix, outfile, mixblock_size)
+  res <- .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads, bigmatrix, outfile, mixblock_size)
 
   if (res$filename == '')
     return (res$matrix)

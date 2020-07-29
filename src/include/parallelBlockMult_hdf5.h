@@ -28,8 +28,16 @@
                                              std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
                                              int mem_block_size, bool bparal, bool browmajor, 
                                              Rcpp::Nullable<int> threads);
-  Rcpp::List Bblockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> block_size, 
+  /*Rcpp::List Bblockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> block_size, 
                              Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads,
-                             Rcpp::Nullable<double> bigmatrix, Rcpp::Nullable<std::string> outfile);
+                             Rcpp::Nullable<double> bigmatrix, Rcpp::Nullable<std::string> outfile);*/
+  
+  Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b, 
+                        Rcpp::Nullable<int> block_size,
+                        Rcpp::Nullable<bool> paral,
+                        Rcpp::Nullable<int> threads,
+                        Rcpp::Nullable<double> bigmatrix,
+                        Rcpp::Nullable<std::string> outfile,
+                        Rcpp::Nullable<double> mixblock_size);
 
 #endif

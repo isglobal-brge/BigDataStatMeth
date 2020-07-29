@@ -2,70 +2,6 @@
 
 // Documentació : http://www.netlib.org/lapack/lawnspdf/lawn129.pdf
 
-/*** MOVED TO hdf5_to_Eigen.cpp
-// Convert array with readed data in rowmajor to colmajor matrix : 
-//    Eigen and R works with ColMajor and hdf5 in RowMajor
-Eigen::MatrixXd RowMajorVector_to_ColMajorMatrix(double* datablock, int countx, int county)
-{
-  Eigen::MatrixXd mdata(countx, county);
-
-  for (size_t i=0; i<countx; i++)
-    for(size_t j=0;j<county;j++)
-      mdata(i,j) = datablock[i*county+j];
-
-  return(mdata);
-}
-
-
-// Read block from hdf5 matrix
-Eigen::MatrixXd GetCurrentBlock_hdf5( H5File* file, DataSet* dataset,
-                                      hsize_t offsetx, hsize_t offsety, 
-                                      hsize_t countx, hsize_t county)
-{
-  
-  IntegerVector offset = IntegerVector::create(offsetx, offsety) ;
-  IntegerVector count = IntegerVector::create(countx, county) ;
-  IntegerVector stride = IntegerVector::create(1, 1) ;
-  IntegerVector block = IntegerVector::create(1, 1) ;
-
-  NumericMatrix data(countx, county);
-  
-  // read_HDF5_matrix_subset(filename, dataset, offset, count, stride, block, REAL(data));
-  read_HDF5_matrix_subset(file, dataset, offset, count, stride, block, REAL(data));
-  
-  Eigen::MatrixXd mat = RowMajorVector_to_ColMajorMatrix(REAL(data), countx, county);
-  
-  return( mat );
-  
-}
-***/
-
-
-
-
-/***
-// Parallel reading
-Eigen::MatrixXd GetCurrentBlock_hdf5_parallel( std::string filename, std::string dataset,
-                                      int offsetx,int offsety, 
-                                      int countx, int county)
-{
-  
-  IntegerVector offset = IntegerVector::create(offsetx, offsety) ;
-  IntegerVector count = IntegerVector::create(countx, county) ;
-  IntegerVector stride = IntegerVector::create(1, 1) ;
-  IntegerVector block = IntegerVector::create(1, 1) ;
-  
-  NumericMatrix data(countx, county);
-  
-  read_HDF5_matrix_subset(filename, dataset, offset, count, stride, block, REAL(data));
-  Eigen::MatrixXd mat = as<Eigen::MatrixXd>(data);
-  return( mat.transpose() );
-  
-}
-***/
-
-
-
 
 // Working with C-matrix in memory
 Eigen::MatrixXd hdf5_block_matrix_mul( IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
@@ -586,7 +522,7 @@ return(C);
 //' Bblockmult(AD,BD,128, TRUE)
 //' @export
 // [[Rcpp::export]]
-Rcpp::List Bblockmult(Rcpp::RObject a, Rcpp::RObject b, 
+Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b, 
                               Rcpp::Nullable<int> block_size = R_NilValue, 
                               Rcpp::Nullable<bool> paral = R_NilValue,
                               Rcpp::Nullable<int> threads = R_NilValue,
@@ -621,7 +557,7 @@ Rcpp::List Bblockmult(Rcpp::RObject a, Rcpp::RObject b,
   RemoveFile(filename);
   
   if( bigmatrix.isNull()) {
-    bigmat = 5000;
+    bigmat = 10000;
   } else {
     bigmat = Rcpp::as<double> (bigmatrix);
   }
@@ -911,7 +847,7 @@ CP1[1:5,1:5]
 
 
 
-results <- microbenchmark( CP1 <- Bblockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 1, paral = FALSE),
+results <- microbenchmark( CP1 <- Bblockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 5000, paral = FALSE),
                            CP1P <- Bblockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 1, outfile = "provilla.hdf5", paral = TRUE, mixblock_size = 256),
                            CP1P1 <- Bblockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 1, outfile = "provilla.hdf5", paral = TRUE, mixblock_size = 128),
                            CM1 <- Bblockmult(t(Ad),Ad, block_size = 1024, paral = FALSE),

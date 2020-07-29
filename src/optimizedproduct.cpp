@@ -38,6 +38,26 @@ Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w)
   return (XtwX);
 }
 
+
+// Compute weighted crossproduct Xw
+Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
+{
+  const int n(X.rows());
+  Eigen::MatrixXd Xw = X * w.array().matrix().asDiagonal();
+  return (Xw);
+}
+
+
+// Compute weighted crossproduct Xw
+Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
+{
+  const int n(X.rows());
+  Eigen::MatrixXd wX = w.array().matrix().asDiagonal()*X;
+  return (wX);
+}
+
+
+
 // Matirx - vector as diagonal matrix Multiplication
 Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
 {
@@ -241,6 +261,10 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
     return(xwxt(A,W)) ;
   }else if (op == "xtwx") {
     return(xtwx(A,W));
+  }else if (op == "Xw") {
+    return(Xw(A,W));
+  }else if (op == "wX") {
+    return(wX(A,W));
   } else
   {
     throw("Invalid option (valid options : xtwx or xwxt)");
@@ -281,8 +305,8 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 //' bdwproduct(DX, dw,"xtwx")
 //' bdwproduct(DX, dw,"xwxt")
 //' 
-//' @export
-*/ 
+//' 
+//' @export*/ 
 // [[Rcpp::export]]
 Eigen::MatrixXd bdXwd(Rcpp::RObject X, Rcpp::RObject w, std::string op, 
                       Rcpp::Nullable<bool> bparal  = R_NilValue,

@@ -1,45 +1,5 @@
 #include "include/svdBlockDecomposition_hdf5.h"
 
-
-/***
- * Que haurem de fer per fer la descomposició llegint des del fitxer ??
- * 
- * nota : al escriure les dades al fitxer implementar alguna cosa que guardi la mida de la matriu sense haver-la de llegir
- *        només accedint als atributs i prou.
- *        
- * Llegir blocs de tamany x (quin?, fer proves per decidir-ho.... matriu/4 ; matriu/8; ... )
- * 
- * Desprès  implementar : 
- * https://scicomp.stackexchange.com/questions/26562/block-matrix-svd-and-rank-bounds
- * 
- *            A     C
- *      M = 
- *            B     D
- *  
- *      Fem descomposició (SVD) per blocs i tenim : 
- *  
- *            Ua  0   Uc  0       Sa    0     0     0           Va'   0
- *        M =                 x   0     Sb    0     0     x     Vb'   0
- *            0   Ub  0  Ud       0     0     Sc    0           0     Vc'
- *                                0     0     0     Sd          0     Vd'
- *                  X                       S                       Y'
- * 
- *        Calculem QR factors : 
- *            X = Qx * Rx            Y = Qy * Ry
- *    
- *        A partir de la matriu W = Rx * S * Ry'    y obtenint SVD    W = U_w * S * V_w'
- *        
- *            M = Qx * W * Qy' = Qx*Uw * S * Vw'*Qy'  = USV'
- *
- *        Finalment obtenim U i V :
- *        
- *            U = Qx*Uw  ;  S = S   ;   Vt = Vw'*Qy'
- */
-
-
-// FALTA IMPLEMENTAR-HO --> 1r VULL IMPLEMENTAR EL SVD DIRECTAMENT DES DE FITXER PERÒ
-//    UTILITZANT LA FUNCIÓ QUE JA TINC FETA.... ES A DIR, LA IMPLEMENTACIÓ SENSE BLOCS.
-
 svdeig bdSVD_hdf5(Rcpp::RObject X)
 {
   

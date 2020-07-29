@@ -186,13 +186,22 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     else
       matlast = GetCurrentBlock_hdf5_Original(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
     
+    //..// Rcpp::Rcout<< "\n Dimensions matlast : \n\t"<<matlast.cols()<<" x "<<matlast.rows()<<"\n";
+    
     retsvd = RcppbdSVD_lapack(matlast, false, false);
     
-
+    // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
+    // Create structure and write d 
+    StringVector name = get_dataset_names_from_dataset_ptr(dataset);
+    create_HDF5_groups_ptr(file,"SVD/"+ name[0]);
+    write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/d", wrap(retsvd.d));
+    
     // 3.- crossprod initial matrix and svdA$u
     IntegerVector dims_out_first = get_HDF5_dataset_size(*dataset);
     // Get initial matrix
     Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, dataset, 0, 0,dims_out_first[0], dims_out_first[1] );
+    
+    Rcpp::Rcout<< "\n Dimensions A : \n\t"<<A.cols()<<" x "<<A.rows()<<"\n Dimensions u : "<<(retsvd.u).rows()<<" x "<< (retsvd.v).cols()<<"\n";
     
     Eigen::MatrixXd v;
     if(transp==1)
@@ -203,18 +212,23 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     // 4.- resuls / svdA$d
     v = v.array().rowwise()/(retsvd.d).transpose().array();
     
-    // 5.- Retornem resultat : 
-    //        --> Si transposta : u=v i v=u
-    //        --> Sino : u=u i v=v
-    //    --> Senzillament fer l'assignació final abans de retornar (easy)
+    // 5.- Get u and v : 
+    //        --> If trans : u=v i v=u  
     
     if (transp == true)
     {
       retsvd.v = retsvd.u;
       retsvd.u = v;
+      // write u and v
+      write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(v));
+      write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.u));
+      
     } else
     {
       retsvd.v = v;
+      // write u and v
+      write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.u));
+      write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(v));
     }
     
   }catch(std::exception &ex) {
@@ -223,12 +237,6 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
   
   return retsvd;
 }
-
-
-
-
-
-
 
 
 
@@ -490,50 +498,62 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
                           Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
                           Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
                           Rcpp::Nullable<int> threads = R_NilValue)
-  //..// Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVector> group = R_NilValue, 
-  //..//                                Rcpp::Nullable<CharacterVector> dataset = R_NilValue,
-  //..//                                Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1, Rcpp::Nullable<int> nev=0,
-  //..//                                Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
-  //..//                                Rcpp::Nullable<int> threads = R_NilValue)
 {
   
-  int ks, qs, nvs = 0;
-  bool bcent, bscal;
-  CharacterVector strgroup, strdataset;
   std::string filename;
-  // int ithreads;
-  
-  if(k.isNull())  ks = 2 ;
-  else    ks = Rcpp::as<int>(k);
-  
-  if(q.isNull())  qs = 1 ;
-  else    qs = Rcpp::as<int>(q);
-
-  if(bcenter.isNull())  bcent = true ;
-  else    bcent = Rcpp::as<bool>(bcenter);
-  
-  if(bscale.isNull())  bscal = true ;
-  else    bscal = Rcpp::as<bool>(bscale);
-  
-  if(group.isNull())  strgroup = "" ;
-  else    strgroup = Rcpp::as<std::string>(group);
-  
-  if(dataset.isNull())  strdataset = "";
-  else    strdataset = Rcpp::as<std::string>(dataset);
-  
-  if(is<CharacterVector>(x))
-  {
-    filename = as<std::string>(x);
-  }
-  
-  // Rcpp::Rcout<<"Abans de cridar el procés del svd... k val : "<<ks<<"\n";
   svdeig retsvd;
   
-  retsvd = RcppbdSVD_hdf5( filename, as<std::string>(strgroup), as<std::string>(strdataset), ks, qs, nvs, bcent, bscal );
-  
+  try {
+    
+    int ks, qs, nvs = 0;
+    bool bcent, bscal;
+    CharacterVector strgroup, strdataset;
+    
+    // int ithreads;
+    
+    if(k.isNull())  ks = 2 ;
+    else    ks = Rcpp::as<int>(k);
+    
+    if(q.isNull())  qs = 1 ;
+    else    qs = Rcpp::as<int>(q);
+    
+    if(bcenter.isNull())  bcent = true ;
+    else    bcent = Rcpp::as<bool>(bcenter);
+    
+    if(bscale.isNull())  bscal = true ;
+    else    bscal = Rcpp::as<bool>(bscale);
+    
+    if(group.isNull())  strgroup = "" ;
+    else    strgroup = Rcpp::as<std::string>(group);
+    
+    if(dataset.isNull())  strdataset = "";
+    else    strdataset = Rcpp::as<std::string>(dataset);
+    
+    if(is<CharacterVector>(x))
+      filename = as<std::string>(x);
+    else
+      throw std::invalid_argument("File name must be character string");
+      
+      // throw std::runtime_error("unacceptable matrix type");
+      
+      // Rcpp::Rcout<<"Abans de cridar el procés del svd... k val : "<<ks<<"\n";
+      
+    
+    retsvd = RcppbdSVD_hdf5( filename, as<std::string>(strgroup), as<std::string>(strdataset), ks, qs, nvs, bcent, bscal );
+    
+    
+  }catch(std::exception &ex) {
+    Rcpp::Rcout<< ex.what();
+    return List::create(Named("d") = R_NilValue,
+                        Named("u") = R_NilValue,
+                        Named("v") = R_NilValue,
+                        Named("file") = R_NilValue);
+  }
+
   return List::create(Named("d") = retsvd.d,
                       Named("u") = retsvd.u,
-                      Named("v") = retsvd.v);
+                      Named("v") = retsvd.v,
+                      Named("file") = filename);
   
 }
 
@@ -582,9 +602,9 @@ setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDa
 # Rows --> Individuals  (small)
 # Cols --> Variables (SNP's or ...) (very big)
 
-dades <- BigDataStatMeth::prova_bdSVD_hdf5("tmp_blockmult.hdf5", group = "INPUT", dataset = "A", k=4, q=1) 
+dades <- BigDataStatMeth::bdSVD_hdf5("tmp_blockmult.hdf5", group = "INPUT", dataset = "A", k=4, q=1) 
 
-
+dades$file
 fprova <- H5Fopen("tmp_blockmult.hdf5")
 fprova
 fprova$INPUT$A[1:25,1:25]
@@ -655,6 +675,7 @@ A <- matrix(c(5,0,2,5,0,5,-1,-1,2,-1,5,-1,5,-1,-1,5),byrow = TRUE, nrow = 4)
 A <- Posdef(n=100, ev=1:100)
 AD <- DelayedArray(A)
 invCpp <- bdInvCholesky_LDL_eigen(A); invCpp[1:5,1:5]
+bdInvCholesky(A)
 invR <- solve(A); invR[1:5,1:5]
 invP <- inversechol_par(A);invP[1:5,1:5]
 
@@ -760,5 +781,52 @@ stopifnot(all.equal(solve(Z),bdInvCholesky_LDL(Z)$v ))
   
   bdSVD(A)$u
   
+  
+  A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
+  bdInvCholesky(A)
+  solve(A)
+  
+  
+  n <- 1000
+  A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+
+  res <- microbenchmark( bdsvd <- bdInvCholesky(A), # No normalitza la matriu
+                         Rsolve <- solve(A), # No normalitza la matriu
+                         times = 5, unit = "s")
+  
+  print(summary(res)[, c(1:7)],digits=3)
+
+  # Generate a positive definite matrix
+  Posdef <- function (n, ev = runif(n, 0, 10)) 
+  {
+    Z <- matrix(ncol=n, rnorm(n^2))
+    decomp <- qr(Z)
+    Q <- qr.Q(decomp) 
+    R <- qr.R(decomp)
+    d <- diag(R)
+    ph <- d / abs(d)
+    O <- Q %*% diag(ph)
+    Z <- t(O) %*% diag(ev) %*% O
+    return(Z)
+  }
+  
+  A <- Posdef(n = 500, ev = 1:500)
+  DA <- DelayedArray(A)
+  
+  A[1:10,1:10]
+  
+  invchol <- bdInvCholesky(A)
+  Dinvchol <- bdInvCholesky(DA)
+  all.equal(invchol,Dinvchol)
+  
+  
+  invchol[1:10,1:10]
+  solve(A)[1:10,1:10]
+  
+  all.equal(Dinvchol,solve(A))
+  
+  round(invchol[1:5,1:5],8)
+  
+    
   
 */

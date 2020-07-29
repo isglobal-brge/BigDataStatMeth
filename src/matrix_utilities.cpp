@@ -188,6 +188,15 @@ Rcpp::RObject Normalize_Data ( Rcpp::RObject & x,
 {
   Eigen::MatrixXd X;
   bool bc, bs;
+  CharacterVector svrows, svrcols;
+  
+  List dimnames = x.attr( "dimnames" );
+  
+  if(dimnames.size()>0 ) {
+    svrows= dimnames[0];
+    svrcols = dimnames[1];
+  }
+  
   
   // Read DelayedArray's x and b
   if ( x.isS4() == true)    
@@ -234,7 +243,16 @@ Rcpp::RObject Normalize_Data ( Rcpp::RObject & x,
     X = X.array().rowwise() / std.array();
   } 
 
-  return Rcpp::wrap(X);
+  NumericMatrix XR = wrap(X);
+  remove("X");
+  
+  if(dimnames.size()>0 )  {
+    rownames(XR) = as<CharacterVector>(dimnames[0]);
+    colnames(XR) = as<CharacterVector>(dimnames[1]);  
+  }
+  
+  
+  return XR;
 }
 
 

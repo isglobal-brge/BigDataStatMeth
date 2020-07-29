@@ -133,6 +133,48 @@ extern "C" {
     
   }
   
+  
+  
+  // Get dataset name from pointer dataset
+  StringVector get_dataset_names_from_dataset_ptr( DataSet* dataset)
+  {
+    
+    StringVector datasetnames;
+    
+    try{
+      
+      Exception::dontPrint();
+      
+      std::string s = dataset->getObjName();
+      std::size_t found = s.rfind("/");
+      
+      if (found!=std::string::npos)
+        s.replace (0,(found+1),"");
+      
+      datasetnames.push_back(s);
+
+    } // end of try block
+    catch( FileIException error ) {
+      error.printErrorStack();
+      return -1;
+    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+      error.printErrorStack();
+      return -1;
+    } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+      error.printErrorStack();
+      return -1;
+    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+      error.printErrorStack();
+      return -1;
+    }
+    
+    return(datasetnames);
+    
+  }
+  
+  
+  
+  
   // Join multiple datasets in one dataset in the same group
   int join_datasets(H5File* file, std::string strsubgroup, StringVector strinput, std::string strasout)
   {
@@ -265,6 +307,43 @@ extern "C" {
     return bexists;
   }
   
+  
+  // Create multiple group in hdf5 data file, groups must be separated by "/"
+  int create_HDF5_groups_ptr( H5File* file, const H5std_string mGroup)
+  {
+    try
+    {
+      Exception::dontPrint();
+      
+      std::string strgroup = mGroup;
+      std::string results = "";
+      vector<string> result; 
+      
+      boost::split(result, mGroup, boost::is_any_of("/")); 
+      
+      for (int i = 0; i < result.size(); i++) {
+        if(!pathExists( file->getId(), results + result[i])) 
+          file->createGroup(results + result[i]);
+        
+        results = result[i] + "/";
+      }
+        
+      
+    } // end of try block
+    catch(FileIException error) { // catch failure caused by the H5File operations
+      error.printErrorStack();
+      return -1;
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      error.printErrorStack();
+      return -1;
+    }
+    
+    return 0;
+  }
+  
+  
+  
+  
   bool remove_HDF5_element_ptr(H5File* file, const H5std_string element)
   {
     
@@ -332,61 +411,7 @@ extern "C" {
     
   }
   
-  
-  
-  /*
-  bool exists_HDF5_group_ptr(H5File* file, const H5std_string group)
-  {
-    
-    try
-    {
-      Exception::dontPrint();
-      
-      bool bexists = false;
-      // search group in file
-      if(pathExists( file->getId(), group)) 
-        bexists = true;
-      
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
-      return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
-      return -1;
-    }
-    return bexists;
-  }
-  
-  
-  
-  bool remove_HDF5_group_ptr(H5File* file, const H5std_string group)
-  {
-    try
-    {
-      Exception::dontPrint();
-     
-      bool bremok = true;
-      
-      int result = H5Ldelete(file->getId(), group.data(), H5P_DEFAULT);
-      if(result<0)
-        bremok = false;
-      
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
-      return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
-      return -1;
-    }
-    
-    return(bremok);
-    
-  }
-  */
-  
-  
+
   
   
   /* Create empty dataset in hdf5 file */
@@ -660,9 +685,10 @@ extern "C" {
     {
       // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
       Exception::dontPrint();
-      
+
       // Create the data space for the dataset.
       std::vector<int> dims;
+      
       if(is<NumericMatrix>(DatasetValues)) 
       {
         
@@ -680,10 +706,9 @@ extern "C" {
         
         dataset.close();
         dataspace.close();
-        
-        
+
       } 
-      else if( Rcpp::is<IntegerMatrix>(DatasetValues)) 
+      else if( Rcpp::is<IntegerMatrix>(DatasetValues) ) 
       {
         hsize_t dims[2];
         dims[0] = as<IntegerMatrix>(DatasetValues).rows();
@@ -698,6 +723,47 @@ extern "C" {
         
         dataset.close();
         dataspace.close();
+      } else if(is<NumericVector>(DatasetValues) || is<IntegerVector>(DatasetValues)) 
+      {
+        
+        hsize_t vectorsize;
+        
+        if(is<IntegerVector>(DatasetValues) || is<LogicalVector>(DatasetValues)) 
+          vectorsize = as<IntegerVector>(DatasetValues).length();
+        else if (is<NumericVector>(DatasetValues))
+          vectorsize = as<NumericVector>(DatasetValues).length();
+        else 
+          vectorsize = 1;
+        
+        hsize_t dims[] = {vectorsize};
+        DataSpace dataspace(RANK1, dims);
+        
+        
+        if(is<IntegerVector>(DatasetValues) || is<LogicalVector>(DatasetValues) ) 
+        {
+          int vectHiCValues[dims[0]];
+          for(int i=0;i<dims[0]; i++)
+            vectHiCValues[i] = as<IntegerVector>(DatasetValues)(i);
+          
+          DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_INT, dataspace);
+          dataset = file->openDataSet(CDatasetName);
+          dataset.write( vectHiCValues, PredType::NATIVE_INT);
+          dataspace.close();
+          dataset.close();
+        } 
+        else if(is<NumericVector>(DatasetValues) ) 
+        {
+          double vectValues[dims[0]];
+          for(int i=0;i<dims[0]; i++)
+            vectValues[i] = as<NumericVector>(DatasetValues)(i);
+          
+          DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
+          dataset = file->openDataSet(CDatasetName);
+          dataset.write(vectValues, PredType::NATIVE_DOUBLE);
+          dataspace.close();
+          dataset.close();
+        } 
+
       } 
       
     } 
@@ -717,12 +783,7 @@ extern "C" {
 
   
   
-  /*
-  int read_HDF5_matrix_subset(H5File* file, DataSet* dataset, 
-                              IntegerVector ivoffset, IntegerVector ivcount,
-                              IntegerVector ivstride, IntegerVector ivblock,
-                              double* rdatablock);
-  */
+
   
 
   int write_HDF5_matrix_subset_v2( H5File* file, DataSet* dataset,
@@ -1267,10 +1328,7 @@ void Create_HDF5_matrix_file(std::string filename, RObject mat,
       catch(std::exception &ex) { }
     }
     
-    
-    
-    
-    
+     
     //..// res = write_HDF5_matrix(filename, strsubgroup + "/" + strdataset, as<Rcpp::NumericMatrix>(mat) );
     
     file.close();
@@ -1352,6 +1410,50 @@ void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, st
   }
   
 }
+
+
+
+
+
+  
+//' Remove element group or dataset from  hdf5 file
+//'
+//' Remove group or dataset from  hdf5 file
+//' 
+//' @param filename, character array indicating the name of the file to create
+//' @param path to element, character array indicating the complete route to the element to be removed (folder or dataset). 
+//' @return none
+//' @export
+// [[Rcpp::export]]
+void Remove_HDF5_element(std::string filename, std::string element)
+{
+  
+  try
+  {
+    int res;
+    
+    if(!ResFileExist(filename))
+      throw std::range_error("File not exits, create file before add new dataset");
+    
+    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    
+    if(!exists_HDF5_element_ptr(file, element)) {
+      file->close();
+      throw std::range_error("Element not exits");
+    } else{
+      remove_HDF5_element_ptr(file, element);
+    }
+      
+    file->close();
+    
+  }
+  catch( FileIException error ) { // catch failure caused by the H5File operations
+    error.printErrorStack();
+  }
+  
+}
+  
+  
 
 
 

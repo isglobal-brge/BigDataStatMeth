@@ -36,15 +36,13 @@ if(file.exists('robjects.hdf5'))
 
 ```{r setup, include = FALSE}
 library(BiocStyle)
-knitr::opts_chunk$set(collapse = TRUE, comment = "", 
-                      cache=TRUE, message = FALSE
-                     )
+knitr::opts_chunk$set(collapse = TRUE, comment = "", cache=TRUE, message = FALSE, width = 180)
 ```
-
+<!--
 ```{r r_setup, include = FALSE}
 options(width = 180)
 ```
-
+-->
 # Prerequisites
 
 The package requires other `Bioconductor` packages to be installed. These include: `beachmat`, `HDF5Array`,
@@ -63,6 +61,7 @@ First, let us start by loading the required packages to describe the main capabi
 library(BigDataStatMeth)
 library(DelayedArray)
 library(rhdf5)
+library(DT)
 ```
 
 These other packages are required to reproduce this vignette
@@ -89,7 +88,10 @@ HDF5 file structure include only *two major types of object*:
 
 This results in a truly hierarchical, filesystem-like data format
 
-<center> ![hierarchical structure](imgs/hdf5_squema.jpg)</center>
+```{r hdf5Img, fig.align = 'center', fig.cap = "HDF5 hierarchical structure", echo=FALSE}
+knitr::include_graphics("imgs/hdf5_squema.jpg")
+```
+
 
 ## Basics in rhdf5
 
@@ -179,7 +181,7 @@ h5fr = H5Fopen("robjects.hdf5")
 h5closeAll()
 ```
 
-More information about working with hdf5 files in r [rhdf5 - HDF5 interface for R](https://bioconductor.org/packages/release/bioc/vignettes/rhdf5/inst/doc/rhdf5.html)
+More information about working with hdf5 files in r ![rhdf5 - HDF5 interface for R](https://bioconductor.org/packages/release/bioc/vignettes/rhdf5/inst/doc/rhdf5.html)
 
 # Matrix Multiplication
 
@@ -345,7 +347,7 @@ bdclose(AxBBig3000)
 
 Here, we compare the performace of the block method with the different options. 
 
-```{r benchmark2}
+```{r benchmark2, cache=TRUE}
 bench1 <- microbenchmark(
   noblockParal = blockmult(Abig, Bbig, paral = TRUE),
   blockParalfile = blockmult(Abig, Bbig, block_size = 256, paral=TRUE),
@@ -489,7 +491,7 @@ round(invchol[1:5,1:5],8)
 ```
 
 We can check whether this function returns the expected values obtained with the standard R function `solve`:
-```
+```{r invCholsequal }
 all.equal(Dinvchol, solve(A))
 ```
 
@@ -559,7 +561,9 @@ all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), Dbsvd$d[1:10] )
 
 This method was developed in June 2016 by M. A. Iwen and B. W. Ong. The authors describe it as a distributed and incremental SVD algorithm that is useful for agglomerative data analysis on large networks. The algorithm calculates the singular values and left singular vectors of a matrix A, by first, partitioning it by columns. This creates a set of submatrices of A with the same number of rows, but only some of its columns. After that, the SVD of each of the submatrices is computed. The final step consists of combining the results obtained by merging them again and computing the SVD of the resulting matrix.
 
-<center> ![Flowchart for a two-level hierarchical Block SVD algorithm](imgs/blocksvd.png )</center>
+```{r BSVDImg, fig.align = 'center', fig.cap = "Flowchart for a two-level hierarchical Block SVD algorithm", echo=FALSE}
+knitr::include_graphics("imgs/blocksvd.png")
+```
 
 This method is implemented in `bdSVD_hdf5` function, this function works directly on hdf5 data format, loading in memory only the data to perform calculations and saving the results again in the hdf5 file for later use.
 
@@ -611,20 +615,45 @@ all.equal(svd$d,svdh5$d )
 
 We can show performance for distinct SVD functions.
 
-```{r svdperform}
+SVD decomposition with normalized data and different parameters executed in memmory and hdf5 files with functions from R base library and BigDataStatMeth library :
 
-# With and without normalization
-res <- microbenchmark( bdSVD_hdf5("delayed.hdf5",group="OMICS",dataset="data"),
-                       bdSVD_hdf5("delayed.hdf5",group="OMICS",dataset="data",k=4),
-                       bdSVD_hdf5("delayed.hdf5",group="OMICS",dataset="data",q=2,k=4),
-                       svd(scale(omdata)), # Normalized
-                       bdSVD_hdf5("delayed.hdf5",group="OMICS",dataset="data",bcenter=FALSE,bscale=FALSE),
-                       svd(omdata), # Not normalized
+```{r svdperform, cache=TRUE}
+bdSVD_hdf5_Normalized_k2q1 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data')"
+bdSVD_hdf5_Normalized_k4q1 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4)"
+bdSVD_hdf5_Normalized_k4q2 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4)"
+bdSVD_memory_Normalized <- 'bdSVD_lapack(omdata)'
+svd_R_memory_Normalized <- 'svd(scale(omdata))'
+
+# With normalization process
+res <- microbenchmark( eval(parse(text=bdSVD_hdf5_Normalized_k2q1)),
+                       eval(parse(text=bdSVD_hdf5_Normalized_k4q1)),
+                       eval(parse(text=bdSVD_hdf5_Normalized_k4q2)),
+                       eval(parse(text=bdSVD_memory_Normalized)),
+                       eval(parse(text=svd_R_memory_Normalized)),
                        times = 3, unit = "s")
 
 print(summary(res)[, c(1:7)],digits=3)
 ```
 
+SVD decomposition with not normalized data and different parameters executed in memmory and hdf5 files with functions from R base library and BigDataStatMeth library :
+
+```{r svdperform2, cache=TRUE}
+bdSVD_hdf5_Not_Normalized_k2q1 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',bcenter=FALSE,bscale=FALSE)"
+bdSVD_hdf5_Not_Normalized_k4q1 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4,bcenter=FALSE,bscale=FALSE)"
+bdSVD_hdf5_Not_Normalized_k4q2 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4,bcenter=FALSE,bscale=FALSE)"
+bdSVD_memory_Not_Normalized <- 'bdSVD_lapack(omdata, bcenter = TRUE, bscale = TRUE)'
+svd_R_memory_Not_Normalized <- 'svd(omdata)'
+
+# Without normalization process
+res <- microbenchmark( eval(parse(text=bdSVD_hdf5_Not_Normalized_k2q1)),
+                       eval(parse(text=bdSVD_hdf5_Not_Normalized_k4q1)),
+                       eval(parse(text=bdSVD_hdf5_Not_Normalized_k4q2)),
+                       eval(parse(text=bdSVD_memory_Not_Normalized)),
+                       eval(parse(text=svd_R_memory_Not_Normalized)),
+                       times = 3, unit = "s")
+
+print(summary(res)[, c(1:7)],digits=3)
+```
 
 
 
