@@ -74,6 +74,10 @@
                                              IntegerVector ivstride, IntegerVector ivblock,
                                              RObject DatasetValues);
   
+  extern "C" int write_hdf5_string_vector(H5File* file, std::string datasetname, StringVector DatasetValues);
+  extern "C" StringVector get_hdf5_matrix_dimnames(H5File* file, std::string datasetname, int idim );
+  extern "C" int write_hdf5_matrix_dimnames(H5File* file, std::string datasetname, StringVector rownames, StringVector colnames);
+  
   extern "C" int read_HDF5_matrix_subset(H5File* file, DataSet* dataset,
                                          IntegerVector ivoffset, IntegerVector ivcount,
                                          IntegerVector ivstride, IntegerVector ivblock,
