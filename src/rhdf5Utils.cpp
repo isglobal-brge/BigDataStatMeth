@@ -1002,13 +1002,13 @@ extern "C" {
         // Create the memory datatype.
         H5::CompType mtype(sizeof(name));
         mtype.insertMember("chr", HOFFSET(name, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
-        
+
         // Create the dataset.
         DataSet* dataset;
         dataset = new DataSet(file->createDataSet(datasetname, mtype, dataspace));
         
         dataset->write(names_list, mtype);
-        
+
         // Release resources
         delete dataset;
         
@@ -1046,7 +1046,7 @@ extern "C" {
    *
    *******/
   // Read dimnames from Hdf5 vector dataset 
-  StringVector get_hdf5_matrix_dimnames(H5File* file, std::string datasetname, int idim )
+  StringVector get_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string datasetname, int idim )
   {
     StringVector dimnames;
     
@@ -1099,21 +1099,24 @@ extern "C" {
   
   
   // Write dimnames from Matrix RObjects to hdf5 data file 
-  int write_hdf5_matrix_dimnames(H5File* file, std::string datasetname, StringVector rownames, StringVector colnames )
+  int write_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string datasetname, StringVector rownames, StringVector colnames )
   {
     
     try{
       
       Exception::dontPrint();
       
-      std::string strGroup = "." + datasetname + "_dimnames";
+      std::string strGroup = groupname + "/." + datasetname + "_dimnames";
       
       // Add rownames
-      create_HDF5_group_ptr(file, strGroup);
+      create_HDF5_groups_ptr(file, strGroup);
+      
+      //..// create_HDF5_group_ptr(file, strGroup);
       if( rownames.length()>1 )
         write_hdf5_string_vector(file, strGroup + "/1" , rownames);
       else
         Rcpp::Rcout<<"Warning no rownames to save";
+      
       
       // Add colnames
       if( colnames.length()>1 )
@@ -1450,23 +1453,22 @@ void Create_HDF5_matrix_file(std::string filename, RObject mat,
       }
       catch(std::exception &ex) { }
     }
-    
-    
-    Rcpp::Rcout<< "\nDimnames Size val : "<<dimnames.size()<<"\n";
-    
+
     // Write dimnaes from RObject to hdf5 data file
     if(dimnames.size()>0 ) {
       svrows= dimnames[0];
       svrcols = dimnames[1];
       
-      write_hdf5_matrix_dimnames(&file, strdataset, svrows, svrcols );
+      write_hdf5_matrix_dimnames(&file, strsubgroup, strdataset, svrows, svrcols );
     }
     
+
     // Read dimnames and colnames from hdf5 data file (working ok)
     //..// StringVector rownames,colnames;
     //..// rownames = get_hdf5_matrix_dimnames(&file, strdataset, 1);
-    //..// colnames = get_hdf5_matrix_dimnames(&file, strdataset, 2);
-    
+    //..// colnames = get_hdf5_matrix_dimnames(&file, strsubgroup, strdataset, 2);
+     
+
     file.close();
     
   }
@@ -1538,20 +1540,14 @@ void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, st
     
     // Write dimnames to dimnames datasets in hdf5 file
     List dimnames = mat.attr( "dimnames" );
-    
-    Rcpp::Rcout<< "\nDimnames Size val : "<<dimnames.size()<<"\n";
-    
+
     if(dimnames.size()>0 ) {
       svrows= dimnames[0];
       svrcols = dimnames[1];
       
-      Rcpp::Rcout<< "\Apaño val : \n\t"<<svrcols<<"\n";
-      
-      write_hdf5_matrix_dimnames(file, dataset, svrows, svrcols );
+      write_hdf5_matrix_dimnames(file, group, dataset, svrows, svrcols );
     }
-    
-    
-   
+
     //..// Eigen::MatrixXd matdat = as<Eigen::MatrixXd>(mat);
     
     //..// res = write_HDF5_matrix(filename, group + "/" + dataset, as<Rcpp::NumericMatrix>(mat) );
@@ -1610,11 +1606,16 @@ void Remove_HDF5_element(std::string filename, std::string element)
   
   
   
-
+/*** TODO : 
+ * Write slots
+ *  Slot : path
+ *  Objects ? Matrixs inside file??
+ *  Size : Size of each object
+ *  Dimnames ?? Write dimnames ??
+ *  
+ * Write all data inside a list for each object ??!!!
+*/
   
-
-
-
 
 /***R
 
@@ -1650,58 +1651,5 @@ res <- microbenchmark( svdh5q1k2 <- bdSVD_hdf5("prova.hdf5",group="INPUT",datase
                        times = 3, unit = "s")
 
 print(summary(res)[, c(1:7)],digits=3)
-
-
-svdh5q1k2N <- bdSVD_hdf5("tmp_blockmult.hdf5",group="INPUT",dataset="A",bcenter=FALSE,bscale=FALSE)
-svdh5q1k2N <- bdSVD_hdf5("tmp_blockmult.hdf5",group="INPUT",dataset="A",bcenter=TRUE,bscale=TRUE)
-svdh5q1k2N$d
-svdh5q1k2N$u[1:5,1:5]
-
-svd(A)$d
-
-svd(matrix(c(1,2,3,4,5,6,7,8,9,10,11,12),ncol = 4))
-
-AN <- svd(scale(A))
-AN$d
-
-#
-
-A[1:5,1:5]
-mA <- apply(A, 2,mean);mA
-sdA <- apply(A, 2,sd);sdA
-
-
-
-
-svdh5q1k2N <- bdSVD_hdf5("tmp_blockmult.hdf5",group="INPUT",dataset="A",bcenter=TRUE,bscale=TRUE)
-svdA <- svd(scale(A))
-svdh5q1k2N$d
-svdA$d
-
-
-ll <- bdSVD_lapack(A)
-bdSVD(A)$d
-
-
-ll$d
-svdA$d
-svdh5q1k2N$d
-
-ll$u[1:5,1:5]
-svdA$u[1:5,1:5]
-svdh5q1k2N$u[1:5,1:5]
-
-ll$v[1:5,1:5]
-svdA$v[1:5,1:5]
-svdh5q1k2N$v[1:5,1:5]
-
-
-A
-Normalize_Data(A, bcenter = TRUE, bscale = FALSE)
-Normalize_Data(A, bcenter = FALSE, bscale = TRUE)
-mean(A[,1])
-
-A1 <- A[,1]-mean(A[,1])
-A2 <- A[,1]/sd(A[,1])
 
 */
