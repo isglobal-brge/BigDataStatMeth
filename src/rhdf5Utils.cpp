@@ -1459,22 +1459,13 @@ void Create_HDF5_matrix_file(std::string filename, RObject mat,
       svrows= dimnames[0];
       svrcols = dimnames[1];
       
-      Rcpp::Rcout<< "\nApaño val : \n\t"<<svrcols<<"\n";
-      
       write_hdf5_matrix_dimnames(&file, strdataset, svrows, svrcols );
     }
     
-    Rcpp::Rcout<<"Ara anem a llegir.... : \n Rownames : \n";
-    
-    StringVector rownames,colnames;
-    
-    rownames = get_hdf5_matrix_dimnames(&file, strdataset, 1);
-    Rcpp::Rcout<<"Acabem de llegir aquestes dades : \n Rownames : "<<rownames<<"\n";
-    colnames = get_hdf5_matrix_dimnames(&file, strdataset, 2);
-    Rcpp::Rcout<<"Acabem de llegir aquestes dades : \n Colnames : "<<colnames<<"\n";
-      
-     
-    //..// res = write_HDF5_matrix(filename, strsubgroup + "/" + strdataset, as<Rcpp::NumericMatrix>(mat) );
+    // Read dimnames and colnames from hdf5 data file (working ok)
+    //..// StringVector rownames,colnames;
+    //..// rownames = get_hdf5_matrix_dimnames(&file, strdataset, 1);
+    //..// colnames = get_hdf5_matrix_dimnames(&file, strdataset, 2);
     
     file.close();
     
