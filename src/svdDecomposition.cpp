@@ -201,7 +201,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     // Get initial matrix
     Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, dataset, 0, 0,dims_out_first[0], dims_out_first[1] );
     
-    Rcpp::Rcout<< "\n Dimensions A : \n\t"<<A.cols()<<" x "<<A.rows()<<"\n Dimensions u : "<<(retsvd.u).rows()<<" x "<< (retsvd.v).cols()<<"\n";
+    //..// Rcpp::Rcout<< "\n Dimensions A : \n\t"<<A.cols()<<" x "<<A.rows()<<"\n Dimensions u : "<<(retsvd.u).rows()<<" x "<< (retsvd.v).cols()<<"\n";
     
     Eigen::MatrixXd v;
     if(transp==1)
@@ -221,16 +221,30 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
       retsvd.u = v;
       // write u and v
       write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(v));
-      write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.u));
+      //.. write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.u));
+      write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.u));
+      //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(v.transpose()));
+      //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap((retsvd.u).transpose()));
       
     } else
     {
       retsvd.v = v;
       // write u and v
       write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.u));
-      write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(v));
+      //.. write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(v));
+      write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(v));
+      //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap((retsvd.u).transpose()));
+      //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(v.transpose()));
     }
     
+  }catch(FileIException error) { // catch failure caused by the H5File operations
+    error.printErrorStack();
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    error.printErrorStack();
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    error.printErrorStack();
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    error.printErrorStack();
   }catch(std::exception &ex) {
     Rcpp::Rcout<< ex.what();
   }
@@ -290,6 +304,13 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
     int xdim = (unsigned long long)dims_out[1];
     int ydim = (unsigned long long)dims_out[0];
     
+    // Remove previous results
+    if(exists_HDF5_element_ptr(&file,"SVD/"+strdataset))
+    {
+      Rcpp::Rcout<<"\n DATASET have been removed \n";
+      remove_HDF5_element_ptr(&file,"SVD/"+strdataset);
+    }
+      
     retsvd = RcppbdSVD_hdf5_Block( &file, &dataset, k, q, nev, bcenter, bscale, xdim, ydim);
   }
   

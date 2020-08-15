@@ -16,16 +16,6 @@
   #include "optimizedproduct.h"
   #include "tgmath.h"
 
-/*
-  struct svdeig {
-    Eigen::VectorXd d;
-    Eigen::MatrixXd u;
-    Eigen::MatrixXd v;
-    bool bokuv;
-    bool bokd;
-  };
-*/
-
 
   svdeig RcppbdSVD( Eigen::MatrixXd& X, int k = 0, int nev = 0, bool bcenter = true, bool bscale = true);
   svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X,  bool bcenter, bool bscale );

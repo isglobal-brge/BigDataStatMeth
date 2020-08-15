@@ -16,6 +16,7 @@ Eigen::MatrixXd RowMajorVector_to_ColMajorMatrix(double* datablock, int countx, 
 
 
 // Read block from hdf5 matrix
+// Converts RowMajor to ColMajor (Transpose)
 Eigen::MatrixXd GetCurrentBlock_hdf5( H5File* file, DataSet* dataset,
                                       hsize_t offsetx, hsize_t offsety, 
                                       hsize_t countx, hsize_t county)
@@ -41,6 +42,7 @@ Eigen::MatrixXd GetCurrentBlock_hdf5( H5File* file, DataSet* dataset,
 
 
 // Read block from hdf5 matrix
+// NOT Convserts RowMajor to Colmajor (NOT Transposed)
 Eigen::MatrixXd GetCurrentBlock_hdf5_Original( H5File* file, DataSet* dataset,
                                       hsize_t offsetx, hsize_t offsety, 
                                       hsize_t countx, hsize_t county)

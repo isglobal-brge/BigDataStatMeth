@@ -1,0 +1,29 @@
+#ifndef pca_hdf5
+#define pca_hdf5
+
+  #include <RcppEigen.h>
+  #include "H5Cpp.h"
+  #include "matrix_utilities.h"
+  #include "svdDecomposition.h"
+  #include "optimizedproduct.h"
+  #include "hdf5_to_Eigen.h"
+  #include "rhdf5Utils.h"
+  #include "parallelBlockMult_hdf5.h"
+  
+
+  struct pcaeig {
+    Eigen::MatrixXd varCoord;
+    Eigen::MatrixXd Y;
+    Eigen::MatrixXd var;
+    Eigen::MatrixXd percvar;
+    Eigen::MatrixXd components;
+    std::string hdf5file = "";
+  };
+  
+  
+  int get_HDF5_PCA_var_ptr(  H5File* file, std::string strdataset);
+  Rcpp::RObject bdPCA_hdf5(std::string filename, std::string strsubgroup, std::string strdataset);
+
+
+
+#endif
