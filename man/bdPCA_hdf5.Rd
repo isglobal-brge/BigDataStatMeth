@@ -4,13 +4,17 @@
 \alias{bdPCA_hdf5}
 \title{PCA Descomposition}
 \usage{
-bdPCA_hdf5(filename, strsubgroup, strdataset)
+bdPCA_hdf5(filename, group, dataset)
 }
 \arguments{
-\item{matrix}{or DelayedArray}
+\item{filename}{string, file name where dataset is stored}
+
+\item{group}{string group name  where dataset is stored in file}
+
+\item{dataset}{string dataset name with data to perform PCA}
 }
 \value{
-
+original file with results in folder PCA/<datasetname>
 }
 \description{
 Compute PCA

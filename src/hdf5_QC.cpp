@@ -1,4 +1,4 @@
-#include "include/QC_hdf5.h"
+#include "include/hdf5_QC.h"
 
 void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
 {
@@ -24,9 +24,7 @@ void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
 
 
 
-// Aquí he de crear un dataset EXTENSIBLE per a la sortida
-// mirar els percentatges i si un percentatge no es correcte
-// eliminar la columna i llestos.
+// Removes row or column with high missing data percentage
 int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string stroutdata, double pcent)
 {
   
@@ -160,10 +158,7 @@ void bdRemovelowdata( std::string filename, std::string group, std::string datas
                          Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> SNPincols )
 {
   
-  
-  
   H5File* file;
-  
     
   try
   {
@@ -222,7 +217,7 @@ void bdRemovelowdata( std::string filename, std::string group, std::string datas
     } else{
       pdataset->close();
       file->close();
-      throw std::range_error("Dataset not exits");  
+      throw std::range_error("Dataset does not exits");  
     }
     
     

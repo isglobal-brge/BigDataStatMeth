@@ -1320,16 +1320,20 @@ extern "C" {
   {
     // Get dataspace from dataset
     DataSpace dataspace = dataset.getSpace();
+    IntegerVector dims;
     
     // Get the number of dimensions in the dataspace.
     int rank = dataspace.getSimpleExtentNdims();
-    
+
     // Get the dimension size of each dimension in the dataspace and
     // display them.
     hsize_t dims_out[2];
     int ndims = dataspace.getSimpleExtentDims( dims_out, NULL);
 
-    IntegerVector dims = IntegerVector::create(static_cast<int>(dims_out[0]), static_cast<int>(dims_out[1]));
+    if(rank==1)
+      dims = IntegerVector::create( static_cast<int>(dims_out[0]), static_cast<int>(1));
+    else
+      dims = IntegerVector::create(static_cast<int>(dims_out[0]), static_cast<int>(dims_out[1]));
 
     return(dims);
   }

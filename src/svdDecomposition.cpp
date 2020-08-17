@@ -254,8 +254,6 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
 
 
 
-
-
 // SVD decomposition with hdf5 file
 //    input data : hdf5 file (object from crossproduct matrix) datagroup = 'strsubgroupIN'
 //    output data : hdf5 file svd data in datagroup svd 
@@ -277,7 +275,14 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
 
   // Open an existing file and dataset.
   H5File file(filename, H5F_ACC_RDWR);
-  DataSet dataset = file.openDataSet(strsubgroup + "/" + strdataset);
+  DataSet dataset;
+  
+  if(exists_HDF5_element_ptr(&file, strsubgroup + "/" + strdataset))
+    dataset = file.openDataSet(strsubgroup + "/" + strdataset);
+  else {
+    file.close();
+    throw std::range_error("Dataset not exits"); 
+  }
 
   // Get dataset dims
   IntegerVector dims_out = get_HDF5_dataset_size(dataset);
@@ -285,7 +290,6 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
   hsize_t offset[2] = {0,0};
   //..// hsize_t count[2] = {as<hsize_t>(dims_out[0]), as<hsize_t>(dims_out[1])};
   hsize_t count[2] = { (unsigned long long)dims_out[0], (unsigned long long)dims_out[1]};
-  
 
   // In memory computation for small matrices (rows or columns<5000)
   // Block decomposition for big mattrix
