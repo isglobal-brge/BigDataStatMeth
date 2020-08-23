@@ -8,6 +8,7 @@
   #include "H5Cpp.h"
   #include "rhdf5Utils.h"
   #include "matrix_utilities.h"
+  #include "hdf5_normalization.h"
 
 /*
   struct svdeig {

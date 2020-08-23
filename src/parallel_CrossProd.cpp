@@ -113,7 +113,7 @@ struct tCrosProdd_block : public RcppParallel::Worker  {
     std::size_t sj= rmat.ncol();
     int kp=0;
     double nrow = 0;
-    // if(begin==8)    { Rcpp::Rcout<<"\nQue redimonis passa amb mi\n";}
+    
     for (std::size_t i = begin; i < end; i++) 
     {
       for(std::size_t j=0; j<sj; j++)

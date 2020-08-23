@@ -44,6 +44,7 @@ Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w)
 {
   const int n(X.rows());
   Eigen::MatrixXd Xw = X * w.array().matrix().asDiagonal();
+  //..// Eigen::MatrixXd Xw = X * w;
   return (Xw);
 }
 
@@ -53,6 +54,7 @@ Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w)
 {
   const int n(X.rows());
   Eigen::MatrixXd wX = w.array().matrix().asDiagonal()*X;
+  //..// Eigen::MatrixXd wX = w*X;
   return (wX);
 }
 
@@ -208,8 +210,7 @@ Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> tran
 //' 
 //' @param X numerical or Delayed Array matrix
 //' @param w vector with weights
-//' @param op string indicating if operation  "Xw" or "wX"
-//' @param bparal (optional, default = true) if bparal=true performs parallel computation.
+//' @param op string indicating if operation 'xtwx' and 'xwxt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
 //' @return numerical matrix 
 //' @examples
 //' n <- 100
@@ -267,9 +268,61 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
     return(wX(A,W));
   } else
   {
+    throw("Invalid option, valid options : 'xtwx' and 'xwxt' for weighted cross product or 'Xw' and 'wX' for weighted product");
+  }
+}
+
+// Weighted product
+//' Matrix - Weighted Scalar Multiplication with numerical or DelayedArray data
+//' 
+//' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
+//' 
+//' @param X numerical or Delayed Array matrix
+//' @param w scalar, weight
+//' @param op string indicating if operation  "Xw" or "wX"
+//' @return numerical matrix 
+//' @examples
+//' n <- 100
+//' p <- 60
+//' 
+//' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+//' w <- 0.75
+//' 
+//' bdScalarwproduct(X, w,"Xw")
+//' bdScalarwproduct(X, w,"Wx")
+//' 
+//' # with Delayed Array
+//' 
+//' DX <- DelayedArray(X)
+//' 
+//' bdScalarwproduct(DX, w,"Xw")
+//' bdScalarwproduct(DX, w,"wX")
+//' 
+//' @export
+// [[Rcpp::export]]
+Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject a, double w, std::string op)
+{
+  
+  Eigen::MatrixXd A;
+
+  // Read DelayedArray's a and b
+  if ( a.isS4() == true)    
+  {
+    A = read_DelayedArray(a);
+  } else {
+    try{  
+      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+    }
+    catch(std::exception &ex) { }
+  }
+  
+  if (op == "Xw" || op == "wX") {
+    return(w*A);
+  } else  {
     throw("Invalid option (valid options : xtwx or xwxt)");
   }
 }
+
 
 
 /* Aquesta funció va lenta ..... no se si posar-la !!!
@@ -362,8 +415,8 @@ Eigen::MatrixXd bdXwd(Rcpp::RObject X, Rcpp::RObject w, std::string op,
 
 
 /***R
-n <- 100
-p <- 60
+n <- 10
+p <- 6
 X <- matrix(rnorm(n*p), nrow=n, ncol=p)
   
 u <- runif(n)

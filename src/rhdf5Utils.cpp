@@ -883,6 +883,112 @@ extern "C" {
     
     return 0;
   }
+  
+  
+  
+  
+  int write_HDF5_matrix_from_R_ptr(H5File* file, const std::string CDatasetName, RObject DatasetValues)
+  {
+    try
+    {
+      // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
+      Exception::dontPrint();
+      
+      // Create the data space for the dataset.
+      std::vector<int> dims;
+      
+      if(is<NumericMatrix>(DatasetValues)) 
+      {
+        
+        hsize_t dims[2];
+        dims[0] = as<NumericMatrix>(DatasetValues).rows();
+        dims[1] = as<NumericMatrix>(DatasetValues).cols();
+        DataSpace dataspace(RANK2, dims);
+        
+        std::vector<double> matHiCValues = as<std::vector<double> >(transpose(as<NumericMatrix>(DatasetValues)));
+        
+        DataSet dataset = file->createDataSet(CDatasetName,PredType::NATIVE_DOUBLE, dataspace);
+        dataset = file->openDataSet(CDatasetName);
+        
+        dataset.write( &matHiCValues[0] , PredType::NATIVE_DOUBLE);
+        
+        dataset.close();
+        dataspace.close();
+        
+      } 
+      else if( Rcpp::is<IntegerMatrix>(DatasetValues) ) 
+      {
+        hsize_t dims[2];
+        dims[0] = as<IntegerMatrix>(DatasetValues).cols();
+        dims[1] = as<IntegerMatrix>(DatasetValues).rows();
+        DataSpace dataspace(RANK2, dims);
+        
+        std::vector<double> matHiCValues = as<std::vector<double> >(transpose(as<NumericMatrix>(DatasetValues)));
+        
+        DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
+        dataset = file->openDataSet(CDatasetName);
+        dataset.write( &matHiCValues[0], PredType::NATIVE_DOUBLE);
+        
+        dataset.close();
+        dataspace.close();
+      } else if(is<NumericVector>(DatasetValues) || is<IntegerVector>(DatasetValues)) 
+      {
+        
+        hsize_t vectorsize;
+        
+        if(is<IntegerVector>(DatasetValues) || is<LogicalVector>(DatasetValues)) 
+          vectorsize = as<IntegerVector>(DatasetValues).length();
+        else if (is<NumericVector>(DatasetValues))
+          vectorsize = as<NumericVector>(DatasetValues).length();
+        else 
+          vectorsize = 1;
+        
+        hsize_t dims[] = {vectorsize};
+        DataSpace dataspace(RANK1, dims);
+        
+        
+        if(is<IntegerVector>(DatasetValues) || is<LogicalVector>(DatasetValues) ) 
+        {
+          int vectHiCValues[dims[0]];
+          for(int i=0;i<dims[0]; i++)
+            vectHiCValues[i] = as<IntegerVector>(DatasetValues)(i);
+          
+          DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_INT, dataspace);
+          dataset = file->openDataSet(CDatasetName);
+          dataset.write( vectHiCValues, PredType::NATIVE_INT);
+          dataspace.close();
+          dataset.close();
+        } 
+        else if(is<NumericVector>(DatasetValues) ) 
+        {
+          double vectValues[dims[0]];
+          for(int i=0;i<dims[0]; i++)
+            vectValues[i] = as<NumericVector>(DatasetValues)(i);
+          
+          DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
+          dataset = file->openDataSet(CDatasetName);
+          dataset.write(vectValues, PredType::NATIVE_DOUBLE);
+          dataspace.close();
+          dataset.close();
+        } 
+        
+      } 
+      
+    } 
+    catch(FileIException error) { // catch failure caused by the H5File operations
+      error.printErrorStack();
+      return -1;
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      error.printErrorStack();
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      error.printErrorStack();
+      return -1;
+    }
+    
+    return 0;
+  }
+  
 
   
 
@@ -1538,9 +1644,11 @@ void Create_HDF5_matrix_file(std::string filename, RObject mat,
       try{  
         
         if ( TYPEOF(mat) == INTSXP ) {
-          write_HDF5_matrix_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<IntegerMatrix>(mat));
+          //..// write_HDF5_matrix_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<IntegerMatrix>(mat));
+          write_HDF5_matrix_from_R_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<IntegerMatrix>(mat));
         } else{
-          write_HDF5_matrix_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(mat));
+          //..// write_HDF5_matrix_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(mat));
+          write_HDF5_matrix_from_R_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(mat));
         }
         
         // Get dimnames from R matrix object
@@ -1551,8 +1659,8 @@ void Create_HDF5_matrix_file(std::string filename, RObject mat,
 
     // Write dimnaes from RObject to hdf5 data file
     if(dimnames.size()>0 ) {
-      svrows = dimnames[0];
-      svrcols = dimnames[1];
+      svrows = dimnames[1];
+      svrcols = dimnames[0];
 
       write_hdf5_matrix_dimnames(file, strsubgroup, strdataset, svrows, svrcols );
     }
