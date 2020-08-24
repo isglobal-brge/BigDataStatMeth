@@ -232,10 +232,7 @@ void bdRemovelowdata( std::string filename, std::string group, std::string datas
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
     error.printErrorStack();
     file->close();
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-    file->close();
-  }catch(std::exception &ex) {
+  } catch(std::exception &ex) {
     Rcpp::Rcout<< ex.what();
     file->close();
   }

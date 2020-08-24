@@ -124,9 +124,6 @@ extern "C" {
     } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
       error.printErrorStack();
       return -1;
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return -1;
     }
     
     return(datasetnames);
@@ -161,9 +158,6 @@ extern "C" {
       error.printErrorStack();
       return -1;
     } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return -1;
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
       error.printErrorStack();
       return -1;
     }
@@ -247,10 +241,7 @@ extern "C" {
     } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
       error.printErrorStack();
       return -1;
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return -1;
-    }
+    } 
     return(0);
   }
   
@@ -547,10 +538,7 @@ extern "C" {
     } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
       error.printErrorStack();
       return -1;
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return -1;
-    }
+    } 
     
     return 0;
   }
@@ -597,12 +585,6 @@ extern "C" {
     }
     // catch failure caused by the DataSpace operations
     catch( DataSpaceIException error )
-    {
-      error.printErrorStack();
-      return -1;
-    }
-    // catch failure caused by the DataSpace operations
-    catch( DataTypeIException error )
     {
       error.printErrorStack();
       return -1;
@@ -1293,9 +1275,6 @@ extern "C" {
     } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
       error.printErrorStack();
       return(-1);
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return(-1);
     }
     return(dimnames);
   }
@@ -1339,10 +1318,7 @@ extern "C" {
     } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
       error.printErrorStack();
       return(-1);
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return(-1);
-    }
+    } 
     return(0);
   }
   
@@ -1409,9 +1385,6 @@ extern "C" {
       error.printErrorStack();
       return -1;
     } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return -1;
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
       error.printErrorStack();
       return -1;
     }
@@ -1514,9 +1487,6 @@ extern "C" {
     } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
       error.printErrorStack();
       return(-1);
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return(-1);
     }
     
     return(0);  // successfully terminated
@@ -1583,10 +1553,7 @@ int Create_hdf5_matrix_unlimited_ptr( H5File* file, const H5std_string dataset ,
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
     error.printErrorStack();
     return -1;
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-    return -1;
-  }
+  } 
   
   return 0;  // successfully terminated
   
@@ -1678,9 +1645,7 @@ void Create_HDF5_matrix_file(std::string filename, RObject mat,
     error.printErrorStack();
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
     error.printErrorStack();
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-  }
+  } 
   
 
 }
@@ -1770,9 +1735,7 @@ void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, st
     error.printErrorStack();
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
     error.printErrorStack();
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-  }
+  } 
   
 }
 

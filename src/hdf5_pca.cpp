@@ -72,10 +72,7 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
     error.printErrorStack();
     return -1;
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-    return -1;
-  }
+  } 
   
   dataset->close();
   return(0);
@@ -174,8 +171,6 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
     error.printErrorStack();
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
     error.printErrorStack();
   } catch (...) {
     ::Rf_error("C++ exception (unknown reason)");
