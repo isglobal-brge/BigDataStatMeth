@@ -176,7 +176,11 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
     error.printErrorStack();
     file->close();
     return -1;
-  } catch(std::exception &ex) {
+  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+    error.printErrorStack();
+    file->close();
+    return -1;
+  }catch(std::exception &ex) {
     Rcpp::Rcout<< ex.what();
     file->close();
     return -1;

@@ -186,7 +186,13 @@ Rcpp::RObject Normalize_hdf5(std::string filename, const std::string group, std:
     pdatasetout->close();
     error.printErrorStack();
     return wrap(-1);
-  } catch(std::exception &ex) {
+  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+    file->close();
+    pdatasetin->close();
+    pdatasetout->close();
+    error.printErrorStack();
+    return wrap(-1);
+  }catch(std::exception &ex) {
     file->close();
     pdatasetin->close();
     pdatasetout->close();

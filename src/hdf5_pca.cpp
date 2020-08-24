@@ -172,6 +172,8 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
     error.printErrorStack();
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
     error.printErrorStack();
+  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+    error.printErrorStack();
   } catch (...) {
     ::Rf_error("C++ exception (unknown reason)");
   }
