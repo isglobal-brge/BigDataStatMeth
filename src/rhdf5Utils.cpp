@@ -1790,8 +1790,10 @@ void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, st
 //' @return none
 //' @export
 // [[Rcpp::export]]
-void Remove_HDF5_element(std::string filename, std::string element)
+Rcpp::RObject Remove_HDF5_element(std::string filename, std::string element)
 {
+  
+  H5File* file;
   
   try
   {
@@ -1800,7 +1802,7 @@ void Remove_HDF5_element(std::string filename, std::string element)
     if(!ResFileExist(filename))
       throw std::range_error("File not exits, create file before add new dataset");
     
-    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    file = new H5File( filename, H5F_ACC_RDWR );
     
     if(!exists_HDF5_element_ptr(file, element)) {
       file->close();
@@ -1813,8 +1815,12 @@ void Remove_HDF5_element(std::string filename, std::string element)
     
   }
   catch( FileIException error ) { // catch failure caused by the H5File operations
+    file->close();
+    return(wrap(-1));
     error.printErrorStack();
   }
+  
+  return(wrap(0));
   
 }
   

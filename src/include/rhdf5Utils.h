@@ -91,8 +91,8 @@
   extern "C" IntegerVector get_HDF5_dataset_size(DataSet dataset);
 
   
-  void Create_HDF5_matrix_file(std::string filename, RObject mat,Rcpp::Nullable<std::string> group , Rcpp::Nullable<std::string> dataset );
-  void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset );
-  void Remove_HDF5_element(std::string filename, std::string element);
+  //..// void Create_HDF5_matrix_file(std::string filename, RObject mat,Rcpp::Nullable<std::string> group , Rcpp::Nullable<std::string> dataset );
+  //..// void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset );
+  //..// void Remove_HDF5_element(std::string filename, std::string element);
 
 #endif
