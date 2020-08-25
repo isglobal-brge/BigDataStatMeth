@@ -16,7 +16,7 @@
   //    DGESVD computes the singular value decomposition (SVD) of a real M-by-N matrix A, 
   //       optionally computing the left and/or right singular vectors
   extern "C" {
-    extern void dgesvd( char*, char*, int*, int*, double*, int*, double*, double*, int*, double*, int*, double*, int*, int*);
+    extern void dgesvd_( char*, char*, int*, int*, double*, int*, double*, double*, int*, double*, int*, double*, int*, int*);
   }
   
   // dscal_ is a symbol in the LAPACK-BLAS Level 3 

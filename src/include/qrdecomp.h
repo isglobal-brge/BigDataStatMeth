@@ -3,7 +3,6 @@
 
    #include <RcppEigen.h>
    #include "pseudoinv.h"
-//   #include "parallelBlockMult.h"
    #include "ReadDelayedData.h"
    #include "parallelBlockMult_hdf5.h"
   
@@ -30,6 +29,7 @@
    extern "C" {
    extern void dtrsv_(char*, char*, char*, int*, double*, int*, double*, int*);	
    }
+
    
    // dtrsm_ is a symbol in the LAPACK-BLAS library files - 
    //    DTRSM  solves one of the matrix equations : op( A )*X = alpha*B,   or   X*op( A ) = alpha*B,
