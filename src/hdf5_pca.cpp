@@ -93,6 +93,9 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
 // [[Rcpp::export]]
 Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string dataset)
 {
+  
+  H5File* file;
+  
   try
   {
     
@@ -104,7 +107,7 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
     pcaeig pcaRes;
     
     // Open an existing file and dataset.
-    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    file = new H5File( filename, H5F_ACC_RDWR );
 
     std::string strSVDdataset = "SVD/" + dataset;
 
@@ -116,10 +119,7 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
       svdeig retsvd = RcppbdSVD_hdf5( filename, group, dataset, 4, 1, 0, true, true );
     }
     
-    
     get_HDF5_PCA_variance_ptr(file, dataset);
-    
-    file->close();
       
       //..// ans <- list(varcoord=var.coord, Y=Y, var = svdX$d^2, percvar=variance, components = svdX$v, method = method)
     
@@ -162,21 +162,36 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
                               Rcpp::Named("var.cos2") = C.pow(2)
     );
     ***/
-    return Rcpp::List::create(Rcpp::Named("filename") = filename);
+    
 
   } catch (std::exception &ex) {
+    file->close();
     forward_exception_to_r(ex);
+    return(wrap(-1));
   }catch( FileIException error ) {
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch (...) {
+    file->close();
     ::Rf_error("C++ exception (unknown reason)");
+    return(wrap(-1));
   }
+  
+  file->close();
+  return Rcpp::List::create(Rcpp::Named("filename") = filename);
   
 }
 

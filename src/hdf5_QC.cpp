@@ -154,7 +154,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
 //' @return Original hdf5 data file with imputed data
 //' @export
 // [[Rcpp::export]]
-void bdRemovelowdata( std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, 
+Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, 
                          Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> SNPincols )
 {
   
@@ -197,13 +197,10 @@ void bdRemovelowdata( std::string filename, std::string group, std::string datas
         if(!exists_HDF5_element_ptr(file, outgroup))
           file->createGroup(outgroup);
 
-        
       } else {
         throw std::range_error("Input and output dataset must be different");  
-
       }
       
-
       int iremoved = Remove_snp_low_data_HDF5( file, pdataset, bcols, stroutdata, dpcent);
       
       Function warning("warning");
@@ -220,25 +217,31 @@ void bdRemovelowdata( std::string filename, std::string group, std::string datas
       throw std::range_error("Dataset does not exits");  
     }
     
-    
-    file->close();
   
   }catch( FileIException error ){ // catch failure caused by the H5File operations
-    error.printErrorStack();
     file->close();
+    error.printErrorStack();
+    return(wrap(-1));
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-    error.printErrorStack();
     file->close();
+    error.printErrorStack();
+    return(wrap(-1));
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
     file->close();
+    error.printErrorStack();
+    return(wrap(-1));
   } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+    file->close();
     error.printErrorStack();
-    file->close();
+    return(wrap(-1));
   }catch(std::exception &ex) {
-    Rcpp::Rcout<< ex.what();
     file->close();
+    Rcpp::Rcout<< ex.what();
+    return(wrap(-1));
   }
+  
+  file->close();
+  return(wrap(0));
   
 }
 

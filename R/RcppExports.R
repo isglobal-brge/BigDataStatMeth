@@ -15,7 +15,7 @@
 #' @return Original hdf5 data file with imputed data
 #' @export
 bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcent, SNPincols) {
-    invisible(.Call('_BigDataStatMeth_bdRemovelowdata', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, SNPincols))
+    .Call('_BigDataStatMeth_bdRemovelowdata', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, SNPincols)
 }
 
 #' Impute SNPs in hdf5 omic dataset 
@@ -31,7 +31,7 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' @return Original hdf5 data file with imputed data
 #' @export
 bdImputeSNPHDF5 <- function(filename, group, dataset, outgroup, outdataset, bycols) {
-    invisible(.Call('_BigDataStatMeth_bdImputeSNPHDF5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols))
+    .Call('_BigDataStatMeth_bdImputeSNPHDF5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols)
 }
 
 #' Normalize dataset in hdf5 file
@@ -474,7 +474,7 @@ bddtrsm <- function(R, Z, threads = NULL) {
 #' @return none
 #' @export
 Create_HDF5_matrix_file <- function(filename, mat, group = NULL, dataset = NULL) {
-    invisible(.Call('_BigDataStatMeth_Create_HDF5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, mat, group, dataset))
+    .Call('_BigDataStatMeth_Create_HDF5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, mat, group, dataset)
 }
 
 #' Write matrix to existing hdf5 file
@@ -488,7 +488,7 @@ Create_HDF5_matrix_file <- function(filename, mat, group = NULL, dataset = NULL)
 #' @return none
 #' @export
 Create_HDF5_matrix <- function(mat, filename, group, dataset) {
-    invisible(.Call('_BigDataStatMeth_Create_HDF5_matrix', PACKAGE = 'BigDataStatMeth', mat, filename, group, dataset))
+    .Call('_BigDataStatMeth_Create_HDF5_matrix', PACKAGE = 'BigDataStatMeth', mat, filename, group, dataset)
 }
 
 #' Remove element group or dataset from  hdf5 file

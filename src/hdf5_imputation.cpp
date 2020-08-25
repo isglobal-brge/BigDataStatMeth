@@ -173,9 +173,12 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
 //' @return Original hdf5 data file with imputed data
 //' @export
 // [[Rcpp::export]]
-void bdImputeSNPHDF5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, 
+Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, 
                      Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols )
 {
+  
+  H5File* file;
+  DataSet* pdataset;
   
   try
   {
@@ -184,7 +187,7 @@ void bdImputeSNPHDF5(std::string filename, std::string group, std::string datase
     std::string strdatasetout;
     int res;
     bool bcols;
-    DataSet* pdataset;
+    
     
     if(bycols.isNull())  bcols = true ;
     else    bcols = Rcpp::as<bool>(bycols);
@@ -200,7 +203,7 @@ void bdImputeSNPHDF5(std::string filename, std::string group, std::string datase
     if(!ResFileExist(filename))
       throw std::range_error("File not exits, create file before impute dataset");  
     
-    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    file = new H5File( filename, H5F_ACC_RDWR );
     
 
     if(exists_HDF5_element_ptr(file, strdataset)) 
@@ -235,13 +238,18 @@ void bdImputeSNPHDF5(std::string filename, std::string group, std::string datase
       throw std::range_error("Dataset not exits");  
     }
     
-    pdataset->close();
-    file->close();
     
   }
   catch( FileIException error ) { // catch failure caused by the H5File operations
+    pdataset->close();
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   }
+  
+  pdataset->close();
+  file->close();
+  return(wrap(0));
   
 }
 

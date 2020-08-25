@@ -16,7 +16,8 @@
   
   
   // functions called from R
+  /**
   void bdImputeSNPHDF5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, 
                        Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols = true );
-
+  **/
 #endif

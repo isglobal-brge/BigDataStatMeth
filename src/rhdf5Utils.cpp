@@ -1604,9 +1604,11 @@ int Create_hdf5_matrix_unlimited_ptr( H5File* file, const H5std_string dataset ,
 //' @return none
 //' @export
 // [[Rcpp::export]]
-void Create_HDF5_matrix_file(std::string filename, RObject mat, 
+Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject mat, 
                             Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue)
 {
+  
+  H5File* file;
   
   try
   {
@@ -1627,7 +1629,7 @@ void Create_HDF5_matrix_file(std::string filename, RObject mat,
     List dimnames;
     
     // Create HDF5 file
-    H5File* file = new H5File( filename, H5F_ACC_TRUNC );
+    file = new H5File( filename, H5F_ACC_TRUNC );
     create_HDF5_group_ptr(file, strsubgroup);
 
     if ( mat.isS4() == true)    
@@ -1670,18 +1672,26 @@ void Create_HDF5_matrix_file(std::string filename, RObject mat,
     //..// rownames = get_hdf5_matrix_dimnames(&file, strdataset, 1);
     //..// colnames = get_hdf5_matrix_dimnames(&file, strsubgroup, strdataset, 2);
     
-    file->close();  
   }
   catch( FileIException error ) { // catch failure caused by the H5File operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   }
-  
+  file->close();
+  return(wrap(0));
 
 }
 
@@ -1697,9 +1707,10 @@ void Create_HDF5_matrix_file(std::string filename, RObject mat,
 //' @return none
 //' @export
 // [[Rcpp::export]]
-void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset )
+Rcpp::RObject Create_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset )
 {
     
+  H5File* file;
   try
   {
     int res;
@@ -1712,34 +1723,22 @@ void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, st
 
     CharacterVector svrows, svrcols;
     
-    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    file = new H5File( filename, H5F_ACC_RDWR );
     
     if(!exists_HDF5_element_ptr(file, group)) 
       create_HDF5_group_ptr(file, group);
     
     //..04-07-2020..// file->close();
 
-    if ( mat.isS4() == true)    
-    {
-      //..04-07-2020..// res = Create_hdf5_file(filename);
-      //..04-07-2020..// res = create_HDF5_group(filename, group );
-      
-      //..04-07-2020..// write_DelayedArray_to_hdf5(filename, group + "/" + dataset, mat);
+    if ( mat.isS4() == true) {
       write_DelayedArray_to_hdf5_ptr(file, group + "/" + dataset, mat);
-      
     } else {
       
       try{  
         
         if ( TYPEOF(mat) == INTSXP ) {
-          //..04-07-2020..// res = Create_hdf5_file(filename);
-          //..04-07-2020..// res = create_HDF5_group(filename, group );
-          //..04-07-2020..// write_HDF5_matrix(filename, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
           write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
         } else{
-          //..04-07-2020..// res = Create_hdf5_file(filename);
-          //..04-07-2020..// res = create_HDF5_group(filename, group );
-          //..04-07-2020..// write_HDF5_matrix(filename, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
           write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
         }
       }
@@ -1761,18 +1760,29 @@ void Create_HDF5_matrix(RObject mat, std::string filename, std::string group, st
     
     //..// res = write_HDF5_matrix(filename, group + "/" + dataset, as<Rcpp::NumericMatrix>(mat) );
 
-    file->close();
+    
     
   }
   catch( FileIException error ) { // catch failure caused by the H5File operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+    file->close();
     error.printErrorStack();
+    return(wrap(-1));
   }
+  
+  file->close();
+  return(wrap(0));
   
 }
 
