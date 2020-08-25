@@ -11,7 +11,7 @@ PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS)
 PKG_LIBS += `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(FLIBS) $(BEACHMAT_LIBS)
 
 # Blas i Lapack
-PKG_LIBS += $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) 
+PKG_LIBS += $(shell $(R_HOME)/bin/Rscript -e 'Rcpp:::LdFlags()' ) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) 
 
 # RHDF5
 RHDF5_LIBS=$(shell echo 'Rhdf5lib::pkgconfig("PKG_CXX_LIBS")'|\
