@@ -86,9 +86,8 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
   
   svdeig retsvd;
   
-  char Schar='S', Nchar='N';
+  char Schar='S';
   int info = 0;
-  int zero = 0;
   
   if(bcenter ==true || bscale == true)
     X = RcppNormalize_Data(X, bcenter, bscale);
@@ -515,7 +514,6 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
 //'   \item{"v"}{ eigenvectors of A^tA, nxn orthogonal matrix }
 //'   \item{"v"}{ singular values, nxn diagonal matrix (non-negative real values) }
 //' }
-//' @examples
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVector> group = R_NilValue, 
