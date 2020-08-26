@@ -1,6 +1,6 @@
-#' @useDynLib BigDataStatMeth, .registration = TRUE
+#' @useDynLib BigDataStatMeth
 #' @import RcppEigen
-#' @importFrom Rcpp evalCpp sourceCpp
+#' @importFrom Rcpp evalCpp
 #' @importFrom RcppParallel RcppParallelLibs
 #' @exportPattern("^[[:alpha:]]+")
 NULL
