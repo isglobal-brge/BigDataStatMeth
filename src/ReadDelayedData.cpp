@@ -168,7 +168,7 @@ int write_DelayedArray_int_hdf5( H5std_string filename, const std::string CDatas
     Exception::dontPrint();
     
     // Create empty dataset in hdf5 file
-    int res = create_HDF5_dataset( filename, CDatasetName, nrows, ncols, "real");
+    create_HDF5_dataset( filename, CDatasetName, nrows, ncols, "real");
     
     // Open file and dataset
     H5File file(filename, H5F_ACC_RDWR);
@@ -251,7 +251,7 @@ int write_DelayedArray_int_hdf5_ptr( H5File* file, const std::string CDatasetNam
     Exception::dontPrint();
 
     // Create empty dataset in hdf5 file
-    int res = create_HDF5_dataset_ptr( file, CDatasetName, nrows, ncols, "real");
+    create_HDF5_dataset_ptr( file, CDatasetName, nrows, ncols, "real");
     
     // Open file and dataset
     //..// H5File file(filename, H5F_ACC_RDWR);
@@ -337,7 +337,7 @@ int write_DelayedArray_int_hdf5_transposed( H5std_string filename, const std::st
     Exception::dontPrint();
     
     // Create empty dataset in hdf5 file (transposed data nrows = ncols)
-    int res = create_HDF5_dataset( filename, CDatasetName, ncols, nrows, "real");
+    create_HDF5_dataset( filename, CDatasetName, ncols, nrows, "real");
     
     // Open file and dataset
     H5File file(filename, H5F_ACC_RDWR);
@@ -421,7 +421,7 @@ int write_DelayedArray_int_hdf5_transposed_ptr( H5File* file, const std::string 
     Exception::dontPrint();
     
     // Create empty dataset in hdf5 file (transposed data nrows = ncols)
-    int res = create_HDF5_dataset_ptr( file, CDatasetName, ncols, nrows, "real");
+    create_HDF5_dataset_ptr( file, CDatasetName, ncols, nrows, "real");
     
     // Open file and dataset
     //..// H5File file(filename, H5F_ACC_RDWR);
@@ -506,7 +506,7 @@ int write_DelayedArray_real_hdf5( H5std_string filename, const std::string CData
     Exception::dontPrint();
     
     // Create empty dataset in hdf5 file
-    int res = create_HDF5_dataset( filename, CDatasetName, nrows, ncols,"real");
+    create_HDF5_dataset( filename, CDatasetName, nrows, ncols,"real");
     
     // Open file and dataset
     H5File file(filename, H5F_ACC_RDWR);
@@ -592,7 +592,7 @@ int write_DelayedArray_real_hdf5_ptr( H5File* file, const std::string CDatasetNa
     Exception::dontPrint();
     
     // Create empty dataset in hdf5 file
-    int res = create_HDF5_dataset_ptr( file, CDatasetName, nrows, ncols,"real");
+    create_HDF5_dataset_ptr( file, CDatasetName, nrows, ncols,"real");
     
     // Open file and dataset
     //..// H5File file(filename, H5F_ACC_RDWR);
@@ -680,7 +680,7 @@ int write_DelayedArray_real_hdf5_transposed( H5std_string filename, const std::s
     Exception::dontPrint();
     
     // Create empty dataset in hdf5 file (transposed data nrows = ncols)
-    int res = create_HDF5_dataset( filename, CDatasetName, ncols, nrows, "real");
+    create_HDF5_dataset( filename, CDatasetName, ncols, nrows, "real");
     
     // Open file and dataset
     H5File file(filename, H5F_ACC_RDWR);
@@ -769,7 +769,7 @@ int write_DelayedArray_real_hdf5_transposed_ptr( H5File* file, const std::string
     
     // Create empty dataset in hdf5 file (transposed data nrows = ncols)
     //..// int res = create_HDF5_dataset( filename, CDatasetName, ncols, nrows, "real");
-    int res = create_HDF5_dataset_ptr( file, CDatasetName, ncols, nrows, "real");
+    create_HDF5_dataset_ptr( file, CDatasetName, ncols, nrows, "real");
     
     // Open file and dataset
     //..// H5File file(filename, H5F_ACC_RDWR);
