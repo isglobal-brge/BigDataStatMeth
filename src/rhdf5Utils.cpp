@@ -1612,7 +1612,7 @@ Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject mat,
   
   try
   {
-    int res;
+
     std::string strsubgroup, strdataset;
     
     if(group.isNull())  strsubgroup = "INPUT" ;

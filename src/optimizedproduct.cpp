@@ -359,7 +359,7 @@ Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject a, double w, std::string op)
 //' bdwproduct(DX, dw,"xwxt")
 //' 
 //' 
-//' @export*/ 
+//' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd bdXwd(Rcpp::RObject X, Rcpp::RObject w, std::string op, 
                       Rcpp::Nullable<bool> bparal  = R_NilValue,
@@ -411,7 +411,7 @@ Eigen::MatrixXd bdXwd(Rcpp::RObject X, Rcpp::RObject w, std::string op,
   }
 
 }
-
+ */ 
 
 
 /***R

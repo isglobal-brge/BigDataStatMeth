@@ -23,7 +23,6 @@ abstract: |
 vignette: |
   %\VignetteIndexEntry{Algebra and Statistical Methods for Big Data with Bioconductor}
   %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{Integrating TCGA Data}
   %\VignetteEngine{knitr::rmarkdown}
 bibliography: references.bib
 ---
