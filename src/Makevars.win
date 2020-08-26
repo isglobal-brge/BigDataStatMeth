@@ -3,13 +3,19 @@
 #PKG_LIBS = 
 
 # RcppParallel
-PKG_LIBS = $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppParallel::RcppParallelLibs()")
 PKG_CXXFLAGS = -DRCPP_PARALLEL_USE_TBB=1
+PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" \
+              -e "RcppParallel::RcppParallelLibs()")
 
-BEACHMAT_LIBS=$(shell echo 'beachmat::pkgconfig("PKG_LIBS")'| "${R_HOME}/bin/R" --vanilla --slave)
+# Beachmat
+BEACHMAT_LIBS = $(shell echo 'beachmat::pkgconfig("PKG_LIBS")'|\
+    "${R_HOME}/bin/R" --vanilla --slave)
+PKG_LIBS += $(BEACHMAT_LIBS)
+
+# OpenMP
 PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) 
-PKG_LIBS += $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(BEACHMAT_LIBS)
-# PKG_LIBS += $(SHLIB_OPENMP_CXXFLAGS) $(FLIBS) $(BEACHMAT_LIBS)
+PKG_LIBS += $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) 
+
 
 # Blas i Lapack
 PKG_LIBS += $(shell $(R_HOME)/bin${R_ARCH_BIN}/Rscript.exe -e "Rcpp:::LdFlags()") $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) 
@@ -22,6 +28,3 @@ PKG_LIBS += $(RHDF5_LIBS)
 ## With R 3.1.0 or later, you can uncomment the following line to tell R to 
 ## enable compilation with C++11 (or even C++14) where available
 CXX_STD = CXX11
-
-## clang as default compiler
-CXX = clang++

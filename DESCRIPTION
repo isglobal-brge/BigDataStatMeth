@@ -9,7 +9,7 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Imports: Rcpp (>= 1.0.5), RcppEigen (>= 0.3.3.5.0), RcppParallel, BH
 LinkingTo: Rcpp, RcppEigen, beachmat, Rhdf5lib, RSpectra,  RcppParallel, BH
-SystemRequirements: C++11
+SystemRequirements: C++11 GNU make
 Suggests: 
     beachmat,
     HDF5Array,
