@@ -30,7 +30,7 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' @param outdataset, optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
 #' @return Original hdf5 data file with imputed data
 #' @export
-bdImputeSNPHDF5 <- function(filename, group, dataset, outgroup, outdataset, bycols) {
+bdImputeSNPHDF5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE) {
     .Call('_BigDataStatMeth_bdImputeSNPHDF5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols)
 }
 

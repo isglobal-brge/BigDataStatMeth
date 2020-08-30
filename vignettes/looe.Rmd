@@ -777,12 +777,21 @@ mod.glmnet$beta[1:7,]
 
 Imputation in genetics refers to the statistical inference of unobserved genotypes. In genetic epidemiology and quantitative genetics, researchers aim at identifying genomic locations where variation between individuals is associated with variation in traits of interest between individuals. 
 
-At the moment BigDataStatMeth has implemented snps imputation following the encoding used in Genomic Data Structure file format (GDS files) where SNPs are codded as 0 : two B alleles, 1 : one A allele and one B allele, 2 : two A alleles and 3 : missing data. BigDataStatMeth impute data where SNPs values are '3'. 
+At the moment BigDataStatMeth has implemented snps imputation following the encoding used in Genomic Data Structure file format (GDS files) where SNPs are codded as 0 : two B alleles, 1 : one A allele and one B allele, 2 : two A alleles and 3 : missing data. BigDataStatMeth impute data where SNPs values are '3' (missing data). 
 
 The imputation method implemented is generated from the information of the SNP data that contains the missing data, it is performed by generating a random value following a discrete distribution. If in the SNP we find 70% of '0', 25% of '1' and 5% of '2', the value of the missing data will be imputed with a probability of 70% to be '0', 25% to be '1' and 5% to be '2'.
 
-Imputation method is so easy
+We first simulate a genotype matrix with 0, 1, 2 and 3 and store it in hdf5 file:
+```{r snpgenotype}
+
+geno.sim <- matrix(sample(0:3, 10000, replace = TRUE),byrow = TRUE, ncol = 10)
+Create_HDF5_matrix(geno.sim, "delayed.hdf5", "OMICS", "geno")
+
+```
+
+Nowe we impute values where genotype = '3' (missing data), here we :
 ```{r impute}
+bdImputeSNPHDF5("delayed.hdf5", group = "OMICS", dataset = "geno", bycols = TRUE)
 
 ```
 

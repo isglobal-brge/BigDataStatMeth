@@ -42,8 +42,6 @@ std::map<double, double> VectortoOrderedMap_SNP_counts( Eigen::VectorXd  vdata)
     int vlength = vdata.size();
     std::vector<double> v(vdata.data(), vdata.data()+vdata.size());
 
-    
-    
     std::sort(v.begin(), v.end() ); // Sort vector to optimize search and count
     
     for (size_t i = 0; i <=  *std::max_element(v.begin(), v.end()) ; ++i)  
@@ -75,7 +73,7 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
   IntegerVector count = IntegerVector::create(0, 0);
   DataSet* outdataset;
   int ilimit;
-  int blocksize = 10;
+  int blocksize = 50;
   
 
     // Real data set dimension
@@ -92,22 +90,17 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
     offset[0] = 0;
   };
   
-  Rcpp::Rcout<<"\n Realment estem fent alguna cosa....\n";
-  
+
   if( stroutdataset.compare("")!=0)
   {
     hsize_t     dimsf[2];              // dataset dimensions
     dimsf[0] = dims_out[0];
     dimsf[1] = dims_out[1];
   
-    Rcpp::Rcout<<"\n Es suposa que em fet la comparació ???.... \n";
-  
     DataSpace dataspace( RANK2, dimsf );
     outdataset = new DataSet(file->createDataSet(stroutdataset, PredType::NATIVE_DOUBLE, dataspace));
-    Rcpp::Rcout<<"\n Hem creat el outputdataset.... \n";
-    
+
   } else  {
-    Rcpp::Rcout<<"\n Els acabem d'equiparar.... \n";
     outdataset = dataset;
   }
   
@@ -136,8 +129,30 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
       for( int row = 0; row<data.rows(); row++)  // COMPLETE EXECUTION
       {
         std::map<double, double> myMap;
-        myMap = VectortoOrderedMap_SNP_counts(data. row(row));
-        data.row(row) = (data.row(row).array() == 3).select( get_value_to_impute_discrete(myMap), data.row(row));
+        myMap = VectortoOrderedMap_SNP_counts(data.row(row));
+        
+        /*** ORIGINAL FUNCIONA PERFECTAMENT PERÒ ASSIGNA UN MATEIX VALOR A TOS... !!!
+         data.row(row) = (data.row(row).array() == 3).select( get_value_to_impute_discrete(myMap), data.row(row)); 
+        ***/
+        
+        //..// data.row(row) = (data.row(row).array() == 0).select( -5, data.row(row)); 
+        //..// data.row(row) = (data.row(row).array() == 1).select( 0, data.row(row)); 
+        //..// data.row(row) = (data.row(row).array() == 2).select( 5, data.row(row)); 
+        //..// data.row(row) = (data.row(row).array() == 3).select( 99, data.row(row)); 
+        
+        Eigen::VectorXd ev = data.row(row);
+        std::vector<double> v(ev.data(), ev.data() + ev.size());
+
+        auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
+        while (it != std::end(v)) {
+          //..// results.emplace_back(std::distance(std::begin(v), it));
+          if(*it==3) *it = get_value_to_impute_discrete(myMap);
+          it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
+        }
+
+        Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
+        data.row(row) = X;
+        
       }
       
     } else {
@@ -145,15 +160,26 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
       {
         std::map<double, double> myMap;
         myMap = VectortoOrderedMap_SNP_counts(data.col(col));
-        data.col(col) = (data.col(col).array() == 3).select( get_value_to_impute_discrete(myMap), data.col(col));
+        //..// data.col(col) = (data.col(col).array() == 3).select( get_value_to_impute_discrete(myMap), data.col(col));
+        Eigen::VectorXd ev = data.col(col);
+        std::vector<double> v(ev.data(), ev.data() + ev.size());
+        
+        auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
+        while (it != std::end(v)) {
+          //..// results.emplace_back(std::distance(std::begin(v), it));
+          if(*it==3) *it = get_value_to_impute_discrete(myMap);
+          it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
+        }
+
+        Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
+        data.col(col) = X;
       }
     }
-
     //..// write_HDF5_matrix_subset_v2(file, dataset, offset, count, stride, block, wrap(data) );
     write_HDF5_matrix_subset_v2(file, outdataset, offset, count, stride, block, wrap(data) );
-    
-    outdataset->close();
+
   }
+  outdataset->close();
   
 }
 
@@ -173,8 +199,9 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
 //' @return Original hdf5 data file with imputed data
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, 
-                     Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols )
+Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::string dataset, 
+                              Rcpp::Nullable<std::string> outgroup = R_NilValue, Rcpp::Nullable<std::string> outdataset = R_NilValue, 
+                              Rcpp::Nullable<bool> bycols = true )
 {
   
   H5File* file;
@@ -212,7 +239,6 @@ Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::stri
       
       if( strdataset.compare(stroutdata)!= 0)
       {
-        Rcpp::Rcout<<"\n La entrada i sortida no seran iguals \n";
         // If output is different from imput --> Remve possible existing dataset and create new
         if(exists_HDF5_element_ptr(file, stroutdata))
           remove_HDF5_element_ptr(file, stroutdata);
@@ -220,16 +246,11 @@ Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::stri
         // Create group if not exists
         if(!exists_HDF5_element_ptr(file, stroutgroup))
           file->createGroup(stroutgroup);
-        
-        Rcpp::Rcout<<"\n En teoria hauriem d'haver create el grup.... \n";
-        
+
       } else {
         stroutdata = "";
-        
-        Rcpp::Rcout<<"\n Ara sembla que si que son iguals.... \n";
-        
       }
-      
+
       Impute_snp_HDF5( file, pdataset, bcols, stroutdata);
       
     } else{

@@ -31,10 +31,11 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
   IntegerVector stride = IntegerVector::create(1, 1);
   IntegerVector block = IntegerVector::create(1, 1);
   IntegerVector offset = IntegerVector::create(0, 0);
+  IntegerVector newoffset = IntegerVector::create(0, 0);
   IntegerVector count = IntegerVector::create(0, 0);
   DataSet* unlimDataset;
   int ilimit;
-  int blocksize = 100;
+  int blocksize = 10;
   int itotrem = 0;
   
   
@@ -75,24 +76,33 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
     
     if(bycols == true) // We have to do it by rows
     {
-      for( int row = 0; row<data.rows(); row++)  // COMPLETE EXECUTION
+      int actualrow = 0;
+      int readedrows = data.rows();
+      //..// for( int row = 0; row<readedrows; row++)  // COMPLETE EXECUTION
+      for( int row = readedrows-1 ; row>=0; row--)  // COMPLETE EXECUTION
       {
-        std::map<double, double> mapSNP;
-        mapSNP = VectortoOrderedMap_SNP_counts(data. row(row));
-        auto it = mapSNP.find(3);
-        
-        if(!(it == mapSNP.end()))
-        {
-          if( ( (double)it->second /(double)count[1] ) >pcent )
+          if((data.row(row).array() == 3).count()/(double)count[1]> pcent )
           {
-            removeRow(data, i-iblockrem);
+            removeRow(data, row);
             iblockrem = iblockrem + 1;
-          }
-        }
+          } 
       }
     } else {
-      for( int col = 0; col<data.cols(); col++) 
+      
+      int actualcol = 0;
+      int readedcols = data.cols();
+      
+      //..//for( int col = 0; col<data.cols(); col++) 
+      for( int col = readedcols-1 ; col>=0; col--)  // COMPLETE EXECUTION
       { 
+        
+        if((data.col(col).array() == 3).count()/(double)count[1]> pcent )
+        {
+          removeRow(data, col);
+          iblockrem = iblockrem + 1;
+        } 
+        
+        /***
         std::map<double, double> mapSNP;
         mapSNP = VectortoOrderedMap_SNP_counts(data. col(col));
         auto it = mapSNP.find(3);
@@ -105,13 +115,14 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
             iblockrem = iblockrem + 1;
           }
         }
+         ***/
       }
     }
     
-
     int extendcols = data.cols();
     int extendrows = data.rows();
     
+
     if(i==0) {
       create_HDF5_unlimited_dataset_ptr(file, stroutdata, extendrows, extendcols, "numeric");
       unlimDataset = new DataSet(file->openDataSet(stroutdata));
@@ -124,7 +135,13 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
     
     IntegerVector countblock = IntegerVector::create(extendrows, extendcols);
     
-    write_HDF5_matrix_subset_v2(file, unlimDataset, offset, countblock, stride, block, wrap(data) );
+    write_HDF5_matrix_subset_v2(file, unlimDataset, newoffset, countblock, stride, block, wrap(data) );
+    
+    if(bycols == true)
+      newoffset[0] =  newoffset[0] + extendrows;
+    else
+      newoffset[1] =  newoffset[2] + extendcols;
+      
     
     itotrem = itotrem - iblockrem;
     

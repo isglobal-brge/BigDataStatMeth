@@ -3,7 +3,7 @@
 #PKG_LIBS = 
 
 # RcppParallel
-PKG_LIBS = $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
+PKG_LIBS += $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
 
 PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) 
 # PKG_LIBS += `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(BEACHMAT_LIBS)

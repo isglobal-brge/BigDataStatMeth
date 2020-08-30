@@ -1,10 +1,5 @@
 #include "include/svdBlockDecomposition_hdf5.h"
 
-svdeig bdSVD_hdf5(Rcpp::RObject X)
-{
-  
-}
-
 
 // Reads big matrix from hdf5 file in blocks and perform a svd descomposition from
 // each block,results are saved in hdf5 datasets under temporal group to be processed
@@ -31,7 +26,7 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
   
   try{
     
-    if(irows > icols) {
+    if(irows >= icols) {
       // Work with transposed matrix
       n = icols;
       p = irows;
@@ -80,6 +75,7 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
       if(transp==false)
         X.transposeInPlace();
 
+      //..// Rcpp::Rcout<<"\nMatriu llegida\n"<<X;
       
       // Normalize data
       if (bcenter==true || bscale==true)
@@ -104,7 +100,7 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
 
       //    d) Escriure els resultats provisionals en alguna part tmp del fitxer hdf5
       offset[0] = 0; offset[1] = 0;
-      if(transp == 1 )
+      if(transp == true )
       {
         count[0] = restmp.rows();
         count[1] = restmp.cols();
@@ -129,13 +125,13 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
         // Get write position
         if(maxsizetoread == block_size)
         {
-          if(transp == 1)
+          if(transp == true)
             offset[1] = (i%(M/k))*block_size;
           else
             offset[0] = (i%(M/k))*block_size;
         }
         else{
-          if(transp==1)
+          if(transp==true)
             offset[1] = ( (i%(M/k))-1 )*block_size + maxsizetoread ;
           else
             offset[0] = ( (i%(M/k))-1 )*block_size + maxsizetoread ;
@@ -230,6 +226,7 @@ int Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupNam
       
       //    b) Get dataset svd
       retsvd = RcppbdSVD_lapack(X, false, false);
+      
       
       //    c) U*d
       int isize = (retsvd.d).size();

@@ -119,6 +119,8 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
   else*/
   dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
 
+  //..// Rcpp::Rcout<<"\nDescomposició - d : \n"<<s;
+  //..// Rcpp::Rcout<<"\nDescomposició - u : \n"<<u;
   
   retsvd.d = s;
   retsvd.u = u;
@@ -153,7 +155,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
   
   try{
     
-    if(irows > icols)
+    if(irows >= icols)
       transp = true;
     
 
@@ -180,14 +182,21 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     IntegerVector dims_out = get_HDF5_dataset_size(datasetlast);
 
     Eigen::MatrixXd matlast;
-    if(transp==true)
-      matlast = GetCurrentBlock_hdf5(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
+    if(transp==true){
+      //..// Rcpp::Rcout<<"\n\n\nEstem tractant el GetCurrentBlock_hdf5\n\n";
+      matlast = GetCurrentBlock_hdf5(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);}
     else
       matlast = GetCurrentBlock_hdf5_Original(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
+      //..//Rcpp::Rcout<<"\n\n\nEstem TRACTANT el GetCurrentBlock_hdf5_ORIGINAL!!!! \n\n";}
     
     //..// Rcpp::Rcout<< "\n Dimensions matlast : \n\t"<<matlast.cols()<<" x "<<matlast.rows()<<"\n";
+    //..// Rcpp::Rcout<< "\n MATRIU LLEGIDA : \n"<<matlast<<"\n";
     
     retsvd = RcppbdSVD_lapack(matlast, false, false);
+    
+    
+    //..// Rcpp::Rcout<<"Resultats obtinguts SVD lapack : "<<retsvd.d<<"\n";
+    
     
     // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
     // Create structure and write d 
@@ -201,9 +210,10 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, dataset, 0, 0,dims_out_first[0], dims_out_first[1] );
     
     //..// Rcpp::Rcout<< "\n Dimensions A : \n\t"<<A.cols()<<" x "<<A.rows()<<"\n Dimensions u : "<<(retsvd.u).rows()<<" x "<< (retsvd.v).cols()<<"\n";
+    //..// Rcpp::Rcout<< "\n Dimensions A : \n\t"<<A.cols()<<" x "<<A.rows()<<"\n Dimensions u : "<<(retsvd.u).rows()<<" x "<< (retsvd.v).cols()<<"\n";
     
     Eigen::MatrixXd v;
-    if(transp==1)
+    if(transp==true)    
       v = Bblock_matrix_mul(A.transpose(),retsvd.u,128);
     else
       v = Bblock_matrix_mul(A,retsvd.u,128);
@@ -235,7 +245,12 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
       //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap((retsvd.u).transpose()));
       //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(v.transpose()));
     }
-    
+
+
+  write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.u));
+  write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.v));
+  
+  
   }catch(FileIException error) { // catch failure caused by the H5File operations
     error.printErrorStack();
   } catch(DataSetIException error) { // catch failure caused by the DataSet operations
@@ -310,7 +325,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
     // Remove previous results
     if(exists_HDF5_element_ptr(&file,"SVD/"+strdataset))
     {
-      Rcpp::Rcout<<"\n DATASET have been removed \n";
+      //..// Rcpp::Rcout<<"\n Old DATASET have been removed \n";
       remove_HDF5_element_ptr(&file,"SVD/"+strdataset);
     }
       
