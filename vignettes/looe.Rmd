@@ -3,14 +3,14 @@ title: "Algebra and Statistical Methods for Big Data with Bioconductor"
 author: 
 - name: Dolors Pelegri
   affiliation: 
-  - &uab Autonomous University of Barcelona (UAB)
+  - &uvic Universitat de Vic - Universitat Central de Catalunya (UVic)
   - &isglobal ISGlobal, Centre for Research in Environmental Epidemiology (CREAL)
   - &brge Bioinformatics Research Group in Epidemiolgy (BRGE)
 - name: Juan R. Gonzalez
   affiliation: 
   - *isglobal
   - *brge
-  - *uab
+  - *uvic
   email: juanr.gonzalez@isglobal.org
 date: "`r Sys.Date()`"
 package: "`r pkg_ver('BigDataStatMeth')`"
@@ -781,25 +781,99 @@ At the moment BigDataStatMeth has implemented snps imputation following the enco
 
 The imputation method implemented is generated from the information of the SNP data that contains the missing data, it is performed by generating a random value following a discrete distribution. If in the SNP we find 70% of '0', 25% of '1' and 5% of '2', the value of the missing data will be imputed with a probability of 70% to be '0', 25% to be '1' and 5% to be '2'.
 
-We first simulate a genotype matrix with 0, 1, 2 and 3 and store it in hdf5 file:
+We first simulate a genotype matrix with 0, 1, 2 and 3 and store it in hdf5 file and show data stored in file:
 ```{r snpgenotype}
-
-geno.sim <- matrix(sample(0:3, 10000, replace = TRUE),byrow = TRUE, ncol = 10)
+set.seed(108432)
+geno.sim <- matrix(sample(0:3, 10000, replace = TRUE), byrow = TRUE, ncol = 10)
 Create_HDF5_matrix(geno.sim, "delayed.hdf5", "OMICS", "geno")
+
+# Get data and show the first 5 rows
+h5fsvd = H5Fopen("delayed.hdf5")
+geno <- h5fsvd$OMICS$geno
+h5closeAll()
+
+geno[1:5,1:10]
 
 ```
 
-Nowe we impute values where genotype = '3' (missing data), here we :
-```{r impute}
-bdImputeSNPHDF5("delayed.hdf5", group = "OMICS", dataset = "geno", bycols = TRUE)
+Remember, we allways have to close hdf5 data file. Now we impute values where genotype = '3' (missing data in GDS format). To apply imputation we only have to indicate the file where dataset is, the group and the dataset name, optionally, we indicate were we want to store results with `outputgroup` and `outputfolder`, by default the results are stored in the input dataset.
+An important parameter is `bycols`, with `bycols` we can inform if we want to impute data by cols `bycols = TRUE` or by rows `bycols = FALSE`, the default imputation implemented method is by cols.
 
+In next example we perform the imputation in "imputedgeno" dataset inside the group "OMICS" and the imputation method applied takes into account the probabilities in columns (default).
+```{r impute}
+bdImputeSNPHDF5("delayed.hdf5", group="OMICS", dataset="geno", outgroup="OMICS", outdataset="imputedgeno")
+```
+
+Now we get the imputation results
+
+```{r impute2}
+# Get imputed data and show the first 5 rows
+h5fsvd = H5Fopen("delayed.hdf5")
+imputedgeno <- h5fsvd$OMICS$imputedgeno
+h5closeAll()
+
+imputedgeno[1:5,1:10]
 ```
 
 
 ## Normalization, center and scale
 
+Normalization is one of the most important procedures in genomics data analysis. A typical dataset contains more than one sample and we are almost always interested in making comparisons between these and in order to make comparisons we need to normalize data.
+
+In BigDataStatMeth we implemented a normalization method that works directly with datasets stored in hdf5 file format, like in other functions implemented in BigDataSet that works with hdf5 data files, we have to indicate where the data is, the filename, the name of the group under the dataset is and the dataset name. In normalization function, we can indicate if we want to center data, scale or center and scale (default option). The applied formula to normalize data by default in implemented function is : 
+$$ \frac{X - \mu}{\sigma}$$
+
+The implemented function to normalize data directo from hdf5 data file is `Normalize_hdf5`. 
+
+To show you an example, we will use the imputed geno dataset *imputedgeno* created before in imputation method example. To normalize data we have to indicate where the dataset is stored and we have two optiona paramters `bcenter` and `bscale` with default value = TRUE. In order to normalize data, we don't need to modify these optional parameters. If we only want to center data, then we have to put `bscale = FALSE` or if we only want to scale data `bcenter` parameter must be FALSE.
+
+**Important : ** The normalization results are stored under "NORMALIZED" group, under this group, we found all normalized datasets with the same structure under root, for example, if we normalize dataset genoimputed under OMICS group, the normalized results will be in "NORMALIZED"/"OMICS"/genoimputed
+
+Let show an example normalizing imputed geno under group "OMICS"  in delayed.hdf5 file: 
+
+```{r normalize}
+
+Normalize_hdf5("delayed.hdf5", group="OMICS", dataset="imputedgeno")
+```
+
+The results will be under groups "NORMALIZED" - "OMICS" in dataset genoimputed
+
+```{r normalizeres}
+# Geno after normalization
+h5fsvd = H5Fopen("delayed.hdf5")
+genonormalized <- h5fsvd$NORMALIZED$OMICS$geno
+h5closeAll()
+
+genonormalized[1:5,1:10]
+```
+
 
 ## QC - Remove low data
+
+Missing data in meta-analysis of genetic association studies are unavoidable. In BigDataStatMeth we implemented a function to remove those SNPs with a hight percentage of missing data. The implemented function to remove SNPs wit a certain percentage of missing data is the function `bdRemovelowdata`
+
+Like in imputation method, in remove low data method we have to inform the input data indicating  the filename, the group and the dataset name and we also have to inform the dataset were data will be stored after removing the SNPs with parameters `outgroup` and `outdataset`.
+
+To remove low data we have to infrorm if we want to remove data by cols `SNPincols = TRUE` or by rows `SNPincols = FALSE` and the percentage of missing data `pcent` parameter. `pcent` of missing data refers to missing percentage in columns if we defined `SNPincols = TRUE` or `pcent` refers to rows if `SNPincols = FALSE`. 
+
+To show how renove low data works we use the previous dataset stored in *delayed.hdf5* file, in that case, we will assume that SNPs are in columns and we will remove those SNPs where missing data is greater than 40%.
+
+```{r removelow}
+bdRemovelowdata("delayed.hdf5", group="OMICS", dataset="geno", outgroup="OMICS", outdataset="removedgeno", SNPincols = TRUE, pcent = 0.39)
+```
+
+After remove the SNPs with pcent greater than 39% results have been saved in dataset "*removedgeno*" under group "*OMICS*", we observe the resulting dataset
+
+```{r removelow2}
+# Get imputed data and show the first 5 rows
+h5fsvd = H5Fopen("delayed.hdf5")
+removedgeno <- h5fsvd$OMICS$removedgeno
+h5closeAll()
+
+removedgeno[1:5,1:10]
+```
+
+
 
 # References
 
