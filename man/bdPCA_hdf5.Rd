@@ -4,7 +4,7 @@
 \alias{bdPCA_hdf5}
 \title{PCA Descomposition}
 \usage{
-bdPCA_hdf5(filename, group, dataset)
+bdPCA_hdf5(filename, group, dataset, threads)
 }
 \arguments{
 \item{filename}{string, file name where dataset is stored}

@@ -35,7 +35,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
   IntegerVector count = IntegerVector::create(0, 0);
   DataSet* unlimDataset;
   int ilimit;
-  int blocksize = 10;
+  int blocksize = 1000;
   int itotrem = 0;
   
   
@@ -81,7 +81,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
       //..// for( int row = 0; row<readedrows; row++)  // COMPLETE EXECUTION
       for( int row = readedrows-1 ; row>=0; row--)  // COMPLETE EXECUTION
       {
-          if((data.row(row).array() == 3).count()/(double)count[1]> pcent )
+          if((data.row(row).array() == 3).count()/(double)count[1]>= pcent )
           {
             removeRow(data, row);
             iblockrem = iblockrem + 1;
@@ -176,6 +176,7 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
 {
   
   H5File* file;
+  int iremoved = 0;
     
   try
   {
@@ -205,7 +206,7 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
       
       if( strdataset.compare(stroutdata)!= 0)
       {
-        Rcpp::Rcout<<"\n La entrada i sortida no seran iguals \n";
+        Rcpp::Rcout<<"\n Input and output datasets will be different \n";
         // If output is different from imput --> Remve possible existing dataset and create new
         if(exists_HDF5_element_ptr(file, stroutdata))
           remove_HDF5_element_ptr(file, stroutdata);
@@ -218,7 +219,7 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
         throw std::range_error("Input and output dataset must be different");  
       }
       
-      int iremoved = Remove_snp_low_data_HDF5( file, pdataset, bcols, stroutdata, dpcent);
+      iremoved = Remove_snp_low_data_HDF5( file, pdataset, bcols, stroutdata, dpcent);
       
       Function warning("warning");
       if (SNPincols )
@@ -258,7 +259,7 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
   }
   
   file->close();
-  return(wrap(0));
+  return(wrap(iremoved));
   
 }
 

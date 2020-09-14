@@ -4,7 +4,7 @@
 \alias{Create_HDF5_matrix}
 \title{Write matrix to existing hdf5 file}
 \usage{
-Create_HDF5_matrix(mat, filename, group, dataset)
+Create_HDF5_matrix(mat, filename, group, dataset, transp = NULL)
 }
 \arguments{
 \item{mat}{numerical data matrix}

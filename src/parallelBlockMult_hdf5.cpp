@@ -305,9 +305,9 @@ int hdf5_block_matrix_mul_parallel( IntegerVector sizeA, IntegerVector sizeB, in
       if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
         ithreads = Rcpp::as<int> (threads);
       else 
-        ithreads = std::thread::hardware_concurrency();
+        ithreads = std::thread::hardware_concurrency()/2;
     }
-    else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads();
+    else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
     
     omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
     omp_set_num_threads(ithreads);
@@ -441,9 +441,9 @@ Eigen::MatrixXd Bblock_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen
     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
       ithreads = Rcpp::as<int> (threads);
     else 
-      ithreads = std::thread::hardware_concurrency();
+      ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads();
+  else    ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads();
 
   omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
   omp_set_num_threads(ithreads);
@@ -451,7 +451,7 @@ Eigen::MatrixXd Bblock_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen
 #pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
 {
 
-  // tid = omp_get_thread_num();
+  tid = omp_get_thread_num();
   //només per fer proves dels threads i saber que està paralelitzant, sinó no cal tenir-ho descomentat
   // if (tid == 0)   {
   //   Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
@@ -527,12 +527,13 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
                               Rcpp::Nullable<bool> paral = R_NilValue,
                               Rcpp::Nullable<int> threads = R_NilValue,
                               Rcpp::Nullable<double> bigmatrix = R_NilValue,
+                              Rcpp::Nullable<double> mixblock_size = R_NilValue,
                               Rcpp::Nullable<std::string> outfile = R_NilValue,
-                              Rcpp::Nullable<double> mixblock_size = R_NilValue)
+                              Rcpp::Nullable<bool> onmemory = R_NilValue)
 {
   
   int iblock_size, res, bigmat;
-  bool bparal;// = Rcpp::as<double>;
+  bool bparal, workmem;// = Rcpp::as<double>;
   std::string filename;
   
   Eigen::MatrixXd A;
@@ -560,6 +561,12 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
     bigmat = 10000;
   } else {
     bigmat = Rcpp::as<double> (bigmatrix);
+  }
+  
+  if( onmemory.isNull()) {
+    workmem = false;
+  } else {
+    workmem = Rcpp::as<bool> (onmemory);
   }
   
 
@@ -613,7 +620,7 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
   
   
   // if number of elemenents < bigmat in all matrix work in memory else work with hdf5 files
-  if( dsizeA[0]<bigmat && dsizeB[0]<bigmat && dsizeA[1]<bigmat && dsizeB[1]<bigmat)
+  if( workmem == true || ( dsizeA[0]<bigmat && dsizeB[0]<bigmat && dsizeA[1]<bigmat && dsizeB[1]<bigmat))
   {
     //..// Rcpp::Rcout<<"Working in memory...";
     
@@ -673,6 +680,8 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
     /********************************/
     /**** START ON-DISK PROCESSING **/
     /********************************/
+    
+    //..// Rcpp::Rcout<<"Working on disk ...";
     
     // Read DelayedArray a and b
     if ( a.isS4() == true)    
@@ -820,8 +829,8 @@ library(rhdf5)
 
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth/tmp")
 
-N <- 500
-M <- 500
+N <- 5000
+M <- 5000
 
 set.seed(123)
 A <- matrix(rnorm(N*M,mean=0,sd=1), N, M)
@@ -830,7 +839,7 @@ Ad<-DelayedArray(A)
 blockmult()
 class(CP2)
 # Memory
-CP1 <- bdMatrixmult(t(Ad),Ad, block_size = 1024, bigmatrix = 10000, paral = FALSE)
+CP1 <- blockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 1000000, paral = TRUE, thread= 5)
 # HDF5 File
 CP2 <- blockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 10, paral = FALSE)
 # Memory R

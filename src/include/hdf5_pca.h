@@ -23,7 +23,8 @@
   
   int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset);
   // Rcpp::RObject bdPCA_hdf5(std::string filename, std::string strsubgroup, std::string strdataset);
-
+  //..// Rcpp::RObject bdPCA_hdf5(std::string filename, std::string strsubgroup, std::string strdataset, Rcpp::Nullable<int> threads = R_NilValue);
+  Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<int> threads = R_NilValue);
 
 
 #endif

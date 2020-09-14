@@ -10,9 +10,10 @@ blockmult(
   block_size = 128,
   paral = TRUE,
   threads = NULL,
-  bigmatrix = 5000,
+  bigmatrix = 10000,
   mixblock_size = 128,
-  outfile = "./tmp_blockmult.hdf5"
+  outfile = "./tmp_blockmult.hdf5",
+  onmemory = FALSE
 )
 
 blockmult(
@@ -21,9 +22,10 @@ blockmult(
   block_size = 128,
   paral = TRUE,
   threads = NULL,
-  bigmatrix = 5000,
+  bigmatrix = 10000,
   mixblock_size = 128,
-  outfile = "./tmp_blockmult.hdf5"
+  outfile = "./tmp_blockmult.hdf5",
+  onmemory = FALSE
 )
 }
 \arguments{
@@ -45,6 +47,8 @@ Block size for mixed computation in big matrix parallel. Size of the block to be
 memory of the block read from the disk being processed.}
 
 \item{outfile}{(optional) file name to work with hdf5 if we are working with big matrix in disk.}
+
+\item{onmemory}{(optional) if onmemory = TRUE the multiplication is forced to execute in memory}
 }
 \value{
 A List with : 

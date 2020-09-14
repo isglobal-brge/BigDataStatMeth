@@ -15,9 +15,9 @@ author:
 date: "`r Sys.Date()`"
 package: "`r pkg_ver('BigDataStatMeth')`"
 output:
-  BiocStyle::html_document: default
   BiocStyle::pdf_document:
     toc_float: true
+  BiocStyle::html_document: default
 abstract: |
   Description of functions to perform matrix operations, algebra and some statistical models using _DelayedMatrix_ objects and HDF5 data files.
 vignette: |
@@ -90,7 +90,7 @@ HDF5 file structure include only *two major types of object*:
 
 This results in a truly hierarchical, filesystem-like data format
 
-```{r hdf5Img, fig.align = 'center', fig.cap = "HDF5 hierarchical structure", echo=FALSE}
+```{r hdf5Img, out.width = '60%', fig.align = 'center', fig.cap = "HDF5 hierarchical structure", echo=FALSE}
 knitr::include_graphics("imgs/hdf5_squema.jpg")
 ```
 
@@ -353,8 +353,9 @@ Here, we compare the performace of the block method with the different options.
 bench1 <- microbenchmark(
   noblockParal = blockmult(Abig, Bbig, paral = TRUE),
   blockParalfile = blockmult(Abig, Bbig, block_size = 256, paral=TRUE),
-  blockParalmem = blockmult(Abig, Bbig, block_size = 256, paral=TRUE, bigmatrix = 100000),
-  times = 3 ) # Tornar-ho a posar a 10 quan tot OK per estalviar temps d'execució !!!
+  blockParalmem = blockmult(Abig, Bbig, block_size = 256, paral=TRUE, 
+                            bigmatrix = 100000),
+  times = 3 ) 
 
 bench1
 ```
@@ -563,7 +564,7 @@ all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), Dbsvd$d[1:10] )
 
 This method was developed in June 2016 by M. A. Iwen and B. W. Ong. The authors describe it as a distributed and incremental SVD algorithm that is useful for agglomerative data analysis on large networks. The algorithm calculates the singular values and left singular vectors of a matrix A, by first, partitioning it by columns. This creates a set of submatrices of A with the same number of rows, but only some of its columns. After that, the SVD of each of the submatrices is computed. The final step consists of combining the results obtained by merging them again and computing the SVD of the resulting matrix.
 
-```{r BSVDImg, fig.align = 'center', fig.cap = "Flowchart for a two-level hierarchical Block SVD algorithm", echo=FALSE}
+```{r BSVDImg, out.width = '60%', fig.align = 'center', fig.cap = "Flowchart for a two-level hierarchical Block SVD algorithm", echo=FALSE}
 knitr::include_graphics("imgs/blocksvd.png")
 ```
 
@@ -591,7 +592,8 @@ Like in Simple Singular Value Decomposition we can normalize, center or scale da
 
 ```{r BlockSVDNotNorm}
 # Direct from hdf5 data file
-svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", bcenter = FALSE, bscale = FALSE)
+svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", 
+                    bcenter = FALSE, bscale = FALSE)
 svdh5$d[1:7]
 
 # with R implementation from data in memory
@@ -620,18 +622,21 @@ We can show performance for distinct SVD functions.
 SVD decomposition with normalized data and different parameters executed in memmory and hdf5 files with functions from R base library and BigDataStatMeth library :
 
 ```{r svdperform, cache=TRUE}
-bdSVD_hdf5_Normalized_k2q1 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data')"
-bdSVD_hdf5_Normalized_k4q1 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4)"
-bdSVD_hdf5_Normalized_k4q2 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4)"
-bdSVD_memory_Normalized <- 'bdSVD_lapack(omdata)'
-svd_R_memory_Normalized <- 'svd(scale(omdata))'
+bdSVD_hdf5_Normal_k2q1 <- 
+  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data')"
+bdSVD_hdf5_Normal_k4q1 <- 
+  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4)"
+bdSVD_hdf5_Normal_k4q2 <- 
+  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4)"
+bdSVD_memory_Normal <- 'bdSVD_lapack(omdata)'
+svd_R_memory_Normal <- 'svd(scale(omdata))'
 
 # With normalization process
-res <- microbenchmark( eval(parse(text=bdSVD_hdf5_Normalized_k2q1)),
-                       eval(parse(text=bdSVD_hdf5_Normalized_k4q1)),
-                       eval(parse(text=bdSVD_hdf5_Normalized_k4q2)),
-                       eval(parse(text=bdSVD_memory_Normalized)),
-                       eval(parse(text=svd_R_memory_Normalized)),
+res <- microbenchmark( eval(parse(text=bdSVD_hdf5_Normal_k2q1)),
+                       eval(parse(text=bdSVD_hdf5_Normal_k4q1)),
+                       eval(parse(text=bdSVD_hdf5_Normal_k4q2)),
+                       eval(parse(text=bdSVD_memory_Normal)),
+                       eval(parse(text=svd_R_memory_Normal)),
                        times = 3, unit = "s")
 
 print(summary(res)[, c(1:7)],digits=3)
@@ -640,18 +645,21 @@ print(summary(res)[, c(1:7)],digits=3)
 SVD decomposition with not normalized data and different parameters executed in memmory and hdf5 files with functions from R base library and BigDataStatMeth library :
 
 ```{r svdperform2, cache=TRUE}
-bdSVD_hdf5_Not_Normalized_k2q1 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',bcenter=FALSE,bscale=FALSE)"
-bdSVD_hdf5_Not_Normalized_k4q1 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4,bcenter=FALSE,bscale=FALSE)"
-bdSVD_hdf5_Not_Normalized_k4q2 <- "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4,bcenter=FALSE,bscale=FALSE)"
-bdSVD_memory_Not_Normalized <- 'bdSVD_lapack(omdata, bcenter = TRUE, bscale = TRUE)'
-svd_R_memory_Not_Normalized <- 'svd(omdata)'
+bdSVD_hdf5_NoNormal_k2q1 <- 
+  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',bcenter=FALSE,bscale=FALSE)"
+bdSVD_hdf5_NoNormal_k4q1 <- 
+  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4,bcenter=FALSE,bscale=FALSE)"
+bdSVD_hdf5_NoNormal_k4q2 <- 
+  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4,bcenter=FALSE,bscale=FALSE)"
+bdSVD_memory_NoNormal <- 'bdSVD_lapack(omdata, bcenter = TRUE, bscale = TRUE)'
+svd_R_memory_NoNormal <- 'svd(omdata)'
 
 # Without normalization process
-res <- microbenchmark( eval(parse(text=bdSVD_hdf5_Not_Normalized_k2q1)),
-                       eval(parse(text=bdSVD_hdf5_Not_Normalized_k4q1)),
-                       eval(parse(text=bdSVD_hdf5_Not_Normalized_k4q2)),
-                       eval(parse(text=bdSVD_memory_Not_Normalized)),
-                       eval(parse(text=svd_R_memory_Not_Normalized)),
+res <- microbenchmark( eval(parse(text=bdSVD_hdf5_NoNormal_k2q1)),
+                       eval(parse(text=bdSVD_hdf5_NoNormal_k4q1)),
+                       eval(parse(text=bdSVD_hdf5_NoNormal_k4q2)),
+                       eval(parse(text=bdSVD_memory_NoNormal)),
+                       eval(parse(text=svd_R_memory_NoNormal)),
                        times = 3, unit = "s")
 
 print(summary(res)[, c(1:7)],digits=3)
@@ -773,7 +781,7 @@ mod.glmnet$beta[1:7,]
 
 # Utils for data analysis working directly in hdf5 files
 
-## SNP imputation
+## Data imputation
 
 Imputation in genetics refers to the statistical inference of unobserved genotypes. In genetic epidemiology and quantitative genetics, researchers aim at identifying genomic locations where variation between individuals is associated with variation in traits of interest between individuals. 
 
@@ -801,7 +809,8 @@ An important parameter is `bycols`, with `bycols` we can inform if we want to im
 
 In next example we perform the imputation in "imputedgeno" dataset inside the group "OMICS" and the imputation method applied takes into account the probabilities in columns (default).
 ```{r impute}
-bdImputeSNPHDF5("delayed.hdf5", group="OMICS", dataset="geno", outgroup="OMICS", outdataset="imputedgeno")
+bdImputeSNPHDF5("delayed.hdf5", group="OMICS", dataset="geno", 
+                outgroup="OMICS", outdataset="imputedgeno")
 ```
 
 Now we get the imputation results
@@ -859,7 +868,9 @@ To remove low data we have to infrorm if we want to remove data by cols `SNPinco
 To show how renove low data works we use the previous dataset stored in *delayed.hdf5* file, in that case, we will assume that SNPs are in columns and we will remove those SNPs where missing data is greater than 40%.
 
 ```{r removelow}
-bdRemovelowdata("delayed.hdf5", group="OMICS", dataset="geno", outgroup="OMICS", outdataset="removedgeno", SNPincols = TRUE, pcent = 0.39)
+bdRemovelowdata("delayed.hdf5", group="OMICS", dataset="geno", 
+                outgroup="OMICS", outdataset="removedgeno", 
+                SNPincols = TRUE, pcent = 0.39)
 ```
 
 After remove the SNPs with pcent greater than 39% results have been saved in dataset "*removedgeno*" under group "*OMICS*", we observe the resulting dataset
@@ -877,10 +888,10 @@ removedgeno[1:5,1:10]
 
 # References
 
-<a id="1">[1]</a> 
-Fox L., Mayers D.F. (1987).
-Algorithms. In: Numerical Solution of Ordinary Differential Equations. (198-211)
-Springer, Dordrecht.
+<a id="rhdf5">[1]</a> 
+Fischer, Bernd, Gregoire Pau, and Mike Smith. (2019).
+R Interface to Hdf5. 
+https://github.com/grimbough/rhdf5
 
 # Session information
 

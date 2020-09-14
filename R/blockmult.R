@@ -15,6 +15,7 @@
 #' Block size for mixed computation in big matrix parallel. Size of the block to be used to perform parallelized memory 
 #' memory of the block read from the disk being processed.
 #' @param outfile (optional) file name to work with hdf5 if we are working with big matrix in disk.
+#' @param onmemory (optional) if onmemory = TRUE the multiplication is forced to execute in memory
 #' @return numerical matrix
 #' @examples
 #' # with numeric matrix
@@ -31,10 +32,11 @@
 #' BD <- DelayedArray(B)
 #' 
 #' blockmult( AD, BD, 128, TRUE)
-blockmult <- function( a, b, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 5000, mixblock_size = 128, outfile = "./tmp_blockmult.hdf5")
+blockmult <- function( a, b, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 10000, mixblock_size = 128, 
+                       outfile = "./tmp_blockmult.hdf5", onmemory = FALSE)
 { 
   
-  res <- .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads, bigmatrix, outfile, mixblock_size)
+  res <- .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads, bigmatrix, mixblock_size, outfile, onmemory)
 
   if (res$filename == '')
     return (res$matrix)

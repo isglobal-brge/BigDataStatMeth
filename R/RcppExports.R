@@ -15,7 +15,7 @@
 #' @return Original hdf5 data file with imputed data
 #' @export
 bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcent, SNPincols) {
-    .Call('_BigDataStatMeth_bdRemovelowdata', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, SNPincols)
+    .Call(`_BigDataStatMeth_bdRemovelowdata`, filename, group, dataset, outgroup, outdataset, pcent, SNPincols)
 }
 
 #' Impute SNPs in hdf5 omic dataset 
@@ -31,7 +31,7 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' @return Original hdf5 data file with imputed data
 #' @export
 bdImputeSNPHDF5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE) {
-    .Call('_BigDataStatMeth_bdImputeSNPHDF5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols)
+    .Call(`_BigDataStatMeth_bdImputeSNPHDF5`, filename, group, dataset, outgroup, outdataset, bycols)
 }
 
 #' Normalize dataset in hdf5 file
@@ -49,7 +49,7 @@ bdImputeSNPHDF5 <- function(filename, group, dataset, outgroup = NULL, outdatase
 #' 
 #' @export
 Normalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, wsize = NULL) {
-    .Call('_BigDataStatMeth_Normalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, wsize)
+    .Call(`_BigDataStatMeth_Normalize_hdf5`, filename, group, dataset, bcenter, bscale, wsize)
 }
 
 #' PCA Descomposition
@@ -61,8 +61,8 @@ Normalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NU
 #' @param dataset string dataset name with data to perform PCA
 #' @return original file with results in folder PCA/<datasetname>
 #' @export
-bdPCA_hdf5 <- function(filename, group, dataset) {
-    .Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset)
+bdPCA_hdf5 <- function(filename, group, dataset, threads) {
+    .Call(`_BigDataStatMeth_bdPCA_hdf5`, filename, group, dataset, threads)
 }
 
 #' LOOE
@@ -98,7 +98,7 @@ bdPCA_hdf5 <- function(filename, group, dataset) {
 #' looe_delayed$coef[1:10]
 #' @export
 LOOE <- function(X, Y, paral, nl = NULL, ml = NULL, l = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_LOOE', PACKAGE = 'BigDataStatMeth', X, Y, paral, nl, ml, l, threads)
+    .Call(`_BigDataStatMeth_LOOE`, X, Y, paral, nl, ml, l, threads)
 }
 
 #' Normalize Delayed Array matrix
@@ -131,7 +131,7 @@ LOOE <- function(X, Y, paral, nl = NULL, ml = NULL, l = NULL, threads = NULL) {
 #' 
 #' @export
 Normalize_Data <- function(x, bcenter = NULL, bscale = NULL) {
-    .Call('_BigDataStatMeth_Normalize_Data', PACKAGE = 'BigDataStatMeth', x, bcenter, bscale)
+    .Call(`_BigDataStatMeth_Normalize_Data`, x, bcenter, bscale)
 }
 
 #' Matrix - Weighted vector Multiplication with numerical or DelayedArray data
@@ -170,7 +170,7 @@ Normalize_Data <- function(x, bcenter = NULL, bscale = NULL) {
 #' 
 #' @export
 bdwXw <- function(X, W, op) {
-    .Call('_BigDataStatMeth_bdwXw', PACKAGE = 'BigDataStatMeth', X, W, op)
+    .Call(`_BigDataStatMeth_bdwXw`, X, W, op)
 }
 
 #' Crossproduct and transposed crossproduct of DelayedArray
@@ -197,7 +197,7 @@ bdwXw <- function(X, W, op) {
 #' 
 #' @export
 bdcrossprod <- function(a, transposed = NULL) {
-    .Call('_BigDataStatMeth_bdcrossprod', PACKAGE = 'BigDataStatMeth', a, transposed)
+    .Call(`_BigDataStatMeth_bdcrossprod`, a, transposed)
 }
 
 #' Matrix - Weighted vector Multiplication with numerical or DelayedArray data
@@ -229,7 +229,7 @@ bdcrossprod <- function(a, transposed = NULL) {
 #' 
 #' @export
 bdwproduct <- function(a, w, op) {
-    .Call('_BigDataStatMeth_bdwproduct', PACKAGE = 'BigDataStatMeth', a, w, op)
+    .Call(`_BigDataStatMeth_bdwproduct`, a, w, op)
 }
 
 #' Matrix - Weighted Scalar Multiplication with numerical or DelayedArray data
@@ -259,7 +259,7 @@ bdwproduct <- function(a, w, op) {
 #' 
 #' @export
 bdScalarwproduct <- function(a, w, op) {
-    .Call('_BigDataStatMeth_bdScalarwproduct', PACKAGE = 'BigDataStatMeth', a, w, op)
+    .Call(`_BigDataStatMeth_bdScalarwproduct`, a, w, op)
 }
 
 #' Block matrix multiplication with Delayed Array Object
@@ -303,40 +303,40 @@ bdScalarwproduct <- function(a, w, op) {
 #' 
 #' Bblockmult(AD,BD,128, TRUE)
 #' @export
-blockmult <- function(a, b, block_size = NULL, paral = NULL, threads = NULL, bigmatrix = NULL, outfile = NULL, mixblock_size = NULL) {
-    .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads, bigmatrix, outfile, mixblock_size)
+blockmult <- function(a, b, block_size = NULL, paral = NULL, threads = NULL, bigmatrix = NULL, mixblock_size = NULL, outfile = NULL, onmemory = NULL) {
+    .Call(`_BigDataStatMeth_blockmult`, a, b, block_size, paral, threads, bigmatrix, mixblock_size, outfile, onmemory)
 }
 
 CholFactor <- function(a) {
-    .Call('_BigDataStatMeth_CholFactor', PACKAGE = 'BigDataStatMeth', a)
+    .Call(`_BigDataStatMeth_CholFactor`, a)
 }
 
 CholSolve <- function(a, b) {
-    .Call('_BigDataStatMeth_CholSolve', PACKAGE = 'BigDataStatMeth', a, b)
+    .Call(`_BigDataStatMeth_CholSolve`, a, b)
 }
 
 inversechol_par <- function(a, threads = NULL) {
-    .Call('_BigDataStatMeth_inversechol_par', PACKAGE = 'BigDataStatMeth', a, threads)
+    .Call(`_BigDataStatMeth_inversechol_par`, a, threads)
 }
 
 partCrossProd <- function(X) {
-    .Call('_BigDataStatMeth_partCrossProd', PACKAGE = 'BigDataStatMeth', X)
+    .Call(`_BigDataStatMeth_partCrossProd`, X)
 }
 
 partCrossProd_block <- function(X) {
-    .Call('_BigDataStatMeth_partCrossProd_block', PACKAGE = 'BigDataStatMeth', X)
+    .Call(`_BigDataStatMeth_partCrossProd_block`, X)
 }
 
 parCrossProd <- function(X) {
-    .Call('_BigDataStatMeth_parCrossProd', PACKAGE = 'BigDataStatMeth', X)
+    .Call(`_BigDataStatMeth_parCrossProd`, X)
 }
 
 parCrossProd_block <- function(X) {
-    .Call('_BigDataStatMeth_parCrossProd_block', PACKAGE = 'BigDataStatMeth', X)
+    .Call(`_BigDataStatMeth_parCrossProd_block`, X)
 }
 
 partCrossProdEigen <- function(X) {
-    .Call('_BigDataStatMeth_partCrossProdEigen', PACKAGE = 'BigDataStatMeth', X)
+    .Call(`_BigDataStatMeth_partCrossProdEigen`, X)
 }
 
 #' Matrix multiplication with Delayed Array Object (RcppParallel)
@@ -365,7 +365,7 @@ partCrossProdEigen <- function(X) {
 #' 
 #' @export
 parXYProd <- function(X, Y, op = NULL) {
-    .Call('_BigDataStatMeth_parXYProd', PACKAGE = 'BigDataStatMeth', X, Y, op)
+    .Call(`_BigDataStatMeth_parXYProd`, X, Y, op)
 }
 
 #' Block matrix multiplication with Delayed Array Object
@@ -394,31 +394,31 @@ parXYProd <- function(X, Y, op = NULL) {
 #' 
 #' @export
 parXYProdBlock <- function(X, Y, op = NULL) {
-    .Call('_BigDataStatMeth_parXYProdBlock', PACKAGE = 'BigDataStatMeth', X, Y, op)
+    .Call(`_BigDataStatMeth_parXYProdBlock`, X, Y, op)
 }
 
 parxwxt <- function(X, W) {
-    .Call('_BigDataStatMeth_parxwxt', PACKAGE = 'BigDataStatMeth', X, W)
+    .Call(`_BigDataStatMeth_parxwxt`, X, W)
 }
 
 parxtwx <- function(X, W) {
-    .Call('_BigDataStatMeth_parxtwx', PACKAGE = 'BigDataStatMeth', X, W)
+    .Call(`_BigDataStatMeth_parxtwx`, X, W)
 }
 
 parXy <- function(X, Y) {
-    .Call('_BigDataStatMeth_parXy', PACKAGE = 'BigDataStatMeth', X, Y)
+    .Call(`_BigDataStatMeth_parXy`, X, Y)
 }
 
 JacobianSVD <- function(X) {
-    .Call('_BigDataStatMeth_JacobianSVD', PACKAGE = 'BigDataStatMeth', X)
+    .Call(`_BigDataStatMeth_JacobianSVD`, X)
 }
 
 bdtsvd <- function(X, k = NULL) {
-    .Call('_BigDataStatMeth_bdtsvd', PACKAGE = 'BigDataStatMeth', X, k)
+    .Call(`_BigDataStatMeth_bdtsvd`, X, k)
 }
 
 bdsvd <- function(X) {
-    .Call('_BigDataStatMeth_bdsvd', PACKAGE = 'BigDataStatMeth', X)
+    .Call(`_BigDataStatMeth_bdsvd`, X)
 }
 
 #' Pseudo-Inverse
@@ -429,7 +429,7 @@ bdsvd <- function(X) {
 #' @return Pseudo-inverse matrix of A
 #' @export
 bdpseudoinv <- function(X) {
-    .Call('_BigDataStatMeth_bdpseudoinv', PACKAGE = 'BigDataStatMeth', X)
+    .Call(`_BigDataStatMeth_bdpseudoinv`, X)
 }
 
 #' QR Decomposition 
@@ -443,11 +443,11 @@ bdpseudoinv <- function(X) {
 #' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
 #' @export
 bdQR <- function(X, thin = NULL) {
-    .Call('_BigDataStatMeth_bdQR', PACKAGE = 'BigDataStatMeth', X, thin)
+    .Call(`_BigDataStatMeth_bdQR`, X, thin)
 }
 
 review_decomposition <- function(R, n) {
-    .Call('_BigDataStatMeth_review_decomposition', PACKAGE = 'BigDataStatMeth', R, n)
+    .Call(`_BigDataStatMeth_review_decomposition`, R, n)
 }
 
 #' Solves matrix equations : A*X = B
@@ -461,7 +461,7 @@ review_decomposition <- function(R, n) {
 #' 
 #' @export
 bddtrsm <- function(R, Z, threads = NULL) {
-    .Call('_BigDataStatMeth_bddtrsm', PACKAGE = 'BigDataStatMeth', R, Z, threads)
+    .Call(`_BigDataStatMeth_bddtrsm`, R, Z, threads)
 }
 
 #' Create hdf5 data file and write data to it
@@ -471,10 +471,11 @@ bddtrsm <- function(R, Z, threads = NULL) {
 #' @param filename, character array indicating the name of the file to create
 #' @param folder, character array indicating folder name to put the matrix in hdf5 file
 #' @param mat numerical data matrix
+#' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 #' @return none
 #' @export
-Create_HDF5_matrix_file <- function(filename, mat, group = NULL, dataset = NULL) {
-    .Call('_BigDataStatMeth_Create_HDF5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, mat, group, dataset)
+Create_HDF5_matrix_file <- function(filename, mat, group = NULL, dataset = NULL, transp = NULL) {
+    .Call(`_BigDataStatMeth_Create_HDF5_matrix_file`, filename, mat, group, dataset, transp)
 }
 
 #' Write matrix to existing hdf5 file
@@ -487,8 +488,8 @@ Create_HDF5_matrix_file <- function(filename, mat, group = NULL, dataset = NULL)
 #' @param dataset, character array indicating the dataset name that contains the matix data
 #' @return none
 #' @export
-Create_HDF5_matrix <- function(mat, filename, group, dataset) {
-    .Call('_BigDataStatMeth_Create_HDF5_matrix', PACKAGE = 'BigDataStatMeth', mat, filename, group, dataset)
+Create_HDF5_matrix <- function(mat, filename, group, dataset, transp = NULL) {
+    .Call(`_BigDataStatMeth_Create_HDF5_matrix`, mat, filename, group, dataset, transp)
 }
 
 #' Remove element group or dataset from  hdf5 file
@@ -500,7 +501,7 @@ Create_HDF5_matrix <- function(mat, filename, group, dataset) {
 #' @return none
 #' @export
 Remove_HDF5_element <- function(filename, element) {
-    .Call('_BigDataStatMeth_Remove_HDF5_element', PACKAGE = 'BigDataStatMeth', filename, element)
+    .Call(`_BigDataStatMeth_Remove_HDF5_element`, filename, element)
 }
 
 #' Inverse Cholesky of Delayed Array
@@ -522,12 +523,12 @@ Remove_HDF5_element <- function(filename, element) {
 #' 
 #' @export
 bdInvCholesky <- function(x) {
-    .Call('_BigDataStatMeth_bdInvCholesky', PACKAGE = 'BigDataStatMeth', x)
+    .Call(`_BigDataStatMeth_bdInvCholesky`, x)
 }
 
-#' SVD of DelayedArray 
+#' k first SVD components for DelayedArray 
 #' 
-#' This function performs a svd decomposition of numerical matrix or Delayed Array
+#' This function gets k first components from svd decomposition of numerical or Delayed Array 
 #' 
 #' @param x numerical or Delayed Array matrix
 #' @param k number of eigen values , this should satisfy k = min(n, m) - 1
@@ -565,7 +566,7 @@ bdInvCholesky <- function(x) {
 #' 
 #' @export
 bdSVD <- function(x, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
-    .Call('_BigDataStatMeth_bdSVD', PACKAGE = 'BigDataStatMeth', x, k, nev, bcenter, bscale)
+    .Call(`_BigDataStatMeth_bdSVD`, x, k, nev, bcenter, bscale)
 }
 
 #' Block SVD decomposition using an incremental algorithm.
@@ -589,11 +590,47 @@ bdSVD <- function(x, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
 #' }
 #' @export
 bdSVD_hdf5 <- function(x, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, threads = NULL) {
-    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', x, group, dataset, k, q, bcenter, bscale, threads)
+    .Call(`_BigDataStatMeth_bdSVD_hdf5`, x, group, dataset, k, q, bcenter, bscale, threads)
 }
 
+#' Complete SVD with Lapack Functions for DelayedArray and RObjects
+#' 
+#' This function performs a complete svd decomposition of numerical matrix or Delayed Array with 
+#' 
+#' @param x numerical or Delayed Array matrix
+#' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
+#' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+#' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
+#' @return v eigenvectors of A^tA, nxn orthogonal matrix
+#' @return d singular values, nxn diagonal matrix (non-negative real values)
+#' @examples
+#' n <- 500
+#' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+#' AD <- DelayedArray(A)
+#' 
+#' # svd without normalization
+#' bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+#' decsvd$d
+#' decsvd$u
+#' 
+#' # svd with normalization
+#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
+#' decvsd <- bdSVD_lapack( A ), # Matrix normalization too
+#' decsvd$d
+#' decsvd$u
+#' 
+#' # svd with scaled matrix (sd)
+#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+#' 
+#' decsvd$d
+#' decsvd$u
+#' # svd with centered matrix (sd)
+#' decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+#' decsvd$d
+#' decsvd$u
+#' 
 #' @export
-bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE) {
-    .Call('_BigDataStatMeth_bdSVD_lapack', PACKAGE = 'BigDataStatMeth', X, bcenter, bscale)
+bdSVD_lapack <- function(x, bcenter = TRUE, bscale = TRUE) {
+    .Call(`_BigDataStatMeth_bdSVD_lapack`, x, bcenter, bscale)
 }
 

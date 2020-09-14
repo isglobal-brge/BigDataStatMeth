@@ -38,6 +38,7 @@
                         Rcpp::Nullable<int> threads,
                         Rcpp::Nullable<double> bigmatrix,
                         Rcpp::Nullable<std::string> outfile,
-                        Rcpp::Nullable<double> mixblock_size);
-
+                        Rcpp::Nullable<double> mixblock_size,
+                        Rcpp::Nullable<bool> onmemory);
+  
 #endif

@@ -4,12 +4,20 @@
 \alias{Create_HDF5_matrix_file}
 \title{Create hdf5 data file and write data to it}
 \usage{
-Create_HDF5_matrix_file(filename, mat, group = NULL, dataset = NULL)
+Create_HDF5_matrix_file(
+  filename,
+  mat,
+  group = NULL,
+  dataset = NULL,
+  transp = NULL
+)
 }
 \arguments{
 \item{filename, }{character array indicating the name of the file to create}
 
 \item{mat}{numerical data matrix}
+
+\item{transp}{boolean, if trans=true matrix is stored transposed in hdf5 file}
 
 \item{folder, }{character array indicating folder name to put the matrix in hdf5 file}
 }

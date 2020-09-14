@@ -89,6 +89,7 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
   char Schar='S';
   int info = 0;
   
+  
   if(bcenter ==true || bscale == true)
     X = RcppNormalize_Data(X, bcenter, bscale);
   
@@ -106,7 +107,8 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
   else
     lwork = std::max( 1, 4*std::min(m,n)* std::min(m,n) + 7*std::min(m, n) );
   */
-  lwork = std::max( 5*std::min(m,n)+ std::max(m,n), 9*std::min(m, n) );
+  //.. ORIGINAL ..//lwork = std::max( 5*std::min(m,n)+ std::max(m,n), 9*std::min(m, n) );
+  lwork = std::max( 3*std::min(m,n)+ std::max(m,n), 5*std::min(m, n) );
   
 
   Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
@@ -114,9 +116,6 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
   Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
   Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
 
-  /*if(n>5*m)
-    dgesvd_( &Schar, &Nchar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
-  else*/
   dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
 
   //..// Rcpp::Rcout<<"\nDescomposició - d : \n"<<s;
@@ -136,15 +135,13 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
 // ##' @param k number of local SVDs to concatenate at each level 
 // ##' @param q number of levels
 svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int nev, bool bcenter, bool bscale, 
-                             int irows, int icols, Rcpp::Nullable<int> threads = R_NilValue )
+                             int irows, int icols, Rcpp::Nullable<int> threads )
 {
   
   IntegerVector stride = IntegerVector::create(1, 1);
   IntegerVector block = IntegerVector::create(1, 1);
   svdeig retsvd;
   Eigen::MatrixXd nX;
-  // int nconv, M, p, n;
-  // int maxsizetoread;
   bool transp = false;
   std::string strGroupName  = "tmpgroup";
   std::string strPrefix;
@@ -158,7 +155,6 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     if(irows >= icols)
       transp = true;
     
-
     First_level_SvdBlock_decomposition_hdf5( file, dataset, k, q, nev, bcenter, bscale, irows, icols, threads);
     
 
@@ -174,29 +170,21 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     // 1.- Join matrix and remove parts from file
     std::string strnewdataset = std::string((joindata[0])).substr(0,1);
     join_datasets(file, strGroupName, joindata, strnewdataset);
-    remove_HDF5_multiple_elements_ptr(file, strGroupName, joindata);
+    //..ONLY DEBUG !!!...//remove_HDF5_multiple_elements_ptr(file, strGroupName, joindata);
 
     // 2.- Get SVD from Blocks full mattrix
 
     DataSet datasetlast = file->openDataSet(strGroupName + "/" + strnewdataset);
     IntegerVector dims_out = get_HDF5_dataset_size(datasetlast);
 
+    
     Eigen::MatrixXd matlast;
     if(transp==true){
-      //..// Rcpp::Rcout<<"\n\n\nEstem tractant el GetCurrentBlock_hdf5\n\n";
       matlast = GetCurrentBlock_hdf5(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);}
     else
       matlast = GetCurrentBlock_hdf5_Original(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
-      //..//Rcpp::Rcout<<"\n\n\nEstem TRACTANT el GetCurrentBlock_hdf5_ORIGINAL!!!! \n\n";}
-    
-    //..// Rcpp::Rcout<< "\n Dimensions matlast : \n\t"<<matlast.cols()<<" x "<<matlast.rows()<<"\n";
-    //..// Rcpp::Rcout<< "\n MATRIU LLEGIDA : \n"<<matlast<<"\n";
-    
+
     retsvd = RcppbdSVD_lapack(matlast, false, false);
-    
-    
-    //..// Rcpp::Rcout<<"Resultats obtinguts SVD lapack : "<<retsvd.d<<"\n";
-    
     
     // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
     // Create structure and write d 
@@ -210,45 +198,41 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, dataset, 0, 0,dims_out_first[0], dims_out_first[1] );
     
     //..// Rcpp::Rcout<< "\n Dimensions A : \n\t"<<A.cols()<<" x "<<A.rows()<<"\n Dimensions u : "<<(retsvd.u).rows()<<" x "<< (retsvd.v).cols()<<"\n";
-    //..// Rcpp::Rcout<< "\n Dimensions A : \n\t"<<A.cols()<<" x "<<A.rows()<<"\n Dimensions u : "<<(retsvd.u).rows()<<" x "<< (retsvd.v).cols()<<"\n";
     
-    Eigen::MatrixXd v;
-    if(transp==true)    
-      v = Bblock_matrix_mul(A.transpose(),retsvd.u,128);
-    else
-      v = Bblock_matrix_mul(A,retsvd.u,128);
-    
+    Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2,A.cols());
+
+    Eigen::MatrixXd v;    
+    if(transp==true){
+      // Get data to normalize matrix
+      get_HDF5_mean_sd_by_column_ptr( file, dataset, datanormal);
+      
+      if(bcenter == true || bscale==true)    
+        A = RcppNormalize_Data_hdf5(A, bcenter, bscale, transp, datanormal );
+      
+      v = Bblock_matrix_mul_parallel(A.transpose(),retsvd.u,128, threads); // ABANS no PARALLEL
+    } else{
+      if(bcenter == true || bscale==true)    
+        A = RcppNormalize_Data_hdf5(A.transpose(), bcenter, bscale, transp, datanormal );
+      
+      v = Bblock_matrix_mul_parallel(A.transpose(),retsvd.u,128, threads); // ABANS no PARALLEL
+    }
     // 4.- resuls / svdA$d
-    v = v.array().rowwise()/(retsvd.d).transpose().array();
+    v = v.array().rowwise()/(retsvd.d).transpose().array();    
     
+ 
     // 5.- Get u and v : 
     //        --> If trans : u=v i v=u  
     
-    if (transp == true)
-    {
+    if (transp == true)  {
       retsvd.v = retsvd.u;
       retsvd.u = v;
-      // write u and v
-      write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(v));
-      //.. write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.u));
-      write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.u));
-      //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(v.transpose()));
-      //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap((retsvd.u).transpose()));
-      
-    } else
-    {
+    } else {
       retsvd.v = v;
-      // write u and v
-      write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.u));
-      //.. write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(v));
-      write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(v));
-      //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap((retsvd.u).transpose()));
-      //.. We have to write data transposed (colmajor-rowmajor)..// write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/v", wrap(v.transpose()));
     }
 
 
-  write_HDF5_matrix_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.u));
-  write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.v));
+    write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.u));
+    write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.v));
   
   
   }catch(FileIException error) { // catch failure caused by the H5File operations
@@ -280,7 +264,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
 //  @param q number of levels
 //  
 svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::string strdataset,  
-                       int k, int q, int nev, bool bcenter, bool bscale )
+                       int k, int q, int nev, bool bcenter, bool bscale, Rcpp::Nullable<int> ithreads = R_NilValue )
 {
   
   svdeig retsvd;
@@ -291,8 +275,9 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
   H5File file(filename, H5F_ACC_RDWR);
   DataSet dataset;
   
-  if(exists_HDF5_element_ptr(&file, strsubgroup + "/" + strdataset))
+  if(exists_HDF5_element_ptr(&file, strsubgroup + "/" + strdataset)){
     dataset = file.openDataSet(strsubgroup + "/" + strdataset);
+  }
   else {
     file.close();
     throw std::range_error("Dataset not exits"); 
@@ -300,7 +285,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
 
   // Get dataset dims
   IntegerVector dims_out = get_HDF5_dataset_size(dataset);
-  
+
   hsize_t offset[2] = {0,0};
   //..// hsize_t count[2] = {as<hsize_t>(dims_out[0]), as<hsize_t>(dims_out[1])};
   hsize_t count[2] = { (unsigned long long)dims_out[0], (unsigned long long)dims_out[1]};
@@ -309,7 +294,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
   // Block decomposition for big mattrix
   if( std::max(dims_out[0], dims_out[1])<25 )
   {
-
+    
     X = GetCurrentBlock_hdf5( &file, &dataset, offset[0], offset[1], count[0], count[1]);
     X.transposeInPlace();
 
@@ -329,17 +314,13 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
       remove_HDF5_element_ptr(&file,"SVD/"+strdataset);
     }
       
-    retsvd = RcppbdSVD_hdf5_Block( &file, &dataset, k, q, nev, bcenter, bscale, xdim, ydim);
+    retsvd = RcppbdSVD_hdf5_Block( &file, &dataset, k, q, nev, bcenter, bscale, xdim, ydim, wrap(ithreads));
   }
   
 
   return retsvd;
    
 }
-
-
-
-
 
 
 
@@ -366,9 +347,6 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
   }
   return(decomp);
 }
-
-
-
 
 
 
@@ -416,9 +394,9 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 
 
 
-//' SVD of DelayedArray 
+//' k first SVD components for DelayedArray 
 //' 
-//' This function performs a svd decomposition of numerical matrix or Delayed Array
+//' This function gets k first components from svd decomposition of numerical or Delayed Array 
 //' 
 //' @param x numerical or Delayed Array matrix
 //' @param k number of eigen values , this should satisfy k = min(n, m) - 1
@@ -546,8 +524,7 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
     int ks, qs, nvs = 0;
     bool bcent, bscal;
     CharacterVector strgroup, strdataset;
-    
-    // int ithreads;
+    // int ithreads=1;
     
     if(k.isNull())  ks = 2 ;
     else    ks = Rcpp::as<int>(k);
@@ -566,6 +543,10 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
     
     if(dataset.isNull())  strdataset = "";
     else    strdataset = Rcpp::as<std::string>(dataset);
+   
+   /* 
+    if(threads.isNull())  ithreads = std::thread::hardware_concurrency() - 1;
+    else    ithreads = Rcpp::as<int>(threads);*/
     
     if(is<CharacterVector>(x))
       filename = as<std::string>(x);
@@ -576,8 +557,7 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
       
       // Rcpp::Rcout<<"Abans de cridar el procés del svd... k val : "<<ks<<"\n";
       
-    
-    retsvd = RcppbdSVD_hdf5( filename, as<std::string>(strgroup), as<std::string>(strdataset), ks, qs, nvs, bcent, bscal );
+    retsvd = RcppbdSVD_hdf5( filename, as<std::string>(strgroup), as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, threads );
     
     
   }catch(std::exception &ex) {
@@ -596,13 +576,48 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
 }
 
 
-
+//' Complete SVD with Lapack Functions for DelayedArray and RObjects
+//' 
+//' This function performs a complete svd decomposition of numerical matrix or Delayed Array with 
+//' 
+//' @param x numerical or Delayed Array matrix
+//' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
+//' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+//' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
+//' @return v eigenvectors of A^tA, nxn orthogonal matrix
+//' @return d singular values, nxn diagonal matrix (non-negative real values)
+//' @examples
+//' n <- 500
+//' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+//' AD <- DelayedArray(A)
+//' 
+//' # svd without normalization
+//' bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+//' decsvd$d
+//' decsvd$u
+//' 
+//' # svd with normalization
+//' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
+//' decvsd <- bdSVD_lapack( A ), # Matrix normalization too
+//' decsvd$d
+//' decsvd$u
+//' 
+//' # svd with scaled matrix (sd)
+//' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+//' 
+//' decsvd$d
+//' decsvd$u
+//' # svd with centered matrix (sd)
+//' decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+//' decsvd$d
+//' decsvd$u
+//' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true)
+Rcpp::RObject bdSVD_lapack ( Rcpp::RObject x, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true)
 {
+  auto dmtype = beachmat::find_sexp_type(x);
   bool bcent, bscal;
-  Eigen::MatrixXd eX = as<Eigen::MatrixXd>(X);
   
   if(bcenter.isNull())  bcent = true ;
   else    bcent = Rcpp::as<bool>(bcenter);
@@ -610,8 +625,26 @@ Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true,
   if(bscale.isNull())  bscal = true ;
   else    bscal = Rcpp::as<bool>(bscale);
   
+
+  Eigen::MatrixXd X;
+  Rcpp::List ret;
   
-  svdeig retsvd =  RcppbdSVD_lapack( eX, bcent, bscal);
+  if ( dmtype == INTSXP || dmtype==REALSXP ) {
+    if ( x.isS4() == true){
+      X = read_DelayedArray(x);
+    }else {
+      try{
+        X = Rcpp::as<Eigen::MatrixXd >(x);
+      }catch(std::exception &ex) {
+        X = Rcpp::as<Eigen::VectorXd >(x);
+      }
+    }
+    
+  } else {
+    throw std::runtime_error("unacceptable matrix type");
+  }
+  
+  svdeig retsvd =  RcppbdSVD_lapack( X, bcent, bscal);
   
   return List::create(Named("d") = retsvd.d,
                       Named("u") = retsvd.u,
@@ -628,14 +661,6 @@ library(DelayedArray)
 library(BigDataStatMeth)
 library(rhdf5)
 setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth/tmp")
-
-# Proves svd hdf5
- 
-
-# if our data is not accessible but presents more rows than columns (more individuals than variables), 
-# then, we are going to apply the algorithm to the transpose of the matrices and, therefore,
-# we will obtain the right singular vectors instead of the left singular vectors.
-
 
 # Rows --> Individuals  (small)
 # Cols --> Variables (SNP's or ...) (very big)
@@ -674,197 +699,4 @@ h5closeAll()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Proves : Matriu Inversa - Cholesky
-set.seed(12)
-n <- 10
-p <- 10
-Z <- matrix(rnorm(n*p), nrow=n, ncol=p)
-X <- Z
-Z[lower.tri(Z)] <- t(Z)[lower.tri(Z)]
-
-# Z <- DelayedArray(Z);Z
-
-A <- matrix(c(5,0,2,5,0,5,-1,-1,2,-1,5,-1,5,-1,-1,5),byrow = TRUE, nrow = 4)
-
-A <- Posdef(n=100, ev=1:100)
-AD <- DelayedArray(A)
-invCpp <- bdInvCholesky_LDL_eigen(A); invCpp[1:5,1:5]
-bdInvCholesky(A)
-invR <- solve(A); invR[1:5,1:5]
-invP <- inversechol_par(A);invP[1:5,1:5]
-
-stopifnot(all.equal(invCpp,invR ))
-stopifnot(all.equal(invCpp,invR ))
-
-invCpp <- bdInvCholesky_LDL_eigen(AD); invCpp[1:5,1:5]
-invP <- inversechol_par(AD);invP[1:5,1:5]
-
-
-
-invCpp <- bdInvCholesky_LDL(A); invCpp$v[1:4,1:4]
-invR <- solve(A); invR[1:4,1:4]
-invP <- inversechol(A);invP[1:4,1:4]
-
-stopifnot(all.equal(solve(Z),bdInvCholesky_LDL(Z)$v ))
-
-
-
-
-
-
-  results <- microbenchmark(invR <- solve(Z),  # Inversa amb Solve
-                            invCpp <- bdInvCholesky_LDL(Z),
-                            invCpppar <- inversechol(Z),
-                            times = 5L)  # Inversa amb Cholesky
-                            
-  print(summary(results)[, c(1:7)],digits=3)
-  
-  all.equal(invR, invCpppar)  
-  
-  
-  cc <- eigen(tcrossprod(X))
-  sqrt(cc$values[1:10])
-  sqrt(invCpp$d)
-  invCpp$v  
-  cc$vectors
-  
-  
-  
-  A <- matrix(c(5,-3,4,-3,3,-4,4,-4,6), byrow = TRUE, ncol = 3)
-  A <- matrix(c(2,-1,0,-1,2,-1,0,-1,1), byrow = TRUE, ncol = 3)
-  A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
-  
-  invR <- solve(A) ; invR
-  eigen(tcrossprod(A))
-  invCpp <- bdInvCholesky(A); invCpp
-  
-  
-  LOOE_BLAST()
-  
-  n <- 10
-  p <- 20
-  Z <- matrix(rnorm(n*p), nrow=n, ncol=p)
-  Zn <- scale(Z,center = TRUE, scale = TRUE)
-  
-  library(BigDataStatMeth)
-  a <- bdSVD(Z,8,10, TRUE, TRUE)
-  b <- eigen(tcrossprod(Z))
-  
-  svd(Zn)$d
-  a$d
-  
-  svd(Z)$d^2
-  a$d^2
-  b$values
-  
-  
-  
-  a$d
-  a$okd
-  
-  a$d^2
-  b$values
-  
-  ;
-  
-  n <- 1000
-  A <- matrix(rnorm(n*n), nrow=n, ncol=n)
-  AD <- DelayedArray(A)
-  
-  dim(A)
-  
-  
-  res <- microbenchmark( bdsvd <- bdSVD( A, n-1, n, FALSE), # No normalitza la matriu
-                         bdsvdD <- bdSVD( AD, n-1, n, FALSE), # No normalitza la matriu
-                         sbd <- svd(tcrossprod(A)),
-                         times = 5, unit = "s")
-  
-  print(summary(res)[, c(1:7)],digits=3)
-  
-  sqrt(sbd$d[1:10])
-  bdsvd$d[1:10]
-  rsv$d[1:10]
-  rsv <- rsvd::rsvd(A)
-  
-  bdsvd$u[1:5,1:5]
-  
-  svd(tcrossprod(A))$d[1:10]
-  
-  A <- matrix(c(5,-3,4,-3,3,-4,4,-4,6,7,2,3), byrow = TRUE, ncol = 3)
-  svd(A)$u
-  
-  bdSVD(A)$u
-  
-  
-  A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
-  bdInvCholesky(A)
-  solve(A)
-  
-  
-  n <- 1000
-  A <- matrix(rnorm(n*n), nrow=n, ncol=n)
-
-  res <- microbenchmark( bdsvd <- bdInvCholesky(A), # No normalitza la matriu
-                         Rsolve <- solve(A), # No normalitza la matriu
-                         times = 5, unit = "s")
-  
-  print(summary(res)[, c(1:7)],digits=3)
-
-  # Generate a positive definite matrix
-  Posdef <- function (n, ev = runif(n, 0, 10)) 
-  {
-    Z <- matrix(ncol=n, rnorm(n^2))
-    decomp <- qr(Z)
-    Q <- qr.Q(decomp) 
-    R <- qr.R(decomp)
-    d <- diag(R)
-    ph <- d / abs(d)
-    O <- Q %*% diag(ph)
-    Z <- t(O) %*% diag(ev) %*% O
-    return(Z)
-  }
-  
-  A <- Posdef(n = 500, ev = 1:500)
-  DA <- DelayedArray(A)
-  
-  A[1:10,1:10]
-  
-  invchol <- bdInvCholesky(A)
-  Dinvchol <- bdInvCholesky(DA)
-  all.equal(invchol,Dinvchol)
-  
-  
-  invchol[1:10,1:10]
-  solve(A)[1:10,1:10]
-  
-  all.equal(Dinvchol,solve(A))
-  
-  round(invchol[1:5,1:5],8)
-  
-    
-  
 */

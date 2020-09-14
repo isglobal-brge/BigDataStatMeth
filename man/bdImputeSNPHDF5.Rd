@@ -4,7 +4,14 @@
 \alias{bdImputeSNPHDF5}
 \title{Impute SNPs in hdf5 omic dataset}
 \usage{
-bdImputeSNPHDF5(filename, group, dataset, outgroup, outdataset, bycols)
+bdImputeSNPHDF5(
+  filename,
+  group,
+  dataset,
+  outgroup = NULL,
+  outdataset = NULL,
+  bycols = TRUE
+)
 }
 \arguments{
 \item{filename, }{character array indicating the name of the file to create}
