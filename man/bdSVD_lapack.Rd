@@ -24,28 +24,31 @@ d singular values, nxn diagonal matrix (non-negative real values)
 This function performs a complete svd decomposition of numerical matrix or Delayed Array with
 }
 \examples{
+
+library(DelayedArray)
+
 n <- 500
 A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 AD <- DelayedArray(A)
 
 # svd without normalization
-bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 decsvd$d
 decsvd$u
 
 # svd with normalization
-decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
-decvsd <- bdSVD_lapack( A ), # Matrix normalization too
+decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
+decvsd <- bdSVD_lapack( A ) # Matrix normalization too
 decsvd$d
 decsvd$u
 
 # svd with scaled matrix (sd)
-decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 
 decsvd$d
 decsvd$u
 # svd with centered matrix (sd)
-decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE) # Centered matrix
 decsvd$d
 decsvd$u
 

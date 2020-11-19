@@ -18,6 +18,8 @@ This function closes the files associated with the hdf5 objects of the operation
 \examples{
 # with numeric matrix
 
+library(DelayedArray)
+
 m <- 350
 n <- 150
 k <- 50

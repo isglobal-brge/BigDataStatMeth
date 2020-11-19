@@ -109,6 +109,8 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @return numerical matrix
 //' @examples
+//' library(DelayedArray)
+//' 
 //' m <- 500
 //' n <- 100 
 //' x <- matrix(rnorm(m*n), nrow=m, ncol=n)
@@ -202,21 +204,4 @@ Rcpp::RObject Normalize_Data ( Rcpp::RObject & x,
   
   return XR;
 }
-
-
-/***R
-library(BigDataStatMeth)
-m <- 10
-n <- 10 
-x <- matrix(rnorm(m*n), nrow=m, ncol=n)
-
-Normalize_Data(x, bscale = TRUE, bcenter = FALSE )
-
-scale(x, scale = TRUE, center = FALSE)
-
-Dx <- DelayedArray(x)
-Normalize_Data(Dx)
-
-
-*/
 

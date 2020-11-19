@@ -85,6 +85,9 @@ BD <- DelayedArray(B)
 
 Bblockmult(AD,BD,128, TRUE)
 # with numeric matrix
+
+library(DelayedArray)
+
 m <- 500
 k <- 1500
 n <- 400

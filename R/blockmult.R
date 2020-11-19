@@ -19,6 +19,9 @@
 #' @return numerical matrix
 #' @examples
 #' # with numeric matrix
+#' 
+#' library(DelayedArray)
+#' 
 #' m <- 500
 #' k <- 1500
 #' n <- 400
@@ -35,12 +38,12 @@
 blockmult <- function( a, b, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 10000, mixblock_size = 128, 
                        outfile = "./tmp_blockmult.hdf5", onmemory = FALSE)
 { 
-  
+
   res <- .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads, bigmatrix, mixblock_size, outfile, onmemory)
 
   if (res$filename == '')
     return (res$matrix)
   else
-    return( list("res" = H5Fopen(res$filename), "file" = res$filename) )
+    return( list("res" = rhdf5::H5Fopen(res$filename), "file" = res$filename) )
 
 }

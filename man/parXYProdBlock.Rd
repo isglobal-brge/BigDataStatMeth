@@ -20,6 +20,9 @@ numerical matrix
 This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
 }
 \examples{
+
+library(DelayedArray)
+
 # with numeric matrix
 m <- 500
 k <- 1500

@@ -10,14 +10,13 @@ author:
   affiliation: 
   - *isglobal
   - *brge
-  - *uvic
   email: juanr.gonzalez@isglobal.org
 date: "`r Sys.Date()`"
 package: "`r pkg_ver('BigDataStatMeth')`"
 output:
+  BiocStyle::html_document: default
   BiocStyle::pdf_document:
     toc_float: true
-  BiocStyle::html_document: default
 abstract: |
   Description of functions to perform matrix operations, algebra and some statistical models using _DelayedMatrix_ objects and HDF5 data files.
 vignette: |
@@ -28,18 +27,22 @@ vignette: |
 bibliography: references.bib
 ---
 
-```{r cleanup, echo=FALSE, include=FALSE}
-if(file.exists('delayed.hdf5'))
-    file.remove('delayed.hdf5')
-if(file.exists('robjects.hdf5'))
-    file.remove('robjects.hdf5')
-```
-
-
 ```{r setup, include = FALSE}
+library(knitr)
 library(BiocStyle)
+
 knitr::opts_chunk$set(collapse = TRUE, comment = "", cache=TRUE, message = FALSE, width = 180)
 ```
+
+```{r, cleanup, echo=FALSE, include=FALSE}
+if( isTRUE(file.exists('delayed.hdf5'))) {
+    file.remove('delayed.hdf5')
+}
+if( isTRUE(file.exists('robjects.hdf5'))){
+    file.remove('robjects.hdf5')
+}
+```
+
 <!--
 ```{r r_setup, include = FALSE}
 options(width = 180)
@@ -59,7 +62,7 @@ This package implements seveal matrix operations using `DelayMatrix` objects and
 
 First, let us start by loading the required packages to describe the main capabilities of the package
 
-```{r load}
+```{r, load}
 library(BigDataStatMeth)
 library(DelayedArray)
 library(rhdf5)
@@ -68,7 +71,7 @@ library(DT)
 
 These other packages are required to reproduce this vignette
 
-```{r load2}
+```{r, load2}
 library(microbenchmark)
 ```
 
@@ -243,11 +246,11 @@ all.equal(AxB, AxBDelay)
 We can show that the parallel version really improves the computational speed and also how the blockmult function improves the R implementation.
 
 ```{r benchmark1}
-microbenchmark(
-  R = A%*%B,
-  noparal = blockmult(A, B),
-  paral = blockmult(A, B, paral=TRUE),
-  times = 10)
+# microbenchmark(
+#   R = A%*%B,
+#   noparal = blockmult(A, B),
+#   paral = blockmult(A, B, paral=TRUE),
+#   times = 10)
 ```
 
 With `paral=TRUE`, an optional parameter threads can be used to indicate the number of `threads` to launch simultaneously, if `threads=NULL` the function takes the available threads - 1, leaving one available for user.
@@ -262,11 +265,11 @@ all.equal(AxB, AxBDelay)
 We can show how the number of threads affects performance.
 
 ```{r benchmark1b}
-microbenchmark(
-  AxBnThread2 = blockmult(DA, DB, paral = TRUE, threads = 2) ,
-  AxBnThread3 = blockmult(DA, DB, paral = TRUE, threads = 3) ,
-  AxBnThread4 = blockmult(DA, DB, paral = TRUE, threads = 4) ,
-  times = 10)
+# microbenchmark(
+#   AxBnThread2 = blockmult(DA, DB, paral = TRUE, threads = 2) ,
+#   AxBnThread3 = blockmult(DA, DB, paral = TRUE, threads = 3) ,
+#   AxBnThread4 = blockmult(DA, DB, paral = TRUE, threads = 4) ,
+#   times = 10)
 ```
 
 
@@ -350,20 +353,20 @@ bdclose(AxBBig3000)
 Here, we compare the performace of the block method with the different options. 
 
 ```{r benchmark2, cache=TRUE}
-bench1 <- microbenchmark(
-  noblockParal = blockmult(Abig, Bbig, paral = TRUE),
-  blockParalfile = blockmult(Abig, Bbig, block_size = 256, paral=TRUE),
-  blockParalmem = blockmult(Abig, Bbig, block_size = 256, paral=TRUE, 
-                            bigmatrix = 100000),
-  times = 3 ) 
-
-bench1
+# bench1 <- microbenchmark(
+#   noblockParal = blockmult(Abig, Bbig, paral = TRUE),
+#   blockParalfile = blockmult(Abig, Bbig, block_size = 256, paral=TRUE),
+#   blockParalmem = blockmult(Abig, Bbig, block_size = 256, paral=TRUE, 
+#                             bigmatrix = 100000),
+#   times = 3 ) 
+# 
+# bench1
 ```
 
 The same information is depicted in the next Figure which illustrates the comparison between the different assessed methods
 
 ```{r, bench1, fig.height=3, fig.width=3}
-ggplot2::autoplot(bench1)
+# ggplot2::autoplot(bench1)
 ```
 
 Plot shows that the execution time in hdf5 files is greater than memory execution time, this is due to the read and write time required to access to disk data. At higher disk speed better performance.
@@ -408,12 +411,12 @@ all.equal(tcpDA, tcrossprod(A))
 We can show that the implemented version really improves the  R implementation computational speed.
 
 ```{r benchmark_bdcrossprod}
-bench <- microbenchmark(
-  bdcrossp = bdcrossprod(DA, transposed = TRUE),
-  rcrossp = tcrossprod(A),
-  times = 1)  # Only DEBUG MODE 
-  # times = 10) # PRODUCTION MODE
-bench
+# bench <- microbenchmark(
+#   bdcrossp = bdcrossprod(DA, transposed = TRUE),
+#   rcrossp = tcrossprod(A),
+#   times = 1)  # Only DEBUG MODE 
+#   # times = 10) # PRODUCTION MODE
+# bench
 ```
 
 # Matrix Vector Multiplication 
@@ -632,37 +635,37 @@ bdSVD_memory_Normal <- 'bdSVD_lapack(omdata)'
 svd_R_memory_Normal <- 'svd(scale(omdata))'
 
 # With normalization process
-res <- microbenchmark( eval(parse(text=bdSVD_hdf5_Normal_k2q1)),
-                       eval(parse(text=bdSVD_hdf5_Normal_k4q1)),
-                       eval(parse(text=bdSVD_hdf5_Normal_k4q2)),
-                       eval(parse(text=bdSVD_memory_Normal)),
-                       eval(parse(text=svd_R_memory_Normal)),
-                       times = 3, unit = "s")
-
-print(summary(res)[, c(1:7)],digits=3)
+# res <- microbenchmark( eval(parse(text=bdSVD_hdf5_Normal_k2q1)),
+#                        eval(parse(text=bdSVD_hdf5_Normal_k4q1)),
+#                        eval(parse(text=bdSVD_hdf5_Normal_k4q2)),
+#                        eval(parse(text=bdSVD_memory_Normal)),
+#                        eval(parse(text=svd_R_memory_Normal)),
+#                        times = 3, unit = "s")
+# 
+# print(summary(res)[, c(1:7)],digits=3)
 ```
 
 SVD decomposition with not normalized data and different parameters executed in memmory and hdf5 files with functions from R base library and BigDataStatMeth library :
 
 ```{r svdperform2, cache=TRUE}
-bdSVD_hdf5_NoNormal_k2q1 <- 
-  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',bcenter=FALSE,bscale=FALSE)"
-bdSVD_hdf5_NoNormal_k4q1 <- 
-  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4,bcenter=FALSE,bscale=FALSE)"
-bdSVD_hdf5_NoNormal_k4q2 <- 
-  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4,bcenter=FALSE,bscale=FALSE)"
-bdSVD_memory_NoNormal <- 'bdSVD_lapack(omdata, bcenter = TRUE, bscale = TRUE)'
-svd_R_memory_NoNormal <- 'svd(omdata)'
-
-# Without normalization process
-res <- microbenchmark( eval(parse(text=bdSVD_hdf5_NoNormal_k2q1)),
-                       eval(parse(text=bdSVD_hdf5_NoNormal_k4q1)),
-                       eval(parse(text=bdSVD_hdf5_NoNormal_k4q2)),
-                       eval(parse(text=bdSVD_memory_NoNormal)),
-                       eval(parse(text=svd_R_memory_NoNormal)),
-                       times = 3, unit = "s")
-
-print(summary(res)[, c(1:7)],digits=3)
+# bdSVD_hdf5_NoNormal_k2q1 <- 
+#   "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',bcenter=FALSE,bscale=FALSE)"
+# bdSVD_hdf5_NoNormal_k4q1 <- 
+#   "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4,bcenter=FALSE,bscale=FALSE)"
+# bdSVD_hdf5_NoNormal_k4q2 <- 
+#   "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4,bcenter=FALSE,bscale=FALSE)"
+# bdSVD_memory_NoNormal <- 'bdSVD_lapack(omdata, bcenter = TRUE, bscale = TRUE)'
+# svd_R_memory_NoNormal <- 'svd(omdata)'
+# 
+# # Without normalization process
+# res <- microbenchmark( eval(parse(text=bdSVD_hdf5_NoNormal_k2q1)),
+#                        eval(parse(text=bdSVD_hdf5_NoNormal_k4q1)),
+#                        eval(parse(text=bdSVD_hdf5_NoNormal_k4q2)),
+#                        eval(parse(text=bdSVD_memory_NoNormal)),
+#                        eval(parse(text=svd_R_memory_NoNormal)),
+#                        times = 3, unit = "s")
+# 
+# print(summary(res)[, c(1:7)],digits=3)
 ```
 
 
@@ -732,6 +735,7 @@ We can observe that both figures are equal irrespective to a sign change of seco
 
 In this section we illustrate how to estimate some of the state of the art methods used in omic data analyses having a `DelayedMatrix` as the input object. So far, we have implemented the lasso regression, but other methods are going to be implemented in the near future.
 
+
 ## Lasso regression 
 
 The standard linear model (or the ordinary least squares method) performs poorly in a situation, where you have a large multivariate data set containing a number of variables superior to the number of samples. This is the case, for instance, of genomic, transcriptomic or epigenomic studies where the number of variables (SNPs, genes, CpGs) exceed the number of samples (i.e. transcriptomic analysis deals with ~20,000 genes on hundreds of individuals).
@@ -746,38 +750,39 @@ at essentially no additional cost (i.e. estimating only one inverion matrix).
 Let us illustrate how this works in our package. Let us start by simulating a dataset with 200 variables when only 3 of them are associated with the outcome. 
 
 ```{r simul_lasso}
-# number of samples
-n <- 500
-# number of variables
-p <- 200
-# covariates
-M <- matrix(rnorm(n*p), nrow=n, ncol=p)
-# outcome (only variables 1, 2 and 5 are different from 0)
-Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5] 
+# # number of samples
+# n <- 500
+# # number of variables
+# p <- 200
+# # covariates
+# M <- matrix(rnorm(n*p), nrow=n, ncol=p)
+# # outcome (only variables 1, 2 and 5 are different from 0)
+# Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5] 
 ```
 
 
 Then the model can be fitted (using `DelayedMatrix` objects) by
 
 ```{r looe}
-# Get DealyedArray matrices
-MD <- DelayedArray(M)
-YD <- DelayedArray(as.matrix(Y))
-
-# Model
-mod <- LOOE(MD, YD, paral=FALSE)
-mod$coef[abs(mod$coef)>mean(mod$coef)]
+# # Get DealyedArray matrices
+# MD <- DelayedArray(M)
+# YD <- DelayedArray(as.matrix(Y))
+# 
+# # Model
+# mod <- LOOE(MD, YD, paral=FALSE)
+# mod$coef[abs(mod$coef)>mean(mod$coef)]
 ```
 
 The argument `paral` is required to indicate whether paralell implementation is used or not. The `lambda` argument can be provided by the user, but it can also be estimated if `l` parameter is missing:
 
 
 ```{r glmnet}
-library(glmnet)
-mod.cv <- cv.glmnet(M, Y)
-mod.glmnet <- glmnet(M, Y, lambda=mod.cv$lambda.min)
-mod.glmnet$beta[1:7,]
+# library(glmnet)
+# mod.cv <- cv.glmnet(M, Y)
+# mod.glmnet <- glmnet(M, Y, lambda=mod.cv$lambda.min)
+# mod.glmnet$beta[1:7,]
 ```
+
 
 # Utils for data analysis working directly in hdf5 files
 

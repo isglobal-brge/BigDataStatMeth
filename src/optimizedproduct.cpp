@@ -100,9 +100,9 @@ Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
       ithreads = Rcpp::as<int> (threads);
     else 
-      ithreads = std::thread::hardware_concurrency();
+      ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads();
+  else    ithreads = std::thread::hardware_concurrency() / 2; //omp_get_max_threads();
   
   omp_set_num_threads(ithreads);
 
@@ -130,9 +130,9 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
       ithreads = Rcpp::as<int> (threads);
     else 
-      ithreads = std::thread::hardware_concurrency();
+      ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads();
+  else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
   omp_set_num_threads(ithreads);
   
@@ -157,6 +157,9 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
 //' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
 //' @return numerical matrix with crossproduct or transposed crossproduct 
 //' @examples
+//' 
+//' library(DelayedArray)
+//' 
 //' n <- 100
 //' p <- 60
 //' 
@@ -169,7 +172,7 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
 //' # with DelayedArray
 //' XD <- DelayedArray(X)
 //' bdcrossprod(XD)
-//' bdcrossprod(XD, transpoded = TRUE)
+//' bdcrossprod(XD, transposed = TRUE)
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -213,6 +216,9 @@ Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> tran
 //' @param op string indicating if operation 'xtwx' and 'xwxt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
 //' @return numerical matrix 
 //' @examples
+//' 
+//' library(DelayedArray)
+//' 
 //' n <- 100
 //' p <- 60
 //' 
@@ -220,16 +226,13 @@ Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> tran
 //' 
 //' u <- runif(n)
 //' w <- u * (1 - u)
-//' bdwproduct(X, w,"xtwx")
-//' bdwproduct(X, w,"xwxt")
+//' ans <- bdwproduct(X, w,"xtwx")
 //' 
 //' # with Delayed Array
 //' 
 //' DX <- DelayedArray(X)
-//' dw <- DelayedArray(w)
 //' 
-//' bdwproduct(DX, dw,"xtwx")
-//' bdwproduct(DX, dw,"xwxt")
+//' ans <- bdwproduct(DX, w,"xtwx")
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -282,6 +285,9 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 //' @param op string indicating if operation  "Xw" or "wX"
 //' @return numerical matrix 
 //' @examples
+//' 
+//' library(DelayedArray)
+//' 
 //' n <- 100
 //' p <- 60
 //' 
@@ -289,7 +295,7 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 //' w <- 0.75
 //' 
 //' bdScalarwproduct(X, w,"Xw")
-//' bdScalarwproduct(X, w,"Wx")
+//' bdScalarwproduct(X, w,"wX")
 //' 
 //' # with Delayed Array
 //' 
@@ -316,7 +322,10 @@ Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject a, double w, std::string op)
     catch(std::exception &ex) { }
   }
   
-  if (op == "Xw" || op == "wX") {
+  std::transform(op.begin(), op.end(), op.begin(),
+                 [](unsigned char c){ return std::tolower(c); });
+  
+  if (op == "xw" || op == "wx") {
     return(w*A);
   } else  {
     throw("Invalid option (valid options : xtwx or xwxt)");
@@ -340,6 +349,9 @@ Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject a, double w, std::string op)
 //' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 //' @return numerical matrix 
 //' @examples
+//' 
+//' library(DelayedArray)
+//' 
 //' n <- 100
 //' p <- 60
 //' 

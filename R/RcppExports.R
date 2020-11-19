@@ -65,42 +65,6 @@ bdPCA_hdf5 <- function(filename, group, dataset, threads) {
     .Call(`_BigDataStatMeth_bdPCA_hdf5`, filename, group, dataset, threads)
 }
 
-#' LOOE
-#' 
-#' This function performs ...
-#' 
-#' @param X numerical or Delayed Array matrix
-#' @param Y numerical or Delayed Array vector
-#' @param paral (optional, default = true) if paral=true performs parallel computation.
-#' @param nl ...
-#' @param ml ...
-#' @param l ...
-#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @return coef ...
-#' @return Ginv  ...
-#' @return lambda.min  ...
-#' @return lambdas  ...
-#' @return looe ...
-#' @examples
-#' n <- 500
-#' p <- 200
-#' M <- matrix(rnorm(n*p), nrow=n, ncol=p)
-#' Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5]
-#' 
-#' MD <- DelayedArray(M)
-#' YD <- DelayedArray(as.matrix(Y))
-#' 
-#' looe <- LOOE(M,Y,paral=TRUE),
-#' looe_delayed <- LOOE(MD,YD,paral=TRUE)
-#' 
-#' looe$lambda.min
-#' looe$lambdas
-#' looe_delayed$coef[1:10]
-#' @export
-LOOE <- function(X, Y, paral, nl = NULL, ml = NULL, l = NULL, threads = NULL) {
-    .Call(`_BigDataStatMeth_LOOE`, X, Y, paral, nl, ml, l, threads)
-}
-
 #' Normalize Delayed Array matrix
 #' 
 #' This function performs a numerical or Delayed Array matrix normalization
@@ -110,6 +74,8 @@ LOOE <- function(X, Y, paral, nl = NULL, ml = NULL, l = NULL, threads = NULL) {
 #' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 #' @return numerical matrix
 #' @examples
+#' library(DelayedArray)
+#' 
 #' m <- 500
 #' n <- 100 
 #' x <- matrix(rnorm(m*n), nrow=m, ncol=n)
@@ -143,6 +109,9 @@ Normalize_Data <- function(x, bcenter = NULL, bscale = NULL) {
 #' @param op string indicating if operation  "Xw" , "wX" or "wXw"
 #' @return numerical matrix 
 #' @examples
+#' 
+#' library(DelayedArray)
+#' 
 #' n <- 100
 #' p <- 60
 #' 
@@ -154,19 +123,11 @@ Normalize_Data <- function(x, bcenter = NULL, bscale = NULL) {
 #' # by columnes
 #' bdwXw(X, w,"wX") 
 #' 
-#' # by rows
-#' bdwXw(X, w,"Xw")
-#' 
-#' # by columns and rows
-#' bdwXw(X, w,"wXw")
-#' 
 #' # with Delayed Array
 #' 
 #' DX <- DelayedArray(X)
-#' dw <- DelayedArray(w)
 #' 
-#' bdwXw(DX, dw,"wX")
-#' bdwXw(DX, dw,"Xw")
+#' bdwXw(DX, w,"wX")
 #' 
 #' @export
 bdwXw <- function(X, W, op) {
@@ -181,6 +142,9 @@ bdwXw <- function(X, W, op) {
 #' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
 #' @return numerical matrix with crossproduct or transposed crossproduct 
 #' @examples
+#' 
+#' library(DelayedArray)
+#' 
 #' n <- 100
 #' p <- 60
 #' 
@@ -193,7 +157,7 @@ bdwXw <- function(X, W, op) {
 #' # with DelayedArray
 #' XD <- DelayedArray(X)
 #' bdcrossprod(XD)
-#' bdcrossprod(XD, transpoded = TRUE)
+#' bdcrossprod(XD, transposed = TRUE)
 #' 
 #' @export
 bdcrossprod <- function(a, transposed = NULL) {
@@ -209,6 +173,9 @@ bdcrossprod <- function(a, transposed = NULL) {
 #' @param op string indicating if operation 'xtwx' and 'xwxt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
 #' @return numerical matrix 
 #' @examples
+#' 
+#' library(DelayedArray)
+#' 
 #' n <- 100
 #' p <- 60
 #' 
@@ -216,16 +183,15 @@ bdcrossprod <- function(a, transposed = NULL) {
 #' 
 #' u <- runif(n)
 #' w <- u * (1 - u)
-#' bdwproduct(X, w,"xtwx")
-#' bdwproduct(X, w,"xwxt")
+#' ans <- bdwproduct(X, w,"xtwx")
+#' ans <- bdwproduct(X, w,"xwxt")
 #' 
 #' # with Delayed Array
 #' 
 #' DX <- DelayedArray(X)
-#' dw <- DelayedArray(w)
 #' 
-#' bdwproduct(DX, dw,"xtwx")
-#' bdwproduct(DX, dw,"xwxt")
+#' ans <- bdwproduct(DX, w,"xtwx")
+#' ans <- bdwproduct(DX, w,"xwxt")
 #' 
 #' @export
 bdwproduct <- function(a, w, op) {
@@ -241,6 +207,9 @@ bdwproduct <- function(a, w, op) {
 #' @param op string indicating if operation  "Xw" or "wX"
 #' @return numerical matrix 
 #' @examples
+#' 
+#' library(DelayedArray)
+#' 
 #' n <- 100
 #' p <- 60
 #' 
@@ -248,7 +217,7 @@ bdwproduct <- function(a, w, op) {
 #' w <- 0.75
 #' 
 #' bdScalarwproduct(X, w,"Xw")
-#' bdScalarwproduct(X, w,"Wx")
+#' bdScalarwproduct(X, w,"wX")
 #' 
 #' # with Delayed Array
 #' 
@@ -348,6 +317,9 @@ partCrossProdEigen <- function(X) {
 #' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
 #' @return numerical matrix
 #' @examples
+#' 
+#' library(DelayedArray)
+#' 
 #' # with numeric matrix
 #' m <- 500
 #' k <- 300
@@ -377,6 +349,9 @@ parXYProd <- function(X, Y, op = NULL) {
 #' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
 #' @return numerical matrix
 #' @examples
+#' 
+#' library(DelayedArray)
+#' 
 #' # with numeric matrix
 #' m <- 500
 #' k <- 1500
@@ -514,6 +489,8 @@ Remove_HDF5_element <- function(filename, element) {
 #' @return inverse matrix of d 
 #' @examples
 #' 
+#' library(DelayedArray)
+#' 
 #' A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
 #' bdInvCholesky(A)
 #' 
@@ -539,28 +516,31 @@ bdInvCholesky <- function(x) {
 #' @return v eigenvectors of A^tA, nxn orthogonal matrix
 #' @return d singular values, nxn diagonal matrix (non-negative real values)
 #' @examples
+#' 
+#' library(DelayedArray)
+#' 
 #' n <- 500
 #' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 #' AD <- DelayedArray(A)
 #' 
 #' # svd without normalization
-#' bdSVD( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+#' decsvd <- bdSVD( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with normalization
-#' decvsd <- bdSVD( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
+#' decvsd <- bdSVD( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
 #' 
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with scaled matrix (sd)
-#' decvsd <- bdSVD( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+#' decvsd <- bdSVD( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 #' 
 #' decsvd$d
 #' decsvd$u
 #' # svd with centered matrix (sd)
-#' decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+#' decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE) # Centered matrix
 #' decsvd$d
 #' decsvd$u
 #' 
@@ -604,28 +584,31 @@ bdSVD_hdf5 <- function(x, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter 
 #' @return v eigenvectors of A^tA, nxn orthogonal matrix
 #' @return d singular values, nxn diagonal matrix (non-negative real values)
 #' @examples
+#' 
+#' library(DelayedArray)
+#' 
 #' n <- 500
 #' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 #' AD <- DelayedArray(A)
 #' 
 #' # svd without normalization
-#' bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+#' decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with normalization
-#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
-#' decvsd <- bdSVD_lapack( A ), # Matrix normalization too
+#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
+#' decvsd <- bdSVD_lapack( A ) # Matrix normalization too
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with scaled matrix (sd)
-#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 #' 
 #' decsvd$d
 #' decsvd$u
 #' # svd with centered matrix (sd)
-#' decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+#' decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE) # Centered matrix
 #' decsvd$d
 #' decsvd$u
 #' 

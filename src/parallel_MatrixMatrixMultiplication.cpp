@@ -304,6 +304,9 @@ Rcpp::NumericMatrix rcpp_parallel_XYtProd(Rcpp::NumericMatrix matX, Rcpp::Numeri
 //' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
 //' @return numerical matrix
 //' @examples
+//' 
+//' library(DelayedArray)
+//' 
 //' # with numeric matrix
 //' m <- 500
 //' k <- 300
@@ -406,6 +409,9 @@ Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::st
 //' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
 //' @return numerical matrix
 //' @examples
+//' 
+//' library(DelayedArray)
+//' 
 //' # with numeric matrix
 //' m <- 500
 //' k <- 1500

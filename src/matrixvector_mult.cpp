@@ -12,6 +12,9 @@ using namespace std;
 //' @param op string indicating if operation  "Xw" , "wX" or "wXw"
 //' @return numerical matrix 
 //' @examples
+//' 
+//' library(DelayedArray)
+//' 
 //' n <- 100
 //' p <- 60
 //' 
@@ -23,19 +26,11 @@ using namespace std;
 //' # by columnes
 //' bdwXw(X, w,"wX") 
 //' 
-//' # by rows
-//' bdwXw(X, w,"Xw")
-//' 
-//' # by columns and rows
-//' bdwXw(X, w,"wXw")
-//' 
 //' # with Delayed Array
 //' 
 //' DX <- DelayedArray(X)
-//' dw <- DelayedArray(w)
 //' 
-//' bdwXw(DX, dw,"wX")
-//' bdwXw(DX, dw,"Xw")
+//' bdwXw(DX, w,"wX")
 //' 
 //' @export
 // [[Rcpp::export]]

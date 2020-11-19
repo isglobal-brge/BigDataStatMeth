@@ -28,28 +28,31 @@ d singular values, nxn diagonal matrix (non-negative real values)
 This function gets k first components from svd decomposition of numerical or Delayed Array
 }
 \examples{
+
+library(DelayedArray)
+
 n <- 500
 A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 AD <- DelayedArray(A)
 
 # svd without normalization
-bdSVD( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+decsvd <- bdSVD( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 decsvd$d
 decsvd$u
 
 # svd with normalization
-decvsd <- bdSVD( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
+decvsd <- bdSVD( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
 
 decsvd$d
 decsvd$u
 
 # svd with scaled matrix (sd)
-decvsd <- bdSVD( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+decvsd <- bdSVD( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 
 decsvd$d
 decsvd$u
 # svd with centered matrix (sd)
-decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE) # Centered matrix
 decsvd$d
 decsvd$u
 

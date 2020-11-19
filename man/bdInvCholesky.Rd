@@ -18,6 +18,8 @@ performs get the inverse using Cholesky decomposition
 }
 \examples{
 
+library(DelayedArray)
+
 A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
 bdInvCholesky(A)
 

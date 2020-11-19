@@ -20,6 +20,8 @@ numerical matrix
 This function performs a numerical or Delayed Array matrix normalization
 }
 \examples{
+library(DelayedArray)
+
 m <- 500
 n <- 100 
 x <- matrix(rnorm(m*n), nrow=m, ncol=n)

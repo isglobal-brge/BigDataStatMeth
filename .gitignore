@@ -46,3 +46,4 @@ rsconnect/
 RcppExports.cpp
 .Rproj.user
 *.csv
+*.hdf5

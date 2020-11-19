@@ -361,6 +361,8 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
 //' @return inverse matrix of d 
 //' @examples
 //' 
+//' library(DelayedArray)
+//' 
 //' A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
 //' bdInvCholesky(A)
 //' 
@@ -407,28 +409,31 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 //' @return v eigenvectors of A^tA, nxn orthogonal matrix
 //' @return d singular values, nxn diagonal matrix (non-negative real values)
 //' @examples
+//' 
+//' library(DelayedArray)
+//' 
 //' n <- 500
 //' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 //' AD <- DelayedArray(A)
 //' 
 //' # svd without normalization
-//' bdSVD( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+//' decsvd <- bdSVD( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 //' decsvd$d
 //' decsvd$u
 //' 
 //' # svd with normalization
-//' decvsd <- bdSVD( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
+//' decvsd <- bdSVD( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
 //' 
 //' decsvd$d
 //' decsvd$u
 //' 
 //' # svd with scaled matrix (sd)
-//' decvsd <- bdSVD( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+//' decvsd <- bdSVD( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 //' 
 //' decsvd$d
 //' decsvd$u
 //' # svd with centered matrix (sd)
-//' decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+//' decvsd <- bdSVD( A, bscale = FALSE, bcenter = TRUE) # Centered matrix
 //' decsvd$d
 //' decsvd$u
 //' 
@@ -587,28 +592,31 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
 //' @return v eigenvectors of A^tA, nxn orthogonal matrix
 //' @return d singular values, nxn diagonal matrix (non-negative real values)
 //' @examples
+//' 
+//' library(DelayedArray)
+//' 
 //' n <- 500
 //' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 //' AD <- DelayedArray(A)
 //' 
 //' # svd without normalization
-//' bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ), # No matrix normalization
+//' decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 //' decsvd$d
 //' decsvd$u
 //' 
 //' # svd with normalization
-//' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE), # Matrix normalization
-//' decvsd <- bdSVD_lapack( A ), # Matrix normalization too
+//' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
+//' decvsd <- bdSVD_lapack( A ) # Matrix normalization too
 //' decsvd$d
 //' decsvd$u
 //' 
 //' # svd with scaled matrix (sd)
-//' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE), # Scaled matrix
+//' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 //' 
 //' decsvd$d
 //' decsvd$u
 //' # svd with centered matrix (sd)
-//' decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE), # Centered matrix
+//' decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE) # Centered matrix
 //' decsvd$d
 //' decsvd$u
 //' 

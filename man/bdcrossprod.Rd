@@ -18,6 +18,9 @@ numerical matrix with crossproduct or transposed crossproduct
 This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
 }
 \examples{
+
+library(DelayedArray)
+
 n <- 100
 p <- 60
 
@@ -30,6 +33,6 @@ bdcrossprod(X, transposed = TRUE)
 # with DelayedArray
 XD <- DelayedArray(X)
 bdcrossprod(XD)
-bdcrossprod(XD, transpoded = TRUE)
+bdcrossprod(XD, transposed = TRUE)
 
 }

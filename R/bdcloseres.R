@@ -9,6 +9,8 @@
 #' @examples
 #' # with numeric matrix
 #' 
+#' library(DelayedArray)
+#' 
 #' m <- 350
 #' n <- 150
 #' k <- 50

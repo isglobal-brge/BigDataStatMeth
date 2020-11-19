@@ -20,6 +20,9 @@ numerical matrix
 This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 }
 \examples{
+
+library(DelayedArray)
+
 n <- 100
 p <- 60
 
@@ -31,18 +34,10 @@ w <- u * (1 - u)
 # by columnes
 bdwXw(X, w,"wX") 
 
-# by rows
-bdwXw(X, w,"Xw")
-
-# by columns and rows
-bdwXw(X, w,"wXw")
-
 # with Delayed Array
 
 DX <- DelayedArray(X)
-dw <- DelayedArray(w)
 
-bdwXw(DX, dw,"wX")
-bdwXw(DX, dw,"Xw")
+bdwXw(DX, w,"wX")
 
 }
