@@ -42,7 +42,7 @@ Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w)
 // Compute weighted crossproduct Xw
 Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
 {
-  const int n(X.rows());
+  //.commented 20201120 - warning check().// const int n(X.rows());
   Eigen::MatrixXd Xw = X * w.array().matrix().asDiagonal();
   //..// Eigen::MatrixXd Xw = X * w;
   return (Xw);
@@ -52,7 +52,7 @@ Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w)
 // Compute weighted crossproduct Xw
 Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
 {
-  const int n(X.rows());
+  //.commented 20201120 - warning check().// const int n(X.rows());
   Eigen::MatrixXd wX = w.array().matrix().asDiagonal()*X;
   //..// Eigen::MatrixXd wX = w*X;
   return (wX);
@@ -153,7 +153,7 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
 //' 
 //' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
 //' 
-//' @param X numerical or Delayed Array matrix
+//' @param a numerical or Delayed Array matrix
 //' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
 //' @return numerical matrix with crossproduct or transposed crossproduct 
 //' @examples
@@ -211,7 +211,7 @@ Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> tran
 //' 
 //' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 //' 
-//' @param X numerical or Delayed Array matrix
+//' @param a numerical or Delayed Array matrix
 //' @param w vector with weights
 //' @param op string indicating if operation 'xtwx' and 'xwxt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
 //' @return numerical matrix 
@@ -280,7 +280,7 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 //' 
 //' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 //' 
-//' @param X numerical or Delayed Array matrix
+//' @param a numerical or Delayed Array matrix
 //' @param w scalar, weight
 //' @param op string indicating if operation  "Xw" or "wX"
 //' @return numerical matrix 

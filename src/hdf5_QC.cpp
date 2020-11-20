@@ -76,7 +76,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
     
     if(bycols == true) // We have to do it by rows
     {
-      int actualrow = 0;
+      //.commented 20201120 - warning check().// int actualrow = 0;
       int readedrows = data.rows();
       //..// for( int row = 0; row<readedrows; row++)  // COMPLETE EXECUTION
       for( int row = readedrows-1 ; row>=0; row--)  // COMPLETE EXECUTION
@@ -89,7 +89,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
       }
     } else {
       
-      int actualcol = 0;
+      //.commented 20201120 - warning check().// int actualcol = 0;
       int readedcols = data.cols();
       
       //..//for( int col = 0; col<data.cols(); col++) 
@@ -182,7 +182,6 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
   {
     bool bcols;
     double dpcent;
-    DataSet* pdataset;
     
     std::string stroutdata = outgroup +"/" + outdataset;
     std::string strdataset = group +"/" + dataset;
@@ -202,6 +201,8 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
     
     if(exists_HDF5_element_ptr(file, strdataset)) 
     {
+      DataSet* pdataset; //.moved from declaration variables 20201120 - warning check().//
+      
       pdataset = new DataSet(file->openDataSet(strdataset));
       
       if( strdataset.compare(stroutdata)!= 0)
@@ -230,7 +231,7 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
       pdataset->close();
       
     } else{
-      pdataset->close();
+      //.commented 20201120 - warning check().// pdataset->close();
       file->close();
       throw std::range_error("Dataset does not exits");  
     }

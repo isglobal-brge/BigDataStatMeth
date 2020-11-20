@@ -74,7 +74,7 @@ Eigen::MatrixXd read_DelayedArray( Rcpp::RObject A  )
     return (read_DelayedArray_real(A));
   }else
   {
-    throw std::runtime_error("unacceptable matrix type");
+    stop("unacceptable matrix type");
   }
   
 }
@@ -100,7 +100,7 @@ Eigen::Vector2i get_DelayedArray_size(Rcpp::RObject A)
     size[1] = dmat->get_ncol();
     
   }else {
-    throw std::runtime_error("unacceptable matrix type");
+    stop("unacceptable matrix type");
   }
   return(size);
 }
@@ -120,7 +120,7 @@ int write_DelayedArray_to_hdf5(H5std_string filename, const std::string CDataset
     res = write_DelayedArray_real_hdf5_transposed(filename, CDatasetName, A);
     
   }else  {
-    throw std::runtime_error("unacceptable matrix type");
+    stop("unacceptable matrix type");
   }
   
   return(res);
@@ -128,20 +128,26 @@ int write_DelayedArray_to_hdf5(H5std_string filename, const std::string CDataset
 
 
 // Write DelayedArray to hdf5 data file 
-int write_DelayedArray_to_hdf5_ptr(H5File* file, const std::string CDatasetName, Rcpp::RObject A)
+int write_DelayedArray_to_hdf5_ptr(H5File* file, const std::string CDatasetName, Rcpp::RObject A, bool transp)
 {
   
   int res = 0;
   auto dmtypex = beachmat::find_sexp_type(A);
   
   if ( dmtypex == INTSXP )  {
-    res = write_DelayedArray_int_hdf5_ptr(file, CDatasetName, A);
+    if ( transp == true)
+      res = write_DelayedArray_int_hdf5_ptr(file, CDatasetName, A);
+    else
+      res = write_DelayedArray_int_hdf5_transposed_ptr(file, CDatasetName, A);
     
   } else if (dmtypex==REALSXP)  {
-    res = write_DelayedArray_real_hdf5_transposed_ptr(file, CDatasetName, A);
+    if(transp==true)
+      res= write_DelayedArray_real_hdf5_ptr(file,CDatasetName, A);
+    else
+      res = write_DelayedArray_real_hdf5_transposed_ptr(file, CDatasetName, A);
     
   }else  {
-    throw std::runtime_error("unacceptable matrix type");
+    stop("unacceptable matrix type");
   }
   
   return(res);
@@ -232,7 +238,7 @@ int write_DelayedArray_int_hdf5( H5std_string filename, const std::string CDatas
 }
 
 
-
+/***
 // Write DealyedArray with integer data type to hdf5 file as double
 int write_DelayedArray_int_hdf5_ptr( H5File* file, const std::string CDatasetName, Rcpp::RObject A )
 {
@@ -314,6 +320,95 @@ int write_DelayedArray_int_hdf5_ptr( H5File* file, const std::string CDatasetNam
   
   return 0;
 }
+***/
+
+
+
+// Write DealyedArray with integer data type to hdf5 file as double
+int write_DelayedArray_int_hdf5_ptr( H5File* file, const std::string CDatasetName, Rcpp::RObject A )
+{
+  
+  hsize_t offset[2], count[2], dims[2];
+  hsize_t stride[2] = {1,1};
+  hsize_t block[2] = {1,1};
+  
+  auto dmat = beachmat::create_integer_matrix(A);
+  
+  size_t ncols = dmat->get_ncol();
+  size_t nrows = dmat->get_nrow();
+  
+  try
+  {
+    Exception::dontPrint();
+    
+    // Create empty dataset in hdf5 file
+    create_HDF5_dataset_ptr( file, CDatasetName, ncols, nrows, "real");
+    
+    // Open file and dataset
+    //..// H5File file(filename, H5F_ACC_RDWR);
+    DataSet dataset = file->openDataSet(CDatasetName);
+    
+    if ( ncols < nrows ) 
+    {
+      offset[0] = 0;
+      dims[0] = count[0] = nrows;
+      dims[1] = count[1] = 1;
+      
+      DataSpace dataspace(RANK2, dims);
+      DataSpace memspace(RANK2, dims, NULL);
+      
+      Rcpp::NumericVector output(nrows);
+      for (size_t ncol=0; ncol<ncols; ++ncol) 
+      {
+        offset[1] = ncol;
+        dmat->get_col(ncol, output.begin());
+        
+        dataspace = dataset.getSpace();
+        dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block);
+        dataset.write(&output[0], PredType::NATIVE_DOUBLE, memspace, dataspace);
+        
+      }
+      
+      dataspace.close();
+      
+    }
+    else 
+    {
+      offset[1] = 0;
+      dims[0] = count[0] = 1;
+      dims[1] = count[1] = ncols;
+      
+      DataSpace dataspace(RANK2, dims);
+      DataSpace memspace(RANK2, dims, NULL);
+      
+      Rcpp::NumericVector output(ncols);
+      for (size_t nrow=0; nrow<nrows; ++nrow)   // Write by rows
+      {
+        offset[0] = nrow;
+        dmat->get_row(nrow, output.begin());
+
+        dataspace = dataset.getSpace();
+        dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block);
+        dataset.write(&output[0], PredType::NATIVE_DOUBLE, memspace, dataspace);
+        
+      }
+      dataspace.close();
+    }
+    dataset.close();
+    
+  } // end of try block
+  catch(FileIException error) { // catch failure caused by the H5File operations
+    error.printErrorStack();
+    return -1;
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    error.printErrorStack();
+    return -1;
+  }
+  
+  return 0;
+}
+
+
 
 
 
@@ -337,7 +432,7 @@ int write_DelayedArray_int_hdf5_transposed( H5std_string filename, const std::st
     Exception::dontPrint();
     
     // Create empty dataset in hdf5 file (transposed data nrows = ncols)
-    create_HDF5_dataset( filename, CDatasetName, ncols, nrows, "real");
+    create_HDF5_dataset( filename, CDatasetName, nrows, ncols,"real");
     
     // Open file and dataset
     H5File file(filename, H5F_ACC_RDWR);
@@ -350,41 +445,44 @@ int write_DelayedArray_int_hdf5_transposed( H5std_string filename, const std::st
       dims[0] = count[0] = 1;
       dims[1] = count[1] = nrows;
       
+      DataSpace dataspace(RANK2, dims);
+      DataSpace memspace(RANK2, dims, NULL);
+      
       Rcpp::NumericVector output(nrows);
       for (size_t ncol=0; ncol<ncols; ++ncol) 
       {
         offset[0] = ncol;
         dmat->get_col(ncol, output.begin());
         
-        DataSpace dataspace(RANK2, dims);
-        DataSpace memspace(RANK2, dims, NULL);
-        
         dataspace = dataset.getSpace();
         dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block);
         dataset.write(&output[0], PredType::NATIVE_DOUBLE, memspace, dataspace);
-        dataspace.close();
+        
       }
+      
+      dataspace.close();
     }
     else 
     {
       offset[1] = 0;
       dims[0] = count[0] = ncols;
       dims[1] = count[1] = 1;
+
+      DataSpace dataspace(RANK2, dims);
+      DataSpace memspace(RANK2, dims, NULL);
       
       Rcpp::NumericVector output(ncols);
       for (size_t nrow=0; nrow<nrows; ++nrow)   // Write by rows
       {
         offset[0] = nrow;
         dmat->get_row(nrow, output.begin());
-        
-        DataSpace dataspace(RANK2, dims);
-        DataSpace memspace(RANK2, dims, NULL);
-        
+
         dataspace = dataset.getSpace();
         dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block);
         dataset.write(&output[0], PredType::NATIVE_DOUBLE, memspace, dataspace);
-        dataspace.close();
+        
       }
+      dataspace.close();
     }
     dataset.close();
     file.close();
@@ -428,11 +526,14 @@ int write_DelayedArray_int_hdf5_transposed_ptr( H5File* file, const std::string 
     DataSet dataset = file->openDataSet(CDatasetName);
     
     Rcpp::Rcout<<"\nInteger\n";
-    if ( ncols < nrows ) 
+    if ( ncols <= nrows ) 
     {
       offset[1] = 0;
       dims[0] = count[0] = 1;
       dims[1] = count[1] = nrows;
+      
+      DataSpace dataspace(RANK2, dims);
+      DataSpace memspace(RANK2, dims, NULL);
       
       Rcpp::NumericVector output(nrows);
       for (size_t ncol=0; ncol<ncols; ++ncol) 
@@ -440,35 +541,36 @@ int write_DelayedArray_int_hdf5_transposed_ptr( H5File* file, const std::string 
         offset[0] = ncol;
         dmat->get_col(ncol, output.begin());
         
-        DataSpace dataspace(RANK2, dims);
-        DataSpace memspace(RANK2, dims, NULL);
-        
         dataspace = dataset.getSpace();
         dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block);
         dataset.write(&output[0], PredType::NATIVE_DOUBLE, memspace, dataspace);
-        dataspace.close();
+        
       }
+      dataspace.close();
     }
     else 
     {
       offset[1] = 0;
       dims[0] = count[0] = ncols;
       dims[1] = count[1] = 1;
+
+      DataSpace dataspace(RANK2, dims);
+      DataSpace memspace(RANK2, dims, NULL);
       
-      Rcpp::NumericVector output(ncols);
+            
+      Rcpp::NumericVector output(ncols,1);
       for (size_t nrow=0; nrow<nrows; ++nrow)   // Write by rows
       {
-        offset[0] = nrow;
+        offset[0] = 0;
+        offset[1] = nrow;
         dmat->get_row(nrow, output.begin());
-        
-        DataSpace dataspace(RANK2, dims);
-        DataSpace memspace(RANK2, dims, NULL);
         
         dataspace = dataset.getSpace();
         dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block);
         dataset.write(&output[0], PredType::NATIVE_DOUBLE, memspace, dataspace);
-        dataspace.close();
+        
       }
+      dataspace.close();
     }
     dataset.close();
     
@@ -964,7 +1066,7 @@ Rcpp::NumericMatrix read_DelayedArray_rcpp( Rcpp::RObject A  )
     return (read_DelayedArray_real_r(A));
   }else
   {
-    throw std::runtime_error("unacceptable matrix type");
+    stop("unacceptable matrix type");
   }
   
 }

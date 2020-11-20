@@ -1,6 +1,7 @@
 #ifndef hdf5_to_Eigen
 #define hdf5_to_Eigen
 
+
   #include <RcppEigen.h>
   #include "H5Cpp.h"
   #include "rhdf5Utils.h"

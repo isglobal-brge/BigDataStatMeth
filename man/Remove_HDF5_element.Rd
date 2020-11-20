@@ -9,7 +9,7 @@ Remove_HDF5_element(filename, element)
 \arguments{
 \item{filename, }{character array indicating the name of the file to create}
 
-\item{path}{to element, character array indicating the complete route to the element to be removed (folder or dataset).}
+\item{element}{path to element, character array indicating the complete route to the element to be removed (folder or dataset).}
 }
 \value{
 none

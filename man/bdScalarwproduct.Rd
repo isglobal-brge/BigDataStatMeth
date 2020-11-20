@@ -7,11 +7,11 @@
 bdScalarwproduct(a, w, op)
 }
 \arguments{
+\item{a}{numerical or Delayed Array matrix}
+
 \item{w}{scalar, weight}
 
 \item{op}{string indicating if operation  "Xw" or "wX"}
-
-\item{X}{numerical or Delayed Array matrix}
 }
 \value{
 numerical matrix

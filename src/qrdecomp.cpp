@@ -50,7 +50,7 @@ strQR rcpp_bdQR( Eigen::MatrixXd & A, bool bthin)
 //' orthogonal matrix Q and an upper triangular matrix R.
 //' 
 //' @param X a real square matrix 
-//' @param boolean thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false
+//' @param thin boolean thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false
 //' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
 //' @export
 // [[Rcpp::export]]
@@ -204,9 +204,10 @@ Rcpp::RObject review_decomposition(Eigen::MatrixXd R, int n)
 //' 
 //' @param R numerical or Delayed Array matrix. 
 //' @param Z numerical or Delayed Array matrix.
+//' @param threads integer with number of threads to use with parallelized execution
 //' @return X numerical matrix. 
 //' @examples
-//' 
+//'  a <- "Unused function"
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z, Rcpp::Nullable<int> threads = R_NilValue) 
@@ -239,7 +240,7 @@ Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z, Rcpp::Nullable<int> thre
       block_size = std::min(  std::min(A.rows(),A.cols()), std::min(B.rows(),B.cols()));
     }
     // Eigen::MatrixXd X = Rcpp::as<Eigen::MatrixXd>( bdpseudoinv(A) )* B;
-    //.. MODIFICAT 06/2020 ..// Eigen::MatrixXd X = block_matrix_mul_parallel( rcpp_bdpseudoinv(A), B, block_size, threads );
+    //.. Modified 06/2020 ..// Eigen::MatrixXd X = block_matrix_mul_parallel( rcpp_bdpseudoinv(A), B, block_size, threads );
     Eigen::MatrixXd X = Bblock_matrix_mul_parallel( rcpp_bdpseudoinv(A), B, block_size, threads );
     return(Rcpp::wrap(X));
   }

@@ -10,6 +10,8 @@ bddtrsm(R, Z, threads = NULL)
 \item{R}{numerical or Delayed Array matrix.}
 
 \item{Z}{numerical or Delayed Array matrix.}
+
+\item{threads}{integer with number of threads to use with parallelized execution}
 }
 \value{
 X numerical matrix.
@@ -18,5 +20,5 @@ X numerical matrix.
 Solves matrix equations : A*X = B
 }
 \examples{
-
+ a <- "Unused function"
 }

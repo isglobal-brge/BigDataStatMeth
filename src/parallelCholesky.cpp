@@ -7,7 +7,7 @@ Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A, Rcpp::Nulla
   int dimensionSize = A.rows();
   Eigen::MatrixXd L = Eigen::MatrixXd::Zero(dimensionSize,dimensionSize);
   L.triangularView<Eigen::Lower>() = A.triangularView<Eigen::Lower>();
-  int i,j,k,chunk = 1; 
+  int i,k,chunk = 1; 
   double sum = 0;
   unsigned int ithreads;
   
@@ -26,9 +26,9 @@ Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A, Rcpp::Nulla
         if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
           ithreads = Rcpp::as<int> (threads);
         else 
-          ithreads = std::thread::hardware_concurrency() - 1;
+          ithreads = std::thread::hardware_concurrency() /2;
       }
-      else    ithreads = std::thread::hardware_concurrency(); //omp_get_max_threads();
+      else    ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads();
       
       omp_set_num_threads(ithreads);
       
@@ -66,9 +66,9 @@ Eigen::VectorXd Forward_Substituion_parallel(Eigen::MatrixXd L, Eigen::VectorXd 
     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
       ithreads = Rcpp::as<int> (threads);
     else 
-      ithreads = std::thread::hardware_concurrency();
+      ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads();
+  else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
   omp_set_num_threads(ithreads);
   
@@ -104,7 +104,7 @@ Eigen::MatrixXd Inverse_of_Cholesky_decomposition_parallel( Eigen::MatrixXd& A, 
   R.triangularView<Eigen::StrictlyUpper>() =  Eigen::MatrixXd::Constant(dimensionSize,dimensionSize,-1).triangularView<Eigen::StrictlyUpper>();
   R.diagonal() = A.diagonal();
   
-  int i,j,k, chunk = 1; 
+  int j, k; 
   double sum = 0;
   unsigned int ithreads;
   
@@ -113,9 +113,9 @@ Eigen::MatrixXd Inverse_of_Cholesky_decomposition_parallel( Eigen::MatrixXd& A, 
     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
       ithreads = Rcpp::as<int> (threads);
     else 
-      ithreads = std::thread::hardware_concurrency();
+      ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads();
+  else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
   omp_set_num_threads(ithreads);
   
@@ -147,7 +147,7 @@ Eigen::MatrixXd Inverse_of_Cholesky_decomposition_parallel( Eigen::MatrixXd& A, 
 
 Eigen::MatrixXd Inverse_Matrix_Cholesky_parallel( Eigen::MatrixXd L, Rcpp::Nullable<int> threads = R_NilValue  )
 {
-  int i, j, k, chunk=1;
+  int i, j, k;
   int dimensionSize = L.rows();
   unsigned int ithreads;
   
@@ -159,9 +159,9 @@ Eigen::MatrixXd Inverse_Matrix_Cholesky_parallel( Eigen::MatrixXd L, Rcpp::Nulla
     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
       ithreads = Rcpp::as<int> (threads);
     else 
-      ithreads = std::thread::hardware_concurrency();
+      ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads();
+  else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
   omp_set_num_threads(ithreads);
   

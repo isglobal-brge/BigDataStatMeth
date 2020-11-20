@@ -9,9 +9,9 @@ bdwXw(X, W, op)
 \arguments{
 \item{X}{numerical or Delayed Array matrix}
 
-\item{op}{string indicating if operation  "Xw" , "wX" or "wXw"}
+\item{W}{vector with weights}
 
-\item{w}{vector with weights}
+\item{op}{string indicating if operation  "Xw" , "wX" or "wXw"}
 }
 \value{
 numerical matrix

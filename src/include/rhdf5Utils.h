@@ -32,8 +32,8 @@
   bool RemoveFile(std::string filename);
   
   //..// extern "C" StringVector get_dataset_names_from_group( H5File* file, std::string strgroup);
-  extern "C" StringVector get_dataset_names_from_group( H5File* file, std::string strgroup, std::string strprefix);
-  extern "C" StringVector get_dataset_names_from_dataset_ptr( DataSet* dataset);
+  StringVector get_dataset_names_from_group( H5File* file, std::string strgroup, std::string strprefix);
+  StringVector get_dataset_names_from_dataset_ptr( DataSet* dataset);
   extern "C" int join_datasets(H5File* file, std::string strsubgroup, StringVector strinput, std::string strasout);
   
   extern "C" bool remove_HDF5_element_ptr(H5File* file, const H5std_string element);
@@ -42,7 +42,7 @@
   
   
   
-  extern "C" H5FilePtr Open_hdf5_file(const std::string& fname);
+  H5FilePtr Open_hdf5_file(const std::string& fname);
   extern "C" int create_HDF5_dataset(H5std_string filename, const std::string CDatasetName,
                                     const size_t rows, const size_t cols, std::string strdatatype);
   extern "C" int create_HDF5_dataset_ptr(H5File* file, const std::string CDatasetName, 
@@ -78,7 +78,7 @@
   
   extern "C" int write_hdf5_string_vector(H5File* file, std::string datasetname, StringVector DatasetValues);
   //..// extern "C" StringVector get_hdf5_matrix_dimnames(H5File* file, std::string datasetname, int idim );
-  extern "C" StringVector get_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string datasetname, int idim );
+  StringVector get_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string datasetname, int idim );
   //..// extern "C" int write_hdf5_matrix_dimnames(H5File* file, std::string datasetname, StringVector rownames, StringVector colnames);
   extern "C" int write_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string datasetname, 
                                            StringVector rownames, StringVector colnames );
@@ -88,7 +88,7 @@
                                          IntegerVector ivstride, IntegerVector ivblock,
                                          double* rdatablock);
   
-  extern "C" IntegerVector get_HDF5_dataset_size(DataSet dataset);
+  IntegerVector get_HDF5_dataset_size(DataSet dataset);
 
   
   //..// void Create_HDF5_matrix_file(std::string filename, RObject mat,Rcpp::Nullable<std::string> group , Rcpp::Nullable<std::string> dataset );

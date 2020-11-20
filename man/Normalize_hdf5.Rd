@@ -33,5 +33,5 @@ file with scaled, centered or scaled and centered dataset
 This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file
 }
 \examples{
-
+  a = "See vignette"
 }

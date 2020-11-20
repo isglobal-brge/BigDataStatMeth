@@ -1,6 +1,8 @@
 #ifndef optimizedproduct
 #define optimizedproduct
 
+  #define EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+
   #include <RcppEigen.h>
   #include <omp.h>
   #include <thread>

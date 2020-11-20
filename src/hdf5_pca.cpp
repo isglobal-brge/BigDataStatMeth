@@ -88,10 +88,11 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
 //' @param filename string, file name where dataset is stored 
 //' @param group string group name  where dataset is stored in file
 //' @param dataset string dataset name with data to perform PCA
+//' @param threads integer number of threads used to run PCA
 //' @return original file with results in folder PCA/<datasetname>
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string dataset)
+Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<int> threads)
 {
   
   H5File* file;
@@ -103,6 +104,9 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
     Eigen::MatrixXd U, V, Lambda;
     Eigen::VectorXd lambda;
     Eigen::MatrixXd C, D, varcoord;
+    // int ithreads=1;
+    int ks = 4, qs = 1, nvs = 0;
+    bool bcent=true, bscal = true;
     
     pcaeig pcaRes;
     
@@ -110,13 +114,23 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
     file = new H5File( filename, H5F_ACC_RDWR );
 
     std::string strSVDdataset = "SVD/" + dataset;
-
+    
     // Look up for svd decomposition in hdf5 file
     if( !(exists_HDF5_element_ptr(file, strSVDdataset )) )
     {
       
-      Rcpp::Rcout<<"\n Doncs ara ens toca calcular .... Fatal !!!!\n";
-      svdeig retsvd = RcppbdSVD_hdf5( filename, group, dataset, 4, 1, 0, true, true );
+      /*
+      if(threads.isNotNull()) 
+      {
+        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+          ithreads = Rcpp::as<int> (threads);
+        else 
+          ithreads = std::thread::hardware_concurrency() - 1;
+      }
+      else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads(); 
+      */
+      //..// svdeig retsvd = RcppbdSVD_hdf5( filename, group, dataset, 4, 1, 0, true, true, ithreads );
+      svdeig retsvd = RcppbdSVD_hdf5( filename, group, dataset, ks, qs, nvs, bcent, bscal, threads );
     }
     
     get_HDF5_PCA_variance_ptr(file, dataset);

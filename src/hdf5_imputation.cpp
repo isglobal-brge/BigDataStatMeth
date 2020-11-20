@@ -39,7 +39,7 @@ std::map<double, double> VectortoOrderedMap_SNP_counts( Eigen::VectorXd  vdata)
   try 
   {
     int position = 0;
-    int vlength = vdata.size();
+    //.commented 20201120 - warning check().// int vlength = vdata.size();
     std::vector<double> v(vdata.data(), vdata.data()+vdata.size());
 
     std::sort(v.begin(), v.end() ); // Sort vector to optimize search and count
@@ -73,7 +73,7 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
   IntegerVector count = IntegerVector::create(0, 0);
   DataSet* outdataset;
   int ilimit;
-  int blocksize = 50;
+  int blocksize = 1000;
   
 
     // Real data set dimension
@@ -212,7 +212,7 @@ Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::stri
     std::string strdataset = group +"/" + dataset;
     std::string stroutgroup, stroutdataset, stroutdata;
     std::string strdatasetout;
-    int res;
+    //.commented 20201120 - warning check().// int res;
     bool bcols;
     
     
@@ -254,7 +254,7 @@ Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::stri
       Impute_snp_HDF5( file, pdataset, bcols, stroutdata);
       
     } else{
-      pdataset->close();
+      //.commented 20201120 - warning check().// pdataset->close();
       file->close();
       throw std::range_error("Dataset not exits");  
     }

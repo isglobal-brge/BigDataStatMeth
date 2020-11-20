@@ -17,9 +17,11 @@ Create_HDF5_matrix_file(
 
 \item{mat}{numerical data matrix}
 
-\item{transp}{boolean, if trans=true matrix is stored transposed in hdf5 file}
+\item{group, }{character array indicating folder name to put the matrix in hdf5 file}
 
-\item{folder, }{character array indicating folder name to put the matrix in hdf5 file}
+\item{dataset, }{character array indicating the dataset name to store the matix data}
+
+\item{transp}{boolean, if trans=true matrix is stored transposed in hdf5 file}
 }
 \value{
 none

@@ -28,6 +28,6 @@
 bdclose <- function(results)
 { 
 
-  try (H5Fclose(results$res) )
+  try (rhdf5::H5Fclose(results$res) )
   
 }

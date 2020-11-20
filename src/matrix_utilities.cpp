@@ -104,7 +104,7 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' 
 //' This function performs a numerical or Delayed Array matrix normalization
 //' 
-//' @param X numerical or Delayed Array Matrix
+//' @param x numerical or Delayed Array Matrix
 //' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @return numerical matrix

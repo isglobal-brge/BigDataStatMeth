@@ -7,9 +7,9 @@
 bdcrossprod(a, transposed = NULL)
 }
 \arguments{
-\item{transposed}{(optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)}
+\item{a}{numerical or Delayed Array matrix}
 
-\item{X}{numerical or Delayed Array matrix}
+\item{transposed}{(optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)}
 }
 \value{
 numerical matrix with crossproduct or transposed crossproduct

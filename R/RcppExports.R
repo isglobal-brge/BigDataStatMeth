@@ -46,7 +46,7 @@ bdImputeSNPHDF5 <- function(filename, group, dataset, outgroup = NULL, outdatase
 #' @param wsize integer (default = 1000), file block size to read to perform normalization
 #' @return file with scaled, centered or scaled and centered dataset
 #' @examples
-#' 
+#'   a = "See vignette"
 #' @export
 Normalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, wsize = NULL) {
     .Call(`_BigDataStatMeth_Normalize_hdf5`, filename, group, dataset, bcenter, bscale, wsize)
@@ -59,6 +59,7 @@ Normalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NU
 #' @param filename string, file name where dataset is stored 
 #' @param group string group name  where dataset is stored in file
 #' @param dataset string dataset name with data to perform PCA
+#' @param threads integer number of threads used to run PCA
 #' @return original file with results in folder PCA/<datasetname>
 #' @export
 bdPCA_hdf5 <- function(filename, group, dataset, threads) {
@@ -69,7 +70,7 @@ bdPCA_hdf5 <- function(filename, group, dataset, threads) {
 #' 
 #' This function performs a numerical or Delayed Array matrix normalization
 #' 
-#' @param X numerical or Delayed Array Matrix
+#' @param x numerical or Delayed Array Matrix
 #' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 #' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 #' @return numerical matrix
@@ -105,7 +106,7 @@ Normalize_Data <- function(x, bcenter = NULL, bscale = NULL) {
 #' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 #' 
 #' @param X numerical or Delayed Array matrix
-#' @param w vector with weights
+#' @param W vector with weights
 #' @param op string indicating if operation  "Xw" , "wX" or "wXw"
 #' @return numerical matrix 
 #' @examples
@@ -134,11 +135,15 @@ bdwXw <- function(X, W, op) {
     .Call(`_BigDataStatMeth_bdwXw`, X, W, op)
 }
 
+timesTwo <- function(x) {
+    .Call(`_BigDataStatMeth_timesTwo`, x)
+}
+
 #' Crossproduct and transposed crossproduct of DelayedArray
 #' 
 #' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
 #' 
-#' @param X numerical or Delayed Array matrix
+#' @param a numerical or Delayed Array matrix
 #' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
 #' @return numerical matrix with crossproduct or transposed crossproduct 
 #' @examples
@@ -168,7 +173,7 @@ bdcrossprod <- function(a, transposed = NULL) {
 #' 
 #' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 #' 
-#' @param X numerical or Delayed Array matrix
+#' @param a numerical or Delayed Array matrix
 #' @param w vector with weights
 #' @param op string indicating if operation 'xtwx' and 'xwxt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
 #' @return numerical matrix 
@@ -184,14 +189,12 @@ bdcrossprod <- function(a, transposed = NULL) {
 #' u <- runif(n)
 #' w <- u * (1 - u)
 #' ans <- bdwproduct(X, w,"xtwx")
-#' ans <- bdwproduct(X, w,"xwxt")
 #' 
 #' # with Delayed Array
 #' 
 #' DX <- DelayedArray(X)
 #' 
 #' ans <- bdwproduct(DX, w,"xtwx")
-#' ans <- bdwproduct(DX, w,"xwxt")
 #' 
 #' @export
 bdwproduct <- function(a, w, op) {
@@ -202,7 +205,7 @@ bdwproduct <- function(a, w, op) {
 #' 
 #' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 #' 
-#' @param X numerical or Delayed Array matrix
+#' @param a numerical or Delayed Array matrix
 #' @param w scalar, weight
 #' @param op string indicating if operation  "Xw" or "wX"
 #' @return numerical matrix 
@@ -257,20 +260,23 @@ bdScalarwproduct <- function(a, w, op) {
 #'   }
 #' }
 #' @examples
+#' 
+#' library(DelayedArray)
+#' 
 #' # with numeric matrix
 #' m <- 500
 #' k <- 1500
 #' n <- 400
-#' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
-#' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+#' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
+#' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 #' 
-#' Bblockmult(A,B,128, TRUE)
+#' blockmult(A,B,128, TRUE)
 #' 
 #' # with Delaeyd Array
 #' AD <- DelayedArray(A)
 #' BD <- DelayedArray(B)
 #' 
-#' Bblockmult(AD,BD,128, TRUE)
+#' blockmult(AD,BD,128, TRUE)
 #' @export
 blockmult <- function(a, b, block_size = NULL, paral = NULL, threads = NULL, bigmatrix = NULL, mixblock_size = NULL, outfile = NULL, onmemory = NULL) {
     .Call(`_BigDataStatMeth_blockmult`, a, b, block_size, paral, threads, bigmatrix, mixblock_size, outfile, onmemory)
@@ -312,8 +318,8 @@ partCrossProdEigen <- function(X) {
 #' 
 #' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
 #' 
-#' @param a a double matrix.
-#' @param b a double matrix.
+#' @param X double matrix to apply multiplication
+#' @param Y double matrix to apply multiplication
 #' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
 #' @return numerical matrix
 #' @examples
@@ -321,19 +327,20 @@ partCrossProdEigen <- function(X) {
 #' library(DelayedArray)
 #' 
 #' # with numeric matrix
-#' m <- 500
 #' k <- 300
 #' n <- 400
-#' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
-#' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+#' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
+#' B <- matrix(rnorm(k*k), nrow=k)
 #' 
-#' parXYProd(A,B,128, TRUE)
+#' parXYProd(A,B,"xy")
+#' parXYProd(A,B,"xyt")
 #' 
 #' # with Delaeyd Array
 #' AD <- DelayedArray(A)
 #' BD <- DelayedArray(B)
 #' 
-#' parXYProd(AD,BD,128, TRUE)
+#' parXYProd(AD,BD,"xy")
+#' parXYProd(AD,BD,"xyt")
 #' 
 #' @export
 parXYProd <- function(X, Y, op = NULL) {
@@ -344,8 +351,8 @@ parXYProd <- function(X, Y, op = NULL) {
 #' 
 #' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
 #' 
-#' @param a a double matrix.
-#' @param b a double matrix.
+#' @param X double matrix to apply multiplication
+#' @param Y double matrix to apply multiplication
 #' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
 #' @return numerical matrix
 #' @examples
@@ -356,16 +363,19 @@ parXYProd <- function(X, Y, op = NULL) {
 #' m <- 500
 #' k <- 1500
 #' n <- 400
-#' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
-#' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+#' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
+#' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 #' 
-#' Bblockmult(A,B,128, TRUE)
+#' parXYProdBlock(A,B,"xy")
+#' parXYProdBlock(A,B,"xty")
 #' 
 #' # with Delaeyd Array
 #' AD <- DelayedArray(A)
 #' BD <- DelayedArray(B)
 #' 
-#' Bblockmult(AD,BD,128, TRUE)
+#' parXYProdBlock(AD,BD,"xy")
+#' parXYProdBlock(AD,BD,"xty")
+#' 
 #' 
 #' @export
 parXYProdBlock <- function(X, Y, op = NULL) {
@@ -400,7 +410,7 @@ bdsvd <- function(X) {
 #' 
 #' Compute the pseudo-inverse of a singular matrix
 #' 
-#' @param Singular matrix (m x n)
+#' @param X Singular matrix (m x n)
 #' @return Pseudo-inverse matrix of A
 #' @export
 bdpseudoinv <- function(X) {
@@ -414,7 +424,7 @@ bdpseudoinv <- function(X) {
 #' orthogonal matrix Q and an upper triangular matrix R.
 #' 
 #' @param X a real square matrix 
-#' @param boolean thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false
+#' @param thin boolean thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false
 #' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
 #' @export
 bdQR <- function(X, thin = NULL) {
@@ -431,9 +441,10 @@ review_decomposition <- function(R, n) {
 #' 
 #' @param R numerical or Delayed Array matrix. 
 #' @param Z numerical or Delayed Array matrix.
+#' @param threads integer with number of threads to use with parallelized execution
 #' @return X numerical matrix. 
 #' @examples
-#' 
+#'  a <- "Unused function"
 #' @export
 bddtrsm <- function(R, Z, threads = NULL) {
     .Call(`_BigDataStatMeth_bddtrsm`, R, Z, threads)
@@ -444,8 +455,9 @@ bddtrsm <- function(R, Z, threads = NULL) {
 #' Creates a hdf5 file with numerical data matrix,
 #' 
 #' @param filename, character array indicating the name of the file to create
-#' @param folder, character array indicating folder name to put the matrix in hdf5 file
 #' @param mat numerical data matrix
+#' @param group, character array indicating folder name to put the matrix in hdf5 file
+#' @param dataset, character array indicating the dataset name to store the matix data
 #' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 #' @return none
 #' @export
@@ -459,8 +471,9 @@ Create_HDF5_matrix_file <- function(filename, mat, group = NULL, dataset = NULL,
 #' 
 #' @param filename, character array indicating the name of the file to create
 #' @param mat numerical data matrix
-#' @param folder, character array indicating folder name to put the matrix in hdf5 file
+#' @param group, character array indicating folder or group name to put the matrix in hdf5 file
 #' @param dataset, character array indicating the dataset name that contains the matix data
+#' @param transp, boolean if true, data is manipulated in transposed form
 #' @return none
 #' @export
 Create_HDF5_matrix <- function(mat, filename, group, dataset, transp = NULL) {
@@ -472,7 +485,7 @@ Create_HDF5_matrix <- function(mat, filename, group, dataset, transp = NULL) {
 #' Remove group or dataset from  hdf5 file
 #' 
 #' @param filename, character array indicating the name of the file to create
-#' @param path to element, character array indicating the complete route to the element to be removed (folder or dataset). 
+#' @param element path to element, character array indicating the complete route to the element to be removed (folder or dataset). 
 #' @return none
 #' @export
 Remove_HDF5_element <- function(filename, element) {

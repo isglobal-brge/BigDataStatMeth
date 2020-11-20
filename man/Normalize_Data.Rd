@@ -7,11 +7,11 @@
 Normalize_Data(x, bcenter = NULL, bscale = NULL)
 }
 \arguments{
+\item{x}{numerical or Delayed Array Matrix}
+
 \item{bcenter}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
 
 \item{bscale}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
-
-\item{X}{numerical or Delayed Array Matrix}
 }
 \value{
 numerical matrix

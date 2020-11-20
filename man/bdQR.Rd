@@ -9,7 +9,7 @@ bdQR(X, thin = NULL)
 \arguments{
 \item{X}{a real square matrix}
 
-\item{boolean}{thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false}
+\item{thin}{boolean thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false}
 }
 \value{
 List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}

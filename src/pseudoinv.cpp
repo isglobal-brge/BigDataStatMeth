@@ -149,7 +149,7 @@ Rcpp::RObject bdpseudoinv(const Rcpp::RObject & X)
 //' 
 //' Compute the pseudo-inverse of a singular matrix
 //' 
-//' @param Singular matrix (m x n)
+//' @param X Singular matrix (m x n)
 //' @return Pseudo-inverse matrix of A
 //' @export
 // [[Rcpp::export]]

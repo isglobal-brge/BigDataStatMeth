@@ -7,7 +7,7 @@
 bdpseudoinv(X)
 }
 \arguments{
-\item{Singular}{matrix (m x n)}
+\item{X}{Singular matrix (m x n)}
 }
 \value{
 Pseudo-inverse matrix of A

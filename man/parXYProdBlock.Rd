@@ -7,11 +7,11 @@
 parXYProdBlock(X, Y, op = NULL)
 }
 \arguments{
+\item{X}{double matrix to apply multiplication}
+
+\item{Y}{double matrix to apply multiplication}
+
 \item{op, }{(optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)}
-
-\item{a}{a double matrix.}
-
-\item{b}{a double matrix.}
 }
 \value{
 numerical matrix
@@ -27,15 +27,18 @@ library(DelayedArray)
 m <- 500
 k <- 1500
 n <- 400
-A <- matrix(rnorm(n*p), nrow=n, ncol=k)
-B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+A <- matrix(rnorm(n*k), nrow=n, ncol=k)
+B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 
-Bblockmult(A,B,128, TRUE)
+parXYProdBlock(A,B,"xy")
+parXYProdBlock(A,B,"xty")
 
 # with Delaeyd Array
 AD <- DelayedArray(A)
 BD <- DelayedArray(B)
 
-Bblockmult(AD,BD,128, TRUE)
+parXYProdBlock(AD,BD,"xy")
+parXYProdBlock(AD,BD,"xty")
+
 
 }

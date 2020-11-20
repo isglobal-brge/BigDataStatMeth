@@ -7,11 +7,11 @@
 bdwproduct(a, w, op)
 }
 \arguments{
+\item{a}{numerical or Delayed Array matrix}
+
 \item{w}{vector with weights}
 
 \item{op}{string indicating if operation 'xtwx' and 'xwxt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)}
-
-\item{X}{numerical or Delayed Array matrix}
 }
 \value{
 numerical matrix

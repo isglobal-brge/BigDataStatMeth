@@ -70,20 +70,23 @@ This function performs a block matrix-matrix multiplication with numeric matrix 
 This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
 }
 \examples{
+
+library(DelayedArray)
+
 # with numeric matrix
 m <- 500
 k <- 1500
 n <- 400
-A <- matrix(rnorm(n*p), nrow=n, ncol=k)
-B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+A <- matrix(rnorm(n*k), nrow=n, ncol=k)
+B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 
-Bblockmult(A,B,128, TRUE)
+blockmult(A,B,128, TRUE)
 
 # with Delaeyd Array
 AD <- DelayedArray(A)
 BD <- DelayedArray(B)
 
-Bblockmult(AD,BD,128, TRUE)
+blockmult(AD,BD,128, TRUE)
 # with numeric matrix
 
 library(DelayedArray)
@@ -91,8 +94,8 @@ library(DelayedArray)
 m <- 500
 k <- 1500
 n <- 400
-A <- matrix(rnorm(n*p), nrow=n, ncol=k)
-B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+A <- matrix(rnorm(n*k), nrow=n, ncol=k)
+B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 
 blockmult(A, B, 128, TRUE)
 
@@ -101,4 +104,5 @@ AD <- DelayedArray(A)
 BD <- DelayedArray(B)
 
 blockmult( AD, BD, 128, TRUE)
+
 }

@@ -11,9 +11,11 @@ Create_HDF5_matrix(mat, filename, group, dataset, transp = NULL)
 
 \item{filename, }{character array indicating the name of the file to create}
 
+\item{group, }{character array indicating folder or group name to put the matrix in hdf5 file}
+
 \item{dataset, }{character array indicating the dataset name that contains the matix data}
 
-\item{folder, }{character array indicating folder name to put the matrix in hdf5 file}
+\item{transp, }{boolean if true, data is manipulated in transposed form}
 }
 \value{
 none

@@ -62,7 +62,7 @@ Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, 
 //' @param wsize integer (default = 1000), file block size to read to perform normalization
 //' @return file with scaled, centered or scaled and centered dataset
 //' @examples
-//' 
+//'   a = "See vignette"
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject Normalize_hdf5(std::string filename, const std::string group, std::string dataset,

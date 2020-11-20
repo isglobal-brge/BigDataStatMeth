@@ -8,7 +8,7 @@ using namespace std;
 //' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 //' 
 //' @param X numerical or Delayed Array matrix
-//' @param w vector with weights
+//' @param W vector with weights
 //' @param op string indicating if operation  "Xw" , "wX" or "wXw"
 //' @return numerical matrix 
 //' @examples
@@ -37,16 +37,16 @@ using namespace std;
 Rcpp::RObject bdwXw(Rcpp::RObject X, Rcpp::RObject W, std::string op)
 {
   
-  char Nchar='N';
-  char Uchar='T';
-  char Lchar='C';
-  double done = 1.0;
-  int ione = 1;
+  //.commented 20201120 - warning check().// char Nchar='N';
+  //.commented 20201120 - warning check().// char Uchar='T';
+  //.commented 20201120 - warning check().// char Lchar='C';
+  //.commented 20201120 - warning check().// double done = 1.0;
+  //.commented 20201120 - warning check().// int ione = 1;
   
   Eigen::MatrixXd A;
   Eigen::MatrixXd w;  // column or row vector
   
-  bool bpar=true;
+  //.commented 20201120 - warning check().// bool bpar=true;
   
   // Read DelayedArray's X and b
   

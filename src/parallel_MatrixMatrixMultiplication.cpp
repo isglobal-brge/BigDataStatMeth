@@ -299,8 +299,8 @@ Rcpp::NumericMatrix rcpp_parallel_XYtProd(Rcpp::NumericMatrix matX, Rcpp::Numeri
 //' 
 //' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
 //' 
-//' @param a a double matrix.
-//' @param b a double matrix.
+//' @param X double matrix to apply multiplication
+//' @param Y double matrix to apply multiplication
 //' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
 //' @return numerical matrix
 //' @examples
@@ -308,19 +308,20 @@ Rcpp::NumericMatrix rcpp_parallel_XYtProd(Rcpp::NumericMatrix matX, Rcpp::Numeri
 //' library(DelayedArray)
 //' 
 //' # with numeric matrix
-//' m <- 500
 //' k <- 300
 //' n <- 400
-//' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
-//' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+//' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
+//' B <- matrix(rnorm(k*k), nrow=k)
 //' 
-//' parXYProd(A,B,128, TRUE)
+//' parXYProd(A,B,"xy")
+//' parXYProd(A,B,"xyt")
 //' 
 //' # with Delaeyd Array
 //' AD <- DelayedArray(A)
 //' BD <- DelayedArray(B)
 //' 
-//' parXYProd(AD,BD,128, TRUE)
+//' parXYProd(AD,BD,"xy")
+//' parXYProd(AD,BD,"xyt")
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -404,8 +405,8 @@ Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::st
 //' 
 //' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
 //' 
-//' @param a a double matrix.
-//' @param b a double matrix.
+//' @param X double matrix to apply multiplication
+//' @param Y double matrix to apply multiplication
 //' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
 //' @return numerical matrix
 //' @examples
@@ -416,16 +417,19 @@ Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::st
 //' m <- 500
 //' k <- 1500
 //' n <- 400
-//' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
-//' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+//' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
+//' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 //' 
-//' Bblockmult(A,B,128, TRUE)
+//' parXYProdBlock(A,B,"xy")
+//' parXYProdBlock(A,B,"xty")
 //' 
 //' # with Delaeyd Array
 //' AD <- DelayedArray(A)
 //' BD <- DelayedArray(B)
 //' 
-//' Bblockmult(AD,BD,128, TRUE)
+//' parXYProdBlock(AD,BD,"xy")
+//' parXYProdBlock(AD,BD,"xty")
+//' 
 //' 
 //' @export
 // [[Rcpp::export]]

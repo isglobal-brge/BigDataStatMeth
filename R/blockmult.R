@@ -25,8 +25,8 @@
 #' m <- 500
 #' k <- 1500
 #' n <- 400
-#' A <- matrix(rnorm(n*p), nrow=n, ncol=k)
-#' B <- matrix(rnorm(n*p), nrow=k, ncol=n)
+#' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
+#' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 #' 
 #' blockmult(A, B, 128, TRUE)
 #' 
@@ -35,6 +35,7 @@
 #' BD <- DelayedArray(B)
 #' 
 #' blockmult( AD, BD, 128, TRUE)
+#' 
 blockmult <- function( a, b, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 10000, mixblock_size = 128, 
                        outfile = "./tmp_blockmult.hdf5", onmemory = FALSE)
 { 

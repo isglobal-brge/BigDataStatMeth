@@ -12,6 +12,8 @@ bdPCA_hdf5(filename, group, dataset, threads)
 \item{group}{string group name  where dataset is stored in file}
 
 \item{dataset}{string dataset name with data to perform PCA}
+
+\item{threads}{integer number of threads used to run PCA}
 }
 \value{
 original file with results in folder PCA/<datasetname>
