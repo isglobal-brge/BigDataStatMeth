@@ -74,7 +74,7 @@ Eigen::MatrixXd read_DelayedArray( Rcpp::RObject A  )
     return (read_DelayedArray_real(A));
   }else
   {
-    stop("unacceptable matrix type");
+    throw std::runtime_error("unacceptable matrix type");
   }
   
 }
@@ -100,7 +100,7 @@ Eigen::Vector2i get_DelayedArray_size(Rcpp::RObject A)
     size[1] = dmat->get_ncol();
     
   }else {
-    stop("unacceptable matrix type");
+    throw std::runtime_error("unacceptable matrix type");
   }
   return(size);
 }
@@ -120,7 +120,7 @@ int write_DelayedArray_to_hdf5(H5std_string filename, const std::string CDataset
     res = write_DelayedArray_real_hdf5_transposed(filename, CDatasetName, A);
     
   }else  {
-    stop("unacceptable matrix type");
+    throw std::runtime_error("unacceptable matrix type");
   }
   
   return(res);
@@ -147,7 +147,7 @@ int write_DelayedArray_to_hdf5_ptr(H5File* file, const std::string CDatasetName,
       res = write_DelayedArray_real_hdf5_transposed_ptr(file, CDatasetName, A);
     
   }else  {
-    stop("unacceptable matrix type");
+    throw std::runtime_error("unacceptable matrix type");
   }
   
   return(res);
@@ -1066,7 +1066,7 @@ Rcpp::NumericMatrix read_DelayedArray_rcpp( Rcpp::RObject A  )
     return (read_DelayedArray_real_r(A));
   }else
   {
-    stop("unacceptable matrix type");
+    throw std::runtime_error("unacceptable matrix type");
   }
   
 }

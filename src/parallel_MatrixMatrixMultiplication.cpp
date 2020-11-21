@@ -435,8 +435,8 @@ Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::st
 // [[Rcpp::export]]
 Rcpp::RObject parXYProdBlock(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::string> op = R_NilValue)
 {
-    auto dmtypex = beachmat::find_sexp_type(X);
-    auto dmtypey = beachmat::find_sexp_type(Y);
+  //.commented 20201120 - warning check().// auto dmtypex = beachmat::find_sexp_type(X);
+  //.commented 20201120 - warning check().// auto dmtypey = beachmat::find_sexp_type(Y);
     
     size_t ncols = 0, nrows=0;
     

@@ -47,9 +47,9 @@ void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::Mat
         if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
           ithreads = Rcpp::as<int> (threads);
         else 
-          ithreads = std::thread::hardware_concurrency();
+          ithreads = std::thread::hardware_concurrency()/2;
       }
-      else    ithreads = std::thread::hardware_concurrency() - 1; //omp_get_max_threads(); 
+      else    ithreads = std::thread::hardware_concurrency() / 2; //omp_get_max_threads(); 
       
       omp_set_num_threads(ithreads);
       
@@ -185,6 +185,9 @@ Rcpp::RObject JacobianSVD(Rcpp::RObject X)
     ::Rf_error("C++ exception (unknown reason)");
   }
   
+  // other cases
+  return (wrap(-1));
+  
 }
 
 
@@ -230,6 +233,9 @@ Rcpp::RObject bdtsvd(Rcpp::RObject X, Rcpp::Nullable<int> k = R_NilValue)
     ::Rf_error("C++ exception (unknown reason)");
   }
   
+  // other cases
+  return (wrap(-1));
+  
 }
 
 
@@ -270,6 +276,9 @@ Rcpp::RObject bdsvd(Rcpp::RObject X)
   } catch (...) {
     ::Rf_error("C++ exception (unknown reason)");
   }
+  
+  // other cases
+  return (wrap(-1));
   
 }
 

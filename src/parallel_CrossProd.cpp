@@ -281,14 +281,19 @@ struct CrosProdd_block : public RcppParallel::Worker  {
   int ncola;
   
   // Constructor
+  /** WARNIN - R CMD Check () -- NOT TESTED  -- (order tmat-mat changed)
   CrosProdd_block(const Rcpp::NumericVector tmat, const Rcpp::NumericVector mat, Rcpp::NumericMatrix rmat, int ncola)
     : tmat(tmat), mat(mat), rmat(rmat), ncola(ncola) {}
+  ***/
+  CrosProdd_block(const Rcpp::NumericVector mat, const Rcpp::NumericVector tmat, Rcpp::NumericMatrix rmat, int ncola)
+    : mat(mat), tmat(tmat), rmat(rmat), ncola(ncola) {}
+  
   
   // function call operator that work for the specified range (begin/end)
   void operator()(std::size_t begin, std::size_t end) 
   {
     std::size_t sj= rmat.ncol();
-    double kp = 0;
+    //.commented 20201120 - warning check().//double kp = 0;
     
     for (std::size_t i = begin; i < end; i++) 
     {

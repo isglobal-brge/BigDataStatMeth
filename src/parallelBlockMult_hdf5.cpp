@@ -99,7 +99,8 @@ int hdf5_block_matrix_mul_hdf5( IntegerVector sizeA, IntegerVector sizeB, int hd
     IntegerVector block = IntegerVector::create(1, 1); 
     
     // Create an empty dataset for C-matrix into hdf5 file
-    int res = create_HDF5_dataset( filename, strsubgroupOUT + "/C", N, M, "real");
+    //.commented 20201120 - warning check().// int res = create_HDF5_dataset( filename, strsubgroupOUT + "/C", N, M, "real");
+    create_HDF5_dataset( filename, strsubgroupOUT + "/C", N, M, "real");
     
     // Open file and get dataset
     H5File* file = new H5File( filename, H5F_ACC_RDWR );
@@ -203,7 +204,8 @@ int hdf5_block_matrix_mul_hdf5_transposed( IntegerVector sizeA, IntegerVector si
     IntegerVector block = IntegerVector::create(1, 1); 
     
     // Create an empty dataset for C-matrix into hdf5 file
-    int res = create_HDF5_dataset( filename, strsubgroupOUT + "/C", M, N, "real");
+    //.commented 20201120 - warning check().// int res = create_HDF5_dataset( filename, strsubgroupOUT + "/C", M, N, "real");
+    create_HDF5_dataset( filename, strsubgroupOUT + "/C", M, N, "real");
     
     // Open file and get dataset
     H5File* file = new H5File( filename, H5F_ACC_RDWR );
@@ -758,8 +760,11 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
         memory_block = 128;
       
       // Test mix versión read block from file and calculate multiplication in memory (with paral·lel algorithm)
-      int i = hdf5_block_matrix_mul_hdf5_transposed( dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut, 
-                                                     memory_block, bparal,true, threads);
+      //.commented 20201120 - warning check().// int i = hdf5_block_matrix_mul_hdf5_transposed( dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut, 
+      //.commented 20201120 - warning check().//                                                memory_block, bparal,true, threads);
+      hdf5_block_matrix_mul_hdf5_transposed( dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut, 
+                                             memory_block, bparal,true, threads);
+      
       
       C = Eigen::MatrixXd::Zero(2,2);
       
@@ -767,8 +772,10 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
     {
       
       // Not parallel
-      int i = hdf5_block_matrix_mul_hdf5_transposed( dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut, 
-                                                     0, bparal,true, threads);
+      //.commented 20201120 - warning check().// int i = hdf5_block_matrix_mul_hdf5_transposed( dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut, 
+      //.commented 20201120 - warning check().//                                                0, bparal,true, threads);
+      hdf5_block_matrix_mul_hdf5_transposed( dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut, 
+                                             0, bparal,true, threads);
       C = Eigen::MatrixXd::Zero(2,2);
       
     }

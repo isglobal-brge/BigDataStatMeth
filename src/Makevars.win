@@ -2,9 +2,11 @@
 ## no user-facing library. The include path to headers is already set by R.
 #PKG_LIBS = 
 
+PKG_LIBS = -lws2_32
+
 # RcppParallel
 PKG_CXXFLAGS = -DRCPP_PARALLEL_USE_TBB=1
-PKG_LIBS = $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppParallel::RcppParallelLibs()")
+PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppParallel::RcppParallelLibs()")
 
 # Beachmat
 BEACHMAT_LIBS = $(shell echo 'beachmat::pkgconfig("PKG_LIBS")'|\

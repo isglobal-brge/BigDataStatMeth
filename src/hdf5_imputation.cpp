@@ -205,7 +205,7 @@ Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::stri
 {
   
   H5File* file;
-  DataSet* pdataset;
+  DataSet* pdataset = nullptr;
   
   try
   {
@@ -235,23 +235,30 @@ Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::stri
 
     if(exists_HDF5_element_ptr(file, strdataset)) 
     {
-      pdataset = new DataSet(file->openDataSet(strdataset));
-      
-      if( strdataset.compare(stroutdata)!= 0)
+      try
       {
-        // If output is different from imput --> Remve possible existing dataset and create new
-        if(exists_HDF5_element_ptr(file, stroutdata))
-          remove_HDF5_element_ptr(file, stroutdata);
+        pdataset = new DataSet(file->openDataSet(strdataset));
         
-        // Create group if not exists
-        if(!exists_HDF5_element_ptr(file, stroutgroup))
-          file->createGroup(stroutgroup);
-
-      } else {
-        stroutdata = "";
+        if( strdataset.compare(stroutdata)!= 0)
+        {
+          // If output is different from imput --> Remve possible existing dataset and create new
+          if(exists_HDF5_element_ptr(file, stroutdata))
+            remove_HDF5_element_ptr(file, stroutdata);
+          
+          // Create group if not exists
+          if(!exists_HDF5_element_ptr(file, stroutgroup))
+            file->createGroup(stroutgroup);
+          
+        } else {
+          stroutdata = "";
+        }
+        
+        Impute_snp_HDF5( file, pdataset, bcols, stroutdata);
+        
+      }catch(FileIException error) {
+        pdataset->close(); //.created 20201120 - warning check().//
       }
-
-      Impute_snp_HDF5( file, pdataset, bcols, stroutdata);
+      
       
     } else{
       //.commented 20201120 - warning check().// pdataset->close();
@@ -262,7 +269,7 @@ Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::stri
     
   }
   catch( FileIException error ) { // catch failure caused by the H5File operations
-    pdataset->close();
+    //.commented 20201120 - warning check().// pdataset->close();
     file->close();
     error.printErrorStack();
     return(wrap(-1));
