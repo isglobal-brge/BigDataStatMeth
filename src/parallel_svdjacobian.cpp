@@ -161,7 +161,9 @@ Rcpp::RObject JacobianSVD(Rcpp::RObject X)
       try{  
         A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
       }
-      catch(std::exception &ex) { forward_exception_to_r(ex); }
+      catch(std::exception &ex) { 
+        forward_exception_to_r(ex); 
+      }
     }
     
     A.transposeInPlace();
@@ -208,7 +210,9 @@ Rcpp::RObject bdtsvd(Rcpp::RObject X, Rcpp::Nullable<int> k = R_NilValue)
       try{  
         eX = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
       }
-      catch(std::exception &ex) { forward_exception_to_r(ex); }
+      catch(std::exception &ex) { 
+        forward_exception_to_r(ex); 
+      }
     }
     
     // k (default): 20

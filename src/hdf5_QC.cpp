@@ -187,14 +187,21 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
     std::string strdataset = group +"/" + dataset;
     
     
-    if(SNPincols.isNull())  bcols = true ;
-    else    bcols = Rcpp::as<bool>(SNPincols);
+    if(SNPincols.isNull()){  
+      bcols = true ;
+    }else{    
+      bcols = Rcpp::as<bool>(SNPincols);
+    }
     
-    if(pcent.isNull())  dpcent = 0.5 ;
-    else    dpcent = Rcpp::as<double>(pcent);
+    if(pcent.isNull()){  
+      dpcent = 0.5 ;
+    }else{    
+      dpcent = Rcpp::as<double>(pcent);
+    }
     
-    if(!ResFileExist(filename))
-      throw std::range_error("File not exits, create file before impute dataset");  
+    if(!ResFileExist(filename)){
+      throw std::range_error("File not exits, create file before impute dataset");
+    }
     
     file = new H5File( filename, H5F_ACC_RDWR );
 
@@ -239,19 +246,19 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
   
   }catch( FileIException error ){ // catch failure caused by the H5File operations
     file->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return(wrap(-1));
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
     file->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSet IException)" );
     return(wrap(-1));
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
     file->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSpace IException)" );
     return(wrap(-1));
   } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
     file->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataType IException)" );
     return(wrap(-1));
   }catch(std::exception &ex) {
     file->close();

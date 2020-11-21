@@ -24,8 +24,20 @@ bool RemoveFile(std::string filename)
       return 0;
     return 0;
     
-  }catch(FileIException error){
-    error.printErrorStack();
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    ::Rf_error( "c++ exception (File IException)" );
+    return -1;
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    ::Rf_error( "c++ exception (DataSet IException)" );
+    return -1;
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    ::Rf_error( "c++ exception (Group IException)" );
+    return -1;
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (DataSpace IException)" );
+    return -1;
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (Data TypeIException)" );
     return -1;
   }
    
@@ -49,12 +61,20 @@ extern "C" {
       
       file.close();
       
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
+      return -1;
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
     } catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -132,18 +152,20 @@ extern "C" {
       unlimDataset->close();
 
     
-    } // end of try block
-    catch( FileIException error ) {
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
-    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
-    } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     return(0);
@@ -165,12 +187,20 @@ extern "C" {
       if(!pathExists( file->getId(), strgroup)) 
         file->createGroup("/"+ mGroup);
 
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
+      return -1;
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
     } catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -188,15 +218,20 @@ extern "C" {
       if(pathExists( file->getId(), element)) 
         bexists = true;
       
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the Dataset operations
-      error.printErrorStack();
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
-    }catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     return bexists;
@@ -224,12 +259,20 @@ extern "C" {
       }
         
       
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
+      return -1;
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
     } catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -252,15 +295,20 @@ extern "C" {
       if(result<0)
         bremok = false;
       
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the Dataset operations
-      error.printErrorStack();
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
-    }catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -290,15 +338,20 @@ extern "C" {
       }
       
       
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the Dataset operations
-      error.printErrorStack();
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
-    }catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -339,12 +392,20 @@ extern "C" {
       dataspace.close();
       file.close();
       
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
+      return -1;
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
     } catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -381,12 +442,20 @@ extern "C" {
       dataspace.close();
       //.. NO S'HA DE TANCAR EL FITXER !!! ..// file->close();
       
-    } // end of try block
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
+      return -1;
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
     } catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -432,18 +501,20 @@ extern "C" {
 
       dataspace.close();
 
-    } // end of try block
-    catch( FileIException error ) {
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
-    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
-    } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -478,28 +549,20 @@ extern "C" {
       
       dataset->extend( size );
       
-    } 
-    catch( FileIException error )
-    {
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
-    }
-    // catch failure caused by the DataSet operations
-    catch( DataSetIException error )
-    {
-      error.printErrorStack();
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
-    }
-    // catch failure caused by the DataSpace operations
-    catch( DataSpaceIException error )
-    {
-      error.printErrorStack();
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
-    }
-    // catch failure caused by the DataSpace operations
-    catch( DataTypeIException error )
-    {
-      error.printErrorStack();
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     return 0;
@@ -558,15 +621,20 @@ extern "C" {
       
       file.close();
     
-    } 
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
     } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSet IException)" );
+      return -1;
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
     } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -661,15 +729,20 @@ extern "C" {
 
       } 
       
-    } 
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
     } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSet IException)" );
+      return -1;
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
     } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -764,15 +837,20 @@ extern "C" {
         
       } 
       
-    } 
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
     } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSet IException)" );
+      return -1;
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
     } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -890,15 +968,20 @@ extern "C" {
         
       } 
       
-    } 
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
     } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSet IException)" );
+      return -1;
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
     } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -973,15 +1056,20 @@ extern "C" {
         dataspace.close();  
       } 
       
-    } 
-    catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
     } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSet IException)" );
+      return -1;
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
     } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -1061,13 +1149,13 @@ extern "C" {
       
     } 
     catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
     } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
     } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSpace IException)" );
       return -1;
     }
     
@@ -1139,16 +1227,16 @@ extern "C" {
       
     } 
     catch(FileIException error) { // catch failure caused by the H5File operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
     } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
     } catch(GroupIException error) { // catch failure caused by the Group operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
     } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+      ::Rf_error( "c++ exception (DataSpace IException)" );
       return -1;
     }
     
@@ -1186,19 +1274,23 @@ extern "C" {
         Rcpp::Rcout<<"Warning no colnames to save";
       
       
-    } catch( FileIException error ){ // catch failure caused by the H5File operations
-      error.printErrorStack();
-      return(-1);
-    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
-      return(-1);
-    } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return(-1);
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return(-1);
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
+      return -1;
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
+      return -1;
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
+      return -1;
     }
+    
     return(0);
   }
   
@@ -1256,19 +1348,20 @@ extern "C" {
         dataset->read( rdatablock, PredType::NATIVE_DOUBLE, memspace, dataspace );
       
       dataspace.close();
-    }  // end of try block
-    
-    catch( FileIException error ){ // catch failure caused by the H5File operations
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
-    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
-    } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -1335,20 +1428,21 @@ extern "C" {
       
       normalize = meansd;
       
-    }  // end of try block
-    
-    catch( FileIException error ){ // catch failure caused by the H5File operations
-      error.printErrorStack();
-      return(-1);
-    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
-      return(-1);
-    } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return(-1);
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
-      return(-1);
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
+      return -1;
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
+      return -1;
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
+      return -1;
     }
     
     return(0);  // successfully terminated
@@ -1419,18 +1513,21 @@ StringVector get_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::
     dataspace.close();
     
     
-  } catch( FileIException error ){ // catch failure caused by the H5File operations
-    error.printErrorStack();
-    return(-1);
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-    error.printErrorStack();
-    return(-1);
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-    return(-1);
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-    return(-1);
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    ::Rf_error( "c++ exception (File IException)" );
+    return -1;
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    ::Rf_error( "c++ exception (DataSet IException)" );
+    return -1;
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    ::Rf_error( "c++ exception (Group IException)" );
+    return -1;
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (DataSpace IException)" );
+    return -1;
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (Data TypeIException)" );
+    return -1;
   }
   return(dimnames);
 }
@@ -1457,19 +1554,20 @@ int Create_hdf5_matrix_unlimited_ptr( H5File* file, const H5std_string dataset ,
     
     
     
-  }  // end of try block
-  
-  catch( FileIException error ){ // catch failure caused by the H5File operations
-    error.printErrorStack();
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-    error.printErrorStack();
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    ::Rf_error( "c++ exception (DataSet IException)" );
     return -1;
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (DataSpace IException)" );
+    return -1;
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (Data TypeIException)" );
     return -1;
   }
   
@@ -1583,22 +1681,20 @@ Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject mat,
     //..// rownames = get_hdf5_matrix_dimnames(&file, strdataset, 1);
     //..// colnames = get_hdf5_matrix_dimnames(&file, strsubgroup, strdataset, 2);
     
-  }
-  catch( FileIException error ) { // catch failure caused by the H5File operations
-    file->close();
-    error.printErrorStack();
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    ::Rf_error( "c++ exception (File IException)" );
     return(wrap(-1));
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-    file->close();
-    error.printErrorStack();
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    ::Rf_error( "c++ exception (DataSet IException)" );
     return(wrap(-1));
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-    file->close();
-    error.printErrorStack();
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    ::Rf_error( "c++ exception (Group IException)" );
     return(wrap(-1));
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    file->close();
-    error.printErrorStack();
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (DataSpace IException)" );
+    return(wrap(-1));
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (Data TypeIException)" );
     return(wrap(-1));
   }
   file->close();
@@ -1678,22 +1774,20 @@ Rcpp::RObject Create_HDF5_matrix(RObject mat, std::string filename, std::string 
 
     
     
-  }
-  catch( FileIException error ) { // catch failure caused by the H5File operations
-    file->close();
-    error.printErrorStack();
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    ::Rf_error( "c++ exception (File IException)" );
     return(wrap(-1));
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-    file->close();
-    error.printErrorStack();
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    ::Rf_error( "c++ exception (DataSet IException)" );
     return(wrap(-1));
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-    file->close();
-    error.printErrorStack();
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    ::Rf_error( "c++ exception (Group IException)" );
     return(wrap(-1));
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    file->close();
-    error.printErrorStack();
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (DataSpace IException)" );
+    return(wrap(-1));
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (Data TypeIException)" );
     return(wrap(-1));
   }
   
@@ -1739,11 +1833,21 @@ Rcpp::RObject Remove_HDF5_element(std::string filename, std::string element)
       
     file->close();
     
-  }
-  catch( FileIException error ) { // catch failure caused by the H5File operations
-    file->close();
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    ::Rf_error( "c++ exception (File IException)" );
     return(wrap(-1));
-    error.printErrorStack();
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    ::Rf_error( "c++ exception (DataSet IException)" );
+    return(wrap(-1));
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    ::Rf_error( "c++ exception (Group IException)" );
+    return(wrap(-1));
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (DataSpace IException)" );
+    return(wrap(-1));
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (Data TypeIException)" );
+    return(wrap(-1));
   }
   
   return(wrap(0));
@@ -1783,18 +1887,20 @@ Rcpp::RObject Remove_HDF5_element(std::string filename, std::string element)
           datasetnames.push_back(memb_name);
         
       }
-    } // end of try block
-    catch( FileIException error ) {
-      error.printErrorStack();
+    } catch(FileIException error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception (File IException)" );
       return -1;
-    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-      error.printErrorStack();
+    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception (DataSet IException)" );
       return -1;
-    } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+    } catch(GroupIException error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception (Group IException)" );
       return -1;
-    } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-      error.printErrorStack();
+    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception (Data TypeIException)" );
       return -1;
     }
     
@@ -1822,18 +1928,20 @@ StringVector get_dataset_names_from_dataset_ptr( DataSet* dataset)
     
     datasetnames.push_back(s);
     
-  } // end of try block
-  catch( FileIException error ) {
-    error.printErrorStack();
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-    error.printErrorStack();
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    ::Rf_error( "c++ exception (DataSet IException)" );
     return -1;
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (DataSpace IException)" );
+    return -1;
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (Data TypeIException)" );
     return -1;
   }
   

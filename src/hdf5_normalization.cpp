@@ -172,25 +172,25 @@ Rcpp::RObject Normalize_hdf5(std::string filename, const std::string group, std:
     file->close();
     pdatasetin->close();
     pdatasetout->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return wrap(-1);
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
     file->close();
     pdatasetin->close();
     pdatasetout->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSet IException)" );
     return wrap(-1);
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
     file->close();
     pdatasetin->close();
     pdatasetout->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSpace IException)" );
     return wrap(-1);
   } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
     file->close();
     pdatasetin->close();
     pdatasetout->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataType IException)" );
     return wrap(-1);
   }catch(std::exception &ex) {
     file->close();

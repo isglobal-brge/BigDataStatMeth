@@ -199,21 +199,20 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
     Rcpp::Rcout<<"\n";
     
     
-  }catch( FileIException error ){ // catch failure caused by the H5File operations
-    error.printErrorStack();
-    file->close();
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-    error.printErrorStack();
-    file->close();
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    ::Rf_error( "c++ exception (DataSet IException)" );
     return -1;
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-    file->close();
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
-    file->close();
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (DataSpace IException)" );
+    return -1;
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (Data TypeIException)" );
     return -1;
   }catch(std::exception &ex) {
     Rcpp::Rcout<< ex.what();

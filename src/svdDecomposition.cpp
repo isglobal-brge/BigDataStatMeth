@@ -235,14 +235,21 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.v));
   
   
-  }catch(FileIException error) { // catch failure caused by the H5File operations
-    error.printErrorStack();
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    ::Rf_error( "c++ exception (File IException)" );
+    return retsvd;
   } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSet IException)" );
+    return retsvd;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (Group IException)" );
+    return retsvd;
   } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSpace IException)" );
+    return retsvd;
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (Data TypeIException)" );
+    return retsvd;
   }catch(std::exception &ex) {
     Rcpp::Rcout<< ex.what();
   }

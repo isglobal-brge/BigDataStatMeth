@@ -271,7 +271,7 @@ Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::stri
   catch( FileIException error ) { // catch failure caused by the H5File operations
     //.commented 20201120 - warning check().// pdataset->close();
     file->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return(wrap(-1));
   }
   

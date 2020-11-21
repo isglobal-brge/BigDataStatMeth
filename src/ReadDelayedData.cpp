@@ -227,10 +227,10 @@ int write_DelayedArray_int_hdf5( H5std_string filename, const std::string CDatas
     
   } // end of try block
   catch(FileIException error) { // catch failure caused by the H5File operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
   }
   
@@ -398,10 +398,10 @@ int write_DelayedArray_int_hdf5_ptr( H5File* file, const std::string CDatasetNam
     
   } // end of try block
   catch(FileIException error) { // catch failure caused by the H5File operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
   }
   
@@ -489,10 +489,10 @@ int write_DelayedArray_int_hdf5_transposed( H5std_string filename, const std::st
     
   } // end of try block
   catch(FileIException error) { // catch failure caused by the H5File operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
   }
   
@@ -576,10 +576,10 @@ int write_DelayedArray_int_hdf5_transposed_ptr( H5File* file, const std::string 
     
   } // end of try block
   catch(FileIException error) { // catch failure caused by the H5File operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
   }
   
@@ -663,10 +663,10 @@ int write_DelayedArray_real_hdf5( H5std_string filename, const std::string CData
     
   } // end of try block
   catch(FileIException error) { // catch failure caused by the H5File operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
   }
   
@@ -748,10 +748,10 @@ int write_DelayedArray_real_hdf5_ptr( H5File* file, const std::string CDatasetNa
     
   } // end of try block
   catch(FileIException error) { // catch failure caused by the H5File operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
   }
   
@@ -839,10 +839,10 @@ int write_DelayedArray_real_hdf5_transposed( H5std_string filename, const std::s
     
   } // end of try block
   catch(FileIException error) { // catch failure caused by the H5File operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
   }
   
@@ -927,10 +927,10 @@ int write_DelayedArray_real_hdf5_transposed_ptr( H5File* file, const std::string
     
   } // end of try block
   catch(FileIException error) { // catch failure caused by the H5File operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return -1;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (Group IException)" );
     return -1;
   }
   
