@@ -60,8 +60,8 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
       // 1.- Get SVD from all blocks
       //    a) Get all blocks from initial matrix 
       
-      IntegerVector offset = getInitialPosition( transp, (unsigned long long)(i*block_size) ); // Posició inicial lectura
-      IntegerVector count; // Tamany de block
+      IntegerVector offset = getInitialPosition( transp, (unsigned long long)(i*block_size) ); // Initial read position
+      IntegerVector count; // Blocks size
       maxsizetoread = block_size;
 
       // Get max block size to read - for blocks smaller than default block size 

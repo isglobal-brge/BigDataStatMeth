@@ -31,7 +31,9 @@
   svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int nev, bool bcenter, bool bscale, 
                                int irows, int icols, Rcpp::Nullable<int> threads);
   
-  Rcpp::RObject BDCInverse_Cholesky (const Rcpp::RObject & x );
+  //..// Rcpp::RObject BDCInverse_Cholesky (const Rcpp::RObject & x );
+  
+  svdeig RcppCholDec(const Eigen::MatrixXd& X);
   
   Rcpp::RObject bdSVD (const Rcpp::RObject & x, int k=0, int nev=0, bool bcenter=true, bool bscale = true );
   //..// Rcpp::RObject bdSVD_hdf5(const Rcpp::RObject & x, CharacterVector group = R_NilValue, CharacterVector dataset = R_NilValue,

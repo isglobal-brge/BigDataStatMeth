@@ -16,6 +16,8 @@
   /**Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata );**/
   Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x );
   
+  Eigen::MatrixXd GetCurrentBlock( Eigen::MatrixXd X, int startrow, int startcol, int nrows, int ncols );
+  
   
   // functions called from R
   Rcpp::RObject Normalize_Data(Rcpp::RObject & x, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<bool> bcenter);

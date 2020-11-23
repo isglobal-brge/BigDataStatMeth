@@ -57,8 +57,8 @@ void svdjacob (Eigen::MatrixXd U_t, int M, int N, Eigen::MatrixXd& U, Eigen::Mat
 #pragma omp parallel for num_threads(ithreads)
       for (int p = 1; p <= r1; p++)
       {
-        // int k = omp_get_thread_num();
-        int k = omp_get_max_threads();
+        int k = omp_get_thread_num();
+        //.20201121.//  int k = omp_get_max_threads();
         int i = I1[p], j = i + l;
         double alpha = 0, beta = 0, gamma = 0;
         double zeta, t, c, s;

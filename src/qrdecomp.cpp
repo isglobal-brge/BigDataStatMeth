@@ -267,5 +267,12 @@ bdpseudoinv(b)
 bd <- DelayedArray(b)
 bdpseudoinv(bd)
 
+solve(a)
 
-*/
+A <- matrix(c(5,-1,-1,-1,-1,5,-1,-1,-1,-1,5,-1,-1,-1,-1,5),byrow = TRUE, nrow = 4)
+solve(A)
+
+bddtrsm(A) 
+
+  
+  */

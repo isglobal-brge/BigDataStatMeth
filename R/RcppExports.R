@@ -135,8 +135,18 @@ bdwXw <- function(X, W, op) {
     .Call(`_BigDataStatMeth_bdwXw`, X, W, op)
 }
 
-timesTwo <- function(x) {
-    .Call(`_BigDataStatMeth_timesTwo`, x)
+#' Linear regression using MLR-MR algorithm
+#'
+#' Linear regression for Big Data using MLR-MR algorithm
+#' 
+#' @param X, numerical matrix with paired observations of the predictor variable X
+#' @param Y, numerical matrix column with response variable
+#' @param blocks, integer with number of blocks we want to split matrix if null matrix is splited in blocks as maximum of 1000 variables per block
+#' @param threads, threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+#' @return coefficients and error
+#' @export
+bdMLR_MR <- function(X, y, blocks, threads = NULL) {
+    .Call(`_BigDataStatMeth_bdMLR_MR`, X, y, blocks, threads)
 }
 
 #' Crossproduct and transposed crossproduct of DelayedArray

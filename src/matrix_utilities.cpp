@@ -205,3 +205,14 @@ Rcpp::RObject Normalize_Data ( Rcpp::RObject & x,
   return XR;
 }
 
+
+// Read Eigen matrix block size from X starting at (startrow,startcol) with size (nrows,ncols)
+Eigen::MatrixXd GetCurrentBlock( Eigen::MatrixXd X, int startrow, int startcol, int nrows, int ncols )
+{
+  
+  Eigen::MatrixXd m = X.block(startrow, startcol, nrows, ncols);;
+  
+  return(m);
+  
+}
+
