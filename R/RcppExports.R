@@ -18,6 +18,24 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
     .Call(`_BigDataStatMeth_bdRemovelowdata`, filename, group, dataset, outgroup, outdataset, pcent, SNPincols)
 }
 
+#' Multiply hdf5 matrix
+#' 
+#' This function multiply matrix stored in hdf5 data file
+#' 
+#' @param filename string file name where dataset to normalize is stored
+#' @param group string or Delayed Array Matrix
+#' @param dataset string or Delayed Array Matrix
+#' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
+#' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
+#' @param wsize integer (default = 1000), file block size to read to perform normalization
+#' @return file with scaled, centered or scaled and centered dataset
+#' @examples
+#'   a = "See vignette"
+#' @export
+blockmult_hdf5 <- function(filename, group, A, B, block_size = NULL, paral = NULL, threads = NULL, bigmatrix = NULL, mixblock_size = NULL, outgroup = NULL) {
+    .Call(`_BigDataStatMeth_blockmult_hdf5`, filename, group, A, B, block_size, paral, threads, bigmatrix, mixblock_size, outgroup)
+}
+
 #' Impute SNPs in hdf5 omic dataset 
 #'
 #' Impute SNPs in hdf5 omic dataset 

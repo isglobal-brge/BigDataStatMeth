@@ -167,6 +167,154 @@ int hdf5_block_matrix_mul_hdf5( IntegerVector sizeA, IntegerVector sizeB, int hd
 
 
 
+/***
+// IMPORTANT : R data stored as Row-major in hdf5 file (stored transposed data from R)
+// 
+// This function differs from "hdf5_block_matrix_mul_hdf5_transposed" in parameters, in hdf5_block_matrix_mul_hdf5_transposed we have
+// the matrix sizes and here we have the dataset name inside the hdf5 data file
+// 
+// 
+// Working directly with C-matrix in hdf5 file
+// If option paral·lel is enabled, this function loads hdf5 read blocks
+// of medium size into memory and calculates the multiplication of blocks
+// by applying the parallel algorithm Bblock_matrix_mul_parallel (in-memory process)
+// browmajor : if = true, indicates that R data is stored in hdf5 as row major (default in hdf5)
+//             else, indicates that R data is stored in hdf5 as column major
+int hdf5_block_matrix_mul_hdf5_indatasets( std::string matA, std::string matB,
+                                           IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
+                                           std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
+                                           int mem_block_size, bool bparal, bool browmajor, 
+                                           Rcpp::Nullable<int> threads  = R_NilValue)
+{
+  
+  // Original data size without transpose 
+  //  sizeA[0] :rows(A), sizeA[1] :cols(A), 
+  //  sizeB[0] :rows(B), sizeB[1] :cols(B)
+  
+  
+  
+  int M = sizeA[0]; 
+  int K = sizeA[1]; 
+  int L = sizeB[0]; 
+  int N = sizeB[1]; 
+  
+  IntegerVector stride = {1,1};
+  IntegerVector block = {1,1};
+  
+  Rcpp::Rcout<<"Estem tractant unes matriu de tamany : \n\tMatriu A : "<<sizeA<<"\n\tMatriu B : "<<sizeB<<"\n\tMatriu C : "<<M<<" "<<N;
+  
+  if( K == L)
+  {
+    
+    int isize = hdf5_block+1;
+    int ksize = hdf5_block+1;
+    int jsize = hdf5_block+1;
+    
+    IntegerVector stride = IntegerVector::create(1, 1);
+    IntegerVector block = IntegerVector::create(1, 1); 
+    
+    // Create an empty dataset for C-matrix into hdf5 file
+    //.commented 20201120 - warning check().// int res = create_HDF5_dataset( filename, strsubgroupOUT + "/C", M, N, "real");
+    
+    Rcpp::Rcout<<"\n Crearem dataset "<<  strsubgroupOUT + matA + "_x_" + matB<<"\n";
+    create_HDF5_dataset( filename, strsubgroupOUT + matA + "_x_" + matB, M, N, "real");
+    Rcpp::Rcout<<"Dataset Creat\n";  
+    
+    // Open file and get dataset
+    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    
+    DataSet* datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
+    DataSet* datasetB = new DataSet(file->openDataSet(strsubgroupIN + matB));
+    DataSet* datasetC = new DataSet(file->openDataSet(strsubgroupOUT + matA + "_x_" + matB));
+    
+    Rcpp::Rcout<<"Dataset Carregat..... \n";  
+    
+    // Això haurien de ser les columnes de la matriu i no les files com ara....
+    for (int ii = 0; ii < M; ii += hdf5_block)
+    {
+      
+      if( ii + hdf5_block > M ) isize = M - ii;
+      for (int jj = 0; jj < N; jj += hdf5_block)
+      {
+        
+        if( jj + hdf5_block > N) jsize = N - jj;
+        
+        for(int kk = 0; kk < K; kk += hdf5_block)
+        {
+          if( kk + hdf5_block > K ) ksize = K - kk;
+          
+          // Get blocks from hdf5 file
+          //..// Rcpp::Rcout<<"\n Anem a carregar de la matriu A : "<<  ii<<" - "<<kk<<" - " << std::min(hdf5_block,isize)<<" - "<<std::min(hdf5_block,ksize)<<"\n";
+          
+          Eigen::MatrixXd A = GetCurrentBlock_hdf5( file, datasetA, ii, kk, 
+                                                    std::min(hdf5_block,isize),std::min(hdf5_block,ksize));
+          
+          Rcpp::Rcout<<"\nBlocl A : \n"<<A<<"\n";
+          
+          //..// Rcpp::Rcout<<"\n Anem a carregar de la matriu B : "<<  kk<<" - "<<jj<<" - " << std::min(hdf5_block,ksize)<<" - "<<std::min(hdf5_block,jsize)<<"\n";
+          Eigen::MatrixXd B = GetCurrentBlock_hdf5( file, datasetB, kk, jj, 
+                                                    std::min(hdf5_block,ksize),std::min(hdf5_block,jsize));
+          Rcpp::Rcout<<"\nBlocl B : \n"<<B<<"\n";
+          
+          
+          //..// Rcpp::Rcout<<"\n Anem a carregar de la matriu C : "<<  ii<<" - "<<jj<<" - " << std::min(hdf5_block,isize)<<" - "<<std::min(hdf5_block,jsize)<<"\n";
+          Eigen::MatrixXd C = GetCurrentBlock_hdf5( file, datasetC, ii, jj, 
+                                                    std::min(hdf5_block,isize),std::min(hdf5_block,jsize));
+          Rcpp::Rcout<<"\nBlocl C : \n"<<C<<"\n";
+          
+          if( bparal == false)
+            C = C + A*B;
+          else
+            C = C + Bblock_matrix_mul_parallel(A, B, mem_block_size, threads);
+          
+
+          IntegerVector count = {std::min(hdf5_block,isize), std::min(hdf5_block,jsize)};
+          IntegerVector offset = {ii,jj};
+          
+          Rcpp::Rcout<<"\n datasetC : \n\toffset : "<<  offset<<" \t count : "<<count<<" \t stride : " << stride<<" \t block : "<< block<<"\n";
+          Rcpp::Rcout<<"\nResult C : \n"<<C<<"\n";
+  
+          
+          Rcpp::Rcout<<"\nResult C2 : \n"<<A.transpose()*B.transpose()<<"\n";
+          Rcpp::Rcout<<"\nResult C3 : \n"<<A*B.transpose()<<"\n";
+          Rcpp::Rcout<<"\nResult C4 : \n"<<A.transpose()*B<<"\n";
+          
+          write_HDF5_matrix_subset_v2( file, datasetC, offset, count, stride, block, Rcpp::wrap(C.transpose() ));
+          
+          if( kk + hdf5_block > K ) ksize = hdf5_block+1;
+        }
+        
+        if( jj + hdf5_block > N ) jsize = hdf5_block+1;
+      }
+      
+      if( ii + hdf5_block > M ) isize = hdf5_block+1;
+    }
+    
+    
+    
+    datasetA->close();
+    datasetB->close();
+    datasetC->close();
+    file->close();
+    
+    return(0);
+  }else {
+    throw std::range_error("non-conformable arguments");
+  }
+}
+
+
+***/
+
+
+
+
+
+
+
+
+
+
 // IMPORTANT : R data stored as Row-major in hdf5 file (stored transposed data from R)
 // Working directly with C-matrix in hdf5 file
 // If option paral·lel is enabled, this function loads hdf5 read blocks
@@ -267,6 +415,264 @@ int hdf5_block_matrix_mul_hdf5_transposed( IntegerVector sizeA, IntegerVector si
   }
 }
 
+
+
+
+/***
+
+// IMPORTANT : R data stored as Row-major in hdf5 file (stored transposed data from R)
+// 
+// This function differs from "hdf5_block_matrix_mul_hdf5_transposed" in parameters, in hdf5_block_matrix_mul_hdf5_transposed we have
+// the matrix sizes and here we have the dataset name inside the hdf5 data file
+// 
+// 
+// Working directly with C-matrix in hdf5 file
+// If option paral·lel is enabled, this function loads hdf5 read blocks
+// of medium size into memory and calculates the multiplication of blocks
+// by applying the parallel algorithm Bblock_matrix_mul_parallel (in-memory process)
+// browmajor : if = true, indicates that R data is stored in hdf5 as row major (default in hdf5)
+//             else, indicates that R data is stored in hdf5 as column major
+int hdf5_block_matrix_mul_hdf5_indatasets_transposed( std::string matA, std::string matB, 
+                                           IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
+                                           std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
+                                           int mem_block_size, bool bparal, bool browmajor, 
+                                           Rcpp::Nullable<int> threads  = R_NilValue)
+{
+  
+  // Original data size without transpose 
+  //  sizeA[0] :rows(A), sizeA[1] :cols(A), 
+  //  sizeB[0] :rows(B), sizeB[1] :cols(B)
+  
+  int N = sizeA[0];
+  int K = sizeA[1];
+  
+  int L = sizeB[0];
+  int M = sizeB[1];
+  
+  IntegerVector stride = {1,1};
+  IntegerVector block = {1,1};
+  
+  if( K == L)
+  {
+    
+    int isize = hdf5_block+1;
+    int ksize = hdf5_block+1;
+    int jsize = hdf5_block+1;
+    
+    IntegerVector stride = IntegerVector::create(1, 1);
+    IntegerVector block = IntegerVector::create(1, 1); 
+    
+    // Create an empty dataset for C-matrix into hdf5 file
+    //.commented 20201120 - warning check().// int res = create_HDF5_dataset( filename, strsubgroupOUT + "/C", M, N, "real");
+  
+  Rcpp::Rcout<<"\n Crearem dataset "<<  strsubgroupOUT + matA + "_x_" + matB<<"\n";
+    create_HDF5_dataset( filename, strsubgroupOUT + matA + "_x_" + matB, N, M, "real");
+  Rcpp::Rcout<<"Dataset Creat\n";  
+    // Open file and get dataset
+    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    
+    DataSet* datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
+    DataSet* datasetB = new DataSet(file->openDataSet(strsubgroupIN + matB));
+    DataSet* datasetC = new DataSet(file->openDataSet(strsubgroupOUT + matA + "_x_" + matB));
+    
+  // datasetA->close();
+  // datasetB->close();
+  // datasetC->close();
+  // file->close();
+  // return(0);
+    
+    Rcpp::Rcout<<"Dataset Carregat..... \n";  
+    
+    // Això haurien de ser les columnes de la matriu i no les files com ara....
+    for (int ii = 0; ii < N; ii += hdf5_block)
+    {
+      
+      if( ii + hdf5_block > N ) isize = N - ii;
+      // Això haurien de ser files i no per columnes
+      for (int jj = 0; jj < M; jj += hdf5_block)
+      {
+        
+        if( jj + hdf5_block > M) jsize = M - jj;
+        
+        for(int kk = 0; kk < K; kk += hdf5_block)
+        {
+          if( kk + hdf5_block > K ) ksize = K - kk;
+          
+          // Get blocks from hdf5 file
+          Rcpp::Rcout<<"\n Peta 1? ... \n";
+          Rcpp::Rcout<<"\n Anem a llegir de la matriu B : "<<  kk<<" - "<<ii<<" - " << std::min(hdf5_block,ksize)<<" - "<<std::min(hdf5_block,isize)<<"\n";
+          Eigen::MatrixXd A = GetCurrentBlock_hdf5( file, datasetA, kk, ii, 
+                                                    std::min(hdf5_block,ksize),std::min(hdf5_block,isize));
+          
+          Rcpp::Rcout<<"\n Peta 2? ... \n";
+          Rcpp::Rcout<<"\n Anem a llegir de la matriu B : "<<  jj<<" - "<<kk<<" - " << std::min(hdf5_block,jsize)<<" - "<<std::min(hdf5_block,ksize)<<"\n";
+          Eigen::MatrixXd B = GetCurrentBlock_hdf5( file, datasetB, jj, kk, 
+                                                    std::min(hdf5_block,jsize),std::min(hdf5_block,ksize));
+
+          Rcpp::Rcout<<"\n Peta 3? ... \n";
+          Rcpp::Rcout<<"\n Anem a llegir de la matriu C : "<<  jj<<" - "<<ii<<" - " << std::min(hdf5_block,jsize)<<" - "<<std::min(hdf5_block,isize)<<"\n";
+          Eigen::MatrixXd C = GetCurrentBlock_hdf5( file, datasetC, jj, ii, 
+                                                    std::min(hdf5_block,jsize),std::min(hdf5_block,isize));
+          
+          Rcpp::Rcout<<"\n No ha Petat ... \n";
+          
+          if( bparal == false)
+            C = C + B*A;
+          else
+            C = C + Bblock_matrix_mul_parallel(B, A, mem_block_size, threads);
+          
+          IntegerVector count = {std::min(hdf5_block,jsize), std::min(hdf5_block,isize)};
+          IntegerVector offset = {jj,ii};
+          
+          
+          Rcpp::Rcout<<"\n Anem a write...  "<<  offset<<" - "<<count<<" - " << stride<<" - "<<block<<"\n";
+          
+          write_HDF5_matrix_subset_v2( file, datasetC, offset, count, stride, block, Rcpp::wrap(C));
+          
+          Rcpp::Rcout<<"\n Writat... \n";
+          
+          if( kk + hdf5_block > K ) ksize = hdf5_block + 1;
+        }
+        
+        if( jj + hdf5_block > M ) jsize = hdf5_block + 1;
+      }
+      
+      if( ii + hdf5_block > N ) isize = hdf5_block + 1;
+    }
+    
+    datasetA->close();
+    datasetB->close();
+    datasetC->close();
+    file->close();
+    
+    return(0);
+  }else {
+    throw std::range_error("non-conformable arguments");
+  }
+}
+
+
+***/
+
+
+// IMPORTANT : R data stored as Row-major in hdf5 file (stored transposed data from R)
+// 
+// This function differs from "hdf5_block_matrix_mul_hdf5_transposed" in parameters, in hdf5_block_matrix_mul_hdf5_transposed we have
+// the matrix sizes and here we have the dataset name inside the hdf5 data file
+// 
+// 
+// Working directly with C-matrix in hdf5 file
+// If option paral·lel is enabled, this function loads hdf5 read blocks
+// of medium size into memory and calculates the multiplication of blocks
+// by applying the parallel algorithm Bblock_matrix_mul_parallel (in-memory process)
+// browmajor : if = true, indicates that R data is stored in hdf5 as row major (default in hdf5)
+//             else, indicates that R data is stored in hdf5 as column major
+int hdf5_block_matrix_mul_hdf5_indatasets_transposed( std::string matA, std::string matB, 
+                                                      IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
+                                                      std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
+                                                      int mem_block_size, bool bparal, bool browmajor, 
+                                                      Rcpp::Nullable<int> threads  = R_NilValue)
+{
+  
+  // Original data size without transpose 
+  //  sizeA[0] :rows(A), sizeA[1] :cols(A), 
+  //  sizeB[0] :rows(B), sizeB[1] :cols(B)
+  
+  int K = sizeA[0];
+  int N = sizeA[1];
+  
+  int M = sizeB[0];
+  int L = sizeB[1];
+  
+  
+  //..// Rcpp::Rcout<<"Estem tractant unes matriu de tamany : \n\tMatriu A : "<<sizeA<<"\n\tMatriu B : "<<sizeB<<"\n\tMatriu C : "<<M<<" "<<N;
+  
+  IntegerVector stride = {1,1};
+  IntegerVector block = {1,1};
+  
+  if( K == L)
+  {
+    
+    int isize = hdf5_block+1;
+    int ksize = hdf5_block+1;
+    int jsize = hdf5_block+1;
+    
+    IntegerVector stride = IntegerVector::create(1, 1);
+    IntegerVector block = IntegerVector::create(1, 1); 
+    
+    // Create an empty dataset for C-matrix into hdf5 file
+    //.commented 20201120 - warning check().// int res = create_HDF5_dataset( filename, strsubgroupOUT + "/C", M, N, "real");
+    
+    //..// Rcpp::Rcout<<"\n Crearem dataset "<<  strsubgroupOUT + matA + "_x_" + matB<<"\n";
+    create_HDF5_dataset( filename, strsubgroupOUT + matA + "_x_" + matB, M, N, "real");
+    //..// Rcpp::Rcout<<"Dataset Creat\n";  
+    // Open file and get dataset
+    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    
+    DataSet* datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
+    DataSet* datasetB = new DataSet(file->openDataSet(strsubgroupIN + matB));
+    DataSet* datasetC = new DataSet(file->openDataSet(strsubgroupOUT + matA + "_x_" + matB));
+    
+    // datasetA->close();
+    // datasetB->close();
+    // datasetC->close();
+    // file->close();
+    // return(0);
+    
+    //..// Rcpp::Rcout<<"Dataset Carregat..... \n";  
+    
+    // Això haurien de ser les columnes de la matriu i no les files com ara....
+    for (int ii = 0; ii < N; ii += hdf5_block)
+    {
+      
+      if( ii + hdf5_block > N ) isize = N - ii;
+      // Això haurien de ser files i no per columnes
+      for (int jj = 0; jj < M; jj += hdf5_block)
+      {
+        
+        if( jj + hdf5_block > M) jsize = M - jj;
+        
+        for(int kk = 0; kk < K; kk += hdf5_block)
+        {
+          if( kk + hdf5_block > K ) ksize = K - kk;
+          
+          // Get blocks from hdf5 file
+          Eigen::MatrixXd A = GetCurrentBlock_hdf5( file, datasetA, kk, ii, 
+                                                    std::min(hdf5_block,ksize),std::min(hdf5_block,isize));
+          Eigen::MatrixXd B = GetCurrentBlock_hdf5( file, datasetB, jj, kk, 
+                                                    std::min(hdf5_block,jsize),std::min(hdf5_block,ksize));
+          Eigen::MatrixXd C = GetCurrentBlock_hdf5( file, datasetC, jj, ii, 
+                                                    std::min(hdf5_block,jsize),std::min(hdf5_block,isize));
+          
+          if( bparal == false)
+            C = C + B*A;
+          else
+            C = C + Bblock_matrix_mul_parallel(B, A, mem_block_size, threads);
+          
+          IntegerVector count = {std::min(hdf5_block,jsize), std::min(hdf5_block,isize)};
+          IntegerVector offset = {jj,ii};
+          
+          write_HDF5_matrix_subset_v2( file, datasetC, offset, count, stride, block, Rcpp::wrap(C));
+          
+          if( kk + hdf5_block > K ) ksize = hdf5_block + 1;
+        }
+        
+        if( jj + hdf5_block > M ) jsize = hdf5_block + 1;
+      }
+      
+      if( ii + hdf5_block > N ) isize = hdf5_block + 1;
+    }
+    
+    datasetA->close();
+    datasetB->close();
+    datasetC->close();
+    file->close();
+    
+    return(0);
+  }else {
+    throw std::range_error("non-conformable arguments");
+  }
+}
 
 
 
@@ -789,177 +1195,3 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
 
 
 
-
-// Performs a simple matrix multiplication for transposed data (only to test - not used)
-Eigen::MatrixXd simple_multiplication_transposed(Rcpp::RObject a, Rcpp::RObject b)
-{
-  
-  
-  Eigen::MatrixXd A;
-  Eigen::MatrixXd B;
-  
-  
-  A = as<Eigen::MatrixXd>(a);
-  B = as<Eigen::MatrixXd>(b);
-  
-  int N = A.rows();
-  int M = B.cols();
-  int K = A.cols();
-  
-  Eigen::MatrixXd C = Eigen::MatrixXd::Zero(M, N);
-  
-  A.transposeInPlace();
-  B.transposeInPlace();
-  
-  for(int i=0; i<N; i++)
-  {
-    for(int j=0; j<M; j++)
-    {
-      for (int k=0; k<K; k++)
-      {
-        C(j,i) = C(j,i) + A(k,i)*B(j,k); 
-      }
-    }
-    
-  }
-  
-  return(C);
-  
-}
-
-
-
-
-/*** R
-
-library(DelayedArray)
-library(BigDataStatMeth)
-library(microbenchmark)
-library(rhdf5)
-
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth/tmp")
-
-N <- 5000
-M <- 5000
-
-set.seed(123)
-A <- matrix(rnorm(N*M,mean=0,sd=1), N, M)
-Ad<-DelayedArray(A)
-
-blockmult()
-class(CP2)
-# Memory
-CP1 <- blockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 1000000, paral = TRUE, thread= 5)
-# HDF5 File
-CP2 <- blockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 10, paral = FALSE)
-# Memory R
-(t(A)%*%A)[1:5,1:5]
-
-
-## -----------------------------------------------------------------------------------------
-
-all.equal((t(A)%*%A)[1:5,1:5], CP1[1:5,1:5])
-all.equal(CP2$OUTPUT$C[1:5,1:5], CP1[1:5,1:5])
-
-CP1$OUTPUT$C[1:5,1:5]
-CP1[1:5,1:5]
-
-
-
-results <- microbenchmark( CP1 <- Bblockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 5000, paral = FALSE),
-                           CP1P <- Bblockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 1, outfile = "provilla.hdf5", paral = TRUE, mixblock_size = 256),
-                           CP1P1 <- Bblockmult(t(Ad),Ad, block_size = 1024, bigmatrix = 1, outfile = "provilla.hdf5", paral = TRUE, mixblock_size = 128),
-                           CM1 <- Bblockmult(t(Ad),Ad, block_size = 1024, paral = FALSE),
-                           CM1P <- Bblockmult(t(Ad),Ad, block_size = 1024, paral = TRUE),
-                           CP2 <- Bblockmult(t(Ad),Ad, block_size = 2048, bigmatrix = 1, paral = FALSE),
-                           CP2P <- Bblockmult(t(Ad),Ad, block_size = 2048, bigmatrix = 1, outfile = "provilla.hdf5", paral = TRUE, mixblock_size = 256),
-                           CP2P2 <- Bblockmult(t(Ad),Ad, block_size = 2048, bigmatrix = 1, outfile = "provilla.hdf5", paral = TRUE, mixblock_size = 128),
-                           CP2P3 <- Bblockmult(t(Ad),Ad, block_size = 2048, bigmatrix = 1, outfile = "provilla.hdf5", paral = TRUE, mixblock_size = 64),
-                           CR1 <- t(A)%*%(A),
-                           times = 3L)
-
-print(summary(results)[, c(1:7)],digits=3)
-
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth/tmp")
-
-m <- 49
-n <- 15
-k <- 25
-Abig <- matrix(rnorm(m*k), nrow=m, ncol=k)
-Bbig <- matrix(rnorm(k*n), nrow=k, ncol=n)
-
-DAbig <- DelayedArray(Abig)
-DBbig <- DelayedArray(Bbig)
-
-# We consider a big matrix if number of rows or columns are > 500
-AxBBig3000 <- blockmult(DAbig, DBbig, bigmatrix = 1, paral = FALSE)
-
-AxBBig3000$res$OUTPUT$C[1:5,1:5]
-
-AxBBig3000$res$INPUT$A
-
-bdclose(AxBBig3000)
-
-
-# -- funcions referents a h5
-h5ls(AxBBig3000$res)
-AxBBig3000$res$INPUT$A[1:5,1:5]
-
-
-AxBBig3000$res$OUTPUT$C[1:5,1:5]
-AxBBig3000P$res$OUTPUT$C[1:5,1:5]
-(Abig%*%Bbig)[1:5,1:5]
-
-all.equal(AxBBig3000$res$OUTPUT$C, AxBBig3000P$res$OUTPUT$C)
-all.equal(AxBBig3000$res$OUTPUT$C, (Abig%*%Bbig))
-
-
-
-
-
-Abig
-AxBBig3000$res$INPUT$A[1:5,1:5]
-
-Bbig
-AxBBig3000$res$INPUT$B[1:5,1:5]
-
-
-
-
-DAbig[1:5,1:5]
-
-# -- 
- 
-
-# We want to force it to run in memory
-AxBNOBig <- blockmult(DAbig, DBbig, bigmatrix = 100000) 
-
-AxBNOBig[1:5,1:5]
-
-getwd()
-A = h5read(AxBBig3000$file,"INPUT/A")
-B = h5read(AxBBig3000$file,"INPUT/B")
-A[1:5,1:5]
-B[1:5,1:5]
-DAbig[1:5,1:5]
-t(A[1:5,1:5])
-all.equal(DAbig, t(A))
-
-dadesdirectes <- H5Fopen(AxBBig3000$file)
-
-
-
-
-
-
-a <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16), ncol=4)
-
-cc <- blockmult(a, a, bigmatrix = 1)
-cc$res$INPUT$A
-cc$res$INPUT$B
-
-
-h5closeAll()
-
-
-*/

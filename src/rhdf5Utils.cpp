@@ -172,8 +172,6 @@ extern "C" {
   }
   
     
-  
-    
   /* Create a group in hdf5 file */
   int create_HDF5_group_ptr( H5File* file, const H5std_string mGroup)
   {
@@ -874,7 +872,7 @@ extern "C" {
       {
         
         hsize_t dims[2];
-        if(transposed == false){
+        if(transposed == true){
           dims[0] = as<NumericMatrix>(DatasetValues).rows();
           dims[1] = as<NumericMatrix>(DatasetValues).cols();
         } else{
@@ -887,7 +885,7 @@ extern "C" {
         DataSet dataset = file->createDataSet(CDatasetName,PredType::NATIVE_DOUBLE, dataspace);
         dataset = file->openDataSet(CDatasetName);
         
-        if(transposed == false){
+        if(transposed == true){
           std::vector<double> matHiCValues = as<std::vector<double> >(transpose(as<NumericMatrix>(DatasetValues)));
           dataset.write( &matHiCValues[0] , PredType::NATIVE_DOUBLE);
         }else{
@@ -902,7 +900,7 @@ extern "C" {
       else if( Rcpp::is<IntegerMatrix>(DatasetValues) ) 
       {
         hsize_t dims[2];
-        if(transposed == false){
+        if(transposed == true){
           dims[0] = as<IntegerMatrix>(DatasetValues).rows();
           dims[1] = as<IntegerMatrix>(DatasetValues).cols();
         }else {
@@ -915,7 +913,7 @@ extern "C" {
         DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
         dataset = file->openDataSet(CDatasetName);
         
-        if(transposed == false){
+        if(transposed == true){
           std::vector<double> matHiCValues = as<std::vector<double> >(transpose(as<NumericMatrix>(DatasetValues)));
           dataset.write( &matHiCValues[0], PredType::NATIVE_DOUBLE);
         } else {
@@ -1000,10 +998,6 @@ extern "C" {
     {
       // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
       Exception::dontPrint();
-      
-      // Open file
-      //..// H5File file(filename, H5F_ACC_RDWR);
-      //..// DataSet dataset = file.openDataSet(CDatasetName);
       
       hsize_t offset[2], count[2], stride[2], block[2];
       
@@ -1749,9 +1743,11 @@ Rcpp::RObject Create_HDF5_matrix(RObject mat, std::string filename, std::string 
       try{  
         
         if ( TYPEOF(mat) == INTSXP ) {
-          write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
+          //..// write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
+          write_HDF5_matrix_transposed_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
         } else{
-          write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
+          //..// write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
+          write_HDF5_matrix_transposed_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
         }
       }
       catch(std::exception &ex) { }

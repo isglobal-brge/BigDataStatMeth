@@ -104,16 +104,16 @@ Eigen::MatrixXd Rcpp_mlr_mr(Eigen::MatrixXd x, Eigen::MatrixXd y, int iblocks, R
     Q1BlockDiv = GetCurrentBlock( Q1, indexQ1(i), 0, ((indexQ1(i+1)) - indexQ1(i)), Q1.cols());
 
     // Get Q3 and V
-    Q3 = Bblock_matrix_mul_parallel(Q1BlockDiv, Q2BlockDiv, 256, ithreads);
+    Q3 = Bblock_matrix_mul_parallel(Q1BlockDiv, Q2BlockDiv, 256, threads);
     Eigen::MatrixXd YBlock  = GetCurrentBlock( y, indexQ1(i), 0, Q3.rows(), 1);
-    V.block(0, i, V.rows(), 1) = Bblock_matrix_mul_parallel( Q3.adjoint(), YBlock , 256, ithreads );
+    V.block(0, i, V.rows(), 1) = Bblock_matrix_mul_parallel( Q3.adjoint(), YBlock , 256, threads );
 
     startnext = startnext + Q3.adjoint().cols();
 
   }
 
   // Get Betas
-  Eigen::MatrixXd beta = Bblock_matrix_mul_parallel( decR1.R.inverse(), V.rowwise().sum(), 256, ithreads);
+  Eigen::MatrixXd beta = Bblock_matrix_mul_parallel( decR1.R.inverse(), V.rowwise().sum(), 256, threads);
 
   return(beta);
 }
@@ -184,10 +184,10 @@ data(mtcars)
 
 Y <- mtcars$mpg
 X <- model.matrix(~ wt + cyl, data=mtcars)
-m <- 3
+m <- 7
 
 
 res <- bdMLR_MR( X, Y, m, 1)
-
+res
 
 */

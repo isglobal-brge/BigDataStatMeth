@@ -127,7 +127,8 @@ int write_DelayedArray_to_hdf5(H5std_string filename, const std::string CDataset
 }
 
 
-// Write DelayedArray to hdf5 data file 
+// Write DelayedArray to hdf5 data file . Ever writes the transposed form from the initial variable because
+// hdf5 works in row-major form and R in col-major form.
 int write_DelayedArray_to_hdf5_ptr(H5File* file, const std::string CDatasetName, Rcpp::RObject A, bool transp)
 {
   
