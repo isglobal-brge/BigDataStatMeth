@@ -32,8 +32,8 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' @examples
 #'   a = "See vignette"
 #' @export
-blockmult_hdf5 <- function(filename, group, A, B, block_size = NULL, paral = NULL, threads = NULL, bigmatrix = NULL, mixblock_size = NULL, outgroup = NULL) {
-    .Call(`_BigDataStatMeth_blockmult_hdf5`, filename, group, A, B, block_size, paral, threads, bigmatrix, mixblock_size, outgroup)
+blockmult_hdf5 <- function(filename, group, A, B, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
+    .Call(`_BigDataStatMeth_blockmult_hdf5`, filename, group, A, B, block_size, paral, threads, mixblock_size, outgroup)
 }
 
 #' Impute SNPs in hdf5 omic dataset 

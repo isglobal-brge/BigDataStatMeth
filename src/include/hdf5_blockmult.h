@@ -14,7 +14,6 @@
                                Rcpp::Nullable<int> block_size, 
                                Rcpp::Nullable<bool> paral,
                                Rcpp::Nullable<int> threads,
-                               Rcpp::Nullable<double> bigmatrix,
                                Rcpp::Nullable<double> mixblock_size,
                                Rcpp::Nullable<std::string> outgroup);
 #endif

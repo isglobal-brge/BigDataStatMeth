@@ -21,12 +21,11 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
                              Rcpp::Nullable<int> block_size = R_NilValue, 
                              Rcpp::Nullable<bool> paral = R_NilValue,
                              Rcpp::Nullable<int> threads = R_NilValue,
-                             Rcpp::Nullable<double> bigmatrix = R_NilValue,
                              Rcpp::Nullable<double> mixblock_size = R_NilValue,
                              Rcpp::Nullable<std::string> outgroup = R_NilValue)
 {
   
-  int iblock_size, res, bigmat;
+  int iblock_size, res;
   bool bparal, bexistgroup;// = Rcpp::as<double>;
   Eigen::MatrixXd C;
   
@@ -52,14 +51,7 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
     
     //..// std::string strsubgroup = "Base.matrices/";
     std::string strsubgroupIn = group + "/";
-    
-    if( bigmatrix.isNull()) {
-      bigmat = 10000;
-    } else {
-      bigmat = Rcpp::as<double> (bigmatrix);
-    }
-    
-  
+
     // Open file and get dataset
     file = new H5File( filename, H5F_ACC_RDONLY );
     
@@ -112,7 +104,7 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
                                              memory_block, bparal,true, threads);
       
       
-      C = Eigen::MatrixXd::Zero(2,2);
+      //..// C = Eigen::MatrixXd::Zero(2,2);
       
     }else if (bparal == false)
     {
@@ -120,7 +112,7 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
       // Not parallel
       hdf5_block_matrix_mul_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut, 
                                              0, bparal,true, threads);
-      C = Eigen::MatrixXd::Zero(2,2);
+      //..// C = Eigen::MatrixXd::Zero(2,2);
       
     }
 
@@ -138,7 +130,13 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
   }
   
   
-  return wrap(wrap(C));
+  //..// return wrap(wrap(C));
+  
+  //..// return(C);
+  return List::create(Named("filename") = filename,
+                      Named("dataset") = strsubgroupOut + "/" + A + "_x_" + B,
+                      Named("result") = wrap(0));
+  
 }
 
 
