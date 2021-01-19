@@ -18,6 +18,24 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
     .Call(`_BigDataStatMeth_bdRemovelowdata`, filename, group, dataset, outgroup, outdataset, pcent, SNPincols)
 }
 
+#' Crossprod with hdf5 matrix
+#' 
+#' This function performs the crossprod from a matrix inside and hdf5 data file
+#' 
+#' @param filename string file name where dataset to normalize is stored
+#' @param group string or Delayed Array Matrix
+#' @param dataset string name inside HDF5 file
+#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
+#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
+#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+#' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
+#' @examples
+#'   a = "See vignette"
+#' @export
+blockCrossprod_hdf5 <- function(filename, group, A, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
+    .Call(`_BigDataStatMeth_blockCrossprod_hdf5`, filename, group, A, block_size, paral, threads, mixblock_size, outgroup)
+}
+
 #' Multiply hdf5 matrix
 #' 
 #' This function multiply matrix stored in hdf5 data file
@@ -34,6 +52,24 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' @export
 blockmult_hdf5 <- function(filename, group, A, B, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
     .Call(`_BigDataStatMeth_blockmult_hdf5`, filename, group, A, B, block_size, paral, threads, mixblock_size, outgroup)
+}
+
+#' Transposed Crossprod with hdf5 matrix
+#' 
+#' This function performs the transposed crossprod from a matrix inside and hdf5 data file
+#' 
+#' @param filename string file name where dataset to normalize is stored
+#' @param group string or Delayed Array Matrix
+#' @param dataset string name inside HDF5 file
+#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
+#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
+#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+#' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
+#' @examples
+#'   a = "See vignette"
+#' @export
+blocktCrossprod_hdf5 <- function(filename, group, A, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
+    .Call(`_BigDataStatMeth_blocktCrossprod_hdf5`, filename, group, A, block_size, paral, threads, mixblock_size, outgroup)
 }
 
 #' Impute SNPs in hdf5 omic dataset 

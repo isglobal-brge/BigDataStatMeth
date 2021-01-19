@@ -40,12 +40,7 @@
                                                       std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
                                                       int mem_block_size, bool bparal, bool browmajor, 
                                                       Rcpp::Nullable<int> threads );
-  
-  int hdf5_block_matrix_mul_hdf5_indatasets( std::string matA, std::string matB,
-                                             IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
-                                             std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
-                                             int mem_block_size, bool bparal, bool browmajor, 
-                                             Rcpp::Nullable<int> threads);
+
     
   /*Rcpp::List Bblockmult(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> block_size, 
                              Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads,

@@ -62,7 +62,7 @@ file with scaled, centered or scaled and centered dataset
 
 A list with an HDF5 object with numerical matrix and  HDF5 file name with results
 \itemize{
- \item{"res"}{rhdf5 object with result matrix - link to hdf5 file contents . IMPORTANT !!, we have to close the object after fihish to work}
+ #### \item{"res"}{rhdf5 object with result matrix - link to hdf5 file contents . IMPORTANT !!, we have to close the object after fihish to work}
  \item{"file"}{string with hdf5 file name with result and original matrixs}
  \item{"dataset"}{string complete path inside hdf5 file where results are stored.}
 }
