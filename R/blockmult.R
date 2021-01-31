@@ -45,6 +45,6 @@ blockmult <- function( a, b, block_size = 128, paral = TRUE, threads = NULL, big
   if (res$filename == '')
     return (res$matrix)
   else
-    return( list("res" = rhdf5::H5Fopen(res$filename), "file" = res$filename) )
+    return( list("dataset" = rhdf5::H5Fopen(res$dataset), "file" = res$filename) )
 
 }

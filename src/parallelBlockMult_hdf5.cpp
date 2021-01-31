@@ -794,6 +794,9 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
     }
     
     
+    return List::create(Named("matrix") = wrap(C), 
+                        Named("filename") = filename);
+    
     /********************************/
     /**** END IN-MEMORY PROCESSING **/
     /********************************/
@@ -905,8 +908,8 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
   }
   
   //..// return(C);
-  return List::create(Named("matrix") = wrap(C), 
-                      Named("filename") = filename);
+  return List::create(Named("filename") = filename,
+                      Named("dataset") = strsubgroupOut + "/C");
 }
 
 

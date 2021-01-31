@@ -26,16 +26,13 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
 {
   
   int iblock_size, res;
-  bool bparal, bexistgroup;// = Rcpp::as<double>;
+  bool bparal, bexistgroup, bexistdataset;// = Rcpp::as<double>;
   Eigen::MatrixXd C;
-  
   
   H5File* file;
   
-  
   std::string strsubgroupOut;
 
-  
   IntegerVector dsizeA, dsizeB;
   
   // hdf5 parameters
@@ -44,29 +41,37 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
     H5::Exception::dontPrint();  
     
     if( outgroup.isNull()) {
-      strsubgroupOut = "OUTPUT/";
+      strsubgroupOut = "OUTPUT";
     } else {
-      strsubgroupOut = Rcpp::as<std::string> (outgroup) + "/";
+      strsubgroupOut = Rcpp::as<std::string> (outgroup);
     }
     
     //..// std::string strsubgroup = "Base.matrices/";
     std::string strsubgroupIn = group + "/";
 
     // Open file and get dataset
-    file = new H5File( filename, H5F_ACC_RDONLY );
+    file = new H5File( filename, H5F_ACC_RDWR );
     
     DataSet dsA = file->openDataSet(strsubgroupIn + A);
     IntegerVector dsizeA = get_HDF5_dataset_size(dsA);
     DataSet dsB = file->openDataSet(strsubgroupIn + B);
     IntegerVector dsizeB = get_HDF5_dataset_size(dsB);
     
-    bexistgroup = exists_HDF5_element_ptr(file,strsubgroupOut );
+    bexistgroup = exists_HDF5_element_ptr(file,strsubgroupOut+ "/" );
 
-    file->close();
+    if(bexistgroup) {
+      
+      std::string strdataset = strsubgroupOut+ "/" + A + "_x_" + B;
+
+      if(exists_HDF5_element_ptr(file, strdataset )) {
+        remove_HDF5_element_ptr(file, strdataset);
+      }
+    } 
     
+    file->close();
     dsA.close();
     dsB.close();
-      
+
     if(block_size.isNotNull())
     {
       iblock_size = Rcpp::as<int> (block_size);
@@ -76,17 +81,17 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
       if (iblock_size>512)
         iblock_size = 512;
     }
-    
+
     if( paral.isNull()) {
       bparal = false;
     } else {
       bparal = Rcpp::as<bool> (paral);
     }
-    
-    if(!bexistgroup) {
-      res = create_HDF5_group(filename, strsubgroupOut );
-    }
 
+    if(!bexistgroup) {
+      res = create_HDF5_group(filename, strsubgroupOut + "/" );
+    } 
+    
     if(bparal == true)
     {
       //.. TODO : Work with parallel hdf5 access
@@ -100,9 +105,8 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
         memory_block = 128;
       
       // Test mix versión read block from file and calculate multiplication in memory (with paral·lel algorithm)
-      hdf5_block_matrix_mul_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut, 
+      hdf5_block_matrix_mul_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut + "/", 
                                              memory_block, bparal,true, threads);
-      
       
       //..// C = Eigen::MatrixXd::Zero(2,2);
       
@@ -110,8 +114,8 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
     {
       
       // Not parallel
-      hdf5_block_matrix_mul_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut, 
-                                             0, bparal,true, threads);
+      hdf5_block_matrix_mul_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut + "/", 
+                                                       0, bparal,true, threads);
       //..// C = Eigen::MatrixXd::Zero(2,2);
       
     }
