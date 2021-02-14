@@ -124,7 +124,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
     
 
     if(i==0) {
-      create_HDF5_unlimited_dataset_ptr(file, stroutdata, extendrows, extendcols, "numeric");
+      create_HDF5_unlimited_matrix_dataset_ptr(file, stroutdata, extendrows, extendcols, "numeric");
       unlimDataset = new DataSet(file->openDataSet(stroutdata));
     }else {
       if(bycols == true)

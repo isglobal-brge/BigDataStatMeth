@@ -23,7 +23,8 @@
   const int	DIM1 = 1;
   const int	DIM2 = 2;
   const int	DIM3 = 3;
-  const int	MAXSTRING = 13;
+  const int	MAXSTRING = 20;
+  const hsize_t MAXSTRBLOCK = 150000;
   
   // a typedef for our managed H5File pointer
   typedef std::shared_ptr<H5::H5File> H5FilePtr;
@@ -47,10 +48,13 @@
                                     const size_t rows, const size_t cols, std::string strdatatype);
   extern "C" int create_HDF5_dataset_ptr(H5File* file, const std::string CDatasetName, 
                               const size_t rows, const size_t cols, std::string strdatatype);
-  extern "C" int create_HDF5_unlimited_dataset_ptr(H5File* file, const std::string CDatasetName, 
+  extern "C" int create_HDF5_unlimited_matrix_dataset_ptr(H5File* file, const std::string CDatasetName, 
                                         const size_t rows, const size_t cols, std::string strdatatype);
+  extern "C" int create_HDF5_unlimited_vector_dataset_ptr(H5File* file, const std::string CDatasetName, 
+                                                         const size_t length, std::string strdatatype);
 
   extern "C" int extend_HDF5_matrix_subset_ptr(H5File* file, DataSet* dataset, const size_t rows, const size_t cols);
+  extern "C" int extend_HDF5_vector_subset_ptr(H5File* file, DataSet* dataset, const size_t length);
     
   extern "C" int create_HDF5_group(H5std_string filename, const H5std_string hiCGroup);
   extern "C" int create_HDF5_group_ptr( H5File* file, const H5std_string mGroup);
@@ -77,6 +81,7 @@
                                              RObject DatasetValues);
   
   extern "C" int write_hdf5_string_vector(H5File* file, std::string datasetname, StringVector DatasetValues);
+  extern "C" int write_hdf5_string_vector2(H5File* file, std::string datasetname, StringVector DatasetValues);
   //..// extern "C" StringVector get_hdf5_matrix_dimnames(H5File* file, std::string datasetname, int idim );
   StringVector get_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string datasetname, int idim );
   //..// extern "C" int write_hdf5_matrix_dimnames(H5File* file, std::string datasetname, StringVector rownames, StringVector colnames);

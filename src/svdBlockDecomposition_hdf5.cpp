@@ -134,10 +134,10 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
         
         // Create unlimited dataset in hdf5 file
         if( transp == true ){
-          create_HDF5_unlimited_dataset_ptr(file, strDatasetName, count[0], count[1], "numeric");
+          create_HDF5_unlimited_matrix_dataset_ptr(file, strDatasetName, count[0], count[1], "numeric");
         }
         else{
-          create_HDF5_unlimited_dataset_ptr(file, strDatasetName, restmp.cols(), restmp.rows(), "numeric");
+          create_HDF5_unlimited_matrix_dataset_ptr(file, strDatasetName, restmp.cols(), restmp.rows(), "numeric");
         }
         cummoffset = 0;
         
@@ -287,7 +287,7 @@ int Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupNam
         if( exists_HDF5_element_ptr(file,strDatasetName))
           remove_HDF5_element_ptr(file,strDatasetName);
         // Create unlimited dataset in hdf5 file
-        create_HDF5_unlimited_dataset_ptr(file, strDatasetName, restmp.rows(), restmp.cols(), "numeric");
+        create_HDF5_unlimited_matrix_dataset_ptr(file, strDatasetName, restmp.rows(), restmp.cols(), "numeric");
         
       } else {
         // Get initial write position
