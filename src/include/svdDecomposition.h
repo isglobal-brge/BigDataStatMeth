@@ -17,6 +17,8 @@
   #include "tgmath.h"
 
 
+  #define MAXSVDBLOCK 5120
+
   // dgesvd_ is a symbol in the LAPACK-BLAS Level 3 
   //    DGESVD computes the singular value decomposition (SVD) of a real M-by-N matrix A, 
   //       optionally computing the left and/or right singular vectors

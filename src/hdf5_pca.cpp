@@ -36,10 +36,13 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
     std::string strlocpcadataset = "PCA/" + strdataset;
     
 
-    if( exists_HDF5_element_ptr(file, strSVDdataset ) )
+    if( exists_HDF5_element_ptr(file, strSVDdataset ) ){
       dataset = new DataSet(file->openDataSet(strSVDdataset));
-    else
-      throw ("Dataset does not exist !");
+    }else{
+      //.Remove note.// throw("Dataset does not exist !");
+      // stop("Dataset does not exist !");
+      ::Rf_error( "c++ exception (Dataset does not exist !)" );
+    }
     
     // Real data set dimension
     IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
@@ -64,13 +67,13 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
     write_HDF5_matrix_ptr(file, strlocpcadataset+"/cumvar", wrap(cumsum_hdf5(vvar)));
 
   }catch( FileIException error ) {
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException )" );
     return -1;
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSet IException )" );
     return -1;
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSpace IException )" );
     return -1;
   } 
   
@@ -88,11 +91,15 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
 //' @param filename string, file name where dataset is stored 
 //' @param group string group name  where dataset is stored in file
 //' @param dataset string dataset name with data to perform PCA
+//' @param bcenter logical value if true data is centered to zero
+//' @param bscale logical value, if true data is scaled
 //' @param threads integer number of threads used to run PCA
 //' @return original file with results in folder PCA/<datasetname>
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<int> threads)
+Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string dataset, 
+                         Rcpp::Nullable<int> bcenter, Rcpp::Nullable<int> bscale, 
+                         Rcpp::Nullable<int> threads)
 {
   
   H5File* file;
@@ -106,7 +113,9 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
     Eigen::MatrixXd C, D, varcoord;
     // int ithreads=1;
     int ks = 4, qs = 1, nvs = 0;
-    bool bcent=true, bscal = true;
+    
+    bool bcent= as<bool>(bcenter), 
+         bscal = as<bool>(bscale);
     
     pcaeig pcaRes;
     
@@ -184,19 +193,19 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
     return(wrap(-1));
   }catch( FileIException error ) {
     file->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (File IException)" );
     return(wrap(-1));
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
     file->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSet IException)" );
     return(wrap(-1));
   } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
     file->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataSpace IException)" );
     return(wrap(-1));
   } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
     file->close();
-    error.printErrorStack();
+    ::Rf_error( "c++ exception (DataType IException)" );
     return(wrap(-1));
   } catch (...) {
     file->close();

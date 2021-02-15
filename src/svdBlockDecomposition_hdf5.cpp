@@ -111,7 +111,7 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
 
       std::string strDatasetName = strGroupName + "/A" + std::to_string(i/(M/k));
       
-      Eigen::MatrixXd restmp = Bblock_matrix_mul_parallel(retsvd.u, d, 128, threads);
+      Eigen::MatrixXd restmp = Bblock_matrix_mul_parallel(retsvd.u, d, 1024, threads);
       
 
       //    d) Write results to hdf5 file

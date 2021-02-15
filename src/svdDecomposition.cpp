@@ -87,12 +87,12 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
   svdeig retsvd;
   
   char Schar='S';
+  char Achar='A';
   int info = 0;
   
   
-  if(bcenter ==true || bscale == true)
-    X = RcppNormalize_Data(X, bcenter, bscale);
-  
+   if(bcenter ==true || bscale == true)
+     X = RcppNormalize_Data(X, bcenter, bscale);
   
   int m = X.rows();
   int n = X.cols();
@@ -107,8 +107,8 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
   else
     lwork = std::max( 1, 4*std::min(m,n)* std::min(m,n) + 7*std::min(m, n) );
   */
-  //.. ORIGINAL ..//lwork = std::max( 5*std::min(m,n)+ std::max(m,n), 9*std::min(m, n) );
-  lwork = std::max( 3*std::min(m,n)+ std::max(m,n), 5*std::min(m, n) );
+  lwork = std::max( 5*std::min(m,n)+ std::max(m,n), 9*std::min(m, n) ); //.. ORIGINAL ..//
+  //..// lwork = std::max( 3*std::min(m,n)+ std::max(m,n), 5*std::min(m, n) );
   
 
   Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
@@ -299,7 +299,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
 
   // In memory computation for small matrices (rows or columns<5000)
   // Block decomposition for big mattrix
-  if( std::max(dims_out[0], dims_out[1])<25 )
+  if( std::max(dims_out[0], dims_out[1]) < MAXSVDBLOCK )
   {
     
     X = GetCurrentBlock_hdf5( &file, &dataset, offset[0], offset[1], count[0], count[1]);

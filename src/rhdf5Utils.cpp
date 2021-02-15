@@ -622,15 +622,8 @@ extern "C" {
       hsize_t      size[2];
       size[0]   = dims_out[0] + newdims[0];
       size[1]   = dims_out[1] + newdims[1];
-      
-      Rcpp::Rcout<<"\n Original : "<<dims_out[0]<<" x "<<dims_out[1]<<"\n";
-      Rcpp::Rcout<<"\n New : "<<newdims[0]<<" x "<<newdims[1]<<"\n";
-      
-      Rcpp::Rcout<<"\n Total to extend : "<<size[0]<<" - "<<size[1]<<"\n";
-      
+
       dataset->extend( size );
-      
-      Rcpp::Rcout<<"\n Extended !!! \n";
       
     } catch(FileIException error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception (File IException)" );

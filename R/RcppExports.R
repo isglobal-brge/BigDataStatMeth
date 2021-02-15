@@ -113,11 +113,13 @@ Normalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NU
 #' @param filename string, file name where dataset is stored 
 #' @param group string group name  where dataset is stored in file
 #' @param dataset string dataset name with data to perform PCA
+#' @param bcenter logical value if true data is centered to zero
+#' @param bscale logical value, if true data is scaled
 #' @param threads integer number of threads used to run PCA
 #' @return original file with results in folder PCA/<datasetname>
 #' @export
-bdPCA_hdf5 <- function(filename, group, dataset, threads) {
-    .Call(`_BigDataStatMeth_bdPCA_hdf5`, filename, group, dataset, threads)
+bdPCA_hdf5 <- function(filename, group, dataset, bcenter, bscale, threads) {
+    .Call(`_BigDataStatMeth_bdPCA_hdf5`, filename, group, dataset, bcenter, bscale, threads)
 }
 
 #' Normalize Delayed Array matrix
