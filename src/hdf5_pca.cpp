@@ -63,8 +63,10 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
     // Write variance dataset
     vvar = vvar/vvar.sum();
     write_HDF5_matrix_ptr(file, strlocpcadataset+"/var", wrap(vvar));
+    
     // Write cumulative variance dataset
     write_HDF5_matrix_ptr(file, strlocpcadataset+"/cumvar", wrap(cumsum_hdf5(vvar)));
+    
 
   }catch( FileIException error ) {
     ::Rf_error( "c++ exception (File IException )" );
@@ -83,6 +85,114 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
 
 
 
+// Get's variance and cumulative variance from svd decomposition
+// var.contr, C, var.coord and var.cos^2 and write results to hdf5 file
+int get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
+{
+  
+  DataSet* d;
+  DataSet* v;
+  
+  try
+  {
+    IntegerVector stride = IntegerVector::create(1, 1);
+    IntegerVector block = IntegerVector::create(1, 1);
+    IntegerVector offset = IntegerVector::create(0, 0);
+    IntegerVector count = IntegerVector::create(0, 0);
+    
+    Exception::dontPrint();
+    
+    std::string strSVDdataset_d = "SVD/"+strdataset+"/d";
+    std::string strSVDdataset_v = "SVD/"+strdataset+"/v";
+    
+    std::string strlocpcadataset = "PCA/" + strdataset;
+    
+    if( exists_HDF5_element_ptr(file, strSVDdataset_d ) ){
+      d = new DataSet(file->openDataSet(strSVDdataset_d));
+    }else{
+      //.Remove note.// throw("Dataset does not exist !");
+      // stop("Dataset does not exist !");
+      ::Rf_error( "c++ exception (Dataset does not exist !)" );
+    }
+    
+    // Real data set dimension
+    IntegerVector dims_out = get_HDF5_dataset_size(*d);
+    count[0] = dims_out[0];
+    count[1] = dims_out[1];
+    
+    if(exists_HDF5_element_ptr(file, strlocpcadataset))
+      remove_HDF5_element_ptr(file, strlocpcadataset);
+    
+    create_HDF5_groups_ptr(file, strlocpcadataset );
+    
+    Eigen::VectorXd data = GetCurrentBlock_hdf5(file, d, 0, 0, count[0], count[1]);
+    Eigen::VectorXd vvar = data.array().pow(2);
+    
+    // Write lambda dataset
+    write_HDF5_matrix_ptr(file, strlocpcadataset+"/lambda", wrap(vvar));
+    
+    // Write variance dataset
+    vvar = vvar/vvar.sum();
+    write_HDF5_matrix_ptr(file, strlocpcadataset+"/var", wrap(vvar));
+    
+    // Write cumulative variance dataset
+    write_HDF5_matrix_ptr(file, strlocpcadataset+"/cumvar", wrap(cumsum_hdf5(vvar)));
+    
+    if( exists_HDF5_element_ptr(file, strSVDdataset_v ) ){
+      v = new DataSet(file->openDataSet(strSVDdataset_v));
+    }else{
+      //.Remove note.// throw("Dataset does not exist !");
+      // stop("Dataset does not exist !");
+      ::Rf_error( "c++ exception (Dataset does not exist !)" );
+    }
+    
+    // Real data set dimension
+    dims_out = get_HDF5_dataset_size(*v);
+    count[0] = dims_out[0];
+    count[1] = dims_out[1];
+    
+    Eigen::MatrixXd V = GetCurrentBlock_hdf5(file, v, 0, 0, count[0], count[1]);
+
+    // Variable contribution var.contr
+    write_HDF5_matrix_ptr(file, strlocpcadataset+"/var.contr", wrap(V.pow(2)));
+    
+    // Correlations C
+    Eigen::MatrixXd tmp =Bblock_matrix_mul_parallel(Eigen::MatrixXd::Identity(count[0], count[1]), V, 1024, R_NilValue);
+    
+    tmp =Bblock_matrix_mul_parallel( tmp, data.asDiagonal(), 1024, R_NilValue);
+    
+    write_HDF5_matrix_ptr(file, strlocpcadataset+"/C", wrap(tmp));
+    
+    // Cosinus Variable var.cos2
+    write_HDF5_matrix_ptr(file, strlocpcadataset+"/var.cos2", wrap(tmp.pow(2) ));
+    
+    // Quality Variable var.qual
+
+    
+  }catch( FileIException error ) {
+    ::Rf_error( "c++ exception (File IException )" );
+    return -1;
+  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+    ::Rf_error( "c++ exception (DataSet IException )" );
+    return -1;
+  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+    ::Rf_error( "c++ exception (DataSpace IException )" );
+    return -1;
+  } 
+  
+  d->close();
+  v->close();
+
+  return(0);
+}
+
+
+
+
+
+
+
+
 // 
 //' PCA Descomposition
 //' 
@@ -98,7 +208,7 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string dataset, 
-                         Rcpp::Nullable<int> bcenter, Rcpp::Nullable<int> bscale, 
+                         Rcpp::Nullable<bool> bcenter = false, Rcpp::Nullable<bool> bscale = false, 
                          Rcpp::Nullable<int> threads)
 {
   
@@ -142,7 +252,13 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
       svdeig retsvd = RcppbdSVD_hdf5( filename, group, dataset, ks, qs, nvs, bcent, bscal, threads );
     }
     
-    get_HDF5_PCA_variance_ptr(file, dataset);
+    // Gets variance related variables
+    //. Works ok but obsolete.//get_HDF5_PCA_variance_ptr(file, dataset);
+    
+    
+    Rcpp::Rcout<<"\n Ara anem a la funció ?? !! \n";
+    // Gets var.contr, C, var.coord and var.cos^2 
+    get_HDF5_PCA_variables_ptr(file, dataset);
       
       //..// ans <- list(varcoord=var.coord, Y=Y, var = svdX$d^2, percvar=variance, components = svdX$v, method = method)
     

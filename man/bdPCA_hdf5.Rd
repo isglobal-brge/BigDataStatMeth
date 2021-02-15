@@ -4,7 +4,7 @@
 \alias{bdPCA_hdf5}
 \title{PCA Descomposition}
 \usage{
-bdPCA_hdf5(filename, group, dataset, threads)
+bdPCA_hdf5(filename, group, dataset, bcenter, bscale, threads)
 }
 \arguments{
 \item{filename}{string, file name where dataset is stored}
@@ -12,6 +12,10 @@ bdPCA_hdf5(filename, group, dataset, threads)
 \item{group}{string group name  where dataset is stored in file}
 
 \item{dataset}{string dataset name with data to perform PCA}
+
+\item{bcenter}{logical value if true data is centered to zero}
+
+\item{bscale}{logical value, if true data is scaled}
 
 \item{threads}{integer number of threads used to run PCA}
 }

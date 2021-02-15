@@ -118,7 +118,7 @@ Normalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NU
 #' @param threads integer number of threads used to run PCA
 #' @return original file with results in folder PCA/<datasetname>
 #' @export
-bdPCA_hdf5 <- function(filename, group, dataset, bcenter, bscale, threads) {
+bdPCA_hdf5 <- function(filename, group, dataset, bcenter = FALSE, bscale = FALSE, threads) {
     .Call(`_BigDataStatMeth_bdPCA_hdf5`, filename, group, dataset, bcenter, bscale, threads)
 }
 
