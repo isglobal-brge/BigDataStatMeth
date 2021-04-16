@@ -48,16 +48,7 @@ The package requires other packages from `Bioconductor` and `R-Cran` to be insta
 
 This package implements seveal matrix operations using `DelayMatrix` objects and HDF5 data files as well as some basic algebra operations that can be used to carry out some statistical analyses using standard methodologies such as principal component analyses (PCA) or least squares estimation. The package also contains specific statatistical methods mainly used in `omic` data analysis such as lasso regression. All procedures referred to HDF5 can be found in [BigDataStatMeth_hdf5](https://github.com/isglobal-brge/BigDataStatMeth/blob/main/vignettes/BigDataStatMeth_hdf5.html) vignette 
 
-# Getting started
-
-First, let us start by loading the required packages to describe the main capabilities of the package
-
-```{r, load}
-library(BigDataStatMeth)
-library(DelayedArray)
-library(rhdf5)
-library(DT)
-```
+# Install package
 
 To install BigDataStatMeth package we only have to run the following commands from the R command shell 
 
@@ -71,6 +62,19 @@ library(devtools)
 install_github("isglobal-brge/BigDataStatMeth@HEAD")
 library(BigDataStatMeth)
 
+```
+
+
+
+# Getting started
+
+First, let us start by loading the required packages to describe the main capabilities of the package
+
+```{r, load}
+library(BigDataStatMeth)
+library(DelayedArray)
+library(rhdf5)
+library(DT)
 ```
 
 These other packages are required to reproduce this vignette

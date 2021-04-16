@@ -22,6 +22,22 @@ This package implements basic Algebra methods using parallel algorithms to be us
      - Supervised and non-supervised algorithms
 
 
+## Install Package
+
+To install BigDataStatMeth package we only have to run the following commands from the R command shell 
+
+```{r, install, eval=FALSE}
+
+# Install devtools and load library (if not previously installed)
+install.packages("devtools") 
+library(devtools)
+
+# Install BigDataStatMeth and load package
+install_github("isglobal-brge/BigDataStatMeth@HEAD")
+library(BigDataStatMeth)
+
+```
+
 ## Implemented Functions
  
 |                                                  |                        R Function                       | Delayed arrays | By blocks | Parallel | HDF5 |
@@ -50,6 +66,6 @@ This package implements basic Algebra methods using parallel algorithms to be us
 | Remove rows or columns with hight missing values |                    bdRemovelowdata(…)                   |                |     ✔︎     |          |   ✔︎  |
 | Impute missing data                              |                    bdImputeSNPHDF5(…)                   |                |     ✔︎     |          |   ✔︎  |
 | Create hdf5 data file with one dataset inside    |                Create_HDF5_matrix_file(…)               |                |           |          |   ✔︎  |
-| Add one dataset in hdf5 data file                |                  Create_HDF5_matrix(…)                  |                |           |          |   ✔︎  |
+| Add one dataset in hdf5 data file                |                  Add_HDF5_matrix(…)                  |                |           |          |   ✔︎  |
 | Remove one dataset from hdf5 data file           |                  Remove_HDF5_element(…)                 |                |           |          |   ✔︎  |
-| Import data from text file to HDF5               |                 Convert_text_to_HDF5(…)                 |                |           |          |   ✔︎  |
+| Import data from text file to HDF5               |                 Import_text_to_HDF5(…)                 |                |           |          |   ✔︎  |
