@@ -1,0 +1,27 @@
+#ifndef parallelBlockMultSparse_hdf5
+#define parallelBlockMultSparse_hdf5
+
+  #include <RcppEigen.h>
+  #include <Eigen/Sparse>
+  #include "H5Cpp.h"
+  #include "rhdf5Utils.h"
+  #include "hdf5_to_Eigen.h"
+  #include <omp.h>
+  #include <thread>
+  #include <cstdlib>
+  #include <cmath>
+  
+
+  // C++ functions 
+  Eigen::SparseMatrix<double> matmult_sparse_parallel ( Eigen::SparseMatrix<double>  A, 
+                                                        Eigen::SparseMatrix<double> B,
+                                                        Rcpp::Nullable<int> threads );
+  
+  Eigen::SparseMatrix<double> matmult_sparse( Eigen::Map<Eigen::SparseMatrix<double> > A, 
+                                              Eigen::Map<Eigen::SparseMatrix<double> > B);
+  
+  // R functions
+  Rcpp::RObject blockmult_sparse(Rcpp::RObject A, Rcpp::RObject B, 
+                                 Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads );
+  
+#endif
