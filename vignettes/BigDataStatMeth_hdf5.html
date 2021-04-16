@@ -306,7 +306,7 @@ A &lt;- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 Create_HDF5_matrix_file(&quot;robjects.hdf5&quot;, A, &quot;INPUT&quot;, &quot;A&quot;)
 [1] 0</code></pre>
 <p><strong>Add datasets in hdf5 file</strong></p>
-<p>The <code>Create_HDF5_matrix</code> allows to create a dataset in existing file. We can create the dataset in any group, if group doesn’t exists in file, the group is created before append the dataset. The object could be an R object or a DelayedArray object.</p>
+<p>The <code>Add_HDF5_matrix</code> allows to create a dataset in existing file. We can create the dataset in any group, if group doesn’t exists in file, the group is created before append the dataset. The object could be an R object or a DelayedArray object.</p>
 <pre class="r"><code>
 set.seed(5234)
 n &lt;- 100
@@ -323,13 +323,13 @@ Create_HDF5_matrix_file(&quot;delayed.hdf5&quot;, A, &quot;INPUT&quot;, &quot;A&
 [1] 0
 
 # And now, we create dataframe B with B matrix in delayed.hdf5 file at INPUT group
-Create_HDF5_matrix(B, &quot;delayed.hdf5&quot;, &quot;INPUT&quot;, &quot;B&quot;);
+Add_HDF5_matrix(B, &quot;delayed.hdf5&quot;, &quot;INPUT&quot;, &quot;B&quot;);
 [1] 0</code></pre>
 <p><strong>Create transposed matrix in hdf5 file</strong></p>
-<p>The function <code>Create_HDF5_matrix</code> allows to create a dataset with a transposed matrix with the parameter `transpose = TRUE``, for example, we can add a dataset in hdf5 with the B transposed matrix with :</p>
+<p>The function <code>Add_HDF5_matrix</code> allows to create a dataset with a transposed matrix with the parameter `transpose = TRUE``, for example, we can add a dataset in hdf5 with the B transposed matrix with :</p>
 <pre class="r"><code>
 # Create dataset BTransposed with B transposed matrix in delayed.hdf5 file at INPUT group
-Create_HDF5_matrix(B, &quot;delayed.hdf5&quot;, &quot;INPUT&quot;, &quot;BTransposed&quot;, transp = TRUE);
+Add_HDF5_matrix(B, &quot;delayed.hdf5&quot;, &quot;INPUT&quot;, &quot;BTransposed&quot;, transp = TRUE);
 [1] 0</code></pre>
 <p><strong>Open and get hdf5 content file</strong></p>
 <p>We can open an existing file show contents and access data using functions from <code>rhdf5</code> package. <code>rhdf5</code> is an R interface for HDF5. The file must always be opened before working with it.</p>
@@ -385,12 +385,12 @@ h5closeAll()</code></pre>
 <div id="convert-text-file-to-hdf5" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Convert text file to HDF5</h1>
 <p>Usually we have files with a great amount of data to be loaded in R but in some cases, R can’t deal with this data and can’t work with this. In order to resolve this issue, you can work directly from data on disk with datasets stored in an HDF5 data file.</p>
-<p>You can easily change your text files to HDF5 using the function <code>Convert_text_to_HDF5</code>, to do that, we only have to define the input file with the <code>filename</code> parameter and the HDF5 destination dataset with parameters <code>outputfile</code> for the output file name, <code>outGroup</code> with the group to store the dataset and the dataset name with the parameter <code>outDataset</code>.</p>
+<p>You can easily change your text files to HDF5 using the function <code>Import_text_to_HDF5</code>, to do that, we only have to define the input file with the <code>filename</code> parameter and the HDF5 destination dataset with parameters <code>outputfile</code> for the output file name, <code>outGroup</code> with the group to store the dataset and the dataset name with the parameter <code>outDataset</code>.</p>
 <p>This function <strong>only allows to import numeric data except for rownames and columnames where character are allowed</strong>.</p>
-<p>About the delimiter parameter, the tabulation delimiter is taken in to account by default in function <code>Convert_text_to_HDF5</code> but this can be changed easily with <code>sep</code> parameter.</p>
+<p>About the delimiter parameter, the tabulation delimiter is taken in to account by default in function <code>Import_text_to_HDF5</code> but this can be changed easily with <code>sep</code> parameter.</p>
 <p>In this example we convert the colesterol.csv file and we will save the data to a file ‘colesterol_file.hdf5’ under the group ‘COLESTEROLGROUP’ in the dataset ‘COLESTEROLDATASET.’ In this example the text file contains column names so we set the parameter <code>header = TRUE</code>.</p>
 <pre class="r"><code>
-Convert_text_to_HDF5(&quot;colesterol.csv&quot;, &#39;,&#39;, 
+Import_text_to_HDF5(&quot;colesterol.csv&quot;, &#39;,&#39;, 
                      outputfile = &quot;colesterol_file.hdf5&quot;, outGroup = &quot;COLESTEROLGROUP&quot;, outDataset = &quot;COLESTEROLDATASET&quot;, 
                      header = TRUE)
 Info : no rownames to save
@@ -430,7 +430,7 @@ head(h5Colesterol$COLESTEROLGROUP$.COLESTEROLDATASET_dimnames$`2`)
 H5Fclose(h5Colesterol)</code></pre>
 <p>We can overwrite an existing dataset with new data from ‘colesterol_new.csv’ file, in that case, we will set the <code>overwrite</code> parameter as TRUE <code>overwrite = TRUE</code></p>
 <pre class="r"><code>
-Convert_text_to_HDF5(&quot;colesterol_new.csv&quot;, &#39;,&#39;, 
+Import_text_to_HDF5(&quot;colesterol_new.csv&quot;, &#39;,&#39;, 
                      outputfile = &quot;colesterol_file.hdf5&quot;, outGroup = &quot;COLESTEROLGROUP&quot;, outDataset = &quot;COLESTEROLDATASET&quot;, 
                      header = TRUE, overwrite = TRUE)
 Info : no rownames to save
@@ -605,7 +605,7 @@ n &lt;- 500
 m &lt;- 600
 B &lt;- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Create_HDF5_matrix(B, filename = &#39;robjects.hdf5&#39;, group=&quot;INPUT&quot;, dataset = &quot;B2&quot;)
+Add_HDF5_matrix(B, filename = &#39;robjects.hdf5&#39;, group=&quot;INPUT&quot;, dataset = &quot;B2&quot;)
 [1] 0
 
 # Get Crossprod with two matrix
@@ -675,7 +675,7 @@ n &lt;- 500
 m &lt;- 600
 B &lt;- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Create_HDF5_matrix(B, filename = &#39;robjects.hdf5&#39;, group=&quot;INPUT&quot;, dataset = &quot;B3&quot;)
+Add_HDF5_matrix(B, filename = &#39;robjects.hdf5&#39;, group=&quot;INPUT&quot;, dataset = &quot;B3&quot;)
 [1] 0
 
 # Get Crossprod with two matrix
@@ -742,7 +742,7 @@ n &lt;- 150000
 m &lt;- 50
 odata &lt;- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Create_HDF5_matrix(odata, &quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;data&quot;)
+Add_HDF5_matrix(odata, &quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;data&quot;)
 [1] 0
 
 # Direct from hdf5 data file
@@ -860,7 +860,7 @@ svd$d[1:7]
 <p>We first simulate a genotype matrix with 0, 1, 2 and 3 and store it in hdf5 file and show data stored in file:</p>
 <pre class="r"><code>set.seed(108432)
 geno.sim &lt;- matrix(sample(0:3, 10000, replace = TRUE), byrow = TRUE, ncol = 10)
-Create_HDF5_matrix(geno.sim, &quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;geno&quot;)
+Add_HDF5_matrix(geno.sim, &quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;geno&quot;)
 [1] 0
 
 # Get data and show the first 5 rows
@@ -889,11 +889,11 @@ h5closeAll()
 
 imputedgeno[1:5,1:10]
      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-[1,]    0    2    0    2    0    0    2    1    1     0
-[2,]    2    2    0    0    0    1    1    1    1     1
-[3,]    1    2    1    1    1    0    0    1    1     2
-[4,]    0    2    2    1    0    1    2    2    1     2
-[5,]    1    1    2    0    1    1    0    0    1     1</code></pre>
+[1,]    0    2    0    2    2    0    2    2    1     0
+[2,]    2    0    0    0    0    1    1    1    1     1
+[3,]    1    2    1    1    1    0    0    2    1     2
+[4,]    1    2    2    1    1    1    2    2    1     2
+[5,]    1    1    2    1    0    1    0    1    1     1</code></pre>
 </div>
 <div id="normalization-center-and-scale" class="section level2" number="9.2">
 <h2><span class="header-section-number">9.2</span> Normalization, center and scale</h2>

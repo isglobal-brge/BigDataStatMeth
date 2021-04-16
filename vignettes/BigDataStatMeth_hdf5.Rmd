@@ -124,7 +124,7 @@ Create_HDF5_matrix_file("robjects.hdf5", A, "INPUT", "A")
 
 **Add datasets in hdf5 file**
 
-The `Create_HDF5_matrix` allows to create a dataset in existing file. We can create the dataset in any group, if group doesn't exists in file, the group is created before append the dataset. The object could be an R object or a DelayedArray object.
+The `Add_HDF5_matrix` allows to create a dataset in existing file. We can create the dataset in any group, if group doesn't exists in file, the group is created before append the dataset. The object could be an R object or a DelayedArray object.
 
 ```{r hdf5AddDataset}
 
@@ -142,18 +142,18 @@ B <- matrix(rnorm(n*m,mean=3,sd=0.5), n,m)
 Create_HDF5_matrix_file("delayed.hdf5", A, "INPUT", "A");
 
 # And now, we create dataframe B with B matrix in delayed.hdf5 file at INPUT group
-Create_HDF5_matrix(B, "delayed.hdf5", "INPUT", "B");
+Add_HDF5_matrix(B, "delayed.hdf5", "INPUT", "B");
 
 ```
 
 **Create transposed matrix in hdf5 file**
 
-The function `Create_HDF5_matrix` allows to create a dataset with a transposed matrix with the parameter `transpose = TRUE``, for example, we can add a dataset in hdf5 with the B transposed matrix with : 
+The function `Add_HDF5_matrix` allows to create a dataset with a transposed matrix with the parameter `transpose = TRUE``, for example, we can add a dataset in hdf5 with the B transposed matrix with : 
 
 ```{r hdf5AddtransposedDataset}
 
 # Create dataset BTransposed with B transposed matrix in delayed.hdf5 file at INPUT group
-Create_HDF5_matrix(B, "delayed.hdf5", "INPUT", "BTransposed", transp = TRUE);
+Add_HDF5_matrix(B, "delayed.hdf5", "INPUT", "BTransposed", transp = TRUE);
 
 ```
 
@@ -217,17 +217,17 @@ More information about working with hdf5 files in r [@rhdf5]
 
 Usually we have files with a great amount of data to be loaded in R but in some cases, R can't deal with this data and can't work with this. In order to resolve this issue, you can work directly from data on disk with datasets stored in an HDF5 data file.
 
-You can easily change your text files to HDF5 using the function `Convert_text_to_HDF5`, to do that, we only have to define the input file with the `filename` parameter and the HDF5 destination dataset with parameters `outputfile` for the output file name, `outGroup` with the group to store the dataset and the dataset name with the parameter `outDataset`.
+You can easily change your text files to HDF5 using the function `Import_text_to_HDF5`, to do that, we only have to define the input file with the `filename` parameter and the HDF5 destination dataset with parameters `outputfile` for the output file name, `outGroup` with the group to store the dataset and the dataset name with the parameter `outDataset`.
 
 This function **only allows to import numeric data except for rownames and columnames where character are allowed**. 
 
-About the delimiter parameter, the tabulation delimiter is taken in to account by default in function `Convert_text_to_HDF5` but this can be changed easily with `sep` parameter.
+About the delimiter parameter, the tabulation delimiter is taken in to account by default in function `Import_text_to_HDF5` but this can be changed easily with `sep` parameter.
 
 In this example we convert the colesterol.csv file and we will save the data to a file 'colesterol_file.hdf5' under the group 'COLESTEROLGROUP' in the dataset 'COLESTEROLDATASET'. In this example the text file contains column names so we set the parameter `header = TRUE`. 
 
 ```{r convert_HDF5}
 
-Convert_text_to_HDF5("colesterol.csv", ',', 
+Import_text_to_HDF5("colesterol.csv", ',', 
                      outputfile = "colesterol_file.hdf5", outGroup = "COLESTEROLGROUP", outDataset = "COLESTEROLDATASET", 
                      header = TRUE)
 
@@ -256,7 +256,7 @@ We can overwrite an existing dataset with new data from 'colesterol_new.csv' fil
 
 ```{r overwrite_HDF5}
 
-Convert_text_to_HDF5("colesterol_new.csv", ',', 
+Import_text_to_HDF5("colesterol_new.csv", ',', 
                      outputfile = "colesterol_file.hdf5", outGroup = "COLESTEROLGROUP", outDataset = "COLESTEROLDATASET", 
                      header = TRUE, overwrite = TRUE)
 
@@ -433,7 +433,7 @@ n <- 500
 m <- 600
 B <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Create_HDF5_matrix(B, filename = 'robjects.hdf5', group="INPUT", dataset = "B2")
+Add_HDF5_matrix(B, filename = 'robjects.hdf5', group="INPUT", dataset = "B2")
 
 # Get Crossprod with two matrix
 res <- Crossprod_hdf5(filename = 'robjects.hdf5', group="INPUT", A="A", 
@@ -506,7 +506,7 @@ n <- 500
 m <- 600
 B <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Create_HDF5_matrix(B, filename = 'robjects.hdf5', group="INPUT", dataset = "B3")
+Add_HDF5_matrix(B, filename = 'robjects.hdf5', group="INPUT", dataset = "B3")
 
 # Get Crossprod with two matrix
 res <- tCrossprod_hdf5(filename = 'robjects.hdf5', group="INPUT", A="A", 
@@ -579,7 +579,7 @@ n <- 150000
 m <- 50
 odata <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Create_HDF5_matrix(odata, "delayed.hdf5", "OMICS", "data")
+Add_HDF5_matrix(odata, "delayed.hdf5", "OMICS", "data")
 
 # Direct from hdf5 data file
 svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data")
@@ -729,7 +729,7 @@ We first simulate a genotype matrix with 0, 1, 2 and 3 and store it in hdf5 file
 ```{r snpgenotype}
 set.seed(108432)
 geno.sim <- matrix(sample(0:3, 10000, replace = TRUE), byrow = TRUE, ncol = 10)
-Create_HDF5_matrix(geno.sim, "delayed.hdf5", "OMICS", "geno")
+Add_HDF5_matrix(geno.sim, "delayed.hdf5", "OMICS", "geno")
 
 # Get data and show the first 5 rows
 h5fsvd = H5Fopen("delayed.hdf5")
