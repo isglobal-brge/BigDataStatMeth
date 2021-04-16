@@ -22,34 +22,34 @@ This package implements basic Algebra methods using parallel algorithms to be us
      - Supervised and non-supervised algorithms
 
 
-## Implemented functionsFunctions
+## Implemented Functions
  
-|                                                     |                        **R Function**                   |**Delayed arrays**|**By blocks**|**Parallel**| **HDF5**|
-|-----------------------------------------------------|:-------------------------------------------------------:|----------------|:---------:|----------|------|
-| **Basic functions with vectors and matrices**       |                                                         |                |           |          |      |
-| Matrix Product                                      |             blockmult(…) / blockmult_hdf5(…)            |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
-| Sparse Matrix Product                               |      blockmult_sparse(…) / blockmult_sparse_hdf5(…)     |                |           |          |   ✔︎  |
-| Matrix product with its transpose                   | bdcrossprod(…) / Crossprod_hdf5(…) / tCrossprod_hdf5(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
-| Matrix vector product                               |                                                         |        ✔︎       |     ✔︎     |     ✔︎    |      |
-| Matrix weighted product (XwXt, XtwX)                |           bdwproduct(…) / bdScalarwproduct(…)           |        ✔︎       |           |          |      |
-| Data Normalization (center, scale and both)         |          Normalize_Data(…) / Normalize_hdf5(…)          |        ✔︎       |     ✔︎     |          |   ✔︎  |
-| **Other functions**                                 |                                                         |                |           |          |      |
-| Vector sum                                          |                                                         |                |           |          |      |
-| Pow vector elements                                 |                                                         |                |           |          |      |
-| **Lineal Algebra Functions**                        |                                                         |                |           |          |      |
-| SVD matrix decomposition                            |                 bdSVD(…) / bdSVD_hdf5(…)                |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
-| QR matrix decomposition                             |                         bdQR(…)                         |        ✔︎       |           |          |      |
-| Cholesky decomposition                              |                     bdInvCholesky(…)                    |        ✔︎       |           |          |      |
-| Matrix Pseudoinverse                                |                      bdpseudoinv(…)                     |        ✔︎       |           |          |      |
-| Solve matrix equation                               |                        bddtrsm(…)                       |        ✔︎       |           |          |      |
-| **Data Analysis**                                   |                                                         |                |           |          |      |
-| Principal Components Analysis (PCA)                 |                      bdPCA_hdf5(…)                      |                |     ✔︎     |          |   ✔︎  |
-| MLR-MR (Linear Regression Big Data)                 |                       bdMLR_MR(…)                       |        ✔︎       |     ✔︎     |     ✔︎    |      |
-| **Utils for Data in HDF5 data files**               |                                                         |                |           |          |      |
-| Remove rows or columns with hight missing values    |                    bdRemovelowdata(…)                   |                |     ✔︎     |          |   ✔︎  |
-| Impute missing data                                 |                    bdImputeSNPHDF5(…)                   |                |     ✔︎     |          |   ✔︎  |
-| Create hdf5 datasets from MultiAssayExperiment List |                                                         |                |           |          |   ✔︎  |
-| **Utils with HDF5 data files**                      |                                                         |                |           |          |      |
-| Create hdf5 data file with one dataset inside       |                Create_HDF5_matrix_file(…)               |                |           |          |   ✔︎  |
-| Add one dataset in hdf5 data file                   |                  Create_HDF5_matrix(…)                  |                |           |          |   ✔︎  |
-| Remove one dataset from hdf5 data file              |                  Remove_HDF5_element(…)                 |                |           |          |   ✔︎  |
+|                                                  |                        R Function                       | Delayed arrays | By blocks | Parallel | HDF5 |
+|--------------------------------------------------|:-------------------------------------------------------:|----------------|:---------:|----------|------|
+| **Basic functions with vectors and matrices**    |                                                         |                |           |          |      |
+| Matrix Product                                   |             blockmult(…) / blockmult_hdf5(…)            |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
+| Sparse Matrix Product                            |      blockmult_sparse(…) / blockmult_sparse_hdf5(…)     |                |           |          |   ✔︎  |
+| Matrix product with its transpose                | bdcrossprod(…) / Crossprod_hdf5(…) / tCrossprod_hdf5(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
+| Matrix - Matrix weighted product (XWXt, XtWX)    |      tCrossprod_Weighted(…) / Crossprod_Weighted(…)     |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
+| Matrix - vector weighted product (XwXt, XtwX)    |           bdwproduct(…) / bdScalarwproduct(…)           |        ✔︎       |           |          |      |
+| Matrix vector product                            |                   blockmult_vector(…)                   |        ✔︎       |     ✔︎     |     ✔︎    |      |
+| Data Normalization (center, scale and both)      |          Normalize_Data(…) / Normalize_hdf5(…)          |        ✔︎       |     ✔︎     |          |   ✔︎  |
+| **Other functions**                              |                                                         |                |           |          |      |
+| Vector sum                                       |                   parallelVectorSum(…)                  |                |           |     ✔︎    |      |
+| Pow(2) vector elements                           |                     parallelpow2(…)                     |                |           |     ✔︎    |      |
+| **Lineal Algebra Functions**                     |                                                         |                |           |          |      |
+| SVD matrix decomposition                         |                 bdSVD(…) / bdSVD_hdf5(…)                |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
+| QR matrix decomposition                          |                         bdQR(…)                         |        ✔︎       |           |          |      |
+| Cholesky decomposition                           |                     bdInvCholesky(…)                    |        ✔︎       |           |          |      |
+| Matrix Pseudoinverse                             |                      bdpseudoinv(…)                     |        ✔︎       |           |          |      |
+| Solve matrix equation (A * X = B )               |                        bdSolve(…)                       |        ✔︎       |           |          |      |
+| **Data Analysis**                                |                                                         |                |           |          |      |
+| Principal Components Analysis (PCA)              |                      bdPCA_hdf5(…)                      |                |     ✔︎     |          |   ✔︎  |
+| MLR-MR (Linear Regression Big Data)              |                       bdMLR_MR(…)                       |        ✔︎       |     ✔︎     |     ✔︎    |      |
+| **HDF5 data files Utils**                        |                                                         |                |           |          |      |
+| Remove rows or columns with hight missing values |                    bdRemovelowdata(…)                   |                |     ✔︎     |          |   ✔︎  |
+| Impute missing data                              |                    bdImputeSNPHDF5(…)                   |                |     ✔︎     |          |   ✔︎  |
+| Create hdf5 data file with one dataset inside    |                Create_HDF5_matrix_file(…)               |                |           |          |   ✔︎  |
+| Add one dataset in hdf5 data file                |                  Create_HDF5_matrix(…)                  |                |           |          |   ✔︎  |
+| Remove one dataset from hdf5 data file           |                  Remove_HDF5_element(…)                 |                |           |          |   ✔︎  |
+| Import data from text file to HDF5               |                 Convert_text_to_HDF5(…)                 |                |           |          |   ✔︎  |
