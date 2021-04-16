@@ -357,7 +357,7 @@ matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4, 42, 23, 
 matC <- matrix(c(14,23,13,12,12,10,9,8,30,6,5,4,37,2,1), nrow = 3, byrow = TRUE)
 
 Create_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-Create_HDF5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+Add_HDF5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
 
 res <- BigDataStatMeth::Crossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
 res2 <- BigDataStatMeth::Crossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", "INPUT","matB", block_size = 3)

@@ -18,7 +18,7 @@
    
    
    // R functions
-   int Convert_text_to_HDF5( Rcpp::CharacterVector filename, 
+   int Import_text_to_HDF5( Rcpp::CharacterVector filename, 
                              std::string outputfile, std::string outGroup, std::string outDataset, 
                              Rcpp::Nullable<std::string> sep, 
                              Rcpp::Nullable<bool> header ,

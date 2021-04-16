@@ -175,10 +175,10 @@ matBD <- DelayedArray(matB)
 
 Create_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matAA")
 #..# Create_HDF5_matrix_file("BasicMatVect.hdf5", matAD, "INPUT", "matA")
-Create_HDF5_matrix(matBD, "BasicMatVect.hdf5", "INPUT", "matB")
-Create_HDF5_matrix(matAD, "BasicMatVect.hdf5", "INPUT", "matA")
+Add_HDF5_matrix(matBD, "BasicMatVect.hdf5", "INPUT", "matB")
+Add_HDF5_matrix(matAD, "BasicMatVect.hdf5", "INPUT", "matA")
 #..# Create_HDF5_matrix(matA, "BasicMatVect.hdf5", "INPUT", "matAA")
-Create_HDF5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matBB")
+Add_HDF5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matBB")
 
 BigDataStatMeth::blockmult_hdf5("BasicMatVect.hdf5", "INPUT","matA","matB")
 BigDataStatMeth::blockmult_hdf5("BasicMatVect.hdf5", "INPUT","matAA","matBB")

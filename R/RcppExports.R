@@ -174,8 +174,8 @@ tCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_s
 #' @param overwrite (optional) either a logical value indicating whether the output file can be overwritten or not.
 #' 
 #' @export
-Convert_text_to_HDF5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE) {
-    .Call('_BigDataStatMeth_Convert_text_to_HDF5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite)
+Import_text_to_HDF5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE) {
+    .Call('_BigDataStatMeth_Import_text_to_HDF5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite)
 }
 
 #' Impute SNPs in hdf5 omic dataset 
@@ -736,14 +736,14 @@ bddtrsm <- function(R, Z, threads = NULL) {
 #' Creates a hdf5 file with numerical data matrix,
 #' 
 #' @param filename, character array indicating the name of the file to create
-#' @param mat numerical data matrix
+#' @param object numerical data matrix
 #' @param group, character array indicating folder name to put the matrix in hdf5 file
 #' @param dataset, character array indicating the dataset name to store the matix data
 #' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 #' @return none
 #' @export
-Create_HDF5_matrix_file <- function(filename, mat, group = NULL, dataset = NULL, transp = NULL) {
-    .Call('_BigDataStatMeth_Create_HDF5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, mat, group, dataset, transp)
+Create_HDF5_matrix_file <- function(filename, object, group = NULL, dataset = NULL, transp = NULL) {
+    .Call('_BigDataStatMeth_Create_HDF5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp)
 }
 
 #' Write matrix to existing hdf5 file
@@ -757,8 +757,8 @@ Create_HDF5_matrix_file <- function(filename, mat, group = NULL, dataset = NULL,
 #' @param transp, boolean if true, data is manipulated in transposed form
 #' @return none
 #' @export
-Create_HDF5_matrix <- function(mat, filename, group, dataset, transp = NULL) {
-    .Call('_BigDataStatMeth_Create_HDF5_matrix', PACKAGE = 'BigDataStatMeth', mat, filename, group, dataset, transp)
+Add_HDF5_matrix <- function(mat, filename, group, dataset, transp = NULL) {
+    .Call('_BigDataStatMeth_Add_HDF5_matrix', PACKAGE = 'BigDataStatMeth', mat, filename, group, dataset, transp)
 }
 
 #' Remove element group or dataset from  hdf5 file

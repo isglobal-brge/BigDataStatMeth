@@ -6,7 +6,7 @@
 \usage{
 Create_HDF5_matrix_file(
   filename,
-  mat,
+  object,
   group = NULL,
   dataset = NULL,
   transp = NULL
@@ -15,7 +15,7 @@ Create_HDF5_matrix_file(
 \arguments{
 \item{filename, }{character array indicating the name of the file to create}
 
-\item{mat}{numerical data matrix}
+\item{object}{numerical data matrix}
 
 \item{group, }{character array indicating folder name to put the matrix in hdf5 file}
 

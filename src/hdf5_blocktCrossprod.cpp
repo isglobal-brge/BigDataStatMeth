@@ -332,7 +332,7 @@ dim(matB)
 # dim(t(matB))
 
 Create_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-Create_HDF5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
+Add_HDF5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
 
 res <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 2)
 res2 <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", "matA", "INPUT","matB", block_size = 2)
