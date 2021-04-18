@@ -13,7 +13,7 @@ PKG_LIBS += -fopenmp
 
 # Beachmat
 # PKG_LIBS += `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(BEACHMAT_LIBS)
-PKG_LIBS += `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(FLIBS) $(BEACHMAT_LIBS)
+#..# PKG_LIBS += `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(FLIBS) $(BEACHMAT_LIBS)
 
 # # omp
 # PKG_CFLAGS = $(SHLIB_OPENMP_FFLAGS)
