@@ -15,7 +15,7 @@ Eigen::SparseMatrix<double> matmult_sparse_parallel ( Eigen::Map<Eigen::SparseMa
 {
   
   int ii;
-  int chunk = 1, tid, iblocks;
+  int tid, iblocks; // chunk = 1,
   int ithreads;
   int M = A.rows(), N = B.cols();
   

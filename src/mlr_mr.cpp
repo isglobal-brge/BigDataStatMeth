@@ -10,7 +10,7 @@ using namespace Rcpp;
 Eigen::MatrixXd Rcpp_mlr_mr(Eigen::MatrixXd x, Eigen::MatrixXd y, int iblocks, Rcpp::Nullable<int> threads  = R_NilValue )
 {
   
-  int chunk = 1, tid;
+  int chunk = 1; // , tid;
   unsigned int ithreads;
   int irows =  x.rows(), 
       icols = x.cols();

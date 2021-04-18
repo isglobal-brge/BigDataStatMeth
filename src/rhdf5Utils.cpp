@@ -490,6 +490,8 @@ extern "C" {
     {
       Exception::dontPrint();
       
+      herr_t status;
+      
       hsize_t     dimsf[2];              // dataset dimensions
       dimsf[0] = rows;
       dimsf[1] = cols;
@@ -505,7 +507,7 @@ extern "C" {
       chunk_dims[1] = cols;
       
       cparms = H5Pcreate(H5P_DATASET_CREATE);
-      herr_t status = H5Pset_chunk( cparms, RANK2, chunk_dims);
+      status = H5Pset_chunk( cparms, RANK2, chunk_dims);
       
       // Create dataset
       if( strdatatype == "int") {
@@ -551,6 +553,8 @@ extern "C" {
     {
       Exception::dontPrint();
       
+      herr_t status;
+      
       hsize_t     dimsf[1];              // dataset dimensions
       dimsf[0] = length;
       hid_t cparms; 
@@ -564,7 +568,7 @@ extern "C" {
       chunk_dims[0] = length;
       
       cparms = H5Pcreate(H5P_DATASET_CREATE);
-      herr_t status = H5Pset_chunk( cparms, RANK1, chunk_dims);
+      status = H5Pset_chunk( cparms, RANK1, chunk_dims);
       
       // Create dataset
       if( strdatatype == "int") {
@@ -572,6 +576,8 @@ extern "C" {
         DataSet dataset = file->createDataSet( CDatasetName, datatype, dataspace, cparms);
         dataset.close();
       } else if( strdatatype == "char" | strdatatype == "character") {
+        
+        
         
         // define name struct
         typedef struct name {
@@ -581,7 +587,7 @@ extern "C" {
         DataSpace dataspace(RANK1, chunk_dims);
         
         cparms = H5Pcreate(H5P_DATASET_CREATE);
-        herr_t status = H5Pset_chunk( cparms, RANK1, chunk_dims);
+        status = H5Pset_chunk( cparms, RANK1, chunk_dims);
         
         // Create the memory datatype.
         H5::CompType mtype(sizeof(name));
@@ -625,15 +631,17 @@ extern "C" {
     {
       Exception::dontPrint();
       
+      int rank, ndims;
+      
       // Get dataspace from dataset
       DataSpace dataspace = dataset->getSpace();
       
       // Get the number of dimensions in the dataspace.
-      int rank = dataspace.getSimpleExtentNdims();
+      rank = dataspace.getSimpleExtentNdims();
       
       // Get the dimension size of each dimension in the dataspace and
       hsize_t dims_out[2];
-      int ndims = dataspace.getSimpleExtentDims( dims_out, NULL);
+      ndims = dataspace.getSimpleExtentDims( dims_out, NULL);
       
       // Create new dataset size from new dims and old dims
       hsize_t   newdims[2];
@@ -677,17 +685,19 @@ extern "C" {
     {
       Exception::dontPrint();
       
+      int rank, ndims;
+      
       // Get dataspace from dataset
       DataSpace dataspace = dataset->getSpace();
       
       Rcpp::Rcout<<"\n\tExtenem - 2 \n";
       
       // Get the number of dimensions in the dataspace.
-      int rank = dataspace.getSimpleExtentNdims();
+      rank = dataspace.getSimpleExtentNdims();
       
       // Get the dimension size of each dimension in the dataspace and
       hsize_t dims_out[1];
-      int ndims = dataspace.getSimpleExtentDims( dims_out, NULL);
+      ndims = dataspace.getSimpleExtentDims( dims_out, NULL);
       
       // Create new dataset size from new dims and old dims
       hsize_t   newdims[1];
@@ -2429,6 +2439,7 @@ IntegerVector get_HDF5_dataset_size(DataSet dataset)
   // Get dataspace from dataset
   DataSpace dataspace = dataset.getSpace();
   IntegerVector dims;
+  int ndims;
   
   // Get the number of dimensions in the dataspace.
   int rank = dataspace.getSimpleExtentNdims();
@@ -2436,7 +2447,7 @@ IntegerVector get_HDF5_dataset_size(DataSet dataset)
   // Get the dimension size of each dimension in the dataspace and
   // display them.
   hsize_t dims_out[2];
-  int ndims = dataspace.getSimpleExtentDims( dims_out, NULL);
+  ndims = dataspace.getSimpleExtentDims( dims_out, NULL);
   
   if(rank==1)
     dims = IntegerVector::create( static_cast<int>(dims_out[0]), static_cast<int>(1));
@@ -2455,7 +2466,6 @@ IntegerVector get_HDF5_dataset_size(DataSet dataset)
  *  Slot : path
  *  Objects ? Matrixs inside file??
  *  Size : Size of each object
- *  Dimnames ?? Write dimnames ??
  *  
  * Write all data inside a list for each object ??!!!
 */

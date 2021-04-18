@@ -212,7 +212,7 @@ Rcpp::List tCrossprod_Weighted(Rcpp::RObject a, Rcpp::RObject w,
                                Rcpp::Nullable<int> threads = R_NilValue )
 {
   
-  int iblock_size, res;
+  int iblock_size;
   bool bparal; 
 
   Eigen::MatrixXd A;

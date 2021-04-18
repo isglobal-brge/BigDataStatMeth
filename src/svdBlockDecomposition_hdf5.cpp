@@ -17,14 +17,14 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
   bool transp = false;
   std::string strGroupName  = "tmpgroup";
   Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2,icols);
-  int cummoffset;
+  int cummoffset, ret;
   DataSet* normalizedData;
   
 
   if( exists_HDF5_element_ptr(file,strGroupName))
     remove_HDF5_element_ptr(file,strGroupName);
 
-  int ret = create_HDF5_group_ptr(file, strGroupName);
+  ret = create_HDF5_group_ptr(file, strGroupName);
   
   try{
     
