@@ -2,16 +2,14 @@
 #define mlr_mr
 
   #include <RcppEigen.h>
-  #include "H5Cpp.h"
+  #include <omp.h>
+  #include <thread>
   #include "rhdf5Utils.h"
   #include "matrix_utilities.h"
   #include "parallelBlockMult_hdf5.h"
   #include "svdDecomposition.h"
   #include "qrdecomp.h"
-  #include <omp.h>
-  #include <thread>
-
-
+  
 // functions called from c++
   Eigen::MatrixXd Rcpp_mlr_mr(Eigen::MatrixXd x, Eigen::MatrixXd y, int iblocks, Rcpp::Nullable<int> threads );
   //..// Rcpp::RObject Rcpp_mlr_mr(Eigen::MatrixXd x, Eigen::MatrixXd y, int iblocks, Rcpp::Nullable<int> threads );

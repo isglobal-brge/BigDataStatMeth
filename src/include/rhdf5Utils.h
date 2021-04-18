@@ -4,12 +4,13 @@
   #include <RcppEigen.h>
   #include <iostream>
   #include <string>
-  #include "H5Cpp.h"
-  #include <sys/stat.h>
-  #include "ReadDelayedData.h"
-  #include "hdf5_to_Eigen.h"
   #include <boost/algorithm/string.hpp>
   #include <fstream>
+  #include <sys/stat.h>
+  #include "H5Cpp.h"
+  #include "ReadDelayedData.h"
+  #include "hdf5_to_Eigen.h"
+  
 
   // [[Rcpp::depends(RcppEigen)]]
 

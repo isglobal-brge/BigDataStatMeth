@@ -2,7 +2,6 @@
 #define hdf5_bloctCrossprod
 
   #include <RcppEigen.h>
-  #include "H5Cpp.h"
   #include "rhdf5Utils.h"
   #include "parallelBlockMult_hdf5.h"
   

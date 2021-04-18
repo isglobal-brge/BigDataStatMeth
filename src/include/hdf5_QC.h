@@ -1,7 +1,6 @@
 #ifndef hdf5_QC
 
   #include <RcppEigen.h>
-  #include "H5Cpp.h"
   #include "rhdf5Utils.h"
   #include "hdf5_imputation.h"
 

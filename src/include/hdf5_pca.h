@@ -2,11 +2,10 @@
 #define hdf5_pca
 
   #include <RcppEigen.h>
-  #include "H5Cpp.h"
   #include "matrix_utilities.h"
   #include "svdDecomposition.h"
   #include "optimizedproduct.h"
-  #include "hdf5_to_Eigen.h"
+//   #include "hdf5_to_Eigen.h"
   #include "rhdf5Utils.h"
   #include "parallelBlockMult_hdf5.h"
   

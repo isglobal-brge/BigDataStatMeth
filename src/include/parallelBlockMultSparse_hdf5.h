@@ -3,13 +3,13 @@
 
   #include <RcppEigen.h>
   #include <Eigen/Sparse>
-  #include "H5Cpp.h"
-  #include "rhdf5Utils.h"
-  #include "hdf5_to_Eigen.h"
   #include <omp.h>
   #include <thread>
   #include <cstdlib>
   #include <cmath>
+  #include "rhdf5Utils.h"
+  // #include "hdf5_to_Eigen.h"
+  
   
 
   // C++ functions 

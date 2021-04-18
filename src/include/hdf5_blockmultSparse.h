@@ -3,10 +3,9 @@
 
    #include <RcppEigen.h>
    #include <Eigen/Sparse>
-   #include "H5Cpp.h"
    #include "parallelBlockMult_hdf5.h"
    #include "utils_sparse.h"
-   #include "hdf5_to_Eigen.h"
+   // #include "hdf5_to_Eigen.h"
    #include "rhdf5Utils.h"
 
 

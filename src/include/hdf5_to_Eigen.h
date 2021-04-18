@@ -3,7 +3,6 @@
 
 
   #include <RcppEigen.h>
-  #include "H5Cpp.h"
   #include "rhdf5Utils.h"
 
   // [[Rcpp::depends(RcppEigen)]]

@@ -4,7 +4,6 @@
   #include <RcppEigen.h>
   #include "beachmat/numeric_matrix.h"  // To access numeric matrix
   #include "beachmat/integer_matrix.h"  // To access numeric matrix
-  #include "H5Cpp.h"
   #include "rhdf5Utils.h"
 
   using namespace H5;

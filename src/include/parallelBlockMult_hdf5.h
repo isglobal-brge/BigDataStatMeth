@@ -2,17 +2,15 @@
 #define parallelBlockMult_hdf5
 
   #include <RcppEigen.h>
-//  #include <Eigen/Sparse>
-  #include "ReadDelayedData.h"
-  #include "H5Cpp.h"
-  #include "rhdf5Utils.h"
-  #include "hdf5_to_Eigen.h"
   #include <cstdlib>
   #include <cmath>
   #include <omp.h>
   #include <thread>
+  #include "ReadDelayedData.h"
+  #include "rhdf5Utils.h"
+  // #include "hdf5_to_Eigen.h"
+  //  #include <Eigen/Sparse>
   
-
   
   /*** TODO : 
       Simplify all this functions 
