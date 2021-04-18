@@ -34,7 +34,9 @@ Suggests:
     knitr,
     rhdf5,
     rmarkdown
-SystemRequirements: GNU make
+SystemRequirements: 
+    GNU make, 
+    C++11
 Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
