@@ -727,7 +727,7 @@ extern "C" {
     
   }
   
-
+/*
   int write_HDF5_matrix(H5std_string filename, const std::string CDatasetName, RObject DatasetValues)
   {
     try
@@ -798,7 +798,7 @@ extern "C" {
     
     return 0;
   }
-  
+*/  
   
   int write_HDF5_matrix_ptr(H5File* file, const std::string CDatasetName, RObject DatasetValues)
   {
@@ -2042,14 +2042,14 @@ H5FilePtr Open_hdf5_file(const std::string& fname)
 //' Creates a hdf5 file with numerical data matrix,
 //' 
 //' @param filename, character array indicating the name of the file to create
-//' @param mat numerical data matrix
+//' @param object numerical data matrix
 //' @param group, character array indicating folder name to put the matrix in hdf5 file
 //' @param dataset, character array indicating the dataset name to store the matix data
 //' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject mat, 
+Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject object, 
                             Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue,
                             Rcpp::Nullable<bool> transp = R_NilValue)
 {
@@ -2073,7 +2073,7 @@ Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject mat,
     if(transp.isNull())  transposed = false ;
     else    transposed = Rcpp::as<bool>(transp);
     
-    if ( mat.sexp_type()==0   )
+    if ( object.sexp_type()==0   )
       throw std::range_error("Data matrix must exsits and mustn't be null");
     
     
@@ -2084,12 +2084,12 @@ Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject mat,
     file = new H5File( filename, H5F_ACC_TRUNC );
     create_HDF5_group_ptr(file, strsubgroup);
 
-    if ( mat.isS4() == true)    
+    if ( object.isS4() == true)    
     {
       //..// write_DelayedArray_to_hdf5(filename, strsubgroup + "/" + strdataset, mat);
-      write_DelayedArray_to_hdf5_ptr(file, strsubgroup + "/" + strdataset, mat, transposed);
+      write_DelayedArray_to_hdf5_ptr(file, strsubgroup + "/" + strdataset, object, transposed);
       // Get attribs from DelayedArray Object
-      RObject S4content = mat.slot("seed");
+      RObject S4content = object.slot("seed");
       // Get dimnames attribs 
       dimnames = S4content.attr("dimnames");
       
@@ -2097,18 +2097,18 @@ Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject mat,
       
       try{  
         
-        //DEBUG : Rcpp::Rcout<<"\n typeof : "<<TYPEOF(mat)<<"\n";
+        //DEBUG : Rcpp::Rcout<<"\n typeof : "<<TYPEOF(object)<<"\n";
         
-        if ( TYPEOF(mat) == INTSXP ) {
-          //..// write_HDF5_matrix_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<IntegerMatrix>(mat));
-          write_HDF5_matrix_from_R_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<IntegerMatrix>(mat), transposed);
+        if ( TYPEOF(object) == INTSXP ) {
+          //..// write_HDF5_matrix_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<IntegerMatrix>(object));
+          write_HDF5_matrix_from_R_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<IntegerMatrix>(object), transposed);
         } else{
           //..// write_HDF5_matrix_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(mat));
-          write_HDF5_matrix_from_R_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(mat), transposed);
+          write_HDF5_matrix_from_R_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(object), transposed);
         }
         
         // Get dimnames from R matrix object
-        dimnames = mat.attr( "dimnames" );
+        dimnames = object.attr( "dimnames" );
         
       }
       catch(std::exception &ex) { }
@@ -2168,7 +2168,7 @@ Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject mat,
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Create_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue )
+Rcpp::RObject Add_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue )
 {
     
   H5File* file;
@@ -2506,7 +2506,7 @@ geno[1:5,1:5]
 
 
 # Creem el fitxer amb la matriu
-Create_HDF5_matrix_file("prova2.hdf5", A, "INPUT", "A")
+Add_HDF5_matrix("prova2.hdf5", A, "INPUT", "A")
 
 
 

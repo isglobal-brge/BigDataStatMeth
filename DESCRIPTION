@@ -17,10 +17,7 @@ Depends:
 Imports: 
     Rcpp (>= 1.0.6), 
     RcppEigen (>= 0.3.3.5.0), 
-    RcppParallel (>= 5.0.2),
-    ggplot2,
-    DT,
-    microbenchmark
+    RcppParallel (>= 5.0.2)
 LinkingTo: 
     Rcpp,
     RcppEigen,

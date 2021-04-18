@@ -67,7 +67,7 @@
   
   extern "C" int Create_hdf5_file(std::string filename);
   extern "C" int create_HDF5_matrix(H5std_string filename, const std::string DatasetName, RObject DatasetValues);
-  extern "C" int write_HDF5_matrix(H5std_string filename, const std::string CDatasetName, RObject DatasetValues);
+  /*extern "C" int write_HDF5_matrix(H5std_string filename, const std::string CDatasetName, RObject DatasetValues);*/
   extern "C" int write_HDF5_matrix_ptr(H5File* file, const std::string CDatasetName, RObject DatasetValues);
   extern "C" int write_HDF5_matrix_transposed_ptr(H5File* file, const std::string CDatasetName, RObject DatasetValues);
   extern "C" int write_HDF5_matrix_from_R_ptr(H5File* file, const std::string CDatasetName, RObject DatasetValues, bool transposed);
