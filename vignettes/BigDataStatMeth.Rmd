@@ -19,7 +19,7 @@ output:
     toc_float: true
   BiocStyle::html_document: default
 abstract: |
-  Description of functions to perform matrix operations, algebra and some statistical models using _DelayedMatrix_ objects and HDF5 data files.
+  Description of functions to perform matrix operations, algebra and some statistical models using _DelayedMatrix_ and _Matrix_ objects.
 vignette: |
   %\VignetteIndexEntry{Algebra and Statistical Methods for Big Data with Bioconductor}
   %\VignetteEncoding{UTF-8}

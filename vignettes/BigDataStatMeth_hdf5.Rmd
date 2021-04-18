@@ -39,8 +39,8 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "", cache = TRUE, message = FAL
 if( isTRUE(file.exists('delayed.hdf5'))) {
     file.remove('delayed.hdf5')
 }
-if( isTRUE(file.exists('robjects.hdf5'))){
-    file.remove('robjects.hdf5')
+if( isTRUE(file.exists('robject.hdf5'))){
+    file.remove('robject.hdf5')
 }
 if( isTRUE(file.exists('colesterol_file.hdf5'))){
     file.remove('colesterol_file.hdf5')
@@ -50,20 +50,45 @@ if( isTRUE(file.exists('tmp_blockmult.hdf5'))){
 }
 ```
 
-<!--
-```{r r_setup, include = FALSE}
-options(width = 180)
-```
--->
-# Prerequisites
-
-The package requires other `Bioconductor` packages to be installed. These include: `beachmat`, `HDF5Array`,
-`DelayedArray`, `rhdf5`. Other required R packages are: `Matrix`,
-`RcppEigen` and `RSpectra`. 
-
 # Overview
 
-This package implements seveal matrix operations using `DelayMatrix` objects and HDF5 data files as well as some basic algebra operations that can be used to carry out some statistical analyses using standard methodologies such as principal component analyses or least squares estimation. The package also contains specific statatistical method mainly used in `omic` data analysis such as lasso regression. 
+This package implements several matrix operations using `Matrix` and `DelayMatrix` objects as well as HDF5 data files. Some basic algebra operations that can also be computed that are useful to implement  statistical analyses using standard methodologies such as principal component analyses (PCA) or least squares estimation. The package also contains specific statistical methods mainly used in `omic` data analysis such as lasso regression. All procedures to work with objects loaded in memory can be found in [BigDataStatMeth_memory]() vignette.
+
+
+# Prerequisites
+
+The package requires other packages from `CRAN` and `Bioconductor` to be installed. 
+
+- `CRAN`: `Matrix`, `RcppEigen` and `RSpectra`.
+- `Bioconductor`: `beachmat`, `DelayedArray` 
+
+Dealing with [hdf5 files](https://www.hdfgroup.org/solutions/hdf5/) requires: `HDF5Array`, `rhdf5`. The user can execute this code to install the required packages:
+
+```{r install_required, eval=FALSE}
+BiocManager::install(c("Matrix", "RcppEigen", "Spectra",
+                       "beachmat", "DelayedArray",
+                       "HDF5array", "rhdf5"))
+```
+
+
+Our package needs to be installed from source code. In such cases, a collection of software (e.g. C, C++, Fortran, ...) are required, mainly for Windows users. So, beThese programs can be installed using [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+
+
+
+# Install package
+
+Once required packages and Rtools are installed, `BigDataStatMeth` package can be installed from our GitHub repository as follows:
+
+```{r, install, eval=FALSE}
+# Install devtools and load library (if not previously installed)
+install.packages("devtools") 
+library(devtools)
+
+# Install BigDataStatMeth and load package
+install_github("isglobal-brge/BigDataStatMeth@HEAD")
+library(BigDataStatMeth)
+```
+
 
 # Getting started
 
@@ -72,7 +97,6 @@ First, let us start by loading the required packages to describe the main capabi
 ```{r, load}
 library(BigDataStatMeth)
 library(rhdf5)
-library(DT)
 ```
 
 These other packages are required to reproduce this vignette
@@ -93,7 +117,7 @@ There is no limit on the number or size of data objects in the collection, givin
 
 HDF5 file structure include only *two major types of object*:
 
-- `Datasets`, which are multidimensional arrays of a homogeneous type, in datasets we can store omics data  associated to genomics, transcriptomics, epigonomics, proteomics, metabolomics experiments
+- `Datasets`, which are multidimensional arrays of a homogeneous type. For example, datasets for omics data could be to genomics, transcriptomics, epigenomics, proteomics and/or metabolomics experiments
 
 - `Groups`, which are container structures which can hold datasets and other groups
 
@@ -108,7 +132,7 @@ knitr::include_graphics("imgs/hdf5_squema.jpg")
 
 **Create hdf5 file**
 
-The `Create_HDF5_matrix_file` function implemented in this package creates an hdf5 file with a group and a dataset in one step. This function allows to create datasets from `DelayedMAtrix` objects using `beachmat` library as well as standard R matrices from matrix object.
+We have implemented the `Create_HDF5_matrix_file ()` function to create an hdf5 file with a group and a dataset in a single step. This function allows to create datasets from `DelayedMAtrix` objects using `beachmat` library as well as standard R matrices from `Matrix` objects.
 
 ```{r hdf5Create}
 library(rhdf5)
@@ -119,42 +143,46 @@ m <- 600
 A <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
 # We also can create a dataset from R matrix object
-Create_HDF5_matrix_file("robjects.hdf5", A, "INPUT", "A")
+Create_HDF5_matrix_file("robject.hdf5", A, "INPUT", "A")
 ```
+
+We see 0 in the console, indicating that no errors where found when creating the hdf5 file. Notice that a file called "robject.hdf5" will be created in the working directory
+
+```{r ls}
+dir()
+```
+
 
 **Add datasets in hdf5 file**
 
-The `Add_HDF5_matrix` allows to create a dataset in existing file. We can create the dataset in any group, if group doesn't exists in file, the group is created before append the dataset. The object could be an R object or a DelayedArray object.
+The function `Add_HDF5_matrix ()` allows to add a dataset in a existing hdf5 file. We can create the dataset in any group, if group doesn't exists in file, the group is created before append the dataset. The object can be either an R object or a `DelayedArray` object.
 
 ```{r hdf5AddDataset}
-
 set.seed(5234)
 n <- 100
 m <- 10000
-A <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
+A <- matrix(rnorm(n*m,mean=0,sd=1), n, m)
 
 set.seed(5234)
 n <- 50
 m <- 12000
-B <- matrix(rnorm(n*m,mean=3,sd=0.5), n,m)
+B <- matrix(rnorm(n*m,mean=3,sd=0.5), n, m)
 
-# Now, we create anothre data file with matrix A naemed delayed.hdf5
-Create_HDF5_matrix_file("delayed.hdf5", A, "INPUT", "A");
+# We create another data file (delayed.hdf5) with a matrix A.
+# The group is called INPUT
+Create_HDF5_matrix_file("delayed.hdf5", A, "INPUT", "A")
 
-# And now, we create dataframe B with B matrix in delayed.hdf5 file at INPUT group
-Add_HDF5_matrix(B, "delayed.hdf5", "INPUT", "B");
-
+# And them, we add another matrix B to the same group
+Add_HDF5_matrix(B, "delayed.hdf5", "INPUT", "B")
 ```
 
 **Create transposed matrix in hdf5 file**
 
-The function `Add_HDF5_matrix` allows to create a dataset with a transposed matrix with the parameter `transpose = TRUE``, for example, we can add a dataset in hdf5 with the B transposed matrix with : 
+The function `Add_HDF5_matrix ()` also allows to create a dataset with a transposed matrix with the parameter `transpose = TRUE`.  For example, we can add a dataset in hdf5 with the B transposed matrix with : 
 
 ```{r hdf5AddtransposedDataset}
-
 # Create dataset BTransposed with B transposed matrix in delayed.hdf5 file at INPUT group
 Add_HDF5_matrix(B, "delayed.hdf5", "INPUT", "BTransposed", transp = TRUE);
-
 ```
 
 
@@ -162,127 +190,129 @@ Add_HDF5_matrix(B, "delayed.hdf5", "INPUT", "BTransposed", transp = TRUE);
 
 We can open an existing file show contents and access data using functions from `rhdf5` package. `rhdf5` is an R interface for HDF5. The file must always be opened before working with it.
 
-With `htls` function we get the the list of an hdf5 content before open the file.
+With `htls ()` function we get the the list of an hdf5 content without the need of open the file.
 
 ```{r hdf5Show}
 # Examine hierarchy before open file
 h5ls("delayed.hdf5")
 ```
 
-Or we can do it after open the file, in that case, we only get the current level in the hierarchical tree
+Once opened, it can be seen just typing its name. In that case, we only get the current level in the hierarchical tree
 
-```{r hdf5Open}
+```{r hdf5Open, cache=FALSE}
 # Open file
-h5fdelay = H5Fopen("delayed.hdf5")
+h5fdelay <- H5Fopen("delayed.hdf5")
 # Show hdf5 hierarchy (groups)
 h5fdelay
-
 ```
+
+NOTE: We can also use [hdfview](https://www.hdfgroup.org/downloads/hdfview/)
+
+
 
 **Access datasets data**
 
 The \$ operator can be used to access the next group level, this operator reads the object from disk. We can assign the dataset contents to an R object in order to work with it.
 
 ```{r hdf5Dataset}
-Bdata = h5fdelay$INPUT$B
+Bdata <- h5fdelay$INPUT$B
 Bdata[1:3,1:5]
 ```
 
 
 Or we can get the data for the transposed version of this matrix created before 
 ```{r hdf5DatasetTransposed}
-BdataTrans = h5fdelay$INPUT$BTransposed
+BdataTrans <- h5fdelay$INPUT$BTransposed
 BdataTrans[1:5,1:3]
 ```
 
+>
+> IMPORTANT NOTE: This is a very interesting feature. Imaging you wan to compute the mean of each column in the matrix A. If you want to do this in R, you first need to load the file and then use any of the existing functions in R. If A is big, loading all the matrix in R can be inneficient since you actually only need the information in one column
+>
+
+```{r get_pvals}
+out <- sapply(1:100, function(i){
+  mean(h5fdelay$INPUT$A[,i])
+  })
+head(out)
+``` 
+
+
+There are efficient ways of reading a subset of data without the need of reading the entire file. To this end, see this [Practical tips](https://www.bioconductor.org/packages/devel/bioc/vignettes/rhdf5/inst/doc/practical_tips.html). 
+
+
+
 **Close hdf5 file**
 
-After work with hdf5 we always must close the file. We can close only one file with `H5Fclose` function or close all hdf5 opend files with `h5closeAll` function
+After work with hdf5 **the user always must close the file**. We can close only one file with `H5Fclose` function or close all hdf5 opened files with `h5closeAll` function
 
 ```{r hdf5Close}
 # Close delayed.hdf5 file
 H5Fclose(h5fdelay)
 
 # Open 2 files and close all
-h5fdelay = H5Fopen("delayed.hdf5")
-h5fr = H5Fopen("robjects.hdf5")
+h5fdelay <- H5Fopen("delayed.hdf5")
+h5fr <- H5Fopen("robject.hdf5")
 
 h5closeAll()
 ```
 
-More information about working with hdf5 files in r [@rhdf5]
+More information about working with hdf5 files in R can be found in [several vignettes](https://www.bioconductor.org/packages/release/bioc/html/rhdf5.html).
 
 
 # Convert text file to HDF5 
 
-Usually we have files with a great amount of data to be loaded in R but in some cases, R can't deal with this data and can't work with this. In order to resolve this issue, you can work directly from data on disk with datasets stored in an HDF5 data file.
+Usually we have files with a large amount of data to be loaded into R. For Big data problem, R can't deal with this data so we cannot efficiently work with then. In order to resolve this issue, you can work directly from data on disk with datasets stored in an HDF5 data file.
 
-You can easily change your text files to HDF5 using the function `Import_text_to_HDF5`, to do that, we only have to define the input file with the `filename` parameter and the HDF5 destination dataset with parameters `outputfile` for the output file name, `outGroup` with the group to store the dataset and the dataset name with the parameter `outDataset`.
+You can easily change your text files to HDF5 using the function `Import_text_to_HDF5 ()`, to do that, we only have to define the input file with the `filename` parameter and the HDF5 destination dataset with parameters `outputfile` for the output file name, `outGroup` with the group to store the dataset and the dataset name with the parameter `outDataset`. It should be considered that:
 
-This function **only allows to import numeric data except for rownames and columnames where character are allowed**. 
+- This function **only allows to import numeric data except for rownames and columnames where character are allowed**. 
 
-About the delimiter parameter, the tabulation delimiter is taken in to account by default in function `Import_text_to_HDF5` but this can be changed easily with `sep` parameter.
+- Data can be delimited by different characters. By default, we use tabs ("\t") but it can be changed easily with `sep` parameter.
 
-In this example we convert the colesterol.csv file and we will save the data to a file 'colesterol_file.hdf5' under the group 'COLESTEROLGROUP' in the dataset 'COLESTEROLDATASET'. In this example the text file contains column names so we set the parameter `header = TRUE`. 
+In this example we convert the "colesterol.csv" file and we will save the data to a file 'colesterol_file.hdf5' under the group 'COLESTEROLGROUP' in the dataset 'COLESTEROLDATASET'. In this example the text file contains column names so we set the parameter `header = TRUE`. 
 
-```{r convert_HDF5}
-
-Import_text_to_HDF5("colesterol.csv", ',', 
-                     outputfile = "colesterol_file.hdf5", outGroup = "COLESTEROLGROUP", outDataset = "COLESTEROLDATASET", 
-                     header = TRUE)
+```{r convert_HDF5, cache=FALSE}
+Import_text_to_HDF5(filename = "colesterol.csv", 
+                    sep=',', 
+                    outputfile = "colesterol_file.hdf5", 
+                    outGroup = "COLESTEROL", 
+                    outDataset = "COLESTEROLDATA", 
+                    header = TRUE)
 
 ```
 
-If we observe the new file colesterol_file.hdf5 and its content
+If we observe the new file `colesterol_file.hdf5` and its content
 
 
 ```{r read_data_col_HDF5}
 
 h5ls("colesterol_file.hdf5")
 
-# Open 2 files and close all
-h5Colesterol = H5Fopen("colesterol_file.hdf5")
+# We can open the file and have access to the data
+h5Colesterol <- H5Fopen("colesterol_file.hdf5")
 
 # Show hdf5 content dataset
-head(h5Colesterol$COLESTEROLGROUP$COLESTEROLDATASET)
+h5Colesterol$COLESTEROL$COLESTEROLDATA[1:5, 1:6]
 
 # Show colnames 
-head(h5Colesterol$COLESTEROLGROUP$.COLESTEROLDATASET_dimnames$`2`)
+head(h5Colesterol$COLESTEROL$.COLESTEROLDATA_dimnames$`2`)
 
 H5Fclose(h5Colesterol)
 ```
 
-We can overwrite an existing dataset with new data from 'colesterol_new.csv' file, in that case, we will set the `overwrite` parameter as TRUE `overwrite = TRUE`
-
-```{r overwrite_HDF5}
-
-Import_text_to_HDF5("colesterol_new.csv", ',', 
-                     outputfile = "colesterol_file.hdf5", outGroup = "COLESTEROLGROUP", outDataset = "COLESTEROLDATASET", 
-                     header = TRUE, overwrite = TRUE)
-
-```
-
-We can observe that the dataset contains different data
+NOTE: We can overwrite an existing hdf5 file with new data by setting `overwrite = TRUE`
 
 
-```{r read_new_HDF5}
-
-h5ls("colesterol_file.hdf5")
-
-# Open the hdf5 file
-h5Colesterol = H5Fopen("colesterol_file.hdf5")
-
-# Show hdf5 content dataset
-head(h5Colesterol$COLESTEROLGROUP$COLESTEROLDATASET)
-
-H5Fclose(h5Colesterol)
-```
 
 
-Now we can operate directly from disk using the datasets in the hdf5 data file
+
+# Operation with HDF5 files
+
+Once our data are available as hdf5 files, we can operate directly on it without having data on memory (i.e we have acces from disk. In `BigDataStatMeth` we have implemented most of the common matrix operations and algebra functions to help users how are not familiar with this type of implementation. Next section provides several examples
 
 
-# HDF5 Matrix Multiplication
+## HDF5 Matrix Multiplication
 
 In this section, different products of matrices and vectors are introduced. The methods implement different strategies including block multiplication algorithms and the use of parallel implementations with hdf5 files datasets. 
 
@@ -291,7 +321,7 @@ In this section, different products of matrices and vectors are introduced. The 
 * two on memory matrices, previously saving the data in a file 
 * two matrices inside an hdf5 file.
 
-## Hdf5 Matrix multiplication from data in memory
+### Hdf5 Matrix multiplication from data in memory
 
 To work with big matrices `blockmult()` saves matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument.
 
@@ -348,7 +378,7 @@ H5Fclose(h5data)
 ```
 
 
-## Hdf5 Matrix multiplication from data stored in a file
+### Hdf5 Matrix multiplication from data stored in a file
 
 If we have the matrices stored in hdf5 data file, we can use the function `blockmult_hdf5`. This function allows to perform a matrix multiplication from two matrices stored in a file.
 
@@ -390,7 +420,7 @@ all.equal(resblockmult, resblockmult_hdf5)
 We obtain the same result using `blockmult` and `blockmult_hdf5`.
 
 
-# Cross-product and Transposed Cross-product with hdf5 files
+## Cross-product and Transposed Cross-product with hdf5 files
 
 To perform a cross-product $C = A^t A$ you can call `Crossprod_hdf5()` function. We just have to set the parameters `filename`, `group` and `A` with the file, group and the dataset that we want to use and optionally the `outgroup` parameter to set the output group where we want to store results.
 
@@ -398,7 +428,7 @@ The result dataset is stored with *CrossProd_<MatrixName>x<MatrixName>* pattern.
 
 
 ```{r crossprod }
-res <- Crossprod_hdf5(filename = 'robjects.hdf5', group="INPUT", A="A", outgroup = "RESULTS")
+res <- Crossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", outgroup = "RESULTS")
 ```
 
 We obtain the expected values computed using `crossprod` function.
@@ -433,10 +463,10 @@ n <- 500
 m <- 600
 B <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Add_HDF5_matrix(B, filename = 'robjects.hdf5', group="INPUT", dataset = "B2")
+Add_HDF5_matrix(B, filename = 'robject.hdf5', group="INPUT", dataset = "B2")
 
 # Get Crossprod with two matrix
-res <- Crossprod_hdf5(filename = 'robjects.hdf5', group="INPUT", A="A", 
+res <- Crossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", 
                       groupB = "INPUT", B = "B2", outgroup = "RESULTS")
 
 ```
@@ -471,7 +501,7 @@ you may also set use `tCrossprod_hdf5()` function to get a transposed cross-prod
 
 
 ```{r tcrossprod }
-res <- tCrossprod_hdf5(filename = 'robjects.hdf5', group="INPUT", A="A", outgroup = "RESULTS")
+res <- tCrossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", outgroup = "RESULTS")
 ```
 
 We obtain the expected values computed using `crossprod` function.
@@ -506,10 +536,10 @@ n <- 500
 m <- 600
 B <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Add_HDF5_matrix(B, filename = 'robjects.hdf5', group="INPUT", dataset = "B3")
+Add_HDF5_matrix(B, filename = 'robject.hdf5', group="INPUT", dataset = "B3")
 
 # Get Crossprod with two matrix
-res <- tCrossprod_hdf5(filename = 'robjects.hdf5', group="INPUT", A="A", 
+res <- tCrossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", 
                        groupB = "INPUT", B = "B3", outgroup = "RESULTS")
 
 ```
@@ -540,7 +570,7 @@ all.equal(restCProd, tcrossprod(A,B))
 
 
 
-# Singular Value Decomposition (SVD)
+## Singular Value Decomposition (SVD)
 
 The SVD of an $m \times n$ real or complex matrix $A$ is a factorization of the form:
 
@@ -559,7 +589,7 @@ Notice that:
 - The columns of $V$ are called the right-singular vectors of $A$.
 
 
-## Block Singular Values Decomposition
+### Block Singular Values Decomposition
 
 This method was developed in June 2016 by M. A. Iwen and B. W. Ong. The authors describe it as a distributed and incremental SVD algorithm that is useful for agglomerative data analysis on large networks. The algorithm calculates the singular values and left singular vectors of a matrix A, by first, partitioning it by columns. This creates a set of submatrices of A with the same number of rows, but only some of its columns. After that, the SVD of each of the submatrices is computed. The final step consists of combining the results obtained by merging them again and computing the SVD of the resulting matrix.
 
@@ -715,13 +745,15 @@ svd$d[1:7]
 <!-- In this section we illustrate how to estimate some of the state of the art methods used in omic data analyses having a `DelayedMatrix` as the input object. So far, we have implemented the lasso regression, but other methods are going to be implemented in the near future. -->
 
 
-# Utils for data analysis working directly in hdf5 files
+# Utils for data analysis working directly in hdf5 files in genomic data
 
-## Data imputation
+We have also implemented a set of functions to deal with genomic data which is a setting were big data is normally present. These are described in the next sections
+
+## Genomic data imputation
 
 Imputation in genetics refers to the statistical inference of unobserved genotypes. In genetic epidemiology and quantitative genetics, researchers aim at identifying genomic locations where variation between individuals is associated with variation in traits of interest between individuals.
 
-At the moment BigDataStatMeth has implemented snps imputation following the encoding used in Genomic Data Structure file format (GDS files) where SNPs are codded as 0 : two B alleles, 1 : one A allele and one B allele, 2 : two A alleles and 3 : missing data. BigDataStatMeth impute data where SNPs values are '3' (missing data).
+At the moment `BigDataStatMeth` has implemented snps imputation following the encoding used in Genomic Data Structure file format (GDS files) where SNPs are codded as 0 : two B alleles, 1 : one A allele and one B allele, 2 : two A alleles and 3 : missing data. BigDataStatMeth impute data where SNPs values are '3' (missing data).
 
 The imputation method implemented is generated from the information of the SNP data that contains the missing data, it is performed by generating a random value following a discrete distribution. If in the SNP we find 70% of '0', 25% of '1' and 5% of '2', the value of the missing data will be imputed with a probability of 70% to be '0', 25% to be '1' and 5% to be '2'.
 
@@ -761,14 +793,14 @@ imputedgeno[1:5,1:10]
 ```
 
 
-## Normalization, center and scale
+## Normalization (center and scale) of genomic data
 
 Normalization is one of the most important procedures in genomics data analysis. A typical dataset contains more than one sample and we are almost always interested in making comparisons between these and in order to make comparisons we need to normalize data.
 
 In BigDataStatMeth we implemented a normalization method that works directly with datasets stored in hdf5 file format, like in other functions implemented in BigDataSet that works with hdf5 data files, we have to indicate where the data is, the filename, the name of the group under the dataset is and the dataset name. In normalization function, we can indicate if we want to center data, scale or center and scale (default option). The applied formula to normalize data by default in implemented function is :
 $$ \frac{X - \mu}{\sigma}$$
 
-The implemented function to normalize data directo from hdf5 data file is `Normalize_hdf5`.
+The implemented function to normalize data direct from hdf5 data file is `Normalize_hdf5`.
 
 To show you an example, we will use the imputed geno dataset *imputedgeno* created before in imputation method example. To normalize data we have to indicate where the dataset is stored and we have two optiona paramters `bcenter` and `bscale` with default value = TRUE. In order to normalize data, we don't need to modify these optional parameters. If we only want to center data, then we have to put `bscale = FALSE` or if we only want to scale data `bcenter` parameter must be FALSE.
 
@@ -820,14 +852,6 @@ h5closeAll()
 removedgeno[1:5,1:10]
 ```
 
-
-
-# References
-
-<a id="rhdf5">[1]</a>
-Fischer, Bernd, Gregoire Pau, and Mike Smith. (2019).
-R Interface to Hdf5.
-https://github.com/grimbough/rhdf5
 
 # Session information
 
