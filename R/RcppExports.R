@@ -751,14 +751,14 @@ Create_HDF5_matrix_file <- function(filename, object, group = NULL, dataset = NU
 #' Creates a hdf5 file with numerical data matrix,
 #' 
 #' @param filename, character array indicating the name of the file to create
-#' @param mat numerical data matrix
+#' @param object numerical data matrix
 #' @param group, character array indicating folder or group name to put the matrix in hdf5 file
 #' @param dataset, character array indicating the dataset name that contains the matix data
 #' @param transp, boolean if true, data is manipulated in transposed form
 #' @return none
 #' @export
-Add_HDF5_matrix <- function(mat, filename, group, dataset, transp = NULL) {
-    .Call('_BigDataStatMeth_Add_HDF5_matrix', PACKAGE = 'BigDataStatMeth', mat, filename, group, dataset, transp)
+Add_HDF5_matrix <- function(object, filename, group, dataset, transp = NULL) {
+    .Call('_BigDataStatMeth_Add_HDF5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp)
 }
 
 #' Remove element group or dataset from  hdf5 file

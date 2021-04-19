@@ -2171,21 +2171,21 @@ Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject object,
 //' Creates a hdf5 file with numerical data matrix,
 //' 
 //' @param filename, character array indicating the name of the file to create
-//' @param mat numerical data matrix
+//' @param object numerical data matrix
 //' @param group, character array indicating folder or group name to put the matrix in hdf5 file
 //' @param dataset, character array indicating the dataset name that contains the matix data
 //' @param transp, boolean if true, data is manipulated in transposed form
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Add_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue )
+Rcpp::RObject Add_HDF5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue )
 {
     
   H5File* file;
   try
   {
 
-    if( mat.sexp_type()==0   )
+    if( object.sexp_type()==0   )
       throw std::range_error("Data matrix must exsits and mustn't be null");
 
     if(!ResFileExist(filename))
@@ -2204,20 +2204,20 @@ Rcpp::RObject Add_HDF5_matrix(RObject mat, std::string filename, std::string gro
     
     //..04-07-2020..// file->close();
 
-    if ( mat.isS4() == true) {
-      write_DelayedArray_to_hdf5_ptr(file, group + "/" + dataset, mat, transposed);
+    if ( object.isS4() == true) {
+      write_DelayedArray_to_hdf5_ptr(file, group + "/" + dataset, object, transposed);
     } else {
       
       try{  
         
-        if ( TYPEOF(mat) == INTSXP ) {
+        if ( TYPEOF(object) == INTSXP ) {
           //..// write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
           //.OPCIÓ ACTUAL 14/03/2021 .// write_HDF5_matrix_transposed_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
-          write_HDF5_matrix_from_R_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat), transposed);
+          write_HDF5_matrix_from_R_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(object), transposed);
         } else{
           //..// write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
           //.OPCIÓ ACTUAL 14/03/2021 .// write_HDF5_matrix_transposed_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
-          write_HDF5_matrix_from_R_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat), transposed);
+          write_HDF5_matrix_from_R_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(object), transposed);
         }
       }
       catch(std::exception &ex) { }
@@ -2225,7 +2225,7 @@ Rcpp::RObject Add_HDF5_matrix(RObject mat, std::string filename, std::string gro
     
     
     // Write dimnames to dimnames datasets in hdf5 file
-    List dimnames = mat.attr( "dimnames" );
+    List dimnames = object.attr( "dimnames" );
 
     // if(dimnames.size()>0 ) {
     //   svrows= dimnames[0];

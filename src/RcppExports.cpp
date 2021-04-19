@@ -553,17 +553,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // Add_HDF5_matrix
-Rcpp::RObject Add_HDF5_matrix(RObject mat, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp);
-RcppExport SEXP _BigDataStatMeth_Add_HDF5_matrix(SEXP matSEXP, SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP transpSEXP) {
+Rcpp::RObject Add_HDF5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp);
+RcppExport SEXP _BigDataStatMeth_Add_HDF5_matrix(SEXP objectSEXP, SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP transpSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< RObject >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< RObject >::type object(objectSEXP);
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
     Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type transp(transpSEXP);
-    rcpp_result_gen = Rcpp::wrap(Add_HDF5_matrix(mat, filename, group, dataset, transp));
+    rcpp_result_gen = Rcpp::wrap(Add_HDF5_matrix(object, filename, group, dataset, transp));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -4,10 +4,10 @@
 \alias{Add_HDF5_matrix}
 \title{Write matrix to existing hdf5 file}
 \usage{
-Add_HDF5_matrix(mat, filename, group, dataset, transp = NULL)
+Add_HDF5_matrix(object, filename, group, dataset, transp = NULL)
 }
 \arguments{
-\item{mat}{numerical data matrix}
+\item{object}{numerical data matrix}
 
 \item{filename, }{character array indicating the name of the file to create}
 
