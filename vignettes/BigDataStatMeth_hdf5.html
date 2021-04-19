@@ -239,14 +239,14 @@ function toggle_visibility(id1) {
 <p>The package requires other packages from <code>CRAN</code> and <code>Bioconductor</code> to be installed.</p>
 <ul>
 <li><code>CRAN</code>: <code>Matrix</code>, <code>RcppEigen</code> and <code>RSpectra</code>.</li>
-<li><code>Bioconductor</code>: <code>beachmat</code>, <code>DelayedArray</code></li>
+<li><code>Bioconductor</code>: <code>HDF5array</code>, <code>rhdf5</code></li>
 </ul>
-<p>Dealing with <a href="https://www.hdfgroup.org/solutions/hdf5/">hdf5 files</a> requires: <code>HDF5Array</code>, <code>rhdf5</code>. The user can execute this code to install the required packages:</p>
+<p>Dealing with <a href="https://bioconductor.org/packages/release/bioc/html/DelayedArray.html">DelayedArray</a> requires: <code>beachmat</code>, <code>DelayedArray</code>. The user can execute this code to install the required packages:</p>
 <pre class="r"><code># Install BiocManager (if not previously installed)
 install.packages(&quot;BiocManager&quot;) 
 
 # Install required packages
-BiocManager::install(c(&quot;Matrix&quot;, &quot;RcppEigen&quot;, &quot;Spectra&quot;,
+BiocManager::install(c(&quot;Matrix&quot;, &quot;RcppEigen&quot;, &quot;RSpectra&quot;,
                        &quot;beachmat&quot;, &quot;DelayedArray&quot;,
                        &quot;HDF5array&quot;, &quot;rhdf5&quot;))</code></pre>
 <p>Our package needs to be installed from source code. In such cases, a collection of software (e.g. C, C++, Fortran, …) are required, mainly for Windows users. These programs can be installed using <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a>.</p>

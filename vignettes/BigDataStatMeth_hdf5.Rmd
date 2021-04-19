@@ -60,16 +60,16 @@ This package implements several matrix operations using `Matrix` and `DelayMatri
 The package requires other packages from `CRAN` and `Bioconductor` to be installed. 
 
 - `CRAN`: `Matrix`, `RcppEigen` and `RSpectra`.
-- `Bioconductor`: `beachmat`, `DelayedArray` 
+- `Bioconductor`:  `HDF5array`, `rhdf5` 
 
-Dealing with [hdf5 files](https://www.hdfgroup.org/solutions/hdf5/) requires: `HDF5Array`, `rhdf5`. The user can execute this code to install the required packages:
+Dealing with [DelayedArray](https://bioconductor.org/packages/release/bioc/html/DelayedArray.html) requires: `beachmat`, `DelayedArray`. The user can execute this code to install the required packages:
 
 ```{r install_required, eval=FALSE}
 # Install BiocManager (if not previously installed)
 install.packages("BiocManager") 
 
 # Install required packages
-BiocManager::install(c("Matrix", "RcppEigen", "Spectra",
+BiocManager::install(c("Matrix", "RcppEigen", "RSpectra",
                        "beachmat", "DelayedArray",
                        "HDF5array", "rhdf5"))
 ```

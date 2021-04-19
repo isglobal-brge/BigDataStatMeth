@@ -54,7 +54,7 @@ As the package can also deal with [hdf5 files](https://www.hdfgroup.org/solution
 install.packages("BiocManager") 
 
 # Install required packages
-BiocManager::install(c("Matrix", "RcppEigen", "Spectra",
+BiocManager::install(c("Matrix", "RcppEigen", "RSpectra",
                        "beachmat", "DelayedArray",
                        "HDF5array", "rhdf5"))
 ```
