@@ -4,7 +4,7 @@ author:
 - name: Dolors Pelegri
   affiliation: 
   - &uab Universitat Autonoma de Barcelona - Universitat Autonoma de Barcelona (UAB)
-  - &isglobal ISGlobal, Centre for Research in Environmental Epidemiology (CREAL)
+  - &isglobal ISGlobal, Centre for Research in Environmental Epidemiology (ISGlobal)
   - &brge Bioinformatics Research Group in Epidemiolgy (BRGE)
 - name: Juan R. Gonzalez
   affiliation: 
@@ -65,13 +65,17 @@ The package requires other packages from `CRAN` and `Bioconductor` to be install
 Dealing with [hdf5 files](https://www.hdfgroup.org/solutions/hdf5/) requires: `HDF5Array`, `rhdf5`. The user can execute this code to install the required packages:
 
 ```{r install_required, eval=FALSE}
+# Install BiocManager (if not previously installed)
+install.packages("BiocManager") 
+
+# Install required packages
 BiocManager::install(c("Matrix", "RcppEigen", "Spectra",
                        "beachmat", "DelayedArray",
                        "HDF5array", "rhdf5"))
 ```
 
 
-Our package needs to be installed from source code. In such cases, a collection of software (e.g. C, C++, Fortran, ...) are required, mainly for Windows users. So, beThese programs can be installed using [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+Our package needs to be installed from source code. In such cases, a collection of software (e.g. C, C++, Fortran, ...) are required, mainly for Windows users. These programs can be installed using [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
 
 
 
@@ -84,9 +88,8 @@ Once required packages and Rtools are installed, `BigDataStatMeth` package can b
 install.packages("devtools") 
 library(devtools)
 
-# Install BigDataStatMeth and load package
-install_github("isglobal-brge/BigDataStatMeth@HEAD")
-library(BigDataStatMeth)
+# Install BigDataStatMeth 
+install_github("isglobal-brge/BigDataStatMeth")
 ```
 
 
@@ -95,15 +98,10 @@ library(BigDataStatMeth)
 First, let us start by loading the required packages to describe the main capabilities of the package
 
 ```{r, load}
-library(BigDataStatMeth)
 library(rhdf5)
+library(BigDataStatMeth)
 ```
 
-These other packages are required to reproduce this vignette
-
-```{r, load2}
-library(microbenchmark)
-```
 
 # Previous knowledge
 
@@ -143,7 +141,10 @@ m <- 600
 A <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
 # We also can create a dataset from R matrix object
-Create_HDF5_matrix_file("robject.hdf5", A, "INPUT", "A")
+Create_HDF5_matrix_file(filename = "robject.hdf5", 
+                        object = A, 
+                        group = "INPUT", 
+                        dataset = "A")
 ```
 
 We see 0 in the console, indicating that no errors where found when creating the hdf5 file. Notice that a file called "robject.hdf5" will be created in the working directory
@@ -170,10 +171,16 @@ B <- matrix(rnorm(n*m,mean=3,sd=0.5), n, m)
 
 # We create another data file (delayed.hdf5) with a matrix A.
 # The group is called INPUT
-Create_HDF5_matrix_file("delayed.hdf5", A, "INPUT", "A")
+Create_HDF5_matrix_file(filename = "delayed.hdf5", 
+                        object = A, 
+                        group = "INPUT", 
+                        dataset = "A")
 
 # And them, we add another matrix B to the same group
-Add_HDF5_matrix(B, "delayed.hdf5", "INPUT", "B")
+Add_HDF5_matrix(object = B, 
+                filename = "delayed.hdf5", 
+                group = "INPUT", 
+                dataset = "B")
 ```
 
 **Create transposed matrix in hdf5 file**
@@ -305,11 +312,9 @@ NOTE: We can overwrite an existing hdf5 file with new data by setting `overwrite
 
 
 
-
-
 # Operation with HDF5 files
 
-Once our data are available as hdf5 files, we can operate directly on it without having data on memory (i.e we have acces from disk. In `BigDataStatMeth` we have implemented most of the common matrix operations and algebra functions to help users how are not familiar with this type of implementation. Next section provides several examples
+Once our data are available as hdf5 files, we can operate directly on it without having data on memory (i.e we have access from disk. In `BigDataStatMeth` we have implemented most of the common matrix operations and algebra functions to help users how are not familiar with this type of implementation. Next section provides several examples
 
 
 ## HDF5 Matrix Multiplication
@@ -427,8 +432,11 @@ To perform a cross-product $C = A^t A$ you can call `Crossprod_hdf5()` function.
 The result dataset is stored with *CrossProd_<MatrixName>x<MatrixName>* pattern.
 
 
-```{r crossprod }
-res <- Crossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", outgroup = "RESULTS")
+```{r crossprod}
+res <- Crossprod_hdf5(filename = 'robject.hdf5', 
+                      group="INPUT", 
+                      A="A", 
+                      outgroup = "RESULTS")
 ```
 
 We obtain the expected values computed using `crossprod` function.

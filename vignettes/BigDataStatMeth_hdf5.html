@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2021-04-18" />
+<meta name="date" content="2021-04-19" />
 
 <title>Algebra and Statistical Methods for Big Data witn HDF5 files</title>
 
@@ -184,9 +184,9 @@ function toggle_visibility(id1) {
 
 <h1 class="title toc-ignore">Algebra and Statistical Methods for Big Data witn HDF5 files</h1>
 <p class="author-name">Dolors Pelegri<span class="affil-mark">1,2,3</span> and Juan R. Gonzalez<span class="affil-mark">1,2,3*</span></p>
-<p class="author-affiliation"><span class="affil-mark">1</span>Universitat Autonoma de Barcelona - Universitat Autonoma de Barcelona (UAB)<br><span class="affil-mark">2</span>ISGlobal, Centre for Research in Environmental Epidemiology (CREAL)<br><span class="affil-mark">3</span>Bioinformatics Research Group in Epidemiolgy (BRGE)</p>
+<p class="author-affiliation"><span class="affil-mark">1</span>Universitat Autonoma de Barcelona - Universitat Autonoma de Barcelona (UAB)<br><span class="affil-mark">2</span>ISGlobal, Centre for Research in Environmental Epidemiology (ISGlobal)<br><span class="affil-mark">3</span>Bioinformatics Research Group in Epidemiolgy (BRGE)</p>
 <p class="author-email"><span class="affil-mark">*</span><a href="mailto:juanr.gonzalez@isglobal.org">juanr.gonzalez@isglobal.org</a></p>
-<h4 class="date">2021-04-18</h4>
+<h4 class="date">2021-04-19</h4>
 <h4 class="abstract">Abstract</h4>
 <p>Description of functions to perform matrix operations using HDF5 data files.</p>
 <h4 class="package">Package</h4>
@@ -242,10 +242,14 @@ function toggle_visibility(id1) {
 <li><code>Bioconductor</code>: <code>beachmat</code>, <code>DelayedArray</code></li>
 </ul>
 <p>Dealing with <a href="https://www.hdfgroup.org/solutions/hdf5/">hdf5 files</a> requires: <code>HDF5Array</code>, <code>rhdf5</code>. The user can execute this code to install the required packages:</p>
-<pre class="r"><code>BiocManager::install(c(&quot;Matrix&quot;, &quot;RcppEigen&quot;, &quot;Spectra&quot;,
+<pre class="r"><code># Install BiocManager (if not previously installed)
+install.packages(&quot;BiocManager&quot;) 
+
+# Install required packages
+BiocManager::install(c(&quot;Matrix&quot;, &quot;RcppEigen&quot;, &quot;Spectra&quot;,
                        &quot;beachmat&quot;, &quot;DelayedArray&quot;,
                        &quot;HDF5array&quot;, &quot;rhdf5&quot;))</code></pre>
-<p>Our package needs to be installed from source code. In such cases, a collection of software (e.g. C, C++, Fortran, …) are required, mainly for Windows users. So, beThese programs can be installed using <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a></p>
+<p>Our package needs to be installed from source code. In such cases, a collection of software (e.g. C, C++, Fortran, …) are required, mainly for Windows users. These programs can be installed using <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a>.</p>
 </div>
 <div id="install-package" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Install package</h1>
@@ -254,17 +258,14 @@ function toggle_visibility(id1) {
 install.packages(&quot;devtools&quot;) 
 library(devtools)
 
-# Install BigDataStatMeth and load package
-install_github(&quot;isglobal-brge/BigDataStatMeth@HEAD&quot;)
-library(BigDataStatMeth)</code></pre>
+# Install BigDataStatMeth 
+install_github(&quot;isglobal-brge/BigDataStatMeth&quot;)</code></pre>
 </div>
 <div id="getting-started" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Getting started</h1>
 <p>First, let us start by loading the required packages to describe the main capabilities of the package</p>
-<pre class="r"><code>library(BigDataStatMeth)
-library(rhdf5)</code></pre>
-<p>These other packages are required to reproduce this vignette</p>
-<pre class="r"><code>library(microbenchmark)</code></pre>
+<pre class="r"><code>library(rhdf5)
+library(BigDataStatMeth)</code></pre>
 </div>
 <div id="previous-knowledge" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Previous knowledge</h1>
@@ -298,13 +299,18 @@ m &lt;- 600
 A &lt;- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
 # We also can create a dataset from R matrix object
-Create_HDF5_matrix_file(&quot;robject.hdf5&quot;, A, &quot;INPUT&quot;, &quot;A&quot;)
+Create_HDF5_matrix_file(filename = &quot;robject.hdf5&quot;, 
+                        object = A, 
+                        group = &quot;INPUT&quot;, 
+                        dataset = &quot;A&quot;)
 [1] 0</code></pre>
 <p>We see 0 in the console, indicating that no errors where found when creating the hdf5 file. Notice that a file called “robject.hdf5” will be created in the working directory</p>
 <pre class="r"><code>dir()
- [1] &quot;BigDataStatMeth.Rmd&quot;        &quot;BigDataStatMeth_hdf5.Rmd&quot;   &quot;BigDataStatMeth_hdf5_cache&quot; &quot;BigDataStatMeth_memory.Rmd&quot;
- [5] &quot;colesterol.csv&quot;             &quot;delayed.hdf5&quot;               &quot;img_applications&quot;           &quot;imgs&quot;                      
- [9] &quot;references.bib&quot;             &quot;references_application.bib&quot; &quot;robject.hdf5&quot;              </code></pre>
+ [1] &quot;BigDataStatMeth_hdf5.html&quot;  &quot;BigDataStatMeth_hdf5.Rmd&quot;  
+ [3] &quot;BigDataStatMeth_hdf5_cache&quot; &quot;BigDataStatMeth_memory.Rmd&quot;
+ [5] &quot;colesterol.csv&quot;             &quot;img_applications&quot;          
+ [7] &quot;imgs&quot;                       &quot;references.bib&quot;            
+ [9] &quot;references_application.bib&quot; &quot;robject.hdf5&quot;              </code></pre>
 <p><strong>Add datasets in hdf5 file</strong></p>
 <p>The function <code>Add_HDF5_matrix ()</code> allows to add a dataset in a existing hdf5 file. We can create the dataset in any group, if group doesn’t exists in file, the group is created before append the dataset. The object can be either an R object or a <code>DelayedArray</code> object.</p>
 <pre class="r"><code>set.seed(5234)
@@ -319,11 +325,17 @@ B &lt;- matrix(rnorm(n*m,mean=3,sd=0.5), n, m)
 
 # We create another data file (delayed.hdf5) with a matrix A.
 # The group is called INPUT
-Create_HDF5_matrix_file(&quot;delayed.hdf5&quot;, A, &quot;INPUT&quot;, &quot;A&quot;)
+Create_HDF5_matrix_file(filename = &quot;delayed.hdf5&quot;, 
+                        object = A, 
+                        group = &quot;INPUT&quot;, 
+                        dataset = &quot;A&quot;)
 [1] 0
 
 # And them, we add another matrix B to the same group
-Add_HDF5_matrix(B, &quot;delayed.hdf5&quot;, &quot;INPUT&quot;, &quot;B&quot;)
+Add_HDF5_matrix(object = B, 
+                filename = &quot;delayed.hdf5&quot;, 
+                group = &quot;INPUT&quot;, 
+                dataset = &quot;B&quot;)
 [1] 0</code></pre>
 <p><strong>Create transposed matrix in hdf5 file</strong></p>
 <p>The function <code>Add_HDF5_matrix ()</code> also allows to create a dataset with a transposed matrix with the parameter <code>transpose = TRUE</code>. For example, we can add a dataset in hdf5 with the B transposed matrix with :</p>
@@ -335,8 +347,6 @@ Add_HDF5_matrix(B, &quot;delayed.hdf5&quot;, &quot;INPUT&quot;, &quot;BTranspose
 <p>With <code>htls ()</code> function we get the the list of an hdf5 content without the need of open the file.</p>
 <pre class="r"><code># Examine hierarchy before open file
 h5ls(&quot;delayed.hdf5&quot;)
-Warning in h5checktypeOrOpenLoc(file, readonly = TRUE, native = native): An open HDF5 file handle exists. If the file has changed on
-disk meanwhile, the function may not work properly. Run &#39;h5closeAll()&#39; to close all open HDF5 object handles.
    group        name       otype dclass         dim
 0      /       INPUT   H5I_GROUP                   
 1 /INPUT           A H5I_DATASET  FLOAT 100 x 10000
@@ -415,11 +425,16 @@ h5closeAll()</code></pre>
 <p>If we observe the new file <code>colesterol_file.hdf5</code> and its content</p>
 <pre class="r"><code>
 h5ls(&quot;colesterol_file.hdf5&quot;)
-                                 group                     name       otype   dclass       dim
-0                                    /               COLESTEROL   H5I_GROUP                   
-1                          /COLESTEROL .COLESTEROLDATA_dimnames   H5I_GROUP                   
-2 /COLESTEROL/.COLESTEROLDATA_dimnames                        2 H5I_DATASET COMPOUND        10
-3                          /COLESTEROL           COLESTEROLDATA H5I_DATASET    FLOAT 1000 x 10
+                                 group                     name       otype   dclass
+0                                    /               COLESTEROL   H5I_GROUP         
+1                          /COLESTEROL .COLESTEROLDATA_dimnames   H5I_GROUP         
+2 /COLESTEROL/.COLESTEROLDATA_dimnames                        2 H5I_DATASET COMPOUND
+3                          /COLESTEROL           COLESTEROLDATA H5I_DATASET    FLOAT
+        dim
+0          
+1          
+2        10
+3 1000 x 10
 
 # We can open the file and have access to the data
 h5Colesterol &lt;- H5Fopen(&quot;colesterol_file.hdf5&quot;)
@@ -448,7 +463,7 @@ H5Fclose(h5Colesterol)</code></pre>
 </div>
 <div id="operation-with-hdf5-files" class="section level1" number="7">
 <h1><span class="header-section-number">7</span> Operation with HDF5 files</h1>
-<p>Once our data are available as hdf5 files, we can operate directly on it without having data on memory (i.e we have acces from disk. In <code>BigDataStatMeth</code> we have implemented most of the common matrix operations and algebra functions to help users how are not familiar with this type of implementation. Next section provides several examples</p>
+<p>Once our data are available as hdf5 files, we can operate directly on it without having data on memory (i.e we have access from disk. In <code>BigDataStatMeth</code> we have implemented most of the common matrix operations and algebra functions to help users how are not familiar with this type of implementation. Next section provides several examples</p>
 <div id="hdf5-matrix-multiplication" class="section level2" number="7.1">
 <h2><span class="header-section-number">7.1</span> HDF5 Matrix Multiplication</h2>
 <p>In this section, different products of matrices and vectors are introduced. The methods implement different strategies including block multiplication algorithms and the use of parallel implementations with hdf5 files datasets.</p>
@@ -559,7 +574,10 @@ all.equal(resblockmult, resblockmult_hdf5)
 <h2><span class="header-section-number">7.2</span> Cross-product and Transposed Cross-product with hdf5 files</h2>
 <p>To perform a cross-product <span class="math inline">\(C = A^t A\)</span> you can call <code>Crossprod_hdf5()</code> function. We just have to set the parameters <code>filename</code>, <code>group</code> and <code>A</code> with the file, group and the dataset that we want to use and optionally the <code>outgroup</code> parameter to set the output group where we want to store results.</p>
 <p>The result dataset is stored with <em>CrossProd_<MatrixName>x<MatrixName></em> pattern.</p>
-<pre class="r"><code>res &lt;- Crossprod_hdf5(filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, A=&quot;A&quot;, outgroup = &quot;RESULTS&quot;)</code></pre>
+<pre class="r"><code>res &lt;- Crossprod_hdf5(filename = &#39;robject.hdf5&#39;, 
+                      group=&quot;INPUT&quot;, 
+                      A=&quot;A&quot;, 
+                      outgroup = &quot;RESULTS&quot;)</code></pre>
 <p>We obtain the expected values computed using <code>crossprod</code> function.</p>
 <pre class="r"><code>
 # Get content
@@ -916,7 +934,8 @@ NULL</code></pre>
 <pre class="r"><code>bdRemovelowdata(&quot;delayed.hdf5&quot;, group=&quot;OMICS&quot;, dataset=&quot;geno&quot;,
                 outgroup=&quot;OMICS&quot;, outdataset=&quot;removedgeno&quot;,
                 SNPincols = TRUE, pcent = 0.39)
-Warning in evalq((function (..., call. = TRUE, immediate. = FALSE, noBreaks. = FALSE, : 0 Columns have been removed
+Warning in evalq((function (..., call. = TRUE, immediate. = FALSE, noBreaks. = FALSE, : 0
+Columns have been removed
 [1] 0</code></pre>
 <p>After remove the SNPs with pcent greater than 39% results have been saved in dataset “<em>removedgeno</em>” under group “<em>OMICS</em>,” we observe the resulting dataset</p>
 <pre class="r"><code># Get imputed data and show the first 5 rows
@@ -943,20 +962,31 @@ Running under: Windows 10 x64 (build 19042)
 Matrix products: default
 
 locale:
-[1] LC_COLLATE=Spanish_Spain.1252  LC_CTYPE=Spanish_Spain.1252    LC_MONETARY=Spanish_Spain.1252 LC_NUMERIC=C                  
+[1] LC_COLLATE=Spanish_Spain.1252  LC_CTYPE=Spanish_Spain.1252   
+[3] LC_MONETARY=Spanish_Spain.1252 LC_NUMERIC=C                  
 [5] LC_TIME=Spanish_Spain.1252    
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] microbenchmark_1.4-7   rhdf5_2.32.2           knitr_1.29             BiocStyle_2.16.0       BigDataStatMeth_0.99.1
+[1] BigDataStatMeth_0.99.1 BiocStyle_2.16.0       knitr_1.29            
+[4] rhdf5_2.32.2          
 
 loaded via a namespace (and not attached):
- [1] bookdown_0.20       Rcpp_1.0.6          codetools_0.2-16    lattice_0.20-41     digest_0.6.27       grid_4.0.2         
- [7] magrittr_2.0.1      evaluate_0.14       highr_0.8           RcppParallel_5.1.2  stringi_1.4.6       rlang_0.4.10       
-[13] Matrix_1.2-18       rmarkdown_2.7       Rhdf5lib_1.10.1     tools_4.0.2         stringr_1.4.0       RcppEigen_0.3.3.9.1
-[19] xfun_0.16           yaml_2.2.1          compiler_4.0.2      BiocManager_1.30.10 htmltools_0.5.1.1  </code></pre>
+ [1] Rcpp_1.0.6          highr_0.8           BiocManager_1.30.10 pillar_1.6.0       
+ [5] compiler_4.0.2      tools_4.0.2         digest_0.6.27       evaluate_0.14      
+ [9] lifecycle_1.0.0     tibble_3.1.0        gtable_0.3.0        lattice_0.20-41    
+[13] pkgconfig_2.0.3     rlang_0.4.10        Matrix_1.2-18       DelayedArray_0.14.1
+[17] yaml_2.2.1          parallel_4.0.2      xfun_0.16           stringr_1.4.0      
+[21] dplyr_1.0.2         generics_0.0.2      vctrs_0.3.7         S4Vectors_0.26.1   
+[25] IRanges_2.22.2      stats4_4.0.2        grid_4.0.2          tidyselect_1.1.0   
+[29] glue_1.4.2          R6_2.5.0            fansi_0.4.2         bookdown_0.20      
+[33] rmarkdown_2.7       Rhdf5lib_1.10.1     ggplot2_3.3.3       purrr_0.3.4        
+[37] magrittr_2.0.1      codetools_0.2-16    scales_1.1.1        ellipsis_0.3.1     
+[41] matrixStats_0.57.0  htmltools_0.5.1.1   BiocGenerics_0.34.0 colorspace_2.0-0   
+[45] utf8_1.2.1          stringi_1.4.6       RcppParallel_5.1.2  munsell_0.5.0      
+[49] RcppEigen_0.3.3.9.1 crayon_1.4.1       </code></pre>
 </div>
 
 
