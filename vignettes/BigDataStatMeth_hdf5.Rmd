@@ -19,7 +19,7 @@ output:
   BiocStyle::pdf_document:
     toc_float: true
 abstract: |
-  Description of functions to perform matrix operations using HDF5 data files.
+  Description of functions to perform matrix operations, algebra and basic statistical analyses using HDF5 data files.
 vignette: |
   %\VignetteIndexEntry{Algebra and Statistical Methods for Big Data witn HDF5 files}
   %\VignetteEncoding{UTF-8}
@@ -586,9 +586,9 @@ $$U\Sigma { V }^{ T }$$
 
 where :
 
--$U$ is a $m \times m$ real or complex unitary matrix
--$\Sigma$ is a $m \times n$ rectangular diagonal matrix with non-negative real numbers on the diagonal
--$V$ is a $n \times n$ real or complex unitary matrix.
+- $U$ is a $m \times m$ real or complex unitary matrix
+- $\Sigma$ is a $m \times n$ rectangular diagonal matrix with non-negative real numbers on the diagonal
+- $V$ is a $n \times n$ real or complex unitary matrix.
 
 Notice that:
 
@@ -599,7 +599,7 @@ Notice that:
 
 ### Block Singular Values Decomposition
 
-This method was developed in June 2016 by M. A. Iwen and B. W. Ong. The authors describe it as a distributed and incremental SVD algorithm that is useful for agglomerative data analysis on large networks. The algorithm calculates the singular values and left singular vectors of a matrix A, by first, partitioning it by columns. This creates a set of submatrices of A with the same number of rows, but only some of its columns. After that, the SVD of each of the submatrices is computed. The final step consists of combining the results obtained by merging them again and computing the SVD of the resulting matrix.
+This method was developed by M. A. Iwen and B. W. Ong (2016). The authors introduced a distributed and incremental SVD algorithm that is useful for agglomerative data analysis on large networks. The algorithm calculates the singular values and left singular vectors of a matrix A, by first, partitioning it by columns. This creates a set of submatrices of A with the same number of rows, but only some of its columns. After that, the SVD of each of the submatrices is computed. The final step consists of combining the results obtained by merging them again and computing the SVD of the resulting matrix.
 
 ```{r BSVDImg, out.width = '100%', fig.align = 'center', fig.cap = "Flowchart for a two-level hierarchical Block SVD algorithm", echo=FALSE}
 knitr::include_graphics("imgs/blocksvd.png")
@@ -607,15 +607,15 @@ knitr::include_graphics("imgs/blocksvd.png")
 
 This method is implemented in `bdSVD_hdf5` function, this function works directly on hdf5 data format, loading in memory only the data to perform calculations and saving the results again in the hdf5 file for later use.
 
-We have to indicate the file to work with, the dataset name and the group under the dataset is located :
+We have to indicate the file to work with, the dataset name and the group where the dataset is located :
 
 ```{r BlockSVDNorm}
 
-# Create dataframe data with Ad matrix in delayed.hdf5 file at OMIC group
+# Create dataframe data with 'odata' matrix in delayed.hdf5 file at OMIC group
 set.seed(5234)
 n <- 150000
 m <- 50
-odata <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
+odata <- matrix(rnorm(n*m, mean=0, sd=1), n,m)
 
 Add_HDF5_matrix(odata, "delayed.hdf5", "OMICS", "data")
 
@@ -623,11 +623,11 @@ Add_HDF5_matrix(odata, "delayed.hdf5", "OMICS", "data")
 svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data")
 
 # with R implementation from data in memory
-fprova <- H5Fopen("delayed.hdf5")
-  # get results svd (d)
-  svd_hdf5_d <- fprova$SVD$data$d[1:7] 
-  # get data
-  omdata <- fprova$OMICS$data 
+test <- H5Fopen("delayed.hdf5")
+# get results svd (d)
+svd_hdf5_d <- test$SVD$data$d[1:7] 
+# get data
+omdata <- test$OMICS$data 
 h5closeAll()
 
 # Results in hdf5 file for d
@@ -635,8 +635,6 @@ svd_hdf5_d[1:7]
 
 svd <- svd(scale(omdata))
 svd$d[1:7]
-
-
 ```
 
 
@@ -648,8 +646,8 @@ svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data",
                     bcenter = FALSE, bscale = FALSE)
 
 # get results svd (d)
-fprova <- H5Fopen("delayed.hdf5")
-  svd_hdf5_d <- fprova$SVD$data$d[1:7] 
+test <- H5Fopen("delayed.hdf5")
+svd_hdf5_d <- test$SVD$data$d[1:7] 
 h5closeAll()
 
 # SVD (d) from file - data not normalized
@@ -658,7 +656,6 @@ svd_hdf5_d
 # with R implementation from data in memory
 svd <- svd(omdata)
 svd$d[1:7]
-
 ```
 
 In the SVD decomposition by blocks we can indicate the number of decomposition levels and number of local SVDs to concatenate at each level with parameters `q` and `k` respectively, by default `q = 1` one level with `k=2`.
