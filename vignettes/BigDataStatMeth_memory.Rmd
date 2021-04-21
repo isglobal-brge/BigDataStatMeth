@@ -93,6 +93,17 @@ This packages is also required to reproduce this vignette
 library(microbenchmark)
 ```
 
+# Previous knowledge
+
+## `DelayedMatrix`
+
+A `DelayedMatrix` is a type of `DelayedArray` which is like an ordinary array in R, but allows for the data to be in-memory, on-disk in a file, or even hosted on a remote server.
+
+The [DelayedArray framework](https://bioconductor.org/packages/3.12/bioc/vignettes/DelayedArray/inst/doc/02-Implementing_a_backend.html) supports some on-disk backends for genomic data. We can deal with HDF5 files via rhdf5 and the HDF5Array package, GenomicDataStorage (GDS) via the gdsfmt and GDSArray package, and Variant Calling Format (VCF) files via the VCFArray package. However, this can be extended to support other on-disk backends. In theory, it should be possible to implement a DelayedArray backend for any file format that has the capability to store array data with fast random access.
+
+Having data in such format allows to perform very fast operations for a given matrix. This has been implemented in the [DelayedMatrixStats](https://bioconductor.org/packages/release/bioc/vignettes/DelayedMatrixStats/inst/doc/DelayedMatrixStatsOverview.html) package. Several examples of how to deal with `DelayedArray` can be found in [this workshop](http://biocworkshops2019.bioconductor.org.s3-website-us-east-1.amazonaws.com/page/DelayedArrayWorkshop__Effectively_using_the_DelayedArray_framework_for_users/).
+
+
 # Matrix Multiplication
 
 In this section, different products of matrices and vectors are introduced. The methods implement different strategies including block multiplication algorithms and the use of parallel implementations. 
@@ -144,7 +155,7 @@ AxBDelay <- blockmult(DA, DB, block_size = 256 )
 
 As expected the results obtained using this procedure are the correct ones
 
-```{r}
+```{r check_equal_x}
 all.equal(AxBDelay,A%*%B)
 all.equal(AxB, AxBDelay)
 ```
@@ -174,20 +185,22 @@ DBbig <- DelayedArray(Abig)
 AxBNOBig <- blockmult(Abig, Bbig, onmemory = TRUE) 
 
 # Run matrix multiplication with data on memory using submatrices of 256x256
-AxBBig3000 <- blockmult(DAbig, DBbig, block_size = 256 ,  onmemory = TRUE)
-
+AxBBig3000 <- blockmult(DAbig, DBbig, block_size = 256 , onmemory = TRUE)
 ```
 
 
-Here, we compare the performace of the block method with the different options.
+Here, we compare the performance of the block method with the different options.
 
 ```{r bench2, cache=TRUE}
 bench1 <- microbenchmark( 
-  Paral128Mem = blockmult(Abig, Bbig, paral = TRUE), # Parallel block size = 128
-  Paral256Disk = blockmult(Abig, Bbig, block_size=256, paral=TRUE), # On disk parallel block size = 256
-  Paral256Mem = blockmult(Abig, Bbig, block_size=256, paral=TRUE, onmemory=TRUE),
-  Paral1024Mem = blockmult(Abig, Bbig, block_size=1024, paral=TRUE, onmemory=TRUE),
-  times = 3 )
+  # Parallel block size = 128
+  Paral128Mem = blockmult(Abig, Bbig, paral = TRUE), 
+  # On disk parallel block size = 256
+  Paral256Disk = blockmult(Abig, Bbig, block_size=256, paral=TRUE), 
+  Paral256Mem = blockmult(Abig, Bbig, block_size=256, 
+                          paral=TRUE, onmemory=TRUE),
+  Paral1024Mem = blockmult(Abig, Bbig, block_size=1024, 
+                           paral=TRUE, onmemory=TRUE), times = 3 )
 
 bench1
 ```
@@ -202,7 +215,11 @@ ggplot2::autoplot(bench1)
 
 ## Sparse matrix multiplication
 
-A sparse matrix or sparse array is a matrix in which most of the elements are zero. `BigDataStatMeth` allows to perform matrix multiplication with sparse matrices using the function `blockmult_sparse`, It is necessary that at least one of the the matrices was defined as sparse in R, `dgCMatrix` class. An example of a sparse matrix could be : 
+A sparse matrix or sparse array is a matrix in which most of the elements are zero. `BigDataStatMeth` allows to perform matrix multiplication with sparse matrices using the function `blockmult_sparse`. It is necessary that at least one of the the two matrices is defined as sparse in R using `dgCMatrix` class. An example of a sparse matrix could be : 
+
+$$\\[.4in]$$
+
+
 $$
 \begin{equation}
   \begin{bmatrix}
@@ -216,6 +233,8 @@ $$
   \end{bmatrix}
 \end{equation}
 $$
+
+$$\\[.4in]$$
 
 
 ```{r sparsematmult}
@@ -577,108 +596,10 @@ all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), Dbsvd$d[1:10] )
 
 ## Block Singular Values Decomposition
 
-This method was developed in June 2016 by M. A. Iwen and B. W. Ong. The authors describe it as a distributed and incremental SVD algorithm that is useful for agglomerative data analysis on large networks. The algorithm calculates the singular values and left singular vectors of a matrix A, by first, partitioning it by columns. This creates a set of submatrices of A with the same number of rows, but only some of its columns. After that, the SVD of each of the submatrices is computed. The final step consists of combining the results obtained by merging them again and computing the SVD of the resulting matrix.
+A method developed by M. A. Iwen and B. W. Ong uses a distributed and incremental SVD algorithm that is useful for agglomerative data analysis on large networks. The algorithm calculates the singular values and left singular vectors of a matrix A, by first, partitioning it by columns. This creates a set of submatrices of A with the same number of rows, but only some of its columns. After that, the SVD of each of the submatrices is computed. The final step consists of combining the results obtained by merging them again and computing the SVD of the resulting matrix. 
 
-```{r BSVDImg, out.width = '60%', fig.align = 'center', fig.cap = "Flowchart for a two-level hierarchical Block SVD algorithm", echo=FALSE}
-knitr::include_graphics("imgs/blocksvd.png")
-```
+This approach is only implemented using HDF5 files. This method is implemented in `bdSVD_hdf5` function, this function works directly on hdf5 data format, loading in memory only the data to perform calculations and saving the results again in the hdf5 file for later use. The user is referred to read [section 7.3.1 from this vignette](https://rpubs.com/jrgonzalezISGlobal/BigDatStatMeth_hdf5).
 
-This method is implemented in `bdSVD_hdf5` function, this function works directly on hdf5 data format, loading in memory only the data to perform calculations and saving the results again in the hdf5 file for later use.
-
-We have to indicate the file to work with, the dataset name and the group under the dataset is located :
-
-```{r BlockSVDNorm}
-# Direct from hdf5 data file
-svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data")
-svdh5$d[1:7]
-
-# with R implementation from data in memory
-fprova <- H5Fopen("delayed.hdf5")
-omdata <- fprova$OMICS$data
-h5closeAll()
-
-svd <- svd(scale(omdata))
-svd$d[1:7]
-
-all.equal(svd$d,svdh5$d )
-```
-
-Like in Simple Singular Value Decomposition we can normalize, center or scale data before proceed with SVD decomposition with `bscale` and `bcenter` parameters, by default this parameter are TRUE, data is normalized before SVD decomposition. To proceed with SVD without normalization :
-
-```{r BlockSVDNotNorm}
-# Direct from hdf5 data file
-svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data",
-                    bcenter = FALSE, bscale = FALSE)
-svdh5$d[1:7]
-
-# with R implementation from data in memory
-svd <- svd(omdata)
-svd$d[1:7]
-
-all.equal(svd$d,svdh5$d )
-```
-
-In the SVD decomposition by blocks we can indicate the number of decomposition levels and number of local SVDs to concatenate at each level with parameters `q` and `k` respectively, by default `q = 1` one level with `k=2`.
-
-```{r BlockSVDk4}
-# Block decomposition with 1 level and 4 local SVDs at each level
-svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", q=1, k=4 )
-svdh5$d[1:7]
-
-# with R implementation from data in memory
-svd <- svd(scale(omdata))
-svd$d[1:7]
-
-all.equal(svd$d,svdh5$d )
-```
-
-We can show performance for distinct SVD functions.
-
-SVD decomposition with normalized data and different parameters executed in memmory and hdf5 files with functions from R base library and BigDataStatMeth library :
-
-```{r svdperform, cache=TRUE}
-bdSVD_hdf5_Normal_k2q1 <-
-  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data')"
-bdSVD_hdf5_Normal_k4q1 <-
-  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4)"
-bdSVD_hdf5_Normal_k4q2 <-
-  "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4)"
-bdSVD_memory_Normal <- 'bdSVD_lapack(omdata)'
-svd_R_memory_Normal <- 'svd(scale(omdata))'
-
-# With normalization process
-# res <- microbenchmark( eval(parse(text=bdSVD_hdf5_Normal_k2q1)),
-#                        eval(parse(text=bdSVD_hdf5_Normal_k4q1)),
-#                        eval(parse(text=bdSVD_hdf5_Normal_k4q2)),
-#                        eval(parse(text=bdSVD_memory_Normal)),
-#                        eval(parse(text=svd_R_memory_Normal)),
-#                        times = 3, unit = "s")
-#
-# print(summary(res)[, c(1:7)],digits=3)
-```
-
-SVD decomposition with not normalized data and different parameters executed in memmory and hdf5 files with functions from R base library and BigDataStatMeth library :
-
-```{r svdperform2, cache=TRUE}
-# bdSVD_hdf5_NoNormal_k2q1 <-
-#   "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',bcenter=FALSE,bscale=FALSE)"
-# bdSVD_hdf5_NoNormal_k4q1 <-
-#   "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',k=4,bcenter=FALSE,bscale=FALSE)"
-# bdSVD_hdf5_NoNormal_k4q2 <-
-#   "bdSVD_hdf5('delayed.hdf5',group='OMICS',dataset='data',q=2,k=4,bcenter=FALSE,bscale=FALSE)"
-# bdSVD_memory_NoNormal <- 'bdSVD_lapack(omdata, bcenter = TRUE, bscale = TRUE)'
-# svd_R_memory_NoNormal <- 'svd(omdata)'
-#
-# # Without normalization process
-# res <- microbenchmark( eval(parse(text=bdSVD_hdf5_NoNormal_k2q1)),
-#                        eval(parse(text=bdSVD_hdf5_NoNormal_k4q1)),
-#                        eval(parse(text=bdSVD_hdf5_NoNormal_k4q2)),
-#                        eval(parse(text=bdSVD_memory_NoNormal)),
-#                        eval(parse(text=svd_R_memory_NoNormal)),
-#                        times = 3, unit = "s")
-#
-# print(summary(res)[, c(1:7)],digits=3)
-```
 
 
 

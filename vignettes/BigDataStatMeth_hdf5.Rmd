@@ -1,5 +1,5 @@
 ---
-title: "Algebra and Statistical Methods for Big Data witn HDF5 files"
+title: "Matrix operations, algebra and Statistical Methods for Big Data. Part II: working with HDF5 files"
 author: 
 - name: Dolors Pelegri
   affiliation: 
