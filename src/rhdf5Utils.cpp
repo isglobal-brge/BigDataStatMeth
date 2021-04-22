@@ -2059,7 +2059,7 @@ H5FilePtr Open_hdf5_file(const std::string& fname)
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject object, 
+Rcpp::RObject Create_hdf5_matrix_file(std::string filename, RObject object, 
                             Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue,
                             Rcpp::Nullable<bool> transp = R_NilValue)
 {
@@ -2145,19 +2145,19 @@ Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject object,
     //..// colnames = get_hdf5_matrix_dimnames(&file, strsubgroup, strdataset, 2);
     
   } catch(FileIException error) { // catch failure caused by the H5File operations
-    ::Rf_error( "c++ exception Create_HDF5_matrix_file (File IException)" );
+    ::Rf_error( "c++ exception Create_hdf5_matrix_file (File IException)" );
     return(wrap(-1));
   } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-    ::Rf_error( "c++ exception Create_HDF5_matrix_file (DataSet IException)" );
+    ::Rf_error( "c++ exception Create_hdf5_matrix_file (DataSet IException)" );
     return(wrap(-1));
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    ::Rf_error( "c++ exception Create_HDF5_matrix_file (Group IException)" );
+    ::Rf_error( "c++ exception Create_hdf5_matrix_file (Group IException)" );
     return(wrap(-1));
   } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-    ::Rf_error( "c++ exception Create_HDF5_matrix_file (DataSpace IException)" );
+    ::Rf_error( "c++ exception Create_hdf5_matrix_file (DataSpace IException)" );
     return(wrap(-1));
   } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
-    ::Rf_error( "c++ exception Create_HDF5_matrix_file (Data TypeIException)" );
+    ::Rf_error( "c++ exception Create_hdf5_matrix_file (Data TypeIException)" );
     return(wrap(-1));
   }
   file->close();
@@ -2178,7 +2178,7 @@ Rcpp::RObject Create_HDF5_matrix_file(std::string filename, RObject object,
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Add_HDF5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue )
+Rcpp::RObject Add_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue )
 {
     
   H5File* file;
@@ -2292,7 +2292,7 @@ Rcpp::RObject Add_HDF5_matrix(RObject object, std::string filename, std::string 
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Remove_HDF5_element(std::string filename, std::string element)
+Rcpp::RObject Remove_hdf5_element(std::string filename, std::string element)
 {
   
   H5File* file;
@@ -2316,19 +2316,19 @@ Rcpp::RObject Remove_HDF5_element(std::string filename, std::string element)
     file->close();
     
   } catch(FileIException error) { // catch failure caused by the H5File operations
-    ::Rf_error( "c++ exception Remove_HDF5_element (File IException)" );
+    ::Rf_error( "c++ exception Remove_hdf5_element (File IException)" );
     return(wrap(-1));
   } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-    ::Rf_error( "c++ exception Remove_HDF5_element (DataSet IException)" );
+    ::Rf_error( "c++ exception Remove_hdf5_element (DataSet IException)" );
     return(wrap(-1));
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    ::Rf_error( "c++ exception Remove_HDF5_element (Group IException)" );
+    ::Rf_error( "c++ exception Remove_hdf5_element (Group IException)" );
     return(wrap(-1));
   } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-    ::Rf_error( "c++ exception Remove_HDF5_element (DataSpace IException)" );
+    ::Rf_error( "c++ exception Remove_hdf5_element (DataSpace IException)" );
     return(wrap(-1));
   } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
-    ::Rf_error( "c++ exception Remove_HDF5_element (Data TypeIException)" );
+    ::Rf_error( "c++ exception Remove_hdf5_element (Data TypeIException)" );
     return(wrap(-1));
   }
   
@@ -2502,7 +2502,7 @@ dim(geno_simD)
 geno_sim[1:5,1:5]
 
 
-BigDataStatMeth::Create_HDF5_matrix_file("delayed.hdf5", geno_simD,"OMICS", "geno", transp = FALSE)
+BigDataStatMeth::Create_hdf5_matrix_file("delayed.hdf5", geno_simD,"OMICS", "geno", transp = FALSE)
 
 h5ls("delayed.hdf5")
 # Get data and show the first 5 rows

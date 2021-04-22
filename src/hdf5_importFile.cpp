@@ -139,7 +139,7 @@ bool manage_Dataset( H5File* file, std::string outGroup, std::string outDataset,
 //' 
 //' @export
 // [[Rcpp::export]]
-int Import_text_to_HDF5( Rcpp::CharacterVector filename, 
+int Import_text_to_hdf5( Rcpp::CharacterVector filename, 
                            std::string outputfile, std::string outGroup, std::string outDataset, 
                            Rcpp::Nullable<std::string> sep = R_NilValue, 
                            Rcpp::Nullable<bool> header = false,
@@ -322,17 +322,17 @@ int Import_text_to_HDF5( Rcpp::CharacterVector filename,
    } catch( FileIException error ) { // catch failure caused by the H5File operations
       datasetOut->close();
       file->close();
-      ::Rf_error( "c++ exception Import_text_to_HDF5 (File IException)" );
+      ::Rf_error( "c++ exception Import_text_to_hdf5 (File IException)" );
       return(-1);
    } catch( GroupIException error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
-      ::Rf_error( "c++ exception Import_text_to_HDF5 (Group IException)" );
+      ::Rf_error( "c++ exception Import_text_to_hdf5 (Group IException)" );
       return(-1);
    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
-      ::Rf_error( "c++ exception Import_text_to_HDF5 (DataSet IException)" );
+      ::Rf_error( "c++ exception Import_text_to_hdf5 (DataSet IException)" );
       return(-1);
    } catch(const std::runtime_error& re) {
       // speciffic handling for runtime_error
@@ -371,7 +371,7 @@ library(BigDataStatMeth)
 setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth")
 
 reload(pkgload::inst("BigDataStatMeth"))
-Import_text_to_HDF5("test/cancer_reg_2.csv", ',', 
+Import_text_to_hdf5("test/cancer_reg_2.csv", ',', 
                      outputfile = "test/cancer_reg.hdf5", outGroup = "CANCERS", outDataset = "Cancccc2", 
                      header = TRUE, rownames = TRUE, overwrite = TRUE)
 

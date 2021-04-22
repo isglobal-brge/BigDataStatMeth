@@ -45,7 +45,7 @@ library(BigDataStatMeth)
 | **Basic functions with vectors and matrices**    |                                                         |                |           |          |      |
 | Matrix Product                                   |             blockmult(…) / blockmult_hdf5(…)            |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
 | Sparse Matrix Product                            |      blockmult_sparse(…) / blockmult_sparse_hdf5(…)     |                |           |          |   ✔︎  |
-| Matrix product with its transpose                | bdcrossprod(…) / Crossprod_hdf5(…) / tCrossprod_hdf5(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
+| Matrix product with its transpose                | bdCrossprod(…) / bdtCrossprod(…) / Crossprod_hdf5(…) / tCrossprod_hdf5(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
 | Matrix - Matrix weighted product (XWXt, XtWX)    |      tCrossprod_Weighted(…) / Crossprod_Weighted(…)     |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
 | Matrix - vector weighted product (XwXt, XtwX)    |           bdwproduct(…) / bdScalarwproduct(…)           |        ✔︎       |           |          |      |
 | Matrix vector product                            |                   blockmult_vector(…)                   |        ✔︎       |     ✔︎     |     ✔︎    |      |
@@ -61,11 +61,11 @@ library(BigDataStatMeth)
 | Solve matrix equation (A * X = B )               |                        bdSolve(…)                       |        ✔︎       |           |          |      |
 | **Data Analysis**                                |                                                         |                |           |          |      |
 | Principal Components Analysis (PCA)              |                      bdPCA_hdf5(…)                      |                |     ✔︎     |          |   ✔︎  |
-| MLR-MR (Linear Regression Big Data)              |                       bdMLR_MR(…)                       |        ✔︎       |     ✔︎     |     ✔︎    |      |
+| MLR-MR (Linear Regression Big Data)              |                       bdlm_paral(…)                       |        ✔︎       |     ✔︎     |     ✔︎    |      |
 | **HDF5 data files Utils**                        |                                                         |                |           |          |      |
 | Remove rows or columns with hight missing values |                    bdRemovelowdata(…)                   |                |     ✔︎     |          |   ✔︎  |
-| Impute missing data                              |                    bdImputeSNPHDF5(…)                   |                |     ✔︎     |          |   ✔︎  |
-| Create hdf5 data file with one dataset inside    |                Create_HDF5_matrix_file(…)               |                |           |          |   ✔︎  |
-| Add one dataset in hdf5 data file                |                  Add_HDF5_matrix(…)                  |                |           |          |   ✔︎  |
-| Remove one dataset from hdf5 data file           |                  Remove_HDF5_element(…)                 |                |           |          |   ✔︎  |
-| Import data from text file to HDF5               |                 Import_text_to_HDF5(…)                 |                |           |          |   ✔︎  |
+| Impute missing data                              |                    bdImpute_snps_hdf5(…)                   |                |     ✔︎     |          |   ✔︎  |
+| Create hdf5 data file with one dataset inside    |                Create_hdf5_matrix_file(…)               |                |           |          |   ✔︎  |
+| Add one dataset in hdf5 data file                |                  Add_hdf5_matrix(…)                  |                |           |          |   ✔︎  |
+| Remove one dataset from hdf5 data file           |                  Remove_hdf5_element(…)                 |                |           |          |   ✔︎  |
+| Import data from text file to HDF5               |                 Import_text_to_hdf5(…)                 |                |           |          |   ✔︎  |

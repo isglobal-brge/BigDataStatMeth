@@ -174,8 +174,8 @@ tCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_s
 #' @param overwrite (optional) either a logical value indicating whether the output file can be overwritten or not.
 #' 
 #' @export
-Import_text_to_HDF5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE) {
-    .Call('_BigDataStatMeth_Import_text_to_HDF5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite)
+Import_text_to_hdf5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE) {
+    .Call('_BigDataStatMeth_Import_text_to_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite)
 }
 
 #' Impute SNPs in hdf5 omic dataset 
@@ -516,8 +516,8 @@ bddtrsm <- function(R, Z, threads = NULL) {
 #' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 #' @return none
 #' @export
-Create_HDF5_matrix_file <- function(filename, object, group = NULL, dataset = NULL, transp = NULL) {
-    .Call('_BigDataStatMeth_Create_HDF5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp)
+Create_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = NULL, transp = NULL) {
+    .Call('_BigDataStatMeth_Create_hdf5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp)
 }
 
 #' Write matrix to existing hdf5 file
@@ -531,8 +531,8 @@ Create_HDF5_matrix_file <- function(filename, object, group = NULL, dataset = NU
 #' @param transp, boolean if true, data is manipulated in transposed form
 #' @return none
 #' @export
-Add_HDF5_matrix <- function(object, filename, group, dataset, transp = NULL) {
-    .Call('_BigDataStatMeth_Add_HDF5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp)
+Add_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL) {
+    .Call('_BigDataStatMeth_Add_hdf5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp)
 }
 
 #' Remove element group or dataset from  hdf5 file
@@ -543,8 +543,8 @@ Add_HDF5_matrix <- function(object, filename, group, dataset, transp = NULL) {
 #' @param element path to element, character array indicating the complete route to the element to be removed (folder or dataset). 
 #' @return none
 #' @export
-Remove_HDF5_element <- function(filename, element) {
-    .Call('_BigDataStatMeth_Remove_HDF5_element', PACKAGE = 'BigDataStatMeth', filename, element)
+Remove_hdf5_element <- function(filename, element) {
+    .Call('_BigDataStatMeth_Remove_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, element)
 }
 
 #' Solve matrix equations
