@@ -71,7 +71,7 @@ install.packages("BiocManager")
 # Install required packages
 BiocManager::install(c("Matrix", "RcppEigen", "RSpectra",
                        "beachmat", "DelayedArray",
-                       "HDF5array", "rhdf5"))
+                       "HDF5Array", "rhdf5"))
 ```
 
 
@@ -97,7 +97,7 @@ install_github("isglobal-brge/BigDataStatMeth")
 
 First, let us start by loading the required packages to describe the main capabilities of the package
 
-```{r, load}
+```{r, load, cache=FALSE}
 library(rhdf5)
 library(BigDataStatMeth)
 ```

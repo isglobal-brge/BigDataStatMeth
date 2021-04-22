@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2021-04-21" />
+<meta name="date" content="2021-04-22" />
 
 <title>Matrix operations, algebra and Statistical Methods for Big Data. Part II: working with HDF5 files</title>
 
@@ -186,7 +186,7 @@ function toggle_visibility(id1) {
 <p class="author-name">Dolors Pelegri<span class="affil-mark">1,2,3</span> and Juan R. Gonzalez<span class="affil-mark">1,2,3*</span></p>
 <p class="author-affiliation"><span class="affil-mark">1</span>Universitat Autonoma de Barcelona - Universitat Autonoma de Barcelona (UAB)<br><span class="affil-mark">2</span>ISGlobal, Centre for Research in Environmental Epidemiology (ISGlobal)<br><span class="affil-mark">3</span>Bioinformatics Research Group in Epidemiolgy (BRGE)</p>
 <p class="author-email"><span class="affil-mark">*</span><a href="mailto:juanr.gonzalez@isglobal.org">juanr.gonzalez@isglobal.org</a></p>
-<h4 class="date">2021-04-21</h4>
+<h4 class="date">2021-04-22</h4>
 <h4 class="abstract">Abstract</h4>
 <p>Description of functions to perform matrix operations, algebra and basic statistical analyses using HDF5 data files.</p>
 <h4 class="package">Package</h4>
@@ -248,7 +248,7 @@ install.packages(&quot;BiocManager&quot;)
 # Install required packages
 BiocManager::install(c(&quot;Matrix&quot;, &quot;RcppEigen&quot;, &quot;RSpectra&quot;,
                        &quot;beachmat&quot;, &quot;DelayedArray&quot;,
-                       &quot;HDF5array&quot;, &quot;rhdf5&quot;))</code></pre>
+                       &quot;HDF5Array&quot;, &quot;rhdf5&quot;))</code></pre>
 <p>Our package needs to be installed from source code. In such cases, a collection of software (e.g. C, C++, Fortran, …) are required, mainly for Windows users. These programs can be installed using <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a>.</p>
 </div>
 <div id="install-package" class="section level1" number="3">
@@ -363,8 +363,11 @@ HDF5 FILE
         name /
     filename 
 
-   name     otype dclass dim
-0 INPUT H5I_GROUP           </code></pre>
+        name     otype dclass dim
+0 INPUT      H5I_GROUP           
+1 NORMALIZED H5I_GROUP           
+2 OMICS      H5I_GROUP           
+3 SVD        H5I_GROUP           </code></pre>
 <p>NOTE: We can also use <a href="https://www.hdfgroup.org/downloads/hdfview/">hdfview</a></p>
 <p><strong>Access datasets data</strong></p>
 <p>The $ operator can be used to access the next group level, this operator reads the object from disk. We can assign the dataset contents to an R object in order to work with it.</p>

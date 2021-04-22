@@ -56,7 +56,7 @@ install.packages("BiocManager")
 # Install required packages
 BiocManager::install(c("Matrix", "RcppEigen", "RSpectra",
                        "beachmat", "DelayedArray",
-                       "HDF5array", "rhdf5"))
+                       "HDF5Array", "rhdf5"))
 ```
 
 Our package needs to be installed from source code. In such cases, a collection of software (e.g. C, C++, Fortran, ...) are required, mainly for Windows users. These programs can be installed using [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
