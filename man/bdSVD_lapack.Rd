@@ -4,10 +4,10 @@
 \alias{bdSVD_lapack}
 \title{Complete SVD with Lapack Functions for DelayedArray and RObjects}
 \usage{
-bdSVD_lapack(x, bcenter = TRUE, bscale = TRUE)
+bdSVD_lapack(X, bcenter = TRUE, bscale = TRUE)
 }
 \arguments{
-\item{x}{numerical or Delayed Array matrix}
+\item{X}{numerical or Delayed Array matrix}
 
 \item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.}
 

@@ -104,7 +104,7 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' 
 //' This function performs a numerical or Delayed Array matrix normalization
 //' 
-//' @param x numerical or Delayed Array Matrix
+//' @param X numerical or Delayed Array Matrix
 //' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @return numerical matrix
@@ -132,16 +132,16 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Normalize_Data ( Rcpp::RObject & x, 
+Rcpp::RObject Normalize_Data ( Rcpp::RObject & X, 
                                Rcpp::Nullable<bool> bcenter = R_NilValue,
                                Rcpp::Nullable<bool> bscale  = R_NilValue)
 {
-  Eigen::MatrixXd X;
+  Eigen::MatrixXd mX;
   bool bc, bs;
   CharacterVector svrows, svrcols;
   
   
-  List dimnames = x.attr( "dimnames" );
+  List dimnames = X.attr( "dimnames" );
   
   if(dimnames.size()>0 ) {
     svrows= dimnames[0];
@@ -149,16 +149,16 @@ Rcpp::RObject Normalize_Data ( Rcpp::RObject & x,
   }
   
   
-  // Read DelayedArray's x and b
-  if ( x.isS4() == true)    
+  // Read DelayedArray's X and b
+  if ( X.isS4() == true)    
   {
-    X = read_DelayedArray(x);
+    mX = read_DelayedArray(X);
   } else {
     try{  
-      if ( TYPEOF(x) == INTSXP ) {
-        X = Rcpp::as<Eigen::MatrixXi>(x).cast<double>()  ;
+      if ( TYPEOF(X) == INTSXP ) {
+        mX = Rcpp::as<Eigen::MatrixXi>(X).cast<double>()  ;
       } else{
-        X = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(x);
+        mX = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
       }
     }
     catch(std::exception &ex) { }
@@ -178,34 +178,34 @@ Rcpp::RObject Normalize_Data ( Rcpp::RObject & x,
   
   if( bc==true && bs==true )  {
     
-    Eigen::RowVectorXd mean = X.colwise().mean();
-    Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+    Eigen::RowVectorXd mean = mX.colwise().mean();
+    Eigen::RowVectorXd std = ((mX.rowwise() - mean).array().square().colwise().sum() / (mX.rows() - 1)).sqrt();
     
     
     // Replace 0 to 0.00000000001 to avoid errors
     std = (std.array() == 0).select(0.00000000001, std);
     
     // Scale data
-    X = (X.rowwise() - mean).array().rowwise() / std.array();
+    mX = (mX.rowwise() - mean).array().rowwise() / std.array();
     
   }   else if (bc == true)   {
     
-    Eigen::RowVectorXd mean = X.colwise().mean();
-    X = (X.rowwise() - mean);
+    Eigen::RowVectorXd mean = mX.colwise().mean();
+    mX = (mX.rowwise() - mean);
     
   }  else if ( bs == true)   {
     
-    Eigen::RowVectorXd std = (X.array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+    Eigen::RowVectorXd std = (mX.array().square().colwise().sum() / (mX.rows() - 1)).sqrt();
 
     // Replace 0 to 0.00000000001 to avoid errors
     std = (std.array() == 0).select(0.00000000001, std);
 
     // Scale data
-    X = X.array().rowwise() / std.array();
+    mX = mX.array().rowwise() / std.array();
   } 
 
-  NumericMatrix XR = wrap(X);
-  remove("X");
+  NumericMatrix XR = wrap(mX);
+  remove("mX");
   
   if(dimnames.size()>0 )  {
     rownames(XR) = as<CharacterVector>(dimnames[0]);

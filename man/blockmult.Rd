@@ -5,8 +5,8 @@
 \title{Block matrix multiplication with Delayed Array Object}
 \usage{
 blockmult(
-  a,
-  b,
+  A,
+  B,
   block_size = 128,
   paral = TRUE,
   threads = NULL,
@@ -17,8 +17,8 @@ blockmult(
 )
 
 blockmult(
-  a,
-  b,
+  A,
+  B,
   block_size = 128,
   paral = TRUE,
   threads = NULL,
@@ -29,9 +29,9 @@ blockmult(
 )
 }
 \arguments{
-\item{a}{a double matrix.}
+\item{A}{a double matrix.}
 
-\item{b}{a double matrix.}
+\item{B}{a double matrix.}
 
 \item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)}
 
@@ -49,6 +49,10 @@ memory of the block read from the disk being processed.}
 \item{outfile}{(optional) file name to work with hdf5 if we are working with big matrix in disk.}
 
 \item{onmemory}{(optional) if onmemory = TRUE the multiplication is forced to execute in memory}
+
+\item{a}{a double matrix.}
+
+\item{b}{a double matrix.}
 
 \item{sparse}{(optional) if sparse = TRUE the matrix are treated as sparse}
 }

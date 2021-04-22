@@ -4,10 +4,10 @@
 \alias{bdSVD}
 \title{k first SVD components for DelayedArray}
 \usage{
-bdSVD(x, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE)
+bdSVD(X, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE)
 }
 \arguments{
-\item{x}{numerical or Delayed Array matrix}
+\item{X}{numerical or Delayed Array matrix}
 
 \item{k}{number of eigen values , this should satisfy k = min(n, m) - 1}
 

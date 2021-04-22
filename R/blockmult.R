@@ -4,8 +4,8 @@
 #' 
 #' @export
 #' 
-#' @param a a double matrix.
-#' @param b a double matrix.
+#' @param A a double matrix.
+#' @param B a double matrix.
 #' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 #' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
 #' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
@@ -37,11 +37,11 @@
 #' 
 #' blockmult( AD, BD, 128, TRUE)
 #' 
-blockmult <- function( a, b, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 10000, mixblock_size = 128, 
+blockmult <- function( A, B, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 10000, mixblock_size = 128, 
                        outfile = "tmp_blockmult.hdf5", onmemory = FALSE)
 { 
 
-  res <- .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads, bigmatrix, mixblock_size, outfile, onmemory)
+  res <- .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', A, B, block_size, paral, threads, bigmatrix, mixblock_size, outfile, onmemory)
 
   if (res$filename == '' | is.null(res$filename))
     return (res$matrix)

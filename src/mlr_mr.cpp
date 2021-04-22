@@ -126,17 +126,17 @@ Eigen::MatrixXd Rcpp_mlr_mr(Eigen::MatrixXd x, Eigen::MatrixXd y, int iblocks, R
 
 
 
-//' Linear regression using MLR-MR algorithm
-//'
-//' Linear regression for Big Data using MLR-MR algorithm
-//' 
-//' @param X, numerical matrix with paired observations of the predictor variable X
-//' @param Y, numerical matrix column with response variable
-//' @param blocks, integer with number of blocks we want to split matrix if null matrix is splited in blocks as maximum of 1000 variables per block
-//' @param threads, threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-//' @return coefficients and error
-//' @export
-// [[Rcpp::export]]
+// // ' Linear regression using MLR-MR algorithm
+// // '
+// // ' Linear regression for Big Data using MLR-MR algorithm
+// // '
+// // ' @param X, numerical matrix with paired observations of the predictor variable X
+// // ' @param Y, numerical matrix column with response variable
+// // ' @param blocks, integer with number of blocks we want to split matrix if null matrix is splited in blocks as maximum of 1000 variables per block
+// // ' @param threads, threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+// // ' @return Lineal regression coefficients
+// //' @export
+// [[Rcpp::export(.bdMLR_MR)]]
 Rcpp::RObject bdMLR_MR(Rcpp::RObject X, Rcpp::RObject y, int blocks, Rcpp::Nullable<int> threads  = R_NilValue) 
 {
   

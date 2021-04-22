@@ -115,9 +115,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// bdImputeSNPHDF5
-Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols);
-RcppExport SEXP _BigDataStatMeth_bdImputeSNPHDF5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP bycolsSEXP) {
+// bdImpute_snps_hdf5
+Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols);
+RcppExport SEXP _BigDataStatMeth_bdImpute_snps_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP bycolsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -127,7 +127,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdImputeSNPHDF5(filename, group, dataset, outgroup, outdataset, bycols));
+    rcpp_result_gen = Rcpp::wrap(bdImpute_snps_hdf5(filename, group, dataset, outgroup, outdataset, bycols));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -167,28 +167,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // Normalize_Data
-Rcpp::RObject Normalize_Data(Rcpp::RObject& x, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale);
-RcppExport SEXP _BigDataStatMeth_Normalize_Data(SEXP xSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP) {
+Rcpp::RObject Normalize_Data(Rcpp::RObject& X, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale);
+RcppExport SEXP _BigDataStatMeth_Normalize_Data(SEXP XSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject& >::type X(XSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
-    rcpp_result_gen = Rcpp::wrap(Normalize_Data(x, bcenter, bscale));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdwXw
-Rcpp::RObject bdwXw(Rcpp::RObject X, Rcpp::RObject W, std::string op);
-RcppExport SEXP _BigDataStatMeth_bdwXw(SEXP XSEXP, SEXP WSEXP, SEXP opSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type W(WSEXP);
-    Rcpp::traits::input_parameter< std::string >::type op(opSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdwXw(X, W, op));
+    rcpp_result_gen = Rcpp::wrap(Normalize_Data(X, bcenter, bscale));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -223,28 +210,28 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdwproduct
-Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op);
-RcppExport SEXP _BigDataStatMeth_bdwproduct(SEXP aSEXP, SEXP wSEXP, SEXP opSEXP) {
+Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op);
+RcppExport SEXP _BigDataStatMeth_bdwproduct(SEXP XSEXP, SEXP wSEXP, SEXP opSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type a(aSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
     Rcpp::traits::input_parameter< Rcpp::RObject >::type w(wSEXP);
     Rcpp::traits::input_parameter< std::string >::type op(opSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdwproduct(a, w, op));
+    rcpp_result_gen = Rcpp::wrap(bdwproduct(X, w, op));
     return rcpp_result_gen;
 END_RCPP
 }
 // bdScalarwproduct
-Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject a, double w, std::string op);
-RcppExport SEXP _BigDataStatMeth_bdScalarwproduct(SEXP aSEXP, SEXP wSEXP, SEXP opSEXP) {
+Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject A, double w, std::string op);
+RcppExport SEXP _BigDataStatMeth_bdScalarwproduct(SEXP ASEXP, SEXP wSEXP, SEXP opSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type a(aSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type A(ASEXP);
     Rcpp::traits::input_parameter< double >::type w(wSEXP);
     Rcpp::traits::input_parameter< std::string >::type op(opSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdScalarwproduct(a, w, op));
+    rcpp_result_gen = Rcpp::wrap(bdScalarwproduct(A, w, op));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -371,32 +358,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// parXYProd
-Rcpp::RObject parXYProd(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::string> op);
-RcppExport SEXP _BigDataStatMeth_parXYProd(SEXP XSEXP, SEXP YSEXP, SEXP opSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type op(opSEXP);
-    rcpp_result_gen = Rcpp::wrap(parXYProd(X, Y, op));
-    return rcpp_result_gen;
-END_RCPP
-}
-// parXYProdBlock
-Rcpp::RObject parXYProdBlock(Rcpp::RObject X, Rcpp::RObject Y, Rcpp::Nullable<std::string> op);
-RcppExport SEXP _BigDataStatMeth_parXYProdBlock(SEXP XSEXP, SEXP YSEXP, SEXP opSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type op(opSEXP);
-    rcpp_result_gen = Rcpp::wrap(parXYProdBlock(X, Y, op));
-    return rcpp_result_gen;
-END_RCPP
-}
 // parxwxt
 Rcpp::RObject parxwxt(Rcpp::RObject X, Rcpp::RObject W);
 RcppExport SEXP _BigDataStatMeth_parxwxt(SEXP XSEXP, SEXP WSEXP) {
@@ -433,55 +394,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// blockmult_Strassen
-Rcpp::List blockmult_Strassen(Rcpp::RObject a, Rcpp::RObject b, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_blockmult_Strassen(SEXP aSEXP, SEXP bSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type a(aSEXP);
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type b(bSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(blockmult_Strassen(a, b, block_size, paral, threads));
-    return rcpp_result_gen;
-END_RCPP
-}
-// JacobianSVD
-Rcpp::RObject JacobianSVD(Rcpp::RObject X);
-RcppExport SEXP _BigDataStatMeth_JacobianSVD(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(JacobianSVD(X));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdtsvd
-Rcpp::RObject bdtsvd(Rcpp::RObject X, Rcpp::Nullable<int> k);
-RcppExport SEXP _BigDataStatMeth_bdtsvd(SEXP XSEXP, SEXP kSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdtsvd(X, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdsvd
-Rcpp::RObject bdsvd(Rcpp::RObject X);
-RcppExport SEXP _BigDataStatMeth_bdsvd(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdsvd(X));
-    return rcpp_result_gen;
-END_RCPP
-}
 // bdpseudoinv
 Rcpp::RObject bdpseudoinv(const Rcpp::RObject& X);
 RcppExport SEXP _BigDataStatMeth_bdpseudoinv(SEXP XSEXP) {
@@ -502,29 +414,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type X(XSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type thin(thinSEXP);
     rcpp_result_gen = Rcpp::wrap(bdQR(X, thin));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdQR_compact
-Rcpp::RObject bdQR_compact(const Rcpp::RObject& A);
-RcppExport SEXP _BigDataStatMeth_bdQR_compact(SEXP ASEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type A(ASEXP);
-    rcpp_result_gen = Rcpp::wrap(bdQR_compact(A));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdQR_parallel
-Rcpp::RObject bdQR_parallel(const Rcpp::RObject& X, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdQR_parallel(SEXP XSEXP, SEXP threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdQR_parallel(X, threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -596,38 +485,38 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdInvCholesky
-Eigen::MatrixXd bdInvCholesky(const Rcpp::RObject& x);
-RcppExport SEXP _BigDataStatMeth_bdInvCholesky(SEXP xSEXP) {
+Eigen::MatrixXd bdInvCholesky(const Rcpp::RObject& X);
+RcppExport SEXP _BigDataStatMeth_bdInvCholesky(SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdInvCholesky(x));
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdInvCholesky(X));
     return rcpp_result_gen;
 END_RCPP
 }
 // bdSVD
-Rcpp::RObject bdSVD(const Rcpp::RObject& x, Rcpp::Nullable<int> k, Rcpp::Nullable<int> nev, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale);
-RcppExport SEXP _BigDataStatMeth_bdSVD(SEXP xSEXP, SEXP kSEXP, SEXP nevSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP) {
+Rcpp::RObject bdSVD(const Rcpp::RObject& X, Rcpp::Nullable<int> k, Rcpp::Nullable<int> nev, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale);
+RcppExport SEXP _BigDataStatMeth_bdSVD(SEXP XSEXP, SEXP kSEXP, SEXP nevSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type X(XSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type k(kSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type nev(nevSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSVD(x, k, nev, bcenter, bscale));
+    rcpp_result_gen = Rcpp::wrap(bdSVD(X, k, nev, bcenter, bscale));
     return rcpp_result_gen;
 END_RCPP
 }
 // bdSVD_hdf5
-Rcpp::RObject bdSVD_hdf5(const Rcpp::RObject& x, Rcpp::Nullable<CharacterVector> group, Rcpp::Nullable<CharacterVector> dataset, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdSVD_hdf5(SEXP xSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP kSEXP, SEXP qSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP threadsSEXP) {
+Rcpp::RObject bdSVD_hdf5(const Rcpp::RObject& file, Rcpp::Nullable<CharacterVector> group, Rcpp::Nullable<CharacterVector> dataset, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_bdSVD_hdf5(SEXP fileSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP kSEXP, SEXP qSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type file(fileSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<CharacterVector> >::type group(groupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<CharacterVector> >::type dataset(datasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type k(kSEXP);
@@ -635,20 +524,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSVD_hdf5(x, group, dataset, k, q, bcenter, bscale, threads));
+    rcpp_result_gen = Rcpp::wrap(bdSVD_hdf5(file, group, dataset, k, q, bcenter, bscale, threads));
     return rcpp_result_gen;
 END_RCPP
 }
 // bdSVD_lapack
-Rcpp::RObject bdSVD_lapack(Rcpp::RObject x, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale);
-RcppExport SEXP _BigDataStatMeth_bdSVD_lapack(SEXP xSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP) {
+Rcpp::RObject bdSVD_lapack(Rcpp::RObject X, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale);
+RcppExport SEXP _BigDataStatMeth_bdSVD_lapack(SEXP XSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSVD_lapack(x, bcenter, bscale));
+    rcpp_result_gen = Rcpp::wrap(bdSVD_lapack(X, bcenter, bscale));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -697,11 +586,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_blockmult_sparse_hdf5", (DL_FUNC) &_BigDataStatMeth_blockmult_sparse_hdf5, 5},
     {"_BigDataStatMeth_tCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_tCrossprod_hdf5, 10},
     {"_BigDataStatMeth_Import_text_to_HDF5", (DL_FUNC) &_BigDataStatMeth_Import_text_to_HDF5, 8},
-    {"_BigDataStatMeth_bdImputeSNPHDF5", (DL_FUNC) &_BigDataStatMeth_bdImputeSNPHDF5, 6},
+    {"_BigDataStatMeth_bdImpute_snps_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImpute_snps_hdf5, 6},
     {"_BigDataStatMeth_Normalize_hdf5", (DL_FUNC) &_BigDataStatMeth_Normalize_hdf5, 6},
     {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 9},
     {"_BigDataStatMeth_Normalize_Data", (DL_FUNC) &_BigDataStatMeth_Normalize_Data, 3},
-    {"_BigDataStatMeth_bdwXw", (DL_FUNC) &_BigDataStatMeth_bdwXw, 3},
     {"_BigDataStatMeth_bdMLR_MR", (DL_FUNC) &_BigDataStatMeth_bdMLR_MR, 4},
     {"_BigDataStatMeth_bdCrossprod_generic", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_generic, 6},
     {"_BigDataStatMeth_bdwproduct", (DL_FUNC) &_BigDataStatMeth_bdwproduct, 3},
@@ -716,19 +604,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_parCrossProd", (DL_FUNC) &_BigDataStatMeth_parCrossProd, 1},
     {"_BigDataStatMeth_parCrossProd_block", (DL_FUNC) &_BigDataStatMeth_parCrossProd_block, 1},
     {"_BigDataStatMeth_partCrossProdEigen", (DL_FUNC) &_BigDataStatMeth_partCrossProdEigen, 1},
-    {"_BigDataStatMeth_parXYProd", (DL_FUNC) &_BigDataStatMeth_parXYProd, 3},
-    {"_BigDataStatMeth_parXYProdBlock", (DL_FUNC) &_BigDataStatMeth_parXYProdBlock, 3},
     {"_BigDataStatMeth_parxwxt", (DL_FUNC) &_BigDataStatMeth_parxwxt, 2},
     {"_BigDataStatMeth_parxtwx", (DL_FUNC) &_BigDataStatMeth_parxtwx, 2},
     {"_BigDataStatMeth_parXy", (DL_FUNC) &_BigDataStatMeth_parXy, 2},
-    {"_BigDataStatMeth_blockmult_Strassen", (DL_FUNC) &_BigDataStatMeth_blockmult_Strassen, 5},
-    {"_BigDataStatMeth_JacobianSVD", (DL_FUNC) &_BigDataStatMeth_JacobianSVD, 1},
-    {"_BigDataStatMeth_bdtsvd", (DL_FUNC) &_BigDataStatMeth_bdtsvd, 2},
-    {"_BigDataStatMeth_bdsvd", (DL_FUNC) &_BigDataStatMeth_bdsvd, 1},
     {"_BigDataStatMeth_bdpseudoinv", (DL_FUNC) &_BigDataStatMeth_bdpseudoinv, 1},
     {"_BigDataStatMeth_bdQR", (DL_FUNC) &_BigDataStatMeth_bdQR, 2},
-    {"_BigDataStatMeth_bdQR_compact", (DL_FUNC) &_BigDataStatMeth_bdQR_compact, 1},
-    {"_BigDataStatMeth_bdQR_parallel", (DL_FUNC) &_BigDataStatMeth_bdQR_parallel, 2},
     {"_BigDataStatMeth_bddtrsm", (DL_FUNC) &_BigDataStatMeth_bddtrsm, 3},
     {"_BigDataStatMeth_Create_HDF5_matrix_file", (DL_FUNC) &_BigDataStatMeth_Create_HDF5_matrix_file, 5},
     {"_BigDataStatMeth_Add_HDF5_matrix", (DL_FUNC) &_BigDataStatMeth_Add_HDF5_matrix, 5},

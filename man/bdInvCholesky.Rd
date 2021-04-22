@@ -4,17 +4,16 @@
 \alias{bdInvCholesky}
 \title{Inverse Cholesky of Delayed Array}
 \usage{
-bdInvCholesky(x)
+bdInvCholesky(X)
 }
 \arguments{
-\item{x}{numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs}
+\item{X}{numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs}
 }
 \value{
 inverse matrix of d
 }
 \description{
-This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then 
-performs get the inverse using Cholesky decomposition
+This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then gets the inverse using Cholesky decomposition
 }
 \examples{
 

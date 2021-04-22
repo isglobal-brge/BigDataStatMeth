@@ -4,14 +4,14 @@
 \alias{bdwproduct}
 \title{Matrix - Weighted vector Multiplication with numerical or DelayedArray data}
 \usage{
-bdwproduct(a, w, op)
+bdwproduct(X, w, op)
 }
 \arguments{
-\item{a}{numerical or Delayed Array matrix}
+\item{X}{numerical or Delayed Array matrix}
 
 \item{w}{vector with weights}
 
-\item{op}{string indicating if operation 'xtwx' and 'xwxt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)}
+\item{op}{string indicating if operation 'XtwX' and 'XwXt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)}
 }
 \value{
 numerical matrix

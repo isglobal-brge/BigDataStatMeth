@@ -454,7 +454,7 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
 
   // if symetric + positive definite -> info = Success
   // else no Cholesky Decomposition --> svd decomposition with Spectra
-  if(cholSolv.info()==Eigen::Success)
+  if( cholSolv.info()==Eigen::Success )
   {
     size_t n = cholSolv.cols();
     decomp.d = cholSolv.vectorD();
@@ -472,11 +472,10 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
 
 //' Inverse Cholesky of Delayed Array
 //' 
-//' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then 
-//' performs get the inverse using Cholesky decomposition
+//' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then gets the inverse using Cholesky decomposition
 //' 
 //' 
-//' @param x numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
+//' @param X numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
 //' @return inverse matrix of d 
 //' @examples
 //' 
@@ -491,23 +490,23 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
 //' 
 //' @export
 // [[Rcpp::export]]
-Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
+Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & X )
 {
   
   svdeig result;
-  Eigen::MatrixXd X;
+  Eigen::MatrixXd mX;
   
-  if ( x.isS4() == true)    
+  if ( X.isS4() == true)    
   {
-    X = read_DelayedArray(x);
+    mX = read_DelayedArray(X);
   } else {
     try{  
-      X = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(x);
+      mX = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
     }
     catch(std::exception &ex) { }
   }
   
-  result = RcppCholDec(X);
+  result = RcppCholDec(mX);
   
   return (result.v);
   
@@ -519,7 +518,7 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 //' 
 //' This function gets k first components from svd decomposition of numerical or Delayed Array 
 //' 
-//' @param x numerical or Delayed Array matrix
+//' @param X numerical or Delayed Array matrix
 //' @param k number of eigen values , this should satisfy k = min(n, m) - 1
 //' @param nev (optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1≤ nev ≤ n, where n is the size of matrix. 
 //' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
@@ -558,11 +557,11 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & x )
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nullable<int> nev=0,
+Rcpp::RObject bdSVD (const Rcpp::RObject & X, Rcpp::Nullable<int> k=0, Rcpp::Nullable<int> nev=0,
                      Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true)
 {
   
-  auto dmtype = beachmat::find_sexp_type(x);
+  auto dmtype = beachmat::find_sexp_type(X);
   int ks, nvs;
   bool bcent, bscal;
   
@@ -580,17 +579,17 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
   else    bscal = Rcpp::as<bool>(bscale);
   
   // size_t ncols = 0, nrows=0;
-  Eigen::MatrixXd X;
+  Eigen::MatrixXd mX;
   Rcpp::List ret;
   
   if ( dmtype == INTSXP || dmtype==REALSXP ) {
-    if ( x.isS4() == true){
-      X = read_DelayedArray(x);
+    if ( X.isS4() == true){
+      mX = read_DelayedArray(X);
     }else {
       try{
-        X = Rcpp::as<Eigen::MatrixXd >(x);
+        mX = Rcpp::as<Eigen::MatrixXd >(X);
       }catch(std::exception &ex) {
-        X = Rcpp::as<Eigen::VectorXd >(x);
+        mX = Rcpp::as<Eigen::VectorXd >(X);
       }
     }
     
@@ -599,7 +598,7 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
   }
   
   svdeig retsvd;
-  retsvd = RcppbdSVD(X,ks,nvs, bcent, bscal);
+  retsvd = RcppbdSVD(mX,ks,nvs, bcent, bscal);
   
   ret["u"] = retsvd.u;
   ret["v"] = retsvd.v;
@@ -616,7 +615,7 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
 //'
 //' Singular values and left singular vectors of a real nxp matrix 
 //' @title Block SVD decomposition using an incremental algorithm.
-//' @param x a real nxp matrix in hdf5 file
+//' @param file a real nxp matrix in hdf5 file
 //' @param group group in hdf5 data file where dataset is located
 //' @param dataset matrix dataset with data to perform SVD
 //' @param k number of local SVDs to concatenate at each level 
@@ -633,7 +632,7 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & x, Rcpp::Nullable<int> k=0, Rcpp::Nul
 //' }
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVector> group = R_NilValue, 
+Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVector> group = R_NilValue, 
                           Rcpp::Nullable<CharacterVector> dataset = R_NilValue,
                           Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
                           Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
@@ -672,8 +671,8 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
     if(threads.isNull())  ithreads = std::thread::hardware_concurrency() - 1;
     else    ithreads = Rcpp::as<int>(threads);*/
     
-    if(is<CharacterVector>(x))
-      filename = as<std::string>(x);
+    if(is<CharacterVector>(file))
+      filename = as<std::string>(file);
     else
       throw std::invalid_argument("File name must be character string");
       
@@ -704,7 +703,7 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
 //' 
 //' This function performs a complete svd decomposition of numerical matrix or Delayed Array with 
 //' 
-//' @param x numerical or Delayed Array matrix
+//' @param X numerical or Delayed Array matrix
 //' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
 //' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
 //' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
@@ -741,9 +740,9 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & x, Rcpp::Nullable<CharacterVecto
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD_lapack ( Rcpp::RObject x, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true)
+Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true)
 {
-  auto dmtype = beachmat::find_sexp_type(x);
+  auto dmtype = beachmat::find_sexp_type(X);
   bool bcent, bscal;
   
   if(bcenter.isNull())  bcent = true ;
@@ -753,17 +752,17 @@ Rcpp::RObject bdSVD_lapack ( Rcpp::RObject x, Rcpp::Nullable<bool> bcenter=true,
   else    bscal = Rcpp::as<bool>(bscale);
   
 
-  Eigen::MatrixXd X;
+  Eigen::MatrixXd mX;
   Rcpp::List ret;
   
   if ( dmtype == INTSXP || dmtype==REALSXP ) {
-    if ( x.isS4() == true){
-      X = read_DelayedArray(x);
+    if ( X.isS4() == true){
+      mX = read_DelayedArray(X);
     }else {
       try{
-        X = Rcpp::as<Eigen::MatrixXd >(x);
+        mX = Rcpp::as<Eigen::MatrixXd >(X);
       }catch(std::exception &ex) {
-        X = Rcpp::as<Eigen::VectorXd >(x);
+        mX = Rcpp::as<Eigen::VectorXd >(X);
       }
     }
     
@@ -771,7 +770,7 @@ Rcpp::RObject bdSVD_lapack ( Rcpp::RObject x, Rcpp::Nullable<bool> bcenter=true,
     throw std::runtime_error("unacceptable matrix type");
   }
   
-  svdeig retsvd =  RcppbdSVD_lapack( X, bcent, bscal);
+  svdeig retsvd =  RcppbdSVD_lapack( mX, bcent, bscal);
   
   return List::create(Named("d") = retsvd.d,
                       Named("u") = retsvd.u,

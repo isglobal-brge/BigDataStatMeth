@@ -41,12 +41,12 @@
   
   svdeig RcppCholDec(const Eigen::MatrixXd& X);
   
-  Rcpp::RObject bdSVD (const Rcpp::RObject & x, int k=0, int nev=0, bool bcenter=true, bool bscale = true );
+  Rcpp::RObject bdSVD (const Rcpp::RObject & X, int k=0, int nev=0, bool bcenter=true, bool bscale = true );
   //..// Rcpp::RObject bdSVD_hdf5(const Rcpp::RObject & x, CharacterVector group = R_NilValue, CharacterVector dataset = R_NilValue,
   //..//                                 int parts = 2, int k=0, int nev=0, bool bcenter=true, bool bscale=true, Rcpp::Nullable<int> threads = R_NilValue);
-  Rcpp::RObject bdSVD_hdf5(const Rcpp::RObject & x, CharacterVector group = R_NilValue, CharacterVector dataset = R_NilValue,
+  Rcpp::RObject bdSVD_hdf5(const Rcpp::RObject & file, CharacterVector group = R_NilValue, CharacterVector dataset = R_NilValue,
                            int parts = 2, int k=0, bool bcenter=true, bool bscale=true, Rcpp::Nullable<int> threads = R_NilValue);
   
-  Rcpp::RObject bdSVD_lapack(const Rcpp::RObject & x, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true);
+  Rcpp::RObject bdSVD_lapack(const Rcpp::RObject & X, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true);
 
 #endif

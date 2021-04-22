@@ -4,10 +4,10 @@
 \alias{Normalize_Data}
 \title{Normalize Delayed Array matrix}
 \usage{
-Normalize_Data(x, bcenter = NULL, bscale = NULL)
+Normalize_Data(X, bcenter = NULL, bscale = NULL)
 }
 \arguments{
-\item{x}{numerical or Delayed Array Matrix}
+\item{X}{numerical or Delayed Array Matrix}
 
 \item{bcenter}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
 

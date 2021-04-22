@@ -5,7 +5,7 @@
 \title{Block SVD decomposition using an incremental algorithm.}
 \usage{
 bdSVD_hdf5(
-  x,
+  file,
   group = NULL,
   dataset = NULL,
   k = 2L,
@@ -16,7 +16,7 @@ bdSVD_hdf5(
 )
 }
 \arguments{
-\item{x}{a real nxp matrix in hdf5 file}
+\item{file}{a real nxp matrix in hdf5 file}
 
 \item{group}{group in hdf5 data file where dataset is located}
 

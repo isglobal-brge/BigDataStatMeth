@@ -190,8 +190,8 @@ Import_text_to_HDF5 <- function(filename, outputfile, outGroup, outDataset, sep 
 #' @param outdataset, optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
 #' @return Original hdf5 data file with imputed data
 #' @export
-bdImputeSNPHDF5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE) {
-    .Call('_BigDataStatMeth_bdImputeSNPHDF5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols)
+bdImpute_snps_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE) {
+    .Call('_BigDataStatMeth_bdImpute_snps_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols)
 }
 
 #' Normalize dataset in hdf5 file
@@ -235,7 +235,7 @@ bdPCA_hdf5 <- function(filename, group, dataset, bcenter = FALSE, bscale = FALSE
 #' 
 #' This function performs a numerical or Delayed Array matrix normalization
 #' 
-#' @param x numerical or Delayed Array Matrix
+#' @param X numerical or Delayed Array Matrix
 #' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 #' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 #' @return numerical matrix
@@ -262,59 +262,15 @@ bdPCA_hdf5 <- function(filename, group, dataset, bcenter = FALSE, bscale = FALSE
 #' Normalize_Data(Dx, bscale = FALSE)
 #' 
 #' @export
-Normalize_Data <- function(x, bcenter = NULL, bscale = NULL) {
-    .Call('_BigDataStatMeth_Normalize_Data', PACKAGE = 'BigDataStatMeth', x, bcenter, bscale)
+Normalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
+    .Call('_BigDataStatMeth_Normalize_Data', PACKAGE = 'BigDataStatMeth', X, bcenter, bscale)
 }
 
-#' Matrix - Weighted vector Multiplication with numerical or DelayedArray data
-#' 
-#' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
-#' 
-#' @param X numerical or Delayed Array matrix
-#' @param W vector with weights
-#' @param op string indicating if operation  "Xw" , "wX" or "wXw"
-#' @return numerical matrix 
-#' @examples
-#' 
-#' library(DelayedArray)
-#' 
-#' n <- 100
-#' p <- 60
-#' 
-#' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
-#' 
-#' u <- runif(n)
-#' w <- u * (1 - u)
-#' 
-#' # by columnes
-#' bdwXw(X, w,"wX") 
-#' 
-#' # with Delayed Array
-#' 
-#' DX <- DelayedArray(X)
-#' 
-#' bdwXw(DX, w,"wX")
-#' 
-#' @export
-bdwXw <- function(X, W, op) {
-    .Call('_BigDataStatMeth_bdwXw', PACKAGE = 'BigDataStatMeth', X, W, op)
-}
-
-#' Linear regression using MLR-MR algorithm
-#'
-#' Linear regression for Big Data using MLR-MR algorithm
-#' 
-#' @param X, numerical matrix with paired observations of the predictor variable X
-#' @param Y, numerical matrix column with response variable
-#' @param blocks, integer with number of blocks we want to split matrix if null matrix is splited in blocks as maximum of 1000 variables per block
-#' @param threads, threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @return coefficients and error
-#' @export
-bdMLR_MR <- function(X, y, blocks, threads = NULL) {
+.bdMLR_MR <- function(X, y, blocks, threads = NULL) {
     .Call('_BigDataStatMeth_bdMLR_MR', PACKAGE = 'BigDataStatMeth', X, y, blocks, threads)
 }
 
-bdCrossprod_generic <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral = NULL, threads = NULL) {
+.bdCrossprod_generic <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral = NULL, threads = NULL) {
     .Call('_BigDataStatMeth_bdCrossprod_generic', PACKAGE = 'BigDataStatMeth', A, B, transposed, block_size, paral, threads)
 }
 
@@ -322,9 +278,9 @@ bdCrossprod_generic <- function(A, B = NULL, transposed = NULL, block_size = NUL
 #' 
 #' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 #' 
-#' @param a numerical or Delayed Array matrix
+#' @param X numerical or Delayed Array matrix
 #' @param w vector with weights
-#' @param op string indicating if operation 'xtwx' and 'xwxt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
+#' @param op string indicating if operation 'XtwX' and 'XwXt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
 #' @return numerical matrix 
 #' @examples
 #' 
@@ -346,15 +302,15 @@ bdCrossprod_generic <- function(A, B = NULL, transposed = NULL, block_size = NUL
 #' ans <- bdwproduct(DX, w,"xtwx")
 #' 
 #' @export
-bdwproduct <- function(a, w, op) {
-    .Call('_BigDataStatMeth_bdwproduct', PACKAGE = 'BigDataStatMeth', a, w, op)
+bdwproduct <- function(X, w, op) {
+    .Call('_BigDataStatMeth_bdwproduct', PACKAGE = 'BigDataStatMeth', X, w, op)
 }
 
 #' Matrix - Weighted Scalar Multiplication with numerical or DelayedArray data
 #' 
 #' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 #' 
-#' @param a numerical or Delayed Array matrix
+#' @param A numerical or Delayed Array matrix
 #' @param w scalar, weight
 #' @param op string indicating if operation  "Xw" or "wX"
 #' @return numerical matrix 
@@ -379,8 +335,8 @@ bdwproduct <- function(a, w, op) {
 #' bdScalarwproduct(DX, w,"wX")
 #' 
 #' @export
-bdScalarwproduct <- function(a, w, op) {
-    .Call('_BigDataStatMeth_bdScalarwproduct', PACKAGE = 'BigDataStatMeth', a, w, op)
+bdScalarwproduct <- function(A, w, op) {
+    .Call('_BigDataStatMeth_bdScalarwproduct', PACKAGE = 'BigDataStatMeth', A, w, op)
 }
 
 #' Block matrix multiplication with Delayed Array Object
@@ -497,74 +453,6 @@ partCrossProdEigen <- function(X) {
     .Call('_BigDataStatMeth_partCrossProdEigen', PACKAGE = 'BigDataStatMeth', X)
 }
 
-#' Matrix multiplication with Delayed Array Object (RcppParallel)
-#' 
-#' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
-#' 
-#' @param X double matrix to apply multiplication
-#' @param Y double matrix to apply multiplication
-#' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
-#' @return numerical matrix
-#' @examples
-#' 
-#' library(DelayedArray)
-#' 
-#' # with numeric matrix
-#' k <- 300
-#' n <- 400
-#' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
-#' B <- matrix(rnorm(k*k), nrow=k)
-#' 
-#' parXYProd(A,B,"xy")
-#' parXYProd(A,B,"xyt")
-#' 
-#' # with Delaeyd Array
-#' AD <- DelayedArray(A)
-#' BD <- DelayedArray(B)
-#' 
-#' parXYProd(AD,BD,"xy")
-#' parXYProd(AD,BD,"xyt")
-#' 
-#' @export
-parXYProd <- function(X, Y, op = NULL) {
-    .Call('_BigDataStatMeth_parXYProd', PACKAGE = 'BigDataStatMeth', X, Y, op)
-}
-
-#' Block matrix multiplication with Delayed Array Object
-#' 
-#' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
-#' 
-#' @param X double matrix to apply multiplication
-#' @param Y double matrix to apply multiplication
-#' @param op, (optional, default = "xy"), if op="xy" then performs the x\%*\%y matrix multiplication, if op = "xty" preforms t(X)\%*\% Y, if op = "xyt" performs X\%*\%t(Y)
-#' @return numerical matrix
-#' @examples
-#' 
-#' library(DelayedArray)
-#' 
-#' # with numeric matrix
-#' m <- 500
-#' k <- 1500
-#' n <- 400
-#' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
-#' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
-#' 
-#' parXYProdBlock(A,B,"xy")
-#' parXYProdBlock(A,B,"xty")
-#' 
-#' # with Delaeyd Array
-#' AD <- DelayedArray(A)
-#' BD <- DelayedArray(B)
-#' 
-#' parXYProdBlock(AD,BD,"xy")
-#' parXYProdBlock(AD,BD,"xty")
-#' 
-#' 
-#' @export
-parXYProdBlock <- function(X, Y, op = NULL) {
-    .Call('_BigDataStatMeth_parXYProdBlock', PACKAGE = 'BigDataStatMeth', X, Y, op)
-}
-
 parxwxt <- function(X, W) {
     .Call('_BigDataStatMeth_parxwxt', PACKAGE = 'BigDataStatMeth', X, W)
 }
@@ -575,66 +463,6 @@ parxtwx <- function(X, W) {
 
 parXy <- function(X, Y) {
     .Call('_BigDataStatMeth_parXy', PACKAGE = 'BigDataStatMeth', X, Y)
-}
-
-#' Block matrix multiplication with Delayed Array Object
-#' 
-#' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
-#' 
-#' @param a a double matrix.
-#' @param b a double matrix.
-#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
-#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @param bigmatrix (optiona, default = 5000) maximum number of rows or columns to consider as big matrix and work with
-#' hdf5 files, by default a matrix with more than 5000 rows or files is considered big matrix and computation is made in disk 
-#' @param mixblock_size (optiona, default = 128), only if we are working with big matrix and parallel computation = true. 
-#' Block size for mixed computation in big matrix parallel. Size of the block to be used to perform parallelized memory 
-#' memory of the block read from the disk being processed.
-#' @param outfile (optional) file name to work with hdf5 if we are working with big matrix in disk.
-#' @return A List with : 
-#' \itemize{
-#'   \item{"matrix"}{ Result matrix if execution has been performed in memory}
-#'   \item{"filename"}{ HDF5 filename if execution has been performed in disk, HDF5 file contains : 
-#'     \itemize{
-#'       \item{"INPUT"}{hdf5 group with input matrix A and B}
-#'       \item{"OUTPUT"}{hdf5 group with output matrix C}
-#'     }with input and output matrix.
-#'   }
-#' }
-#' @examples
-#' 
-#' library(DelayedArray)
-#' 
-#' # with numeric matrix
-#' m <- 500
-#' k <- 1500
-#' n <- 400
-#' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
-#' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
-#' 
-#' blockmult(A,B,128, TRUE)
-#' 
-#' # with Delaeyd Array
-#' AD <- DelayedArray(A)
-#' BD <- DelayedArray(B)
-#' 
-#' blockmult_Strassen(AD,BD,128, TRUE)
-#' @export
-blockmult_Strassen <- function(a, b, block_size = NULL, paral = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_blockmult_Strassen', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads)
-}
-
-JacobianSVD <- function(X) {
-    .Call('_BigDataStatMeth_JacobianSVD', PACKAGE = 'BigDataStatMeth', X)
-}
-
-bdtsvd <- function(X, k = NULL) {
-    .Call('_BigDataStatMeth_bdtsvd', PACKAGE = 'BigDataStatMeth', X, k)
-}
-
-bdsvd <- function(X) {
-    .Call('_BigDataStatMeth_bdsvd', PACKAGE = 'BigDataStatMeth', X)
 }
 
 #' Pseudo-Inverse
@@ -660,34 +488,6 @@ bdpseudoinv <- function(X) {
 #' @export
 bdQR <- function(X, thin = NULL) {
     .Call('_BigDataStatMeth_bdQR', PACKAGE = 'BigDataStatMeth', X, thin)
-}
-
-#' QR Decomposition 
-#' 
-#' This function compute QR decomposition computes a QR
-#' factorization with column pivoting of a matrix A:  A*P = Q*R
-#' 
-#' This QR decomposition is like R native decomposition obtained with qr() function
-#' 
-#' @param X a real square matrix 
-#' @return List with  : a matrix with the same dimensions as x. The upper triangle contains the \(\bold{R}\) of the decomposition and the lower triangle contains information on the \(\bold{Q}\) of the decomposition (stored in compact form)
-#' @export
-bdQR_compact <- function(A) {
-    .Call('_BigDataStatMeth_bdQR_compact', PACKAGE = 'BigDataStatMeth', A)
-}
-
-#' QR Decomposition 
-#' 
-#' This function compute QR decomposition (also called a QR factorization) 
-#' of a matrix \code{A} into a product \code{A = QR} of an 
-#' orthogonal matrix Q and an upper triangular matrix R.
-#' 
-#' @param X a real square matrix 
-#' @param threads (optional) only if paral = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
-#' @export
-bdQR_parallel <- function(X, threads = NULL) {
-    .Call('_BigDataStatMeth_bdQR_parallel', PACKAGE = 'BigDataStatMeth', X, threads)
 }
 
 #' Solves matrix equations : A*X = B
@@ -788,11 +588,10 @@ bdSolve <- function(A, B) {
 
 #' Inverse Cholesky of Delayed Array
 #' 
-#' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then 
-#' performs get the inverse using Cholesky decomposition
+#' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then gets the inverse using Cholesky decomposition
 #' 
 #' 
-#' @param x numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
+#' @param X numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
 #' @return inverse matrix of d 
 #' @examples
 #' 
@@ -806,15 +605,15 @@ bdSolve <- function(A, B) {
 #' bdInvCholesky(DA)
 #' 
 #' @export
-bdInvCholesky <- function(x) {
-    .Call('_BigDataStatMeth_bdInvCholesky', PACKAGE = 'BigDataStatMeth', x)
+bdInvCholesky <- function(X) {
+    .Call('_BigDataStatMeth_bdInvCholesky', PACKAGE = 'BigDataStatMeth', X)
 }
 
 #' k first SVD components for DelayedArray 
 #' 
 #' This function gets k first components from svd decomposition of numerical or Delayed Array 
 #' 
-#' @param x numerical or Delayed Array matrix
+#' @param X numerical or Delayed Array matrix
 #' @param k number of eigen values , this should satisfy k = min(n, m) - 1
 #' @param nev (optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1≤ nev ≤ n, where n is the size of matrix. 
 #' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
@@ -852,15 +651,15 @@ bdInvCholesky <- function(x) {
 #' decsvd$u
 #' 
 #' @export
-bdSVD <- function(x, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
-    .Call('_BigDataStatMeth_bdSVD', PACKAGE = 'BigDataStatMeth', x, k, nev, bcenter, bscale)
+bdSVD <- function(X, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
+    .Call('_BigDataStatMeth_bdSVD', PACKAGE = 'BigDataStatMeth', X, k, nev, bcenter, bscale)
 }
 
 #' Block SVD decomposition for hdf5 files using an incremental algorithm.
 #'
 #' Singular values and left singular vectors of a real nxp matrix 
 #' @title Block SVD decomposition using an incremental algorithm.
-#' @param x a real nxp matrix in hdf5 file
+#' @param file a real nxp matrix in hdf5 file
 #' @param group group in hdf5 data file where dataset is located
 #' @param dataset matrix dataset with data to perform SVD
 #' @param k number of local SVDs to concatenate at each level 
@@ -876,15 +675,15 @@ bdSVD <- function(x, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
 #'   \item{"v"}{ singular values, nxn diagonal matrix (non-negative real values) }
 #' }
 #' @export
-bdSVD_hdf5 <- function(x, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, threads = NULL) {
-    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', x, group, dataset, k, q, bcenter, bscale, threads)
+bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, threads = NULL) {
+    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, threads)
 }
 
 #' Complete SVD with Lapack Functions for DelayedArray and RObjects
 #' 
 #' This function performs a complete svd decomposition of numerical matrix or Delayed Array with 
 #' 
-#' @param x numerical or Delayed Array matrix
+#' @param X numerical or Delayed Array matrix
 #' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
 #' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
 #' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
@@ -920,8 +719,8 @@ bdSVD_hdf5 <- function(x, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter 
 #' decsvd$u
 #' 
 #' @export
-bdSVD_lapack <- function(x, bcenter = TRUE, bscale = TRUE) {
-    .Call('_BigDataStatMeth_bdSVD_lapack', PACKAGE = 'BigDataStatMeth', x, bcenter, bscale)
+bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE) {
+    .Call('_BigDataStatMeth_bdSVD_lapack', PACKAGE = 'BigDataStatMeth', X, bcenter, bscale)
 }
 
 #' Block matrix multiplication with Delayed Array Object

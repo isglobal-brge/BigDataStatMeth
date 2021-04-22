@@ -202,7 +202,7 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
 
 
 
-// [[Rcpp::export]]
+// [[Rcpp::export(.bdCrossprod_generic)]]
 Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B=  R_NilValue, 
                                      Rcpp::Nullable<bool> transposed = R_NilValue,
                                      Rcpp::Nullable<int> block_size = R_NilValue, 
@@ -324,9 +324,9 @@ Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObje
 //' 
 //' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 //' 
-//' @param a numerical or Delayed Array matrix
+//' @param X numerical or Delayed Array matrix
 //' @param w vector with weights
-//' @param op string indicating if operation 'xtwx' and 'xwxt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
+//' @param op string indicating if operation 'XtwX' and 'XwXt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
 //' @return numerical matrix 
 //' @examples
 //' 
@@ -349,20 +349,20 @@ Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObje
 //' 
 //' @export
 // [[Rcpp::export]]
-Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
+Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op)
 {
   
   Eigen::MatrixXd A;
   Eigen::MatrixXd W;
   
   
-  // Read DelayedArray's a and b
-  if ( a.isS4() == true)    
+  // Read DelayedArray's X and b
+  if ( X.isS4() == true)    
   {
-    A = read_DelayedArray(a);
+    A = read_DelayedArray(X);
   } else {
     try{  
-      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
     }
     catch(std::exception &ex) { }
   }
@@ -374,13 +374,13 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
     W = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(w);
   } 
   
-  if(op == "xwxt") {
+  if(op == "XwXt" || op == "xwxt") {
     return(xwxt(A,W)) ;
-  }else if (op == "xtwx") {
+  }else if (op == "XtwX" || op == "xtwx") {
     return(xtwx(A,W));
-  }else if (op == "Xw") {
+  }else if (op == "Xw" || op == "xw") {
     return(Xw(A,W));
-  }else if (op == "wX") {
+  }else if (op == "wX" || op == "wx" ) {
     return(wX(A,W));
   } else
   {
@@ -393,7 +393,7 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 //' 
 //' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 //' 
-//' @param a numerical or Delayed Array matrix
+//' @param A numerical or Delayed Array matrix
 //' @param w scalar, weight
 //' @param op string indicating if operation  "Xw" or "wX"
 //' @return numerical matrix 
@@ -419,18 +419,18 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op)
 //' 
 //' @export
 // [[Rcpp::export]]
-Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject a, double w, std::string op)
+Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject A, double w, std::string op)
 {
   
-  Eigen::MatrixXd A;
+  Eigen::MatrixXd mA;
 
-  // Read DelayedArray's a and b
-  if ( a.isS4() == true)    
+  // Read DelayedArray's A and b
+  if ( A.isS4() == true)    
   {
-    A = read_DelayedArray(a);
+    mA = read_DelayedArray(A);
   } else {
     try{  
-      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+      mA = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(A);
     }
     catch(std::exception &ex) { }
   }
@@ -439,7 +439,7 @@ Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject a, double w, std::string op)
                  [](unsigned char c){ return std::tolower(c); });
   
   if (op == "xw" || op == "wx") {
-    return(w*A);
+    return(w*mA);
   } else  {
     throw("Invalid option (valid options : xtwx or xwxt)");
   }
@@ -466,6 +466,11 @@ stopifnot(all.equal(bdwproduct(X, w,"xtwx"),crossprod(X, w*X)),
 
 
 
+bdwproduct(X, w,"xwxt")
+bdwproduct(X, w,"xwxt")
+bdwproduct(X, w,"xwxt")
+
+
 n <- 10
 p <- 6
 X <- matrix(rnorm(n*p), nrow=n, ncol=p)
@@ -476,6 +481,19 @@ wD <- DelayedArray(as.matrix(w))
   
 bdwproduct(X, w,"xwxt")
 bdwproduct(XD, w,"xwxt")
+
+bdwproduct(XD, w,"xw")
+bdwproduct(XD, w,"wx")
+
+all.equal(bdwproduct(XD, w,"Xw"), X%*%diag(w) )
+
+all.equal(bdwproduct(XD, w,"wX"), diag(w)%*%X )
+
+
+dim(XD)
+length(w)
+
+
 X%*%diag(w)%*%t(X)
 
 stopifnot(all.equal(bdwproduct(X, w,"xwxt"), X%*%diag(w)%*%t(X) ),

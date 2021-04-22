@@ -4,10 +4,10 @@
 \alias{bdScalarwproduct}
 \title{Matrix - Weighted Scalar Multiplication with numerical or DelayedArray data}
 \usage{
-bdScalarwproduct(a, w, op)
+bdScalarwproduct(A, w, op)
 }
 \arguments{
-\item{a}{numerical or Delayed Array matrix}
+\item{A}{numerical or Delayed Array matrix}
 
 \item{w}{scalar, weight}
 
