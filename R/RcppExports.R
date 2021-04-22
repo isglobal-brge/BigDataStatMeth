@@ -315,6 +315,36 @@ bdMLR_MR <- function(X, y, blocks, threads = NULL) {
 }
 
 #' Crossproduct and transposed crossproduct of DelayedArray
+#'
+#' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
+#'
+#' @param a numerical or Delayed Array matrix
+#' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
+#' @return numerical matrix with crossproduct or transposed crossproduct
+#' @examples
+#'
+#' library(DelayedArray)
+#'
+#' n <- 100
+#' p <- 60
+#'
+#' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+#'
+#' # without DelayedArray
+#' bdcrossprod(X)
+#' bdcrossprod(X, transposed = TRUE)
+#'
+#' # with DelayedArray
+#' XD <- DelayedArray(X)
+#' bdcrossprod(XD)
+#' bdcrossprod(XD, transposed = TRUE)
+#'
+#' @export
+bdcrossprod <- function(a, transposed = NULL) {
+    .Call('_BigDataStatMeth_bdcrossprod', PACKAGE = 'BigDataStatMeth', a, transposed)
+}
+
+#' Crossproduct and transposed crossproduct of DelayedArray
 #' 
 #' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
 #' 
@@ -340,8 +370,8 @@ bdMLR_MR <- function(X, y, blocks, threads = NULL) {
 #' bdcrossprod(XD, transposed = TRUE)
 #' 
 #' @export
-bdcrossprod <- function(a, transposed = NULL) {
-    .Call('_BigDataStatMeth_bdcrossprod', PACKAGE = 'BigDataStatMeth', a, transposed)
+bdCrossprod2 <- function(A, B = NULL, transposed = NULL) {
+    .Call('_BigDataStatMeth_bdCrossprod2', PACKAGE = 'BigDataStatMeth', A, B, transposed)
 }
 
 #' Matrix - Weighted vector Multiplication with numerical or DelayedArray data
@@ -954,12 +984,12 @@ bdSVD_lapack <- function(x, bcenter = TRUE, bscale = TRUE) {
 #' 
 #' This function performs a Crossproduct with weigths matrix A%*%W%*%t(A) multiplication with numeric matrix or Delayed Arrays
 #' 
-#' @param a a double matrix.
-#' @param w a Weighted matrix
+#' @param A a double matrix.
+#' @param W a Weighted matrix
 #' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 #' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
 #' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @return Matrix with crossproduct : 
+#' @return Matrix with A%*%W%*%t(A) product 
 #' @examples
 #' 
 #' library(DelayedArray)
@@ -971,16 +1001,19 @@ bdSVD_lapack <- function(x, bcenter = TRUE, bscale = TRUE) {
 #' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 #' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 #' 
-#' blockmult(A,B,128, TRUE)
 #' 
 #' # with Delaeyd Array
 #' AD <- DelayedArray(A)
 #' BD <- DelayedArray(B)
 #' 
-#' blockmult(AD,BD,128, TRUE)
+#' # Serial execution
+#' Serie<- tCrossprod_Weighted(A, B, paral = FALSE)
+#' 
+#' # Parallel execution with 2 threads and blocks 256x256
+#' Par_2cor <- tCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 #' @export
-tCrossprod_Weighted <- function(a, w, block_size = NULL, paral = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_tCrossprod_Weighted', PACKAGE = 'BigDataStatMeth', a, w, block_size, paral, threads)
+tCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_tCrossprod_Weighted', PACKAGE = 'BigDataStatMeth', A, W, block_size, paral, threads)
 }
 
 #' Sumarize vector

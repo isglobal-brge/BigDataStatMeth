@@ -4,12 +4,12 @@
 \alias{tCrossprod_Weighted}
 \title{Block matrix multiplication with Delayed Array Object}
 \usage{
-tCrossprod_Weighted(a, w, block_size = NULL, paral = NULL, threads = NULL)
+tCrossprod_Weighted(A, W, block_size = NULL, paral = NULL, threads = NULL)
 }
 \arguments{
-\item{a}{a double matrix.}
+\item{A}{a double matrix.}
 
-\item{w}{a Weighted matrix}
+\item{W}{a Weighted matrix}
 
 \item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)}
 
@@ -18,7 +18,7 @@ tCrossprod_Weighted(a, w, block_size = NULL, paral = NULL, threads = NULL)
 \item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
 }
 \value{
-Matrix with crossproduct :
+Matrix with A%*%W%*%t(A) product
 }
 \description{
 This function performs a Crossproduct with weigths matrix A%*%W%*%t(A) multiplication with numeric matrix or Delayed Arrays
@@ -34,11 +34,14 @@ n <- 400
 A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 
-blockmult(A,B,128, TRUE)
 
 # with Delaeyd Array
 AD <- DelayedArray(A)
 BD <- DelayedArray(B)
 
-blockmult(AD,BD,128, TRUE)
+# Serial execution
+Serie<- tCrossprod_Weighted(A, B, paral = FALSE)
+
+# Parallel execution with 2 threads and blocks 256x256
+Par_2cor <- tCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 }

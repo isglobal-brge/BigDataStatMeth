@@ -218,6 +218,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdCrossprod2
+Eigen::MatrixXd bdCrossprod2(Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B, Rcpp::Nullable<bool> transposed);
+RcppExport SEXP _BigDataStatMeth_bdCrossprod2(SEXP ASEXP, SEXP BSEXP, SEXP transposedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::RObject> >::type B(BSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type transposed(transposedSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdCrossprod2(A, B, transposed));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdwproduct
 Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op);
 RcppExport SEXP _BigDataStatMeth_bdwproduct(SEXP aSEXP, SEXP wSEXP, SEXP opSEXP) {
@@ -649,17 +662,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // tCrossprod_Weighted
-Rcpp::List tCrossprod_Weighted(Rcpp::RObject a, Rcpp::RObject w, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_tCrossprod_Weighted(SEXP aSEXP, SEXP wSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
+Rcpp::RObject tCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_tCrossprod_Weighted(SEXP ASEXP, SEXP WSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type a(aSEXP);
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type w(wSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type W(WSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(tCrossprod_Weighted(a, w, block_size, paral, threads));
+    rcpp_result_gen = Rcpp::wrap(tCrossprod_Weighted(A, W, block_size, paral, threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -700,6 +713,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdwXw", (DL_FUNC) &_BigDataStatMeth_bdwXw, 3},
     {"_BigDataStatMeth_bdMLR_MR", (DL_FUNC) &_BigDataStatMeth_bdMLR_MR, 4},
     {"_BigDataStatMeth_bdcrossprod", (DL_FUNC) &_BigDataStatMeth_bdcrossprod, 2},
+    {"_BigDataStatMeth_bdCrossprod2", (DL_FUNC) &_BigDataStatMeth_bdCrossprod2, 3},
     {"_BigDataStatMeth_bdwproduct", (DL_FUNC) &_BigDataStatMeth_bdwproduct, 3},
     {"_BigDataStatMeth_bdScalarwproduct", (DL_FUNC) &_BigDataStatMeth_bdScalarwproduct, 3},
     {"_BigDataStatMeth_blockmult_sparse", (DL_FUNC) &_BigDataStatMeth_blockmult_sparse, 4},

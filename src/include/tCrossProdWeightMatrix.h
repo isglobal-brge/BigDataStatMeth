@@ -12,9 +12,9 @@
                                                       int block_size, Rcpp::Nullable<int> threads  = R_NilValue);
    
    // R functions :
-   Rcpp::List tCrossprod_Weighted(Rcpp::RObject a, Rcpp::RObject w, 
-                                  Rcpp::Nullable<int> block_size, 
-                                  Rcpp::Nullable<bool> paral,
-                                  Rcpp::Nullable<int> threads );
+   Rcpp::RObject tCrossprod_Weighted(Rcpp::RObject a, Rcpp::RObject w, 
+                                     Rcpp::Nullable<int> block_size, 
+                                     Rcpp::Nullable<bool> paral,
+                                     Rcpp::Nullable<int> threads );
    
 #endif

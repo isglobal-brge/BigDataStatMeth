@@ -144,6 +144,64 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
 
 
 //' Crossproduct and transposed crossproduct of DelayedArray
+//'
+//' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
+//'
+//' @param a numerical or Delayed Array matrix
+//' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
+//' @return numerical matrix with crossproduct or transposed crossproduct
+//' @examples
+//'
+//' library(DelayedArray)
+//'
+//' n <- 100
+//' p <- 60
+//'
+//' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+//'
+//' # without DelayedArray
+//' bdcrossprod(X)
+//' bdcrossprod(X, transposed = TRUE)
+//'
+//' # with DelayedArray
+//' XD <- DelayedArray(X)
+//' bdcrossprod(XD)
+//' bdcrossprod(XD, transposed = TRUE)
+//'
+//' @export
+// [[Rcpp::export]]
+Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> transposed = R_NilValue)
+{
+
+  Eigen::MatrixXd A;
+  bool btrans;
+
+  if(transposed.isNotNull())
+    btrans = Rcpp::as<bool> (transposed);
+  else
+    btrans = FALSE;
+
+  // Read DelayedArray's a and b
+  if ( a.isS4() == true)
+  {
+    A = read_DelayedArray(a);
+  } else {
+    try{
+      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+    }
+    catch(std::exception &ex) { }
+  }
+
+  if(btrans == true) {
+    return(bdtcrossproduct(A)) ;
+  }else {
+    return(bdcrossproduct(A));
+  }
+}
+
+
+
+//' Crossproduct and transposed crossproduct of DelayedArray
 //' 
 //' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
 //' 
@@ -170,34 +228,68 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
 //' 
 //' @export
 // [[Rcpp::export]]
-Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> transposed = R_NilValue)
+Eigen::MatrixXd bdCrossprod2(Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B=  R_NilValue, Rcpp::Nullable<bool> transposed = R_NilValue)
 {
   
-  Eigen::MatrixXd A;
+  Eigen::MatrixXd mA;
+  Eigen::MatrixXd tmpData;
+  
   bool btrans;
   
   if(transposed.isNotNull())
     btrans = Rcpp::as<bool> (transposed);
   else
     btrans = FALSE;
-
-  // Read DelayedArray's a and b
-  if ( a.isS4() == true)    
+  
+  // Read DelayedmArray's A and b
+  if ( A.isS4() == true)    
   {
-    A = read_DelayedArray(a);
+    mA = read_DelayedArray(A);
   } else {
     try{  
-      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+      mA = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(A);
     }
     catch(std::exception &ex) { }
   }
-
-  if(btrans == true) {
-    return(bdtcrossproduct(A)) ;
-  }else {
-    return(bdcrossproduct(A));
+  
+  if(B.isNull())
+  {
+    if(btrans == true) {
+      return(bdtcrossproduct(mA)) ;
+    }else {
+      return(bdcrossproduct(mA));
+    }
+  } else {
+    
+    // Read DelayedArray's a and b
+    if ( as<Rcpp::RObject>(B).isS4() == true)    
+    {
+      
+      tmpData = read_DelayedArray(as<Rcpp::RObject>(B));
+      
+      Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mB(tmpData.data(), tmpData.rows(), tmpData.cols());
+      Rcpp::Rcout<<"\n"<<mB<<"\n";
+      
+      
+    } else {
+      try{  
+      //   A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+      }
+      catch(std::exception &ex) { }
+    }
+    
+  
   }
+  
+
+  
+  
 }
+
+
+
+
+
 
 
 // Weighted product
@@ -399,6 +491,13 @@ all.equal(cpDA, crossprod(A))
 
 all.equal(cpDA, A%*%t(A))
 all.equal(cpA, A%*%t(A))
+
+
+
+
+library(BigDataStatMeth)
+
+
 
 
 

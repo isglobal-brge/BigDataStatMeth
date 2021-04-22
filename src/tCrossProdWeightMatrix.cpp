@@ -180,12 +180,12 @@ return(C);
 //' 
 //' This function performs a Crossproduct with weigths matrix A%*%W%*%t(A) multiplication with numeric matrix or Delayed Arrays
 //' 
-//' @param a a double matrix.
-//' @param w a Weighted matrix
+//' @param A a double matrix.
+//' @param W a Weighted matrix
 //' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 //' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
 //' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-//' @return Matrix with crossproduct : 
+//' @return Matrix with A%*%W%*%t(A) product 
 //' @examples
 //' 
 //' library(DelayedArray)
@@ -197,16 +197,19 @@ return(C);
 //' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 //' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 //' 
-//' blockmult(A,B,128, TRUE)
 //' 
 //' # with Delaeyd Array
 //' AD <- DelayedArray(A)
 //' BD <- DelayedArray(B)
 //' 
-//' blockmult(AD,BD,128, TRUE)
+//' # Serial execution
+//' Serie<- tCrossprod_Weighted(A, B, paral = FALSE)
+//' 
+//' # Parallel execution with 2 threads and blocks 256x256
+//' Par_2cor <- tCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 //' @export
 // [[Rcpp::export]]
-Rcpp::List tCrossprod_Weighted(Rcpp::RObject a, Rcpp::RObject w, 
+Rcpp::RObject tCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, 
                                Rcpp::Nullable<int> block_size = R_NilValue, 
                                Rcpp::Nullable<bool> paral = R_NilValue,
                                Rcpp::Nullable<int> threads = R_NilValue )
@@ -215,45 +218,45 @@ Rcpp::List tCrossprod_Weighted(Rcpp::RObject a, Rcpp::RObject w,
   int iblock_size;
   bool bparal; 
 
-  Eigen::MatrixXd A;
+  Eigen::MatrixXd mA;
   Eigen::MatrixXd B;
   Eigen::MatrixXd C;
   
   IntegerVector dsizeA, dsizeB;
   
-  // Rcpp::Rcout<<"\n Tipus de dades :  "<<TYPEOF(a)<<"\n";
-  // Rcpp::Rcout<<"\n Clase objecte :  "<<  as<std::string>(a.slot("class"))  <<"\n";
+  // Rcpp::Rcout<<"\n Tipus de dades :  "<<TYPEOF(A)<<"\n";
+  // Rcpp::Rcout<<"\n Clase objecte :  "<<  as<std::string>(A.slot("class"))  <<"\n";
   
   
   try{
     
     // Get matrix sizes
-    if ( a.isS4() == true )    
+    if ( A.isS4() == true )    
     {
-      dsizeA = get_DelayedArray_size(a);
+      dsizeA = get_DelayedArray_size(A);
     } else { 
       try{  
-        if ( TYPEOF(a) == INTSXP ) {
-          dsizeA[0] = Rcpp::as<IntegerMatrix>(a).nrow();
-          dsizeA[1] = Rcpp::as<IntegerMatrix>(a).ncol();
+        if ( TYPEOF(A) == INTSXP ) {
+          dsizeA[0] = Rcpp::as<IntegerMatrix>(A).nrow();
+          dsizeA[1] = Rcpp::as<IntegerMatrix>(A).ncol();
         }else{
-          dsizeA[0] = Rcpp::as<NumericMatrix>(a).nrow();
-          dsizeA[1] = Rcpp::as<NumericMatrix>(a).ncol();
+          dsizeA[0] = Rcpp::as<NumericMatrix>(A).nrow();
+          dsizeA[1] = Rcpp::as<NumericMatrix>(A).ncol();
         }
       }catch(std::exception &ex) { }
     }
     
-    if ( w.isS4() == true)    
+    if ( W.isS4() == true)    
     {
-      dsizeB = get_DelayedArray_size(w);
+      dsizeB = get_DelayedArray_size(W);
     } else { 
       try{  
-        if ( TYPEOF(w) == INTSXP ) {
-          dsizeB[0] = Rcpp::as<IntegerMatrix>(w).nrow();
-          dsizeB[1] = Rcpp::as<IntegerMatrix>(w).ncol();
+        if ( TYPEOF(W) == INTSXP ) {
+          dsizeB[0] = Rcpp::as<IntegerMatrix>(W).nrow();
+          dsizeB[1] = Rcpp::as<IntegerMatrix>(W).ncol();
         }else{
-          dsizeB[0] = Rcpp::as<NumericMatrix>(w).nrow();
-          dsizeB[1] = Rcpp::as<NumericMatrix>(w).ncol();
+          dsizeB[0] = Rcpp::as<NumericMatrix>(W).nrow();
+          dsizeB[1] = Rcpp::as<NumericMatrix>(W).ncol();
         }
       }catch(std::exception &ex) { }
     }
@@ -287,41 +290,41 @@ Rcpp::List tCrossprod_Weighted(Rcpp::RObject a, Rcpp::RObject w,
       /**** START IN-MEMORY PROCESSING **/
       /**********************************/
   
-      // Read DelayedArray's a and b
-      if ( a.isS4() == true)    
+      // Read DelayedArray's A and b
+      if ( A.isS4() == true)    
       {
-        A = read_DelayedArray(a);
+        mA = read_DelayedArray(A);
       } else {
         try{  
-          if ( TYPEOF(a) == INTSXP ) {
-            A = Rcpp::as<Eigen::MatrixXi>(a).cast<double>();
+          if ( TYPEOF(A) == INTSXP ) {
+            mA = Rcpp::as<Eigen::MatrixXi>(A).cast<double>();
           } else{
-            A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+            mA = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(A);
           }
         }
         catch(std::exception &ex) { }
       }
       
-      if ( w.isS4() == true) {
-        B = read_DelayedArray(w);
+      if ( W.isS4() == true) {
+        B = read_DelayedArray(W);
       }  else {
         
-        if ( TYPEOF(w) == INTSXP ) {
-          B = Rcpp::as<Eigen::MatrixXi>(w).cast<double>();
+        if ( TYPEOF(W) == INTSXP ) {
+          B = Rcpp::as<Eigen::MatrixXi>(W).cast<double>();
         } else{
-          B = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(w);
+          B = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(W);
         }
         
       } 
       
       if(bparal == true) {
-        C = Bblock_weighted_crossprod_parallel(A, B, iblock_size, threads);
+        C = Bblock_weighted_crossprod_parallel(mA, B, iblock_size, threads);
       } else if (bparal == false)  {
-        C = Bblock_weighted_crossprod(A, B, iblock_size);
+        C = Bblock_weighted_crossprod(mA, B, iblock_size);
       }
       
       
-      return List::create(Named("matrix") = wrap(C));
+      return (wrap(C));
       
       /********************************/
       /**** END IN-MEMORY PROCESSING **/
@@ -361,13 +364,6 @@ n <- 1024
 
 A <- matrix(runif(n*n), nrow = n, ncol = n)
 B <- matrix(runif(n*n), nrow = n, ncol = n)
-
-
-# D <- A%*%B%*%t(A)
-# C <- Crossprod_Weighted(A,B,paral = FALSE)
-# all.equal(D, C$matrix)
-
-
 
 res <- microbenchmark(R <- A%*%B%*%t(A),
                       Serie<- tCrossprod_Weighted(A,B,paral = FALSE), 
