@@ -206,28 +206,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// bdcrossprod
-Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> transposed);
-RcppExport SEXP _BigDataStatMeth_bdcrossprod(SEXP aSEXP, SEXP transposedSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type a(aSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::Function> >::type transposed(transposedSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdcrossprod(a, transposed));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdCrossprod2
-Eigen::MatrixXd bdCrossprod2(Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B, Rcpp::Nullable<bool> transposed);
-RcppExport SEXP _BigDataStatMeth_bdCrossprod2(SEXP ASEXP, SEXP BSEXP, SEXP transposedSEXP) {
+// bdCrossprod_generic
+Eigen::MatrixXd bdCrossprod_generic(Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B, Rcpp::Nullable<bool> transposed, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_bdCrossprod_generic(SEXP ASEXP, SEXP BSEXP, SEXP transposedSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::RObject >::type A(ASEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::RObject> >::type B(BSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type transposed(transposedSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdCrossprod2(A, B, transposed));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdCrossprod_generic(A, B, transposed, block_size, paral, threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -712,8 +703,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_Normalize_Data", (DL_FUNC) &_BigDataStatMeth_Normalize_Data, 3},
     {"_BigDataStatMeth_bdwXw", (DL_FUNC) &_BigDataStatMeth_bdwXw, 3},
     {"_BigDataStatMeth_bdMLR_MR", (DL_FUNC) &_BigDataStatMeth_bdMLR_MR, 4},
-    {"_BigDataStatMeth_bdcrossprod", (DL_FUNC) &_BigDataStatMeth_bdcrossprod, 2},
-    {"_BigDataStatMeth_bdCrossprod2", (DL_FUNC) &_BigDataStatMeth_bdCrossprod2, 3},
+    {"_BigDataStatMeth_bdCrossprod_generic", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_generic, 6},
     {"_BigDataStatMeth_bdwproduct", (DL_FUNC) &_BigDataStatMeth_bdwproduct, 3},
     {"_BigDataStatMeth_bdScalarwproduct", (DL_FUNC) &_BigDataStatMeth_bdScalarwproduct, 3},
     {"_BigDataStatMeth_blockmult_sparse", (DL_FUNC) &_BigDataStatMeth_blockmult_sparse, 4},

@@ -314,64 +314,8 @@ bdMLR_MR <- function(X, y, blocks, threads = NULL) {
     .Call('_BigDataStatMeth_bdMLR_MR', PACKAGE = 'BigDataStatMeth', X, y, blocks, threads)
 }
 
-#' Crossproduct and transposed crossproduct of DelayedArray
-#'
-#' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
-#'
-#' @param a numerical or Delayed Array matrix
-#' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
-#' @return numerical matrix with crossproduct or transposed crossproduct
-#' @examples
-#'
-#' library(DelayedArray)
-#'
-#' n <- 100
-#' p <- 60
-#'
-#' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
-#'
-#' # without DelayedArray
-#' bdcrossprod(X)
-#' bdcrossprod(X, transposed = TRUE)
-#'
-#' # with DelayedArray
-#' XD <- DelayedArray(X)
-#' bdcrossprod(XD)
-#' bdcrossprod(XD, transposed = TRUE)
-#'
-#' @export
-bdcrossprod <- function(a, transposed = NULL) {
-    .Call('_BigDataStatMeth_bdcrossprod', PACKAGE = 'BigDataStatMeth', a, transposed)
-}
-
-#' Crossproduct and transposed crossproduct of DelayedArray
-#' 
-#' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
-#' 
-#' @param a numerical or Delayed Array matrix
-#' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
-#' @return numerical matrix with crossproduct or transposed crossproduct 
-#' @examples
-#' 
-#' library(DelayedArray)
-#' 
-#' n <- 100
-#' p <- 60
-#' 
-#' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
-#' 
-#' # without DelayedArray
-#' bdcrossprod(X)
-#' bdcrossprod(X, transposed = TRUE)
-#' 
-#' # with DelayedArray
-#' XD <- DelayedArray(X)
-#' bdcrossprod(XD)
-#' bdcrossprod(XD, transposed = TRUE)
-#' 
-#' @export
-bdCrossprod2 <- function(A, B = NULL, transposed = NULL) {
-    .Call('_BigDataStatMeth_bdCrossprod2', PACKAGE = 'BigDataStatMeth', A, B, transposed)
+bdCrossprod_generic <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdCrossprod_generic', PACKAGE = 'BigDataStatMeth', A, B, transposed, block_size, paral, threads)
 }
 
 #' Matrix - Weighted vector Multiplication with numerical or DelayedArray data

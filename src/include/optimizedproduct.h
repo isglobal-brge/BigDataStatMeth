@@ -1,12 +1,13 @@
 #ifndef optimizedproduct
 #define optimizedproduct
 
-  #define EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+  // #define EIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
 
   #include <RcppEigen.h>
   #include <omp.h>
   #include <thread>
   #include "ReadDelayedData.h"
+  #include "parallelBlockMult_hdf5.h"
 
   Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& mat);
   Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& mat);

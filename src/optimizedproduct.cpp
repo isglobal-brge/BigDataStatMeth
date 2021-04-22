@@ -143,103 +143,108 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
 
 
 
-//' Crossproduct and transposed crossproduct of DelayedArray
-//'
-//' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
-//'
-//' @param a numerical or Delayed Array matrix
-//' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
-//' @return numerical matrix with crossproduct or transposed crossproduct
-//' @examples
-//'
-//' library(DelayedArray)
-//'
-//' n <- 100
-//' p <- 60
-//'
-//' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
-//'
-//' # without DelayedArray
-//' bdcrossprod(X)
-//' bdcrossprod(X, transposed = TRUE)
-//'
-//' # with DelayedArray
-//' XD <- DelayedArray(X)
-//' bdcrossprod(XD)
-//' bdcrossprod(XD, transposed = TRUE)
-//'
-//' @export
+// //' Crossproduct and transposed crossproduct of DelayedArray
+// //'
+// //' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
+// //'
+// //' @param a numerical or Delayed Array matrix
+// //' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
+// //' @return numerical matrix with crossproduct or transposed crossproduct
+// //' @examples
+// //'
+// //' library(DelayedArray)
+// //'
+// //' n <- 100
+// //' p <- 60
+// //'
+// //' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+// //'
+// //' # without DelayedArray
+// //' bdcrossprod(X)
+// //' bdcrossprod(X, transposed = TRUE)
+// //'
+// //' # with DelayedArray
+// //' XD <- DelayedArray(X)
+// //' bdcrossprod(XD)
+// //' bdcrossprod(XD, transposed = TRUE)
+// //'
+// //' @export
+// // [[Rcpp::export]]
+// Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> transposed = R_NilValue)
+// {
+// 
+//   Eigen::MatrixXd A;
+//   bool btrans;
+// 
+//   if(transposed.isNotNull())
+//     btrans = Rcpp::as<bool> (transposed);
+//   else
+//     btrans = FALSE;
+// 
+//   // Read DelayedArray's a and b
+//   if ( a.isS4() == true)
+//   {
+//     A = read_DelayedArray(a);
+//   } else {
+//     try{
+//       A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+//     }
+//     catch(std::exception &ex) { }
+//   }
+// 
+//   if(btrans == true) {
+//     return(bdtcrossproduct(A)) ;
+//   }else {
+//     return(bdcrossproduct(A));
+//   }
+// }
+
+
+
+
 // [[Rcpp::export]]
-Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> transposed = R_NilValue)
-{
-
-  Eigen::MatrixXd A;
-  bool btrans;
-
-  if(transposed.isNotNull())
-    btrans = Rcpp::as<bool> (transposed);
-  else
-    btrans = FALSE;
-
-  // Read DelayedArray's a and b
-  if ( a.isS4() == true)
-  {
-    A = read_DelayedArray(a);
-  } else {
-    try{
-      A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
-    }
-    catch(std::exception &ex) { }
-  }
-
-  if(btrans == true) {
-    return(bdtcrossproduct(A)) ;
-  }else {
-    return(bdcrossproduct(A));
-  }
-}
-
-
-
-//' Crossproduct and transposed crossproduct of DelayedArray
-//' 
-//' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
-//' 
-//' @param a numerical or Delayed Array matrix
-//' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
-//' @return numerical matrix with crossproduct or transposed crossproduct 
-//' @examples
-//' 
-//' library(DelayedArray)
-//' 
-//' n <- 100
-//' p <- 60
-//' 
-//' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
-//' 
-//' # without DelayedArray
-//' bdcrossprod(X)
-//' bdcrossprod(X, transposed = TRUE)
-//' 
-//' # with DelayedArray
-//' XD <- DelayedArray(X)
-//' bdcrossprod(XD)
-//' bdcrossprod(XD, transposed = TRUE)
-//' 
-//' @export
-// [[Rcpp::export]]
-Eigen::MatrixXd bdCrossprod2(Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B=  R_NilValue, Rcpp::Nullable<bool> transposed = R_NilValue)
+Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B=  R_NilValue, 
+                                     Rcpp::Nullable<bool> transposed = R_NilValue,
+                                     Rcpp::Nullable<int> block_size = R_NilValue, 
+                                     Rcpp::Nullable<bool> paral = R_NilValue,
+                                     Rcpp::Nullable<int> threads = R_NilValue )
 {
   
   Eigen::MatrixXd mA;
-  Eigen::MatrixXd tmpData;
+  Eigen::MatrixXd mB;
+  Eigen::MatrixXd C;
   
-  bool btrans;
+  bool btrans, bparal;
+  int iblock_size;
   
   if(transposed.isNotNull())
     btrans = Rcpp::as<bool> (transposed);
   else
     btrans = FALSE;
+  
+  if( paral.isNull()) {
+    bparal = false;
+  } else {
+    bparal = Rcpp::as<bool> (paral);
+  }
+  
+  
+  
+  if(block_size.isNotNull())
+  {
+    iblock_size = Rcpp::as<int> (block_size);
+  } else {
+      iblock_size = 128;
+  }
+  
+  
+  
+  if( paral.isNull()) {
+    bparal = false;
+  } else {
+    bparal = Rcpp::as<bool> (paral);
+  }
+  
   
   // Read DelayedmArray's A and b
   if ( A.isS4() == true)    
@@ -254,34 +259,56 @@ Eigen::MatrixXd bdCrossprod2(Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B=  
   
   if(B.isNull())
   {
+    
     if(btrans == true) {
-      return(bdtcrossproduct(mA)) ;
+      
+       C = bdtcrossproduct(mA) ;
+    
     }else {
-      return(bdcrossproduct(mA));
+    
+      C = bdcrossproduct(mA);
     }
+    
+    
   } else {
     
     // Read DelayedArray's a and b
-    if ( as<Rcpp::RObject>(B).isS4() == true)    
-    {
-      
-      tmpData = read_DelayedArray(as<Rcpp::RObject>(B));
-      
-      Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mB(tmpData.data(), tmpData.rows(), tmpData.cols());
-      Rcpp::Rcout<<"\n"<<mB<<"\n";
-      
-      
+    if ( as<Rcpp::RObject>(B).isS4() == true) {
+      mB = read_DelayedArray(as<Rcpp::RObject>(B));
     } else {
       try{  
-      //   A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
+        mB = Rcpp::as<Eigen::MatrixXd>(B); 
       }
       catch(std::exception &ex) { }
     }
     
-  
+    if( btrans == true )
+    {
+      Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mTrans(mB.data(), mB.cols(), mB.rows());
+      if(bparal == true) {
+        C = Bblock_matrix_mul_parallel(mA, mTrans, iblock_size, threads);
+        
+      } else if (bparal == false)  {
+        C = Bblock_matrix_mul(mA, mTrans, iblock_size);
+      }
+      
+      
+    } else {
+      
+      Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mTrans(mA.data(), mA.cols(), mA.rows());
+      
+      if(bparal == true) {
+        C = Bblock_matrix_mul_parallel(mTrans, mB, iblock_size, threads);
+        
+      } else if (bparal == false)  {
+        C = Bblock_matrix_mul(mTrans, mB, iblock_size);
+      }
+    }
+
+    
   }
   
-
+  return(C);
   
   
 }
@@ -495,8 +522,55 @@ all.equal(cpA, A%*%t(A))
 
 
 
-library(BigDataStatMeth)
 
+
+
+library(BigDataStatMeth)
+library(microbenchmark)
+
+
+n <- 1024
+p <- 1024
+
+a <- matrix(rnorm(n*p), nrow=n)
+b <- matrix(rnorm(n*p), nrow=n)
+
+res <-  microbenchmark(R = crossprod(a,b),
+                      Serie =  bdCrossprod(a, b), 
+                      Par_2cor = bdCrossprod(a, b, paral = TRUE, threads = 2, block_size = 256),
+                      Par_3cor = bdCrossprod(a, b, paral = TRUE, threads = 3, block_size = 256),
+                      Par_4cor = bdCrossprod(a, b, paral = TRUE, threads = 4, block_size = 256),
+                      times = 3 )
+res
+
+
+
+res <-  microbenchmark(R = crossprod(a),
+                      Serie =  bdCrossprod(a), 
+                      Par_2cor = bdCrossprod(a, paral = TRUE, threads = 2, block_size = 256),
+                      Par_3cor = bdCrossprod(a, paral = TRUE, threads = 3, block_size = 256),
+                      Par_4cor = bdCrossprod(a, paral = TRUE, threads = 4, block_size = 256),
+                      times = 3 )
+res
+
+
+res2 <-  microbenchmark(R = tcrossprod(a,b),
+                       Serie =  bdtCrossprod(a, b), 
+                       Par_2cor = bdtCrossprod(a, b, paral = TRUE, threads = 2, block_size = 256),
+                       Par_3cor = bdtCrossprod(a, b, paral = TRUE, threads = 3, block_size = 256),
+                       Par_4cor = bdtCrossprod(a, b, paral = TRUE, threads = 4, block_size = 256),
+                       times = 3 )
+res2
+
+
+
+res2 <-  microbenchmark(R = tcrossprod(a),
+                       Serie =  bdtCrossprod(a), 
+                       Par_2cor = bdtCrossprod(a, paral = TRUE, threads = 2, block_size = 256),
+                       Par_3cor = bdtCrossprod(a, paral = TRUE, threads = 3, block_size = 256),
+                       Par_4cor = bdtCrossprod(a, paral = TRUE, threads = 4, block_size = 256),
+                       times = 3 )
+res2
 
 
 
