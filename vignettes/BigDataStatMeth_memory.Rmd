@@ -286,13 +286,20 @@ We can observe the huge difference in execution time
 
 # Cross-product and Transposed Cross-product
 
-To perform a cross-product and tcrossproduct with BigDataStatMeth we use the same function `bdcrossprod()` setting parameter `transposed` to TRUE or FALSE. Like other functions implemented in BigDataStatMeth, we can work with DelayedArray or R Objects. Setting parameter transposed for Crossproduct and tCrossProduct
+To perform a cross-product (similar to `crossprod()`) and a transposed cross-product (similar to `tcrossprod()` with BigDataStatMeth we use  `bdCrossprod()` and `bdtCrossprod()` functions, respectively. Like other functions implemented in BigDataStatMeth, we can work with DelayedArray or R Objects. 
 
-- if `transposed = FALSE` (default), we perform a Crossproduct $$\left( C \right) ={ \left( A \right)  }^{ t }\left( A \right) $$
+- `bdCrossprod()`  performs $$\left( C \right) ={ \left( A \right)  }^{ t }\left( A \right) $$
 
-- if `transposed = TRUE` :  we perform a transposed-Crossproduct $$\left( C \right) = \left( A \right){ \left( A \right)  }^{ t } $$
+- `bdtCrossprod()` performs $$\left( C \right) = \left( A \right){ \left( A \right)  }^{ t } $$
 
-Here we shown some examples using `bdcrossprod` function
+Notice that `bdCrossprod()` and `bdtCrossprod()` allows parallelization and get the product of two different matrices since the arguments of the functions are:
+
+```{r showargs}
+args(bdCrossprod)
+```
+
+
+Here we shown some examples 
 
 ```{r crossprod }
 n <- 500
@@ -301,9 +308,9 @@ A <- matrix(rnorm(n*m), nrow=n, ncol=m)
 DA <- DelayedArray(A)
 
 # Cross Product of a standard R matrix
-cpA <- bdcrossprod(A)
+cpA <- bdCrossprod(A)
 # Result with DelayedArray data type
-cpDA <- bdcrossprod(DA)
+cpDA <- bdCrossprod(DA)
 ```
 
 We obtain the expected values computed using `crossprod` R function
@@ -312,16 +319,16 @@ We obtain the expected values computed using `crossprod` R function
 all.equal(cpDA, crossprod(A))
 ```
 
-you may also set `transposed=TRUE`
+The same for the transposed cross-product:
 
 ```{r nocrossprod}
 # Transposed Cross Product R matrices
-tcpA <- bdcrossprod(A, transposed = TRUE)
+tcpA <- bdtCrossprod(A)
 # With DelayeArray data types
-tcpDA <- bdcrossprod(DA, transposed = TRUE)
+tcpDA <- bdtCrossprod(DA)
 ```
 
-We obtain the expected values computed using `tcrossprod` function
+We obtain the expected values computed using `tcrossprod()` function
 
 ```{r check_tcp}
 all.equal(tcpDA, tcrossprod(A))
@@ -331,9 +338,9 @@ We can show that the implemented version really improves the  R implementation c
 
 ```{r benchmark_bdcrossprod}
 res <- microbenchmark(
-  bdcrossp_tr = bdcrossprod(A, transposed=TRUE),
+  bdcrossp_tr = bdtCrossprod(A),
   rcrossp_tr = tcrossprod(A),
-  bdcrossp = bdcrossprod(A),
+  bdcrossp = bdCrossprod(A),
   rcrossp = crossprod(A),
   times = 3)
 res
@@ -345,11 +352,26 @@ ggplot2::autoplot(res)
 
 
 
-# Matrix Vector Multiplication
+# Multiplying matrices and vectors
 
-You can perform a weighted cross-product $C = X^ t w X$ with `bdwcrossprod()` given a matrix X as argument and a vector or matrix of weights, w.
+Sometime the user need to perform different matrices and vector multiplications. The simplest multiplication is $X %*% w$ that can be perform in parallel using `blockmult_vector ()` function
 
-## Weighted Cross-product and Weighted Transposed Cross-product
+Other useful operations are:
+
+- $X^t\text{diag}(w)X$
+- $X\text{diag}(w)X^t$
+- $X\text{diag}(w)$ 
+- $\text{diag(w)}X$
+
+These can be perform using `bdwproduct()` function that has an argument called `op` that performs the required operations:
+
+- 'XtwX' or 'xtwx': `t(X) %*% diag(w) %*% X`
+- 'XwXt' or 'xwxt': `X %*% diag(w) %*% t(X)`
+- 'Xw' or 'xw': `X %*% diag(w)` 
+- 'wX' or 'wx': `diag(w) %*% X`
+
+
+Next, we have some examples
 
 ```{r wcrossprod }
 n <- 250
@@ -359,35 +381,70 @@ w <- u * (1 - u)
 DX <- DelayedArray(X)
 Dw <- DelayedArray(as.matrix(w))
 
-wcpX <- bdwproduct(X, w,"xwxt")
-wcpDX <- bdwproduct(DX, Dw,"xwxt") # with DelayedArray
+wcpX <- bdwproduct(X, w, op="xwxt")
+wcpDX <- bdwproduct(DX, Dw, op= "xwxt") # with DelayedArray
 
 wcpDX[1:5,1:5]
 ```
 
-Those are the expected values as it is indicated by executing:
+We check whether we obtaine the expected values:
 
 ```{r check_wcp}
 all.equal( wcpDX, X%*%diag(w)%*%t(X) )
 ```
 
-
-## Weighted Transposed Cross Product
-
-With argument `transposed=TRUE`, we can perform a transposed weighted cross-product $C = A w A^t$
+Another example
 
 ```{r wtcrossprod }
-wtcpX <- bdwproduct(X, w,"xtwx")
-wtcpDX <- bdwproduct(DX, Dw,"xtwx") # with DelayedArray
+wtcpX <- bdwproduct(X, w, op = "xtwx")
+wtcpDX <- bdwproduct(DX, Dw, op = "xtwx") # with DelayedArray
 
 wtcpDX[1:5,1:5]
 ```
 
-Those are the expected values as it is indicated by executing:
+Again, we obtain the expected values
 
 ```{r check_wtcp}
 all.equal(wtcpDX, t(X)%*%diag(w)%*%X)
 ```
+
+# Multiplying matrices 
+
+In some situations the user is interested in computing
+
+$$X^tWX$$
+or
+
+$$XWX^t$$
+
+were $W$ is a matrix of weights 
+
+This can be efficiently perform in `BigDataStatMeth` using the functions `Crossprod_Weighted ()` and `tCrossprod_Weighted()` respectively. Here one example (it also works with DelayedArray matrices)
+
+```{r XWXt}
+n <- k <- 400
+X <- matrix(rnorm(n*k), nrow=n, ncol=k)
+W <- matrix(rnorm(n*k), nrow=k, ncol=n)
+
+# Serial execution
+Serie<- tCrossprod_Weighted(X, W, paral = FALSE)
+
+# Parallel execution with 2 threads and blocks 256x256
+Par_3cor <-  tCrossprod_Weighted(X, W, 
+                                paral = TRUE,
+                                block_size = 256,
+                                threads = 3)
+``` 
+
+
+We can check whether we obtain the expected results
+
+```{r check_xwxt}
+all.equal(Serie, X%*%W%*%t(X))
+all.equal(Serie, X%*%W%*%t(X))
+```
+
+
 
 # Inverse Cholesky
 
