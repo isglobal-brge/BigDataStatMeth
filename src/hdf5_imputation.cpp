@@ -199,7 +199,7 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
 //' @return Original hdf5 data file with imputed data
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdImputeSNPHDF5(std::string filename, std::string group, std::string dataset, 
+Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::string dataset, 
                               Rcpp::Nullable<std::string> outgroup = R_NilValue, Rcpp::Nullable<std::string> outdataset = R_NilValue, 
                               Rcpp::Nullable<bool> bycols = true )
 {

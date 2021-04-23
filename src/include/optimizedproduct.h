@@ -19,7 +19,7 @@
 //  Eigen::MatrixXd bdXwd(Rcpp::RObject X, Rcpp::RObject w, std::string op,
 //                        Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads);
   Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject a, double w, std::string op);
-  Eigen::MatrixXd bdwproduct(Rcpp::RObject a, Rcpp::RObject w, std::string op);
+  Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op);
 
 #endif
 

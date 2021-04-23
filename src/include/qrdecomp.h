@@ -71,11 +71,11 @@
    
    // C++ Functions
    strQR rcpp_bdQR( Eigen::MatrixXd & A, bool bthin);
-   strQR rcpp_bdQR_parallel( Eigen::MatrixXd A, Rcpp::Nullable<int> threads);
+   // strQR rcpp_bdQR_parallel( Eigen::MatrixXd A, Rcpp::Nullable<int> threads);
    
    // R Functions
    Rcpp::RObject bdQR( const Rcpp::RObject & X, Rcpp::Nullable<bool> thin);
-   Rcpp::RObject bdQR_compact( const Rcpp::RObject & A);
+   // Rcpp::RObject bdQR_compact( const Rcpp::RObject & A);
    Rcpp::RObject bddtrsm(Rcpp::RObject R, Rcpp::RObject Z, Rcpp::Nullable<int> threads) ; 
 
 

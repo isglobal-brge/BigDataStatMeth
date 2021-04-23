@@ -3,129 +3,129 @@
 
 using namespace std;
 
-
-// Housholder's QR decomposition for OMP
-strQR rcpp_bdQR_parallel( Eigen::MatrixXd A, Rcpp::Nullable<int> threads  = R_NilValue )
-{
-  
-   strQR vQR;
-  int ithreads;
-   
-   try {
-     
-     A.transposeInPlace();
-     
-     int irows = A.rows(),
-         icols = A.cols();
-     
-    if(threads.isNotNull())
-    {
-      if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
-        ithreads = Rcpp::as<int> (threads);
-      else
-        ithreads = std::thread::hardware_concurrency()-1;
-    }
-    else    ithreads = std::thread::hardware_concurrency()-1; 
-
-        omp_set_dynamic(0);  
-        omp_set_num_threads(ithreads);
-
-    
-    bool verbose = true, definition = true;
-    int i,j;
-    double *vec;
-    
-    // matrixQ = create_matrix(irows,irows, verbose);
-    Eigen::MatrixXd matrixQ = Eigen::MatrixXd::Identity(irows,icols);
-    Eigen::MatrixXd tmpmat = Eigen::MatrixXd::Zero(irows,icols);
-
-    int k,l,m;
-    for(i = 0; i < irows; i++){
-      
-      double x = 0;
-      vec = new double[irows-i];
-      for(j = i; j < irows; j++){
-        vec[j-i] = -A(j,i);
-        x += vec[j-i]*vec[j-i];
-      }
-      x = sqrt(x);
-      
-      if(vec[0] > 0) x = -x;
-      vec[0] = vec[0] + x;
-      x = 0;
-      for(j = 0; j < irows-i; j++){
-        x += vec[j]*vec[j];
-      }
-      x = sqrt(x);
-      
-      if(x > 0){
-        //normalizovat vec
-        for(j = 0; j < irows-i; j++){
-          vec[j] /= x;
-        }
-        
-        Eigen::MatrixXd pp = Eigen::MatrixXd::Zero(irows-i, irows-i);
-        for(k = 0; k < irows-i; k++){
-#pragma omp parallel for
-          for(l = 0; l < irows-i; l++){
-            if(k == l) pp(k,k) = 1 - 2*vec[k]*vec[l];
-            else pp(k,l) = -2*vec[k]*vec[l];
-          }
-        }
-        
-
-        //R
-        double tm;
-        for(k = i; k < irows; k++){
-#pragma omp parallel for private(tm,m)
-          for(l = i; l < irows; l++){
-            tm = 0;
-            for(m = i; m < irows; m++){
-              tm += pp(k-i,m-i)*A(m,l);
-            }
-            tmpmat(k,l) = tm;
-          }
-        }
-        for(k = i; k < irows; k++){
-#pragma omp parallel for
-          for(l = i; l < irows; l++){
-            A(k,l) = tmpmat(k,l);
-            
-          }
-        }
-        
-        //Q
-        for(k = 0; k < irows; k++){
-#pragma omp parallel for private(tm,m)
-          for(l = i; l < irows; l++){
-            tm = 0;
-            for(m = i; m < irows; m++){
-              tm += matrixQ(k,m)*pp(m-i,l-i);
-            }
-            tmpmat(k,l) = tm;
-          }
-        }
-        for(k = 0; k < irows; k++){
-#pragma omp parallel for
-          for(l = i; l < irows; l++){
-            matrixQ(k,l) = tmpmat(k,l);
-          }
-        }
-      }
-    }
-      
-      vQR.Q = matrixQ;
-      vQR.R = A;
-    
-    
-  } catch(std::exception &ex) {
-    Rcpp::Rcout<< ex.what();
-    return vQR;
-  }
-  
-  return(vQR);
-  
-  }
+// 
+// // Housholder's QR decomposition for OMP
+// strQR rcpp_bdQR_parallel( Eigen::MatrixXd A, Rcpp::Nullable<int> threads  = R_NilValue )
+// {
+//   
+//    strQR vQR;
+//   int ithreads;
+//    
+//    try {
+//      
+//      A.transposeInPlace();
+//      
+//      int irows = A.rows(),
+//          icols = A.cols();
+//      
+//     if(threads.isNotNull())
+//     {
+//       if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+//         ithreads = Rcpp::as<int> (threads);
+//       else
+//         ithreads = std::thread::hardware_concurrency()-1;
+//     }
+//     else    ithreads = std::thread::hardware_concurrency()-1; 
+// 
+//         omp_set_dynamic(0);  
+//         omp_set_num_threads(ithreads);
+// 
+//     
+//     bool verbose = true, definition = true;
+//     int i,j;
+//     double *vec;
+//     
+//     // matrixQ = create_matrix(irows,irows, verbose);
+//     Eigen::MatrixXd matrixQ = Eigen::MatrixXd::Identity(irows,icols);
+//     Eigen::MatrixXd tmpmat = Eigen::MatrixXd::Zero(irows,icols);
+// 
+//     int k,l,m;
+//     for(i = 0; i < irows; i++){
+//       
+//       double x = 0;
+//       vec = new double[irows-i];
+//       for(j = i; j < irows; j++){
+//         vec[j-i] = -A(j,i);
+//         x += vec[j-i]*vec[j-i];
+//       }
+//       x = sqrt(x);
+//       
+//       if(vec[0] > 0) x = -x;
+//       vec[0] = vec[0] + x;
+//       x = 0;
+//       for(j = 0; j < irows-i; j++){
+//         x += vec[j]*vec[j];
+//       }
+//       x = sqrt(x);
+//       
+//       if(x > 0){
+//         //normalizovat vec
+//         for(j = 0; j < irows-i; j++){
+//           vec[j] /= x;
+//         }
+//         
+//         Eigen::MatrixXd pp = Eigen::MatrixXd::Zero(irows-i, irows-i);
+//         for(k = 0; k < irows-i; k++){
+// #pragma omp parallel for
+//           for(l = 0; l < irows-i; l++){
+//             if(k == l) pp(k,k) = 1 - 2*vec[k]*vec[l];
+//             else pp(k,l) = -2*vec[k]*vec[l];
+//           }
+//         }
+//         
+// 
+//         //R
+//         double tm;
+//         for(k = i; k < irows; k++){
+// #pragma omp parallel for private(tm,m)
+//           for(l = i; l < irows; l++){
+//             tm = 0;
+//             for(m = i; m < irows; m++){
+//               tm += pp(k-i,m-i)*A(m,l);
+//             }
+//             tmpmat(k,l) = tm;
+//           }
+//         }
+//         for(k = i; k < irows; k++){
+// #pragma omp parallel for
+//           for(l = i; l < irows; l++){
+//             A(k,l) = tmpmat(k,l);
+//             
+//           }
+//         }
+//         
+//         //Q
+//         for(k = 0; k < irows; k++){
+// #pragma omp parallel for private(tm,m)
+//           for(l = i; l < irows; l++){
+//             tm = 0;
+//             for(m = i; m < irows; m++){
+//               tm += matrixQ(k,m)*pp(m-i,l-i);
+//             }
+//             tmpmat(k,l) = tm;
+//           }
+//         }
+//         for(k = 0; k < irows; k++){
+// #pragma omp parallel for
+//           for(l = i; l < irows; l++){
+//             matrixQ(k,l) = tmpmat(k,l);
+//           }
+//         }
+//       }
+//     }
+//       
+//       vQR.Q = matrixQ;
+//       vQR.R = A;
+//     
+//     
+//   } catch(std::exception &ex) {
+//     Rcpp::Rcout<< ex.what();
+//     return vQR;
+//   }
+//   
+//   return(vQR);
+//   
+//   }
 
 
 
@@ -217,109 +217,109 @@ Rcpp::RObject bdQR( const Rcpp::RObject & X, Rcpp::Nullable<bool> thin = R_NilVa
 
 
 
-//' QR Decomposition 
-//' 
-//' This function compute QR decomposition computes a QR
-//' factorization with column pivoting of a matrix A:  A*P = Q*R
-//' 
-//' This QR decomposition is like R native decomposition obtained with qr() function
-//' 
-//' @param X a real square matrix 
-//' @return List with  : a matrix with the same dimensions as x. The upper triangle contains the \(\bold{R}\) of the decomposition and the lower triangle contains information on the \(\bold{Q}\) of the decomposition (stored in compact form)
-//' @export
-// [[Rcpp::export]]
-Rcpp::RObject bdQR_compact( const Rcpp::RObject & A)
-{
-  
-  auto dmtype = beachmat::find_sexp_type(A);
-  Eigen::MatrixXd a;
-  int info = 0;
-  try {
-    
-    if ( dmtype == INTSXP || dmtype==REALSXP ) {
-      if ( A.isS4() == true){
-        a = read_DelayedArray(A);
-      }else {
-        try{
-          a = Rcpp::as<Eigen::Map<Eigen::MatrixXd > >(A);
-        }catch(std::exception &ex) {
-          a = Rcpp::as<Eigen::Map<Eigen::MatrixXd > >(A);
-        }
-      }
-    } else {
-      throw std::runtime_error("unacceptable matrix type");
-    }
-    
-    // Declare matrix variables
-    int m = a.rows();
-    int n = a.cols();
-    int minmn = std::min(m,n);
-    int lda = std::max( 1, m );
-    int lwork = 3*n+1;
-    double work[lwork];
-    Eigen::VectorXi jpvt = Eigen::VectorXi::Zero(n);
-    Eigen::VectorXd tau = Eigen::VectorXd::Zero(minmn);
-    
-    
-    // dgeqp3_( int* M, int* N, double* A, int* LDA, int* JPVT, double* TAU, double* WORK, int* LWORK, int* INFO);
-    dgeqp3_( &m, &n, a.data(), &lda, jpvt.data(), tau.data(), work, &lwork, &info);
-    
-    if(info<0){
-      throw std::runtime_error("the i-th argument had an illegal value.");
-    } else {
-      return Rcpp::List::create(Rcpp::Named("QR") = wrap(a),
-                                Rcpp::Named("pivot") = wrap(jpvt),
-                                Rcpp::Named("qraux") = wrap(tau)
-                                );
-    }
-    
-  }catch(std::exception &ex) {
-    Rcpp::Rcout<< ex.what();
-    return wrap(-1);
-  }
-  
-}
+// //' QR Decomposition 
+// //' 
+// //' This function compute QR decomposition computes a QR
+// //' factorization with column pivoting of a matrix A:  A*P = Q*R
+// //' 
+// //' This QR decomposition is like R native decomposition obtained with qr() function
+// //' 
+// //' @param X a real square matrix 
+// //' @return List with  : a matrix with the same dimensions as x. The upper triangle contains the \(\bold{R}\) of the decomposition and the lower triangle contains information on the \(\bold{Q}\) of the decomposition (stored in compact form)
+// //' @export
+// // [[Rcpp::export]]
+// Rcpp::RObject bdQR_compact( const Rcpp::RObject & A)
+// {
+//   
+//   auto dmtype = beachmat::find_sexp_type(A);
+//   Eigen::MatrixXd a;
+//   int info = 0;
+//   try {
+//     
+//     if ( dmtype == INTSXP || dmtype==REALSXP ) {
+//       if ( A.isS4() == true){
+//         a = read_DelayedArray(A);
+//       }else {
+//         try{
+//           a = Rcpp::as<Eigen::Map<Eigen::MatrixXd > >(A);
+//         }catch(std::exception &ex) {
+//           a = Rcpp::as<Eigen::Map<Eigen::MatrixXd > >(A);
+//         }
+//       }
+//     } else {
+//       throw std::runtime_error("unacceptable matrix type");
+//     }
+//     
+//     // Declare matrix variables
+//     int m = a.rows();
+//     int n = a.cols();
+//     int minmn = std::min(m,n);
+//     int lda = std::max( 1, m );
+//     int lwork = 3*n+1;
+//     double work[lwork];
+//     Eigen::VectorXi jpvt = Eigen::VectorXi::Zero(n);
+//     Eigen::VectorXd tau = Eigen::VectorXd::Zero(minmn);
+//     
+//     
+//     // dgeqp3_( int* M, int* N, double* A, int* LDA, int* JPVT, double* TAU, double* WORK, int* LWORK, int* INFO);
+//     dgeqp3_( &m, &n, a.data(), &lda, jpvt.data(), tau.data(), work, &lwork, &info);
+//     
+//     if(info<0){
+//       throw std::runtime_error("the i-th argument had an illegal value.");
+//     } else {
+//       return Rcpp::List::create(Rcpp::Named("QR") = wrap(a),
+//                                 Rcpp::Named("pivot") = wrap(jpvt),
+//                                 Rcpp::Named("qraux") = wrap(tau)
+//                                 );
+//     }
+//     
+//   }catch(std::exception &ex) {
+//     Rcpp::Rcout<< ex.what();
+//     return wrap(-1);
+//   }
+//   
+// }
 
-
-//' QR Decomposition 
-//' 
-//' This function compute QR decomposition (also called a QR factorization) 
-//' of a matrix \code{A} into a product \code{A = QR} of an 
-//' orthogonal matrix Q and an upper triangular matrix R.
-//' 
-//' @param X a real square matrix 
-//' @param threads (optional) only if paral = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-//' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
-//' @export
-// [[Rcpp::export]]
-Rcpp::RObject bdQR_parallel( const Rcpp::RObject & X, Rcpp::Nullable<int> threads = R_NilValue)
-{
-  
-  auto dmtype = beachmat::find_sexp_type(X);
-  Eigen::MatrixXd A;
-  strQR decQR;
-  
-  if ( dmtype == INTSXP || dmtype==REALSXP ) {
-    if ( X.isS4() == true){
-      A = read_DelayedArray(X);
-    }else {
-      try{
-        A = Rcpp::as<Eigen::MatrixXd >(X);
-      }catch(std::exception &ex) {
-        A = Rcpp::as<Eigen::VectorXd >(X);
-      }
-    }
-  } else {
-    throw std::runtime_error("unacceptable matrix type");
-  }
-  
-  decQR = rcpp_bdQR_parallel(A, threads);
-  
-  return Rcpp::List::create(Rcpp::Named("Q") = decQR.Q,
-                            Rcpp::Named("R") = decQR.R
-                            );
-}
-
+// 
+// //' QR Decomposition 
+// //' 
+// //' This function compute QR decomposition (also called a QR factorization) 
+// //' of a matrix \code{A} into a product \code{A = QR} of an 
+// //' orthogonal matrix Q and an upper triangular matrix R.
+// //' 
+// //' @param X a real square matrix 
+// //' @param threads (optional) only if paral = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+// //' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
+// //' @export
+// // [[Rcpp::export]]
+// Rcpp::RObject bdQR_parallel( const Rcpp::RObject & X, Rcpp::Nullable<int> threads = R_NilValue)
+// {
+//   
+//   auto dmtype = beachmat::find_sexp_type(X);
+//   Eigen::MatrixXd A;
+//   strQR decQR;
+//   
+//   if ( dmtype == INTSXP || dmtype==REALSXP ) {
+//     if ( X.isS4() == true){
+//       A = read_DelayedArray(X);
+//     }else {
+//       try{
+//         A = Rcpp::as<Eigen::MatrixXd >(X);
+//       }catch(std::exception &ex) {
+//         A = Rcpp::as<Eigen::VectorXd >(X);
+//       }
+//     }
+//   } else {
+//     throw std::runtime_error("unacceptable matrix type");
+//   }
+//   
+//   decQR = rcpp_bdQR_parallel(A, threads);
+//   
+//   return Rcpp::List::create(Rcpp::Named("Q") = decQR.Q,
+//                             Rcpp::Named("R") = decQR.R
+//                             );
+// }
+// 
 
 
 
