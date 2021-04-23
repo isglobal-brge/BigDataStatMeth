@@ -222,7 +222,8 @@ Rcpp::RObject tCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
   Eigen::MatrixXd B;
   Eigen::MatrixXd C;
   
-  IntegerVector dsizeA, dsizeB;
+  IntegerVector dsizeA = {0, 0}, 
+                dsizeB = {0, 0};
   
   // Rcpp::Rcout<<"\n Tipus de dades :  "<<TYPEOF(A)<<"\n";
   // Rcpp::Rcout<<"\n Clase objecte :  "<<  as<std::string>(A.slot("class"))  <<"\n";
@@ -239,9 +240,19 @@ Rcpp::RObject tCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
         if ( TYPEOF(A) == INTSXP ) {
           dsizeA[0] = Rcpp::as<IntegerMatrix>(A).nrow();
           dsizeA[1] = Rcpp::as<IntegerMatrix>(A).ncol();
+          
+          if(dsizeA[0] == 0 || dsizeA[1] == 0) {
+            dsizeA[0] = Rcpp::as<IntegerVector>(A).size();
+            dsizeA[1] = 1;
+          }
+          
         }else{
           dsizeA[0] = Rcpp::as<NumericMatrix>(A).nrow();
           dsizeA[1] = Rcpp::as<NumericMatrix>(A).ncol();
+          if(dsizeA[0] == 0 || dsizeA[1] == 0) {
+            dsizeA[0] = Rcpp::as<NumericVector>(A).size();
+            dsizeA[1] = 1;
+          }
         }
       }catch(std::exception &ex) { }
     }
@@ -254,9 +265,18 @@ Rcpp::RObject tCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
         if ( TYPEOF(W) == INTSXP ) {
           dsizeB[0] = Rcpp::as<IntegerMatrix>(W).nrow();
           dsizeB[1] = Rcpp::as<IntegerMatrix>(W).ncol();
+          if(dsizeB[0] == 0 || dsizeB[1] == 0) {
+            dsizeB[0] = Rcpp::as<IntegerVector>(W).size();
+            dsizeB[1] = 1;
+          }
+          
         }else{
           dsizeB[0] = Rcpp::as<NumericMatrix>(W).nrow();
           dsizeB[1] = Rcpp::as<NumericMatrix>(W).ncol();
+          if(dsizeB[0] == 0 || dsizeB[1] == 0) {
+            dsizeB[0] = Rcpp::as<NumericVector>(W).size();
+            dsizeB[1] = 1;
+          }
         }
       }catch(std::exception &ex) { }
     }

@@ -657,7 +657,8 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
   
   H5File* file;
   
-  IntegerVector dsizeA, dsizeB;
+  IntegerVector dsizeA = {0, 0}, 
+                dsizeB = {0, 0};
   
   
   // Rcpp::Rcout<<"\n Tipus de dades :  "<<TYPEOF(a)<<"\n";
@@ -701,9 +702,19 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
         if ( TYPEOF(a) == INTSXP ) {
           dsizeA[0] = Rcpp::as<IntegerMatrix>(a).nrow();
           dsizeA[1] = Rcpp::as<IntegerMatrix>(a).ncol();
+          
+          if(dsizeA[0] == 0 || dsizeA[1] == 0) {
+            dsizeA[0] = Rcpp::as<IntegerVector>(a).size();
+            dsizeA[1] = 1;
+          }
+          
         }else{
           dsizeA[0] = Rcpp::as<NumericMatrix>(a).nrow();
           dsizeA[1] = Rcpp::as<NumericMatrix>(a).ncol();
+          if(dsizeA[0] == 0 || dsizeA[1] == 0) {
+            dsizeA[0] = Rcpp::as<NumericVector>(a).size();
+            dsizeA[1] = 1;
+          }
         }
       }catch(std::exception &ex) { }
     }
@@ -716,12 +727,21 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
         if ( TYPEOF(b) == INTSXP ) {
           dsizeB[0] = Rcpp::as<IntegerMatrix>(b).nrow();
           dsizeB[1] = Rcpp::as<IntegerMatrix>(b).ncol();
+          if(dsizeB[0] == 0 || dsizeB[1] == 0) {
+            dsizeB[0] = Rcpp::as<IntegerVector>(b).size();
+            dsizeB[1] = 1;
+          }
         }else{
           dsizeB[0] = Rcpp::as<NumericMatrix>(b).nrow();
           dsizeB[1] = Rcpp::as<NumericMatrix>(b).ncol();
+          if(dsizeB[0] == 0 || dsizeB[1] == 0) {
+            dsizeB[0] = Rcpp::as<NumericVector>(b).size();
+            dsizeB[1] = 1;
+          }
         }
       }catch(std::exception &ex) { }
     }
+
     
     if(block_size.isNotNull())
     {
@@ -738,9 +758,7 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
     } else {
       bparal = Rcpp::as<bool> (paral);
     }
-    
-    
-    
+
     // if number of elemenents < bigmat in all matrix work in memory else work with hdf5 files
     if( workmem == true || ( dsizeA[0]<bigmat && dsizeB[0]<bigmat && dsizeA[1]<bigmat && dsizeB[1]<bigmat))
     {
@@ -778,6 +796,7 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
         }
         
       } 
+      
       
       if(bparal == true) {
         C = Bblock_matrix_mul_parallel(A, B, iblock_size, threads);
