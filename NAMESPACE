@@ -2,6 +2,7 @@
 
 export(Add_hdf5_matrix)
 export(Create_hdf5_matrix_file)
+export(Crossprod_Weighted)
 export(Crossprod_hdf5)
 export(Import_text_to_hdf5)
 export(Normalize_Data)

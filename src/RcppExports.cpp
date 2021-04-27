@@ -6,6 +6,21 @@
 
 using namespace Rcpp;
 
+// Crossprod_Weighted
+Rcpp::RObject Crossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_Crossprod_Weighted(SEXP ASEXP, SEXP WSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type W(WSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(Crossprod_Weighted(A, W, block_size, paral, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdRemovelowdata
 Rcpp::RObject bdRemovelowdata(std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> SNPincols);
 RcppExport SEXP _BigDataStatMeth_bdRemovelowdata(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP pcentSEXP, SEXP SNPincolsSEXP) {
@@ -580,6 +595,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_BigDataStatMeth_Crossprod_Weighted", (DL_FUNC) &_BigDataStatMeth_Crossprod_Weighted, 5},
     {"_BigDataStatMeth_bdRemovelowdata", (DL_FUNC) &_BigDataStatMeth_bdRemovelowdata, 7},
     {"_BigDataStatMeth_Crossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_Crossprod_hdf5, 10},
     {"_BigDataStatMeth_blockmult_hdf5", (DL_FUNC) &_BigDataStatMeth_blockmult_hdf5, 9},
