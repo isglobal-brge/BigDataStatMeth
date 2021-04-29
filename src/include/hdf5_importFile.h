@@ -18,11 +18,11 @@
    
    
    // R functions
-   int Import_text_to_HDF5( Rcpp::CharacterVector filename, 
-                             std::string outputfile, std::string outGroup, std::string outDataset, 
-                             Rcpp::Nullable<std::string> sep, 
-                             Rcpp::Nullable<bool> header ,
-                             Rcpp::Nullable<bool> rownames,
-                             Rcpp::Nullable<bool> overwrite);
+   int bdImport_text_to_HDF5( Rcpp::CharacterVector filename, 
+                              std::string outputfile, std::string outGroup, std::string outDataset, 
+                              Rcpp::Nullable<std::string> sep, 
+                              Rcpp::Nullable<bool> header ,
+                              Rcpp::Nullable<bool> rownames,
+                              Rcpp::Nullable<bool> overwrite);
    
 #endif

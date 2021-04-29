@@ -24,13 +24,13 @@
   
     
   // functions called from R
-  Rcpp::RObject tCrossprod_hdf5(std::string filename, const std::string group, 
-                                     std::string A,
-                                     Rcpp::Nullable<std::string> groupB, 
-                                     Rcpp::Nullable<std::string>  B, 
-                                     Rcpp::Nullable<int> block_size, 
-                                     Rcpp::Nullable<bool> paral,
-                                     Rcpp::Nullable<int> threads,
-                                     Rcpp::Nullable<double> mixblock_size,
-                                     Rcpp::Nullable<std::string> outgroup);
+  Rcpp::RObject bdtCrossprod_hdf5(std::string filename, const std::string group, 
+                                  std::string A,
+                                  Rcpp::Nullable<std::string> groupB, 
+                                  Rcpp::Nullable<std::string>  B, 
+                                  Rcpp::Nullable<int> block_size, 
+                                  Rcpp::Nullable<bool> paral,
+                                  Rcpp::Nullable<int> threads,
+                                  Rcpp::Nullable<double> mixblock_size,
+                                  Rcpp::Nullable<std::string> outgroup);
 #endif

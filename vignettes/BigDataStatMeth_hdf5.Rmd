@@ -130,7 +130,7 @@ knitr::include_graphics("imgs/hdf5_squema.jpg")
 
 **Create hdf5 file**
 
-We have implemented the `Create_hdf5_matrix_file ()` function to create an hdf5 file with a group and a dataset in a single step. This function allows to create datasets from `DelayedMAtrix` objects using `beachmat` library as well as standard R matrices from `Matrix` objects.
+We have implemented the `bdCreate_hdf5_matrix_file ()` function to create an hdf5 file with a group and a dataset in a single step. This function allows to create datasets from `DelayedMAtrix` objects using `beachmat` library as well as standard R matrices from `Matrix` objects.
 
 ```{r hdf5Create}
 library(rhdf5)
@@ -141,10 +141,10 @@ m <- 600
 A <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
 # We also can create a dataset from R matrix object
-Create_hdf5_matrix_file(filename = "robject.hdf5", 
-                        object = A, 
-                        group = "INPUT", 
-                        dataset = "A")
+bdCreate_hdf5_matrix_file(filename = "robject.hdf5", 
+                          object = A, 
+                          group = "INPUT", 
+                          dataset = "A")
 ```
 
 We see 0 in the console, indicating that no errors where found when creating the hdf5 file. Notice that a file called "robject.hdf5" will be created in the working directory
@@ -156,7 +156,7 @@ dir()
 
 **Add datasets in hdf5 file**
 
-The function `Add_hdf5_matrix ()` allows to add a dataset in a existing hdf5 file. We can create the dataset in any group, if group doesn't exists in file, the group is created before append the dataset. The object can be either an R object or a `DelayedArray` object.
+The function `bdAdd_hdf5_matrix ()` allows to add a dataset in a existing hdf5 file. We can create the dataset in any group, if group doesn't exists in file, the group is created before append the dataset. The object can be either an R object or a `DelayedArray` object.
 
 ```{r hdf5AddDataset}
 set.seed(5234)
@@ -171,13 +171,13 @@ B <- matrix(rnorm(n*m,mean=3,sd=0.5), n, m)
 
 # We create another data file (delayed.hdf5) with a matrix A.
 # The group is called INPUT
-Create_hdf5_matrix_file(filename = "delayed.hdf5", 
+bdCreate_hdf5_matrix_file(filename = "delayed.hdf5", 
                         object = A, 
                         group = "INPUT", 
                         dataset = "A")
 
 # And them, we add another matrix B to the same group
-Add_hdf5_matrix(object = B, 
+bdAdd_hdf5_matrix(object = B, 
                 filename = "delayed.hdf5", 
                 group = "INPUT", 
                 dataset = "B")
@@ -189,7 +189,7 @@ The function `Add_hdf5_matrix ()` also allows to create a dataset with a transpo
 
 ```{r hdf5AddtransposedDataset}
 # Create dataset BTransposed with B transposed matrix in delayed.hdf5 file at INPUT group
-Add_hdf5_matrix(B, "delayed.hdf5", "INPUT", "BTransposed", transp = TRUE);
+bdAdd_hdf5_matrix(B, "delayed.hdf5", "INPUT", "BTransposed", transp = TRUE);
 ```
 
 
@@ -271,7 +271,7 @@ More information about working with hdf5 files in R can be found in [several vig
 
 Usually we have files with a large amount of data to be loaded into R. For Big data problem, R can't deal with this data so we cannot efficiently work with then. In order to resolve this issue, you can work directly from data on disk with datasets stored in an HDF5 data file.
 
-You can easily change your text files to HDF5 using the function `Import_text_to_hdf5 ()`, to do that, we only have to define the input file with the `filename` parameter and the HDF5 destination dataset with parameters `outputfile` for the output file name, `outGroup` with the group to store the dataset and the dataset name with the parameter `outDataset`. It should be considered that:
+You can easily change your text files to HDF5 using the function `bdImport_text_to_hdf5 ()`, to do that, we only have to define the input file with the `filename` parameter and the HDF5 destination dataset with parameters `outputfile` for the output file name, `outGroup` with the group to store the dataset and the dataset name with the parameter `outDataset`. It should be considered that:
 
 - This function **only allows to import numeric data except for rownames and columnames where character are allowed**. 
 
@@ -280,12 +280,12 @@ You can easily change your text files to HDF5 using the function `Import_text_to
 In this example we convert the "colesterol.csv" file and we will save the data to a file 'colesterol_file.hdf5' under the group 'COLESTEROLGROUP' in the dataset 'COLESTEROLDATASET'. In this example the text file contains column names so we set the parameter `header = TRUE`. 
 
 ```{r convert_HDF5, cache=FALSE}
-Import_text_to_hdf5(filename = "colesterol.csv", 
-                    sep=',', 
-                    outputfile = "colesterol_file.hdf5", 
-                    outGroup = "COLESTEROL", 
-                    outDataset = "COLESTEROLDATA", 
-                    header = TRUE)
+bdImport_text_to_hdf5(filename = "colesterol.csv", 
+                      sep=',', 
+                      outputfile = "colesterol_file.hdf5", 
+                      outGroup = "COLESTEROL", 
+                      outDataset = "COLESTEROLDATA", 
+                      header = TRUE)
 
 ```
 
@@ -328,9 +328,9 @@ In this section, different products of matrices and vectors are introduced. The 
 
 ### Hdf5 Matrix multiplication from data in memory
 
-To work with big matrices `blockmult()` saves matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument.
+To work with big matrices `bdblockmult()` saves matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument.
 
-In that case, by default the function `blockmult`, by default, this function creates the *tmp_blockmult.hdf5* file with two groups the *INPUT* group with datasets *A* and *B* with original matrices and the *OUTPUT* group with dataset *C* with the results. The file name can be set with `outputfile` parameter.
+In that case, by default the function `bdblockmult`, by default, this function creates the *tmp_blockmult.hdf5* file with two groups the *INPUT* group with datasets *A* and *B* with original matrices and the *OUTPUT* group with dataset *C* with the results. The file name can be set with `outputfile` parameter.
 
 
 ```{r blockmultbm1}
@@ -341,10 +341,10 @@ Bbig <- matrix(rnorm(n*p), nrow=n, ncol=p)
 
 
 # We want to force it to run in memory
-AxBNOBig <- blockmult(Abig, Bbig, bigmatrix = 100000)
+AxBNOBig <- bdblockmult(Abig, Bbig, bigmatrix = 100000)
 
 # We consider a big matrix if number of rows or columns are > 500
-AxBBig3000 <- blockmult(Abig, Bbig, bigmatrix = 500)
+AxBBig3000 <- bdblockmult(Abig, Bbig, bigmatrix = 500)
 
 ```
 
@@ -385,22 +385,22 @@ H5Fclose(h5data)
 
 ### Hdf5 Matrix multiplication from data stored in a file
 
-If we have the matrices stored in hdf5 data file, we can use the function `blockmult_hdf5`. This function allows to perform a matrix multiplication from two matrices stored in a file.
+If we have the matrices stored in hdf5 data file, we can use the function `bdblockmult_hdf5`. This function allows to perform a matrix multiplication from two matrices stored in a file.
 
-To use the `blockmult_hdf5`, we have to set the parameters `filename` with the file that contains the matrices, `group`, here, we have to indicate under which group are stored the matrices and the datasets names where data is stored parameters `a` and `b`. By default, the results group can be set by `outgroup` parameter by default, the output group is *OUTPUT* .
+To use the `bdblockmult_hdf5`, we have to set the parameters `filename` with the file that contains the matrices, `group`, here, we have to indicate under which group are stored the matrices and the datasets names where data is stored parameters `a` and `b`. By default, the results group can be set by `outgroup` parameter by default, the output group is *OUTPUT* .
 
-To show how this function works, we will use the matrices created with `blockmult` function previously used and we will store the results under the 'HDF5_RES' group
+To show how this function works, we will use the matrices created with `bdblockmult` function previously used and we will store the results under the 'HDF5_RES' group
 
 ```{r blockmult_hdf5_exec}
-res <- blockmult_hdf5(filename = 'tmp_blockmult.hdf5', group="INPUT", 
-                      a="A", b="B", outgroup = 'HDF5_RES')
+res <- bdblockmult_hdf5(filename = 'tmp_blockmult.hdf5', group="INPUT",
+                        a="A", b="B", outgroup = 'HDF5_RES')
 
 # We show the hdf5 content
  h5ls(res$file)
 ```
 
 
-Now, we compare the obtained results with `blockmult_hdf5` and `blockmult` functions .
+Now, we compare the obtained results with `bdblockmult_hdf5` and `bdblockmult` functions .
 ```{r blockmult_hdf5_res}
 # Get content
 h5data <- H5Fopen(res$file)
@@ -408,10 +408,10 @@ h5data <- H5Fopen(res$file)
 # We can get wher data is stored
 res$dataset
 
-# We get the results with blockmult (previous step)
+# We get the results with bdblockmult (previous step)
 resblockmult <- h5data$OUTPUT$C
 
-# And the results obtained from blockmult_hdf5
+# And the results obtained from bdblockmult_hdf5
 resblockmult_hdf5 <- h5data$HDF5_RES$A_x_B
 resblockmult_hdf5[1:5,1:5]
 
@@ -422,21 +422,21 @@ all.equal(resblockmult, resblockmult_hdf5)
 ```
 
 
-We obtain the same result using `blockmult` and `blockmult_hdf5`.
+We obtain the same result using `bdblockmult` and `bdblockmult_hdf5`.
 
 
 ## Cross-product and Transposed Cross-product with hdf5 files
 
-To perform a cross-product $C = A^t A$ you can call `Crossprod_hdf5()` function. We just have to set the parameters `filename`, `group` and `A` with the file, group and the dataset that we want to use and optionally the `outgroup` parameter to set the output group where we want to store results.
+To perform a cross-product $C = A^t A$ you can call `bdCrossprod_hdf5()` function. We just have to set the parameters `filename`, `group` and `A` with the file, group and the dataset that we want to use and optionally the `outgroup` parameter to set the output group where we want to store results.
 
 The result dataset is stored with *CrossProd_<MatrixName>x<MatrixName>* pattern.
 
 
 ```{r crossprod}
-res <- Crossprod_hdf5(filename = 'robject.hdf5', 
-                      group="INPUT", 
-                      A="A", 
-                      outgroup = "RESULTS")
+res <- bdCrossprod_hdf5(filename = 'robject.hdf5', 
+                        group="INPUT", 
+                        A="A", 
+                        outgroup = "RESULTS")
 ```
 
 We obtain the expected values computed using `crossprod` function.
@@ -471,11 +471,11 @@ n <- 500
 m <- 600
 B <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Add_hdf5_matrix(B, filename = 'robject.hdf5', group="INPUT", dataset = "B2")
+bdAdd_hdf5_matrix(B, filename = 'robject.hdf5', group="INPUT", dataset = "B2")
 
 # Get Crossprod with two matrix
-res <- Crossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", 
-                      groupB = "INPUT", B = "B2", outgroup = "RESULTS")
+res <- bdCrossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", 
+                        groupB = "INPUT", B = "B2", outgroup = "RESULTS")
 
 ```
 
@@ -505,11 +505,11 @@ all.equal(resCProd, crossprod(A,B))
 
 
 
-you may also set use `tCrossprod_hdf5()` function to get a transposed cross-product $C = A A^t$ . In that case the result dataset is stored with *tCrossProd_<MatrixName>x<MatrixName>* pattern.
+you may also set use `bdtCrossprod_hdf5()` function to get a transposed cross-product $C = A A^t$ . In that case the result dataset is stored with *tCrossProd_<MatrixName>x<MatrixName>* pattern.
 
 
 ```{r tcrossprod }
-res <- tCrossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", outgroup = "RESULTS")
+res <- bdtCrossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", outgroup = "RESULTS")
 ```
 
 We obtain the expected values computed using `crossprod` function.
@@ -544,11 +544,11 @@ n <- 500
 m <- 600
 B <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Add_hdf5_matrix(B, filename = 'robject.hdf5', group="INPUT", dataset = "B3")
+bdAdd_hdf5_matrix(B, filename = 'robject.hdf5', group="INPUT", dataset = "B3")
 
 # Get Crossprod with two matrix
-res <- tCrossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", 
-                       groupB = "INPUT", B = "B3", outgroup = "RESULTS")
+res <- bdtCrossprod_hdf5(filename = 'robject.hdf5', group="INPUT", A="A", 
+                         groupB = "INPUT", B = "B3", outgroup = "RESULTS")
 
 ```
 
@@ -617,7 +617,7 @@ n <- 150000
 m <- 50
 odata <- matrix(rnorm(n*m, mean=0, sd=1), n,m)
 
-Add_hdf5_matrix(odata, "delayed.hdf5", "OMICS", "data")
+bdAdd_hdf5_matrix(odata, "delayed.hdf5", "OMICS", "data")
 
 # Direct from hdf5 data file
 svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data")
@@ -693,7 +693,7 @@ svd$d[1:7]
 <!-- data(cancer) -->
 <!-- dim(miRNA) -->
 
-<!-- Create_hdf5_matrix(odata, "delayed.hdf5", "OMICS", "miRNA") -->
+<!-- Create_HDF5_matrix(odata, "delayed.hdf5", "OMICS", "miRNA") -->
 
 <!-- ``` -->
 
@@ -766,7 +766,7 @@ We first simulate a genotype matrix with 0, 1, 2 and 3 and store it in hdf5 file
 ```{r snpgenotype}
 set.seed(108432)
 geno.sim <- matrix(sample(0:3, 10000, replace = TRUE), byrow = TRUE, ncol = 10)
-Add_hdf5_matrix(geno.sim, "delayed.hdf5", "OMICS", "geno")
+bdAdd_hdf5_matrix(geno.sim, "delayed.hdf5", "OMICS", "geno")
 
 # Get data and show the first 5 rows
 h5fsvd = H5Fopen("delayed.hdf5")
@@ -805,7 +805,7 @@ Normalization is one of the most important procedures in genomics data analysis.
 In BigDataStatMeth we implemented a normalization method that works directly with datasets stored in hdf5 file format, like in other functions implemented in BigDataSet that works with hdf5 data files, we have to indicate where the data is, the filename, the name of the group under the dataset is and the dataset name. In normalization function, we can indicate if we want to center data, scale or center and scale (default option). The applied formula to normalize data by default in implemented function is :
 $$ \frac{X - \mu}{\sigma}$$
 
-The implemented function to normalize data direct from hdf5 data file is `Normalize_hdf5`.
+The implemented function to normalize data direct from hdf5 data file is `bdNormalize_hdf5`.
 
 To show you an example, we will use the imputed geno dataset *imputedgeno* created before in imputation method example. To normalize data we have to indicate where the dataset is stored and we have two optiona paramters `bcenter` and `bscale` with default value = TRUE. In order to normalize data, we don't need to modify these optional parameters. If we only want to center data, then we have to put `bscale = FALSE` or if we only want to scale data `bcenter` parameter must be FALSE.
 
@@ -815,7 +815,7 @@ Let show an example normalizing imputed geno under group "OMICS"  in delayed.hdf
 
 ```{r normalize}
 
-Normalize_hdf5("delayed.hdf5", group="OMICS", dataset="imputedgeno")
+bdNormalize_hdf5("delayed.hdf5", group="OMICS", dataset="imputedgeno")
 ```
 
 The results will be under groups "NORMALIZED" - "OMICS" in dataset genoimputed

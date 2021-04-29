@@ -139,7 +139,7 @@ bool manage_Dataset( H5File* file, std::string outGroup, std::string outDataset,
 //' 
 //' @export
 // [[Rcpp::export]]
-int Import_text_to_hdf5( Rcpp::CharacterVector filename, 
+int bdImport_text_to_hdf5( Rcpp::CharacterVector filename, 
                            std::string outputfile, std::string outGroup, std::string outDataset, 
                            Rcpp::Nullable<std::string> sep = R_NilValue, 
                            Rcpp::Nullable<bool> header = false,

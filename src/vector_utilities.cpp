@@ -63,7 +63,7 @@ struct Sum : public RcppParallel::Worker
 //' 
 //' @export
 // [[Rcpp::export]]
-double parallelVectorSum(Rcpp::NumericVector x) {
+double bdparallelVectorSum(Rcpp::NumericVector x) {
   
   // declare instance 
   Sum sum(x);
@@ -114,7 +114,7 @@ struct Pow : public RcppParallel::Worker
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::NumericVector parallelpow2(Rcpp::NumericVector x) {
+Rcpp::NumericVector bdparallelpow2(Rcpp::NumericVector x) {
   
   // Return vector
   Rcpp::NumericVector rv(x.length());

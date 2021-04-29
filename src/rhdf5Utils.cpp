@@ -2059,9 +2059,9 @@ H5FilePtr Open_hdf5_file(const std::string& fname)
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Create_hdf5_matrix_file(std::string filename, RObject object, 
-                            Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue,
-                            Rcpp::Nullable<bool> transp = R_NilValue)
+Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object, 
+                                        Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue,
+                                        Rcpp::Nullable<bool> transp = R_NilValue)
 {
   
   H5File* file;
@@ -2178,7 +2178,7 @@ Rcpp::RObject Create_hdf5_matrix_file(std::string filename, RObject object,
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Add_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue )
+Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue )
 {
     
   H5File* file;
@@ -2292,7 +2292,7 @@ Rcpp::RObject Add_hdf5_matrix(RObject object, std::string filename, std::string 
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Remove_hdf5_element(std::string filename, std::string element)
+Rcpp::RObject bdRemove_hdf5_element(std::string filename, std::string element)
 {
   
   H5File* file;

@@ -209,10 +209,10 @@ return(C);
 //' Par_2cor <- tCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject tCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, 
-                               Rcpp::Nullable<int> block_size = R_NilValue, 
-                               Rcpp::Nullable<bool> paral = R_NilValue,
-                               Rcpp::Nullable<int> threads = R_NilValue )
+Rcpp::RObject bdtCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, 
+                                    Rcpp::Nullable<int> block_size = R_NilValue, 
+                                    Rcpp::Nullable<bool> paral = R_NilValue,
+                                    Rcpp::Nullable<int> threads = R_NilValue )
 {
   
   int iblock_size;

@@ -32,7 +32,7 @@
 #' 
 #' blockmult_vector( A, b, 128, TRUE)
 #' 
-blockmult_vector <- function( A, b, block_size = 128, paral = TRUE, threads = NULL, outfile = "tmp_blockmult_vector.hdf5", onmemory = FALSE)
+bdblockmult_vector <- function( A, b, block_size = 128, paral = TRUE, threads = NULL, outfile = "tmp_blockmult_vector.hdf5", onmemory = FALSE)
 { 
    
    if(is.array(b) || is.vector(b)) {

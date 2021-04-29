@@ -65,9 +65,9 @@ Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, 
 //'   a = "See vignette"
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Normalize_hdf5(std::string filename, const std::string group, std::string dataset,
-                             Rcpp::Nullable<bool> bcenter = R_NilValue, Rcpp::Nullable<bool> bscale  = R_NilValue,
-                             Rcpp::Nullable<int> wsize  = R_NilValue)
+Rcpp::RObject bdNormalize_hdf5( std::string filename, const std::string group, std::string dataset,
+                                Rcpp::Nullable<bool> bcenter = R_NilValue, Rcpp::Nullable<bool> bscale  = R_NilValue,
+                                Rcpp::Nullable<int> wsize  = R_NilValue)
 {
   
   bool bc, bs;

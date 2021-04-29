@@ -23,8 +23,8 @@
 
   void replace_zero(Rcpp::NumericVector* v);
   int index_val( double val, Eigen::VectorXd& vector);
-  double parallelVectorSum(Rcpp::NumericVector x);
-  Rcpp::NumericVector parallelpow2(Rcpp::NumericVector x);
+  double bdparallelVectorSum(Rcpp::NumericVector x);
+  Rcpp::NumericVector bdparallelpow2(Rcpp::NumericVector x);
   template <class T> T generate_seq (double start, double end, double inc);
   
 

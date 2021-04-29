@@ -21,7 +21,7 @@
                                               Eigen::Map<Eigen::SparseMatrix<double> > B);
   
   // R functions
-  Rcpp::RObject blockmult_sparse(Rcpp::RObject A, Rcpp::RObject B, 
+  Rcpp::RObject bdblockmult_sparse(Rcpp::RObject A, Rcpp::RObject B, 
                                  Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads );
   
 #endif

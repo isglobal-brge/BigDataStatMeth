@@ -163,15 +163,15 @@ int hdf5_block_matrix_crossprod_hdf5( std::string matA, IntegerVector sizeA,
 //'   
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Crossprod_hdf5(std::string filename, const std::string group, 
-                             std::string A, 
-                             Rcpp::Nullable<std::string> groupB = R_NilValue, 
-                             Rcpp::Nullable<std::string>  B = R_NilValue, 
-                             Rcpp::Nullable<int> block_size = R_NilValue, 
-                             Rcpp::Nullable<bool> paral = R_NilValue,
-                             Rcpp::Nullable<int> threads = R_NilValue,
-                             Rcpp::Nullable<double> mixblock_size = R_NilValue,
-                             Rcpp::Nullable<std::string> outgroup = R_NilValue)
+Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
+                               std::string A, 
+                               Rcpp::Nullable<std::string> groupB = R_NilValue, 
+                               Rcpp::Nullable<std::string>  B = R_NilValue, 
+                               Rcpp::Nullable<int> block_size = R_NilValue, 
+                               Rcpp::Nullable<bool> paral = R_NilValue,
+                               Rcpp::Nullable<int> threads = R_NilValue,
+                               Rcpp::Nullable<double> mixblock_size = R_NilValue,
+                               Rcpp::Nullable<std::string> outgroup = R_NilValue)
 {
 
 ////        t(matA) %*% matA

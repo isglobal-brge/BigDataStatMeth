@@ -227,10 +227,10 @@ Eigen::MatrixXd Bblock_weighted_crossprod_parallel(const Eigen::MatrixXd& A, Eig
 //' Par_2cor <- Crossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Crossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, 
-                                 Rcpp::Nullable<int> block_size = R_NilValue, 
-                                 Rcpp::Nullable<bool> paral = R_NilValue,
-                                 Rcpp::Nullable<int> threads = R_NilValue )
+Rcpp::RObject bdCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, 
+                                   Rcpp::Nullable<int> block_size = R_NilValue, 
+                                   Rcpp::Nullable<bool> paral = R_NilValue,
+                                   Rcpp::Nullable<int> threads = R_NilValue )
 {
   
   int iblock_size;

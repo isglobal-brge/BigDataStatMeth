@@ -37,7 +37,7 @@
 #' 
 #' blockmult( AD, BD, 128, TRUE)
 #' 
-blockmult <- function( A, B, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 10000, mixblock_size = 128, 
+bdblockmult <- function( A, B, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 10000, mixblock_size = 128, 
                        outfile = "tmp_blockmult.hdf5", onmemory = FALSE)
 { 
 

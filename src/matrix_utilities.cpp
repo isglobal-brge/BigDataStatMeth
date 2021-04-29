@@ -132,9 +132,9 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject Normalize_Data ( Rcpp::RObject & X, 
-                               Rcpp::Nullable<bool> bcenter = R_NilValue,
-                               Rcpp::Nullable<bool> bscale  = R_NilValue)
+Rcpp::RObject bdNormalize_Data ( Rcpp::RObject & X, 
+                                 Rcpp::Nullable<bool> bcenter = R_NilValue,
+                                 Rcpp::Nullable<bool> bscale  = R_NilValue)
 {
   Eigen::MatrixXd mX;
   bool bc, bs;

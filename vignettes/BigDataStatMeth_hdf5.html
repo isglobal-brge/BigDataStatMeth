@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2021-04-23" />
+<meta name="date" content="2021-04-28" />
 
 <title>Matrix operations, algebra and Statistical Methods for Big Data. Part II: working with HDF5 files</title>
 
@@ -68,7 +68,7 @@ if (window.hljs) {
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Amargin%3A%200px%20auto%3B%0Amax%2Dwidth%3A%201134px%3B%0Afont%2Dfamily%3A%20sans%2Dserif%3B%0Afont%2Dsize%3A%2010pt%3B%0A%7D%0A%0Adiv%23TOC%20ul%20%7B%0Apadding%3A%200px%200px%200px%2045px%3B%0Alist%2Dstyle%3A%20none%3B%0Abackground%2Dimage%3A%20none%3B%0Abackground%2Drepeat%3A%20none%3B%0Abackground%2Dposition%3A%200%3B%0Afont%2Dsize%3A%2010pt%3B%0Afont%2Dfamily%3A%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%7D%0Adiv%23TOC%20%3E%20ul%20%7B%0Apadding%3A%200px%20150px%200px%2065px%3B%0Afont%2Dsize%3A%2012pt%3B%0A%7D%0Adiv%23TOC%20%3E%20ul%20%3E%20li%20%7B%0Apadding%3A%205px%200px%200px%200px%3B%0A%7D%0Adiv%23TOC%20ul%20ul%20%7B%0Afont%2Dsize%3A%2011pt%3B%0A%7D%0Adiv%23TOC%2Etocify%20ul%20%7B%0Apadding%3A%200px%3B%0Afont%2Dsize%3A%20inherit%3B%0Afont%2Dfamily%3A%20inherit%3B%0A%7D%0Adiv%23TOC%2Etocify%20li%20%7B%0Apadding%3A%205px%3B%0Afont%2Dsize%3A%20inherit%3B%0Afont%2Dfamily%3A%20inherit%3B%0A%7D%0Ap%2C%20dl%20%7B%0Apadding%3A%200px%20150px%200px%2065px%3B%0Atext%2Dalign%3A%20justify%3B%0A%7D%0A%0Ap%2C%20img%2C%20table%20%7B%0Amargin%2Dtop%3A%2010px%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%0Aol%2C%20ul%20%7B%0Apadding%3A%200px%20150px%200px%20100px%3B%0Alist%2Dstyle%3A%20square%3B%0A%7D%0Ali%20ol%2C%20li%20ul%20%7B%0Apadding%3A%200px%200px%200px%2035px%3B%0A%7D%0Ali%20p%20%7B%0Apadding%3A%200%3B%0A%7D%0Apre%20%7B%0Amargin%3A%200em%20150px%200%2E5em%200em%3B%0Apadding%3A%200px%200px%200px%2065px%3B%0Aborder%3A%200px%20none%3B%0Abackground%2Dcolor%3A%20%23f0f0f0%3B%0Awhite%2Dspace%3A%20pre%3B%0Aoverflow%2Dx%3A%20auto%3B%0Afont%2Dsize%3A%2090%25%3B%0A%7D%0Ali%20pre%20%7B%0Amargin%3A%200em%200px%200%2E5em%20%2D65px%3B%0Apadding%3A%200px%200px%200px%2065px%3B%0A%7D%0Apre%20code%20%7B%0Abackground%2Dcolor%3A%20inherit%3B%0Adisplay%3A%20block%3B%0Apadding%3A%2010px%2010px%2010px%200px%3B%0Aoverflow%2Dx%3A%20inherit%3B%0Afont%2Dsize%3A%20100%25%3B%0A%7D%0A%0Apre%20code%5Bclass%5D%20%7B%0Abackground%2Dcolor%3A%20inherit%3B%0A%7D%0A%0Apre%5Bclass%5D%20code%20%7B%0Abackground%2Dcolor%3A%20inherit%3B%0A%7D%0Att%2C%20code%2C%20pre%20%7B%0Afont%2Dfamily%3A%20%27DejaVu%20Sans%20Mono%27%2C%20%27Droid%20Sans%20Mono%27%2C%20%27Lucida%20Console%27%2C%20Consolas%2C%20Monaco%2C%20monospace%3B%0A%7D%0Ah1%2C%20h2%2C%20h3%2C%20h4%2C%20h5%2C%20h6%20%7B%0Afont%2Dfamily%3A%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Amargin%3A%201%2E2em%20150px%200%2E6em%200em%3B%0A%0Apadding%2Dleft%3A%2065px%3B%0Atext%2Dindent%3A%20%2D65px%3B%0A%7D%0Ah1%2Etitle%20%7B%0Acolor%3A%20%2387b13f%3B%0Aline%2Dheight%3A%201%2E1em%3B%0Amargin%2Dtop%3A%2025px%3B%0Aborder%2Dbottom%3A%200px%3B%0A%7D%0Ah1%20%7B%0Aline%2Dheight%3A%201%2E4em%3B%0Aborder%2Dbottom%3A%201px%20%231a81c2%20solid%3B%0A%7D%0Ah1%2C%20h2%2C%20h3%20%7B%0Acolor%3A%20%231a81c2%3B%0A%7D%0Ah1%20%7B%0Afont%2Dsize%3A%2018%2E0pt%3B%0A%7D%0Ah2%20%7B%0Afont%2Dsize%3A%2014%2E5pt%3B%0A%7D%0Ah3%2C%20h4%20%7B%0Afont%2Dsize%3A%2012pt%3B%0A%7D%0Aspan%2Eheader%2Dsection%2Dnumber%20%7B%0Afloat%3A%20left%3B%0Awidth%3A%2065px%3B%0A%7D%0A%0Ap%2Eauthor%2Dname%20%7B%0Afont%2Dsize%3A%2014%2E5pt%3B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dstyle%3A%20italic%3B%0Atext%2Dalign%3A%20left%3B%0A%7D%0A%2Edate%20%7B%0Atext%2Dindent%3A%200px%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0A%2Eabstract%2C%20%2Epackage%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0A%0Acode%20%7B%0Abackground%2Dcolor%3A%20%23f0f0f0%3B%0Acolor%3A%20%23404040%3B%0Afont%2Dsize%3A%2090%25%3B%0A%7D%0A%0A%2Efigure%20%7B%0Amargin%3A%200em%200px%200%2E5em%3B%0A%7D%0Aimg%20%7B%0Amax%2Dwidth%3A%20100%25%3B%0Adisplay%3A%20block%3B%0Apadding%3A%200px%20150px%200px%20130px%3B%0A%7D%0Ap%20%3E%20img%20%7B%0Apadding%2Dleft%3A%2065px%3B%0Apadding%2Dright%3A%200px%3B%0A%7D%0Atd%20%3E%20img%20%7B%0Apadding%3A%200px%3B%0Amax%2Dwidth%3A%20100%25%3B%0Adisplay%3A%20inline%3B%0A%7D%0Aimg%2Esmallfigure%20%7B%0Apadding%2Dleft%3A%20195px%3B%0Apadding%2Dright%3A%20280px%3B%0A%7D%0Ap%20%3E%20img%2Esmallfigure%20%7B%0Apadding%2Dleft%3A%20130px%3B%0Apadding%2Dright%3A%20130px%3B%0A%7D%0Aimg%2Ewidefigure%20%7B%0Apadding%2Dleft%3A%2065px%3B%0Apadding%2Dright%3A%2085px%3B%0Amargin%2Dright%3A%20%2D65px%3B%0A%7D%0Ap%20%3E%20img%2Ewidefigure%20%7B%0Apadding%2Dleft%3A%200px%3B%0Apadding%2Dright%3A%200px%3B%0Amargin%2Dright%3A%20%2D65px%3B%0A%7D%0Ap%2Ecaption%2C%20caption%20%7B%0Acolor%3A%20inherit%3B%0Afont%2Dsize%3A%208pt%3B%0A%7D%0Ap%2Ecaption%20%7B%0Apadding%2Dleft%3A%20130px%3B%0Apadding%2Dright%3A%2085px%3B%0Amargin%2Dbottom%3A%2020px%3B%0A%7D%0Acaption%20%7B%0Apadding%3A%200px%3B%0Amargin%2Dbottom%3A%2010px%3B%0Amin%2Dwidth%3A%20583%3B%0A%7D%0Aspan%2Ecaption%2Dtitle%20%7B%0Acolor%3A%20%231a81c2%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aspan%2Ecaption%2Dlabel%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0A%0Atable%20%7B%0Amargin%2Dleft%3A%20130px%3B%0Amargin%2Dright%3A%2085px%3B%0A%7D%0A%2Etable%20%7B%0Amax%2Dwidth%3A%20518px%3B%0A%7D%0A%0Add%20%7B%0Amargin%2Dleft%3A%2065px%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%0A%2Ecode%2Dfolding%2Dbtn%20%7B%0Aposition%3A%20relative%3B%0Amargin%2Dtop%3A%20%2D26px%3B%0Atop%3A%2026px%3B%0A%7D%0A%2Ecol%2Dmd%2D12%20%7B%0Amin%2Dheight%3A%200px%3B%0A%7D%0A%0A%2Esidenote%20%7B%0Afloat%3A%20right%3B%0Aclear%3A%20right%3B%0Amargin%2Dright%3A%20%2D150px%3B%0Awidth%3A%20130px%3B%0Amargin%2Dtop%3A%200%3B%0Amargin%2Dbottom%3A%201rem%3B%0Afont%2Dsize%3A%208pt%3B%0Aline%2Dheight%3A%201%2E3%3B%0Avertical%2Dalign%3A%20baseline%3B%0Aposition%3A%20relative%3B%0Atext%2Dalign%3A%20left%3B%0A%7D%0A%2Esidenote%2Dnumber%2C%20%2Eaffil%2Dmark%20%7B%0Aposition%3A%20relative%3B%0Avertical%2Dalign%3A%20super%3B%0Afont%2Dsize%3A%207%2E5pt%3B%0Afont%2Dweight%3A%20normal%3B%0Afont%2Dstyle%3A%20normal%3B%0Aline%2Dheight%3A%20normal%3B%0A%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23E07020%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23404040%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%23D02070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23D02070%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%2340A040%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%2340A040%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23808080%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%232020F0%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23E07020%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23FF0000%3B%20%7D%20%0Acode%20%3E%20span%2Eidentifier%20%7B%20color%3A%20%23404040%3B%20%7D%0Acode%20%3E%20span%2Enumber%20%7B%20color%3A%20%23D02070%3B%20%7D%0Acode%20%3E%20span%2Estring%20%7B%20color%3A%20%2340A040%3B%20%7D%0Acode%20%3E%20span%2Ecomment%20%7B%20color%3A%20%23808080%3B%20font%2Dstyle%3A%20italic%3B%20%7D%0Acode%20%3E%20span%2Ekeyword%20%7B%20color%3A%20%232020F0%3B%20%7D%0Acode%20%3E%20span%2Eliteral%20%7B%20color%3A%20%232020F0%3B%20%7D%0Acode%20%3E%20span%2Eoperator%20%7B%20color%3A%20%23000000%3B%7D%0Acode%20%3E%20span%2Eparen%20%7B%20color%3A%20%23000000%3B%7D%0A%0A%2Ejs%2Dplotly%2Dplot%20%2Eplotly%20%7B%0Apadding%2Dleft%3A%2065px%3B%0A%7D%0A%0A%2Emargin%2Dtoggle%20%7B%0Adisplay%3A%20none%3B%0A%7D%0A%40media%20screen%20and%20%28max%2Dwidth%3A%20991px%29%20%7B%0Abody%20%7B%0Apadding%2Dleft%3A%200%3B%0Amargin%2Dleft%3A%200%3B%0Amargin%2Dright%3A%200%3B%0Awidth%3A%20auto%3B%0A%7D%0Ap%20%7B%0Apadding%2Dleft%3A%200%3B%0Apadding%2Dright%3A%200%3B%0A%7D%0Ah1%2C%20h2%2C%20h3%2C%20h4%2C%20h5%2C%20h6%20%7B%0Awidth%3A%20100%25%3B%0Apadding%2Dleft%3A%200%3B%0Atext%2Dindent%3A%200%3B%0A%7D%0Aul%20%7B%0Apadding%2Dleft%3A%2020px%3B%0Apadding%2Dright%3A%200%3B%0A%7D%0Ali%20pre%20%7B%0Amargin%2Dleft%3A%20%2D20px%3B%0Apadding%2Dleft%3A%2010px%3B%0A%7D%0Apre%20%7B%0Amargin%2Dright%3A%200%3B%0Apadding%2Dleft%3A%2010px%3B%0A%7D%0Apre%20code%20%7B%0Awhite%2Dspace%3A%20pre%3B%0A%7D%0Ap%20img%7B%0Apadding%2Dleft%3A%200%3B%0A%7D%0A%2Ehorizontal%2Dscroll%20%7B%0Aoverflow%2Dx%3A%20auto%3B%0A%7D%0A%2Etable%20%7B%0Amin%2Dwidth%3A%20100%25%3B%0Amargin%3A%200%200%200%200%3B%0A%7D%0Adiv%2Efigure%20img%20%7B%0Apadding%3A%200%200%200%200%3B%0A%7D%0Adiv%2Efigure%20p%2Ecaption%20%7B%0Apadding%2Dleft%3A%200%3B%0Apadding%2Dright%3A%200%3B%0A%7D%0A%2Esidenote%20%7B%0Afloat%3A%20unset%3B%0Amargin%2Dtop%3A%201rem%3B%0Amargin%2Dright%3A%200%3B%0Amargin%2Dleft%3A%2010%25%3B%0Awidth%3A%2080%25%3B%0Afont%2Dsize%3A%208pt%3B%0Aline%2Dheight%3A%201%2E3%3B%0Atext%2Dalign%3A%20left%3B%0Adisplay%3A%20none%3B%0A%7D%0A%2Esidenote%2Dnumber%7B%0Adisplay%3A%20none%3B%0A%7D%0A%2Emargin%2Dtoggle%20%7B%0Adisplay%3A%20inline%3B%0Aposition%3A%20relative%3B%0Avertical%2Dalign%3A%20super%3B%0Afont%2Dsize%3A%207%2E5pt%3B%0Afont%2Dweight%3A%20normal%3B%0Afont%2Dstyle%3A%20normal%3B%0Aline%2Dheight%3A%20normal%3B%0Acolor%3A%20%23337ab7%3B%0A%7D%0A%7D%0A%0A%40media%20screen%20and%20%28max%2Dwidth%3A%20767px%29%20%7B%0A%23TOC%20%7B%0Adisplay%3A%20none%3B%0A%7D%0A%7D%0A" type="text/css" />
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Amargin%3A%200px%20auto%3B%0Amax%2Dwidth%3A%201134px%3B%0Afont%2Dfamily%3A%20sans%2Dserif%3B%0Afont%2Dsize%3A%2010pt%3B%0A%7D%0A%0Adiv%23TOC%20ul%20%7B%0Apadding%3A%200px%200px%200px%2045px%3B%0Alist%2Dstyle%3A%20none%3B%0Abackground%2Dimage%3A%20none%3B%0Abackground%2Drepeat%3A%20none%3B%0Abackground%2Dposition%3A%200%3B%0Afont%2Dsize%3A%2010pt%3B%0Afont%2Dfamily%3A%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%7D%0Adiv%23TOC%20%3E%20ul%20%7B%0Apadding%3A%200px%20150px%200px%2065px%3B%0Afont%2Dsize%3A%2012pt%3B%0A%7D%0Adiv%23TOC%20%3E%20ul%20%3E%20li%20%7B%0Apadding%3A%205px%200px%200px%200px%3B%0A%7D%0Adiv%23TOC%20ul%20ul%20%7B%0Afont%2Dsize%3A%2011pt%3B%0A%7D%0Adiv%23TOC%2Etocify%20ul%20%7B%0Apadding%3A%200px%3B%0Afont%2Dsize%3A%20inherit%3B%0Afont%2Dfamily%3A%20inherit%3B%0A%7D%0Adiv%23TOC%2Etocify%20li%20%7B%0Apadding%3A%205px%3B%0Afont%2Dsize%3A%20inherit%3B%0Afont%2Dfamily%3A%20inherit%3B%0A%7D%0Ap%2C%20dl%20%7B%0Apadding%3A%200px%20150px%200px%2065px%3B%0Atext%2Dalign%3A%20justify%3B%0A%7D%0A%0Ap%2C%20img%2C%20table%20%7B%0Amargin%2Dtop%3A%2010px%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%0Aol%2C%20ul%20%7B%0Apadding%3A%200px%20150px%200px%20100px%3B%0Alist%2Dstyle%3A%20square%3B%0A%7D%0Ali%20ol%2C%20li%20ul%20%7B%0Apadding%3A%200px%200px%200px%2035px%3B%0A%7D%0Ali%20p%20%7B%0Apadding%3A%200%3B%0A%7D%0Apre%20%7B%0Amargin%3A%200em%20150px%200%2E5em%200em%3B%0Apadding%3A%200px%200px%200px%2065px%3B%0Aborder%3A%200px%20none%3B%0Abackground%2Dcolor%3A%20%23f0f0f0%3B%0Awhite%2Dspace%3A%20pre%3B%0Aoverflow%2Dx%3A%20auto%3B%0Afont%2Dsize%3A%2090%25%3B%0A%7D%0Ali%20pre%20%7B%0Amargin%3A%200em%200px%200%2E5em%20%2D65px%3B%0Apadding%3A%200px%200px%200px%2065px%3B%0A%7D%0Apre%20code%20%7B%0Abackground%2Dcolor%3A%20inherit%3B%0Adisplay%3A%20block%3B%0Apadding%3A%2010px%2010px%2010px%200px%3B%0Awhite%2Dspace%3A%20pre%3B%0Aoverflow%2Dx%3A%20inherit%3B%0Afont%2Dsize%3A%20100%25%3B%0A%7D%0A%0Apre%20code%5Bclass%5D%20%7B%0Abackground%2Dcolor%3A%20inherit%3B%0A%7D%0A%0Apre%5Bclass%5D%20code%20%7B%0Abackground%2Dcolor%3A%20inherit%3B%0A%7D%0Att%2C%20code%2C%20pre%20%7B%0Afont%2Dfamily%3A%20%27DejaVu%20Sans%20Mono%27%2C%20%27Droid%20Sans%20Mono%27%2C%20%27Lucida%20Console%27%2C%20Consolas%2C%20Monaco%2C%20monospace%3B%0A%7D%0Ah1%2C%20h2%2C%20h3%2C%20h4%2C%20h5%2C%20h6%20%7B%0Afont%2Dfamily%3A%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Amargin%3A%201%2E2em%20150px%200%2E6em%200em%3B%0A%0Apadding%2Dleft%3A%2065px%3B%0Atext%2Dindent%3A%20%2D65px%3B%0A%7D%0Ah1%2Etitle%20%7B%0Acolor%3A%20%2387b13f%3B%0Aline%2Dheight%3A%201%2E1em%3B%0Amargin%2Dtop%3A%2025px%3B%0Aborder%2Dbottom%3A%200px%3B%0A%7D%0Ah1%20%7B%0Aline%2Dheight%3A%201%2E4em%3B%0Aborder%2Dbottom%3A%201px%20%231a81c2%20solid%3B%0A%7D%0Ah1%2C%20h2%2C%20h3%20%7B%0Acolor%3A%20%231a81c2%3B%0A%7D%0Ah1%20%7B%0Afont%2Dsize%3A%2018%2E0pt%3B%0A%7D%0Ah2%20%7B%0Afont%2Dsize%3A%2014%2E5pt%3B%0A%7D%0Ah3%2C%20h4%20%7B%0Afont%2Dsize%3A%2012pt%3B%0A%7D%0Aspan%2Eheader%2Dsection%2Dnumber%20%7B%0Afloat%3A%20left%3B%0Awidth%3A%2065px%3B%0A%7D%0A%0Ap%2Eauthor%2Dname%20%7B%0Afont%2Dsize%3A%2014%2E5pt%3B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dstyle%3A%20italic%3B%0Atext%2Dalign%3A%20left%3B%0A%7D%0A%2Edate%20%7B%0Atext%2Dindent%3A%200px%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0A%2Eabstract%2C%20%2Epackage%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0A%0Acode%20%7B%0Abackground%2Dcolor%3A%20%23f0f0f0%3B%0Acolor%3A%20%23404040%3B%0Afont%2Dsize%3A%2090%25%3B%0A%7D%0A%0A%2Efigure%20%7B%0Amargin%3A%200em%200px%200%2E5em%3B%0A%7D%0Aimg%20%7B%0Amax%2Dwidth%3A%20100%25%3B%0Adisplay%3A%20block%3B%0Apadding%3A%200px%20150px%200px%20130px%3B%0A%7D%0Ap%20%3E%20img%20%7B%0Apadding%2Dleft%3A%2065px%3B%0Apadding%2Dright%3A%200px%3B%0A%7D%0Atd%20%3E%20img%20%7B%0Apadding%3A%200px%3B%0Amax%2Dwidth%3A%20100%25%3B%0Adisplay%3A%20inline%3B%0A%7D%0Aimg%2Esmallfigure%20%7B%0Apadding%2Dleft%3A%20195px%3B%0Apadding%2Dright%3A%20280px%3B%0A%7D%0Ap%20%3E%20img%2Esmallfigure%20%7B%0Apadding%2Dleft%3A%20130px%3B%0Apadding%2Dright%3A%20130px%3B%0A%7D%0Aimg%2Ewidefigure%20%7B%0Apadding%2Dleft%3A%2065px%3B%0Apadding%2Dright%3A%2085px%3B%0Amargin%2Dright%3A%20%2D65px%3B%0A%7D%0Ap%20%3E%20img%2Ewidefigure%20%7B%0Apadding%2Dleft%3A%200px%3B%0Apadding%2Dright%3A%200px%3B%0Amargin%2Dright%3A%20%2D65px%3B%0A%7D%0Ap%2Ecaption%2C%20caption%20%7B%0Acolor%3A%20inherit%3B%0Afont%2Dsize%3A%208pt%3B%0A%7D%0Ap%2Ecaption%20%7B%0Apadding%2Dleft%3A%20130px%3B%0Apadding%2Dright%3A%2085px%3B%0Amargin%2Dbottom%3A%2020px%3B%0A%7D%0Acaption%20%7B%0Apadding%3A%200px%3B%0Amargin%2Dbottom%3A%2010px%3B%0Amin%2Dwidth%3A%20583%3B%0A%7D%0Aspan%2Ecaption%2Dtitle%20%7B%0Acolor%3A%20%231a81c2%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aspan%2Ecaption%2Dlabel%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0A%0Atable%20%7B%0Amargin%2Dleft%3A%20130px%3B%0Amargin%2Dright%3A%2085px%3B%0A%7D%0A%2Etable%20%7B%0Amax%2Dwidth%3A%20518px%3B%0A%7D%0A%0Add%20%7B%0Amargin%2Dleft%3A%2065px%3B%0Amargin%2Dbottom%3A%2010px%3B%0A%7D%0A%0A%2Ecode%2Dfolding%2Dbtn%20%7B%0Aposition%3A%20relative%3B%0Amargin%2Dtop%3A%20%2D26px%3B%0Atop%3A%2026px%3B%0A%7D%0A%2Ecol%2Dmd%2D12%20%7B%0Amin%2Dheight%3A%200px%3B%0A%7D%0A%0A%2Esidenote%20%7B%0Afloat%3A%20right%3B%0Aclear%3A%20right%3B%0Amargin%2Dright%3A%20%2D150px%3B%0Awidth%3A%20130px%3B%0Amargin%2Dtop%3A%200%3B%0Amargin%2Dbottom%3A%201rem%3B%0Afont%2Dsize%3A%208pt%3B%0Aline%2Dheight%3A%201%2E3%3B%0Avertical%2Dalign%3A%20baseline%3B%0Aposition%3A%20relative%3B%0Atext%2Dalign%3A%20left%3B%0A%7D%0A%2Esidenote%2Dnumber%2C%20%2Eaffil%2Dmark%20%7B%0Aposition%3A%20relative%3B%0Avertical%2Dalign%3A%20super%3B%0Afont%2Dsize%3A%207%2E5pt%3B%0Afont%2Dweight%3A%20normal%3B%0Afont%2Dstyle%3A%20normal%3B%0Aline%2Dheight%3A%20normal%3B%0A%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23E07020%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23404040%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%23D02070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23D02070%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%2340A040%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%2340A040%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23808080%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%232020F0%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23E07020%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23FF0000%3B%20%7D%20%0Acode%20%3E%20span%2Eidentifier%20%7B%20color%3A%20%23404040%3B%20%7D%0Acode%20%3E%20span%2Enumber%20%7B%20color%3A%20%23D02070%3B%20%7D%0Acode%20%3E%20span%2Estring%20%7B%20color%3A%20%2340A040%3B%20%7D%0Acode%20%3E%20span%2Ecomment%20%7B%20color%3A%20%23808080%3B%20font%2Dstyle%3A%20italic%3B%20%7D%0Acode%20%3E%20span%2Ekeyword%20%7B%20color%3A%20%232020F0%3B%20%7D%0Acode%20%3E%20span%2Eliteral%20%7B%20color%3A%20%232020F0%3B%20%7D%0Acode%20%3E%20span%2Eoperator%20%7B%20color%3A%20%23000000%3B%7D%0Acode%20%3E%20span%2Eparen%20%7B%20color%3A%20%23000000%3B%7D%0A%0A%2Ejs%2Dplotly%2Dplot%20%2Eplotly%20%7B%0Apadding%2Dleft%3A%2065px%3B%0A%7D%0A%0A%2Emargin%2Dtoggle%20%7B%0Adisplay%3A%20none%3B%0A%7D%0A%40media%20screen%20and%20%28max%2Dwidth%3A%20991px%29%20%7B%0Abody%20%7B%0Apadding%2Dleft%3A%200%3B%0Amargin%2Dleft%3A%200%3B%0Amargin%2Dright%3A%200%3B%0Awidth%3A%20auto%3B%0A%7D%0Ap%20%7B%0Apadding%2Dleft%3A%200%3B%0Apadding%2Dright%3A%200%3B%0A%7D%0Ah1%2C%20h2%2C%20h3%2C%20h4%2C%20h5%2C%20h6%20%7B%0Awidth%3A%20100%25%3B%0Apadding%2Dleft%3A%200%3B%0Atext%2Dindent%3A%200%3B%0A%7D%0Aul%20%7B%0Apadding%2Dleft%3A%2020px%3B%0Apadding%2Dright%3A%200%3B%0A%7D%0Ali%20pre%20%7B%0Amargin%2Dleft%3A%20%2D20px%3B%0Apadding%2Dleft%3A%2010px%3B%0A%7D%0Apre%20%7B%0Amargin%2Dright%3A%200%3B%0Apadding%2Dleft%3A%2010px%3B%0A%7D%0Apre%20code%20%7B%0Awhite%2Dspace%3A%20pre%3B%0A%7D%0Ap%20img%7B%0Apadding%2Dleft%3A%200%3B%0A%7D%0A%2Ehorizontal%2Dscroll%20%7B%0Aoverflow%2Dx%3A%20auto%3B%0A%7D%0A%2Etable%20%7B%0Amin%2Dwidth%3A%20100%25%3B%0Amargin%3A%200%200%200%200%3B%0A%7D%0Adiv%2Efigure%20img%20%7B%0Apadding%3A%200%200%200%200%3B%0A%7D%0Adiv%2Efigure%20p%2Ecaption%20%7B%0Apadding%2Dleft%3A%200%3B%0Apadding%2Dright%3A%200%3B%0A%7D%0A%2Esidenote%20%7B%0Afloat%3A%20unset%3B%0Amargin%2Dtop%3A%201rem%3B%0Amargin%2Dright%3A%200%3B%0Amargin%2Dleft%3A%2010%25%3B%0Awidth%3A%2080%25%3B%0Afont%2Dsize%3A%208pt%3B%0Aline%2Dheight%3A%201%2E3%3B%0Atext%2Dalign%3A%20left%3B%0Adisplay%3A%20none%3B%0A%7D%0A%2Esidenote%2Dnumber%7B%0Adisplay%3A%20none%3B%0A%7D%0A%2Emargin%2Dtoggle%20%7B%0Adisplay%3A%20inline%3B%0Aposition%3A%20relative%3B%0Avertical%2Dalign%3A%20super%3B%0Afont%2Dsize%3A%207%2E5pt%3B%0Afont%2Dweight%3A%20normal%3B%0Afont%2Dstyle%3A%20normal%3B%0Aline%2Dheight%3A%20normal%3B%0Acolor%3A%20%23337ab7%3B%0A%7D%0A%7D%0A%0A%40media%20screen%20and%20%28max%2Dwidth%3A%20767px%29%20%7B%0A%23TOC%20%7B%0Adisplay%3A%20none%3B%0A%7D%0A%7D%0A" type="text/css" />
 
 
 
@@ -186,7 +186,7 @@ function toggle_visibility(id1) {
 <p class="author-name">Dolors Pelegri<span class="affil-mark">1,2,3</span> and Juan R. Gonzalez<span class="affil-mark">1,2,3*</span></p>
 <p class="author-affiliation"><span class="affil-mark">1</span>Universitat Autonoma de Barcelona - Universitat Autonoma de Barcelona (UAB)<br><span class="affil-mark">2</span>ISGlobal, Centre for Research in Environmental Epidemiology (ISGlobal)<br><span class="affil-mark">3</span>Bioinformatics Research Group in Epidemiolgy (BRGE)</p>
 <p class="author-email"><span class="affil-mark">*</span><a href="mailto:juanr.gonzalez@isglobal.org">juanr.gonzalez@isglobal.org</a></p>
-<h4 class="date">2021-04-23</h4>
+<h4 class="date">2021-04-28</h4>
 <h4 class="abstract">Abstract</h4>
 <p>Description of functions to perform matrix operations, algebra and basic statistical analyses using HDF5 data files.</p>
 <h4 class="package">Package</h4>
@@ -290,7 +290,7 @@ Figure 1: <span class="caption-title">HDF5 hierarchical structure</span><br>
 <div id="basics-in-rhdf5" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Basics in rhdf5</h2>
 <p><strong>Create hdf5 file</strong></p>
-<p>We have implemented the <code>Create_hdf5_matrix_file ()</code> function to create an hdf5 file with a group and a dataset in a single step. This function allows to create datasets from <code>DelayedMAtrix</code> objects using <code>beachmat</code> library as well as standard R matrices from <code>Matrix</code> objects.</p>
+<p>We have implemented the <code>bdCreate_hdf5_matrix_file ()</code> function to create an hdf5 file with a group and a dataset in a single step. This function allows to create datasets from <code>DelayedMAtrix</code> objects using <code>beachmat</code> library as well as standard R matrices from <code>Matrix</code> objects.</p>
 <pre class="r"><code>library(rhdf5)
 
 set.seed(5234)
@@ -299,26 +299,22 @@ m &lt;- 600
 A &lt;- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
 # We also can create a dataset from R matrix object
-Create_hdf5_matrix_file(filename = &quot;robject.hdf5&quot;, 
-                        object = A, 
-                        group = &quot;INPUT&quot;, 
-                        dataset = &quot;A&quot;)
+bdCreate_hdf5_matrix_file(filename = &quot;robject.hdf5&quot;, 
+                          object = A, 
+                          group = &quot;INPUT&quot;, 
+                          dataset = &quot;A&quot;)
 [1] 0</code></pre>
 <p>We see 0 in the console, indicating that no errors where found when creating the hdf5 file. Notice that a file called “robject.hdf5” will be created in the working directory</p>
 <pre class="r"><code>dir()
- [1] &quot;BigDataStatMeth_hdf5.html&quot; 
- [2] &quot;BigDataStatMeth_hdf5.Rmd&quot;  
- [3] &quot;BigDataStatMeth_hdf5_cache&quot;
- [4] &quot;BigDataStatMeth_memory.Rmd&quot;
- [5] &quot;colesterol.csv&quot;            
- [6] &quot;img_applications&quot;          
- [7] &quot;imgs&quot;                      
- [8] &quot;references.bib&quot;            
- [9] &quot;references_application.bib&quot;
-[10] &quot;robject.hdf5&quot;              
-[11] &quot;rsconnect&quot;                 </code></pre>
+ [1] &quot;BigDataStatMeth_hdf5_cache&quot;   &quot;BigDataStatMeth_hdf5.html&quot;   
+ [3] &quot;BigDataStatMeth_hdf5.Rmd&quot;     &quot;BigDataStatMeth_memory_cache&quot;
+ [5] &quot;BigDataStatMeth_memory.html&quot;  &quot;BigDataStatMeth_memory.Rmd&quot;  
+ [7] &quot;colesterol_new.csv&quot;           &quot;colesterol.csv&quot;              
+ [9] &quot;img_applications&quot;             &quot;imgs&quot;                        
+[11] &quot;references_application.bib&quot;   &quot;references.bib&quot;              
+[13] &quot;Removed&quot;                      &quot;robject.hdf5&quot;                </code></pre>
 <p><strong>Add datasets in hdf5 file</strong></p>
-<p>The function <code>Add_hdf5_matrix ()</code> allows to add a dataset in a existing hdf5 file. We can create the dataset in any group, if group doesn’t exists in file, the group is created before append the dataset. The object can be either an R object or a <code>DelayedArray</code> object.</p>
+<p>The function <code>bdAdd_hdf5_matrix ()</code> allows to add a dataset in a existing hdf5 file. We can create the dataset in any group, if group doesn’t exists in file, the group is created before append the dataset. The object can be either an R object or a <code>DelayedArray</code> object.</p>
 <pre class="r"><code>set.seed(5234)
 n &lt;- 100
 m &lt;- 10000
@@ -331,14 +327,14 @@ B &lt;- matrix(rnorm(n*m,mean=3,sd=0.5), n, m)
 
 # We create another data file (delayed.hdf5) with a matrix A.
 # The group is called INPUT
-Create_hdf5_matrix_file(filename = &quot;delayed.hdf5&quot;, 
+bdCreate_hdf5_matrix_file(filename = &quot;delayed.hdf5&quot;, 
                         object = A, 
                         group = &quot;INPUT&quot;, 
                         dataset = &quot;A&quot;)
 [1] 0
 
 # And them, we add another matrix B to the same group
-Add_hdf5_matrix(object = B, 
+bdAdd_hdf5_matrix(object = B, 
                 filename = &quot;delayed.hdf5&quot;, 
                 group = &quot;INPUT&quot;, 
                 dataset = &quot;B&quot;)
@@ -346,7 +342,7 @@ Add_hdf5_matrix(object = B,
 <p><strong>Create transposed matrix in hdf5 file</strong></p>
 <p>The function <code>Add_hdf5_matrix ()</code> also allows to create a dataset with a transposed matrix with the parameter <code>transpose = TRUE</code>. For example, we can add a dataset in hdf5 with the B transposed matrix with :</p>
 <pre class="r"><code># Create dataset BTransposed with B transposed matrix in delayed.hdf5 file at INPUT group
-Add_hdf5_matrix(B, &quot;delayed.hdf5&quot;, &quot;INPUT&quot;, &quot;BTransposed&quot;, transp = TRUE);
+bdAdd_hdf5_matrix(B, &quot;delayed.hdf5&quot;, &quot;INPUT&quot;, &quot;BTransposed&quot;, transp = TRUE);
 [1] 0</code></pre>
 <p><strong>Open and get hdf5 content file</strong></p>
 <p>We can open an existing file show contents and access data using functions from <code>rhdf5</code> package. <code>rhdf5</code> is an R interface for HDF5. The file must always be opened before working with it.</p>
@@ -394,8 +390,7 @@ BdataTrans[1:5,1:3]
   mean(h5fdelay$INPUT$A[,i])
   })
 head(out)
-[1] -0.05107500  0.25916486  0.14013419  0.09320278
-[5] -0.13489573  0.10595091</code></pre>
+[1] -0.05107500  0.25916486  0.14013419  0.09320278 -0.13489573  0.10595091</code></pre>
 <p>There are efficient ways of reading a subset of data without the need of reading the entire file. To this end, see this <a href="https://www.bioconductor.org/packages/devel/bioc/vignettes/rhdf5/inst/doc/practical_tips.html">Practical tips</a>.</p>
 <p><strong>Close hdf5 file</strong></p>
 <p>After work with hdf5 <strong>the user always must close the file</strong>. We can close only one file with <code>H5Fclose</code> function or close all hdf5 opened files with <code>h5closeAll</code> function</p>
@@ -413,51 +408,45 @@ h5closeAll()</code></pre>
 <div id="convert-text-file-to-hdf5" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Convert text file to HDF5</h1>
 <p>Usually we have files with a large amount of data to be loaded into R. For Big data problem, R can’t deal with this data so we cannot efficiently work with then. In order to resolve this issue, you can work directly from data on disk with datasets stored in an HDF5 data file.</p>
-<p>You can easily change your text files to HDF5 using the function <code>Import_text_to_hdf5 ()</code>, to do that, we only have to define the input file with the <code>filename</code> parameter and the HDF5 destination dataset with parameters <code>outputfile</code> for the output file name, <code>outGroup</code> with the group to store the dataset and the dataset name with the parameter <code>outDataset</code>. It should be considered that:</p>
+<p>You can easily change your text files to HDF5 using the function <code>bdImport_text_to_hdf5 ()</code>, to do that, we only have to define the input file with the <code>filename</code> parameter and the HDF5 destination dataset with parameters <code>outputfile</code> for the output file name, <code>outGroup</code> with the group to store the dataset and the dataset name with the parameter <code>outDataset</code>. It should be considered that:</p>
 <ul>
 <li><p>This function <strong>only allows to import numeric data except for rownames and columnames where character are allowed</strong>.</p></li>
 <li><p>Data can be delimited by different characters. By default, we use tabs (&quot;) but it can be changed easily with <code>sep</code> parameter.</p></li>
 </ul>
 <p>In this example we convert the “colesterol.csv” file and we will save the data to a file ‘colesterol_file.hdf5’ under the group ‘COLESTEROLGROUP’ in the dataset ‘COLESTEROLDATASET.’ In this example the text file contains column names so we set the parameter <code>header = TRUE</code>.</p>
-<pre class="r"><code>Import_text_to_hdf5(filename = &quot;colesterol.csv&quot;, 
-                    sep=&#39;,&#39;, 
-                    outputfile = &quot;colesterol_file.hdf5&quot;, 
-                    outGroup = &quot;COLESTEROL&quot;, 
-                    outDataset = &quot;COLESTEROLDATA&quot;, 
-                    header = TRUE)
+<pre class="r"><code>bdImport_text_to_hdf5(filename = &quot;colesterol.csv&quot;, 
+                      sep=&#39;,&#39;, 
+                      outputfile = &quot;colesterol_file.hdf5&quot;, 
+                      outGroup = &quot;COLESTEROL&quot;, 
+                      outDataset = &quot;COLESTEROLDATA&quot;, 
+                      header = TRUE)
 Info : no rownames to save
 [1] 0</code></pre>
 <p>If we observe the new file <code>colesterol_file.hdf5</code> and its content</p>
 <pre class="r"><code>
 h5ls(&quot;colesterol_file.hdf5&quot;)
-                                 group
-0                                    /
-1                          /COLESTEROL
-2 /COLESTEROL/.COLESTEROLDATA_dimnames
-3                          /COLESTEROL
-                      name       otype   dclass       dim
-0               COLESTEROL   H5I_GROUP                   
-1 .COLESTEROLDATA_dimnames   H5I_GROUP                   
-2                        2 H5I_DATASET COMPOUND        10
-3           COLESTEROLDATA H5I_DATASET    FLOAT 1000 x 10
+                                 group                     name       otype
+0                                    /               COLESTEROL   H5I_GROUP
+1                          /COLESTEROL .COLESTEROLDATA_dimnames   H5I_GROUP
+2 /COLESTEROL/.COLESTEROLDATA_dimnames                        2 H5I_DATASET
+3                          /COLESTEROL           COLESTEROLDATA H5I_DATASET
+    dclass       dim
+0                   
+1                   
+2 COMPOUND        10
+3    FLOAT 1000 x 10
 
 # We can open the file and have access to the data
 h5Colesterol &lt;- H5Fopen(&quot;colesterol_file.hdf5&quot;)
 
 # Show hdf5 content dataset
 h5Colesterol$COLESTEROL$COLESTEROLDATA[1:5, 1:6]
-         [,1]     [,2]     [,3]      [,4]     [,5]
-[1,] 223.7348 55.25039 14.90246 0.9026095 10.22067
-[2,] 248.1820 53.47404 25.12592 0.8710345 17.10225
-[3,] 180.2071 58.54268 12.95197 0.8882435 11.21530
-[4,] 200.1522 62.58284 28.27819 0.9361357 12.79399
-[5,] 234.3281 68.70254 13.21404 0.7775238 11.39689
-         [,6]
-[1,] 1.450970
-[2,] 1.002655
-[3,] 1.073924
-[4,] 1.129373
-[5,] 1.235655
+         [,1]     [,2]     [,3]      [,4]     [,5]     [,6]
+[1,] 223.7348 55.25039 14.90246 0.9026095 10.22067 1.450970
+[2,] 248.1820 53.47404 25.12592 0.8710345 17.10225 1.002655
+[3,] 180.2071 58.54268 12.95197 0.8882435 11.21530 1.073924
+[4,] 200.1522 62.58284 28.27819 0.9361357 12.79399 1.129373
+[5,] 234.3281 68.70254 13.21404 0.7775238 11.39689 1.235655
 
 # Show colnames 
 head(h5Colesterol$COLESTEROL$.COLESTEROLDATA_dimnames$`2`)
@@ -485,8 +474,8 @@ H5Fclose(h5Colesterol)</code></pre>
 </ul>
 <div id="hdf5-matrix-multiplication-from-data-in-memory" class="section level3" number="7.1.1">
 <h3><span class="header-section-number">7.1.1</span> Hdf5 Matrix multiplication from data in memory</h3>
-<p>To work with big matrices <code>blockmult()</code> saves matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with <code>bigmatrix</code> argument.</p>
-<p>In that case, by default the function <code>blockmult</code>, by default, this function creates the <em>tmp_blockmult.hdf5</em> file with two groups the <em>INPUT</em> group with datasets <em>A</em> and <em>B</em> with original matrices and the <em>OUTPUT</em> group with dataset <em>C</em> with the results. The file name can be set with <code>outputfile</code> parameter.</p>
+<p>To work with big matrices <code>bdblockmult()</code> saves matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with <code>bigmatrix</code> argument.</p>
+<p>In that case, by default the function <code>bdblockmult</code>, by default, this function creates the <em>tmp_blockmult.hdf5</em> file with two groups the <em>INPUT</em> group with datasets <em>A</em> and <em>B</em> with original matrices and the <em>OUTPUT</em> group with dataset <em>C</em> with the results. The file name can be set with <code>outputfile</code> parameter.</p>
 <pre class="r"><code>n &lt;- 1000
 p &lt;- 10000
 Abig &lt;- matrix(rnorm(n*n), nrow=n, ncol=n)
@@ -494,10 +483,10 @@ Bbig &lt;- matrix(rnorm(n*p), nrow=n, ncol=p)
 
 
 # We want to force it to run in memory
-AxBNOBig &lt;- blockmult(Abig, Bbig, bigmatrix = 100000)
+AxBNOBig &lt;- bdblockmult(Abig, Bbig, bigmatrix = 100000)
 
 # We consider a big matrix if number of rows or columns are &gt; 500
-AxBBig3000 &lt;- blockmult(Abig, Bbig, bigmatrix = 500)</code></pre>
+AxBBig3000 &lt;- bdblockmult(Abig, Bbig, bigmatrix = 500)</code></pre>
 <p>Depending on whether the calculation has been performed directly in memory or from an hdf5 file, the returned object type is different.</p>
 <p>If we work in memory results are returned as a current r matrix object,</p>
 <pre class="r"><code>class(AxBNOBig)
@@ -536,11 +525,11 @@ H5Fclose(h5data)</code></pre>
 </div>
 <div id="hdf5-matrix-multiplication-from-data-stored-in-a-file" class="section level3" number="7.1.2">
 <h3><span class="header-section-number">7.1.2</span> Hdf5 Matrix multiplication from data stored in a file</h3>
-<p>If we have the matrices stored in hdf5 data file, we can use the function <code>blockmult_hdf5</code>. This function allows to perform a matrix multiplication from two matrices stored in a file.</p>
-<p>To use the <code>blockmult_hdf5</code>, we have to set the parameters <code>filename</code> with the file that contains the matrices, <code>group</code>, here, we have to indicate under which group are stored the matrices and the datasets names where data is stored parameters <code>a</code> and <code>b</code>. By default, the results group can be set by <code>outgroup</code> parameter by default, the output group is <em>OUTPUT</em> .</p>
-<p>To show how this function works, we will use the matrices created with <code>blockmult</code> function previously used and we will store the results under the ‘HDF5_RES’ group</p>
-<pre class="r"><code>res &lt;- blockmult_hdf5(filename = &#39;tmp_blockmult.hdf5&#39;, group=&quot;INPUT&quot;, 
-                      a=&quot;A&quot;, b=&quot;B&quot;, outgroup = &#39;HDF5_RES&#39;)
+<p>If we have the matrices stored in hdf5 data file, we can use the function <code>bdblockmult_hdf5</code>. This function allows to perform a matrix multiplication from two matrices stored in a file.</p>
+<p>To use the <code>bdblockmult_hdf5</code>, we have to set the parameters <code>filename</code> with the file that contains the matrices, <code>group</code>, here, we have to indicate under which group are stored the matrices and the datasets names where data is stored parameters <code>a</code> and <code>b</code>. By default, the results group can be set by <code>outgroup</code> parameter by default, the output group is <em>OUTPUT</em> .</p>
+<p>To show how this function works, we will use the matrices created with <code>bdblockmult</code> function previously used and we will store the results under the ‘HDF5_RES’ group</p>
+<pre class="r"><code>res &lt;- bdblockmult_hdf5(filename = &#39;tmp_blockmult.hdf5&#39;, group=&quot;INPUT&quot;,
+                        a=&quot;A&quot;, b=&quot;B&quot;, outgroup = &#39;HDF5_RES&#39;)
 
 # We show the hdf5 content
  h5ls(res$file)
@@ -552,7 +541,7 @@ H5Fclose(h5data)</code></pre>
 4    /INPUT        B H5I_DATASET  FLOAT 1000 x 10000
 5         /   OUTPUT   H5I_GROUP                    
 6   /OUTPUT        C H5I_DATASET  FLOAT 1000 x 10000</code></pre>
-<p>Now, we compare the obtained results with <code>blockmult_hdf5</code> and <code>blockmult</code> functions .</p>
+<p>Now, we compare the obtained results with <code>bdblockmult_hdf5</code> and <code>bdblockmult</code> functions .</p>
 <pre class="r"><code># Get content
 h5data &lt;- H5Fopen(res$file)
 
@@ -560,10 +549,10 @@ h5data &lt;- H5Fopen(res$file)
 res$dataset
 [1] &quot;HDF5_RES/A_x_B&quot;
 
-# We get the results with blockmult (previous step)
+# We get the results with bdblockmult (previous step)
 resblockmult &lt;- h5data$OUTPUT$C
 
-# And the results obtained from blockmult_hdf5
+# And the results obtained from bdblockmult_hdf5
 resblockmult_hdf5 &lt;- h5data$HDF5_RES$A_x_B
 resblockmult_hdf5[1:5,1:5]
           [,1]      [,2]       [,3]       [,4]      [,5]
@@ -578,17 +567,17 @@ h5closeAll()
 
 all.equal(resblockmult, resblockmult_hdf5)
 [1] TRUE</code></pre>
-<p>We obtain the same result using <code>blockmult</code> and <code>blockmult_hdf5</code>.</p>
+<p>We obtain the same result using <code>bdblockmult</code> and <code>bdblockmult_hdf5</code>.</p>
 </div>
 </div>
 <div id="cross-product-and-transposed-cross-product-with-hdf5-files" class="section level2" number="7.2">
 <h2><span class="header-section-number">7.2</span> Cross-product and Transposed Cross-product with hdf5 files</h2>
-<p>To perform a cross-product <span class="math inline">\(C = A^t A\)</span> you can call <code>Crossprod_hdf5()</code> function. We just have to set the parameters <code>filename</code>, <code>group</code> and <code>A</code> with the file, group and the dataset that we want to use and optionally the <code>outgroup</code> parameter to set the output group where we want to store results.</p>
+<p>To perform a cross-product <span class="math inline">\(C = A^t A\)</span> you can call <code>bdCrossprod_hdf5()</code> function. We just have to set the parameters <code>filename</code>, <code>group</code> and <code>A</code> with the file, group and the dataset that we want to use and optionally the <code>outgroup</code> parameter to set the output group where we want to store results.</p>
 <p>The result dataset is stored with <em>CrossProd_<MatrixName>x<MatrixName></em> pattern.</p>
-<pre class="r"><code>res &lt;- Crossprod_hdf5(filename = &#39;robject.hdf5&#39;, 
-                      group=&quot;INPUT&quot;, 
-                      A=&quot;A&quot;, 
-                      outgroup = &quot;RESULTS&quot;)</code></pre>
+<pre class="r"><code>res &lt;- bdCrossprod_hdf5(filename = &#39;robject.hdf5&#39;, 
+                        group=&quot;INPUT&quot;, 
+                        A=&quot;A&quot;, 
+                        outgroup = &quot;RESULTS&quot;)</code></pre>
 <p>We obtain the expected values computed using <code>crossprod</code> function.</p>
 <pre class="r"><code>
 # Get content
@@ -607,18 +596,12 @@ h5closeAll()
 
 # Show results
 resCProd[1:5,1:5]
-            [,1]       [,2]        [,3]      [,4]
-[1,] 505.6616915  10.611020  -0.3666995  13.24150
-[2,]  10.6110197 489.229418  -9.4790008 -10.69272
-[3,]  -0.3666995  -9.479001 497.0000736 -16.47190
-[4,]  13.2415011 -10.692717 -16.4719016 583.94688
-[5,]   8.0016642 -22.537412  -1.4840559  -4.37989
-           [,5]
-[1,]   8.001664
-[2,] -22.537412
-[3,]  -1.484056
-[4,]  -4.379890
-[5,] 525.367876
+            [,1]       [,2]        [,3]      [,4]       [,5]
+[1,] 505.6616915  10.611020  -0.3666995  13.24150   8.001664
+[2,]  10.6110197 489.229418  -9.4790008 -10.69272 -22.537412
+[3,]  -0.3666995  -9.479001 497.0000736 -16.47190  -1.484056
+[4,]  13.2415011 -10.692717 -16.4719016 583.94688  -4.379890
+[5,]   8.0016642 -22.537412  -1.4840559  -4.37989 525.367876
 
 all.equal(resCProd, crossprod(A))
 [1] TRUE</code></pre>
@@ -629,12 +612,12 @@ n &lt;- 500
 m &lt;- 600
 B &lt;- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Add_hdf5_matrix(B, filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, dataset = &quot;B2&quot;)
+bdAdd_hdf5_matrix(B, filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, dataset = &quot;B2&quot;)
 [1] 0
 
 # Get Crossprod with two matrix
-res &lt;- Crossprod_hdf5(filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, A=&quot;A&quot;, 
-                      groupB = &quot;INPUT&quot;, B = &quot;B2&quot;, outgroup = &quot;RESULTS&quot;)</code></pre>
+res &lt;- bdCrossprod_hdf5(filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, A=&quot;A&quot;, 
+                        groupB = &quot;INPUT&quot;, B = &quot;B2&quot;, outgroup = &quot;RESULTS&quot;)</code></pre>
 <p>We obtain the expected values computed using <code>crossprod</code> function.</p>
 <pre class="r"><code>
 # Get content
@@ -654,23 +637,17 @@ h5closeAll()
 
 # Show results
 resCProd[1:5,1:5]
-            [,1]       [,2]        [,3]      [,4]
-[1,] 505.6616915  10.611020  -0.3666995  13.24150
-[2,]  10.6110197 489.229418  -9.4790008 -10.69272
-[3,]  -0.3666995  -9.479001 497.0000736 -16.47190
-[4,]  13.2415011 -10.692717 -16.4719016 583.94688
-[5,]   8.0016642 -22.537412  -1.4840559  -4.37989
-           [,5]
-[1,]   8.001664
-[2,] -22.537412
-[3,]  -1.484056
-[4,]  -4.379890
-[5,] 525.367876
+            [,1]       [,2]        [,3]      [,4]       [,5]
+[1,] 505.6616915  10.611020  -0.3666995  13.24150   8.001664
+[2,]  10.6110197 489.229418  -9.4790008 -10.69272 -22.537412
+[3,]  -0.3666995  -9.479001 497.0000736 -16.47190  -1.484056
+[4,]  13.2415011 -10.692717 -16.4719016 583.94688  -4.379890
+[5,]   8.0016642 -22.537412  -1.4840559  -4.37989 525.367876
 
 all.equal(resCProd, crossprod(A,B))
 [1] TRUE</code></pre>
-<p>you may also set use <code>tCrossprod_hdf5()</code> function to get a transposed cross-product <span class="math inline">\(C = A A^t\)</span> . In that case the result dataset is stored with <em>tCrossProd_<MatrixName>x<MatrixName></em> pattern.</p>
-<pre class="r"><code>res &lt;- tCrossprod_hdf5(filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, A=&quot;A&quot;, outgroup = &quot;RESULTS&quot;)</code></pre>
+<p>you may also set use <code>bdtCrossprod_hdf5()</code> function to get a transposed cross-product <span class="math inline">\(C = A A^t\)</span> . In that case the result dataset is stored with <em>tCrossProd_<MatrixName>x<MatrixName></em> pattern.</p>
+<pre class="r"><code>res &lt;- bdtCrossprod_hdf5(filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, A=&quot;A&quot;, outgroup = &quot;RESULTS&quot;)</code></pre>
 <p>We obtain the expected values computed using <code>crossprod</code> function.</p>
 <pre class="r"><code>
 # Get content
@@ -705,12 +682,12 @@ n &lt;- 500
 m &lt;- 600
 B &lt;- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-Add_hdf5_matrix(B, filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, dataset = &quot;B3&quot;)
+bdAdd_hdf5_matrix(B, filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, dataset = &quot;B3&quot;)
 [1] 0
 
 # Get Crossprod with two matrix
-res &lt;- tCrossprod_hdf5(filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, A=&quot;A&quot;, 
-                       groupB = &quot;INPUT&quot;, B = &quot;B3&quot;, outgroup = &quot;RESULTS&quot;)</code></pre>
+res &lt;- bdtCrossprod_hdf5(filename = &#39;robject.hdf5&#39;, group=&quot;INPUT&quot;, A=&quot;A&quot;, 
+                         groupB = &quot;INPUT&quot;, B = &quot;B3&quot;, outgroup = &quot;RESULTS&quot;)</code></pre>
 <p>We obtain the expected values computed using <code>crossprod</code> function.</p>
 <pre class="r"><code>
 # Get content
@@ -774,7 +751,7 @@ n &lt;- 150000
 m &lt;- 50
 odata &lt;- matrix(rnorm(n*m, mean=0, sd=1), n,m)
 
-Add_hdf5_matrix(odata, &quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;data&quot;)
+bdAdd_hdf5_matrix(odata, &quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;data&quot;)
 [1] 0
 
 # Direct from hdf5 data file
@@ -790,13 +767,11 @@ h5closeAll()
 
 # Results in hdf5 file for d
 svd_hdf5_d[1:7]
-[1] 393.7274 393.3720 393.0192 392.6845 392.4629 391.7279
-[7] 391.5869
+[1] 393.7274 393.3720 393.0192 392.6845 392.4629 391.7279 391.5869
 
 svd &lt;- svd(scale(omdata))
 svd$d[1:7]
-[1] 393.7274 393.3720 393.0192 392.6845 392.4629 391.7279
-[7] 391.5869</code></pre>
+[1] 393.7274 393.3720 393.0192 392.6845 392.4629 391.7279 391.5869</code></pre>
 <p>Like in Simple Singular Value Decomposition we can normalize, center or scale data before proceed with SVD decomposition with <code>bscale</code> and <code>bcenter</code> parameters, by default this parameter are TRUE, data is normalized before SVD decomposition. To proceed with SVD without normalization :</p>
 <pre class="r"><code># Direct from hdf5 data file
 svdh5 &lt;- bdSVD_hdf5(&quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;data&quot;, 
@@ -811,14 +786,12 @@ h5closeAll()
 
 # SVD (d) from file - data not normalized
 svd_hdf5_d
-[1] 393.8092 393.3840 393.1712 392.8305 392.7400 391.7171
-[7] 391.6472
+[1] 393.8092 393.3840 393.1712 392.8305 392.7400 391.7171 391.6472
 
 # with R implementation from data in memory
 svd &lt;- svd(omdata)
 svd$d[1:7]
-[1] 393.8092 393.3840 393.1712 392.8305 392.7400 391.7171
-[7] 391.6472</code></pre>
+[1] 393.8092 393.3840 393.1712 392.8305 392.7400 391.7171 391.6472</code></pre>
 <p>In the SVD decomposition by blocks we can indicate the number of decomposition levels and number of local SVDs to concatenate at each level with parameters <code>q</code> and <code>k</code> respectively, by default <code>q = 1</code> one level with <code>k=2</code>.</p>
 <pre class="r"><code># Block decomposition with 1 level and 4 local SVDs at each level
 svdh5 &lt;- bdSVD_hdf5(&quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;data&quot;, q=1, k=4 )
@@ -833,14 +806,12 @@ h5closeAll()
 
 # SVD (d) from file - data not normalized
 svd_hdf5_d
-[1] 393.7274 393.3720 393.0192 392.6845 392.4629 391.7279
-[7] 391.5869
+[1] 393.7274 393.3720 393.0192 392.6845 392.4629 391.7279 391.5869
 
 # with R implementation from data in memory
 svd &lt;- svd(scale(omdata))
 svd$d[1:7]
-[1] 393.7274 393.3720 393.0192 392.6845 392.4629 391.7279
-[7] 391.5869</code></pre>
+[1] 393.7274 393.3720 393.0192 392.6845 392.4629 391.7279 391.5869</code></pre>
 <!-- # Using algebra procedure for `DelayedMatrix` objects to implement basic statistical methods -->
 <!-- ## Principal component analysis (PCA) -->
 <!-- Let us illustrate how to perform a PCA using miRNA data obtained from TCGA corresponding to 3 different tumors: melanoma (ME), leukemia (LEU) and centran nervous system (CNS). Data is available at `BigDataStatMeth` and can be loaded by simply: -->
@@ -848,7 +819,7 @@ svd$d[1:7]
 <!-- data(miRNA) -->
 <!-- data(cancer) -->
 <!-- dim(miRNA) -->
-<!-- Create_hdf5_matrix(odata, "delayed.hdf5", "OMICS", "miRNA") -->
+<!-- Create_HDF5_matrix(odata, "delayed.hdf5", "OMICS", "miRNA") -->
 <!-- ``` -->
 <!-- We observe that there are a total of 21 individuals and 537 miRNAs. The vector `cancer` contains the type of tumor of each individual. For each type we have: -->
 <!-- ```{r tab} -->
@@ -900,7 +871,7 @@ svd$d[1:7]
 <p>We first simulate a genotype matrix with 0, 1, 2 and 3 and store it in hdf5 file and show data stored in file:</p>
 <pre class="r"><code>set.seed(108432)
 geno.sim &lt;- matrix(sample(0:3, 10000, replace = TRUE), byrow = TRUE, ncol = 10)
-Add_hdf5_matrix(geno.sim, &quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;geno&quot;)
+bdAdd_hdf5_matrix(geno.sim, &quot;delayed.hdf5&quot;, &quot;OMICS&quot;, &quot;geno&quot;)
 [1] 0
 
 # Get data and show the first 5 rows
@@ -929,23 +900,23 @@ h5closeAll()
 
 imputedgeno[1:5,1:10]
      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
-[1,]    0    2    0    2    2    0    2    2    1     0
-[2,]    2    2    0    0    0    1    1    2    2     1
-[3,]    1    2    1    1    1    0    0    2    1     2
-[4,]    2    2    2    1    2    1    2    2    1     2
-[5,]    2    1    2    2    2    1    0    2    1     1</code></pre>
+[1,]    0    2    0    2    1    0    2    1    1     0
+[2,]    2    1    0    0    0    1    1    2    1     1
+[3,]    1    2    1    1    1    0    0    1    1     2
+[4,]    2    2    2    1    0    1    2    2    1     2
+[5,]    2    1    2    0    1    1    0    1    1     1</code></pre>
 </div>
 <div id="normalization-center-and-scale-of-genomic-data" class="section level2" number="8.2">
 <h2><span class="header-section-number">8.2</span> Normalization (center and scale) of genomic data</h2>
 <p>Normalization is one of the most important procedures in genomics data analysis. A typical dataset contains more than one sample and we are almost always interested in making comparisons between these and in order to make comparisons we need to normalize data.</p>
 <p>In BigDataStatMeth we implemented a normalization method that works directly with datasets stored in hdf5 file format, like in other functions implemented in BigDataSet that works with hdf5 data files, we have to indicate where the data is, the filename, the name of the group under the dataset is and the dataset name. In normalization function, we can indicate if we want to center data, scale or center and scale (default option). The applied formula to normalize data by default in implemented function is :
 <span class="math display">\[ \frac{X - \mu}{\sigma}\]</span></p>
-<p>The implemented function to normalize data direct from hdf5 data file is <code>Normalize_hdf5</code>.</p>
+<p>The implemented function to normalize data direct from hdf5 data file is <code>bdNormalize_hdf5</code>.</p>
 <p>To show you an example, we will use the imputed geno dataset <em>imputedgeno</em> created before in imputation method example. To normalize data we have to indicate where the dataset is stored and we have two optiona paramters <code>bcenter</code> and <code>bscale</code> with default value = TRUE. In order to normalize data, we don’t need to modify these optional parameters. If we only want to center data, then we have to put <code>bscale = FALSE</code> or if we only want to scale data <code>bcenter</code> parameter must be FALSE.</p>
 <p><strong>Important : </strong> The normalization results are stored under “NORMALIZED” group, under this group, we found all normalized datasets with the same structure under root, for example, if we normalize dataset genoimputed under OMICS group, the normalized results will be in “NORMALIZED”/“OMICS”/genoimputed</p>
 <p>Let show an example normalizing imputed geno under group “OMICS” in delayed.hdf5 file:</p>
 <pre class="r"><code>
-Normalize_hdf5(&quot;delayed.hdf5&quot;, group=&quot;OMICS&quot;, dataset=&quot;imputedgeno&quot;)
+bdNormalize_hdf5(&quot;delayed.hdf5&quot;, group=&quot;OMICS&quot;, dataset=&quot;imputedgeno&quot;)
 [1] 0</code></pre>
 <p>The results will be under groups “NORMALIZED” - “OMICS” in dataset genoimputed</p>
 <pre class="r"><code># Geno after normalization
@@ -965,8 +936,8 @@ NULL</code></pre>
 <pre class="r"><code>bdRemovelowdata(&quot;delayed.hdf5&quot;, group=&quot;OMICS&quot;, dataset=&quot;geno&quot;,
                 outgroup=&quot;OMICS&quot;, outdataset=&quot;removedgeno&quot;,
                 SNPincols = TRUE, pcent = 0.39)
-Warning in evalq((function (..., call. = TRUE, immediate.
-= FALSE, noBreaks. = FALSE, : 0 Columns have been removed
+Warning in evalq((function (..., call. = TRUE, immediate. = FALSE, noBreaks. =
+FALSE, : 0 Columns have been removed
 [1] 0</code></pre>
 <p>After remove the SNPs with pcent greater than 39% results have been saved in dataset “<em>removedgeno</em>” under group “<em>OMICS</em>,” we observe the resulting dataset</p>
 <pre class="r"><code># Get imputed data and show the first 5 rows
@@ -986,40 +957,35 @@ removedgeno[1:5,1:10]
 <div id="session-information" class="section level1" number="9">
 <h1><span class="header-section-number">9</span> Session information</h1>
 <pre class="r"><code>sessionInfo()
-R version 4.0.2 (2020-06-22)
-Platform: x86_64-w64-mingw32/x64 (64-bit)
-Running under: Windows 10 x64 (build 19042)
+R version 4.0.5 RC (2021-03-27 r80128)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Mojave 10.14.6
 
 Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 
 locale:
-[1] LC_COLLATE=Spanish_Spain.1252 
-[2] LC_CTYPE=Spanish_Spain.1252   
-[3] LC_MONETARY=Spanish_Spain.1252
-[4] LC_NUMERIC=C                  
-[5] LC_TIME=Spanish_Spain.1252    
+[1] ca_ES.UTF-8/ca_ES.UTF-8/ca_ES.UTF-8/C/ca_ES.UTF-8/ca_ES.UTF-8
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets 
-[6] methods   base     
+[1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] BigDataStatMeth_0.99.1 rhdf5_2.32.2          
-[3] knitr_1.29             BiocStyle_2.16.0      
+[1] BigDataStatMeth_0.99.1 rhdf5_2.34.0           knitr_1.31            
+[4] BiocStyle_2.18.1      
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.6          bookdown_0.20      
- [3] lattice_0.20-41     codetools_0.2-16   
- [5] digest_0.6.27       grid_4.0.2         
- [7] magrittr_2.0.1      evaluate_0.14      
- [9] highr_0.8           RcppParallel_5.1.2 
-[11] rlang_0.4.10        stringi_1.4.6      
-[13] Matrix_1.2-18       rmarkdown_2.7      
-[15] Rhdf5lib_1.10.1     tools_4.0.2        
-[17] RcppEigen_0.3.3.9.1 stringr_1.4.0      
-[19] xfun_0.16           yaml_2.2.1         
-[21] compiler_4.0.2      BiocManager_1.30.10
-[23] htmltools_0.5.1.1  </code></pre>
+ [1] Rcpp_1.0.6          magrittr_2.0.1      lattice_0.20-41    
+ [4] R6_2.5.0            rlang_0.4.10        highr_0.8          
+ [7] stringr_1.4.0       tools_4.0.5         grid_4.0.5         
+[10] xfun_0.22           jquerylib_0.1.3     htmltools_0.5.1.1  
+[13] RcppParallel_5.0.3  yaml_2.2.1          digest_0.6.27      
+[16] RcppEigen_0.3.3.9.1 bookdown_0.21       Matrix_1.3-2       
+[19] BiocManager_1.30.10 Rhdf5lib_1.12.1     codetools_0.2-18   
+[22] sass_0.3.1          rhdf5filters_1.2.0  evaluate_0.14      
+[25] rmarkdown_2.7       stringi_1.5.3       compiler_4.0.5     
+[28] bslib_0.2.4         jsonlite_1.7.2     </code></pre>
 </div>
 
 

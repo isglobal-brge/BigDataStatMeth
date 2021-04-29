@@ -33,8 +33,8 @@
 #' # Parallel execution with 2 threads and blocks 256x256
 #' Par_2cor <- Crossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 #' @export
-Crossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_Crossprod_Weighted', PACKAGE = 'BigDataStatMeth', A, W, block_size, paral, threads)
+bdCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdCrossprod_Weighted', PACKAGE = 'BigDataStatMeth', A, W, block_size, paral, threads)
 }
 
 #' Remove SNPs in hdf5 omic dataset with low data
@@ -99,25 +99,11 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #'   
 #'   
 #' @export
-Crossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
-    .Call('_BigDataStatMeth_Crossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, groupB, B, block_size, paral, threads, mixblock_size, outgroup)
+bdCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
+    .Call('_BigDataStatMeth_bdCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, groupB, B, block_size, paral, threads, mixblock_size, outgroup)
 }
 
-#' Multiply hdf5 matrix
-#' 
-#' This function multiply matrix stored in hdf5 data file
-#' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param group string or Delayed Array Matrix
-#' @param dataset string or Delayed Array Matrix
-#' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
-#' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
-#' @param wsize integer (default = 1000), file block size to read to perform normalization
-#' @return file with scaled, centered or scaled and centered dataset
-#' @examples
-#'   a = "See vignette"
-#' @export
-blockmult_hdf5 <- function(filename, group, A, B, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
+.blockmult_hdf5 <- function(filename, group, A, B, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
     .Call('_BigDataStatMeth_blockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, block_size, paral, threads, mixblock_size, outgroup)
 }
 
@@ -153,8 +139,8 @@ blockmult_hdf5 <- function(filename, group, A, B, block_size = NULL, paral = NUL
 #' d <- blockmult_sparse(x_sparse, y_sparse)
 #' 
 #' @export
-blockmult_sparse_hdf5 <- function(filename, group, A, B, outgroup = NULL) {
-    .Call('_BigDataStatMeth_blockmult_sparse_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, outgroup)
+bdblockmult_sparse_hdf5 <- function(filename, group, A, B, outgroup = NULL) {
+    .Call('_BigDataStatMeth_bdblockmult_sparse_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, outgroup)
 }
 
 #' Transposed Crossprod with hdf5 matrix
@@ -192,8 +178,8 @@ blockmult_sparse_hdf5 <- function(filename, group, A, B, outgroup = NULL) {
 #' H5Fclose(h5fdelay)
 #' 
 #' @export
-tCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
-    .Call('_BigDataStatMeth_tCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, groupB, B, block_size, paral, threads, mixblock_size, outgroup)
+bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
+    .Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, groupB, B, block_size, paral, threads, mixblock_size, outgroup)
 }
 
 #' Converts text file to hdf5 data file
@@ -210,8 +196,8 @@ tCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_s
 #' @param overwrite (optional) either a logical value indicating whether the output file can be overwritten or not.
 #' 
 #' @export
-Import_text_to_hdf5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE) {
-    .Call('_BigDataStatMeth_Import_text_to_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite)
+bdImport_text_to_hdf5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE) {
+    .Call('_BigDataStatMeth_bdImport_text_to_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite)
 }
 
 #' Impute SNPs in hdf5 omic dataset 
@@ -244,8 +230,8 @@ bdImpute_snps_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdat
 #' @examples
 #'   a = "See vignette"
 #' @export
-Normalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, wsize = NULL) {
-    .Call('_BigDataStatMeth_Normalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, wsize)
+bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, wsize = NULL) {
+    .Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, wsize)
 }
 
 #' PCA Descomposition
@@ -298,8 +284,8 @@ bdPCA_hdf5 <- function(filename, group, dataset, bcenter = FALSE, bscale = FALSE
 #' Normalize_Data(Dx, bscale = FALSE)
 #' 
 #' @export
-Normalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
-    .Call('_BigDataStatMeth_Normalize_Data', PACKAGE = 'BigDataStatMeth', X, bcenter, bscale)
+bdNormalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
+    .Call('_BigDataStatMeth_bdNormalize_Data', PACKAGE = 'BigDataStatMeth', X, bcenter, bscale)
 }
 
 .bdMLR_MR <- function(X, y, blocks, threads = NULL) {
@@ -405,8 +391,8 @@ bdScalarwproduct <- function(A, w, op) {
 #' d <- blockmult_sparse(x_sparse, y_sparse)
 #' 
 #' @export
-blockmult_sparse <- function(A, B, paral = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_blockmult_sparse', PACKAGE = 'BigDataStatMeth', A, B, paral, threads)
+bdblockmult_sparse <- function(A, B, paral = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdblockmult_sparse', PACKAGE = 'BigDataStatMeth', A, B, paral, threads)
 }
 
 #' Block matrix multiplication with Delayed Array Object
@@ -552,8 +538,8 @@ bddtrsm <- function(R, Z, threads = NULL) {
 #' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 #' @return none
 #' @export
-Create_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = NULL, transp = NULL) {
-    .Call('_BigDataStatMeth_Create_hdf5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp)
+bdCreate_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = NULL, transp = NULL) {
+    .Call('_BigDataStatMeth_bdCreate_hdf5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp)
 }
 
 #' Write matrix to existing hdf5 file
@@ -567,8 +553,8 @@ Create_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = NU
 #' @param transp, boolean if true, data is manipulated in transposed form
 #' @return none
 #' @export
-Add_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL) {
-    .Call('_BigDataStatMeth_Add_hdf5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp)
+bdAdd_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL) {
+    .Call('_BigDataStatMeth_bdAdd_hdf5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp)
 }
 
 #' Remove element group or dataset from  hdf5 file
@@ -579,8 +565,8 @@ Add_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL) {
 #' @param element path to element, character array indicating the complete route to the element to be removed (folder or dataset). 
 #' @return none
 #' @export
-Remove_hdf5_element <- function(filename, element) {
-    .Call('_BigDataStatMeth_Remove_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, element)
+bdRemove_hdf5_element <- function(filename, element) {
+    .Call('_BigDataStatMeth_bdRemove_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, element)
 }
 
 #' Solve matrix equations
@@ -791,8 +777,8 @@ bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE) {
 #' # Parallel execution with 2 threads and blocks 256x256
 #' Par_2cor <- tCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 #' @export
-tCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_tCrossprod_Weighted', PACKAGE = 'BigDataStatMeth', A, W, block_size, paral, threads)
+bdtCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdtCrossprod_Weighted', PACKAGE = 'BigDataStatMeth', A, W, block_size, paral, threads)
 }
 
 #' Sumarize vector
@@ -810,8 +796,8 @@ tCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads =
 #' parallelVectorSum(x)
 #' 
 #' @export
-parallelVectorSum <- function(x) {
-    .Call('_BigDataStatMeth_parallelVectorSum', PACKAGE = 'BigDataStatMeth', x)
+bdparallelVectorSum <- function(x) {
+    .Call('_BigDataStatMeth_bdparallelVectorSum', PACKAGE = 'BigDataStatMeth', x)
 }
 
 #' Pow vector
@@ -829,7 +815,7 @@ parallelVectorSum <- function(x) {
 #' parallelpow2(x)
 #' 
 #' @export
-parallelpow2 <- function(x) {
-    .Call('_BigDataStatMeth_parallelpow2', PACKAGE = 'BigDataStatMeth', x)
+bdparallelpow2 <- function(x) {
+    .Call('_BigDataStatMeth_bdparallelpow2', PACKAGE = 'BigDataStatMeth', x)
 }
 

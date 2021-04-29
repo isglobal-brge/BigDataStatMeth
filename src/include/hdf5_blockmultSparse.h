@@ -12,7 +12,7 @@
    // functions called from c++
 
    // functions called from R
-   Rcpp::RObject blockmult_sparse_hdf5(std::string filename, const std::string group, 
+   Rcpp::RObject bdblockmult_sparse_hdf5(std::string filename, const std::string group, 
                                        std::string A, std::string B,
                                        Rcpp::Nullable<std::string> outgroup );
 #endif

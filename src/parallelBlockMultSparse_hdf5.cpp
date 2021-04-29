@@ -125,7 +125,7 @@ Eigen::SparseMatrix<double> matmult_sparse( Eigen::Map<Eigen::SparseMatrix<doubl
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject blockmult_sparse(Rcpp::RObject A, Rcpp::RObject B, Rcpp::Nullable<bool> paral = R_NilValue, Rcpp::Nullable<int> threads  = R_NilValue )
+Rcpp::RObject bdblockmult_sparse(Rcpp::RObject A, Rcpp::RObject B, Rcpp::Nullable<bool> paral = R_NilValue, Rcpp::Nullable<int> threads  = R_NilValue )
 {
   
   std::string spMatrix("dgCMatrix");

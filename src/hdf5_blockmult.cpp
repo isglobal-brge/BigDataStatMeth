@@ -1,21 +1,21 @@
 #include "include/hdf5_blockmult.h"
 
 
-//' Multiply hdf5 matrix
-//' 
-//' This function multiply matrix stored in hdf5 data file
-//' 
-//' @param filename string file name where dataset to normalize is stored
-//' @param group string or Delayed Array Matrix
-//' @param dataset string or Delayed Array Matrix
-//' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
-//' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
-//' @param wsize integer (default = 1000), file block size to read to perform normalization
-//' @return file with scaled, centered or scaled and centered dataset
-//' @examples
-//'   a = "See vignette"
-//' @export
-// [[Rcpp::export]]
+// // ' Multiply hdf5 matrix
+// // '
+// // ' This function multiply matrix stored in hdf5 data file
+// // '
+// // ' @param filename string file name where dataset to normalize is stored
+// // ' @param group string or Delayed Array Matrix
+// // ' @param dataset string or Delayed Array Matrix
+// // ' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
+// // ' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
+// // ' @param wsize integer (default = 1000), file block size to read to perform normalization
+// // ' @return file with scaled, centered or scaled and centered dataset
+// // ' @examples
+// // '   a = "See vignette"
+// //' @export
+// [[Rcpp::export(.blockmult_hdf5)]]
 Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group, 
                              std::string A, std::string B,
                              Rcpp::Nullable<int> block_size = R_NilValue, 

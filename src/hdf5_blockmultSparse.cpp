@@ -34,7 +34,7 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject blockmult_sparse_hdf5(std::string filename, const std::string group, 
+Rcpp::RObject bdblockmult_sparse_hdf5(std::string filename, const std::string group, 
                              std::string A, std::string B,
                              Rcpp::Nullable<std::string> outgroup = R_NilValue )
 {
@@ -143,11 +143,11 @@ Rcpp::RObject blockmult_sparse_hdf5(std::string filename, const std::string grou
       
    } catch( FileIException error ) { // catch failure caused by the H5File operations
       file->close();
-      ::Rf_error( "c++ exception blockmult_hdf5 (File IException)" );
+      ::Rf_error( "c++ exception bdblockmult_sparse_hdf5 (File IException)" );
       return wrap(-1);
    } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
       file->close();
-      ::Rf_error( "c++ exception blockmult_hdf5 (DataSet IException)" );
+      ::Rf_error( "c++ exception bdblockmult_sparse_hdf5 (DataSet IException)" );
       return wrap(-1);   
    } catch(std::exception &ex) {
       Rcpp::Rcout<< ex.what();

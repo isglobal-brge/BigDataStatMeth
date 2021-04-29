@@ -39,7 +39,7 @@
 #' 
 #' blockmult_hdf5( AD, BD, 128, TRUE)
 #' 
-blockmult_hdf5 <- function( filename, group, a, b, block_size = 128, paral = FALSE, threads = NULL,  mixblock_size = 128, 
+bdblockmult_hdf5 <- function( filename, group, a, b, block_size = 128, paral = FALSE, threads = NULL,  mixblock_size = 128, 
                        outgroup = "OUTPUT")
 { 
 

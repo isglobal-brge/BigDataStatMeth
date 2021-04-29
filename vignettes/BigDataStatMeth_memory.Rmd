@@ -143,14 +143,14 @@ DB <- DelayedArray(B)
 ```
 
 
-Matrix multiplication using block matrices is implemented in the `blockmult()` function. It only requires to setting the argument `block_size`, by default `block_size = 128`. An optimal block size is important to better performance but it is difficult to asses what is the optimum block size for each matrix.
+Matrix multiplication using block matrices is implemented in the `bdblockmult()` function. It only requires to setting the argument `block_size`, by default `block_size = 128`. An optimal block size is important to better performance but it is difficult to asses what is the optimum block size for each matrix.
 
 ```{r blockmult }
 # Use 10x10 blocks
-AxB <- blockmult(A, B, block_size = 10)
+AxB <- bdblockmult(A, B, block_size = 10)
 
 # Use 256x256 blocks
-AxBDelay <- blockmult(DA, DB, block_size = 256 )
+AxBDelay <- bdblockmult(DA, DB, block_size = 256 )
 ```
 
 As expected the results obtained using this procedure are the correct ones
@@ -165,16 +165,16 @@ Note that when the argument `block_size` is larger than any of the dimensions of
 The process can be speed up by making computations in parallel using `paral=TRUE` an optional parameter threads can be used to indicate the number of `threads` to launch simultaneously, if `threads=NULL` the function takes the available threads - 1, leaving one available for user.
 
 ```{r blockmultparal}
-AxB <- blockmult(A, B, block_size = 10, paral = TRUE)
-AxBDelay <- blockmult(DA, DB, block_size = 10, paral = TRUE )
-AxBDelayT <- blockmult(DA, DB, block_size = 10, paral = TRUE, threads =  3 )
+AxB <- bdblockmult(A, B, block_size = 10, paral = TRUE)
+AxBDelay <- bdblockmult(DA, DB, block_size = 10, paral = TRUE )
+AxBDelayT <- bdblockmult(DA, DB, block_size = 10, paral = TRUE, threads =  3 )
 
 all.equal(AxBDelay,A%*%B)
 all.equal(AxB, AxBDelay)
 all.equal(AxBDelay, AxBDelayT)
 ```
 
-To work with big matrices `blockmult()` can save matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument. Or we can also force to execute the matrix multiplication with data on memory setting the parameter `onmemory = TRUE`
+To work with big matrices `bdblockmult()` can save matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument. Or we can also force to execute the matrix multiplication with data on memory setting the parameter `onmemory = TRUE`
 
 
 ```{r blockmultbm1}
@@ -182,10 +182,10 @@ DAbig <- DelayedArray(Abig)
 DBbig <- DelayedArray(Abig)
 
 # We want to force it to run in memory
-AxBNOBig <- blockmult(Abig, Bbig, onmemory = TRUE) 
+AxBNOBig <- bdblockmult(Abig, Bbig, onmemory = TRUE) 
 
 # Run matrix multiplication with data on memory using submatrices of 256x256
-AxBBig3000 <- blockmult(DAbig, DBbig, block_size = 256 , onmemory = TRUE)
+AxBBig3000 <- bdblockmult(DAbig, DBbig, block_size = 256 , onmemory = TRUE)
 ```
 
 
@@ -194,13 +194,13 @@ Here, we compare the performance of the block method with the different options.
 ```{r bench2, cache=TRUE}
 bench1 <- microbenchmark( 
   # Parallel block size = 128
-  Paral128Mem = blockmult(Abig, Bbig, paral = TRUE), 
+  Paral128Mem = bdblockmult(Abig, Bbig, paral = TRUE), 
   # On disk parallel block size = 256
-  Paral256Disk = blockmult(Abig, Bbig, block_size=256, paral=TRUE), 
-  Paral256Mem = blockmult(Abig, Bbig, block_size=256, 
-                          paral=TRUE, onmemory=TRUE),
-  Paral1024Mem = blockmult(Abig, Bbig, block_size=1024, 
-                           paral=TRUE, onmemory=TRUE), times = 3 )
+  Paral256Disk = bdblockmult(Abig, Bbig, block_size=256, paral=TRUE), 
+  Paral256Mem = bdblockmult(Abig, Bbig, block_size=256, 
+                            paral=TRUE, onmemory=TRUE),
+  Paral1024Mem = bdblockmult(Abig, Bbig, block_size=1024, 
+                             paral=TRUE, onmemory=TRUE), times = 3 )
 
 bench1
 ```
@@ -215,7 +215,7 @@ ggplot2::autoplot(bench1)
 
 ## Sparse matrix multiplication
 
-A sparse matrix or sparse array is a matrix in which most of the elements are zero. `BigDataStatMeth` allows to perform matrix multiplication with sparse matrices using the function `blockmult_sparse`. It is necessary that at least one of the the two matrices is defined as sparse in R using `dgCMatrix` class. An example of a sparse matrix could be : 
+A sparse matrix or sparse array is a matrix in which most of the elements are zero. `BigDataStatMeth` allows to perform matrix multiplication with sparse matrices using the function `bdblockmult_sparse`. It is necessary that at least one of the the two matrices is defined as sparse in R using `dgCMatrix` class. An example of a sparse matrix could be : 
 
 $$\\[.4in]$$
 
@@ -255,7 +255,7 @@ y_sparse <- sparseMatrix(
    x = rnorm(n = k)
 )
 
-d <- blockmult_sparse(x_sparse, y_sparse)
+d <- bdblockmult_sparse(x_sparse, y_sparse)
 f <- x_sparse%*%y_sparse
 
 all.equal(d,f)
@@ -266,8 +266,8 @@ Here, we compare the performace using sparse matrix multiplication with sparse m
 
 ```{r bench3, cache=TRUE}
 res <- microbenchmark( 
-  sparse_mult = blockmult_sparse(x_sparse, y_sparse),
-  matrix_mult = blockmult(as.matrix(x_sparse), as.matrix(y_sparse)), 
+  sparse_mult = bdblockmult_sparse(x_sparse, y_sparse),
+  matrix_mult = bdblockmult(as.matrix(x_sparse), as.matrix(y_sparse)), 
   RSparse_mult = x_sparse%*% y_sparse, 
   times = 3 )
 
@@ -286,20 +286,13 @@ We can observe the huge difference in execution time
 
 # Cross-product and Transposed Cross-product
 
-To perform a cross-product (similar to `crossprod()`) and a transposed cross-product (similar to `tcrossprod()` with BigDataStatMeth we use  `bdCrossprod()` and `bdtCrossprod()` functions, respectively. Like other functions implemented in BigDataStatMeth, we can work with DelayedArray or R Objects. 
+To perform a cross-product and tcrossproduct with BigDataStatMeth we use the same function `bdcrossprod()` setting parameter `transposed` to TRUE or FALSE. Like other functions implemented in BigDataStatMeth, we can work with DelayedArray or R Objects. Setting parameter transposed for Crossproduct and tCrossProduct
 
-- `bdCrossprod()`  performs $$\left( C \right) ={ \left( A \right)  }^{ t }\left( A \right) $$
+- if `transposed = FALSE` (default), we perform a Crossproduct $$\left( C \right) ={ \left( A \right)  }^{ t }\left( A \right) $$
 
-- `bdtCrossprod()` performs $$\left( C \right) = \left( A \right){ \left( A \right)  }^{ t } $$
+- if `transposed = TRUE` :  we perform a transposed-Crossproduct $$\left( C \right) = \left( A \right){ \left( A \right)  }^{ t } $$
 
-Notice that `bdCrossprod()` and `bdtCrossprod()` allows parallelization and get the product of two different matrices since the arguments of the functions are:
-
-```{r showargs}
-args(bdCrossprod)
-```
-
-
-Here we shown some examples 
+Here we shown some examples using `bdcrossprod` function
 
 ```{r crossprod }
 n <- 500
@@ -319,7 +312,7 @@ We obtain the expected values computed using `crossprod` R function
 all.equal(cpDA, crossprod(A))
 ```
 
-The same for the transposed cross-product:
+you may also set `transposed=TRUE`
 
 ```{r nocrossprod}
 # Transposed Cross Product R matrices
@@ -328,7 +321,7 @@ tcpA <- bdtCrossprod(A)
 tcpDA <- bdtCrossprod(DA)
 ```
 
-We obtain the expected values computed using `tcrossprod()` function
+We obtain the expected values computed using `tcrossprod` function
 
 ```{r check_tcp}
 all.equal(tcpDA, tcrossprod(A))
@@ -352,26 +345,11 @@ ggplot2::autoplot(res)
 
 
 
-# Multiplying matrices and vectors
+# Matrix Vector Multiplication
 
-Sometime the user need to perform different matrices and vector multiplications. The simplest multiplication is $X %*% w$ that can be perform in parallel using `blockmult_vector ()` function
+You can perform a weighted cross-product $C = X^ t w X$ with `bdwcrossprod()` given a matrix X as argument and a vector or matrix of weights, w.
 
-Other useful operations are:
-
-- $X^t\text{diag}(w)X$
-- $X\text{diag}(w)X^t$
-- $X\text{diag}(w)$ 
-- $\text{diag(w)}X$
-
-These can be perform using `bdwproduct()` function that has an argument called `op` that performs the required operations:
-
-- 'XtwX' or 'xtwx': `t(X) %*% diag(w) %*% X`
-- 'XwXt' or 'xwxt': `X %*% diag(w) %*% t(X)`
-- 'Xw' or 'xw': `X %*% diag(w)` 
-- 'wX' or 'wx': `diag(w) %*% X`
-
-
-Next, we have some examples
+## Weighted Cross-product and Weighted Transposed Cross-product
 
 ```{r wcrossprod }
 n <- 250
@@ -381,70 +359,35 @@ w <- u * (1 - u)
 DX <- DelayedArray(X)
 Dw <- DelayedArray(as.matrix(w))
 
-wcpX <- bdwproduct(X, w, op="xwxt")
-wcpDX <- bdwproduct(DX, Dw, op= "xwxt") # with DelayedArray
+wcpX <- bdwproduct(X, w,"xwxt")
+wcpDX <- bdwproduct(DX, Dw,"xwxt") # with DelayedArray
 
 wcpDX[1:5,1:5]
 ```
 
-We check whether we obtaine the expected values:
+Those are the expected values as it is indicated by executing:
 
 ```{r check_wcp}
 all.equal( wcpDX, X%*%diag(w)%*%t(X) )
 ```
 
-Another example
+
+## Weighted Transposed Cross Product
+
+With argument `transposed=TRUE`, we can perform a transposed weighted cross-product $C = A w A^t$
 
 ```{r wtcrossprod }
-wtcpX <- bdwproduct(X, w, op = "xtwx")
-wtcpDX <- bdwproduct(DX, Dw, op = "xtwx") # with DelayedArray
+wtcpX <- bdwproduct(X, w,"xtwx")
+wtcpDX <- bdwproduct(DX, Dw,"xtwx") # with DelayedArray
 
 wtcpDX[1:5,1:5]
 ```
 
-Again, we obtain the expected values
+Those are the expected values as it is indicated by executing:
 
 ```{r check_wtcp}
 all.equal(wtcpDX, t(X)%*%diag(w)%*%X)
 ```
-
-# Multiplying matrices 
-
-In some situations the user is interested in computing
-
-$$X^tWX$$
-or
-
-$$XWX^t$$
-
-were $W$ is a matrix of weights 
-
-This can be efficiently perform in `BigDataStatMeth` using the functions `Crossprod_Weighted ()` and `tCrossprod_Weighted()` respectively. Here one example (it also works with DelayedArray matrices)
-
-```{r XWXt}
-n <- k <- 400
-X <- matrix(rnorm(n*k), nrow=n, ncol=k)
-W <- matrix(rnorm(n*k), nrow=k, ncol=n)
-
-# Serial execution
-Serie<- tCrossprod_Weighted(X, W, paral = FALSE)
-
-# Parallel execution with 2 threads and blocks 256x256
-Par_3cor <-  tCrossprod_Weighted(X, W, 
-                                paral = TRUE,
-                                block_size = 256,
-                                threads = 3)
-``` 
-
-
-We can check whether we obtain the expected results
-
-```{r check_xwxt}
-all.equal(Serie, X%*%W%*%t(X))
-all.equal(Serie, X%*%W%*%t(X))
-```
-
-
 
 # Inverse Cholesky
 
@@ -578,7 +521,7 @@ Now we check results multiplying matrix A by results X, if all is correct $A*X =
 
 ```{r check_matrix_matrixEQ }
 
-testB <- blockmult(A,X)
+testB <- bdblockmult(A,X)
 
 B[1:5,]
 testB[1:5,]
