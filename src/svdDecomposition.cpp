@@ -451,6 +451,12 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
   svdeig decomp;
   
   Eigen::LDLT<Eigen::MatrixXd> cholSolv = mX.ldlt();
+  
+  Eigen::LLT<Eigen::MatrixXd> lltOfA(X); // compute the Cholesky decomposition of A
+  if(lltOfA.info() == Eigen::NumericalIssue)  {
+    throw std::logic_error("Possibly non semi-positive definitie matrix!");
+    
+  } 
 
   // if symetric + positive definite -> info = Success
   // else no Cholesky Decomposition --> svd decomposition with Spectra
@@ -807,6 +813,20 @@ BigDataStatMeth.svd <- BigDataStatMeth::bdSVD(a)
 dades <- BigDataStatMeth::bdPCA_hdf5("robjects.hdf5.hdf5", group = "INPUT", dataset = "A", k=2, q=1) 
 
 
+bdInvCholesky()
+
+
+
+data(mtcars)
+lm(mpg ~ wt + cyl, data=mtcars)
+Y <- mtcars$mpg
+X <- model.matrix(~ wt + cyl, data=mtcars)
+QR.1 <- qr(X)
+R.1 <- qr.R(QR.1)
+Q.1 <- qr.Q(QR.1)
+tcrossprod(solve(R.1), Q.1) %*% Y
+QR.2 <- bdQR(X, thin = TRUE)
+blockmult(bdtCrossprod(bdInvCholesky(QR.2$R), QR.2$Q), Y)
 
 
 
