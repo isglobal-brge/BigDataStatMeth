@@ -6,7 +6,7 @@ void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
   unsigned int numCols = matrix.cols();
   
   if( rowToRemove < numRows )
-    matrix.block(rowToRemove,0,numRows-rowToRemove,numCols) = matrix.bottomRows(numRows-rowToRemove);
+    matrix.block(rowToRemove,0,numRows-rowToRemove,numCols) = matrix.bottomRows(numRows-rowToRemove).eval();
   
   matrix.conservativeResize(numRows,numCols);
 }
@@ -17,7 +17,7 @@ void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
   unsigned int numCols = matrix.cols()-1;
   
   if( colToRemove < numCols )
-    matrix.block(0,colToRemove,numRows,numCols-colToRemove) = matrix.rightCols(numCols-colToRemove);
+    matrix.block(0,colToRemove,numRows,numCols-colToRemove) = matrix.rightCols(numCols-colToRemove).eval();
   
   matrix.conservativeResize(numRows,numCols);
 }
@@ -55,6 +55,8 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
       offset[0] = 0;
     };
     
+    Rcpp::Rcout<<"ilimit val : "<<ilimit<<"\n";
+    
     for( int i=0; i<=(ilimit/blocksize); i++) 
     {
       int iread;
@@ -78,6 +80,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
       {
         //.commented 20201120 - warning check().// int actualrow = 0;
         int readedrows = data.rows();
+        
         //..// for( int row = 0; row<readedrows; row++)  // COMPLETE EXECUTION
         for( int row = readedrows-1 ; row>=0; row--)  // COMPLETE EXECUTION
         {
@@ -87,6 +90,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
             iblockrem = iblockrem + 1;
           } 
         }
+
       } else {
         
         //.commented 20201120 - warning check().// int actualcol = 0;
@@ -96,9 +100,10 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
         for( int col = readedcols-1 ; col>=0; col--)  // COMPLETE EXECUTION
         { 
           
-          if((data.col(col).array() == 3).count()/(double)count[1]> pcent )
+          if((data.col(col).array() == 3).count()/(double)count[0]>=pcent )
           {
-            removeRow(data, col);
+            //..//Rcpp::Rcout<<"Removed row : "<<col<<"\n";
+            removeColumn(data, col);
             iblockrem = iblockrem + 1;
           } 
           
@@ -118,6 +123,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
            ***/
         }
       }
+      
       
       int extendcols = data.cols();
       int extendrows = data.rows();

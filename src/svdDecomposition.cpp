@@ -454,7 +454,7 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
   
   Eigen::LLT<Eigen::MatrixXd> lltOfA(X); // compute the Cholesky decomposition of A
   if(lltOfA.info() == Eigen::NumericalIssue)  {
-    throw std::logic_error("Possibly non semi-positive definitie matrix!");
+    throw std::runtime_error("Possibly non semi-positive definitie matrix!");
     
   } 
 
