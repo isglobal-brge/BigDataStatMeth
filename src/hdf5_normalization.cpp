@@ -81,7 +81,7 @@ Rcpp::RObject bdNormalize_hdf5( std::string filename, const std::string group, s
   DataSet* pdatasetin;
   DataSet* pdatasetout;
   
-  
+
   try{
     if( bcenter.isNull())
       bc = true;
@@ -118,7 +118,7 @@ Rcpp::RObject bdNormalize_hdf5( std::string filename, const std::string group, s
     
     IntegerVector dims_out = get_HDF5_dataset_size(*pdatasetin);
     
-    // Defube blocksize atending number of elements in rows and cols
+    // Define blocksize atending number of elements in rows and cols
     if( wsize.isNull()) {
       int maxsize = std::max( dims_out[0], dims_out[1]);
       blocksize = std::ceil( maxElemBlock / maxsize);

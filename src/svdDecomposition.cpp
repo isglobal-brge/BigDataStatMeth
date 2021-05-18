@@ -330,12 +330,12 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
   }  catch( FileIException error ) { // catch failure caused by the H5File operations
     dataset->close();
     file->close();
-    ::Rf_error( "c++ exception Normalize_hdf5 (File IException)" );
+    ::Rf_error( "c++ exception RcppbdSVD_hdf5 (File IException)" );
     return retsvd;
   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
     dataset->close();
     file->close();
-    ::Rf_error( "c++ exception Normalize_hdf5 (DataSet IException)" );
+    ::Rf_error( "c++ exception RcppbdSVD_hdf5 (DataSet IException)" );
     return retsvd;
   } catch(std::exception &ex) {
     dataset->close();

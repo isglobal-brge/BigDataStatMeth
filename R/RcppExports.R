@@ -182,6 +182,29 @@ bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block
     .Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, groupB, B, block_size, paral, threads, mixblock_size, outgroup)
 }
 
+#' Get minor allele frequency
+#' 
+#' This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file
+#' 
+#' @param filename string file name where dataset to normalize is stored
+#' @param group string or Delayed Array Matrix
+#' @param dataset string or Delayed Array Matrix
+#' @param byrows, boolean, default TRUE. If true, the frequency is calculated by rows, else, if byrows= FALSE, frequency is calculated by columns
+#' @param bparallel, boolean, Perform calculous in parallel?, by default TRUE.
+#' @param wsize integer (default = 1000), file block size to read to perform normalization
+#' @return Numeric vector with allele frequencies
+#' @examples
+#' 
+#' library(BigDataStatMeth)
+#' 
+#' maf_cols = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", "test", "mat1", byrows = FALSE )
+#' maf_rows = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", "test", "mat1", byrows = TRUE )
+#' 
+#' @export
+bdget_maf_hdf5 <- function(filename, group, dataset, byrows = NULL, bparallel = NULL, wsize = NULL) {
+    .Call('_BigDataStatMeth_bdget_maf_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, byrows, bparallel, wsize)
+}
+
 #' Converts text file to hdf5 data file
 #' 
 #' Converts text file to hdf5 data file

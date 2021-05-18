@@ -2125,11 +2125,14 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
     }
     
     // Write dimnaes from RObject to hdf5 data file
-    if( (dimnames.size()>0) & (Rf_isNull(dimnames)) ) {
+    if( (dimnames.size()>0) && (!Rf_isNull(dimnames)) ) {
       
-      if(Rf_isNull(dimnames[1]) ){ svrows = dimnames[1]; }
+      Rcpp::Rcout<<"\n Dimnames [1] : "<<Rf_isNull(dimnames[1])<<"\n";
+      Rcpp::Rcout<<"\n Dimnames [0] : "<<Rf_isNull(dimnames[0])<<"\n";
       
-      if(Rf_isNull(dimnames[0]) ){ svrcols = dimnames[0]; }
+      if(!Rf_isNull(dimnames[1]) ){ svrows = dimnames[0]; }
+      
+      if(!Rf_isNull(dimnames[0]) ){ svrcols = dimnames[1]; }
 
       if(transposed == false){
         write_hdf5_matrix_dimnames(file, strsubgroup, strdataset, svrows, svrcols );

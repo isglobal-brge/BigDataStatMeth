@@ -55,8 +55,6 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
       offset[0] = 0;
     };
     
-    Rcpp::Rcout<<"ilimit val : "<<ilimit<<"\n";
-    
     for( int i=0; i<=(ilimit/blocksize); i++) 
     {
       int iread;
