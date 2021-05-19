@@ -178,9 +178,9 @@ library(BigDataStatMeth)
 library(devtools)
 reload(pkgload::inst("BigDataStatMeth"))
 
-resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", "test", "mat1", byrows = FALSE )
+resc <- bdget_allele_freq_hdf5("test.hdf5", "test", "mat1", byrows = FALSE )
 
-resr <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", "test", "mat1", byrows = TRUE )
+resr <- bdget_allele_freq_hdf5("test.hdf5", "test", "mat1", byrows = TRUE )
 
 
 

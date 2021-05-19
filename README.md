@@ -69,3 +69,8 @@ library(BigDataStatMeth)
 | Add one dataset in hdf5 data file                |                  bdAdd_hdf5_matrix(…)                  |                |           |          |   ✔︎  |
 | Remove one dataset from hdf5 data file           |                  bdRemove_hdf5_element(…)                 |                |           |          |   ✔︎  |
 | Import data from text file to HDF5               |                 bdImport_text_to_hdf5(…)                 |                |           |          |   ✔︎  |
+| Remove MAF by rows or columns                    |                    bdremove_maf_hdf5(…)                   |                |     ✔︎     |          |   ✔︎  |
+| Get MAF by rows or columns                       |                    bdget_maf_hdf5(…)                   |                |     ✔︎     |          |   ✔︎  |
+
+
+

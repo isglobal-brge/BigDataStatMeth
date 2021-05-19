@@ -276,6 +276,23 @@ bdPCA_hdf5 <- function(filename, group, dataset, bcenter = FALSE, bscale = FALSE
     .Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, k, q, force, threads)
 }
 
+#' Remove SNPs in hdf5 omic dataset with low data
+#'
+#' Remove SNPs in hdf5 omic dataset with low data
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, character array indicating the input group where the data set to be imputed is. 
+#' @param dataset, character array indicating the input dataset to be imputed
+#' @param outgroup, character array indicating group where the data set will be saved after remove data with if `outgroup` is NULL, output dataset is stored in the same input group. 
+#' @param outdataset, character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
+#' @param maf, by default maf = 0.05. Numeric indicating the percentage to be considered to remove SNPs, SNPS with higest MAF will be removed from data
+#' @param byrows, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
+#' @return Original hdf5 data file with imputed data
+#' @export
+bdremove_maf_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf, byrows) {
+    .Call('_BigDataStatMeth_bdremove_maf_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, maf, byrows)
+}
+
 #' Normalize Delayed Array matrix
 #' 
 #' This function performs a numerical or Delayed Array matrix normalization
