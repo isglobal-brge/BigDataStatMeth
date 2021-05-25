@@ -2116,7 +2116,7 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
           //..// write_HDF5_matrix_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(mat));
           write_HDF5_matrix_from_R_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(object), transposed);
         }
-        
+      
         // Get dimnames from R matrix object
         dimnames = object.attr( "dimnames" );
         
@@ -2130,9 +2130,9 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
       Rcpp::Rcout<<"\n Dimnames [1] : "<<Rf_isNull(dimnames[1])<<"\n";
       Rcpp::Rcout<<"\n Dimnames [0] : "<<Rf_isNull(dimnames[0])<<"\n";
       
-      if(!Rf_isNull(dimnames[1]) ){ svrows = dimnames[0]; }
-      
-      if(!Rf_isNull(dimnames[0]) ){ svrcols = dimnames[1]; }
+      if(!Rf_isNull(dimnames[1]) ){  svrcols = dimnames[1]; }
+      if(!Rf_isNull(dimnames[0]) ){ svrows = dimnames[0]; }
+
 
       if(transposed == false){
         write_hdf5_matrix_dimnames(file, strsubgroup, strdataset, svrows, svrcols );
