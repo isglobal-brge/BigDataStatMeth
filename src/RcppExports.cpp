@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // bdCrossprod_Weighted
 Rcpp::RObject bdCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
 RcppExport SEXP _BigDataStatMeth_bdCrossprod_Weighted(SEXP ASEXP, SEXP WSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
@@ -22,8 +27,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdRemovelowdata
-Rcpp::RObject bdRemovelowdata(std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> SNPincols);
-RcppExport SEXP _BigDataStatMeth_bdRemovelowdata(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP pcentSEXP, SEXP SNPincolsSEXP) {
+Rcpp::RObject bdRemovelowdata(std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> bycols);
+RcppExport SEXP _BigDataStatMeth_bdRemovelowdata(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP pcentSEXP, SEXP bycolsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -33,8 +38,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type outgroup(outgroupSEXP);
     Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type pcent(pcentSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type SNPincols(SNPincolsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdRemovelowdata(filename, group, dataset, outgroup, outdataset, pcent, SNPincols));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdRemovelowdata(filename, group, dataset, outgroup, outdataset, pcent, bycols));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -198,8 +203,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdremove_maf_hdf5
-Rcpp::RObject bdremove_maf_hdf5(std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> byrows);
-RcppExport SEXP _BigDataStatMeth_bdremove_maf_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP mafSEXP, SEXP byrowsSEXP) {
+Rcpp::RObject bdremove_maf_hdf5(std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<int> blocksize);
+RcppExport SEXP _BigDataStatMeth_bdremove_maf_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP mafSEXP, SEXP bycolsSEXP, SEXP blocksizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -209,8 +214,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type outgroup(outgroupSEXP);
     Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type maf(mafSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type byrows(byrowsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdremove_maf_hdf5(filename, group, dataset, outgroup, outdataset, maf, byrows));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type blocksize(blocksizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdremove_maf_hdf5(filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -639,7 +645,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdImpute_snps_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImpute_snps_hdf5, 6},
     {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 6},
     {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 9},
-    {"_BigDataStatMeth_bdremove_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdremove_maf_hdf5, 7},
+    {"_BigDataStatMeth_bdremove_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdremove_maf_hdf5, 8},
     {"_BigDataStatMeth_bdNormalize_Data", (DL_FUNC) &_BigDataStatMeth_bdNormalize_Data, 3},
     {"_BigDataStatMeth_bdMLR_MR", (DL_FUNC) &_BigDataStatMeth_bdMLR_MR, 4},
     {"_BigDataStatMeth_bdCrossprod_generic", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_generic, 6},

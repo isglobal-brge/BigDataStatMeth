@@ -15,21 +15,25 @@ bool ResFileExist(const std::string& name) {
 }
 
 
-// Check if file exists
+// // Check if file exists
 bool ResFileExist_filestream(std::string name) {
-  
+
   bool exists = true;
-  
+
   fstream fileStream;
   fileStream.open(name);
 
   if (fileStream.fail()) {
     exists = false;
   }
-  
+
   return(exists);
 
 }
+
+
+
+
 
 
 // Remove file if exists
@@ -523,18 +527,23 @@ extern "C" {
       dataspace.close();
 
     } catch(FileIException error) { // catch failure caused by the H5File operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (File IException)" );
       return -1;
     } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (DataSet IException)" );
       return -1;
     } catch(GroupIException error) { // catch failure caused by the Group operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (Group IException)" );
       return -1;
     } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (DataSpace IException)" );
       return -1;
     } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (Data TypeIException)" );
       return -1;
     }

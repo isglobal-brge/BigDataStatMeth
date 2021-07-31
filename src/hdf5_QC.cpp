@@ -193,12 +193,12 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
 //' @param outgroup, character array indicating group where the data set will be saved after remove data with if `outgroup` is NULL, output dataset is stored in the same input group. 
 //' @param outdataset, character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
 //' @param pcent, by default pcent = 0.5. Numeric indicating the percentage to be considered to remove SNPs, SNPS with percentage equal or higest will be removed from data
-//' @param SNPincols, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
+//' @param bycols, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
 //' @return Original hdf5 data file with imputed data
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, 
-                         Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> SNPincols )
+                         Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> bycols )
 {
   
   H5File* file;
@@ -208,14 +208,15 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
   {
     bool bcols;
     double dpcent;
+    
 
     std::string stroutdata = outgroup +"/" + outdataset;
     std::string strdataset = group +"/" + dataset;
 
-    if(SNPincols.isNull()){  
+    if(bycols.isNull()){  
       bcols = true ;
     }else{    
-      bcols = Rcpp::as<bool>(SNPincols);
+      bcols = Rcpp::as<bool>(bycols);
     }
     
     if(pcent.isNull()){  
@@ -225,10 +226,10 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
     }
     
 
-    //..//if(!ResFileExist(filename))
     if(!ResFileExist_filestream(filename)){
       throw std::range_error("File not exits, create file before access to dataset");
     }
+    
     
     file = new H5File( filename, H5F_ACC_RDWR );
     
@@ -257,7 +258,7 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
       iremoved = Remove_snp_low_data_HDF5( file, pdataset, bcols, stroutdata, dpcent);
       
       Function warning("warning");
-      if (SNPincols )
+      if (bycols )
         warning( std::to_string(iremoved) + " Columns have been removed");
       else
         warning( std::to_string(iremoved) + " Rows have been removed");

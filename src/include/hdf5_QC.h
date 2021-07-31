@@ -12,6 +12,6 @@
 
   // functions called from R
   Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, 
-                                 Rcpp::Nullable<double> pcent = 0.5, Rcpp::Nullable<bool> SNPincols = true ); 
+                                 Rcpp::Nullable<double> pcent = 0.5, Rcpp::Nullable<bool> bycols = true ); 
 
 #endif

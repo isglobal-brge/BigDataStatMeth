@@ -1,7 +1,7 @@
 #include "include/hdf5_removeMaf.h"
 
 // Removes row or column with high missing data percentage
-int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string stroutdata, double pcent)
+int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string stroutdata, double pcent, int blocksize)
 {
   
   IntegerVector stride = IntegerVector::create(1, 1);
@@ -11,8 +11,9 @@ int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string st
   IntegerVector count = IntegerVector::create(0, 0);
   DataSet* unlimDataset;
   int ilimit;
-  int blocksize = 100;
+  // int blocksize = 100;
   int itotrem = 0;
+  bool bcreated = false;
   
   
   try{
@@ -52,7 +53,6 @@ int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string st
       
       if(bycols == true) // We have to do it by rows
       {
-        
         int readedrows = data.rows();
 
         for( int row = readedrows-1 ; row>=0; row--)
@@ -81,31 +81,40 @@ int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string st
       int extendcols = data.cols();
       int extendrows = data.rows();
       
-      if(i==0) {
-        create_HDF5_unlimited_matrix_dataset_ptr(file, stroutdata, extendrows, extendcols, "numeric");
-        unlimDataset = new DataSet(file->openDataSet(stroutdata));
-      }else {
-        if(bycols == true){
-          extend_HDF5_matrix_subset_ptr(file, unlimDataset, extendrows, 0);
-        }else{
-          extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, extendcols);
+      if( extendrows>0 && extendcols>0)
+      {
+        
+        if(bcreated == false) {
+          Rcpp::Rcout<<"\n Create initial dataframe \n";
+          create_HDF5_unlimited_matrix_dataset_ptr(file, stroutdata, extendrows, extendcols, "numeric");
+          Rcpp::Rcout<<"\nWell done - 1 \n";
+          unlimDataset = new DataSet(file->openDataSet(stroutdata));
+          bcreated = true;
+        }else {
+          if(bycols == true){
+            extend_HDF5_matrix_subset_ptr(file, unlimDataset, extendrows, 0);
+          }else{
+            extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, extendcols);
+          }
         }
+        
+        IntegerVector countblock = IntegerVector::create(extendrows, extendcols);
+        write_HDF5_matrix_subset_v2(file, unlimDataset, newoffset, countblock, stride, block, wrap(data) );
+        
+        if(bycols == true)
+          newoffset[0] =  newoffset[0] + extendrows;
+        else
+          newoffset[1] =  newoffset[1] + extendcols;
       }
-      
-      IntegerVector countblock = IntegerVector::create(extendrows, extendcols);
-      write_HDF5_matrix_subset_v2(file, unlimDataset, newoffset, countblock, stride, block, wrap(data) );
-      
-      if(bycols == true)
-        newoffset[0] =  newoffset[0] + extendrows;
-      else
-        newoffset[1] =  newoffset[1] + extendcols;
       
       
       itotrem = itotrem - iblockrem;
       
     }
     
-    unlimDataset->close();
+    if (bcreated == true) {
+      unlimDataset->close();
+    }
     
   } catch(FileIException error) { // catch failure caused by the H5File operations
     unlimDataset->close();
@@ -148,16 +157,18 @@ int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string st
 //' @param outgroup, character array indicating group where the data set will be saved after remove data with if `outgroup` is NULL, output dataset is stored in the same input group. 
 //' @param outdataset, character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
 //' @param maf, by default maf = 0.05. Numeric indicating the percentage to be considered to remove SNPs, SNPS with higest MAF will be removed from data
-//' @param byrows, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
+//' @param bycols, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
+//' @param blocksize, integer, block size dataset to read/write and calculate MAF, by default this operations is made in with 100 rows if byrows = true or 100 cols if byrows = false.
 //' @return Original hdf5 data file with imputed data
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdremove_maf_hdf5( std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, 
-                               Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> byrows )
+                               Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<int> blocksize )
 {
   
   H5File* file;
   int iremoved = 0;
+  int iblocksize = 100;
   
   try
   {
@@ -167,10 +178,10 @@ Rcpp::RObject bdremove_maf_hdf5( std::string filename, std::string group, std::s
     std::string stroutdata = outgroup +"/" + outdataset;
     std::string strdataset = group +"/" + dataset;
     
-    if(byrows.isNull()){  
+    if(bycols.isNull()){  
       bcols = false ;
     }else{    
-      bcols = Rcpp::as<bool>(byrows);
+      bcols = Rcpp::as<bool>(bycols);
     }
     
     if(maf.isNull()){  
@@ -179,11 +190,16 @@ Rcpp::RObject bdremove_maf_hdf5( std::string filename, std::string group, std::s
       dpcent = Rcpp::as<double>(maf);
     }
     
+    if(!blocksize.isNull()){  
+      iblocksize = Rcpp::as<int>(blocksize);
+    }
     
-    //..//if(!ResFileExist(filename))
+    
+
     if(!ResFileExist_filestream(filename)){
       throw std::range_error("File not exits, create file before access to dataset");
     }
+    
     
     file = new H5File( filename, H5F_ACC_RDWR );
     
@@ -209,13 +225,13 @@ Rcpp::RObject bdremove_maf_hdf5( std::string filename, std::string group, std::s
         throw std::range_error("Input and output dataset must be different");  
       }
       
-      iremoved = Remove_MAF_HDF5( file, pdataset, bcols, stroutdata, dpcent);
+      iremoved = Remove_MAF_HDF5( file, pdataset, bcols, stroutdata, dpcent, iblocksize);
       
       Function warning("warning");
-      if (!byrows )
-        warning( std::to_string(iremoved) + " Columns have been removed");
-      else
+      if (!bycols )
         warning( std::to_string(iremoved) + " Rows have been removed");
+      else
+        warning( std::to_string(iremoved) + " Columns have been removed");
       
       pdataset->close();
       

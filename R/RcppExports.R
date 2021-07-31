@@ -47,11 +47,11 @@ bdCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads 
 #' @param outgroup, character array indicating group where the data set will be saved after remove data with if `outgroup` is NULL, output dataset is stored in the same input group. 
 #' @param outdataset, character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
 #' @param pcent, by default pcent = 0.5. Numeric indicating the percentage to be considered to remove SNPs, SNPS with percentage equal or higest will be removed from data
-#' @param SNPincols, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
+#' @param bycols, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
 #' @return Original hdf5 data file with imputed data
 #' @export
-bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcent, SNPincols) {
-    .Call('_BigDataStatMeth_bdRemovelowdata', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, SNPincols)
+bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcent, bycols) {
+    .Call('_BigDataStatMeth_bdRemovelowdata', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, bycols)
 }
 
 #' Crossprod with hdf5 matrix
@@ -286,11 +286,12 @@ bdPCA_hdf5 <- function(filename, group, dataset, bcenter = FALSE, bscale = FALSE
 #' @param outgroup, character array indicating group where the data set will be saved after remove data with if `outgroup` is NULL, output dataset is stored in the same input group. 
 #' @param outdataset, character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
 #' @param maf, by default maf = 0.05. Numeric indicating the percentage to be considered to remove SNPs, SNPS with higest MAF will be removed from data
-#' @param byrows, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
+#' @param bycols, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
+#' @param blocksize, integer, block size dataset to read/write and calculate MAF, by default this operations is made in with 100 rows if byrows = true or 100 cols if byrows = false.
 #' @return Original hdf5 data file with imputed data
 #' @export
-bdremove_maf_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf, byrows) {
-    .Call('_BigDataStatMeth_bdremove_maf_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, maf, byrows)
+bdremove_maf_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize) {
+    .Call('_BigDataStatMeth_bdremove_maf_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize)
 }
 
 #' Normalize Delayed Array matrix

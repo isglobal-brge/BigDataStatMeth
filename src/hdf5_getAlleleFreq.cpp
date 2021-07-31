@@ -105,7 +105,6 @@ Rcpp::RObject bdget_maf_hdf5( std::string filename, const std::string group, std
       readsize = dims_out[0];
     } 
       
-    Rcpp::Rcout<<"\n Llegirem size : "<<readsize<<"\n";
     
     IntegerVector stride = IntegerVector::create(1, 1) ;
     IntegerVector block = IntegerVector::create(1, 1) ;
