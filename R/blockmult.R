@@ -16,7 +16,6 @@
 #' memory of the block read from the disk being processed.
 #' @param outfile (optional) file name to work with hdf5 if we are working with big matrix in disk.
 #' @param onmemory (optional) if onmemory = TRUE the multiplication is forced to execute in memory
-#' @param sparse (optional) if sparse = TRUE the matrix are treated as sparse
 #' @return numerical matrix
 #' @examples
 #' # with numeric matrix

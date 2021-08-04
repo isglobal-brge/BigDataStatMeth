@@ -603,6 +603,7 @@ return(C);
 //' Block size for mixed computation in big matrix parallel. Size of the block to be used to perform parallelized memory 
 //' memory of the block read from the disk being processed.
 //' @param outfile (optional) file name to work with hdf5 if we are working with big matrix in disk.
+//' @param onmemory (optional) if onmemory = TRUE the multiplication is forced to execute in memory
 //' @return A List with : 
 //' \itemize{
 //'   \item{"matrix"}{ Result matrix if execution has been performed in memory}

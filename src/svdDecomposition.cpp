@@ -226,23 +226,23 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
   
   
   } catch(FileIException error) { // catch failure caused by the H5File operations
-    file->close();
+    // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (File IException)" );
     return retsvd;
   } catch(DataSetIException error) { // catch failure caused by the DataSet operations
-    file->close();
+    // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (DataSet IException)" );
     return retsvd;
   } catch(GroupIException error) { // catch failure caused by the Group operations
-    file->close();
+    // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (Group IException)" );
     return retsvd;
   } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
-    file->close();
+    // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (DataSpace IException)" );
     return retsvd;
   } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
-    file->close();
+    // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (Data TypeIException)" );
     return retsvd;
   }catch(std::exception &ex) {

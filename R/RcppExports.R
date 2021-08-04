@@ -22,16 +22,12 @@
 #' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 #' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 #' 
-#' 
-#' # with Delaeyd Array
-#' AD <- DelayedArray(A)
-#' BD <- DelayedArray(B)
-#' 
 #' # Serial execution
-#' Serie<- Crossprod_Weighted(A, B, paral = FALSE)
+#' Serie <- bdCrossprod_Weighted(A, B, paral = FALSE)
 #' 
 #' # Parallel execution with 2 threads and blocks 256x256
-#' Par_2cor <- Crossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
+#' Par_2cor <- bdCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
+#' 
 #' @export
 bdCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads = NULL) {
     .Call('_BigDataStatMeth_bdCrossprod_Weighted', PACKAGE = 'BigDataStatMeth', A, W, block_size, paral, threads)
@@ -59,11 +55,14 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' This function performs the crossprod from a matrix inside and hdf5 data file
 #' 
 #' @param filename string file name where dataset to normalize is stored
-#' @param group string or Delayed Array Matrix
-#' @param dataset string name inside HDF5 file
+#' @param group, string, group name where dataset A is stored
+#' @param A string name inside HDF5 file
+#' @param groupB, string, group name where dataset b is stored
+#' @param B string, dataset name for matrix B inside HDF5 file
 #' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 #' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
 #' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+#' @param mixblock_size (optional) only for debug pourpose
 #' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
 #' @examples
 #'   
@@ -71,13 +70,15 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #'   library(rhdf5)
 #'      
 #'   matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-#'   matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4, 42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
+#'   matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+#'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
 #'   
-#'   Create_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-#'   Create_HDF5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#'   bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#'   bdCreate_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
 #'   
-#'   res <- BigDataStatMeth::Crossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
-#'   res2 <- BigDataStatMeth::Crossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", "INPUT","matB", block_size = 3)
+#'   res <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
+#'   res2 <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
+#'                            "matA", "INPUT","matB", block_size = 3)
 #'   
 #'   # Examine hierarchy before open file
 #'   h5ls("BasicMatVect.hdf5")
@@ -148,22 +149,28 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, outgroup = NULL) {
 #' This function performs the transposed crossprod from a matrix inside and hdf5 data file
 #' 
 #' @param filename string file name where dataset to normalize is stored
-#' @param group string or Delayed Array Matrix
-#' @param dataset string name inside HDF5 file
+#' @param group, string, group name where dataset A is stored
+#' @param A string name inside HDF5 file
+#' @param groupB, string, group name where dataset b is stored
+#' @param B string, dataset name for matrix B inside HDF5 file
 #' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 #' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
 #' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+#' @param mixblock_size (optional) only for debug pourpose
 #' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
 #' @examples
 #' 
 #' matA <- matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-#' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4, 42, 23, 23, 423,1,2), ncol = 5, byrow = TRUE)
+#' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+#'                  42, 23, 23, 423,1,2), ncol = 5, byrow = TRUE)
 #' 
-#' Create_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-#' Create_HDF5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#' bdCreate_hdf5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
 #' 
-#' res <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 2)
-#' res2 <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", "matA", "INPUT","matB", block_size = 2)
+#' res <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
+#'                                         "matA", block_size = 2)
+#' res2 <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", 
+#'                                         "matA", "INPUT","matB", block_size = 2)
 #' 
 #' # Open file
 #' h5fdelay = H5Fopen("BasicMatVect.hdf5")
@@ -197,8 +204,10 @@ bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block
 #' 
 #' library(BigDataStatMeth)
 #' 
-#' maf_cols = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", "test", "mat1", byrows = FALSE )
-#' maf_rows = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", "test", "mat1", byrows = TRUE )
+#' maf_cols = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", 
+#'                                           "test", "mat1", byrows = FALSE )
+#' maf_rows = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", 
+#'                                           "test", "mat1", byrows = TRUE )
 #' 
 #' @export
 bdget_maf_hdf5 <- function(filename, group, dataset, byrows = NULL, bparallel = NULL, wsize = NULL) {
@@ -451,6 +460,7 @@ bdblockmult_sparse <- function(A, B, paral = NULL, threads = NULL) {
 #' Block size for mixed computation in big matrix parallel. Size of the block to be used to perform parallelized memory 
 #' memory of the block read from the disk being processed.
 #' @param outfile (optional) file name to work with hdf5 if we are working with big matrix in disk.
+#' @param onmemory (optional) if onmemory = TRUE the multiplication is forced to execute in memory
 #' @return A List with : 
 #' \itemize{
 #'   \item{"matrix"}{ Result matrix if execution has been performed in memory}

@@ -836,14 +836,14 @@ Missing data in meta-analysis of genetic association studies are unavoidable. In
 
 Like in imputation method, in remove low data method we have to inform the input data indicating  the filename, the group and the dataset name and we also have to inform the dataset were data will be stored after removing the SNPs with parameters `outgroup` and `outdataset`.
 
-To remove low data we have to infrorm if we want to remove data by cols `SNPincols = TRUE` or by rows `SNPincols = FALSE` and the percentage of missing data `pcent` parameter. `pcent` of missing data refers to missing percentage in columns if we defined `SNPincols = TRUE` or `pcent` refers to rows if `SNPincols = FALSE`.
+To remove low data we have to infrorm if we want to remove data by cols `bycols = TRUE` or by rows `bycols = FALSE` and the percentage of missing data `pcent` parameter. `pcent` of missing data refers to missing percentage in columns if we defined `bycols = TRUE` or `pcent` refers to rows if `bycols = FALSE`.
 
 To show how renove low data works we use the previous dataset stored in *delayed.hdf5* file, in that case, we will assume that SNPs are in columns and we will remove those SNPs where missing data is greater than 40%.
 
 ```{r removelow}
 bdRemovelowdata("delayed.hdf5", group="OMICS", dataset="geno",
                 outgroup="OMICS", outdataset="removedgeno",
-                SNPincols = TRUE, pcent = 0.39)
+                bycols = TRUE, pcent = 0.39)
 ```
 
 After remove the SNPs with pcent greater than 39% results have been saved in dataset "*removedgeno*" under group "*OMICS*", we observe the resulting dataset
@@ -856,6 +856,10 @@ h5closeAll()
 
 removedgeno[1:5,1:10]
 ```
+
+## QC - Get MAF
+
+## QC - Remove MAF
 
 
 # Session information

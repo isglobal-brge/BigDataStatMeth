@@ -9,11 +9,11 @@ bdlm_paral(Y, model, blocks, threads = NULL)
 \arguments{
 \item{Y, }{numerical matrix column with response variable}
 
+\item{model, }{numerical matrix with paired observations of the predictor variable X}
+
 \item{blocks, }{integer with number of blocks we want to split matrix if null matrix is splited in blocks as maximum of 1000 variables per block}
 
 \item{threads, }{threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
-
-\item{X, }{numerical matrix with paired observations of the predictor variable X}
 }
 \value{
 Lineal regression coefficients

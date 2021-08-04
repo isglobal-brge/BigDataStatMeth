@@ -35,6 +35,8 @@ Block size for mixed computation in big matrix parallel. Size of the block to be
 memory of the block read from the disk being processed.}
 
 \item{outfile}{(optional) file name to work with hdf5 if we are working with big matrix in disk.}
+
+\item{onmemory}{(optional) if onmemory = TRUE the multiplication is forced to execute in memory}
 }
 \value{
 A List with : 

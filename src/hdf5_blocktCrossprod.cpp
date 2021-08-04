@@ -119,22 +119,28 @@ int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA,
 //' This function performs the transposed crossprod from a matrix inside and hdf5 data file
 //' 
 //' @param filename string file name where dataset to normalize is stored
-//' @param group string or Delayed Array Matrix
-//' @param dataset string name inside HDF5 file
+//' @param group, string, group name where dataset A is stored
+//' @param A string name inside HDF5 file
+//' @param groupB, string, group name where dataset b is stored
+//' @param B string, dataset name for matrix B inside HDF5 file
 //' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 //' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
 //' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+//' @param mixblock_size (optional) only for debug pourpose
 //' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
 //' @examples
 //' 
 //' matA <- matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-//' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4, 42, 23, 23, 423,1,2), ncol = 5, byrow = TRUE)
+//' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+//'                  42, 23, 23, 423,1,2), ncol = 5, byrow = TRUE)
 //' 
-//' Create_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-//' Create_HDF5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
+//' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+//' bdCreate_hdf5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
 //' 
-//' res <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 2)
-//' res2 <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", "matA", "INPUT","matB", block_size = 2)
+//' res <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
+//'                                         "matA", block_size = 2)
+//' res2 <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", 
+//'                                         "matA", "INPUT","matB", block_size = 2)
 //' 
 //' # Open file
 //' h5fdelay = H5Fopen("BasicMatVect.hdf5")

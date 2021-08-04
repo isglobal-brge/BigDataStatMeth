@@ -37,8 +37,6 @@ memory of the block read from the disk being processed.}
 \item{outfile}{(optional) file name to work with hdf5 if we are working with big matrix in disk.}
 
 \item{onmemory}{(optional) if onmemory = TRUE the multiplication is forced to execute in memory}
-
-\item{sparse}{(optional) if sparse = TRUE the matrix are treated as sparse}
 }
 \value{
 numerical matrix

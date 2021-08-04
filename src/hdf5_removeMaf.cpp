@@ -85,9 +85,7 @@ int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string st
       {
         
         if(bcreated == false) {
-          Rcpp::Rcout<<"\n Create initial dataframe \n";
           create_HDF5_unlimited_matrix_dataset_ptr(file, stroutdata, extendrows, extendcols, "numeric");
-          Rcpp::Rcout<<"\nWell done - 1 \n";
           unlimDataset = new DataSet(file->openDataSet(stroutdata));
           bcreated = true;
         }else {

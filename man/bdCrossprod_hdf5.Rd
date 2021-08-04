@@ -20,7 +20,13 @@ bdCrossprod_hdf5(
 \arguments{
 \item{filename}{string file name where dataset to normalize is stored}
 
-\item{group}{string or Delayed Array Matrix}
+\item{group, }{string, group name where dataset A is stored}
+
+\item{A}{string name inside HDF5 file}
+
+\item{groupB, }{string, group name where dataset b is stored}
+
+\item{B}{string, dataset name for matrix B inside HDF5 file}
 
 \item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)}
 
@@ -28,9 +34,9 @@ bdCrossprod_hdf5(
 
 \item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
 
-\item{outgroup}{(optional) group name to store results from Crossprod inside hdf5 data file}
+\item{mixblock_size}{(optional) only for debug pourpose}
 
-\item{dataset}{string name inside HDF5 file}
+\item{outgroup}{(optional) group name to store results from Crossprod inside hdf5 data file}
 }
 \description{
 This function performs the crossprod from a matrix inside and hdf5 data file
@@ -41,13 +47,15 @@ This function performs the crossprod from a matrix inside and hdf5 data file
   library(rhdf5)
      
   matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-  matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4, 42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
+  matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+                   42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
   
-  Create_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-  Create_HDF5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+  bdCreate_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+  bdCreate_HDF5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
   
-  res <- BigDataStatMeth::Crossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
-  res2 <- BigDataStatMeth::Crossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", "INPUT","matB", block_size = 3)
+  res <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
+  res2 <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
+                           "matA", "INPUT","matB", block_size = 3)
   
   # Examine hierarchy before open file
   h5ls("BasicMatVect.hdf5")

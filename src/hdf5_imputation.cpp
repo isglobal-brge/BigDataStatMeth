@@ -75,111 +75,134 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
   int ilimit;
   int blocksize = 1000;
   
-
-    // Real data set dimension
-  IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
-
-  // id bycols == true : read all rows by group of columns ; else : all columns by group of rows
-  if (bycols == true) {
-    ilimit = dims_out[0];
-    count[1] = dims_out[1];
-    offset[1] = 0;
-  } else {
-    ilimit = dims_out[1];
-    count[0] = dims_out[0];
-    offset[0] = 0;
-  };
-  
-
-  if( stroutdataset.compare("")!=0)
-  {
-    hsize_t     dimsf[2];              // dataset dimensions
-    dimsf[0] = dims_out[0];
-    dimsf[1] = dims_out[1];
-  
-    DataSpace dataspace( RANK2, dimsf );
-    outdataset = new DataSet(file->createDataSet(stroutdataset, PredType::NATIVE_DOUBLE, dataspace));
-
-  } else  {
-    outdataset = dataset;
-  }
-  
-
-  
-  for( int i=0; i<=(ilimit/blocksize); i++) 
-  {
-    int iread;
+  try{
     
-    if( (i+1)*blocksize < ilimit) iread = blocksize;
-    else iread = ilimit - (i*blocksize);
-      
-    if(bycols == true) {
-      count[0] = iread; 
-      offset[0] = i*blocksize;
+    // Real data set dimension
+    IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
+    
+    // id bycols == true : read all rows by group of columns ; else : all columns by group of rows
+    if (bycols == true) {
+      ilimit = dims_out[0];
+      count[1] = dims_out[1];
+      offset[1] = 0;
     } else {
-      count[1] = iread; 
-      offset[1] = i*blocksize;
-    }
-
-    // read block
-    Eigen::MatrixXd data = GetCurrentBlock_hdf5(file, dataset, offset[0], offset[1], count[0], count[1]);
-
-    if(bycols == true) // We have to do it by rows
+      ilimit = dims_out[1];
+      count[0] = dims_out[0];
+      offset[0] = 0;
+    };
+    
+    
+    if( stroutdataset.compare("")!=0)
     {
-      for( int row = 0; row<data.rows(); row++)  // COMPLETE EXECUTION
-      {
-        std::map<double, double> myMap;
-        myMap = VectortoOrderedMap_SNP_counts(data.row(row));
-        
-        /*** ORIGINAL FUNCIONA PERFECTAMENT PERÒ ASSIGNA UN MATEIX VALOR A TOS... !!!
-         data.row(row) = (data.row(row).array() == 3).select( get_value_to_impute_discrete(myMap), data.row(row)); 
-        ***/
-        
-        //..// data.row(row) = (data.row(row).array() == 0).select( -5, data.row(row)); 
-        //..// data.row(row) = (data.row(row).array() == 1).select( 0, data.row(row)); 
-        //..// data.row(row) = (data.row(row).array() == 2).select( 5, data.row(row)); 
-        //..// data.row(row) = (data.row(row).array() == 3).select( 99, data.row(row)); 
-        
-        Eigen::VectorXd ev = data.row(row);
-        std::vector<double> v(ev.data(), ev.data() + ev.size());
-
-        auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
-        while (it != std::end(v)) {
-          //..// results.emplace_back(std::distance(std::begin(v), it));
-          if(*it==3) *it = get_value_to_impute_discrete(myMap);
-          it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
-        }
-
-        Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
-        data.row(row) = X;
-        
+      hsize_t     dimsf[2];              // dataset dimensions
+      dimsf[0] = dims_out[0];
+      dimsf[1] = dims_out[1];
+      
+      DataSpace dataspace( RANK2, dimsf );
+      outdataset = new DataSet(file->createDataSet(stroutdataset, PredType::NATIVE_DOUBLE, dataspace));
+      
+    } else  {
+      outdataset = dataset;
+    }
+    
+    
+    
+    for( int i=0; i<=(ilimit/blocksize); i++) 
+    {
+      int iread;
+      
+      if( (i+1)*blocksize < ilimit) iread = blocksize;
+      else iread = ilimit - (i*blocksize);
+      
+      if(bycols == true) {
+        count[0] = iread; 
+        offset[0] = i*blocksize;
+      } else {
+        count[1] = iread; 
+        offset[1] = i*blocksize;
       }
       
-    } else {
-      for( int col = 0; col<data.cols(); col++) 
+      // read block
+      Eigen::MatrixXd data = GetCurrentBlock_hdf5(file, dataset, offset[0], offset[1], count[0], count[1]);
+      
+      if(bycols == true) // We have to do it by rows
       {
-        std::map<double, double> myMap;
-        myMap = VectortoOrderedMap_SNP_counts(data.col(col));
-        //..// data.col(col) = (data.col(col).array() == 3).select( get_value_to_impute_discrete(myMap), data.col(col));
-        Eigen::VectorXd ev = data.col(col);
-        std::vector<double> v(ev.data(), ev.data() + ev.size());
-        
-        auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
-        while (it != std::end(v)) {
-          //..// results.emplace_back(std::distance(std::begin(v), it));
-          if(*it==3) *it = get_value_to_impute_discrete(myMap);
-          it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
+        for( int row = 0; row<data.rows(); row++)  // COMPLETE EXECUTION
+        {
+          std::map<double, double> myMap;
+          myMap = VectortoOrderedMap_SNP_counts(data.row(row));
+          
+          /*** ORIGINAL FUNCIONA PERFECTAMENT PERÒ ASSIGNA UN MATEIX VALOR A TOS... !!!
+           data.row(row) = (data.row(row).array() == 3).select( get_value_to_impute_discrete(myMap), data.row(row)); 
+           ***/
+          
+          //..// data.row(row) = (data.row(row).array() == 0).select( -5, data.row(row)); 
+          //..// data.row(row) = (data.row(row).array() == 1).select( 0, data.row(row)); 
+          //..// data.row(row) = (data.row(row).array() == 2).select( 5, data.row(row)); 
+          //..// data.row(row) = (data.row(row).array() == 3).select( 99, data.row(row)); 
+          
+          Eigen::VectorXd ev = data.row(row);
+          std::vector<double> v(ev.data(), ev.data() + ev.size());
+          
+          auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
+          while (it != std::end(v)) {
+            //..// results.emplace_back(std::distance(std::begin(v), it));
+            if(*it==3) *it = get_value_to_impute_discrete(myMap);
+            it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
+          }
+          
+          Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
+          data.row(row) = X;
+          
         }
-
-        Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
-        data.col(col) = X;
+        
+      } else {
+        for( int col = 0; col<data.cols(); col++) 
+        {
+          std::map<double, double> myMap;
+          myMap = VectortoOrderedMap_SNP_counts(data.col(col));
+          //..// data.col(col) = (data.col(col).array() == 3).select( get_value_to_impute_discrete(myMap), data.col(col));
+          Eigen::VectorXd ev = data.col(col);
+          std::vector<double> v(ev.data(), ev.data() + ev.size());
+          
+          auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
+          while (it != std::end(v)) {
+            //..// results.emplace_back(std::distance(std::begin(v), it));
+            if(*it==3) *it = get_value_to_impute_discrete(myMap);
+            it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
+          }
+          
+          Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
+          data.col(col) = X;
+        }
       }
+      //..// write_HDF5_matrix_subset_v2(file, dataset, offset, count, stride, block, wrap(data) );
+      write_HDF5_matrix_subset_v2(file, outdataset, offset, count, stride, block, wrap(data) );
     }
-    //..// write_HDF5_matrix_subset_v2(file, dataset, offset, count, stride, block, wrap(data) );
-    write_HDF5_matrix_subset_v2(file, outdataset, offset, count, stride, block, wrap(data) );
-
+    
+    outdataset->close();
+    
+  } catch(FileIException error) { // catch failure caused by the H5File operations
+    outdataset->close();
+    file->close();
+    ::Rf_error( "c++ exception Impute_snp_HDF5 (File IException)" );
+  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    outdataset->close();
+    file->close();
+    ::Rf_error( "c++ exception Impute_snp_HDF5 (DataSet IException)" );
+  } catch(GroupIException error) { // catch failure caused by the Group operations
+    outdataset->close();
+    file->close();
+    ::Rf_error( "c++ exception Impute_snp_HDF5 (Group IException)" );
+  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    outdataset->close();
+    file->close();
+    ::Rf_error( "c++ exception Impute_snp_HDF5 (DataSpace IException)" );
+  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    outdataset->close();
+    file->close();
+    ::Rf_error( "c++ exception Impute_snp_HDF5 (Data TypeIException)" );
   }
-  outdataset->close();
   
 }
 
@@ -212,6 +235,7 @@ Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::s
     std::string strdataset = group +"/" + dataset;
     std::string stroutgroup, stroutdataset, stroutdata;
     std::string strdatasetout;
+    
     //.commented 20201120 - warning check().// int res;
     bool bcols;
     
@@ -227,8 +251,20 @@ Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::s
     
     stroutdata = stroutgroup +"/" + stroutdataset;
     
-    if(!ResFileExist(filename))
-      throw std::range_error("File not exits, create file before impute dataset");  
+    // if(!ResFileExist(filename))
+    //   throw std::range_error("File not exits, create file before impute dataset");  
+    
+    // if(!std::filesystem::exists(filename)){
+    //   throw std::range_error("File not exits, create file before access to dataset");
+    // }
+     
+     // if(!ResFileExist_filestream(fs)){
+     //   throw std::range_error("File not exits, create file before access to dataset");
+     // }
+    
+    if(!ResFileExist_filestream(filename)){
+      throw std::range_error("File not exits, create file before access to dataset");
+    }
     
     file = new H5File( filename, H5F_ACC_RDWR );
     
@@ -257,6 +293,7 @@ Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::s
         
       }catch(FileIException error) {
         pdataset->close(); //.created 20201120 - warning check().//
+        file->close();
       }
       
       

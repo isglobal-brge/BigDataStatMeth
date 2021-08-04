@@ -4,15 +4,7 @@
 \alias{bdRemovelowdata}
 \title{Remove SNPs in hdf5 omic dataset with low data}
 \usage{
-bdRemovelowdata(
-  filename,
-  group,
-  dataset,
-  outgroup,
-  outdataset,
-  pcent,
-  SNPincols
-)
+bdRemovelowdata(filename, group, dataset, outgroup, outdataset, pcent, bycols)
 }
 \arguments{
 \item{filename, }{character array indicating the name of the file to create}
@@ -27,7 +19,7 @@ bdRemovelowdata(
 
 \item{pcent, }{by default pcent = 0.5. Numeric indicating the percentage to be considered to remove SNPs, SNPS with percentage equal or higest will be removed from data}
 
-\item{SNPincols, }{boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.}
+\item{bycols, }{boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.}
 }
 \value{
 Original hdf5 data file with imputed data

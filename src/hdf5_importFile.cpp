@@ -104,16 +104,16 @@ bool manage_Dataset( H5File* file, std::string outGroup, std::string outDataset,
       return(allOk);
    } catch(const std::runtime_error& re) {
       // speciffic handling for runtime_error
-      std::cerr << "Runtime error: " << re.what() << std::endl;
+      ::Rcerr << "Runtime error: " << re.what() << std::endl;
       return(allOk);
    } catch(const std::exception& ex) {
       // speciffic handling for all exceptions extending std::exception, except
       // std::runtime_error which is handled explicitly
-      std::cerr << "Error occurred: " << ex.what() << std::endl;
+      ::Rcerr << "Error occurred: " << ex.what() << std::endl;
       return(allOk);
    } catch(...) {
       // catch any other errors (that we have no information about)
-      std::cerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
+      ::Rcerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
       return(allOk);
    }
 
@@ -338,20 +338,20 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
       // speciffic handling for runtime_error
       datasetOut->close();
        file->close();
-      std::cerr << "Runtime error: " << re.what() << std::endl;
+      ::Rcerr << "Runtime error: " << re.what() << std::endl;
       return(-1);
    } catch(const std::exception& ex) {
       // speciffic handling for all exceptions extending std::exception, except
       // std::runtime_error which is handled explicitly
       // datasetOut->close();
       file->close();
-      std::cerr << "Error occurred: " << ex.what() << std::endl;
+      ::Rcerr << "Error occurred: " << ex.what() << std::endl;
       return(-1);
    } catch(...) {
       // catch any other errors (that we have no information about)
       datasetOut->close();
        file->close();
-      std::cerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
+      ::Rcerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
       return(-1);
    }
    

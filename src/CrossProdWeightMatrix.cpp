@@ -215,16 +215,12 @@ Eigen::MatrixXd Bblock_weighted_crossprod_parallel(const Eigen::MatrixXd& A, Eig
 //' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 //' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 //' 
-//' 
-//' # with Delaeyd Array
-//' AD <- DelayedArray(A)
-//' BD <- DelayedArray(B)
-//' 
 //' # Serial execution
-//' Serie<- Crossprod_Weighted(A, B, paral = FALSE)
+//' Serie <- bdCrossprod_Weighted(A, B, paral = FALSE)
 //' 
 //' # Parallel execution with 2 threads and blocks 256x256
-//' Par_2cor <- Crossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
+//' Par_2cor <- bdCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
+//' 
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, 
