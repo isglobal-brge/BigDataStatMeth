@@ -141,7 +141,7 @@ int hdf5_block_matrix_crossprod_hdf5( std::string matA, IntegerVector sizeA,
 //'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
 //'   
 //'   bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-//'   bdCreate_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+//'   bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
 //'   
 //'   res <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
 //'   res2 <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",

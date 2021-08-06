@@ -59,12 +59,6 @@ n <- 400
 A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 
-blockmult(A, B, 128, TRUE)
-
-# with Delaeyd Array
-AD <- DelayedArray(A)
-BD <- DelayedArray(B)
-
-blockmult_hdf5( AD, BD, 128, TRUE)
+C <- bdblockmult(A, B, 128, TRUE)
 
 }

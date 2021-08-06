@@ -30,7 +30,13 @@
 //'     x = rnorm(n = k)
 //' )
 //' 
-//' d <- blockmult_sparse(x_sparse, y_sparse)
+//' if( isTRUE(file.exists('BasicMatVect.hdf5'))) {
+//'      file.remove('BasicMatVect.hdf5')
+//' }
+//' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
+//' bdAdd_hdf5_matrix(as.matrix(y_sparse), "BasicMatVect.hdf5", "SPARSE", "y_sparse")
+//' 
+//' d <- bdblockmult_sparse_hdf5("BasicMatVect.hdf5", "SPARSE", "x_sparse", "y_sparse")
 //' 
 //' @export
 // [[Rcpp::export]]

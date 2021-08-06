@@ -203,10 +203,10 @@ return(C);
 //' BD <- DelayedArray(B)
 //' 
 //' # Serial execution
-//' Serie<- tCrossprod_Weighted(A, B, paral = FALSE)
+//' Serie<- bdtCrossprod_Weighted(A, B, paral = FALSE)
 //' 
 //' # Parallel execution with 2 threads and blocks 256x256
-//' Par_2cor <- tCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
+//' Par_2cor <- bdtCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdtCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W, 
@@ -396,10 +396,10 @@ A <- matrix(runif(n*n), nrow = n, ncol = n)
 B <- matrix(runif(n*n), nrow = n, ncol = n)
 
 res <- microbenchmark(R <- A%*%B%*%t(A),
-                      Serie<- tCrossprod_Weighted(A,B,paral = FALSE), 
-                      Par_2cor<-tCrossprod_Weighted(A,B,paral = TRUE, block_size = 256, threads = 2),
-                      Par_3cor<-tCrossprod_Weighted(A,B,paral = TRUE, block_size = 256, threads = 3),
-                      Par_4cor<-tCrossprod_Weighted(A,B,paral = TRUE, block_size = 256, threads = 4),
+                      Serie<- bdtCrossprod_Weighted(A,B,paral = FALSE), 
+                      Par_2cor<-bdtCrossprod_Weighted(A,B,paral = TRUE, block_size = 256, threads = 2),
+                      Par_3cor<-bdtCrossprod_Weighted(A,B,paral = TRUE, block_size = 256, threads = 3),
+                      Par_4cor<-bdtCrossprod_Weighted(A,B,paral = TRUE, block_size = 256, threads = 4),
                times = 3 )
 
 res

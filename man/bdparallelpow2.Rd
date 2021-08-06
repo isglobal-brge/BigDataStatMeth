@@ -19,6 +19,6 @@ n <- 100
 x <- rnorm(n)
 
 # with numeric matrix
-parallelpow2(x)
+res <- bdparallelpow2(x)
 
 }

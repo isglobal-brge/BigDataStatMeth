@@ -31,13 +31,7 @@
 #' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 #' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 #' 
-#' blockmult(A, B, 128, TRUE)
-#' 
-#' # with Delaeyd Array
-#' AD <- DelayedArray(A)
-#' BD <- DelayedArray(B)
-#' 
-#' blockmult_hdf5( AD, BD, 128, TRUE)
+#' C <- bdblockmult(A, B, 128, TRUE)
 #' 
 bdblockmult_hdf5 <- function( filename, group, a, b, block_size = 128, paral = FALSE, threads = NULL,  mixblock_size = 128, 
                        outgroup = "OUTPUT")

@@ -16,8 +16,8 @@ PKG_LIBS += -fopenmp
 #..# PKG_LIBS += `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(FLIBS) $(BEACHMAT_LIBS)
 
 # # omp
-# PKG_CFLAGS = $(SHLIB_OPENMP_FFLAGS)
-# PKG_LIBS += $(SHLIB_OPENMP_CFLAGS)
+#..# KG_CFLAGS = $(SHLIB_OPENMP_FFLAGS)
+#..# PKG_LIBS += $(SHLIB_OPENMP_CFLAGS)
 
 # Blas i Lapack
 PKG_LIBS += $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) 
@@ -31,5 +31,16 @@ PKG_LIBS += $(RHDF5_LIBS)
 ## enable compilation with C++11 (or even C++14) where available
 CXX_STD = CXX11
 
-# CXXFLAGS = -g3 -O3 -Wall
-CXXFLAGS= -g3 -O3 -std=c++11 -Wall
+CXXFLAGS = -g3 -O3 -Wall
+# CXXFLAGS += -g3 -O3 -std=c++11 -Wall
+
+
+# Compilation speed up (frontend ccache ) for OS X and Linux
+# VER=
+# CCACHE=ccache
+# CC=$(CCACHE) gcc$(VER)
+# CXX=$(CCACHE) g++$(VER)
+# SHLIB_CXXLD=g++$(VER)
+# FC=ccache gfortran$(VER)
+# #FC=gfortran
+# F77=$(CCACHE) gfortran$(VER)

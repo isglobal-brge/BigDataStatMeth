@@ -40,8 +40,8 @@ AD <- DelayedArray(A)
 BD <- DelayedArray(B)
 
 # Serial execution
-Serie<- tCrossprod_Weighted(A, B, paral = FALSE)
+Serie<- bdtCrossprod_Weighted(A, B, paral = FALSE)
 
 # Parallel execution with 2 threads and blocks 256x256
-Par_2cor <- tCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
+Par_2cor <- bdtCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 }

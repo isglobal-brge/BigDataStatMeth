@@ -19,6 +19,6 @@ n <- 100
 x <- rnorm(n)
 
 # with numeric matrix
-parallelVectorSum(x)
+res <- bdparallelVectorSum(x)
 
 }

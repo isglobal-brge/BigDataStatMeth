@@ -59,7 +59,7 @@ struct Sum : public RcppParallel::Worker
 //' x <- rnorm(n)
 //' 
 //' # with numeric matrix
-//' parallelVectorSum(x)
+//' res <- bdparallelVectorSum(x)
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -110,7 +110,7 @@ struct Pow : public RcppParallel::Worker
 //' x <- rnorm(n)
 //' 
 //' # with numeric matrix
-//' parallelpow2(x)
+//' res <- bdparallelpow2(x)
 //' 
 //' @export
 // [[Rcpp::export]]

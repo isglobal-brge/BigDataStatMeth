@@ -108,6 +108,7 @@ Eigen::SparseMatrix<double> matmult_sparse( Eigen::Map<Eigen::SparseMatrix<doubl
 //' library(Matrix)
 //' library(BigDataStatMeth)
 //' 
+//' k <- 1e3
 //' set.seed(1)
 //' x_sparse <- sparseMatrix(
 //'     i = sample(x = k, size = k),
@@ -121,7 +122,7 @@ Eigen::SparseMatrix<double> matmult_sparse( Eigen::Map<Eigen::SparseMatrix<doubl
 //'     x = rnorm(n = k)
 //' )
 //' 
-//' d <- blockmult_sparse(x_sparse, y_sparse)
+//' d <- bdblockmult_sparse(x_sparse, y_sparse)
 //' 
 //' @export
 // [[Rcpp::export]]

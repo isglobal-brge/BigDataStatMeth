@@ -26,6 +26,7 @@ This function performs a block matrix-matrix multiplication with numeric matrix 
 library(Matrix)
 library(BigDataStatMeth)
 
+k <- 1e3
 set.seed(1)
 x_sparse <- sparseMatrix(
     i = sample(x = k, size = k),
@@ -39,6 +40,6 @@ y_sparse <- sparseMatrix(
     x = rnorm(n = k)
 )
 
-d <- blockmult_sparse(x_sparse, y_sparse)
+d <- bdblockmult_sparse(x_sparse, y_sparse)
 
 }

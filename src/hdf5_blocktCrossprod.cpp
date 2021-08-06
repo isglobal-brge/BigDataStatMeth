@@ -130,16 +130,19 @@ int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA,
 //' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
 //' @examples
 //' 
+//' library(BigDataStatMeth)
+//' library(rhdf5)
+//' 
 //' matA <- matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
 //' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
 //'                  42, 23, 23, 423,1,2), ncol = 5, byrow = TRUE)
 //' 
 //' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-//' bdCreate_hdf5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
+//' bdAdd_hdf5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
 //' 
-//' res <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
+//' res <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
 //'                                         "matA", block_size = 2)
-//' res2 <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", 
+//' res2 <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", 
 //'                                         "matA", "INPUT","matB", block_size = 2)
 //' 
 //' # Open file
@@ -310,60 +313,5 @@ Rcpp::RObject bdtCrossprod_hdf5(std::string filename, const std::string group,
 
 
 /***R
-library(BigDataStatMeth)
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth")
-devtools::document()
-
-
-
-library(DelayedArray)
-library(rhdf5)
-
-setwd( "/Users/mailos/BitDataStatMeth_test/BasicMatVect" )
-
-n <- 7
-m <- 5
-p <- 5
-q <- 12
-
-# R Object
-
-set.seed(222)
-matA <- matrix(runif(n*m), nrow = n, ncol = m)
-matA <- matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4, 42, 23, 23, 423,1,2), ncol = 5, byrow = TRUE)
-
-dim(matA)
-dim(matB)
-# dim(t(matB))
-
-Create_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-Add_HDF5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
-
-res <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 2)
-res2 <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", "matA", "INPUT","matB", block_size = 2)
-
-
-
-# Examine hierarchy before open file
-h5ls("BasicMatVect.hdf5")
-
-# Open file
-h5fdelay = H5Fopen("BasicMatVect.hdf5")
-# Show hdf5 hierarchy (groups)
-h5fdelay
-
-res <- h5fdelay$OUTPUT$tCrossProd_matAxmatA
-res2 <- h5fdelay$OUTPUT$tCrossProd_matAxmatB
-
-all.equal(tcrossprod(matA), res)
-all.equal(tcrossprod(matA, matB), res2)
-
-# Close delayed.hdf5 file
-H5Fclose(h5fdelay)
-
-
-matAxmatB
-
 
 */

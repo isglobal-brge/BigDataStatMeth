@@ -116,19 +116,19 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' x <- matrix(rnorm(m*n), nrow=m, ncol=n)
 //' 
 //' # with numeric matrix
-//' Normalize_Data(x)
+//' bdNormalize_Data(x)
 //' 
 //' # with Delaeyd Array
 //' Dx <- DelayedArray(x)
 //' 
 //' # Center and scale
-//' Normalize_Data(Dx)
+//' bdNormalize_Data(Dx)
 //' 
 //' # Only scale
-//' Normalize_Data(Dx, bcenter = FALSE)
+//' bdNormalize_Data(Dx, bcenter = FALSE)
 //' 
 //' # Only center
-//' Normalize_Data(Dx, bscale = FALSE)
+//' bdNormalize_Data(Dx, bscale = FALSE)
 //' 
 //' @export
 // [[Rcpp::export]]

@@ -43,16 +43,9 @@ library(DelayedArray)
 k <- 100
 n <- 400
 A <- matrix(rnorm(n*k), nrow=n, ncol=k)
-b <- sample(1:100,50, replace = TRUE);w
+B <- sample(1:100,50, replace = TRUE);
 
-blockmult_vector(A, B, 128, TRUE)
+res <- bdblockmult_vector(A, B, 128, TRUE)
 
-# with Delaeyd Array
-AD <- DelayedArray(A)
-bD <- DelayedArray(B)
-
-blockmult_vector( AD, BD, 128, TRUE)
-
-blockmult_vector( A, b, 128, TRUE)
 
 }

@@ -74,7 +74,7 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
 #'   
 #'   bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-#'   bdCreate_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#'   bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
 #'   
 #'   res <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
 #'   res2 <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
@@ -137,7 +137,13 @@ bdCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_
 #'     x = rnorm(n = k)
 #' )
 #' 
-#' d <- blockmult_sparse(x_sparse, y_sparse)
+#' if( isTRUE(file.exists('BasicMatVect.hdf5'))) {
+#'      file.remove('BasicMatVect.hdf5')
+#' }
+#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
+#' bdAdd_hdf5_matrix(as.matrix(y_sparse), "BasicMatVect.hdf5", "SPARSE", "y_sparse")
+#' 
+#' d <- bdblockmult_sparse_hdf5("BasicMatVect.hdf5", "SPARSE", "x_sparse", "y_sparse")
 #' 
 #' @export
 bdblockmult_sparse_hdf5 <- function(filename, group, A, B, outgroup = NULL) {
@@ -160,16 +166,19 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, outgroup = NULL) {
 #' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
 #' @examples
 #' 
+#' library(BigDataStatMeth)
+#' library(rhdf5)
+#' 
 #' matA <- matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
 #' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
 #'                  42, 23, 23, 423,1,2), ncol = 5, byrow = TRUE)
 #' 
 #' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-#' bdCreate_hdf5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#' bdAdd_hdf5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
 #' 
-#' res <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
+#' res <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
 #'                                         "matA", block_size = 2)
-#' res2 <- BigDataStatMeth::tCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", 
+#' res2 <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", 
 #'                                         "matA", "INPUT","matB", block_size = 2)
 #' 
 #' # Open file
@@ -204,9 +213,9 @@ bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block
 #' 
 #' library(BigDataStatMeth)
 #' 
-#' maf_cols = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", 
+#' maf_cols = resc <- bdget_maf_hdf5("/Users/mailos/tmp/test/test.hdf5", 
 #'                                           "test", "mat1", byrows = FALSE )
-#' maf_rows = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", 
+#' maf_rows = resc <- bdget_maf_hdf5("/Users/mailos/tmp/test/test.hdf5", 
 #'                                           "test", "mat1", byrows = TRUE )
 #' 
 #' @export
@@ -319,19 +328,19 @@ bdremove_maf_hdf5 <- function(filename, group, dataset, outgroup, outdataset, ma
 #' x <- matrix(rnorm(m*n), nrow=m, ncol=n)
 #' 
 #' # with numeric matrix
-#' Normalize_Data(x)
+#' bdNormalize_Data(x)
 #' 
 #' # with Delaeyd Array
 #' Dx <- DelayedArray(x)
 #' 
 #' # Center and scale
-#' Normalize_Data(Dx)
+#' bdNormalize_Data(Dx)
 #' 
 #' # Only scale
-#' Normalize_Data(Dx, bcenter = FALSE)
+#' bdNormalize_Data(Dx, bcenter = FALSE)
 #' 
 #' # Only center
-#' Normalize_Data(Dx, bscale = FALSE)
+#' bdNormalize_Data(Dx, bscale = FALSE)
 #' 
 #' @export
 bdNormalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
@@ -425,6 +434,7 @@ bdScalarwproduct <- function(A, w, op) {
 #' library(Matrix)
 #' library(BigDataStatMeth)
 #' 
+#' k <- 1e3
 #' set.seed(1)
 #' x_sparse <- sparseMatrix(
 #'     i = sample(x = k, size = k),
@@ -438,7 +448,7 @@ bdScalarwproduct <- function(A, w, op) {
 #'     x = rnorm(n = k)
 #' )
 #' 
-#' d <- blockmult_sparse(x_sparse, y_sparse)
+#' d <- bdblockmult_sparse(x_sparse, y_sparse)
 #' 
 #' @export
 bdblockmult_sparse <- function(A, B, paral = NULL, threads = NULL) {
@@ -482,13 +492,14 @@ bdblockmult_sparse <- function(A, B, paral = NULL, threads = NULL) {
 #' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 #' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 #' 
-#' blockmult(A,B,128, TRUE)
+#' C <- blockmult(A,B,128, TRUE)
 #' 
 #' # with Delaeyd Array
 #' AD <- DelayedArray(A)
 #' BD <- DelayedArray(B)
 #' 
-#' blockmult(AD,BD,128, TRUE)
+#' CD <- blockmult(AD,BD,128, TRUE)
+#' 
 #' @export
 blockmult <- function(a, b, block_size = NULL, paral = NULL, threads = NULL, bigmatrix = NULL, mixblock_size = NULL, outfile = NULL, onmemory = NULL) {
     .Call('_BigDataStatMeth_blockmult', PACKAGE = 'BigDataStatMeth', a, b, block_size, paral, threads, bigmatrix, mixblock_size, outfile, onmemory)
@@ -823,10 +834,10 @@ bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE) {
 #' BD <- DelayedArray(B)
 #' 
 #' # Serial execution
-#' Serie<- tCrossprod_Weighted(A, B, paral = FALSE)
+#' Serie<- bdtCrossprod_Weighted(A, B, paral = FALSE)
 #' 
 #' # Parallel execution with 2 threads and blocks 256x256
-#' Par_2cor <- tCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
+#' Par_2cor <- bdtCrossprod_Weighted(A, B, paral = TRUE, block_size = 256, threads = 2)
 #' @export
 bdtCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads = NULL) {
     .Call('_BigDataStatMeth_bdtCrossprod_Weighted', PACKAGE = 'BigDataStatMeth', A, W, block_size, paral, threads)
@@ -844,7 +855,7 @@ bdtCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads
 #' x <- rnorm(n)
 #' 
 #' # with numeric matrix
-#' parallelVectorSum(x)
+#' res <- bdparallelVectorSum(x)
 #' 
 #' @export
 bdparallelVectorSum <- function(x) {
@@ -863,7 +874,7 @@ bdparallelVectorSum <- function(x) {
 #' x <- rnorm(n)
 #' 
 #' # with numeric matrix
-#' parallelpow2(x)
+#' res <- bdparallelpow2(x)
 #' 
 #' @export
 bdparallelpow2 <- function(x) {

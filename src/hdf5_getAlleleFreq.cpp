@@ -40,9 +40,9 @@ double calc_freq(NumericVector x)
 //' 
 //' library(BigDataStatMeth)
 //' 
-//' maf_cols = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", 
+//' maf_cols = resc <- bdget_maf_hdf5("/Users/mailos/tmp/test/test.hdf5", 
 //'                                           "test", "mat1", byrows = FALSE )
-//' maf_rows = resc <- bdget_allele_freq_hdf5("/Users/mailos/tmp/test/test.hdf5", 
+//' maf_rows = resc <- bdget_maf_hdf5("/Users/mailos/tmp/test/test.hdf5", 
 //'                                           "test", "mat1", byrows = TRUE )
 //' 
 //' @export
