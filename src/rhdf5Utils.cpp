@@ -584,7 +584,7 @@ extern "C" {
         IntType datatype( PredType::NATIVE_INT );
         DataSet dataset = file->createDataSet( CDatasetName, datatype, dataspace, cparms);
         dataset.close();
-      } else if( strdatatype == "char" | strdatatype == "character") {
+      } else if( strdatatype == "char" || strdatatype == "character") {
         
         
         
@@ -881,25 +881,28 @@ extern "C" {
         
         if(is<IntegerVector>(DatasetValues) || is<LogicalVector>(DatasetValues) ) 
         {
-          int vectHiCValues[dims[0]];
+          std::vector<int> vectHiCValues(dims[0]);
+          //..// int vectHiCValues[dims[0]];
           for(int i=0;i<dims[0]; i++)
             vectHiCValues[i] = as<IntegerVector>(DatasetValues)(i);
           
           DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_INT, dataspace);
           dataset = file->openDataSet(CDatasetName);
-          dataset.write( vectHiCValues, PredType::NATIVE_INT);
+          dataset.write( vectHiCValues.data(), PredType::NATIVE_INT);
           dataspace.close();
           dataset.close();
         } 
         else if(is<NumericVector>(DatasetValues) ) 
         {
-          double vectValues[dims[0]];
+          std::vector<double> vectValues(dims[0]);
+          //..// double vectValues[dims[0]];
           for(int i=0;i<dims[0]; i++)
             vectValues[i] = as<NumericVector>(DatasetValues)(i);
           
           DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
           dataset = file->openDataSet(CDatasetName);
-          dataset.write(vectValues, PredType::NATIVE_DOUBLE);
+          //..// dataset.write(vectValues, PredType::NATIVE_DOUBLE);
+          dataset.write( vectValues.data() , PredType::NATIVE_DOUBLE);
           dataspace.close();
           dataset.close();
         } 
@@ -989,25 +992,30 @@ extern "C" {
         
         if(is<IntegerVector>(DatasetValues) || is<LogicalVector>(DatasetValues) ) 
         {
-          int vectHiCValues[dims[0]];
+          //..// int vectHiCValues[dims[0]];
+          std::vector<int> vectHiCValues(dims[0]);
+          
           for(int i=0;i<dims[0]; i++)
             vectHiCValues[i] = as<IntegerVector>(DatasetValues)(i);
           
           DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_INT, dataspace);
           dataset = file->openDataSet(CDatasetName);
-          dataset.write( vectHiCValues, PredType::NATIVE_INT);
+          //..// dataset.write( vectHiCValues, PredType::NATIVE_INT);
+          dataset.write( vectHiCValues.data(), PredType::NATIVE_INT);
           dataspace.close();
           dataset.close();
         } 
         else if(is<NumericVector>(DatasetValues) ) 
         {
-          double vectValues[dims[0]];
+          //..// double vectValues[dims[0]];
+          std::vector<double> vectValues(dims[0]);
           for(int i=0;i<dims[0]; i++)
             vectValues[i] = as<NumericVector>(DatasetValues)(i);
           
           DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
           dataset = file->openDataSet(CDatasetName);
-          dataset.write(vectValues, PredType::NATIVE_DOUBLE);
+          //..// dataset.write(vectValues, PredType::NATIVE_DOUBLE);
+          dataset.write(vectValues.data(), PredType::NATIVE_DOUBLE);
           dataspace.close();
           dataset.close();
         } 
@@ -1122,25 +1130,29 @@ extern "C" {
         
         if(is<IntegerVector>(DatasetValues) || is<LogicalVector>(DatasetValues) ) 
         {
-          int vectHiCValues[dims[0]];
+          //..// int vectHiCValues[dims[0]];
+          std::vector<int> vectHiCValues(dims[0]);
           for(int i=0;i<dims[0]; i++)
             vectHiCValues[i] = as<IntegerVector>(DatasetValues)(i);
           
           DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_INT, dataspace);
           dataset = file->openDataSet(CDatasetName);
-          dataset.write( vectHiCValues, PredType::NATIVE_INT);
+          //..// dataset.write( vectHiCValues, PredType::NATIVE_INT);
+          dataset.write( vectHiCValues.data(), PredType::NATIVE_INT);
           dataspace.close();
           dataset.close();
         } 
         else if(is<NumericVector>(DatasetValues) ) 
         {
-          double vectValues[dims[0]];
+          //..// double vectValues[dims[0]];
+          std::vector<double> vectValues(dims[0]);
           for(int i=0;i<dims[0]; i++)
             vectValues[i] = as<NumericVector>(DatasetValues)(i);
           
           DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
           dataset = file->openDataSet(CDatasetName);
-          dataset.write(vectValues, PredType::NATIVE_DOUBLE);
+          //..// dataset.write(vectValues, PredType::NATIVE_DOUBLE);
+          dataset.write(vectValues.data(), PredType::NATIVE_DOUBLE);
           dataspace.close();
           dataset.close();
         } 

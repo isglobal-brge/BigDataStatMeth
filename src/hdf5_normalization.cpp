@@ -146,8 +146,8 @@ Rcpp::RObject bdNormalize_hdf5( std::string filename, const std::string group, s
     
     // Store center and scale for each column
     // Create dataset and store data
-    write_HDF5_matrix_ptr(file, strgroupout + "/"+dataset+".mean", wrap(datanormal.row(0)));
-    write_HDF5_matrix_ptr(file, strgroupout + "/"+dataset+".scale", wrap(datanormal.row(1)));
+    write_HDF5_matrix_ptr(file, strgroupout + "/"+dataset + ".mean", wrap(datanormal.row(0)));
+    write_HDF5_matrix_ptr(file, strgroupout + "/"+dataset + ".scale", wrap(datanormal.row(1)));
     
 
     for(hsize_t i=0; i*blocksize <= dims_out[0] ; i++)

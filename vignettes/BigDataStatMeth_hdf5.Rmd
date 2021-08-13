@@ -345,7 +345,6 @@ AxBNOBig <- bdblockmult(Abig, Bbig, bigmatrix = 100000)
 
 # We consider a big matrix if number of rows or columns are > 500
 AxBBig3000 <- bdblockmult(Abig, Bbig, bigmatrix = 500)
-
 ```
 
 Depending on whether the calculation has been performed directly in memory or from an hdf5 file, the returned object type is different.
@@ -362,14 +361,14 @@ if we work in disk, we return a list with the filnme and the dataset that contai
 To work in R with hdf5 data object we can use the `rhdf5` function library from `bioconductor`, we can open file and read all the content
 
 ```{r blockmultresfile}
-
 h5data <- H5Fopen(AxBBig3000$file)
 
-# We can get wher data is stored
+# We can get where data is stored
 AxBBig3000$dataset
 
-# We observe thad the data is in folder OUTPUT dataset C
+# We observe that the data is in folder OUTPUT dataset C
 reshdf5 <- h5data$OUTPUT$C
+
 reshdf5[1:5,1:5]
 
 all.equal(reshdf5, AxBNOBig)
@@ -405,13 +404,13 @@ Now, we compare the obtained results with `bdblockmult_hdf5` and `bdblockmult` f
 # Get content
 h5data <- H5Fopen(res$file)
 
-# We can get wher data is stored
+# We can get where data is stored
 res$dataset
 
 # We get the results with bdblockmult (previous step)
 resblockmult <- h5data$OUTPUT$C
 
-# And the results obtained from bdblockmult_hdf5
+# and the results obtained from bdblockmult_hdf5
 resblockmult_hdf5 <- h5data$HDF5_RES$A_x_B
 resblockmult_hdf5[1:5,1:5]
 
@@ -610,8 +609,7 @@ This method is implemented in `bdSVD_hdf5` function, this function works directl
 We have to indicate the file to work with, the dataset name and the group where the dataset is located :
 
 ```{r BlockSVDNorm}
-
-# Create dataframe data with 'odata' matrix in delayed.hdf5 file at OMIC group
+# Create dataframe data with 'odata' matrix in delayed hdf5 file at OMIC group
 set.seed(5234)
 n <- 150000
 m <- 50
@@ -625,9 +623,9 @@ svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data")
 # with R implementation from data in memory
 test <- H5Fopen("delayed.hdf5")
 # get results svd (d)
-svd_hdf5_d <- test$SVD$data$d[1:7] 
+svd_hdf5_d <- test$SVD$data$d[1:7]
 # get data
-omdata <- test$OMICS$data 
+omdata <- test$OMICS$data
 h5closeAll()
 
 # Results in hdf5 file for d
@@ -662,12 +660,11 @@ In the SVD decomposition by blocks we can indicate the number of decomposition l
 
 ```{r BlockSVDk4}
 # Block decomposition with 1 level and 4 local SVDs at each level
-svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", q=1, k=4 )
-
+svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", q=1, k=4)
 
 # get results svd (d)
 fprova <- H5Fopen("delayed.hdf5")
-  svd_hdf5_d <- fprova$SVD$data$d[1:7] 
+  svd_hdf5_d <- fprova$SVD$data$d[1:7]
 h5closeAll()
 
 # SVD (d) from file - data not normalized
@@ -676,7 +673,6 @@ svd_hdf5_d
 # with R implementation from data in memory
 svd <- svd(scale(omdata))
 svd$d[1:7]
-
 ```
 
 

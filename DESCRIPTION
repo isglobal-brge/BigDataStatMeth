@@ -1,13 +1,13 @@
 Package: BigDataStatMeth
 Type: Package
-Title: BigDataStatMeth - Statistical Methods and Algorithms for Big Data
-Version: 0.99.1
-Date: 2018-09-07
-Author: c(person("Dolors", "Pelegri-Siso", , "dolors.pelegri@isglobal.org", role = "aut"),
-  person("Juan R.", "Gonzalez", ,"juanr.gonzalez@isglobal.org", role = c("aut", "cre")))
-Maintainer: Juan R Gonzalez <juanr.gonzalez@isglobal.org>
-Description: This package implements basic Algebra methods using parallel 
-    algorithms to be used in big data problems such as omic data analyses. 
+Title: Statistical Methods and Algorithms for Big Data
+Version: 0.99.4
+Date: 2021-08-11
+Authors@R: c(person("Dolors", "Pelegri-Siso", , "dolors.pelegri@isglobal.org", role = c("aut", "cre")),
+  person("Juan R.", "Gonzalez", ,"juanr.gonzalez@isglobal.org", role = c("aut")))
+Maintainer: Dolors Pelegri-Siso <dolors.pelegri@isglobal.org>
+Description: BigDataStatMeth implements basic Algebra methods using parallel 
+    algorithms to be used in big data problems such as omics data analyses. 
     The functions will consider as input an object of class DelayedArray 
     which is an array-like object (typically an on-disk object) specifically
     designed for Bioconductor.
@@ -16,15 +16,15 @@ Depends:
   R (>= 3.6.0)
 Imports: 
     Rcpp (>= 1.0.6), 
-    RcppEigen (>= 0.3.3.5.0), 
-    RcppParallel (>= 5.0.2)
+    RcppParallel (>= 5.0.2),
+    RcppEigen (>= 0.3.3.5.0)
 LinkingTo: 
     Rcpp,
     RcppEigen,
+    RcppParallel,
     beachmat,
     Rhdf5lib,
     RSpectra,
-    RcppParallel,
     BH
 Suggests: 
     HDF5Array,
@@ -33,7 +33,9 @@ Suggests:
     BiocStyle,
     knitr,
     rhdf5,
-    rmarkdown
+    rmarkdown,
+    ggplot2,
+    microbenchmark
 SystemRequirements: 
     GNU make, 
     C++11

@@ -78,7 +78,10 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
       // Declare matrix variables
       int n = a.rows();
       int nrhs = b.cols();
-      int ipiv[n];
+      
+      std::vector<int> ipiv(n);
+      //..// int ipiv[n];
+      
       int lwork = std::max( 1, n );
       double work[lwork];
       int lda = std::max( 1, n );
@@ -89,11 +92,11 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
       if( a == a.transpose()  )
       {
          // dsysv_( char* UPLO, int* N , int* NRHS, double* A, int* LDA, int* IPIV, double* B, int* LDB, double* WORK, int* LWORK, int* INFO);
-         dsysv_( & Uchar, &n, &nrhs, a.data(), &lda, ipiv, b.data(), &ldb, work, &lwork, &info);
+         dsysv_( & Uchar, &n, &nrhs, a.data(), &lda, ipiv.data(), b.data(), &ldb, work, &lwork, &info);
       } else {
          
          // dgesv( int N, int NRHS, double A, int LDA, int IPIV, double B, int LDB, int INFO);
-         dgesv_( &n, &nrhs, a.data(), &lda, ipiv, b.data(), &ldb, &info );
+         dgesv_( &n, &nrhs, a.data(), &lda, ipiv.data(), b.data(), &ldb, &info );
       }
       
    } catch(std::exception &ex) {
@@ -126,7 +129,7 @@ m <- 500
 A <- matrix(runif(n*m), nrow = n, ncol = m)
 B <- matrix(runif(n*2), nrow = n)
 
-(A%*%X)[1:5,]
+(A%*%B)[1:5,]
 B[1:5,]
 
    
