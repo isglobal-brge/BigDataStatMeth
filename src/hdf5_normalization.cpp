@@ -192,25 +192,25 @@ Rcpp::RObject bdNormalize_hdf5( std::string filename, const std::string group, s
       write_HDF5_matrix_subset_v2(file, pdatasetout, offset, count, block, stride, wrap(X));
       
     }
-  } catch( FileIException error ) { // catch failure caused by the H5File operations
+  } catch( FileIException& error ) { // catch failure caused by the H5File operations
     file->close();
     pdatasetin->close();
     pdatasetout->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (File IException)" );
     return wrap(-1);
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
     file->close();
     pdatasetin->close();
     pdatasetout->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (DataSet IException)" );
     return wrap(-1);
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+  } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
     file->close();
     pdatasetin->close();
     pdatasetout->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (DataSpace IException)" );
     return wrap(-1);
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+  } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
     file->close();
     pdatasetin->close();
     pdatasetout->close();

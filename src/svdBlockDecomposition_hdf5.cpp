@@ -166,27 +166,27 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
       
     }
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     if (bcenter==true || bscale==true){ normalizedData->close(); }
     file->close();
     ::Rf_error( "c++ exception First_level_SvdBlock_decomposition_hdf5 (File IException)" );
     return -1;
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     if (bcenter==true || bscale==true){ normalizedData->close(); }
     file->close();
     ::Rf_error( "c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSet IException)" );
     return -1;
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     if (bcenter==true || bscale==true){ normalizedData->close(); }
     file->close();
     ::Rf_error( "c++ exception First_level_SvdBlock_decomposition_hdf5 (Group IException)" );
     return -1;
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     if (bcenter==true || bscale==true){ normalizedData->close(); }
     file->close();
     ::Rf_error( "c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSpace IException)" );
     return -1;
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     if (bcenter==true || bscale==true){ normalizedData->close(); }
     file->close();
     ::Rf_error( "c++ exception First_level_SvdBlock_decomposition_hdf5 (Data TypeIException)" );

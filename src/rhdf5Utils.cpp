@@ -45,19 +45,19 @@ bool RemoveFile(std::string filename)
       return 0;
     return 0;
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     ::Rf_error( "c++ exception RemoveFile (File IException)" );
     return -1;
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception RemoveFile (DataSet IException)" );
     return -1;
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     ::Rf_error( "c++ exception RemoveFile (Group IException)" );
     return -1;
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception RemoveFile (DataSpace IException)" );
     return -1;
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception RemoveFile (Data TypeIException)" );
     return -1;
   }
@@ -82,19 +82,19 @@ extern "C" {
       
       file.close();
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception create_HDF5_group (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception create_HDF5_group (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception create_HDF5_group (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_group (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_group (Data TypeIException)" );
       return -1;
     }
@@ -173,19 +173,19 @@ extern "C" {
       unlimDataset->close();
 
     
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception join_datasets (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception join_datasets (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception join_datasets (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception join_datasets (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception join_datasets (Data TypeIException)" );
       return -1;
     }
@@ -206,19 +206,19 @@ extern "C" {
       if(!pathExists( file->getId(), strgroup)) 
         file->createGroup("/"+ mGroup);
 
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception create_HDF5_group_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception create_HDF5_group_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception create_HDF5_group_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_group_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_group_ptr (Data TypeIException)" );
       return -1;
     }
@@ -237,19 +237,19 @@ extern "C" {
       if(pathExists( file->getId(), element)) 
         bexists = true;
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (Data TypeIException)" );
       return -1;
     }
@@ -278,19 +278,19 @@ extern "C" {
       }
         
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (Data TypeIException)" );
       return -1;
     }
@@ -314,19 +314,19 @@ extern "C" {
       if(result<0)
         bremok = false;
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception remove_HDF5_element_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception remove_HDF5_element_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception remove_HDF5_element_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception remove_HDF5_element_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception remove_HDF5_element_ptr (Data TypeIException)" );
       return -1;
     }
@@ -357,19 +357,19 @@ extern "C" {
       }
       
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (Data TypeIException)" );
       return -1;
     }
@@ -411,19 +411,19 @@ extern "C" {
       dataspace.close();
       file.close();
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception create_HDF5_dataset (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception create_HDF5_dataset (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception create_HDF5_dataset (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_dataset (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_dataset (Data TypeIException)" );
       return -1;
     }
@@ -460,23 +460,23 @@ extern "C" {
       
       dataspace.close();
 
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_dataset_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_dataset_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_dataset_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_dataset_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_dataset_ptr (Data TypeIException)" );
       return -1;
@@ -526,23 +526,23 @@ extern "C" {
 
       dataspace.close();
 
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       file->close();
       ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (Data TypeIException)" );
       return -1;
@@ -613,19 +613,19 @@ extern "C" {
       
       dataspace.close();
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception create_HDF5_unlimited_vector_dataset_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception create_HDF5_unlimited_vector_dataset_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception create_HDF5_unlimited_vector_dataset_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_unlimited_vector_dataset_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception create_HDF5_unlimited_vector_dataset_ptr (Data TypeIException)" );
       return -1;
     }
@@ -663,19 +663,19 @@ extern "C" {
 
       dataset->extend( size );
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (Data TypeIException)" );
       return -1;
     }
@@ -716,27 +716,27 @@ extern "C" {
 
       dataset->extend( size );
 
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       dataset->close();
       file->close();
       ::Rf_error( "c++ exception extend_HDF5_vector_subset_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       dataset->close();
       file->close();
       ::Rf_error( "c++ exception extend_HDF5_vector_subset_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       dataset->close();
       file->close();
       ::Rf_error( "c++ exception extend_HDF5_vector_subset_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       dataset->close();
       file->close();
       ::Rf_error( "c++ exception extend_HDF5_vector_subset_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       dataset->close();
       file->close();
       ::Rf_error( "c++ exception extend_HDF5_vector_subset_ptr (Data TypeIException)" );
@@ -798,19 +798,19 @@ extern "C" {
       
       file.close();
     
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_HDF5_matrix (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception write_HDF5_matrix (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception write_HDF5_matrix (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix (Data TypeIException)" );
       return -1;
     }
@@ -906,19 +906,19 @@ extern "C" {
 
       } 
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_HDF5_matrix_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception write_HDF5_matrix_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception write_HDF5_matrix_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_ptr (Data TypeIException)" );
       return -1;
     }
@@ -1014,19 +1014,19 @@ extern "C" {
         
       } 
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_HDF5_matrix_transposed_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception write_HDF5_matrix_transposed_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception write_HDF5_matrix_transposed_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_transposed_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_transposed_ptr (Data TypeIException)" );
       return -1;
     }
@@ -1149,19 +1149,19 @@ extern "C" {
         Rcpp::Rcout<<"\n\n Unknown data type - Dataset not created !!\n";
       }
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (Data TypeIException)" );
       return -1;
     }
@@ -1361,19 +1361,19 @@ extern "C" {
         Rcpp::Rcout<<"\n\n Unknown data type - Dataset not created !!\n";
       }
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (Data TypeIException)" );
       return -1;
     }
@@ -1447,19 +1447,19 @@ extern "C" {
         dataspace.close();  
       } 
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (Data TypeIException)" );
       return -1;
     }
@@ -1539,13 +1539,13 @@ extern "C" {
       file.close();
       
     } 
-    catch(FileIException error) { // catch failure caused by the H5File operations
+    catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_HDF5_matrix_subset (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception write_HDF5_matrix_subset (DataSet IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_HDF5_matrix_subset (DataSpace IException)" );
       return -1;
     }
@@ -1678,16 +1678,16 @@ extern "C" {
       }
       
     } 
-    catch(FileIException error) { // catch failure caused by the H5File operations
+    catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_hdf5_string_vector (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception write_hdf5_string_vector (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception write_hdf5_string_vector (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_hdf5_string_vector (DataSpace IException)" );
       return -1;
     }
@@ -1732,19 +1732,19 @@ extern "C" {
         Rcpp::Rcout<<"Info : no colnames to save";
       
 
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Data TypeIException)" );
       return -1;
     }
@@ -1806,19 +1806,19 @@ extern "C" {
         dataset->read( rdatablock, PredType::NATIVE_DOUBLE, memspace, dataspace );
       
       dataspace.close();
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (Data TypeIException)" );
       return -1;
     }
@@ -1888,19 +1888,19 @@ extern "C" {
       
       // normalize = meansd;
       
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (Data TypeIException)" );
       return -1;
     }
@@ -1973,19 +1973,19 @@ StringVector get_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::
     dataspace.close();
     
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     ::Rf_error( "c++ exception get_hdf5_matrix_dimnames (File IException)" );
     return -1;
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception get_hdf5_matrix_dimnames (DataSet IException)" );
     return -1;
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     ::Rf_error( "c++ exception get_hdf5_matrix_dimnames (Group IException)" );
     return -1;
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception get_hdf5_matrix_dimnames (DataSpace IException)" );
     return -1;
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception get_hdf5_matrix_dimnames (Data TypeIException)" );
     return -1;
   }
@@ -2014,19 +2014,19 @@ int Create_hdf5_matrix_unlimited_ptr( H5File* file, const H5std_string dataset ,
     
     
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_unlimited_ptr (File IException)" );
     return -1;
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_unlimited_ptr (DataSet IException)" );
     return -1;
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_unlimited_ptr (Group IException)" );
     return -1;
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_unlimited_ptr (DataSpace IException)" );
     return -1;
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_unlimited_ptr (Data TypeIException)" );
     return -1;
   }
@@ -2156,19 +2156,19 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
     //..// rownames = get_hdf5_matrix_dimnames(&file, strdataset, 1);
     //..// colnames = get_hdf5_matrix_dimnames(&file, strsubgroup, strdataset, 2);
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (File IException)" );
     return(wrap(-1));
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (DataSet IException)" );
     return(wrap(-1));
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (Group IException)" );
     return(wrap(-1));
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (DataSpace IException)" );
     return(wrap(-1));
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (Data TypeIException)" );
     return(wrap(-1));
   }
@@ -2268,19 +2268,19 @@ Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::strin
 
     
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (File IException)" );
     return(wrap(-1));
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (DataSet IException)" );
     return(wrap(-1));
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (Group IException)" );
     return(wrap(-1));
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (DataSpace IException)" );
     return(wrap(-1));
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (Data TypeIException)" );
     return(wrap(-1));
   }
@@ -2327,19 +2327,19 @@ Rcpp::RObject bdRemove_hdf5_element(std::string filename, std::string element)
       
     file->close();
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     ::Rf_error( "c++ exception Remove_hdf5_element (File IException)" );
     return(wrap(-1));
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception Remove_hdf5_element (DataSet IException)" );
     return(wrap(-1));
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     ::Rf_error( "c++ exception Remove_hdf5_element (Group IException)" );
     return(wrap(-1));
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Remove_hdf5_element (DataSpace IException)" );
     return(wrap(-1));
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Remove_hdf5_element (Data TypeIException)" );
     return(wrap(-1));
   }
@@ -2381,19 +2381,19 @@ Rcpp::RObject bdRemove_hdf5_element(std::string filename, std::string element)
           datasetnames.push_back(memb_name);
         
       }
-    } catch(FileIException error) { // catch failure caused by the H5File operations
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception get_dataset_names_from_group (File IException)" );
       return -1;
-    } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception get_dataset_names_from_group (DataSet IException)" );
       return -1;
-    } catch(GroupIException error) { // catch failure caused by the Group operations
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
       ::Rf_error( "c++ exception get_dataset_names_from_group (Group IException)" );
       return -1;
-    } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception get_dataset_names_from_group (DataSpace IException)" );
       return -1;
-    } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       ::Rf_error( "c++ exception get_dataset_names_from_group (Data TypeIException)" );
       return -1;
     }
@@ -2422,19 +2422,19 @@ StringVector get_dataset_names_from_dataset_ptr( DataSet* dataset)
     
     datasetnames.push_back(s);
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     ::Rf_error( "c++ exception get_dataset_names_from_dataset_ptr (File IException)" );
     return -1;
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception get_dataset_names_from_dataset_ptr (DataSet IException)" );
     return -1;
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     ::Rf_error( "c++ exception get_dataset_names_from_dataset_ptr (Group IException)" );
     return -1;
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception get_dataset_names_from_dataset_ptr (DataSpace IException)" );
     return -1;
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception get_dataset_names_from_dataset_ptr (Data TypeIException)" );
     return -1;
   }

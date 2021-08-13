@@ -18,7 +18,7 @@ This package implements basic Algebra methods using parallel algorithms to be us
      - Data reduction (Principal Component Analysis, Canonical Correlation, Partial Least Squares, ...)
      - Linear regression models
      - Penalized methods for linear regression (Lasso, Elastic Net, ...)
-     - Omic data integration (Penalized Generalized Canonical Correlation)
+     - Omics data integration (Penalized Generalized Canonical Correlation)
      - Supervised and non-supervised algorithms
 
 

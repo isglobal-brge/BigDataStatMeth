@@ -69,13 +69,13 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
     write_HDF5_matrix_ptr(file, strlocpcadataset+"/cumvar", wrap(cumsum_hdf5(vvar)));
     
 
-  }catch( FileIException error ) {
+  }catch( FileIException& error ) {
     ::Rf_error( "c++ exception (File IException )" );
     return -1;
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception (DataSet IException )" );
     return -1;
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+  } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception (DataSpace IException )" );
     return -1;
   } 
@@ -174,13 +174,13 @@ int get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
     write_HDF5_matrix_transposed_ptr(file, strlocpcadataset+"/var.cos2", wrap(var_cos2.transpose()));
 
     
-  }catch( FileIException error ) {
+  }catch( FileIException& error ) {
     ::Rf_error( "c++ exception (File IException )" );
     return -1;
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception (DataSet IException )" );
     return -1;
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+  } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception (DataSpace IException )" );
     return -1;
   } 
@@ -314,19 +314,19 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
     file->close();
     forward_exception_to_r(ex);
     return(wrap(-1));
-  }catch( FileIException error ) {
+  }catch( FileIException& error ) {
     file->close();
     ::Rf_error( "c++ exception bdPCA_hdf5 (File IException)" );
     return(wrap(-1));
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
     file->close();
     ::Rf_error( "c++ exception bdPCA_hdf5 (DataSet IException)" );
     return(wrap(-1));
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+  } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
     file->close();
     ::Rf_error( "c++ exception bdPCA_hdf5 (DataSpace IException)" );
     return(wrap(-1));
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+  } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
     file->close();
     ::Rf_error( "c++ exception bdPCA_hdf5 (DataType IException)" );
     return(wrap(-1));

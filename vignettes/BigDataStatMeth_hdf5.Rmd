@@ -15,9 +15,9 @@ author:
 date: "`r Sys.Date()`"
 package: "`r pkg_ver('BigDataStatMeth')`"
 output:
-  BiocStyle::html_document: default
   BiocStyle::pdf_document:
     toc_float: true
+  BiocStyle::html_document: default
 abstract: |
   Description of functions to perform matrix operations, algebra and basic statistical analyses using HDF5 data files.
 vignette: |
@@ -275,7 +275,7 @@ You can easily change your text files to HDF5 using the function `bdImport_text_
 
 - This function **only allows to import numeric data except for rownames and columnames where character are allowed**. 
 
-- Data can be delimited by different characters. By default, we use tabs ("\t") but it can be changed easily with `sep` parameter.
+- Data can be delimited by different characters. By default, we use tabs ("\\t") but it can be changed easily with `sep` parameter.
 
 In this example we convert the "colesterol.csv" file and we will save the data to a file 'colesterol_file.hdf5' under the group 'COLESTEROLGROUP' in the dataset 'COLESTEROLDATASET'. In this example the text file contains column names so we set the parameter `header = TRUE`. 
 
@@ -330,7 +330,7 @@ In this section, different products of matrices and vectors are introduced. The 
 
 To work with big matrices `bdblockmult()` saves matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument.
 
-In that case, by default the function `bdblockmult`, by default, this function creates the *tmp_blockmult.hdf5* file with two groups the *INPUT* group with datasets *A* and *B* with original matrices and the *OUTPUT* group with dataset *C* with the results. The file name can be set with `outputfile` parameter.
+In that case, by default the function `bdblockmult()`, by default, this function creates the *tmp_blockmult.hdf5* file with two groups the *INPUT* group with datasets *A* and *B* with original matrices and the *OUTPUT* group with dataset *C* with the results. The file name can be set with `outputfile` parameter.
 
 
 ```{r blockmultbm1}

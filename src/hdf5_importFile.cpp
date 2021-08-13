@@ -93,13 +93,13 @@ bool manage_Dataset( H5File* file, std::string outGroup, std::string outDataset,
          remove_HDF5_multiple_elements_ptr(file, outGroup + "/" + strGroupDimnames, dimdatasets );
       }
       
-   } catch( FileIException error ) { // catch failure caused by the H5File operations
+   } catch( FileIException& error ) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception Convert_text_to_HDF5 (File IException)" );
       return(allOk);
-   } catch( GroupIException error ) { // catch failure caused by the DataSet operations
+   } catch( GroupIException& error ) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception Convert_text_to_HDF5 (Group IException)" );
       return(allOk);
-   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
       ::Rf_error( "c++ exception Convert_text_to_HDF5 (DataSet IException)" );
       return(allOk);
    } catch(const std::runtime_error& re) {
@@ -319,17 +319,17 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
          warning("File doesn't exists, please, review location");
       }
       
-   } catch( FileIException error ) { // catch failure caused by the H5File operations
+   } catch( FileIException& error ) { // catch failure caused by the H5File operations
       datasetOut->close();
       file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (File IException)" );
       return(-1);
-   } catch( GroupIException error ) { // catch failure caused by the DataSet operations
+   } catch( GroupIException& error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (Group IException)" );
       return(-1);
-   } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (DataSet IException)" );

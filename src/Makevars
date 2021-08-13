@@ -33,14 +33,3 @@ CXX_STD = CXX11
 
 CXXFLAGS = -g3 -O3 -Wall
 # CXXFLAGS += -g3 -O3 -std=c++11 -Wall
-
-
-# Compilation speed up (frontend ccache ) for OS X and Linux
-# VER=
-# CCACHE=ccache
-# CC=$(CCACHE) gcc$(VER)
-# CXX=$(CCACHE) g++$(VER)
-# SHLIB_CXXLD=g++$(VER)
-# FC=ccache gfortran$(VER)
-# #FC=gfortran
-# F77=$(CCACHE) gfortran$(VER)

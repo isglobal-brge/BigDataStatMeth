@@ -182,23 +182,23 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
     
     outdataset->close();
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     outdataset->close();
     file->close();
     ::Rf_error( "c++ exception Impute_snp_HDF5 (File IException)" );
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     outdataset->close();
     file->close();
     ::Rf_error( "c++ exception Impute_snp_HDF5 (DataSet IException)" );
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     outdataset->close();
     file->close();
     ::Rf_error( "c++ exception Impute_snp_HDF5 (Group IException)" );
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     outdataset->close();
     file->close();
     ::Rf_error( "c++ exception Impute_snp_HDF5 (DataSpace IException)" );
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     outdataset->close();
     file->close();
     ::Rf_error( "c++ exception Impute_snp_HDF5 (Data TypeIException)" );
@@ -291,7 +291,7 @@ Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::s
         
         Impute_snp_HDF5( file, pdataset, bcols, stroutdata);
         
-      }catch(FileIException error) {
+      }catch(FileIException& error) {
         pdataset->close(); //.created 20201120 - warning check().//
         file->close();
       }
@@ -305,7 +305,7 @@ Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::s
     
     
   }
-  catch( FileIException error ) { // catch failure caused by the H5File operations
+  catch( FileIException& error ) { // catch failure caused by the H5File operations
     //.commented 20201120 - warning check().// pdataset->close();
     file->close();
     ::Rf_error( "c++ exception (File IException)" );

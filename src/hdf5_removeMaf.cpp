@@ -114,23 +114,23 @@ int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string st
       unlimDataset->close();
     }
     
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     unlimDataset->close();
     ::Rf_error( "c++ exception Remove_MAF_HDF5 (File IException)" );
     return -1;
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     unlimDataset->close();
     ::Rf_error( "c++ exception Remove_MAF_HDF5 (DataSet IException)" );
     return -1;
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     unlimDataset->close();
     ::Rf_error( "c++ exception Remove_MAF_HDF5 (Group IException)" );
     return -1;
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     unlimDataset->close();
     ::Rf_error( "c++ exception Remove_MAF_HDF5 (DataSpace IException)" );
     return -1;
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     unlimDataset->close();
     ::Rf_error( "c++ exception Remove_MAF_HDF5 (Data TypeIException)" );
     return -1;
@@ -240,19 +240,19 @@ Rcpp::RObject bdremove_maf_hdf5( std::string filename, std::string group, std::s
     }
     
     
-  }catch( FileIException error ){ // catch failure caused by the H5File operations
+  }catch( FileIException& error ){ // catch failure caused by the H5File operations
     file->close();
     ::Rf_error( "c++ exception bdremove_maf_hdf5 (File IException)" );
     return(wrap(-1));
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
     file->close();
     ::Rf_error( "c++ exception bdremove_maf_hdf5 (DataSet IException)" );
     return(wrap(-1));
-  } catch( DataSpaceIException error ) { // catch failure caused by the DataSpace operations
+  } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
     file->close();
     ::Rf_error( "c++ exception bdremove_maf_hdf5 (DataSpace IException)" );
     return(wrap(-1));
-  } catch( DataTypeIException error ) { // catch failure caused by the DataSpace operations
+  } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
     file->close();
     ::Rf_error( "c++ exception bdremove_maf_hdf5 (DataType IException)" );
     return(wrap(-1));

@@ -942,11 +942,11 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
   
     }
     
-  }catch( FileIException error ) { // catch failure caused by the H5File operations
+  }catch( FileIException& error ) { // catch failure caused by the H5File operations
     file->close();
     ::Rf_error( "c++ exception blockmult (File IException)" );
     return wrap(-1);
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
     file->close();
     ::Rf_error( "c++ exception blockmult (DataSet IException)" );
     return wrap(-1);

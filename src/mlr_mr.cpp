@@ -81,7 +81,7 @@ Eigen::MatrixXd Rcpp_mlr_mr(Eigen::MatrixXd x, Eigen::MatrixXd y, int iblocks, R
   Eigen::MatrixXd V(icols, iblocks);
   
   
-  double block_size = block_size = std::floor((double)decR1.Q.rows()/(double)iblocks);
+  double block_size = std::floor((double)decR1.Q.rows()/(double)iblocks);
   int maxsizetoread = block_size;
   int iSizetoRead; 
   int startnext = 0;

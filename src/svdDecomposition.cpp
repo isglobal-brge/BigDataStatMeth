@@ -225,23 +225,23 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     remove_HDF5_element_ptr(file, strGroupName);
   
   
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (File IException)" );
     return retsvd;
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (DataSet IException)" );
     return retsvd;
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (Group IException)" );
     return retsvd;
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (DataSpace IException)" );
     return retsvd;
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (Data TypeIException)" );
     return retsvd;
@@ -327,12 +327,12 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
 
     }
     
-  }  catch( FileIException error ) { // catch failure caused by the H5File operations
+  }  catch( FileIException& error ) { // catch failure caused by the H5File operations
     dataset->close();
     file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5 (File IException)" );
     return retsvd;
-  } catch( DataSetIException error ) { // catch failure caused by the DataSet operations
+  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
     dataset->close();
     file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5 (DataSet IException)" );
@@ -413,19 +413,19 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
       
       
     }
-  } catch(FileIException error) { // catch failure caused by the H5File operations
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
     file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (File IException)" );
-  } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (DataSet IException)" );
-  } catch(GroupIException error) { // catch failure caused by the Group operations
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
     file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (Group IException)" );
-  } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (DataSpace IException)" );
-  } catch(DataTypeIException error) { // catch failure caused by the DataSpace operations
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (Data TypeIException)" );
   }
