@@ -3,6 +3,7 @@
 
   #include <RcppEigen.h>
   #include "ReadDelayedData.h"
+  #include <omp.h>
 
 
   // dgemm_ is a symbol in the LAPACK-BLAS library files 

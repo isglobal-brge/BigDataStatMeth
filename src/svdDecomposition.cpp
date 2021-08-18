@@ -526,7 +526,7 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & X )
 //' 
 //' @param X numerical or Delayed Array matrix
 //' @param k number of eigen values , this should satisfy k = min(n, m) - 1
-//' @param nev (optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1≤ nev ≤ n, where n is the size of matrix. 
+//' @param nev (optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1<= nev <= n, where n is the size of matrix. 
 //' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
 //' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
 //' @return u eigenvectors of AA^t, mxn and column orthogonal matrix

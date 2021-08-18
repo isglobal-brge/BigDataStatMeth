@@ -11,7 +11,7 @@ bdSVD(X, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE)
 
 \item{k}{number of eigen values , this should satisfy k = min(n, m) - 1}
 
-\item{nev}{(optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1≤ nev ≤ n, where n is the size of matrix.}
+\item{nev}{(optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1<= nev <= n, where n is the size of matrix.}
 
 \item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.}
 

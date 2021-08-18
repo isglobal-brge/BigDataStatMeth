@@ -15,9 +15,9 @@ author:
 date: "`r Sys.Date()`"
 package: "`r pkg_ver('BigDataStatMeth')`"
 output:
-  BiocStyle::pdf_document:
+  BiocStyle::pdf_document: default
+  BiocStyle::html_document: 
     toc_float: true
-  BiocStyle::html_document: default
 abstract: |
   Description of functions to perform matrix operations, algebra and some basic statistical models using _Matrix_ (CRAN) and _DelayedMatrix_ (Bioconductor) objects.
 vignette: |

@@ -83,7 +83,7 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
       //..// int ipiv[n];
       
       int lwork = std::max( 1, n );
-      double work[lwork];
+      std::vector<double> work(lwork);
       int lda = std::max( 1, n );
       int ldb = std::max( 1, n );
       
@@ -92,7 +92,7 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
       if( a == a.transpose()  )
       {
          // dsysv_( char* UPLO, int* N , int* NRHS, double* A, int* LDA, int* IPIV, double* B, int* LDB, double* WORK, int* LWORK, int* INFO);
-         dsysv_( & Uchar, &n, &nrhs, a.data(), &lda, ipiv.data(), b.data(), &ldb, work, &lwork, &info);
+         dsysv_( & Uchar, &n, &nrhs, a.data(), &lda, ipiv.data(), b.data(), &ldb, work.data(), &lwork, &info);
       } else {
          
          // dgesv( int N, int NRHS, double A, int LDA, int IPIV, double B, int LDB, int INFO);
