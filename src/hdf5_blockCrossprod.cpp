@@ -165,6 +165,11 @@ int hdf5_block_matrix_crossprod_hdf5( std::string matA, IntegerVector sizeA,
 //'   # Close delayed.hdf5 file
 //'   H5Fclose(h5fdelay)
 //'   
+//'   # Remove file (used as example)
+//'   if (file.exists("BasicMatVect.hdf5")) {
+//'     # Delete file if it exist
+//'     file.remove("BasicMatVect.hdf5")
+//'   }
 //'   
 //' @export
 // [[Rcpp::export]]
@@ -324,74 +329,5 @@ Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
 
 
 /***R
-library(BigDataStatMeth)
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth")
-devtools::document()
-
-
-library(BigDataStatMeth)
-library(DelayedArray)
-library(rhdf5)
-
-setwd( "/Users/mailos/BigDataStatMeth_test/BasicMatVect" )
-
-n <- 70
-m <- 50
-p <- 50
-q <- 120
-
-
-blockCrossprod_hdf5
-
-# R Object
-
-set.seed(222)
-matA <- matrix(runif(n*m), nrow = n, ncol = m)
-matAp <- matrix(c(1,2,3,4,5,6,7,8,9,10), nrow = 2, byrow = TRUE)
-matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-
-
-
-
-
-
-set.seed(333)
-matB <- matrix(runif(n*m), nrow = n, ncol = m)
-matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4, 42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
-
-matC <- matrix(c(14,23,13,12,12,10,9,8,30,6,5,4,37,2,1), nrow = 3, byrow = TRUE)
-
-Create_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-Add_HDF5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
-
-res <- BigDataStatMeth::Crossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
-res2 <- BigDataStatMeth::Crossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", "INPUT","matB", block_size = 3)
-
-
-# Examine hierarchy before open file
-h5ls("BasicMatVect.hdf5")
-
-# Open file
-h5fdelay = H5Fopen("BasicMatVect.hdf5")
-# Show hdf5 hierarchy (groups)
-h5fdelay
-
-res <- h5fdelay$OUTPUT$CrossProd_matAxmatA
-res
-crossprod(matA)
-
-res2 <- h5fdelay$OUTPUT$CrossProd_matAxmatB
-res2
-crossprod(matA,matB)
-
-
-all.equal(crossprod(matA), res)
-all.equal(crossprod(matA,matB), res2)
-
-
-# Close delayed.hdf5 file
-H5Fclose(h5fdelay)
-
-
 
 */

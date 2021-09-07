@@ -38,6 +38,12 @@
 //' 
 //' d <- bdblockmult_sparse_hdf5("BasicMatVect.hdf5", "SPARSE", "x_sparse", "y_sparse")
 //' 
+//' # Remove file (used as example)
+//' if (file.exists("BasicMatVect.hdf5")) {
+//'   # Delete file if it exist
+//'   file.remove("BasicMatVect.hdf5")
+//' }
+//' 
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdblockmult_sparse_hdf5(std::string filename, const std::string group, 

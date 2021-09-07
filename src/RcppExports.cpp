@@ -167,6 +167,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdMLR_MR_hdf5
+Rcpp::RObject bdMLR_MR_hdf5(std::string filename, const std::string group, std::string dataset, const std::string betasgroup, std::string betasdataset, int blocks, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_bdMLR_MR_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP betasgroupSEXP, SEXP betasdatasetSEXP, SEXP blocksSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< const std::string >::type betasgroup(betasgroupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type betasdataset(betasdatasetSEXP);
+    Rcpp::traits::input_parameter< int >::type blocks(blocksSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdMLR_MR_hdf5(filename, group, dataset, betasgroup, betasdataset, blocks, outgroup, outdataset, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdNormalize_hdf5
 Rcpp::RObject bdNormalize_hdf5(std::string filename, const std::string group, std::string dataset, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<int> wsize);
 RcppExport SEXP _BigDataStatMeth_bdNormalize_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP wsizeSEXP) {
@@ -643,6 +662,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdget_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdget_maf_hdf5, 6},
     {"_BigDataStatMeth_bdImport_text_to_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImport_text_to_hdf5, 8},
     {"_BigDataStatMeth_bdImpute_snps_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImpute_snps_hdf5, 6},
+    {"_BigDataStatMeth_bdMLR_MR_hdf5", (DL_FUNC) &_BigDataStatMeth_bdMLR_MR_hdf5, 9},
     {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 6},
     {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 9},
     {"_BigDataStatMeth_bdremove_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdremove_maf_hdf5, 8},

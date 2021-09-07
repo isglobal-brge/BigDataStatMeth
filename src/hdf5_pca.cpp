@@ -42,7 +42,7 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
       //.Remove note.// throw("Dataset does not exist !");
       // stop("Dataset does not exist !");
       file->close();
-      ::Rf_error( "c++ exception (Dataset does not exist !)" );
+      ::Rf_error( "c++ exception in get_HDF5_PCA_variance_ptr (Dataset does not exist !)" );
     }
 
     // Real data set dimension
@@ -117,7 +117,7 @@ int get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
       //.Remove note.// throw("Dataset does not exist !");
       // stop("Dataset does not exist !");
       file->close();
-      ::Rf_error( "c++ exception (Dataset does not exist !)" );
+      ::Rf_error( "c++ exception in get_HDF5_PCA_variables_ptr(Dataset does not exist !)" );
     }
     
     
@@ -127,7 +127,7 @@ int get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
       //.Remove note.// throw("Dataset does not exist !");
       // stop("Dataset does not exist !");
       file->close();
-      ::Rf_error( "c++ exception (Dataset does not exist !)" );
+      ::Rf_error( "c++ exception in get_HDF5_PCA_variables_ptr(Dataset does not exist !)" );
     }
 
     // Real data set dimension
@@ -290,8 +290,9 @@ Rcpp::RObject bdPCA_hdf5(std::string filename, std::string group, std::string da
     std::string strSVDdataset = "SVD/" + dataset;
     
     // Look up for svd decomposition in hdf5 file or if we have to recompute again the SVD
+    // With paràmeter true we force to write data to disk 
     if( !(exists_HDF5_element_ptr(file, strSVDdataset )) || bforce == true) {
-      svdeig retsvd = RcppbdSVD_hdf5_ptr( file, group, dataset, ks, qs, nvs, bcent, bscal, threads );
+      svdeig retsvd = RcppbdSVD_hdf5_ptr( file, group, dataset, ks, qs, nvs, bcent, bscal, true, threads ); 
     }
     
     // Gets variance related variables

@@ -70,4 +70,10 @@ all.equal(tcrossprod(matA, matB), res2)
 # Close delayed.hdf5 file
 H5Fclose(h5fdelay)
 
+# Remove file (used as example)
+if (file.exists("BasicMatVect.hdf5")) {
+  # Delete file if it exist
+  file.remove("BasicMatVect.hdf5")
+}
+
 }

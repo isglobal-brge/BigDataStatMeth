@@ -98,6 +98,11 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #'   # Close delayed.hdf5 file
 #'   H5Fclose(h5fdelay)
 #'   
+#'   # Remove file (used as example)
+#'   if (file.exists("BasicMatVect.hdf5")) {
+#'     # Delete file if it exist
+#'     file.remove("BasicMatVect.hdf5")
+#'   }
 #'   
 #' @export
 bdCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
@@ -144,6 +149,12 @@ bdCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_
 #' bdAdd_hdf5_matrix(as.matrix(y_sparse), "BasicMatVect.hdf5", "SPARSE", "y_sparse")
 #' 
 #' d <- bdblockmult_sparse_hdf5("BasicMatVect.hdf5", "SPARSE", "x_sparse", "y_sparse")
+#' 
+#' # Remove file (used as example)
+#' if (file.exists("BasicMatVect.hdf5")) {
+#'   # Delete file if it exist
+#'   file.remove("BasicMatVect.hdf5")
+#' }
 #' 
 #' @export
 bdblockmult_sparse_hdf5 <- function(filename, group, A, B, outgroup = NULL) {
@@ -192,6 +203,12 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, outgroup = NULL) {
 #' 
 #' # Close delayed.hdf5 file
 #' H5Fclose(h5fdelay)
+#' 
+#' # Remove file (used as example)
+#' if (file.exists("BasicMatVect.hdf5")) {
+#'   # Delete file if it exist
+#'   file.remove("BasicMatVect.hdf5")
+#' }
 #' 
 #' @export
 bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
@@ -255,6 +272,10 @@ bdImport_text_to_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #' @export
 bdImpute_snps_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE) {
     .Call('_BigDataStatMeth_bdImpute_snps_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols)
+}
+
+.bdMLR_MR_hdf5 <- function(filename, group, dataset, betasgroup, betasdataset, blocks, outgroup = NULL, outdataset = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdMLR_MR_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, betasgroup, betasdataset, blocks, outgroup, outdataset, threads)
 }
 
 #' Normalize dataset in hdf5 file

@@ -43,7 +43,7 @@ Eigen::MatrixXd Rcpp_mlr_mr(Eigen::MatrixXd x, Eigen::MatrixXd y, int iblocks, R
     int iSizetoRead; 
 
     
-#pragma omp parallel for ordered schedule(dynamic)
+#pragma omp parallel for schedule(static)
     for( int i = 0; i<iblocks ; i++) 
     {
       strQR decQR;

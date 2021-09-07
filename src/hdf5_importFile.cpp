@@ -156,7 +156,7 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
    
    // Blocks control
    double counter = 0;
-   double blockCounter = 5;
+   double blockCounter = 10000;
    
    // hdf5 variables
    H5File* file;
@@ -194,6 +194,12 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             incols = incols-1; // Reduce in one the number of columns
          }
          
+         // Re-adjust block size
+         if(incols < 100 ){
+            blockCounter = 100000;
+         } else if (incols < 10000 ){
+            blockCounter = 1000;
+         }
          
          // Get number of rows
          int irows = std::count(std::istreambuf_iterator<char>(inFile), 
@@ -225,23 +231,29 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
          // Read again the first line if header = true
          line.clear();
          
+         // If data contains header :  Store first row as a colnames and reads next line
          if(as<bool>(header) == true) {
             std::getline(inFile,line,'\n');
-         }
-         
-         // If data contains header :  Store first row as a colnames and reads next line
-         if( as<bool>(header)==true ){
             svrcolnames = wrap( get_SplitData_in_vectorString(line, reg_expres));
             // Read next line
             line.clear();
             std::getline(inFile,line,'\n');
          }
          
+         
+         // if( as<bool>(header)==true ){
+         //    svrcolnames = wrap( get_SplitData_in_vectorString(line, reg_expres));
+         //    // Read next line
+         //    line.clear();
+         //    std::getline(inFile,line,'\n');
+         // }
+         
          std::vector<std::string> strBlockValues;
          IntegerVector stride = {1,1};
          IntegerVector block = {1,1};
          IntegerVector count = {incols, irows};
          IntegerVector offset = {0,0};
+         bool btowrite;
          
          while( !inFile.eof()  )
          {
@@ -249,6 +261,7 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             std::vector<double> numbers;
             std::stringstream is(line); // take the line into a stringstream
             
+            btowrite = true;
             
             // Get splitted values
             std::vector<std::string> strValues = get_SplitData_in_vectorString(line, reg_expres);
@@ -277,7 +290,12 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
                
                // Empty Vector
                strBlockValues.erase (strBlockValues.begin(),strBlockValues.end());
+               // std::vector<std::string>().swap(strBlockValues);
                
+               btowrite = false;
+               
+               Rcpp::Rcout<<"\nEscriptura :"<< counter <<" \n";
+
             }
             
             // Clear Buffer and Read next line
@@ -289,26 +307,40 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             
          }
          
+         Rcpp::Rcout<<"\n EM SORTIT DEL WHIIILLLLEEEEE !!!!! \n";
+         
          if(counter - blockCounter <0){
             offset[1] = 0;
          }else {
-            offset[1] = floor((counter-1) / blockCounter) * blockCounter;
+            offset[1] = (floor((counter-1) / blockCounter) * blockCounter);
          }
          
-         count[1] = irows - (floor(irows/blockCounter)*blockCounter);
+         if(irows - (floor(irows/blockCounter)*blockCounter) == 0 && btowrite == true){
+            count[1] = blockCounter;
+         } else {
+            count[1] = irows - (floor(irows/blockCounter)*blockCounter);   
+         }
 
-         if(irows - (floor(irows/blockCounter)*blockCounter)>0 && strBlockValues.size()>0)
+         Rcpp::Rcout<<"\nQue val el booleà ?? \n"<<btowrite<<"\n";
+         
+         if(irows - (floor(irows/blockCounter)*blockCounter)>0 && strBlockValues.size()>0 || btowrite == true)
          {
+            Rcpp::Rcout<<"\nEscriptura final !!!??"<< counter <<" \n";
+            
+            Rcpp::Rcout<<"\nEscriptura final "<< offset[0]<<" - " <<offset[1] <<" \n";
+            Rcpp::Rcout<<"\nEscriptura final "<< count[0]<<" - " <<count[1] <<" \n";
+            
             std::vector<double> doubleVector = get_data_as_Matrix(strBlockValues);
-
+            
             double *p = doubleVector.data();
-            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, irows - (floor(irows/blockCounter)*blockCounter) );
+            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, offset[1] );
             write_HDF5_matrix_subset_v2(file, datasetOut, offset, count, stride, block, wrap(resMat));
-
+            
          }
          
          if(as<bool>(rownames) == true || as<bool>(header) == true ) {
             // Write rownames and colnames
+            Rcpp::Rcout<<"\nPERQUÈ ESTEM DINS DAQUEST BOOL??"<<"\n";
             write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );
          }
          
@@ -368,11 +400,48 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
 library(devtools)
 library(BigDataStatMeth)
 
+
+setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/CEQ_Analysis")
+
+# Create hdf5 data file with csv data
+bdImport_text_to_hdf5( filename = "CEQ_Data.csv", 
+                       outputfile =  "CEQdata.hdf5", 
+                       outGroup = "CEQFolder",
+                       outDataset = "CEQdata",
+                       header = TRUE,
+                       rownames = FALSE,
+                       overwrite = TRUE,
+                       sep = ";"
+)
+
+
+bdImport_text_to_hdf5( filename = "CEQ_Complete.csv", 
+                       outputfile =  "CEQdata2.hdf5", 
+                       outGroup = "folder",
+                       outDataset = "data",
+                       header = TRUE,
+                       rownames = FALSE,
+                       overwrite = TRUE,
+                       sep = ";"
+)
+
+bdPCA_hdf5( filename = "CEQdata2.hdf5", 
+            group = "folder",
+            dataset = "data",
+            bcenter = TRUE,
+            bscale = TRUE,
+            force = TRUE )
+
+
+
 setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth")
 
 reload(pkgload::inst("BigDataStatMeth"))
 Import_text_to_hdf5("test/cancer_reg_2.csv", ',', 
                      outputfile = "test/cancer_reg.hdf5", outGroup = "CANCERS", outDataset = "Cancccc2", 
                      header = TRUE, rownames = TRUE, overwrite = TRUE)
+
+
+
 
 */

@@ -352,7 +352,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
 
 
 svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string strdataset,  
-                       int k, int q, int nev, bool bcenter, bool bscale, Rcpp::Nullable<int> ithreads = R_NilValue )
+                       int k, int q, int nev, bool bcenter, bool bscale, bool bstorehdf5, Rcpp::Nullable<int> ithreads = R_NilValue)
 {
   
   svdeig retsvd;
@@ -361,6 +361,8 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
   
   try
   {
+    Rcpp::Rcout<<"\nCalculem SVD !!! \n";
+    
     // Open an existing file and dataset.
     //..// H5File file(filename, H5F_ACC_RDWR);
     DataSet dataset;
@@ -384,15 +386,13 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
     
     // In memory computation for small matrices (rows or columns<5000)
     // Block decomposition for big mattrix
-    if( std::max(dims_out[0], dims_out[1]) < MAXSVDBLOCK )
+    if( std::max(dims_out[0], dims_out[1]) < MAXSVDBLOCK && bstorehdf5 == false )
     {
       
       X = GetCurrentBlock_hdf5( file, &dataset, offset[0], offset[1], count[0], count[1]);
       X.transposeInPlace();
       
       retsvd = RcppbdSVD(X, k, nev, bcenter, bscale);
-      
-      
       
     }
     else{
@@ -784,152 +784,6 @@ Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true,
 }
 
 
-
-
 /***R
-
-library(microbenchmark)
-library(DelayedArray)
-library(BigDataStatMeth)
-library(rhdf5)
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth/tmp")
-
-
-library(MASS)
-library(BigDataStatMeth)
-
-a <- matrix(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
-              0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1), 9, 4)
-
-a.svd <- svd(a)
-BigDataStatMeth.svd <- BigDataStatMeth::bdSVD(a)
-
-
-
-
-
-
-
-dades <- BigDataStatMeth::bdPCA_hdf5("robjects.hdf5.hdf5", group = "INPUT", dataset = "A", k=2, q=1) 
-
-
-bdInvCholesky()
-
-
-
-data(mtcars)
-lm(mpg ~ wt + cyl, data=mtcars)
-Y <- mtcars$mpg
-X <- model.matrix(~ wt + cyl, data=mtcars)
-QR.1 <- qr(X)
-R.1 <- qr.R(QR.1)
-Q.1 <- qr.Q(QR.1)
-tcrossprod(solve(R.1), Q.1) %*% Y
-QR.2 <- bdQR(X, thin = TRUE)
-blockmult(bdtCrossprod(bdInvCholesky(QR.2$R), QR.2$Q), Y)
-
-
-
-
-
-
-
-
-# Rows --> Individuals  (small)
-# Cols --> Variables (SNP's or ...) (very big)
-
-dades <- BigDataStatMeth::bdSVD_hdf5("tmp_blockmult.hdf5", group = "INPUT", dataset = "A", k=4, q=1) 
-
-dades$file
-fprova <- H5Fopen("tmp_blockmult.hdf5")
-fprova
-fprova$INPUT$A[1:25,1:25]
-csvd <- bdSVD_lapack(fprova$INPUT$A[1:25,1:25], bcenter = FALSE, bscale = FALSE)
-
-csvd3 <- bdSVD_lapack(fprova$INPUT$A[1:25,1:25], bcenter = FALSE, bscale = FALSE)
-csvd3$u[1:5,1:5]
-csvd3$v
-csvd$d
-csvd$u
-csvd$v
-
-csvd2 <- svd(fprova$INPUT$A[1:25,1:25])
-csvd2$v[1:5,1:5]
-
-
-
-csvd$u %*% diag(csvd$d)
-
-(csvd$u %*% diag(csvd$d))[1:5,1:5]
-t(fprova$tmpgroup$A0)[1:5,1:5]
-
-
-svd( scale(fprova$INPUT$A))$
-bdSVD_lapack(fprova$INPUT$A)$d
-
-h5closeAll()
-# 
-
-## TEST chr17_small.hdf5 (Inversions chr17)
-
-file <- H5Fopen("data/chr17_small.hdf5")
-  dades <- file$invs$genofilter
-  dades_svd_u <- file$SVD$genofilter$u 
-  dades_svd_v <- file$SVD$genofilter$v 
-  dades_svd_d <- file$SVD$genofilter$d 
-h5closeAll()
-
-
-dades.svd <- svd(scale(dades))
-
-
-###### 
-# Equal results??? 
-
-dades.svd$d
-dades_svd_d
-
-
-dades_svd_u[1:5,1:5]
-dades.svd$u[1:5,1:5]
-
-dades_svd_v[1:5,1:5]
-dades.svd$v[1:5,1:5]
-
-
-
-plot(dades_svd_u[,2], dades_svd_u[,1])
-
-plot(dades.svd$u[,2], dades.svd$u[,1])
-
-pca1 <- prcomp(dades)
-pca2 <- PCA(dades, graph = FALSE)
-
-summary(pca1)
-
-
-
-
-library(BigDataStatMeth)
-library(rhdf5)
-
-
-setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/PROJECTES/Treballant/BigDataStatMeth/vignettes")
-
-
-# Create dataframe data with Ad matrix in delayed.hdf5 file at OMIC group
-set.seed(5234)
-n <- 150000
-m <- 50
-odata <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
-
-Create_HDF5_matrix_file(odata, "delayed.hdf5", "OMICS", "data")
-
-
-
-
-svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", bcenter = FALSE, bscale = FALSE)
-
-
 
 */

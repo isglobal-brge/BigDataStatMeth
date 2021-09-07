@@ -32,6 +32,8 @@ bibliography: references.bib
 library(knitr)
 library(BiocStyle)
 
+options(tinytex.verbose = TRUE)
+
 knitr::opts_chunk$set(collapse = TRUE, comment = "", cache=FALSE, message = FALSE, width = 180)
 ```
 

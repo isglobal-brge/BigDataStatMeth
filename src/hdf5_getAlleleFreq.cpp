@@ -169,20 +169,3 @@ Rcpp::RObject bdget_maf_hdf5( std::string filename, const std::string group, std
   
 }
 
-
-
-
-/***R
-
-library(BigDataStatMeth)
-
-library(devtools)
-reload(pkgload::inst("BigDataStatMeth"))
-
-resc <- bdget_allele_freq_hdf5("test.hdf5", "test", "mat1", byrows = FALSE )
-
-resr <- bdget_allele_freq_hdf5("test.hdf5", "test", "mat1", byrows = TRUE )
-
-
-
-*/

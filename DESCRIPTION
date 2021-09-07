@@ -1,23 +1,21 @@
 Package: BigDataStatMeth
 Type: Package
 Title: Statistical Methods and Algorithms for Big Data
-Version: 0.99.6
+Version: 0.99.10
 Date: 2021-08-11
 Authors@R: c(person("Dolors", "Pelegri-Siso", , "dolors.pelegri@isglobal.org", role = c("aut", "cre")),
   person("Juan R.", "Gonzalez", ,"juanr.gonzalez@isglobal.org", role = c("aut")))
 Maintainer: Dolors Pelegri-Siso <dolors.pelegri@isglobal.org>
-Description: BigDataStatMeth implements basic Algebra methods using parallel 
+Description: Basic Algebra methods using parallel 
     algorithms to be used in big data problems such as omics data analyses. 
-    The functions will consider as input an object of class DelayedArray 
-    which is an array-like object (typically an on-disk object) specifically
-    designed for Bioconductor.
+    The functions will consider as input an HDF5 data file, an object of
+    class DelayedArray or an R object.
 License: MIT + file LICENSE
 Depends: 
   R (>= 3.6.0)
 Imports: 
     Rcpp (>= 1.0.6), 
-    RcppParallel (>= 5.0.2),
-    RcppEigen (>= 0.3.3.5.0)
+    RcppParallel (>= 5.0.2)
 LinkingTo: 
     Rcpp,
     RcppEigen,

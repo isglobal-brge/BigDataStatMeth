@@ -50,8 +50,8 @@ This function performs the crossprod from a matrix inside and hdf5 data file
   matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
   
-  bdCreate_HDF5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-  bdCreate_HDF5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+  bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+  bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
   
   res <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
   res2 <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
@@ -75,5 +75,10 @@ This function performs the crossprod from a matrix inside and hdf5 data file
   # Close delayed.hdf5 file
   H5Fclose(h5fdelay)
   
+  # Remove file (used as example)
+  if (file.exists("BasicMatVect.hdf5")) {
+    # Delete file if it exist
+    file.remove("BasicMatVect.hdf5")
+  }
   
 }
