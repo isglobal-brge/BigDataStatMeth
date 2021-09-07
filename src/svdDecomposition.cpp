@@ -361,8 +361,6 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
   
   try
   {
-    Rcpp::Rcout<<"\nCalculem SVD !!! \n";
-    
     // Open an existing file and dataset.
     //..// H5File file(filename, H5F_ACC_RDWR);
     DataSet dataset;

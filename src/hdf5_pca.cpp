@@ -150,26 +150,26 @@ int get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
     
     create_HDF5_groups_ptr(file, strlocpcadataset );
     
-    Rcpp::Rcout<<"\nGetting Lambda\n";
+    Rcpp::Rcout<<"\nGetting Lambda";
     Eigen::VectorXd vvar = d.array().pow(2);
     write_HDF5_matrix_ptr(file, strlocpcadataset+"/lambda", wrap(vvar));
     
-    Rcpp::Rcout<<"\nGetting Variance\n";
+    Rcpp::Rcout<<"\nGetting Variance";
     vvar = d.array().pow(2)/d.array().pow(2).sum()  ;
     write_HDF5_matrix_ptr(file, strlocpcadataset+"/variance", wrap(vvar));
     
-    Rcpp::Rcout<<"\nGetting Cumulative Variance\n";
+    Rcpp::Rcout<<"\nGetting Cumulative Variance";
     int ielements = 0;
     if(vvar.size()>1000){  ielements = 1000;    }
     else{ ielements = vvar.size();    }
     write_HDF5_matrix_ptr(file, strlocpcadataset+"/cumvar", wrap(cumsum_hdf5(vvar.head(ielements))));
     
     
-    Rcpp::Rcout<<"\nGetting Variables - Coord\n";
+    Rcpp::Rcout<<"\nGetting Variables - Coord";
     Eigen::MatrixXd var_coord = v.array().colwise() * d.array();
     write_HDF5_matrix_transposed_ptr(file, strlocpcadataset+"/var.coord", wrap(var_coord.transpose()));
     
-    Rcpp::Rcout<<"\nGetting Variables - Cos2\n";
+    Rcpp::Rcout<<"\nGetting Variables - Cos2";
     Eigen::MatrixXd var_cos2 = var_coord.unaryExpr([](double d) {return std::pow(d, 2);});;
     write_HDF5_matrix_transposed_ptr(file, strlocpcadataset+"/var.cos2", wrap(var_cos2.transpose()));
 

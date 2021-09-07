@@ -293,8 +293,6 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
                // std::vector<std::string>().swap(strBlockValues);
                
                btowrite = false;
-               
-               Rcpp::Rcout<<"\nEscriptura :"<< counter <<" \n";
 
             }
             
@@ -306,8 +304,6 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             counter++;
             
          }
-         
-         Rcpp::Rcout<<"\n EM SORTIT DEL WHIIILLLLEEEEE !!!!! \n";
          
          if(counter - blockCounter <0){
             offset[1] = 0;
@@ -321,15 +317,8 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             count[1] = irows - (floor(irows/blockCounter)*blockCounter);   
          }
 
-         Rcpp::Rcout<<"\nQue val el booleà ?? \n"<<btowrite<<"\n";
-         
          if(irows - (floor(irows/blockCounter)*blockCounter)>0 && strBlockValues.size()>0 || btowrite == true)
          {
-            Rcpp::Rcout<<"\nEscriptura final !!!??"<< counter <<" \n";
-            
-            Rcpp::Rcout<<"\nEscriptura final "<< offset[0]<<" - " <<offset[1] <<" \n";
-            Rcpp::Rcout<<"\nEscriptura final "<< count[0]<<" - " <<count[1] <<" \n";
-            
             std::vector<double> doubleVector = get_data_as_Matrix(strBlockValues);
             
             double *p = doubleVector.data();
@@ -340,7 +329,6 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
          
          if(as<bool>(rownames) == true || as<bool>(header) == true ) {
             // Write rownames and colnames
-            Rcpp::Rcout<<"\nPERQUÈ ESTEM DINS DAQUEST BOOL??"<<"\n";
             write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );
          }
          
