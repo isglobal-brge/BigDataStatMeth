@@ -1,6 +1,5 @@
 #include "include/hdf5_importFile.h"
 
-
 using namespace Rcpp;
 
 // Split the line in several fields and store results in a Vector String.
@@ -18,6 +17,7 @@ std::vector<std::string> get_SplitData_in_vectorString(std::string line, std::re
    
    return(strValues);
 }
+
 
 
 // Test if read data is numeric or not
@@ -151,12 +151,14 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
    std::string stdsep;
    int res;
    
-   // Colnames and rownames
-   CharacterVector svrownames, svrcolnames;
    
+   // Colnames and rownames
+   //..// CharacterVector svrownames, svrcolnames;
+   CharacterVector svrcolnames;
+
    // Blocks control
    double counter = 0;
-   double blockCounter = 10000;
+   double blockCounter = 1000;
    
    // hdf5 variables
    H5File* file;
@@ -175,12 +177,10 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
       
       if(ResFileExist_filestream(path))
       {
-         
          std::ifstream inFile(path.c_str()); //Opens the file. c_str is mandatory here so that ifstream accepts the string path
          
          std::string line;
          
-
          std::getline(inFile,line,'\n'); //skip the first line (col names in our case). Remove those lines if note necessary
 
          
@@ -188,28 +188,46 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
          std::ptrdiff_t const icols(std::distance(
                std::sregex_iterator(line.begin(), line.end(), reg_expres),
                std::sregex_iterator()));
-         
+
          int incols = icols;
          if(as<bool>(rownames) == true) {
-            incols = incols-1; // Reduce in one the number of columns
+            // Read next line and count number of columns again depending on how file is created we can have
+            // one empty space for rownames or not, then colnames will be different (-1 difference)
+            std::getline(inFile,line,'\n'); //skip the first line (col names in our case). Remove those lines if note necessary
+            
+            // Number of columns
+            std::ptrdiff_t const icols2(std::distance(
+                  std::sregex_iterator(line.begin(), line.end(), reg_expres),
+                  std::sregex_iterator()));
+            
+            if(icols2 == icols){
+               incols = icols-1; // Reduce in one the number of columns
+            }else if ( icols == icols2 -1){
+               incols = icols; 
+            }else{
+               warning("Number of columns and headers are different, review data");
+            }
+                  
          }
          
          // Re-adjust block size
          if(incols < 100 ){
-            blockCounter = 100000;
-         } else if (incols < 10000 ){
+            blockCounter = 10000;
+         } else if (incols > 1000 ){
             blockCounter = 1000;
          }
          
-         // Get number of rows
-         int irows = std::count(std::istreambuf_iterator<char>(inFile), 
-                                std::istreambuf_iterator<char>(), '\n');
+         // Get number of rows (+1 to take in to account the last line without \n)
+         int irows = std::count(std::istreambuf_iterator<char>(inFile),
+                                std::istreambuf_iterator<char>(), '\n') + 1;
          
-         // To restore counter after read first line to get number of cols
+         // Restore counter after read first line to get number of cols
          if( as<bool>(header)==false ){
             irows = irows + 1;
          }
-         
+
+         CharacterVector svrownames(irows);
+
          // Prepare hdf5 data file
          if( ! ResFileExist_filestream(outputfile)) {
             res = Create_hdf5_file(outputfile); 
@@ -220,7 +238,6 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
          if( !manage_Dataset( file, outGroup, outDataset, as<bool>(overwrite), irows, incols ) ){
             stop("Dataset exists - please set overwrite = true if you want to overwrite the dataset");
          }
-         
          
          datasetOut =  new DataSet(file->openDataSet(outGroup + "/" + outDataset));
 
@@ -239,46 +256,46 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             line.clear();
             std::getline(inFile,line,'\n');
          }
-         
-         
-         // if( as<bool>(header)==true ){
-         //    svrcolnames = wrap( get_SplitData_in_vectorString(line, reg_expres));
-         //    // Read next line
-         //    line.clear();
-         //    std::getline(inFile,line,'\n');
-         // }
-         
+
          std::vector<std::string> strBlockValues;
          IntegerVector stride = {1,1};
          IntegerVector block = {1,1};
          IntegerVector count = {incols, irows};
          IntegerVector offset = {0,0};
          bool btowrite;
-         
+         std::vector<std::string> strValues;
+
+      
          while( !inFile.eof()  )
          {
             
-            std::vector<double> numbers;
+            //..// std::vector<double> numbers;
             std::stringstream is(line); // take the line into a stringstream
             
             btowrite = true;
             
-            // Get splitted values
-            std::vector<std::string> strValues = get_SplitData_in_vectorString(line, reg_expres);
             
-            if(as<bool>(rownames) == true) 
-            {
-               svrownames.push_back(strValues.front()); 
+            // Get splitted values
+            boost::split(strValues, line, boost::is_any_of(delim), boost::token_compress_on);
+
+            if(as<bool>(rownames) == true) {
+               svrownames[counter] =  strValues.front(); 
                strValues.erase(strValues.begin());
             }
             
-            // Concatenate Valutes to get a block with several values
+            
+            // Concatenate Valutes to get a block with several rows
             std::move(strValues.begin(), strValues.end(), std::back_inserter(strBlockValues));
+            
+            // Empty vector
+            //..// strValues.erase (strValues.begin(),strValues.end());
+            strValues.clear();
             
             // Write block
             
             if( counter>0 && (int)counter % (int)blockCounter == 0)
             {
+               
                offset[1] = counter - blockCounter;
                count[1] = blockCounter;
                
@@ -288,10 +305,9 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, blockCounter);
                write_HDF5_matrix_subset_v2(file, datasetOut, offset, count, stride, block, wrap(resMat));
                
-               // Empty Vector
-               strBlockValues.erase (strBlockValues.begin(),strBlockValues.end());
-               // std::vector<std::string>().swap(strBlockValues);
-               
+               // Clear Vector
+               strBlockValues.clear();
+
                btowrite = false;
 
             }
@@ -316,13 +332,14 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
          } else {
             count[1] = irows - (floor(irows/blockCounter)*blockCounter);   
          }
-
+         
          if(irows - (floor(irows/blockCounter)*blockCounter)>0 && strBlockValues.size()>0 || btowrite == true)
          {
+            
             std::vector<double> doubleVector = get_data_as_Matrix(strBlockValues);
             
             double *p = doubleVector.data();
-            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, offset[1] );
+            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, count[1] );
             write_HDF5_matrix_subset_v2(file, datasetOut, offset, count, stride, block, wrap(resMat));
             
          }
@@ -331,6 +348,7 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             // Write rownames and colnames
             write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );
          }
+          
          
          datasetOut->close();
          file->close();
@@ -389,6 +407,7 @@ library(devtools)
 library(BigDataStatMeth)
 
 
+
 setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/CEQ_Analysis")
 
 # Create hdf5 data file with csv data
@@ -401,6 +420,28 @@ bdImport_text_to_hdf5( filename = "CEQ_Data.csv",
                        overwrite = TRUE,
                        sep = ";"
 )
+
+
+
+
+reload(pkgload::inst("BigDataStatMeth"))
+
+# Create hdf5 data file with csv data
+bdImport_text_to_hdf5( filename = "CEQ_Data.csv", 
+                       outputfile =  "CEQdata.hdf5", 
+                       outGroup = "CEQFolder",
+                       outDataset = "CEQdata",
+                       header = TRUE,
+                       rownames = TRUE,
+                       overwrite = TRUE,
+                       sep = ";"
+)
+
+
+
+
+
+
 
 
 bdImport_text_to_hdf5( filename = "CEQ_Complete.csv", 
