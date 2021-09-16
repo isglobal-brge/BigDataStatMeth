@@ -258,8 +258,6 @@ int Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupNam
       Eigen::MatrixXd restmp = Bblock_matrix_mul_parallel(retsvd.u, d, 128, threads);
       
       //    d) Write results to dataset
-      //.. MODIFICAT 07/09/2020 ..// int cbefore = restmp.cols();
-      //.. MODIFICAT 07/09/2020 ..// offset[0] = 0; offset[1] = 0;
       count[0] = restmp.rows();
       count[1] = restmp.cols();
       

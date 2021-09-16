@@ -2260,11 +2260,14 @@ Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::strin
     
     
     // Write dimnaes from RObject to hdf5 data file
-    if( (dimnames.size()>0) & (Rf_isNull(dimnames)) ) {
+    if( (dimnames.size()>0) && (!Rf_isNull(dimnames)) ) {
       
-      if(Rf_isNull(dimnames[1]) ){ svrows = dimnames[1]; }
+      Rcpp::Rcout<<"\n Dimnames [1] : "<<Rf_isNull(dimnames[1])<<"\n";
+      Rcpp::Rcout<<"\n Dimnames [0] : "<<Rf_isNull(dimnames[0])<<"\n";
       
-      if(Rf_isNull(dimnames[0]) ){ svrcols = dimnames[0]; }
+      if(!Rf_isNull(dimnames[1]) ){  svrcols = dimnames[1]; }
+      if(!Rf_isNull(dimnames[0]) ){ svrows = dimnames[0]; }
+      
       
       if(transposed == false){
         write_hdf5_matrix_dimnames(file, group, dataset, svrows, svrcols );
@@ -2273,6 +2276,21 @@ Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::strin
       }
       
     }
+    
+    // // Write dimnaes from RObject to hdf5 data file
+    // if( (dimnames.size()>0) & (Rf_isNull(dimnames)) ) {
+    //   
+    //   if(Rf_isNull(dimnames[1]) ){ svrows = dimnames[1]; }
+    //   
+    //   if(Rf_isNull(dimnames[0]) ){ svrcols = dimnames[0]; }
+    //   
+    //   if(transposed == false){
+    //     write_hdf5_matrix_dimnames(file, group, dataset, svrows, svrcols );
+    //   }else{
+    //     write_hdf5_matrix_dimnames(file, group, dataset, svrcols, svrows );
+    //   }
+    //   
+    // }
 
     //..// Eigen::MatrixXd matdat = as<Eigen::MatrixXd>(mat);
     
@@ -2389,8 +2407,17 @@ Rcpp::RObject bdRemove_hdf5_element(std::string filename, std::string element)
         len = H5Gget_objname_by_idx(gid, (hsize_t)i, memb_name, (size_t)MAX_NAME );
         
         otype =  H5Gget_objtype_by_idx(gid, (size_t)i );
-        if(otype == H5G_DATASET && (memb_name[0] == strprefix[0])) 
-          datasetnames.push_back(memb_name);
+        
+        // 202109
+        if( strprefix.compare("")!=0 ){
+          if(otype == H5G_DATASET && (memb_name[0] == strprefix[0])) {
+            datasetnames.push_back(memb_name);
+          }
+        } else {
+          if(otype == H5G_DATASET ) {
+            datasetnames.push_back(memb_name);
+          }
+        }
         
       }
     } catch(FileIException& error) { // catch failure caused by the H5File operations

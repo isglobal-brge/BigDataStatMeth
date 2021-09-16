@@ -246,7 +246,7 @@ Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::s
     if(outgroup.isNull())  stroutgroup = group ;
     else    stroutgroup = Rcpp::as<std::string>(outgroup);
     
-    if(outgroup.isNull())  stroutdataset = dataset ;
+    if(outdataset.isNull())  stroutdataset = dataset ;
     else    stroutdataset = Rcpp::as<std::string>(outdataset);
     
     stroutdata = stroutgroup +"/" + stroutdataset;

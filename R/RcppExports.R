@@ -274,6 +274,20 @@ bdImpute_snps_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdat
     .Call('_BigDataStatMeth_bdImpute_snps_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols)
 }
 
+#' Reduce hdf5 dataset
+#'
+#' Reduce hdf5 datasets inside a group by rows or columns and store complete matrix inside hdf5 data file.
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, character array indicating the input group where the data sets are stored 
+#' @param prefix, character array optional, indicates the prefix with which the dataset
+#' names begin, if null, then the function returns all datasets inside the group
+#' @return Full matrix with results from reduction
+#' @export
+inGroupDatasetin_hdf5 <- function(filema, group, prefix = NULL) {
+    .Call('_BigDataStatMeth_inGroupDatasetin_hdf5', PACKAGE = 'BigDataStatMeth', filema, group, prefix)
+}
+
 .bdMLR_MR_hdf5 <- function(filename, group, dataset, betasgroup, betasdataset, blocks, outgroup = NULL, outdataset = NULL, threads = NULL) {
     .Call('_BigDataStatMeth_bdMLR_MR_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, betasgroup, betasdataset, blocks, outgroup, outdataset, threads)
 }
@@ -315,6 +329,23 @@ bdPCA_hdf5 <- function(filename, group, dataset, bcenter = FALSE, bscale = FALSE
     .Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, k, q, force, threads)
 }
 
+#' Reduce hdf5 dataset
+#'
+#' Reduce hdf5 datasets inside a group by rows or columns and store complete matrix inside hdf5 data file.
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, character array indicating the input group where the data sets are stored 
+#' @param function, single character with function to apply, can be '+' or  '-' array indicating the input dataset to be imputed
+#' @param outgroup, optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
+#' @param outdataset, optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
+#' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @param remove, boolean if true, removes original matrices, by default bremove = false.
+#' @return Full matrix with results from reduction
+#' @export
+bdReduce_matrix_hdf5 <- function(filename, group, reducefunction, outgroup = NULL, outdataset = NULL, force = FALSE, remove = FALSE) {
+    .Call('_BigDataStatMeth_bdReduce_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, reducefunction, outgroup, outdataset, force, remove)
+}
+
 #' Remove SNPs in hdf5 omic dataset with low data
 #'
 #' Remove SNPs in hdf5 omic dataset with low data
@@ -331,6 +362,25 @@ bdPCA_hdf5 <- function(filename, group, dataset, bcenter = FALSE, bscale = FALSE
 #' @export
 bdremove_maf_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize) {
     .Call('_BigDataStatMeth_bdremove_maf_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize)
+}
+
+#' Split hdf5 dataset
+#'
+#' Split hdf5 dataset by rows or columns and store splitted submatrices inside hdf5 file.
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, character array indicating the input group where the data set to be imputed is. 
+#' @param dataset, character array indicating the input dataset to be imputed
+#' @param outgroup, optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
+#' @param outdataset, optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
+#' @param nblocks, integer number of blocks in which we want to split the data
+#' @param blocksize, integer, number of elements in each block
+#' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
+#' @param bforce, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @return Original hdf5 data file with imputed data
+#' @export
+bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, nblocks = NULL, blocksize = NULL, bycols = TRUE, force = FALSE) {
+    .Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, force)
 }
 
 #' Normalize Delayed Array matrix
