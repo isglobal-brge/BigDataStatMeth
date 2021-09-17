@@ -284,8 +284,8 @@ bdImpute_snps_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdat
 #' names begin, if null, then the function returns all datasets inside the group
 #' @return Full matrix with results from reduction
 #' @export
-inGroupDatasetin_hdf5 <- function(filema, group, prefix = NULL) {
-    .Call('_BigDataStatMeth_inGroupDatasetin_hdf5', PACKAGE = 'BigDataStatMeth', filema, group, prefix)
+inGroupDatasetin_hdf5 <- function(filename, group, prefix = NULL) {
+    .Call('_BigDataStatMeth_inGroupDatasetin_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, prefix)
 }
 
 .bdMLR_MR_hdf5 <- function(filename, group, dataset, betasgroup, betasdataset, blocks, outgroup = NULL, outdataset = NULL, threads = NULL) {

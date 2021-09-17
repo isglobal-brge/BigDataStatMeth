@@ -9,22 +9,19 @@ bool exist_FileGroupDataset(std::string filename, std::string group, std::string
   try {
     
       if( ResFileExist_filestream(filename) ) {
-       file = new H5File( filename, H5F_ACC_RDWR ); 
+        file = new H5File( filename, H5F_ACC_RDWR ); 
       } else {
-      //..// throw std::range_error("File not exits, create file before split dataset");
-      Rcpp::Rcout<<"\nFile not exits, create file before split dataset";
-      return false;
+        Rcpp::Rcout<<"\nFile not exits, create file before split dataset";
+        return false;
       }
     
       if( group.compare("") != 0 ) {
         
-        Rcpp::Rcout<<"\n\n"<<exists_HDF5_element_ptr(file, group)<<"\n\n";
         if( exists_HDF5_element_ptr(file, group) != 0 ) {
             
           if( dataset.compare("") != 0 ) {
             if( exists_HDF5_element_ptr(file, group + "/" + dataset ) == 0 ) {
                   file->close();
-                  // throw std::range_error("Dataset not exits, create file and dataset before split data");
                   Rcpp::Rcout<<"Group not exists, create the input dataset before proceed";
                   return false;
             }
@@ -33,7 +30,6 @@ bool exist_FileGroupDataset(std::string filename, std::string group, std::string
         }  else { 
       
           file->close();
-          // throw std::range_error("Group not exits, create file and group before split data !"); 
           Rcpp::Rcout<<"Group not exists, create the group and dataset before proceed";
           return false;
           

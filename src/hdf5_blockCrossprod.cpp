@@ -115,8 +115,6 @@ int hdf5_block_matrix_crossprod_hdf5( std::string matA, IntegerVector sizeA,
 
 
 
-
-
 //' Crossprod with hdf5 matrix
 //' 
 //' This function performs the crossprod from a matrix inside and hdf5 data file

@@ -168,15 +168,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // inGroupDatasetin_hdf5
-Rcpp::RObject inGroupDatasetin_hdf5(std::string filema, std::string group, Rcpp::Nullable<std::string> prefix);
-RcppExport SEXP _BigDataStatMeth_inGroupDatasetin_hdf5(SEXP filemaSEXP, SEXP groupSEXP, SEXP prefixSEXP) {
+Rcpp::RObject inGroupDatasetin_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix);
+RcppExport SEXP _BigDataStatMeth_inGroupDatasetin_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP prefixSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filema(filemaSEXP);
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type prefix(prefixSEXP);
-    rcpp_result_gen = Rcpp::wrap(inGroupDatasetin_hdf5(filema, group, prefix));
+    rcpp_result_gen = Rcpp::wrap(inGroupDatasetin_hdf5(filename, group, prefix));
     return rcpp_result_gen;
 END_RCPP
 }
