@@ -1,4 +1,4 @@
-#include "include/hdf5_interfaceUtilitiesR"
+#include "include/hdf5_interfaceUtilitiesR.h"
 using namespace Rcpp;
 
 
@@ -14,7 +14,7 @@ using namespace Rcpp;
 //' @return Full matrix with results from reduction
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject inGroupDatasetin_hdf5(std::string filema, std::string group, Rcpp::Nullable<std::string> prefix = R_NilValue)
+Rcpp::RObject inGroupDatasetin_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix = R_NilValue)
 {
     
     H5File* file;

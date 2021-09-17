@@ -7,7 +7,7 @@
     #include "H5Cpp.h"
 
 
-    Rcpp::RObject inGroupDatasetin_hdf5(std::string filema, std::string strgroup, Rcpp::Nullable<std::string> pref);
+    Rcpp::RObject inGroupDatasetin_hdf5(std::string filename, std::string strgroup, Rcpp::Nullable<std::string> pref);
 
 
 #endif
