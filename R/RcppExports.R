@@ -56,20 +56,45 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' 
 #' @param filename, character array indicating the name of the file to create
 #' @param group, character array indicating the input group where the data set to be imputed is. 
-#' @param datasets, character array indicating the input dataset to be imputed
+#' @param datasets, character array indicating the input datasets to be used
 #' @param func, character array function to be applyed
 #' \describe{
 #'     \item{QR}{apply bdQR() function to datasets}
 #'     \item{CrossProd}{apply bdCrossprod() function to datasets}
 #'     \item{tCrossProd}{apply bdtCrossprod() function to datasets}
 #'     \item{invChol}{apply bdInvCholesky() function to datasets}
+#'     \item{blockmult}{apply matrix multiplication, in that case, we need the datasets to be used defined
+#'     in b_datasets variable, datasets and b_datasets must be of the same lenght, in that case, the operation is performed according to index, for example,
+#'     if we have datasets = {"A1", "A2", "A3} and b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, A2%*%B2 and A3%*%B3 }
 #' }
-#' @param outgroup, optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
-#' @param bforce, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @param outgroup, character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
+#' @param b_datasets, optional character array indicating the input datasets to be used when we need a second dataset in functions like matrix multiplication
+#' @param bforce, optional boolean if true, previous results in same location inside hdf5 will be overwritten, by default force = false, data was not overwritten..
 #' @return Original hdf5 data file with results after apply function to different datasets
 #' @export
-bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, force = FALSE) {
-    .Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, force)
+bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, force = FALSE) {
+    .Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force)
+}
+
+#' Bind matrices by rows or columns
+#'
+#' Merge existing matrices inside hdf5 data file by rows or by columns
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, character array indicating the input group where the data set to be imputed is. 
+#' @param datasets, character array indicating the input dataset to be imputed
+#' @param func, character array function to be applyed
+#' \describe{
+#'     \item{bindRows}{merge datasets by rows}
+#'     \item{bindCols}{apply datasets by columns}
+#' }
+#' @param outgroup, character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
+#' @param outdataset, character array indicating the name for the new merged dataset
+#' @param bforce, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @return Original hdf5 data file with results after input datasets
+#' @export
+bdBind_hdf5 <- function(filename, group, datasets, outgroup, outdataset, func, force = FALSE) {
+    .Call('_BigDataStatMeth_bdBind_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, outdataset, func, force)
 }
 
 #' Crossprod with hdf5 matrix

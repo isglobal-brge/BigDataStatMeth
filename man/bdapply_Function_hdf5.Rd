@@ -4,26 +4,29 @@
 \alias{bdapply_Function_hdf5}
 \title{Apply function to different datasets inside a group}
 \usage{
-bdapply_Function_hdf5(filename, group, datasets, outgroup, func, force = FALSE)
+bdapply_Function_hdf5(
+  filename,
+  group,
+  datasets,
+  outgroup,
+  func,
+  b_group = NULL,
+  b_datasets = NULL,
+  force = FALSE
+)
 }
 \arguments{
 \item{filename, }{character array indicating the name of the file to create}
 
 \item{group, }{character array indicating the input group where the data set to be imputed is.}
 
-\item{datasets, }{character array indicating the input dataset to be imputed}
+\item{datasets, }{character array indicating the input datasets to be used}
 
-\item{outgroup, }{optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group.}
+\item{outgroup, }{character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group.}
 
-\item{func, }{character array function to be applyed
-\describe{
-    \item{QR}{apply bdQR() function to datasets}
-    \item{CrossProd}{apply bdCrossprod() function to datasets}
-    \item{tCrossProd}{apply bdtCrossprod() function to datasets}
-    \item{invChol}{apply bdInvCholesky() function to datasets}
-}}
+\item{func, }{character array function to be applyed}
 
-\item{bforce, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
+\item{b_datasets, }{optional character array indicating the input datasets to be used when we need a second dataset in functions like matrix multiplication}
 }
 \value{
 Original hdf5 data file with results after apply function to different datasets
