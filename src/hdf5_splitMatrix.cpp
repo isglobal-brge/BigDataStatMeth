@@ -101,7 +101,7 @@ Rcpp::RObject bdSplit_matrix_hdf5( std::string filename, std::string group, std:
   
   try
   {
-    std::string strdataset; group +"/" + dataset;
+    std::string strdataset = group + "/" + dataset;
     std::string stroutgroup, stroutdataset, stroutdata;
     std::string strdatasetout;
     int iblocksize = 0, iwholesize = 0;
@@ -124,7 +124,7 @@ Rcpp::RObject bdSplit_matrix_hdf5( std::string filename, std::string group, std:
 
     if (exist_FileGroupDataset (filename, group, dataset) != 0 ) {
       
-      strdataset = group +"/" + dataset;
+      //..// strdataset = group +"/" + dataset;
       
       file = new H5File( filename, H5F_ACC_RDWR );
       pdataset = new DataSet(file->openDataSet(strdataset));

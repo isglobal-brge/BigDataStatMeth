@@ -50,6 +50,28 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
     .Call('_BigDataStatMeth_bdRemovelowdata', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, bycols)
 }
 
+#' Apply function to different datasets inside a group
+#'
+#' Apply function to different datasets inside a group
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, character array indicating the input group where the data set to be imputed is. 
+#' @param datasets, character array indicating the input dataset to be imputed
+#' @param func, character array function to be applyed
+#' \describe{
+#'     \item{QR}{apply bdQR() function to datasets}
+#'     \item{CrossProd}{apply bdCrossprod() function to datasets}
+#'     \item{tCrossProd}{apply bdtCrossprod() function to datasets}
+#'     \item{invChol}{apply bdInvCholesky() function to datasets}
+#' }
+#' @param outgroup, optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
+#' @param bforce, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @return Original hdf5 data file with results after apply function to different datasets
+#' @export
+bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, force = FALSE) {
+    .Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, force)
+}
+
 #' Crossprod with hdf5 matrix
 #' 
 #' This function performs the crossprod from a matrix inside and hdf5 data file
@@ -284,8 +306,8 @@ bdImpute_snps_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdat
 #' names begin, if null, then the function returns all datasets inside the group
 #' @return Full matrix with results from reduction
 #' @export
-inGroupDatasetin_hdf5 <- function(filename, group, prefix = NULL) {
-    .Call('_BigDataStatMeth_inGroupDatasetin_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, prefix)
+bdinGroupDatasetin_hdf5 <- function(filename, group, prefix = NULL) {
+    .Call('_BigDataStatMeth_bdinGroupDatasetin_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, prefix)
 }
 
 .bdMLR_MR_hdf5 <- function(filename, group, dataset, betasgroup, betasdataset, blocks, outgroup = NULL, outdataset = NULL, threads = NULL) {

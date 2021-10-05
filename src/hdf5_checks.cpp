@@ -67,15 +67,15 @@ double prepare_outGroup(H5File* file, std::string outGroup, bool bforce)
   
   try {
     
-    if( exists_HDF5_element_ptr(file, outGroup) ==0 ) {
+    if( exists_HDF5_element_ptr(file, outGroup) == 0 ) {
       res = create_HDF5_group_ptr(file, outGroup );
-    }/* else if (exists_HDF5_element_ptr(file, outGroup) && bforce == true)
+    } else if (exists_HDF5_element_ptr(file, outGroup) != 0 && bforce == true)
     {
       res = remove_HDF5_element_ptr(file, outGroup);
       res = create_HDF5_group_ptr(file, outGroup );
     } else {
       throw std::range_error("Group exists, please set force = true if you want to rewrite data");
-    }*/
+    }
     
     
   } catch( FileIException& error ) { // catch failure caused by the H5File operations

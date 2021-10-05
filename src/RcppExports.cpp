@@ -43,6 +43,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdapply_Function_hdf5
+Rcpp::RObject bdapply_Function_hdf5(std::string filename, std::string group, Rcpp::StringVector datasets, std::string outgroup, std::string func, Rcpp::Nullable<bool> force);
+RcppExport SEXP _BigDataStatMeth_bdapply_Function_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetsSEXP, SEXP outgroupSEXP, SEXP funcSEXP, SEXP forceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type datasets(datasetsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type force(forceSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdapply_Function_hdf5(filename, group, datasets, outgroup, func, force));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdCrossprod_hdf5
 Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group, std::string A, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<std::string> B, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<double> mixblock_size, Rcpp::Nullable<std::string> outgroup);
 RcppExport SEXP _BigDataStatMeth_bdCrossprod_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP groupBSEXP, SEXP BSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP mixblock_sizeSEXP, SEXP outgroupSEXP) {
@@ -167,16 +183,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// inGroupDatasetin_hdf5
-Rcpp::RObject inGroupDatasetin_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix);
-RcppExport SEXP _BigDataStatMeth_inGroupDatasetin_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP prefixSEXP) {
+// bdinGroupDatasetin_hdf5
+Rcpp::RObject bdinGroupDatasetin_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix);
+RcppExport SEXP _BigDataStatMeth_bdinGroupDatasetin_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP prefixSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type prefix(prefixSEXP);
-    rcpp_result_gen = Rcpp::wrap(inGroupDatasetin_hdf5(filename, group, prefix));
+    rcpp_result_gen = Rcpp::wrap(bdinGroupDatasetin_hdf5(filename, group, prefix));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -704,6 +720,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdCrossprod_Weighted", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_Weighted, 5},
     {"_BigDataStatMeth_bdRemovelowdata", (DL_FUNC) &_BigDataStatMeth_bdRemovelowdata, 7},
+    {"_BigDataStatMeth_bdapply_Function_hdf5", (DL_FUNC) &_BigDataStatMeth_bdapply_Function_hdf5, 6},
     {"_BigDataStatMeth_bdCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_hdf5, 10},
     {"_BigDataStatMeth_blockmult_hdf5", (DL_FUNC) &_BigDataStatMeth_blockmult_hdf5, 9},
     {"_BigDataStatMeth_bdblockmult_sparse_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockmult_sparse_hdf5, 5},
@@ -711,7 +728,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdget_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdget_maf_hdf5, 6},
     {"_BigDataStatMeth_bdImport_text_to_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImport_text_to_hdf5, 8},
     {"_BigDataStatMeth_bdImpute_snps_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImpute_snps_hdf5, 6},
-    {"_BigDataStatMeth_inGroupDatasetin_hdf5", (DL_FUNC) &_BigDataStatMeth_inGroupDatasetin_hdf5, 3},
+    {"_BigDataStatMeth_bdinGroupDatasetin_hdf5", (DL_FUNC) &_BigDataStatMeth_bdinGroupDatasetin_hdf5, 3},
     {"_BigDataStatMeth_bdMLR_MR_hdf5", (DL_FUNC) &_BigDataStatMeth_bdMLR_MR_hdf5, 9},
     {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 6},
     {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 9},
