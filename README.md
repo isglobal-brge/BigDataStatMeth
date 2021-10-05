@@ -69,6 +69,9 @@ library(BigDataStatMeth)
 | Add one dataset in hdf5 data file                |                  bdAdd_hdf5_matrix(…)                  |                |           |          |   ✔︎  |
 | Split an hdf5 dataset in small datasets          |                  bdSplit_matrix_hdf5(…)                  |                |           |          |   ✔︎  |
 | Reduce multiple datasets applying a function     |                  bdReduce_matrix_hdf5(…)                  |                |           |          |   ✔︎  |
+| Merge multiple datasets by rows or columns       |                  bdBind_hdf5(…)                             |                |           |          |   ✔︎  |
+| Apply a function to multiple datasets            |                  bdapply_Function_hdf5(…)                  |                |           |          |   ✔︎  |
+| Get a list with all datasets inside a group      |                  bdinGroupDatasetin_hdf5(…)                  |                |           |          |   ✔︎  |
 | Remove one dataset from hdf5 data file           |                  bdRemove_hdf5_element(…)                 |                |           |          |   ✔︎  |
 | Import data from text file to HDF5               |                 bdImport_text_to_hdf5(…)                 |                |           |          |   ✔︎  |
 | Remove MAF by rows or columns                    |                    bdremove_maf_hdf5(…)                   |                |     ✔︎     |          |   ✔︎  |
