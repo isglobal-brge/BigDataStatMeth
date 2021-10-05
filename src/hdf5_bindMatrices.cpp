@@ -86,12 +86,6 @@ Rcpp::RObject bdBind_hdf5( std::string filename, std::string group, Rcpp::String
             
             if( oper.findName( func ) == 0 || oper.findName( func ) == 1) {
                 
-                // Rcpp::Rcout<< "Files actuals : "<<original.rows()<<"\n";
-                // Rcpp::Rcout<< "Files llegides : "<<count[0]<<"\n";
-                // Rcpp::Rcout<< "Columnes actuals : "<<original.cols()<<"\n";
-                // Rcpp::Rcout<< "Columnes llegides : "<<count[1]<<"\n";
-                
-                
                 if(oper.findName( func ) == 0 ){
                     
                     // Test if dimmensions are correct
@@ -125,11 +119,9 @@ Rcpp::RObject bdBind_hdf5( std::string filename, std::string group, Rcpp::String
                     create_HDF5_unlimited_matrix_dataset_ptr(file, stroutDatasetName, count[0], count[1], "numeric");
                 }
                     
-                // Rcpp::Rcout<<"\n Where peta - 1 \n";
                 unlimDataset = new DataSet(file->openDataSet(stroutDatasetName));
                 
-                Rcpp::Rcout<<"\n Where peta - 2 \n";
-                
+
                 if(oper.findName( func ) == 0 && i!=0) {
                     
                     // Rcpp::Rcout<<"\n Where peta - 3.1 \n";
@@ -137,22 +129,11 @@ Rcpp::RObject bdBind_hdf5( std::string filename, std::string group, Rcpp::String
                     // Rcpp::Rcout<<"\n Where peta - 3 \n";
                     
                 } else if (oper.findName( func ) == 1 && i!=0) {
-                    
-                    // Rcpp::Rcout<<"\n Where peta - 4.1 \n";
                     extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, count[1]);
-                    // Rcpp::Rcout<<"\n Where peta - 4 \n";
-                    
+
                 }
                 
-                // Rcpp::Rcout<<"\n Where peta - 5 \n";
-                // Rcpp::Rcout<< "Offset [0] : "<<offset[0]<<"\n";
-                // Rcpp::Rcout<< "Offset [1] : "<<offset[1]<<"\n";
-                // Rcpp::Rcout<< "Count [0] : "<<count[0]<<"\n";
-                // Rcpp::Rcout<< "Count [1] : "<<count[1]<<"\n";
-                
-                
                 write_HDF5_matrix_subset_v2(file, unlimDataset, offset, count, stride, block, Rcpp::wrap(original)  );  
-                // Rcpp::Rcout<<"\n Where peta - 6 \n";
                 unlimDataset->close();
                 
                 

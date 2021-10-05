@@ -135,35 +135,21 @@ Rcpp::RObject bdReduce_matrix_hdf5( std::string filename, std::string group,
       return(Rcpp::wrap(-1));
     }
     
-    Rcpp::Rcout<<"\n L'error esta a 1... \n";
-
     if(outgroup.isNull()) {  stroutgroup = group ;
     } else {   stroutgroup = Rcpp::as<std::string>(outgroup);}
-    
-    Rcpp::Rcout<<"\n L'error esta a 2... \n";
     
     if(remove.isNull()) { bremove = false ;
     } else {   bremove = Rcpp::as<bool>(remove);}
     
-    Rcpp::Rcout<<"\n L'error esta a 3... \n";
-    
     if(force.isNull()) { bforce = false; } 
     else {   bforce = Rcpp::as<bool>(force); }
-    
-    Rcpp::Rcout<<"\n L'error esta a 4... \n";
-    
-    
+
     if(outdataset.isNull()){  strdatasetout = group ;
     } else {   strdatasetout = Rcpp::as<std::string>(outdataset);}
-    
-    Rcpp::Rcout<<"\n L'error esta a 5... \n";
-    
 
     if (exist_FileGroupDataset (filename, group, "")!= 0 ) {
       file = new H5File( filename, H5F_ACC_RDWR );
     }
-    
-    Rcpp::Rcout<<"\n L'error esta a 6... \n";
     
     prepare_outGroup(file, stroutgroup, bforce);
 

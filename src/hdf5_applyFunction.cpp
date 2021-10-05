@@ -63,9 +63,15 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
             return wrap(false);
         }
 
-        //..// if( oper.findName( func ) == 4) {
+
+        if( b_datasets.isNotNull() &&  ( oper(oper.findName( func )) == 1 ||  oper(oper.findName( func )) == 2 ||  oper(oper.findName( func )) == 4) ) {
             
-        if(b_datasets.isNotNull() && (as<Rcpp::StringVector>(b_datasets)).size() == datasets.size()) {
+            if( as<Rcpp::StringVector>(b_datasets).size() != datasets.size() ){
+                Rcpp::Rcout<<"To perform matrix multiplication, CrossProd or tCrossProd "<<
+                    "with two matrices b_datasets variable must be defined and the length "<<
+                        " of datasets and b_datasets must be equal";
+                return wrap(false);  
+            }
             str_bdatasets = as<Rcpp::StringVector>(b_datasets);
             
             if( oper.findName( func ) == 1){
@@ -74,14 +80,9 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                 func = "tCrossProd_double";
             }
             
-        } else {
-            Rcpp::Rcout<<"To perform matrix multiplication, CrossProd or tCrossProd "<<
-                "with two matrices b_datasets variable must be defined and the length "<<
-                " of datasets and b_datasets must be equal";
-            return wrap(false);    
         }
         
-        //..// }
+        
 
         if(b_group.isNull()) { str_bgroup = group; } 
         else {   str_bgroup = Rcpp::as<std::string>(b_group); }
@@ -178,9 +179,9 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
 
                 originalB = GetCurrentBlock_hdf5_Original( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
                 
-                
-                Rcpp::Rcout<<"\n ORIGINAL : \n"<<original<<"\n";
-                Rcpp::Rcout<<"\n ORIGINAL B : \n"<<originalB<<"\n";
+                // 
+                // Rcpp::Rcout<<"\n ORIGINAL : \n"<<original<<"\n";
+                // Rcpp::Rcout<<"\n ORIGINAL B : \n"<<originalB<<"\n";
                 
                 
                 if( oper(oper.findName( func )) == 4 ) {
@@ -194,10 +195,10 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                     originalB = GetCurrentBlock_hdf5( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
                 }
                 
-                Rcpp::Rcout<<"\n  \n \n";
-                
-                Rcpp::Rcout<<"\n ORIGINAL : \n"<<original<<"\n";
-                Rcpp::Rcout<<"\n ORIGINAL B : \n"<<originalB<<"\n";
+                // Rcpp::Rcout<<"\n  \n \n";
+                // 
+                // Rcpp::Rcout<<"\n ORIGINAL : \n"<<original<<"\n";
+                // Rcpp::Rcout<<"\n ORIGINAL B : \n"<<originalB<<"\n";
                 
                 // // Get data
                 // originalB = GetCurrentBlock_hdf5_Original( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);

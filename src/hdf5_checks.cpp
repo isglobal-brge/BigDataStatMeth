@@ -68,7 +68,7 @@ double prepare_outGroup(H5File* file, std::string outGroup, bool bforce)
   try {
     
     if( exists_HDF5_element_ptr(file, outGroup) == 0 ) {
-      res = create_HDF5_group_ptr(file, outGroup );
+      res = create_HDF5_groups_ptr(file, outGroup );
     } /*  Commented to prevent to remove complete group
           maybe there are other interesting datasets inside the group !!!
  

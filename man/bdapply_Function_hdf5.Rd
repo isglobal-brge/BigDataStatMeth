@@ -24,9 +24,9 @@ bdapply_Function_hdf5(
 
 \item{outgroup, }{character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group.}
 
-\item{func, }{character array function to be applyed}
-
 \item{b_datasets, }{optional character array indicating the input datasets to be used when we need a second dataset in functions like matrix multiplication}
+
+\item{bforce, }{optional boolean if true, previous results in same location inside hdf5 will be overwritten, by default force = false, data was not overwritten..}
 }
 \value{
 Original hdf5 data file with results after apply function to different datasets
