@@ -202,16 +202,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// bdinGroupDatasetin_hdf5
-Rcpp::RObject bdinGroupDatasetin_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix);
-RcppExport SEXP _BigDataStatMeth_bdinGroupDatasetin_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP prefixSEXP) {
+// bdgetDatasetsList_hdf5
+Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix);
+RcppExport SEXP _BigDataStatMeth_bdgetDatasetsList_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP prefixSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type prefix(prefixSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdinGroupDatasetin_hdf5(filename, group, prefix));
+    rcpp_result_gen = Rcpp::wrap(bdgetDatasetsList_hdf5(filename, group, prefix));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -748,7 +748,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdget_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdget_maf_hdf5, 6},
     {"_BigDataStatMeth_bdImport_text_to_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImport_text_to_hdf5, 8},
     {"_BigDataStatMeth_bdImpute_snps_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImpute_snps_hdf5, 6},
-    {"_BigDataStatMeth_bdinGroupDatasetin_hdf5", (DL_FUNC) &_BigDataStatMeth_bdinGroupDatasetin_hdf5, 3},
+    {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
     {"_BigDataStatMeth_bdMLR_MR_hdf5", (DL_FUNC) &_BigDataStatMeth_bdMLR_MR_hdf5, 9},
     {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 6},
     {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 9},

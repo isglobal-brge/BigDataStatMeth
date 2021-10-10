@@ -14,7 +14,7 @@ using namespace Rcpp;
 //' @return Full matrix with results from reduction
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject inGroupDatasetin_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix = R_NilValue)
+Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix = R_NilValue)
 {
     
     H5File* file;
@@ -67,7 +67,7 @@ bdReduce_matrix_hdf5(  "cars2.hdf5", "dataoutCols", "+", "test", "testdataset", 
 
 library(BigDataStatMeth)
 setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/UAB/DOCTORAT/BitDataStatMeth - BDSM/Analysis/BigDataStatMeth_Analysis/Cholesterol/test")
-datasets_hdf5 <- inGroupDatasetin_hdf5( "cars.hdf5", "Xrows")
+datasets_hdf5 <- bdgetDatasetsList_hdf5( "cars.hdf5", "Xrows")
 datasets_hdf5
 
 */

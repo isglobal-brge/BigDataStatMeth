@@ -188,8 +188,8 @@ bdSplit_matrix_hdf5( "cars.hdf5", "data", "X", "dataoutCols", nblocks = 3, bycol
 
 devtools::reload(pkgload::inst("BigDataStatMeth"))
 
-x.blocks <- BigDataStatMeth::bdinGroupDatasetin_hdf5("cars.hdf5", "Xrows")
-y.blocks <- BigDataStatMeth::bdinGroupDatasetin_hdf5("cars.hdf5", "Yrows")
+x.blocks <- BigDataStatMeth::bdgetDatasetsList_hdf5("cars.hdf5", "Xrows")
+y.blocks <- BigDataStatMeth::bdgetDatasetsList_hdf5("cars.hdf5", "Yrows")
 
 bdBind_hdf5("cars.hdf5", "Xrows", x.blocks, "merges", "outMergedRows", "bindRows", force = TRUE )
 bdBind_hdf5("cars.hdf5", "Yrows", y.blocks, "merges", "outMergedCols", "bindCols", force = TRUE )
