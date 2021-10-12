@@ -321,9 +321,10 @@ bdImpute_snps_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdat
     .Call('_BigDataStatMeth_bdImpute_snps_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols)
 }
 
-#' Reduce hdf5 dataset
+#' Gets all dataset names inside a group
 #'
-#' Reduce hdf5 datasets inside a group by rows or columns and store complete matrix inside hdf5 data file.
+#' Gets a list of all dataset names inside a group or all the datasets names 
+#' starting with a prefix under a group
 #' 
 #' @param filename, character array indicating the name of the file to create
 #' @param group, character array indicating the input group where the data sets are stored 

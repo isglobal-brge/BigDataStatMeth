@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdgetDatasetsList_hdf5}
 \alias{bdgetDatasetsList_hdf5}
-\title{Reduce hdf5 dataset}
+\title{Gets all dataset names inside a group}
 \usage{
 bdgetDatasetsList_hdf5(filename, group, prefix = NULL)
 }
@@ -18,5 +18,6 @@ names begin, if null, then the function returns all datasets inside the group}
 Full matrix with results from reduction
 }
 \description{
-Reduce hdf5 datasets inside a group by rows or columns and store complete matrix inside hdf5 data file.
+Gets a list of all dataset names inside a group or all the datasets names 
+starting with a prefix under a group
 }
