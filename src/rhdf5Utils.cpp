@@ -1819,18 +1819,28 @@ extern "C" {
       
       dataspace.close();
     } catch(FileIException& error) { // catch failure caused by the H5File operations
+        dataset->close();
+        file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (File IException)" );
       return -1;
     } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+        dataset->close();
+        file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (DataSet IException)" );
       return -1;
     } catch(GroupIException& error) { // catch failure caused by the Group operations
+        dataset->close();
+        file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (Group IException)" );
       return -1;
     } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+        dataset->close();
+        file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (DataSpace IException)" );
       return -1;
     } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+        dataset->close();
+        file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (Data TypeIException)" );
       return -1;
     }

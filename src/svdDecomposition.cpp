@@ -81,12 +81,13 @@ svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale 
 
 
 // Lapack SVD decomposition
-svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
+svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale, bool complete )
 {
   
   svdeig retsvd;
   
   char Schar='S';
+  char Achar='A';
   int info = 0;
   
   
@@ -112,10 +113,17 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale )
 
   Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
   Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);
-  Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
+  Eigen::MatrixXd u;
   Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
 
-  dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
+  if( complete == false ){
+      u = Eigen::MatrixXd::Zero(ldu,k);
+      dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
+  } else {
+      u = Eigen::MatrixXd::Zero(ldu,m);
+      dgesvd_( &Achar, &Achar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
+      
+  }
 
   //..// Rcpp::Rcout<<"\nDescomposició - d : \n"<<s;
   //..// Rcpp::Rcout<<"\nDescomposició - u : \n"<<u;
@@ -174,7 +182,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     Eigen::MatrixXd matlast;
     matlast = GetCurrentBlock_hdf5(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
 
-    retsvd = RcppbdSVD_lapack(matlast, false, false);
+    retsvd = RcppbdSVD_lapack(matlast, false, false, true);
     
     // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
     // Create structure and write d 
@@ -307,7 +315,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
       X = GetCurrentBlock_hdf5_Original(file, dataset, offset[0], offset[1], count[0], count[1]); 
       
       // retsvd = RcppbdSVD(X, k, nev, bcenter, bscale);
-      retsvd = RcppbdSVD_lapack(X, bcenter, bscale);
+      retsvd = RcppbdSVD_lapack(X, bcenter, bscale, true);
 
       create_HDF5_groups_ptr(file,"SVD/"+ strdataset);
       
@@ -714,6 +722,7 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
 //' @param X numerical or Delayed Array matrix
 //' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
 //' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+//' @param complete (optional, defalut = FALSE) . If complete is TRUE svd function returns complete u and v
 //' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
 //' @return v eigenvectors of A^tA, nxn orthogonal matrix
 //' @return d singular values, nxn diagonal matrix (non-negative real values)
@@ -748,16 +757,19 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true)
+Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,  Rcpp::Nullable<bool> complete=false )
 {
   auto dmtype = beachmat::find_sexp_type(X);
-  bool bcent, bscal;
+  bool bcent, bscal, bcomp;
   
   if(bcenter.isNull())  bcent = true ;
   else    bcent = Rcpp::as<bool>(bcenter);
   
   if(bscale.isNull())  bscal = true ;
   else    bscal = Rcpp::as<bool>(bscale);
+  
+  if(complete.isNull())  bcomp = false;
+  else    bcomp = Rcpp::as<bool>(complete);
   
 
   Eigen::MatrixXd mX;
@@ -778,7 +790,7 @@ Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true,
     throw std::runtime_error("unacceptable matrix type");
   }
   
-  svdeig retsvd =  RcppbdSVD_lapack( mX, bcent, bscal);
+  svdeig retsvd =  RcppbdSVD_lapack( mX, bcent, bscal, bcomp);
   
   return List::create(Named("d") = retsvd.d,
                       Named("u") = retsvd.u,

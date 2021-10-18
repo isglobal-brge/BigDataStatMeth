@@ -112,7 +112,6 @@ double prepare_outDataset(H5File* file, std::string outDataset, bool bforce)
             //..// throw std::range_error("Output dataset exists, please set force = true if you want to rewrite data");
         } else if ( exists_HDF5_element_ptr(file, outDataset) !=0 && bforce == true) {
           
-          Rcpp::Rcout<<"\n Hem entrat a la destrucció\n"<< exists_HDF5_element_ptr(file, outDataset)<<"\n Bforce = "<<bforce<<"\n Element"<<outDataset<<"\n";
             res = remove_HDF5_element_ptr(file, outDataset);
         }
         

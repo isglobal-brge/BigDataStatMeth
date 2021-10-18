@@ -686,15 +686,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdSVD_lapack
-Rcpp::RObject bdSVD_lapack(Rcpp::RObject X, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale);
-RcppExport SEXP _BigDataStatMeth_bdSVD_lapack(SEXP XSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP) {
+Rcpp::RObject bdSVD_lapack(Rcpp::RObject X, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<bool> complete);
+RcppExport SEXP _BigDataStatMeth_bdSVD_lapack(SEXP XSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP completeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSVD_lapack(X, bcenter, bscale));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type complete(completeSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdSVD_lapack(X, bcenter, bscale, complete));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -783,7 +784,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdInvCholesky", (DL_FUNC) &_BigDataStatMeth_bdInvCholesky, 1},
     {"_BigDataStatMeth_bdSVD", (DL_FUNC) &_BigDataStatMeth_bdSVD, 5},
     {"_BigDataStatMeth_bdSVD_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSVD_hdf5, 8},
-    {"_BigDataStatMeth_bdSVD_lapack", (DL_FUNC) &_BigDataStatMeth_bdSVD_lapack, 3},
+    {"_BigDataStatMeth_bdSVD_lapack", (DL_FUNC) &_BigDataStatMeth_bdSVD_lapack, 4},
     {"_BigDataStatMeth_bdtCrossprod_Weighted", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_Weighted, 5},
     {"_BigDataStatMeth_bdparallelVectorSum", (DL_FUNC) &_BigDataStatMeth_bdparallelVectorSum, 1},
     {"_BigDataStatMeth_bdparallelpow2", (DL_FUNC) &_BigDataStatMeth_bdparallelpow2, 1},

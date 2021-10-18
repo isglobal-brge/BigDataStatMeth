@@ -66,6 +66,9 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #'     \item{blockmult}{apply matrix multiplication, in that case, we need the datasets to be used defined
 #'     in b_datasets variable, datasets and b_datasets must be of the same lenght, in that case, the operation is performed according to index, for example,
 #'     if we have datasets = {"A1", "A2", "A3} and b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, A2%*%B2 and A3%*%B3 }
+#'     \item{CrossProd_double}{ performs crossprod using two matrices, see blockmult }
+#'     \item{tCrossProd_double}{ performs transposed crossprod using two matrices, see blockmult }
+#'     \item{solve}{solve matrix equation system, see blockmult for parametrization }
 #' }
 #' @param outgroup, character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
 #' @param b_datasets, optional character array indicating the input datasets to be used when we need a second dataset in functions like matrix multiplication
@@ -889,6 +892,7 @@ bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcent
 #' @param X numerical or Delayed Array matrix
 #' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
 #' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+#' @param complete (optional, defalut = FALSE) . If complete is TRUE svd function returns complete u and v
 #' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
 #' @return v eigenvectors of A^tA, nxn orthogonal matrix
 #' @return d singular values, nxn diagonal matrix (non-negative real values)
@@ -922,8 +926,8 @@ bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcent
 #' decsvd$u
 #' 
 #' @export
-bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE) {
-    .Call('_BigDataStatMeth_bdSVD_lapack', PACKAGE = 'BigDataStatMeth', X, bcenter, bscale)
+bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE, complete = FALSE) {
+    .Call('_BigDataStatMeth_bdSVD_lapack', PACKAGE = 'BigDataStatMeth', X, bcenter, bscale, complete)
 }
 
 #' Block matrix multiplication with Delayed Array Object

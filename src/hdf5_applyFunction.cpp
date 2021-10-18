@@ -22,6 +22,9 @@ using namespace std;
 //'     \item{blockmult}{apply matrix multiplication, in that case, we need the datasets to be used defined
 //'     in b_datasets variable, datasets and b_datasets must be of the same lenght, in that case, the operation is performed according to index, for example,
 //'     if we have datasets = {"A1", "A2", "A3} and b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, A2%*%B2 and A3%*%B3 }
+//'     \item{CrossProd_double}{ performs crossprod using two matrices, see blockmult }
+//'     \item{tCrossProd_double}{ performs transposed crossprod using two matrices, see blockmult }
+//'     \item{solve}{solve matrix equation system, see blockmult for parametrization }
 //' }
 //' @param outgroup, character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
 //' @param b_datasets, optional character array indicating the input datasets to be used when we need a second dataset in functions like matrix multiplication
@@ -44,8 +47,8 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
     DataSet* pbdataset = nullptr;
     Rcpp::StringVector str_bdatasets;
     std::string str_bgroup;
-    Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22};
-    oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd", "invChol", "blockmult", "CrossProd_double", "tCrossProd_double"});
+    Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5};
+    oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd", "invChol", "blockmult", "CrossProd_double", "tCrossProd_double", "solve"});
     
     try
     {
@@ -64,10 +67,11 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
         }
 
 
-        if( b_datasets.isNotNull() &&  ( oper(oper.findName( func )) == 1 ||  oper(oper.findName( func )) == 2 ||  oper(oper.findName( func )) == 4) ) {
+        if( b_datasets.isNotNull() &&  ( oper(oper.findName( func )) == 1 ||  oper(oper.findName( func )) == 2 ||  
+            oper(oper.findName( func )) == 4 ||  oper(oper.findName( func )) == 5) ) {
             
             if( as<Rcpp::StringVector>(b_datasets).size() != datasets.size() ){
-                Rcpp::Rcout<<"To perform matrix multiplication, CrossProd or tCrossProd "<<
+                Rcpp::Rcout<<"To perform matrix multiplication, CrossProd, tCrossProd or solve "<<
                     "with two matrices b_datasets variable must be defined and the length "<<
                         " of datasets and b_datasets must be equal";
                 return wrap(false);  
@@ -127,7 +131,7 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                 
                 write_HDF5_matrix_from_R_ptr(file, outgroup + "/" + datasets(i) + ".Q", Rcpp::wrap(decQR.Q), false);
                 write_HDF5_matrix_from_R_ptr(file, outgroup + "/" + datasets(i) + ".R", Rcpp::wrap(decQR.R), false);
-                
+
                 pdataset->close();
                 
             } else if( oper(oper.findName( func )) == 1) {
@@ -191,7 +195,7 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                     original = GetCurrentBlock_hdf5( file, pdataset, 0, 0, dims_out[0], dims_out[1]);
                     
                 } else if ( oper(oper.findName( func )) == 22) {
-                    outputdataset = outgroup + "/tCross_" + datasets(i) + "_x_" + str_bdatasets(i);
+                    outputdataset = outgroup + "/tCross_" + datasets(i) + str_bdatasets(i);
                     originalB = GetCurrentBlock_hdf5( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
                 }
                 
@@ -215,6 +219,28 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                 pdataset->close();
                 pbdataset->close();
 
+                
+            } else if( oper(oper.findName( func )) == 5) {
+                
+                std::string outputdataset;
+                Eigen::MatrixXd originalB;
+                
+                
+                std::string b_strdataset = str_bgroup + "/" + str_bdatasets(i);
+                outputdataset = outgroup + "/solved_" + datasets(i) + "x_eq_" + str_bdatasets(i);
+                
+                pbdataset = new DataSet(file->openDataSet(b_strdataset));
+                
+                // Real data set dimension
+                IntegerVector dims_outB = get_HDF5_dataset_size(*pbdataset);
+                
+                original = GetCurrentBlock_hdf5( file, pdataset, 0, 0, dims_out[0], dims_out[1]);
+                originalB = GetCurrentBlock_hdf5( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
+                
+                Rcpp::NumericMatrix results = Rcpp::as<Rcpp::NumericMatrix>(bdSolve(wrap(original), wrap(originalB)));
+                
+                write_HDF5_matrix_from_R_ptr(file, outputdataset, results, false);
+                pdataset->close();
                 
             } else {
                 pdataset->close();

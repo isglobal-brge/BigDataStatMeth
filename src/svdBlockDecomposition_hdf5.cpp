@@ -121,7 +121,7 @@ int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int 
       }
       
       //    b) SVD for each block
-      retsvd = RcppbdSVD_lapack(X, false, false);
+      retsvd = RcppbdSVD_lapack(X, false, false, true);
       
       //    c)  U*d
       // Create diagonal matrix from svd decomposition d
@@ -245,7 +245,7 @@ int Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupNam
       Eigen::MatrixXd X = GetCurrentBlock_hdf5( file, &currentdataset, 0, 0, dims_out[0], dims_out[1]);
       
       //    b) Get dataset svd
-      retsvd = RcppbdSVD_lapack(X, false, false);
+      retsvd = RcppbdSVD_lapack(X, false, false, true);
       
       
       //    c) U*d
