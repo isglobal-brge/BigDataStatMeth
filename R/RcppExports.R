@@ -737,8 +737,8 @@ bdCreate_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = 
 #' @param transp, boolean if true, data is manipulated in transposed form
 #' @return none
 #' @export
-bdAdd_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL) {
-    .Call('_BigDataStatMeth_bdAdd_hdf5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp)
+bdAdd_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL, force = FALSE) {
+    .Call('_BigDataStatMeth_bdAdd_hdf5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp, force)
 }
 
 #' Remove element group or dataset from  hdf5 file

@@ -2212,7 +2212,7 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue )
+Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue, Rcpp::Nullable<bool> force = false )
 {
     
   H5File* file;
@@ -2226,16 +2226,37 @@ Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::strin
       throw std::range_error("File not exits, create file before add new dataset");
 
     CharacterVector svrows, svrcols;
-    bool transposed;
+    bool transposed,
+         bforce;
     
     if(transp.isNull())  transposed = false ;
     else    transposed = Rcpp::as<bool>(transp);
+    
+    if(force.isNull())  bforce = false ;
+    else    bforce = Rcpp::as<bool>(force);
+    
     
     file = new H5File( filename, H5F_ACC_RDWR );
     
     if(!exists_HDF5_element_ptr(file, group)) 
       create_HDF5_group_ptr(file, group);
     
+    if( exists_HDF5_element_ptr(file, group + "/" + dataset) ) {
+        if(bforce == true) {
+            remove_HDF5_element_ptr( file, group + "/" + dataset);
+            
+            // Remove rownames and colnames if exsits
+            std::string strdimnames = group + "/." + dataset + "_dimnames";
+            if(exists_HDF5_element_ptr(file, strdimnames)) {
+                remove_HDF5_element_ptr( file, strdimnames);
+            }
+            
+        } else {
+            Rcpp::Rcout<<"\n ERROR - dataset exists, please set force = TRUE to force overwrite";
+            return(wrap(-1));
+        }
+    }
+
     //..04-07-2020..// file->close();
 
     if ( object.isS4() == true) {

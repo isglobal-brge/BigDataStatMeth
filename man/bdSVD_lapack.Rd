@@ -4,7 +4,7 @@
 \alias{bdSVD_lapack}
 \title{Complete SVD with Lapack Functions for DelayedArray and RObjects}
 \usage{
-bdSVD_lapack(X, bcenter = TRUE, bscale = TRUE)
+bdSVD_lapack(X, bcenter = TRUE, bscale = TRUE, complete = FALSE)
 }
 \arguments{
 \item{X}{numerical or Delayed Array matrix}
@@ -12,6 +12,8 @@ bdSVD_lapack(X, bcenter = TRUE, bscale = TRUE)
 \item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.}
 
 \item{bscale}{(optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.}
+
+\item{complete}{(optional, defalut = FALSE) . If complete is TRUE svd function returns complete u and v}
 }
 \value{
 u eigenvectors of AA^t, mxn and column orthogonal matrix

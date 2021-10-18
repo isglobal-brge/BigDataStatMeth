@@ -603,8 +603,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdAdd_hdf5_matrix
-Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp);
-RcppExport SEXP _BigDataStatMeth_bdAdd_hdf5_matrix(SEXP objectSEXP, SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP transpSEXP) {
+Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp, Rcpp::Nullable<bool> force);
+RcppExport SEXP _BigDataStatMeth_bdAdd_hdf5_matrix(SEXP objectSEXP, SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP transpSEXP, SEXP forceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -613,7 +613,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
     Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type transp(transpSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdAdd_hdf5_matrix(object, filename, group, dataset, transp));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type force(forceSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdAdd_hdf5_matrix(object, filename, group, dataset, transp, force));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -778,7 +779,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdQR", (DL_FUNC) &_BigDataStatMeth_bdQR, 2},
     {"_BigDataStatMeth_bddtrsm", (DL_FUNC) &_BigDataStatMeth_bddtrsm, 3},
     {"_BigDataStatMeth_bdCreate_hdf5_matrix_file", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_matrix_file, 5},
-    {"_BigDataStatMeth_bdAdd_hdf5_matrix", (DL_FUNC) &_BigDataStatMeth_bdAdd_hdf5_matrix, 5},
+    {"_BigDataStatMeth_bdAdd_hdf5_matrix", (DL_FUNC) &_BigDataStatMeth_bdAdd_hdf5_matrix, 6},
     {"_BigDataStatMeth_bdRemove_hdf5_element", (DL_FUNC) &_BigDataStatMeth_bdRemove_hdf5_element, 2},
     {"_BigDataStatMeth_bdSolve", (DL_FUNC) &_BigDataStatMeth_bdSolve, 2},
     {"_BigDataStatMeth_bdInvCholesky", (DL_FUNC) &_BigDataStatMeth_bdInvCholesky, 1},
