@@ -2087,12 +2087,13 @@ H5FilePtr Open_hdf5_file(const std::string& fname)
 //' @param group, character array indicating folder name to put the matrix in hdf5 file
 //' @param dataset, character array indicating the dataset name to store the matix data
 //' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
+//' @param force, optional boolean if true and file exists, removes old file and creates a new file with de dataset data.
 //' @return none
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object, 
                                         Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue,
-                                        Rcpp::Nullable<bool> transp = R_NilValue)
+                                        Rcpp::Nullable<bool> transp = R_NilValue, Rcpp::Nullable<bool> force = R_NilValue )
 {
   
   H5File* file;
@@ -2102,7 +2103,7 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
 
 
     std::string strsubgroup, strdataset;
-    bool transposed;
+    bool transposed, bforce;
     
     if(group.isNull())  strsubgroup = "INPUT" ;
     else    strsubgroup = Rcpp::as<std::string>(group);
@@ -2114,12 +2115,23 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
     if(transp.isNull())  transposed = false ;
     else    transposed = Rcpp::as<bool>(transp);
     
+    if(force.isNull())  bforce = false ;
+    else    bforce = Rcpp::as<bool>(force);
+    
     if ( object.sexp_type()==0   )
       throw std::range_error("Data matrix must exsits and mustn't be null");
     
     
     CharacterVector svrows, svrcols;
     List dimnames;
+    
+    if( ResFileExist_filestream(filename)) {
+        if(bforce == true) {
+            RemoveFile(filename);
+        } else {
+            Rcpp::Rcout<<"\n File already exits, please set force = TRUE if you want to overwrite the old file";
+        }
+    } 
     
     // Create HDF5 file
     file = new H5File( filename, H5F_ACC_TRUNC );

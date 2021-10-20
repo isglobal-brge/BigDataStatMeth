@@ -588,8 +588,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdCreate_hdf5_matrix_file
-Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object, Rcpp::Nullable<std::string> group, Rcpp::Nullable<std::string> dataset, Rcpp::Nullable<bool> transp);
-RcppExport SEXP _BigDataStatMeth_bdCreate_hdf5_matrix_file(SEXP filenameSEXP, SEXP objectSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP transpSEXP) {
+Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object, Rcpp::Nullable<std::string> group, Rcpp::Nullable<std::string> dataset, Rcpp::Nullable<bool> transp, Rcpp::Nullable<bool> force);
+RcppExport SEXP _BigDataStatMeth_bdCreate_hdf5_matrix_file(SEXP filenameSEXP, SEXP objectSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP transpSEXP, SEXP forceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -598,7 +598,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type group(groupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type dataset(datasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type transp(transpSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdCreate_hdf5_matrix_file(filename, object, group, dataset, transp));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type force(forceSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdCreate_hdf5_matrix_file(filename, object, group, dataset, transp, force));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -778,7 +779,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdpseudoinv", (DL_FUNC) &_BigDataStatMeth_bdpseudoinv, 1},
     {"_BigDataStatMeth_bdQR", (DL_FUNC) &_BigDataStatMeth_bdQR, 2},
     {"_BigDataStatMeth_bddtrsm", (DL_FUNC) &_BigDataStatMeth_bddtrsm, 3},
-    {"_BigDataStatMeth_bdCreate_hdf5_matrix_file", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_matrix_file, 5},
+    {"_BigDataStatMeth_bdCreate_hdf5_matrix_file", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_matrix_file, 6},
     {"_BigDataStatMeth_bdAdd_hdf5_matrix", (DL_FUNC) &_BigDataStatMeth_bdAdd_hdf5_matrix, 6},
     {"_BigDataStatMeth_bdRemove_hdf5_element", (DL_FUNC) &_BigDataStatMeth_bdRemove_hdf5_element, 2},
     {"_BigDataStatMeth_bdSolve", (DL_FUNC) &_BigDataStatMeth_bdSolve, 2},

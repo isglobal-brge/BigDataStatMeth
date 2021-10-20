@@ -720,10 +720,11 @@ bddtrsm <- function(R, Z, threads = NULL) {
 #' @param group, character array indicating folder name to put the matrix in hdf5 file
 #' @param dataset, character array indicating the dataset name to store the matix data
 #' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
+#' @param force, optional boolean if true and file exists, removes old file and creates a new file with de dataset data.
 #' @return none
 #' @export
-bdCreate_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = NULL, transp = NULL) {
-    .Call('_BigDataStatMeth_bdCreate_hdf5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp)
+bdCreate_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = NULL, transp = NULL, force = NULL) {
+    .Call('_BigDataStatMeth_bdCreate_hdf5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp, force)
 }
 
 #' Write matrix to existing hdf5 file

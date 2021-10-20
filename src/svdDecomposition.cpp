@@ -182,7 +182,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     Eigen::MatrixXd matlast;
     matlast = GetCurrentBlock_hdf5(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
 
-    retsvd = RcppbdSVD_lapack(matlast, false, false, true);
+    retsvd = RcppbdSVD_lapack(matlast, false, false, false);
     
     // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
     // Create structure and write d 
@@ -315,7 +315,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
       X = GetCurrentBlock_hdf5_Original(file, dataset, offset[0], offset[1], count[0], count[1]); 
       
       // retsvd = RcppbdSVD(X, k, nev, bcenter, bscale);
-      retsvd = RcppbdSVD_lapack(X, bcenter, bscale, true);
+      retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
 
       create_HDF5_groups_ptr(file,"SVD/"+ strdataset);
       

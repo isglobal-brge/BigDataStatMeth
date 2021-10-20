@@ -8,6 +8,7 @@
    #include <fstream>
    #include <vector>
    #include <algorithm>
+   #include <boost/algorithm/string.hpp>
    
    
    // Cpp functions
