@@ -174,37 +174,4 @@ Rcpp::RObject bdReduce_matrix_hdf5( std::string filename, std::string group,
 
 /***R
 
-library(BigDataStatMeth)
-
-setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/UAB/DOCTORAT/BitDataStatMeth - BDSM/Analysis/BigDataStatMeth_Analysis/Cholesterol/test")
-
-bdSplit_matrix_hdf5( "cares.hdf5", "data", "X", "dataoutCols", nblocks = 3, bycols = FALSE, force = TRUE)
-bdSplit_matrix_hdf5( "cares.hdf5", "data", "X", "dataoutRows", nblocks = 3, bycols = TRUE, force = TRUE)
-bdReduce_matrix_hdf5(  "cares.hdf5", "dataoutCols", "+", "test", "testdataset", force = TRUE)
-
-
-library(BigDataStatMeth)
-setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/UAB/DOCTORAT/BitDataStatMeth - BDSM/Analysis/BigDataStatMeth_Analysis/Cholesterol/test")
-bdReduce_matrix_hdf5(  filename = "cars2.hdf5", 
-                       group = "dataoutCols", 
-                       reducefunction = "+", 
-                       outgroup = "testejantquePassa", 
-                       outdataset = "testdataset", 
-                       force = TRUE)
-
-
-
-library(BigDataStatMeth)
-
-setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/UAB/DOCTORAT/BitDataStatMeth - BDSM/Analysis/BigDataStatMeth_Analysis/Cholesterol/test")
-
-bdReduce_matrix_hdf5( "cars2.hdf5", "dataoutCols", "+", "test", "testdataset", force = TRUE)
-
-
-
-
-bdReduce_matrix_hdf5( "meteoritos.hdf5", "data", "X", 
-                     "dataout", nblocks = 3 )
-
-
 */

@@ -251,17 +251,7 @@ Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::s
     
     stroutdata = stroutgroup +"/" + stroutdataset;
     
-    // if(!ResFileExist(filename))
-    //   throw std::range_error("File not exits, create file before impute dataset");  
-    
-    // if(!std::filesystem::exists(filename)){
-    //   throw std::range_error("File not exits, create file before access to dataset");
-    // }
-     
-     // if(!ResFileExist_filestream(fs)){
-     //   throw std::range_error("File not exits, create file before access to dataset");
-     // }
-    
+
     if(!ResFileExist_filestream(filename)){
       throw std::range_error("File not exits, create file before access to dataset");
     }

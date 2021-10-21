@@ -210,14 +210,4 @@ Rcpp::RObject bdSplit_matrix_hdf5( std::string filename, std::string group, std:
 
 /***R
 
-library(BigDataStatMeth)
-
-setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/UAB/DOCTORAT/BitDataStatMeth - BDSM/Analysis/BigDataStatMeth_Analysis/Cholesterol/test")
-
-bdSplit_matrix_hdf5( "cars.hdf5", "data", "X", "dataoutCols", nblocks = 3, bycols = FALSE, force = TRUE)
-
-bdSplit_matrix_hdf5( "cars.hdf5", "data", "X", "dataoutRows", nblocks = 3, bycols = TRUE, force = TRUE)
-
-
-
 */

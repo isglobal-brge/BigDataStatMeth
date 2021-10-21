@@ -17,13 +17,10 @@ svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale 
   
   {
     Eigen::MatrixXd Xtcp;
-    //..//if(normalize ==true )  {
     if(bcenter ==true || bscale == true)  {
-      // Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( Rcpp::wrap(RcppNormalize_Data(X))));
       nX = RcppNormalize_Data(X, bcenter, bscale);
       Xtcp =  bdtcrossproduct(nX);
     }else {
-      //Xtcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_tCrossProd( Rcpp::wrap(X)));
       Xtcp =  bdtcrossproduct(X);
     }
     
@@ -50,10 +47,8 @@ svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale 
   {
     Eigen::MatrixXd Xcp;
     if(bcenter ==true || bscale==true )  {
-      // Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(RcppNormalize_Data(X))));  
       Xcp =  bdcrossproduct(nX);  
     }else {
-      // Xcp =  Rcpp::as<Eigen::MatrixXd> (rcpp_parallel_CrossProd( Rcpp::wrap(X)));
       Xcp =  bdcrossproduct(X);
     }  
 
@@ -125,9 +120,6 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale, bool com
       
   }
 
-  //..// Rcpp::Rcout<<"\nDescomposició - d : \n"<<s;
-  //..// Rcpp::Rcout<<"\nDescomposició - u : \n"<<u;
-  
   retsvd.d = s;
   retsvd.u = u;
   retsvd.v = vt.transpose();
@@ -691,26 +683,17 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
       filename = as<std::string>(file);
     else
       throw std::invalid_argument("File name must be character string");
-      
-      // throw std::runtime_error("unacceptable matrix type");
-      
-      // Rcpp::Rcout<<"Abans de cridar el procés del svd... k val : "<<ks<<"\n";
+
       
     retsvd = RcppbdSVD_hdf5( filename, as<std::string>(strgroup), as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, threads );
     
     
   }catch(std::exception &ex) {
     Rcpp::Rcout<< ex.what();
-    return List::create(/*Named("d") = R_NilValue,
-                        Named("u") = R_NilValue,
-                        Named("v") = R_NilValue, */
-                        Named("file") = R_NilValue);
+    return List::create(Named("file") = R_NilValue);
   }
 
-  return List::create(/*Named("d") = retsvd.d,
-                      Named("u") = retsvd.u,
-                      Named("v") = retsvd.v,*/
-                      Named("file") = filename);
+  return List::create(Named("file") = filename);
   
 }
 

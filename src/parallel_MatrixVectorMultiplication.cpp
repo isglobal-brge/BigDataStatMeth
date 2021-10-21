@@ -662,61 +662,6 @@ Rcpp::RObject parXy(Rcpp::RObject X, Rcpp::RObject Y)
 
 /*** R
 
-library(RcppParallel)
-library(rbenchmark) 
-set.seed(5)
-X <- matrix(sample(1:10,50, replace = TRUE), ncol = 10);X
-D <- DelayedArray(X);D
-w <- sample(1:10,50, replace = TRUE);w
-pmX <- parxwxt(X,w);pmX
-pmX <- parxwxt(D,w);pmX
-
-
-bdScalarwproduct(X,w)
-
-X%*%diag(w)%*%t(X)
-
-
-
-RcppParallel::setThreadOptions(numThreads = 40)
-n <- 1000
-m <- matrix(runif(n*900), ncol = n)
-w <- runif(n)
-
-
-
-res <- benchmark(X%*%diag(w)%*%t(X),
-                 parxwxt(D,w),
-                 parxwxt(X,w),
-                 order="relative", replications = c(10))
-res[,1:4] 
-
-
-res <- benchmark(t(X)%*%diag(w)%*%X,
-                 parxtwx(D,w),
-                 parxtwx(X,w),
-                 order="relative", replications = c(10))
-res[,1:4] 
-dim(X)
-
-
-
-n <- 5000
-p <- 5000
-M <- matrix(rnorm(n*p), nrow=n, ncol=p)
-Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5]
-
-stopifnot(identical(t(M)%*%Y,parXy(t(M),Y)))
-stopifnot(identical(M%*%Y,parXy(M,Y)))
-res <- benchmark(t(M)%*%Y,
-                 parXy(t(M),Y),
-                 order="relative", replications = c(10))
-res[,1:4] 
-
-parXy(t(M),Y)
-dim(t(M))
-
-
 */
 
 

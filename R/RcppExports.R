@@ -339,10 +339,6 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
     .Call('_BigDataStatMeth_bdgetDatasetsList_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, prefix)
 }
 
-.bdMLR_MR_hdf5 <- function(filename, group, dataset, betasgroup, betasdataset, blocks, outgroup = NULL, outdataset = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_bdMLR_MR_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, betasgroup, betasdataset, blocks, outgroup, outdataset, threads)
-}
-
 #' Normalize dataset in hdf5 file
 #' 
 #' This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file

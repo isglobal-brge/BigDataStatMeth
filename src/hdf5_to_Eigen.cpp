@@ -53,10 +53,8 @@ Eigen::MatrixXd GetCurrentBlock_hdf5_Original( H5File* file, DataSet* dataset,
   IntegerVector stride = IntegerVector::create(1, 1) ;
   IntegerVector block = IntegerVector::create(1, 1) ;
   
-  //..// NumericMatrix data(countx, county);
   NumericMatrix data(county, countx);
   
-  // read_HDF5_matrix_subset(filename, dataset, offset, count, stride, block, REAL(data));
   read_HDF5_matrix_subset(file, dataset, offset, count, stride, block, REAL(data));
   
   Eigen::MatrixXd mat = as<Eigen::MatrixXd>(data);

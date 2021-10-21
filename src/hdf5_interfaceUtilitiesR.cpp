@@ -56,19 +56,4 @@ Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rc
 
 /*** R
 
-library(BigDataStatMeth)
-
-setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/UAB/DOCTORAT/BitDataStatMeth - BDSM/Analysis/BigDataStatMeth_Analysis/Cholesterol/test")
-
-bdSplit_matrix_hdf5( "cars.hdf5", "data", "X", "dataoutCols", Xrows = 3, bycols = FALSE, force = TRUE)
-bdSplit_matrix_hdf5( "cars.hdf5", "data", "X", "dataoutRows", Xcols = 3, bycols = TRUE, force = TRUE)
-
-bdReduce_matrix_hdf5(  "cars2.hdf5", "dataoutCols", "+", "test", "testdataset", force = TRUE)
-
-
-library(BigDataStatMeth)
-setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/UAB/DOCTORAT/BitDataStatMeth - BDSM/Analysis/BigDataStatMeth_Analysis/Cholesterol/test")
-datasets_hdf5 <- bdgetDatasetsList_hdf5( "cars.hdf5", "Xrows")
-datasets_hdf5
-
 */

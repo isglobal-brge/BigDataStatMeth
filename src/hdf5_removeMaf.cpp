@@ -275,16 +275,4 @@ Rcpp::RObject bdremove_maf_hdf5( std::string filename, std::string group, std::s
 
 /***R
 
-library(BigDataStatMeth)
-
-library(devtools)
-reload(pkgload::inst("BigDataStatMeth"))
-
-resc <- bdget_maf_hdf5("test.hdf5", "test", "mat1", byrows = FALSE )
-
-resr <- bdget_maf_hdf5("test.hdf5", "test", "mat1", byrows = TRUE )
-
-bdremove_maf_hdf5( "test.hdf5", "test", "mat1", "test", "mat1_maf_r", 
-                   maf = 0.05, byrows = FALSE )
-
 */

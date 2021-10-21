@@ -9,7 +9,8 @@ bdCreate_hdf5_matrix_file(
   object,
   group = NULL,
   dataset = NULL,
-  transp = NULL
+  transp = NULL,
+  force = NULL
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ bdCreate_hdf5_matrix_file(
 \item{dataset, }{character array indicating the dataset name to store the matix data}
 
 \item{transp}{boolean, if trans=true matrix is stored transposed in hdf5 file}
+
+\item{force, }{optional boolean if true and file exists, removes old file and creates a new file with de dataset data.}
 }
 \value{
 none

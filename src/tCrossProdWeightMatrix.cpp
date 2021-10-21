@@ -387,31 +387,4 @@ Rcpp::RObject bdtCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
 
 /***R
 
-library(BigDataStatMeth)
-library(microbenchmark)
-
-n <- 1024
-
-A <- matrix(runif(n*n), nrow = n, ncol = n)
-B <- matrix(runif(n*n), nrow = n, ncol = n)
-
-res <- microbenchmark(R <- A%*%B%*%t(A),
-                      Serie<- bdtCrossprod_Weighted(A,B,paral = FALSE), 
-                      Par_2cor<-bdtCrossprod_Weighted(A,B,paral = TRUE, block_size = 256, threads = 2),
-                      Par_3cor<-bdtCrossprod_Weighted(A,B,paral = TRUE, block_size = 256, threads = 3),
-                      Par_4cor<-bdtCrossprod_Weighted(A,B,paral = TRUE, block_size = 256, threads = 4),
-               times = 3 )
-
-res
-
-
-microbenchmark(A%*%B%*%t(A), 
-               Crossprod_Weighted(A,B,paral = FALSE))
-
-
-
-
-C <- Crossprod_Weighted(A,B,paral = FALSE)
-
-
 */

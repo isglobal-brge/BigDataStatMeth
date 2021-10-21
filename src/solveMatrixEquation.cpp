@@ -114,48 +114,4 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
 
 /***R
 
-library(devtools)
-library(DelayedArray)
-library(microbenchmark)
-library(BigDataStatMeth)
-
-# MATRIX EQUATION SOLVER EXAMPLE
-
-n <- 500
-m <- 500
-
-# R Object
-
-A <- matrix(runif(n*m), nrow = n, ncol = m)
-B <- matrix(runif(n*2), nrow = n)
-
-(A%*%B)[1:5,]
-B[1:5,]
-
-   
-AS <- A%*%t(A)
-
-DA <- DelayedArray(A)
-DB <- DelayedArray(B)
-ASD <- DelayedArray(AS)
-
-
-X <- bdSolve(A, B)
-XR <- solve(A,B)
-XRD <- bdSolve(DA,DB)
-
-all.equal(X, XR, check.attributes=FALSE)
-all.equal(XR, XRD, check.attributes=FALSE)
-
-res <- microbenchmark(bdSolve(A, B),
-                      solve(A,B),
-                      bdSolve(AS, B),
-                      solve(AS,B),
-                      bdSolve(DA, DB),
-                      bdSolve(ASD, DB),
-                      times = 1)
-res
-
-
-
 */

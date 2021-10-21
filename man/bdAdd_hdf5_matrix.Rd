@@ -4,7 +4,14 @@
 \alias{bdAdd_hdf5_matrix}
 \title{Write matrix to existing hdf5 file}
 \usage{
-bdAdd_hdf5_matrix(object, filename, group, dataset, transp = NULL)
+bdAdd_hdf5_matrix(
+  object,
+  filename,
+  group,
+  dataset,
+  transp = NULL,
+  force = FALSE
+)
 }
 \arguments{
 \item{object}{numerical data matrix}

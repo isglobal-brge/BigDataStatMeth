@@ -737,14 +737,7 @@ Rcpp::RObject partCrossProdEigen(Rcpp::RObject X)
     const Eigen::Map<Eigen::MatrixXd> eX(Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X));
     Rcpp::Rcout<<"\n"<<eX<<"\n";
   }
-  /*
-  Eigen::MatrixXd eX = Rcpp::as<Eigen::MatrixXd>(X);
-  const Eigen::Map<Eigen::MatrixXd> A(Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X));
-  
-  Rcpp::Rcout<<"\n"<<A<<"\n";
-  //Eigen::Map<Eigen::MatrixXd> XX = rcpp_parallel_tCrossProd_eigen(eX);
-  Eigen::Map<Eigen::MatrixXd> XX = A;
-  return(Rcpp::wrap(XX));*/
+ 
   return(Rcpp::wrap('2'));
 
 }

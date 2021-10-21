@@ -185,15 +185,4 @@ Rcpp::RObject bdMLR_MR(Rcpp::RObject X, Rcpp::RObject y, int blocks, Rcpp::Nulla
 
 /*** R
 
-library(BigDataStatMeth)
-data(mtcars)
-
-Y <- mtcars$mpg
-X <- model.matrix(~ wt + cyl, data=mtcars)
-m <- 7
-
-
-res <- bdMLR_MR( X, Y, m, 1)
-res
-
 */
