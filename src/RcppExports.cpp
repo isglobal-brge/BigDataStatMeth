@@ -441,61 +441,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// partCrossProd
-Rcpp::RObject partCrossProd(Rcpp::RObject X);
-RcppExport SEXP _BigDataStatMeth_partCrossProd(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(partCrossProd(X));
-    return rcpp_result_gen;
-END_RCPP
-}
-// partCrossProd_block
-Rcpp::RObject partCrossProd_block(Rcpp::RObject X);
-RcppExport SEXP _BigDataStatMeth_partCrossProd_block(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(partCrossProd_block(X));
-    return rcpp_result_gen;
-END_RCPP
-}
-// parCrossProd
-Rcpp::RObject parCrossProd(Rcpp::RObject X);
-RcppExport SEXP _BigDataStatMeth_parCrossProd(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(parCrossProd(X));
-    return rcpp_result_gen;
-END_RCPP
-}
-// parCrossProd_block
-Rcpp::RObject parCrossProd_block(Rcpp::RObject X);
-RcppExport SEXP _BigDataStatMeth_parCrossProd_block(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(parCrossProd_block(X));
-    return rcpp_result_gen;
-END_RCPP
-}
-// partCrossProdEigen
-Rcpp::RObject partCrossProdEigen(Rcpp::RObject X);
-RcppExport SEXP _BigDataStatMeth_partCrossProdEigen(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(partCrossProdEigen(X));
-    return rcpp_result_gen;
-END_RCPP
-}
 // parxwxt
 Rcpp::RObject parxwxt(Rcpp::RObject X, Rcpp::RObject W);
 RcppExport SEXP _BigDataStatMeth_parxwxt(SEXP XSEXP, SEXP WSEXP) {
@@ -748,11 +693,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_CholFactor", (DL_FUNC) &_BigDataStatMeth_CholFactor, 1},
     {"_BigDataStatMeth_CholSolve", (DL_FUNC) &_BigDataStatMeth_CholSolve, 2},
     {"_BigDataStatMeth_inversechol_par", (DL_FUNC) &_BigDataStatMeth_inversechol_par, 2},
-    {"_BigDataStatMeth_partCrossProd", (DL_FUNC) &_BigDataStatMeth_partCrossProd, 1},
-    {"_BigDataStatMeth_partCrossProd_block", (DL_FUNC) &_BigDataStatMeth_partCrossProd_block, 1},
-    {"_BigDataStatMeth_parCrossProd", (DL_FUNC) &_BigDataStatMeth_parCrossProd, 1},
-    {"_BigDataStatMeth_parCrossProd_block", (DL_FUNC) &_BigDataStatMeth_parCrossProd_block, 1},
-    {"_BigDataStatMeth_partCrossProdEigen", (DL_FUNC) &_BigDataStatMeth_partCrossProdEigen, 1},
     {"_BigDataStatMeth_parxwxt", (DL_FUNC) &_BigDataStatMeth_parxwxt, 2},
     {"_BigDataStatMeth_parxtwx", (DL_FUNC) &_BigDataStatMeth_parxtwx, 2},
     {"_BigDataStatMeth_parXy", (DL_FUNC) &_BigDataStatMeth_parXy, 2},

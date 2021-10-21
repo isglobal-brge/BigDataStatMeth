@@ -1734,14 +1734,14 @@ extern "C" {
       //..// create_HDF5_group_ptr(file, strGroup);
       if( rownames.length()>1 )
         write_hdf5_string_vector(file, strGroup + "/1" , rownames);
-      else
-        Rcpp::Rcout<<"Info : no rownames to save";
+      // else
+      //   Rcpp::Rcout<<"Info : no rownames to save";
       
       // Add colnames
       if( colnames.length()>1 )
         write_hdf5_string_vector(file, strGroup + "/2", colnames);
-      else
-        Rcpp::Rcout<<"Info : no colnames to save";
+      // else
+      //   Rcpp::Rcout<<"Info : no colnames to save";
       
 
     } catch(FileIException& error) { // catch failure caused by the H5File operations
