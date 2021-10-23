@@ -25,6 +25,7 @@ bool is_number(const std::string& s)
 {
    char* end = nullptr;
    double val = strtod(s.c_str(), &end);
+   
    return end != s.c_str() && *end == '\0' && val != HUGE_VAL;
 }
 
@@ -45,6 +46,7 @@ std::vector<double> get_data_as_Matrix(std::vector<std::string> strBlockValues)
          if( is_number(s.substr(0,s.length()-1) ) ==1 ){
             return (std::stod(s));
          } else {
+            Rcpp::Rcout<<"\nValue : "<<s<<"\n";
             stop("Error: Column is not numeric. Only numeric data is allowed");
          }
       }
@@ -121,15 +123,13 @@ bool manage_Dataset( H5File* file, std::string outGroup, std::string outDataset,
    
 }
 
-// file = new H5File( outputfile, H5F_ACC_RDWR );
-// datasetOut = new DataSet(file->openDataSet(outGroup + "/" + outDataset));
 
 //' Converts text file to hdf5 data file
 //' 
 //' Converts text file to hdf5 data file
 //' 
-//' @param filename string file name where dataset to normalize is stored
-//' @param outputfile file name and path to store the readed file as an hdf5 data file
+//' @param filename string file name with data to be imported
+//' @param outputfile file name and path to store imported data
 //' @param outGroup group name to store the dataset
 //' @param outDataset dataset name to store the input file in hdf5
 //' @param sep (optional), by default = "\\t". The field separator string. Values within each row of x are separated by this string.
@@ -139,7 +139,7 @@ bool manage_Dataset( H5File* file, std::string outGroup, std::string outDataset,
 //' 
 //' @export
 // [[Rcpp::export]]
-int bdImport_text_to_hdf5( Rcpp::CharacterVector filename, 
+void bdImport_text_to_hdf5( Rcpp::CharacterVector filename, 
                            std::string outputfile, std::string outGroup, std::string outDataset, 
                            Rcpp::Nullable<std::string> sep = R_NilValue, 
                            Rcpp::Nullable<bool> header = false,
@@ -361,41 +361,40 @@ int bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
       datasetOut->close();
       file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (File IException)" );
-      return(-1);
+      //..// return(-1);
    } catch( GroupIException& error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (Group IException)" );
-      return(-1);
+      //..// return(-1);
    } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (DataSet IException)" );
-      return(-1);
+      //..// return(-1);
    } catch(const std::runtime_error& re) {
       // speciffic handling for runtime_error
       datasetOut->close();
        file->close();
       ::Rcerr << "Runtime error: " << re.what() << std::endl;
-      return(-1);
+      //..// return(-1);
    } catch(const std::exception& ex) {
-      // speciffic handling for all exceptions extending std::exception, except
-      // std::runtime_error which is handled explicitly
       // datasetOut->close();
       file->close();
       ::Rcerr << "Error occurred: " << ex.what() << std::endl;
-      return(-1);
+      //..// return(-1);
    } catch(...) {
       // catch any other errors (that we have no information about)
       datasetOut->close();
        file->close();
       ::Rcerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
-      return(-1);
+      //..// return(-1);
    }
    
 
-
-   return(0);
+;
+   Rcpp::Rcout<<"\n"<<outDataset<<" dataset has been imported successfully.\n";
+   //..// return(0);
    
 }
 

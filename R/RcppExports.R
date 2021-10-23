@@ -294,8 +294,8 @@ bdget_maf_hdf5 <- function(filename, group, dataset, byrows = NULL, bparallel = 
 #' 
 #' Converts text file to hdf5 data file
 #' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param outputfile file name and path to store the readed file as an hdf5 data file
+#' @param filename string file name with data to be imported
+#' @param outputfile file name and path to store imported data
 #' @param outGroup group name to store the dataset
 #' @param outDataset dataset name to store the input file in hdf5
 #' @param sep (optional), by default = "\\t". The field separator string. Values within each row of x are separated by this string.
@@ -305,7 +305,7 @@ bdget_maf_hdf5 <- function(filename, group, dataset, byrows = NULL, bparallel = 
 #' 
 #' @export
 bdImport_text_to_hdf5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE) {
-    .Call('_BigDataStatMeth_bdImport_text_to_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite)
+    invisible(.Call('_BigDataStatMeth_bdImport_text_to_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite))
 }
 
 #' Impute SNPs in hdf5 omic dataset 

@@ -46,3 +46,4 @@ rsconnect/
 .Rproj.user
 *.csv
 *.hdf5
+*.icloud

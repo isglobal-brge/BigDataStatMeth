@@ -16,9 +16,9 @@ bdImport_text_to_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{string file name with data to be imported}
 
-\item{outputfile}{file name and path to store the readed file as an hdf5 data file}
+\item{outputfile}{file name and path to store imported data}
 
 \item{outGroup}{group name to store the dataset}
 

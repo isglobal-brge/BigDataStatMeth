@@ -167,10 +167,9 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdImport_text_to_hdf5
-int bdImport_text_to_hdf5(Rcpp::CharacterVector filename, std::string outputfile, std::string outGroup, std::string outDataset, Rcpp::Nullable<std::string> sep, Rcpp::Nullable<bool> header, Rcpp::Nullable<bool> rownames, Rcpp::Nullable<bool> overwrite);
+void bdImport_text_to_hdf5(Rcpp::CharacterVector filename, std::string outputfile, std::string outGroup, std::string outDataset, Rcpp::Nullable<std::string> sep, Rcpp::Nullable<bool> header, Rcpp::Nullable<bool> rownames, Rcpp::Nullable<bool> overwrite);
 RcppExport SEXP _BigDataStatMeth_bdImport_text_to_hdf5(SEXP filenameSEXP, SEXP outputfileSEXP, SEXP outGroupSEXP, SEXP outDatasetSEXP, SEXP sepSEXP, SEXP headerSEXP, SEXP rownamesSEXP, SEXP overwriteSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type outputfile(outputfileSEXP);
@@ -180,8 +179,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type header(headerSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type rownames(rownamesSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdImport_text_to_hdf5(filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite));
-    return rcpp_result_gen;
+    bdImport_text_to_hdf5(filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite);
+    return R_NilValue;
 END_RCPP
 }
 // bdImpute_snps_hdf5
