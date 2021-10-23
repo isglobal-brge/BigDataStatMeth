@@ -76,7 +76,7 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' @return Original hdf5 data file with results after apply function to different datasets
 #' @export
 bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, force = FALSE) {
-    .Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force)
+    invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force))
 }
 
 #' Bind matrices by rows or columns
@@ -97,7 +97,7 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #' @return Original hdf5 data file with results after input datasets
 #' @export
 bdBind_hdf5 <- function(filename, group, datasets, outgroup, outdataset, func, force = FALSE) {
-    .Call('_BigDataStatMeth_bdBind_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, outdataset, func, force)
+    invisible(.Call('_BigDataStatMeth_bdBind_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, outdataset, func, force))
 }
 
 #' Crossprod with hdf5 matrix
@@ -354,7 +354,7 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #'   a = "See vignette"
 #' @export
 bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, wsize = NULL) {
-    .Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, wsize)
+    invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, wsize))
 }
 
 #' PCA Descomposition
@@ -427,7 +427,7 @@ bdremove_maf_hdf5 <- function(filename, group, dataset, outgroup, outdataset, ma
 #' @return Original hdf5 data file with imputed data
 #' @export
 bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, nblocks = NULL, blocksize = NULL, bycols = TRUE, force = FALSE) {
-    .Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, force)
+    invisible(.Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, force))
 }
 
 #' Normalize Delayed Array matrix
@@ -635,26 +635,6 @@ inversechol_par <- function(a, threads = NULL) {
     .Call('_BigDataStatMeth_inversechol_par', PACKAGE = 'BigDataStatMeth', a, threads)
 }
 
-partCrossProd <- function(X) {
-    .Call('_BigDataStatMeth_partCrossProd', PACKAGE = 'BigDataStatMeth', X)
-}
-
-partCrossProd_block <- function(X) {
-    .Call('_BigDataStatMeth_partCrossProd_block', PACKAGE = 'BigDataStatMeth', X)
-}
-
-parCrossProd <- function(X) {
-    .Call('_BigDataStatMeth_parCrossProd', PACKAGE = 'BigDataStatMeth', X)
-}
-
-parCrossProd_block <- function(X) {
-    .Call('_BigDataStatMeth_parCrossProd_block', PACKAGE = 'BigDataStatMeth', X)
-}
-
-partCrossProdEigen <- function(X) {
-    .Call('_BigDataStatMeth_partCrossProdEigen', PACKAGE = 'BigDataStatMeth', X)
-}
-
 parxwxt <- function(X, W) {
     .Call('_BigDataStatMeth_parxwxt', PACKAGE = 'BigDataStatMeth', X, W)
 }
@@ -720,7 +700,7 @@ bddtrsm <- function(R, Z, threads = NULL) {
 #' @return none
 #' @export
 bdCreate_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = NULL, transp = NULL, force = NULL) {
-    .Call('_BigDataStatMeth_bdCreate_hdf5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp, force)
+    invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp, force))
 }
 
 #' Write matrix to existing hdf5 file
@@ -735,7 +715,7 @@ bdCreate_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = 
 #' @return none
 #' @export
 bdAdd_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL, force = FALSE) {
-    .Call('_BigDataStatMeth_bdAdd_hdf5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp, force)
+    invisible(.Call('_BigDataStatMeth_bdAdd_hdf5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp, force))
 }
 
 #' Remove element group or dataset from  hdf5 file

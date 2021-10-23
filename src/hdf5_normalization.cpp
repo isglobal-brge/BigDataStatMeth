@@ -65,7 +65,7 @@ Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, 
 //'   a = "See vignette"
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdNormalize_hdf5( std::string filename, const std::string group, std::string dataset,
+void bdNormalize_hdf5( std::string filename, const std::string group, std::string dataset,
                                 Rcpp::Nullable<bool> bcenter = R_NilValue, Rcpp::Nullable<bool> bscale  = R_NilValue,
                                 Rcpp::Nullable<int> wsize  = R_NilValue)
 {
@@ -97,7 +97,7 @@ Rcpp::RObject bdNormalize_hdf5( std::string filename, const std::string group, s
     
     if(!ResFileExist(filename)) {
       Rcpp::Rcout<<"\nFile not exits, create file before normalize dataset\n";  
-      return wrap(-1);
+      //..// return wrap(-1);
     }
     file = new H5File( filename, H5F_ACC_RDWR );
     
@@ -105,12 +105,12 @@ Rcpp::RObject bdNormalize_hdf5( std::string filename, const std::string group, s
     if(exists_HDF5_element_ptr(file, group)==0) {
       Rcpp::Rcout<<"\nGroup not exits, create file and dataset before normalize data\n";
       file->close();
-      return wrap(-1);
+      //..// return wrap(-1);
     }  else{
       if(!exists_HDF5_element_ptr(file, group + "/" + dataset)) {
         Rcpp::Rcout<<"\n Dataset not exits, create file and dataset before normalize data \n";
         file->close();
-        return wrap(-1);
+        //..// return wrap(-1);
       }
     }
     
@@ -193,39 +193,41 @@ Rcpp::RObject bdNormalize_hdf5( std::string filename, const std::string group, s
       
     }
   } catch( FileIException& error ) { // catch failure caused by the H5File operations
-    file->close();
     pdatasetin->close();
     pdatasetout->close();
+    file->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (File IException)" );
-    return wrap(-1);
+    //..// return wrap(-1);
   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-    file->close();
     pdatasetin->close();
     pdatasetout->close();
+    file->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (DataSet IException)" );
-    return wrap(-1);
+    //..// return wrap(-1);
   } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-    file->close();
     pdatasetin->close();
     pdatasetout->close();
+    file->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (DataSpace IException)" );
-    return wrap(-1);
+    //..// return wrap(-1);
   } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-    file->close();
     pdatasetin->close();
     pdatasetout->close();
+    file->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (DataType IException)" );
-    return wrap(-1);
+    //..// return wrap(-1);
   }catch(std::exception &ex) {
-    file->close();
     pdatasetin->close();
     pdatasetout->close();
+    file->close();
     Rcpp::Rcout<< ex.what();
-    return wrap(-1);
+    //..// return wrap(-1);
   }
   
-  file->close();
   pdatasetin->close();
   pdatasetout->close();
-  return wrap(0);
+  file->close();
+  
+  Rcpp::Rcout<<"\nNormalization has been computed\n";
+  //..// return wrap(0);
 }

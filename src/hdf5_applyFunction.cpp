@@ -32,7 +32,7 @@ using namespace std;
 //' @return Original hdf5 data file with results after apply function to different datasets
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdapply_Function_hdf5( std::string filename, 
+void bdapply_Function_hdf5( std::string filename, 
                                      std::string group, 
                                      Rcpp::StringVector datasets, 
                                      std::string outgroup, 
@@ -48,7 +48,9 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
     Rcpp::StringVector str_bdatasets;
     std::string str_bgroup;
     Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5};
-    oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd", "invChol", "blockmult", "CrossProd_double", "tCrossProd_double", "solve"});
+    oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd",
+               "invChol", "blockmult", "CrossProd_double", "tCrossProd_double",
+               "solve"});
     
     try
     {
@@ -63,7 +65,7 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
             file = new H5File( filename, H5F_ACC_RDWR ); 
         } else {
             Rcpp::Rcout<<"\nFile not exits, create file before apply function to datasets";
-            return wrap(false);
+            // return wrap(false);
         }
 
 
@@ -74,7 +76,7 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                 Rcpp::Rcout<<"To perform matrix multiplication, CrossProd, tCrossProd or solve "<<
                     "with two matrices b_datasets variable must be defined and the length "<<
                         " of datasets and b_datasets must be equal";
-                return wrap(false);  
+                // return wrap(false);  
             }
             str_bdatasets = as<Rcpp::StringVector>(b_datasets);
             
@@ -87,7 +89,6 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
         }
         
         
-
         if(b_group.isNull()) { str_bgroup = group; } 
         else {   str_bgroup = Rcpp::as<std::string>(b_group); }
 
@@ -97,12 +98,10 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
             std::string strdataset = group +"/" + datasets(i);
             
             if( exists_HDF5_element_ptr(file, strdataset ) == 0 ) {
-                
-                Rcpp::Rcout<<"\n Estem buscant ... :"<<strdataset<<"\n";
-                
+
                 file->close();
                 Rcpp::Rcout<<"Group or dataset does not exists, create the input dataset before proceed";
-                return wrap(false);
+                // return wrap(false);
             }
             
             pdataset = new DataSet(file->openDataSet(strdataset));
@@ -152,7 +151,7 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                 if( results.v == Eigen::MatrixXd::Zero(2,2) && results.u == Eigen::MatrixXd::Zero(2,2)) {
                     pdataset->close();
                     file->close();
-                    return wrap(false);
+                    // return wrap(false);
                     
                 } else {
                     write_HDF5_matrix_from_R_ptr(file, outgroup + "/" + datasets(i), Rcpp::wrap(results.v), false);
@@ -168,12 +167,10 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                 
                 if( exists_HDF5_element_ptr(file, b_strdataset ) == 0 ) {
                     
-                    Rcpp::Rcout<<"\n Estem buscant ... :"<<b_strdataset<<"\n";
-                    
                     pdataset->close();
                     file->close();
                     Rcpp::Rcout<<"Group or dataset does not exists, create the input dataset before proceed";
-                    return wrap(false);
+                    // return wrap(false);
                 }
 
                 pbdataset = new DataSet(file->openDataSet(b_strdataset));
@@ -182,11 +179,6 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                 IntegerVector dims_outB = get_HDF5_dataset_size(*pbdataset);
 
                 originalB = GetCurrentBlock_hdf5_Original( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
-                
-                // 
-                // Rcpp::Rcout<<"\n ORIGINAL : \n"<<original<<"\n";
-                // Rcpp::Rcout<<"\n ORIGINAL B : \n"<<originalB<<"\n";
-                
                 
                 if( oper(oper.findName( func )) == 4 ) {
                     outputdataset = outgroup + "/" + datasets(i) + "_x_" + str_bdatasets(i);
@@ -199,14 +191,6 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                     originalB = GetCurrentBlock_hdf5( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
                 }
                 
-                // Rcpp::Rcout<<"\n  \n \n";
-                // 
-                // Rcpp::Rcout<<"\n ORIGINAL : \n"<<original<<"\n";
-                // Rcpp::Rcout<<"\n ORIGINAL B : \n"<<originalB<<"\n";
-                
-                // // Get data
-                // originalB = GetCurrentBlock_hdf5_Original( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
-
                 
                 prepare_outGroup(file, outgroup, bforce);
                 prepare_outDataset(file, outputdataset, bforce);
@@ -246,7 +230,7 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
                 pdataset->close();
                 file->close();
                 Rcpp::Rcout<<"Function does not exists, please use one of the following : 'QR', 'CrossProd', 'tCrossProd', 'invChol', 'blockmult' ";
-                return wrap(false);
+                // return wrap(false);
                 
             }
             
@@ -258,12 +242,13 @@ Rcpp::RObject bdapply_Function_hdf5( std::string filename,
         pdataset->close();
         file->close();
         ::Rf_error( "c++ exception (File IException)" );
-        return(wrap(-1));
+        // return(wrap(-1));
     }
     
     file->close();
-    
-    return(wrap(0));
+  
+    Rcpp::Rcout<<"\n"<< func <<" function has been computed in all blocks\n";  
+    // return(wrap(0));
 }
 
 

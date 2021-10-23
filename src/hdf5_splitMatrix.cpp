@@ -90,7 +90,7 @@ int RcppSplit_matrix_hdf5 ( H5File* file, DataSet* dataset, bool bycols, std::st
 //' @return Original hdf5 data file with imputed data
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSplit_matrix_hdf5( std::string filename, std::string group, std::string dataset, 
+void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string dataset, 
                                  Rcpp::Nullable<std::string> outgroup = R_NilValue, Rcpp::Nullable<std::string> outdataset = R_NilValue, 
                                  Rcpp::Nullable<int> nblocks = R_NilValue,  Rcpp::Nullable<int> blocksize = R_NilValue,
                                  Rcpp::Nullable<bool> bycols = true, Rcpp::Nullable<bool> force = false  )
@@ -141,13 +141,13 @@ Rcpp::RObject bdSplit_matrix_hdf5( std::string filename, std::string group, std:
       pdataset->close();
       file->close();
       Rcpp::Rcout<<"\n Block size or number of blocks needed to proceed with matrix split. Please, review parameters";
-      return(wrap(-1));
+      // return(wrap(-1));
       
     } else if (!nblocks.isNull() && !blocksize.isNull()) {
       pdataset->close();
       file->close();
       Rcpp::Rcout<<"\nBlock size and number of blocks are defined, please define only one option, split by number of blocks or by block size";
-      return(wrap(-1));
+      // return(wrap(-1));
       
     } else if(!nblocks.isNull()) {
       
@@ -155,7 +155,7 @@ Rcpp::RObject bdSplit_matrix_hdf5( std::string filename, std::string group, std:
         pdataset->close();
         file->close();
         Rcpp::Rcout<<"\nNumbers of blocks = 1, no data to split";
-        return(wrap(-1));
+        // return(wrap(-1));
 
       } else {
         
@@ -197,13 +197,14 @@ Rcpp::RObject bdSplit_matrix_hdf5( std::string filename, std::string group, std:
     pdataset->close();
     file->close();
     ::Rf_error( "c++ exception (File IException)" );
-    return(wrap(-1));
+    // return(wrap(-1));
   }
   
   pdataset->close();
   file->close();
   
-  return(wrap(0));
+  Rcpp::Rcout<<"\nDataset has been splitted\n";
+  // return(wrap(0));
 }
 
 

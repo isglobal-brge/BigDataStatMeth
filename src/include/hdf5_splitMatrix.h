@@ -10,9 +10,9 @@
   int RcppSplit_matrix_hdf5 ( H5File* file, DataSet* dataset, bool bycols, std::string stroutgroup, std::string stroutdataset, int blocksize, int irows, int icols );
 
   // R functions
-  Rcpp::RObject bdSplit_matrix_hdf5( std::string filename, std::string group, std::string dataset, 
-                                     Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, 
-                                     Rcpp::Nullable<int> nblocks,  Rcpp::Nullable<int> blocksize,
-                                     Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> force  );
+  void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string dataset, 
+                            Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, 
+                            Rcpp::Nullable<int> nblocks,  Rcpp::Nullable<int> blocksize,
+                            Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> force  );
 
 #endif

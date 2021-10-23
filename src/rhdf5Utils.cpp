@@ -2091,7 +2091,7 @@ H5FilePtr Open_hdf5_file(const std::string& fname)
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object, 
+void bdCreate_hdf5_matrix_file(std::string filename, RObject object, 
                                         Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue,
                                         Rcpp::Nullable<bool> transp = R_NilValue, Rcpp::Nullable<bool> force = R_NilValue )
 {
@@ -2170,8 +2170,8 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
     // Write dimnaes from RObject to hdf5 data file
     if( (dimnames.size()>0) && (!Rf_isNull(dimnames)) ) {
       
-      Rcpp::Rcout<<"\n Dimnames [1] : "<<Rf_isNull(dimnames[1])<<"\n";
-      Rcpp::Rcout<<"\n Dimnames [0] : "<<Rf_isNull(dimnames[0])<<"\n";
+      //..// Rcpp::Rcout<<"\n Dimnames [1] : "<<Rf_isNull(dimnames[1])<<"\n";
+      //..// Rcpp::Rcout<<"\n Dimnames [0] : "<<Rf_isNull(dimnames[0])<<"\n";
       
       if(!Rf_isNull(dimnames[1]) ){  svrcols = dimnames[1]; }
       if(!Rf_isNull(dimnames[0]) ){ svrows = dimnames[0]; }
@@ -2192,22 +2192,23 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
     
   } catch(FileIException& error) { // catch failure caused by the H5File operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (File IException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (DataSet IException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   } catch(GroupIException& error) { // catch failure caused by the Group operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (Group IException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (DataSpace IException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (Data TypeIException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   }
   file->close();
-  return(wrap(0));
+  Rcpp::Rcout<<"\nFile and dataset has been created\n";
+  //..// return(wrap(0));
 
 }
 
@@ -2224,7 +2225,7 @@ Rcpp::RObject bdCreate_hdf5_matrix_file(std::string filename, RObject object,
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue, Rcpp::Nullable<bool> force = false )
+void bdAdd_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue, Rcpp::Nullable<bool> force = false )
 {
     
   H5File* file;
@@ -2265,7 +2266,7 @@ Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::strin
             
         } else {
             Rcpp::Rcout<<"\n ERROR - dataset exists, please set force = TRUE to force overwrite";
-            return(wrap(-1));
+          //..// return(wrap(-1));
         }
     }
 
@@ -2278,12 +2279,8 @@ Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::strin
       try{  
         
         if ( TYPEOF(object) == INTSXP ) {
-          //..// write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
-          //.OPCIÓ ACTUAL 14/03/2021 .// write_HDF5_matrix_transposed_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(mat));
           write_HDF5_matrix_from_R_ptr(file, group + "/" + dataset, Rcpp::as<IntegerMatrix>(object), transposed);
         } else{
-          //..// write_HDF5_matrix_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
-          //.OPCIÓ ACTUAL 14/03/2021 .// write_HDF5_matrix_transposed_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(mat));
           write_HDF5_matrix_from_R_ptr(file, group + "/" + dataset, Rcpp::as<NumericMatrix>(object), transposed);
         }
       }
@@ -2294,19 +2291,8 @@ Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::strin
     // Write dimnames to dimnames datasets in hdf5 file
     List dimnames = object.attr( "dimnames" );
 
-    // if(dimnames.size()>0 ) {
-    //   svrows= dimnames[0];
-    //   svrcols = dimnames[1];
-    //   
-    //   write_hdf5_matrix_dimnames(file, group, dataset, svrows, svrcols );
-    // }
-    
-    
     // Write dimnaes from RObject to hdf5 data file
     if( (dimnames.size()>0) && (!Rf_isNull(dimnames)) ) {
-      
-      Rcpp::Rcout<<"\n Dimnames [1] : "<<Rf_isNull(dimnames[1])<<"\n";
-      Rcpp::Rcout<<"\n Dimnames [0] : "<<Rf_isNull(dimnames[0])<<"\n";
       
       if(!Rf_isNull(dimnames[1]) ){  svrcols = dimnames[1]; }
       if(!Rf_isNull(dimnames[0]) ){ svrows = dimnames[0]; }
@@ -2317,49 +2303,29 @@ Rcpp::RObject bdAdd_hdf5_matrix(RObject object, std::string filename, std::strin
       }else{
         write_hdf5_matrix_dimnames(file, group, dataset, svrcols, svrows );
       }
-      
     }
-    
-    // // Write dimnaes from RObject to hdf5 data file
-    // if( (dimnames.size()>0) & (Rf_isNull(dimnames)) ) {
-    //   
-    //   if(Rf_isNull(dimnames[1]) ){ svrows = dimnames[1]; }
-    //   
-    //   if(Rf_isNull(dimnames[0]) ){ svrcols = dimnames[0]; }
-    //   
-    //   if(transposed == false){
-    //     write_hdf5_matrix_dimnames(file, group, dataset, svrows, svrcols );
-    //   }else{
-    //     write_hdf5_matrix_dimnames(file, group, dataset, svrcols, svrows );
-    //   }
-    //   
-    // }
 
-    //..// Eigen::MatrixXd matdat = as<Eigen::MatrixXd>(mat);
-    
-    //..// res = write_HDF5_matrix(filename, group + "/" + dataset, as<Rcpp::NumericMatrix>(mat) );
-
-    
     
   } catch(FileIException& error) { // catch failure caused by the H5File operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (File IException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (DataSet IException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   } catch(GroupIException& error) { // catch failure caused by the Group operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (Group IException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (DataSpace IException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     ::Rf_error( "c++ exception Create_HDF5_matrix (Data TypeIException)" );
-    return(wrap(-1));
+    //..// return(wrap(-1));
   }
   
   file->close();
-  return(wrap(0));
+  Rcpp::Rcout<<"\nDataset has been added to the file\n";
+  //..// return(wrap(0));
   
 }
 
