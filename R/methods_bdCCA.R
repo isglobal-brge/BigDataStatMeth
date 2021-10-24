@@ -181,11 +181,8 @@ bdCCA_hdf5 <- function(filename, X, Y, m = 10, bcenter = TRUE, bscale = FALSE, b
                       group = "Step7", dataset = "CrossProd_XQxYQ",
                       bcenter = FALSE, bscale = FALSE, k = 16, q = 2, threads = 3)
     
-    
-    sizeX <- bdgetDim_hdf5(filename, "data/X")
-    sizeY <- bdgetDim_hdf5(filename, "data/Y")
-    
-    writeCCAComponents_hdf5( filename, sizeX[2], sizeY[2])
+    res <- sapply( matrices, bdgetDim_hdf5, filename = filename )
+    writeCCAComponents_hdf5( filename, res[2,X], res[2,Y])
     
     if( keepInteResults == FALSE){
         sapply(paste0 ("Step",1:7), function (x) {
