@@ -67,10 +67,10 @@ Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, 
 // [[Rcpp::export]]
 void bdNormalize_hdf5( std::string filename, const std::string group, std::string dataset,
                                 Rcpp::Nullable<bool> bcenter = R_NilValue, Rcpp::Nullable<bool> bscale  = R_NilValue,
-                                Rcpp::Nullable<int> wsize  = R_NilValue)
+                                Rcpp::Nullable<int> wsize  = R_NilValue, Rcpp::Nullable<int> force  = false)
 {
   
-  bool bc, bs;
+  bool bc, bs, bforce;
   int blocksize;
   std::string strgroupout;
   IntegerVector stride = IntegerVector::create(1, 1);
@@ -93,11 +93,16 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
     else
       bs = Rcpp::as<bool> (bscale);
     
+    if( force.isNull())
+        bforce = true;
+    else
+        bforce = Rcpp::as<bool> (force);
     
     
     if(!ResFileExist(filename)) {
-      Rcpp::Rcout<<"\nFile not exits, create file before normalize dataset\n";  
-      //..// return wrap(-1);
+        file->close();
+        Rcpp::Rcout<<"\nFile not exits, create file before normalize dataset\n";  
+        return void();
     }
     file = new H5File( filename, H5F_ACC_RDWR );
     
@@ -105,14 +110,30 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
     if(exists_HDF5_element_ptr(file, group)==0) {
       Rcpp::Rcout<<"\nGroup not exits, create file and dataset before normalize data\n";
       file->close();
-      //..// return wrap(-1);
+      return void();
     }  else{
+        
       if(!exists_HDF5_element_ptr(file, group + "/" + dataset)) {
         Rcpp::Rcout<<"\n Dataset not exits, create file and dataset before normalize data \n";
         file->close();
-        //..// return wrap(-1);
+        return void();
       }
     }
+    
+    
+    strgroupout = "NORMALIZED/" + group;
+    
+    if(exists_HDF5_element_ptr(file, strgroupout + "/" + dataset) && bforce == false) {
+        Rcpp::Rcout<<"\n Normalized dataset exists, please set force = TRUE to overwrite\n";
+        file->close();
+        return void();
+    }else if(exists_HDF5_element_ptr(file, strgroupout) && bforce == true) {
+        remove_HDF5_element_ptr(file, strgroupout + "/" + dataset); 
+        remove_HDF5_element_ptr(file, strgroupout + "/" + dataset + ".mean"); 
+        remove_HDF5_element_ptr(file, strgroupout + "/" + dataset + ".scale"); 
+    }
+    
+    
     
     pdatasetin = new DataSet(file->openDataSet(group + "/" + dataset));
     
@@ -120,10 +141,18 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
     
     // Define blocksize atending number of elements in rows and cols
     if( wsize.isNull()) {
-      int maxsize = std::max( dims_out[0], dims_out[1]);
-      blocksize = std::ceil( maxElemBlock / maxsize);
+        if(dims_out[1] > maxElemBlock){
+            blocksize = 1;
+        } else {
+            int maxsize = std::max( dims_out[0], dims_out[1]);
+            blocksize = std::ceil( maxElemBlock / maxsize);
+        }
     } else {
-      blocksize = Rcpp::as<int> (wsize);
+        if(dims_out[1] > maxElemBlock){
+            blocksize = 1;
+        } else {
+            blocksize = Rcpp::as<int> (wsize);
+        }
     }
     
     
@@ -132,17 +161,11 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
     // Get data to normalize matrix (mean and sd by column)
     get_HDF5_mean_sd_by_column_ptr( file, pdatasetin, datanormal);
     
-    
-    // Create group to store data
-    strgroupout = "NORMALIZED/" + group;
-    
-    // Mirar si existeix el grup NORMALIZED al fitxer --> Crear-lo
-    if(exists_HDF5_element_ptr(file, strgroupout)) {
-      if(exists_HDF5_element_ptr(file, strgroupout + "/" + dataset))  {
-        remove_HDF5_element_ptr(file, strgroupout + "/" + dataset); }
-    } else {
-      create_HDF5_groups_ptr( file, strgroupout);
+    // if not exists -> create output group 
+    if(exists_HDF5_element_ptr(file, strgroupout) == 0) {
+        create_HDF5_groups_ptr( file, strgroupout);
     }
+    
     
     // Store center and scale for each column
     // Create dataset and store data
@@ -197,37 +220,37 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
     pdatasetout->close();
     file->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (File IException)" );
-    //..// return wrap(-1);
+    return void();
   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
     pdatasetin->close();
     pdatasetout->close();
     file->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (DataSet IException)" );
-    //..// return wrap(-1);
+    return void();
   } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
     pdatasetin->close();
     pdatasetout->close();
     file->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (DataSpace IException)" );
-    //..// return wrap(-1);
+    return void();
   } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
     pdatasetin->close();
     pdatasetout->close();
     file->close();
     ::Rf_error( "c++ exception Normalize_hdf5 (DataType IException)" );
-    //..// return wrap(-1);
+    return void();
   }catch(std::exception &ex) {
     pdatasetin->close();
     pdatasetout->close();
     file->close();
     Rcpp::Rcout<< ex.what();
-    //..// return wrap(-1);
+    return void();
   }
   
   pdatasetin->close();
   pdatasetout->close();
   file->close();
   
-  Rcpp::Rcout<<"\nNormalization has been computed\n";
-  //..// return wrap(0);
+  Rcpp::Rcout<<"Normalization has been computed\n";
+  return void();
 }

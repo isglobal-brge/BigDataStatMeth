@@ -190,12 +190,10 @@ void bdapply_Function_hdf5( std::string filename,
                     outputdataset = outgroup + "/tCross_" + datasets(i) + str_bdatasets(i);
                     originalB = GetCurrentBlock_hdf5( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
                 }
-                
-                
+
                 prepare_outGroup(file, outgroup, bforce);
                 prepare_outDataset(file, outputdataset, bforce);
-                
-                
+
                 Eigen::MatrixXd results = Bblock_matrix_mul_parallel(original, originalB, 128, R_NilValue);
                 
                 write_HDF5_matrix_from_R_ptr(file, outputdataset, Rcpp::wrap(results), false);
@@ -247,7 +245,7 @@ void bdapply_Function_hdf5( std::string filename,
     
     file->close();
   
-    Rcpp::Rcout<<"\n"<< func <<" function has been computed in all blocks\n";  
+    Rcpp::Rcout<< func <<" function has been computed in all blocks\n";  
     // return(wrap(0));
 }
 

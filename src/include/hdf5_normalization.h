@@ -5,7 +5,7 @@
   #include "ReadDelayedData.h"
   #include "rhdf5Utils.h"
   
-  static const int maxElemBlock = 1000000;
+  static const int maxElemBlock = 3000000;
   // functions called from c++
   Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata );
   

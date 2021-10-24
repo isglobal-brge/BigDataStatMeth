@@ -123,11 +123,8 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                 
 
                 if(oper.findName( func ) == 0 && i!=0) {
-                    
-                    // Rcpp::Rcout<<"\n Where peta - 3.1 \n";
                     extend_HDF5_matrix_subset_ptr(file, unlimDataset, count[0], 0);
-                    // Rcpp::Rcout<<"\n Where peta - 3 \n";
-                    
+
                 } else if (oper.findName( func ) == 1 && i!=0) {
                     extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, count[1]);
 
@@ -135,8 +132,6 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                 
                 write_HDF5_matrix_subset_v2(file, unlimDataset, offset, count, stride, block, Rcpp::wrap(original)  );  
                 unlimDataset->close();
-                
-                
                 pdataset->close();
 
             }else {
@@ -160,7 +155,7 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
     }
     
     file->close();
-    Rcpp::Rcout<<"\n Dataset has been recomposed from blocks\n";
+    Rcpp::Rcout<<outdataset<<" dataset has been recomposed from blocks\n";
     
     //..// return(wrap(0));
 }
@@ -344,6 +339,7 @@ YQ <- h5f$Step6$YQ[1:ncol(Y), 1:ncol(Y)]
 XR <- h5f$Step3$Final_QR$XRt.R
 YR <- h5f$Step3$Final_QR$YRt.R
 u <- h5f$SVD$CrossProd_XQxYQ$u
+d <- h5f$SVD$CrossProd_XQxYQ$d
 v <- h5f$SVD$CrossProd_XQxYQ$v
 h5closeAll()
 
@@ -361,68 +357,4 @@ YQR <- YR + YQ
 xcoef.hdf5 <- bdSolve(XQR, u)
 ycoef.hdf5 <- bdSolve(YQR, v)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 
-# library(BigDataStatMeth)
-# 
-# setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/UAB/DOCTORAT/BitDataStatMeth - BDSM/Analysis/BigDataStatMeth_Analysis/Cholesterol/test")
-# 
-# 
-# 
-# 
-# data("mtcars")
-# library(BigDataStatMeth)
-# library(rhdf5)
-# 
-# #..# devtools::reload(pkgload::inst("BigDataStatMeth"))
-# 
-# setwd("/Users/mailos/Library/Mobile Documents/com~apple~CloudDocs/UAB/DOCTORAT/BitDataStatMeth - BDSM/Analysis/BigDataStatMeth_Analysis/Cholesterol/test")
-# 
-# bdSplit_matrix_hdf5( "cars.hdf5", "data", "X", "dataoutCols", nblocks = 3, bycols = FALSE, force = TRUE)
-# 
-# 
-# devtools::reload(pkgload::inst("BigDataStatMeth"))
-# 
-# x.blocks <- BigDataStatMeth::bdgetDatasetsList_hdf5("cars.hdf5", "Xrows")
-# y.blocks <- BigDataStatMeth::bdgetDatasetsList_hdf5("cars.hdf5", "Yrows")
-# 
-# bdBind_hdf5("cars.hdf5", "Xrows", x.blocks, "merges", "outMergedRows", "bindRows", force = TRUE )
-# bdBind_hdf5("cars.hdf5", "Yrows", y.blocks, "merges", "outMergedCols", "bindCols", force = TRUE )
-# 
-# 
-# 
-# 
-# 
-# bdapply_Function_hdf5( "cars.hdf5", "Xrows", x.blocks, "Xrows_CrossProd", "CrossProd", force = TRUE )
-# bdapply_Function_hdf5( "cars.hdf5", "Xrows", x.blocks, "Xrows_tCrossProd", "tCrossProd", force = TRUE )
-# 
-# 
-# 
-# # Test results hdf5 : 
-# # Examine hierarchy before open file
-# h5ls("cars.hdf5")
-# 
-# # Open file and get data, all data is stored under SVD group
-# h5f = H5Fopen("cars.hdf5")
-# 
-# mergedRows <- h5f$Xcols_merge$outMergedCols
-# 
-# h5closeAll()
-# 
-# mergedRows
 */

@@ -290,7 +290,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
     
     // Remove previous results
     if(exists_HDF5_element_ptr(file,"SVD/"+strdataset)) {
-      Rcpp::Rcout<<"\n OLD Dataset have been REMOVED \n";
+      Rcpp::Rcout<<"SVD - old dataset have been REMOVED \n";
       remove_HDF5_element_ptr(file,"SVD/"+strdataset);
     }
 

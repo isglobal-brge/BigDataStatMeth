@@ -353,8 +353,8 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #' @examples
 #'   a = "See vignette"
 #' @export
-bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, wsize = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, wsize))
+bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, wsize = NULL, force = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, wsize, force))
 }
 
 #' PCA Descomposition
@@ -727,7 +727,19 @@ bdAdd_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL, f
 #' @return none
 #' @export
 bdRemove_hdf5_element <- function(filename, element) {
-    .Call('_BigDataStatMeth_bdRemove_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, element)
+    invisible(.Call('_BigDataStatMeth_bdRemove_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, element))
+}
+
+#' Get dataset dimensions
+#'
+#' get dataset dimensions
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param element path to element, character array indicating the complete route to the element to query size (folder or dataset). 
+#' @return none
+#' @export
+bdgetDim_hdf5 <- function(filename, element) {
+    .Call('_BigDataStatMeth_bdgetDim_hdf5', PACKAGE = 'BigDataStatMeth', filename, element)
 }
 
 #' Solve matrix equations

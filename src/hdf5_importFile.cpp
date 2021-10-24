@@ -167,7 +167,7 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
    try{
       
       if(sep.isNull()){
-         stdsep = "\\t";
+         stdsep = "\t";
       }else {
          stdsep = as<std::string>(sep);
       }
@@ -194,7 +194,7 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             // Read next line and count number of columns again depending on how file is created we can have
             // one empty space for rownames or not, then colnames will be different (-1 difference)
             std::getline(inFile,line,'\n'); //skip the first line (col names in our case). Remove those lines if note necessary
-            
+             
             // Number of columns
             std::ptrdiff_t const icols2(std::distance(
                   std::sregex_iterator(line.begin(), line.end(), reg_expres),
@@ -208,18 +208,19 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
                warning("Number of columns and headers are different, review data");
             }
                   
-         }
+         } 
          
          // Re-adjust block size
          if(incols < 100 ){
             blockCounter = 10000;
-         } else if (incols > 1000 ){
+         } /*else if (incols > 1000 ){
             blockCounter = 1000;
-         }
+         }*/
          
          // Get number of rows (+1 to take in to account the last line without \n)
          int irows = std::count(std::istreambuf_iterator<char>(inFile),
-                                std::istreambuf_iterator<char>(), '\n') + 1;
+                                std::istreambuf_iterator<char>(), '\n') ;
+         
          
          // Restore counter after read first line to get number of cols
          if( as<bool>(header)==false ){
@@ -333,7 +334,7 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             count[1] = irows - (floor(irows/blockCounter)*blockCounter);   
          }
          
-         if(irows - (floor(irows/blockCounter)*blockCounter)>0 && strBlockValues.size()>0 || btowrite == true)
+         if((irows - (floor(irows/blockCounter)*blockCounter)>0 && strBlockValues.size()>0) || btowrite == true)
          {
             
             std::vector<double> doubleVector = get_data_as_Matrix(strBlockValues);
@@ -345,8 +346,16 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
          }
          
          if(as<bool>(rownames) == true || as<bool>(header) == true ) {
-            // Write rownames and colnames
-            write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );
+             if(as<bool>(rownames) == false){
+                Rcpp::StringVector svrownames(1);
+                write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );
+             } else if(as<bool>(header) == false){
+                 Rcpp::StringVector svrcolnames(1);
+                 write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );
+             } else {
+                 // Write rownames and colnames
+                 write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );     
+             }
          }
           
          
@@ -361,39 +370,46 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
       datasetOut->close();
       file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (File IException)" );
+      return void();
       //..// return(-1);
    } catch( GroupIException& error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (Group IException)" );
+      return void();
       //..// return(-1);
    } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (DataSet IException)" );
+      return void();
       //..// return(-1);
    } catch(const std::runtime_error& re) {
       // speciffic handling for runtime_error
       datasetOut->close();
        file->close();
       ::Rcerr << "Runtime error: " << re.what() << std::endl;
+      return void();
       //..// return(-1);
    } catch(const std::exception& ex) {
       // datasetOut->close();
       file->close();
       ::Rcerr << "Error occurred: " << ex.what() << std::endl;
+      return void();
       //..// return(-1);
    } catch(...) {
       // catch any other errors (that we have no information about)
       datasetOut->close();
        file->close();
       ::Rcerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
+      return void();
       //..// return(-1);
    }
    
 
 ;
    Rcpp::Rcout<<"\n"<<outDataset<<" dataset has been imported successfully.\n";
+   return void();
    //..// return(0);
    
 }

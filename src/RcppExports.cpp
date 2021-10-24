@@ -213,8 +213,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdNormalize_hdf5
-void bdNormalize_hdf5(std::string filename, const std::string group, std::string dataset, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<int> wsize);
-RcppExport SEXP _BigDataStatMeth_bdNormalize_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP wsizeSEXP) {
+void bdNormalize_hdf5(std::string filename, const std::string group, std::string dataset, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> force);
+RcppExport SEXP _BigDataStatMeth_bdNormalize_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP wsizeSEXP, SEXP forceSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
@@ -223,7 +223,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
-    bdNormalize_hdf5(filename, group, dataset, bcenter, bscale, wsize);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type force(forceSEXP);
+    bdNormalize_hdf5(filename, group, dataset, bcenter, bscale, wsize, force);
     return R_NilValue;
 END_RCPP
 }
@@ -539,14 +540,25 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdRemove_hdf5_element
-Rcpp::RObject bdRemove_hdf5_element(std::string filename, std::string element);
+void bdRemove_hdf5_element(std::string filename, std::string element);
 RcppExport SEXP _BigDataStatMeth_bdRemove_hdf5_element(SEXP filenameSEXP, SEXP elementSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type element(elementSEXP);
+    bdRemove_hdf5_element(filename, element);
+    return R_NilValue;
+END_RCPP
+}
+// bdgetDim_hdf5
+Rcpp::RObject bdgetDim_hdf5(std::string filename, std::string element);
+RcppExport SEXP _BigDataStatMeth_bdgetDim_hdf5(SEXP filenameSEXP, SEXP elementSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type element(elementSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdRemove_hdf5_element(filename, element));
+    rcpp_result_gen = Rcpp::wrap(bdgetDim_hdf5(filename, element));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -671,7 +683,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdImport_text_to_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImport_text_to_hdf5, 8},
     {"_BigDataStatMeth_bdImpute_snps_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImpute_snps_hdf5, 6},
     {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
-    {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 6},
+    {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 7},
     {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 9},
     {"_BigDataStatMeth_bdReduce_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdReduce_matrix_hdf5, 7},
     {"_BigDataStatMeth_bdremove_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdremove_maf_hdf5, 8},
@@ -695,6 +707,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdCreate_hdf5_matrix_file", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_matrix_file, 6},
     {"_BigDataStatMeth_bdAdd_hdf5_matrix", (DL_FUNC) &_BigDataStatMeth_bdAdd_hdf5_matrix, 6},
     {"_BigDataStatMeth_bdRemove_hdf5_element", (DL_FUNC) &_BigDataStatMeth_bdRemove_hdf5_element, 2},
+    {"_BigDataStatMeth_bdgetDim_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDim_hdf5, 2},
     {"_BigDataStatMeth_bdSolve", (DL_FUNC) &_BigDataStatMeth_bdSolve, 2},
     {"_BigDataStatMeth_bdInvCholesky", (DL_FUNC) &_BigDataStatMeth_bdInvCholesky, 1},
     {"_BigDataStatMeth_bdSVD", (DL_FUNC) &_BigDataStatMeth_bdSVD, 5},

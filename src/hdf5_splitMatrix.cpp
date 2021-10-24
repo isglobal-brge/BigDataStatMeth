@@ -49,20 +49,20 @@ int RcppSplit_matrix_hdf5 ( H5File* file, DataSet* dataset, bool bycols, std::st
     }
     
   }catch( FileIException& error ) {
-    file->close();
-    dataset->close();
-    ::Rf_error( "c++ exception (File IException )" );
-    return -1;
+      dataset->close();
+      file->close();
+      ::Rf_error( "c++ exception (File IException )" );
+      return -1;
   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-    file->close();
-    dataset->close();
-    ::Rf_error( "c++ exception (DataSet IException )" );
-    return -1;
+      dataset->close();
+      file->close();
+      ::Rf_error( "c++ exception (DataSet IException )" );
+      return -1;
   } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-    file->close();
-    dataset->close();
-    ::Rf_error( "c++ exception (DataSpace IException )" );
-    return -1;
+      dataset->close();
+      file->close();
+      ::Rf_error( "c++ exception (DataSpace IException )" );
+      return -1;
   } 
   
   return(0);
@@ -141,12 +141,14 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
       pdataset->close();
       file->close();
       Rcpp::Rcout<<"\n Block size or number of blocks needed to proceed with matrix split. Please, review parameters";
+      return void();
       // return(wrap(-1));
       
     } else if (!nblocks.isNull() && !blocksize.isNull()) {
       pdataset->close();
       file->close();
       Rcpp::Rcout<<"\nBlock size and number of blocks are defined, please define only one option, split by number of blocks or by block size";
+      return void();
       // return(wrap(-1));
       
     } else if(!nblocks.isNull()) {
@@ -155,6 +157,7 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         pdataset->close();
         file->close();
         Rcpp::Rcout<<"\nNumbers of blocks = 1, no data to split";
+        return void();
         // return(wrap(-1));
 
       } else {
@@ -197,13 +200,15 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
     pdataset->close();
     file->close();
     ::Rf_error( "c++ exception (File IException)" );
+    return void();
     // return(wrap(-1));
   }
   
   pdataset->close();
   file->close();
   
-  Rcpp::Rcout<<"\nDataset has been splitted\n";
+  Rcpp::Rcout<<"Dataset has been splitted\n";
+  return void();
   // return(wrap(0));
 }
 

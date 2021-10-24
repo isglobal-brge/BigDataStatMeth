@@ -10,7 +10,8 @@ bdNormalize_hdf5(
   dataset,
   bcenter = NULL,
   bscale = NULL,
-  wsize = NULL
+  wsize = NULL,
+  force = FALSE
 )
 }
 \arguments{

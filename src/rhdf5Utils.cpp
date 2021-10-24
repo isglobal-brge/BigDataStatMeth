@@ -821,6 +821,9 @@ extern "C" {
   
   int write_HDF5_matrix_ptr(H5File* file, const std::string CDatasetName, RObject DatasetValues)
   {
+      
+      DataSet dataset;
+      
     try
     {
       // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
@@ -839,7 +842,7 @@ extern "C" {
         
         std::vector<double> matHiCValues = as<std::vector<double> >(as<NumericMatrix>(DatasetValues));
         
-        DataSet dataset = file->createDataSet(CDatasetName,PredType::NATIVE_DOUBLE, dataspace);
+        dataset = file->createDataSet(CDatasetName,PredType::NATIVE_DOUBLE, dataspace);
         dataset = file->openDataSet(CDatasetName);
         
         dataset.write( &matHiCValues[0] , PredType::NATIVE_DOUBLE);
@@ -857,7 +860,7 @@ extern "C" {
         
         std::vector<double> matHiCValues = as<std::vector<double> >(transpose(as<NumericMatrix>(DatasetValues)));
         
-        DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
+        dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
         dataset = file->openDataSet(CDatasetName);
         dataset.write( &matHiCValues[0], PredType::NATIVE_DOUBLE);
         
@@ -910,20 +913,30 @@ extern "C" {
       } 
       
     } catch(FileIException& error) { // catch failure caused by the H5File operations
-      ::Rf_error( "c++ exception write_HDF5_matrix_ptr (File IException)" );
-      return -1;
+        dataset.close();
+        file->close();
+        ::Rf_error( "c++ exception write_HDF5_matrix_ptr (File IException)" );
+        return -1;
     } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
-      ::Rf_error( "c++ exception write_HDF5_matrix_ptr (DataSet IException)" );
-      return -1;
+        dataset.close();
+        file->close();
+        ::Rf_error( "c++ exception write_HDF5_matrix_ptr (DataSet IException)" );
+        return -1;
     } catch(GroupIException& error) { // catch failure caused by the Group operations
-      ::Rf_error( "c++ exception write_HDF5_matrix_ptr (Group IException)" );
-      return -1;
+        dataset.close();
+        file->close();
+        ::Rf_error( "c++ exception write_HDF5_matrix_ptr (Group IException)" );
+        return -1;
     } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-      ::Rf_error( "c++ exception write_HDF5_matrix_ptr (DataSpace IException)" );
-      return -1;
+        dataset.close();
+        file->close();
+        ::Rf_error( "c++ exception write_HDF5_matrix_ptr (DataSpace IException)" );
+        return -1;
     } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
-      ::Rf_error( "c++ exception write_HDF5_matrix_ptr (Data TypeIException)" );
-      return -1;
+        dataset.close();
+        file->close();
+        ::Rf_error( "c++ exception write_HDF5_matrix_ptr (Data TypeIException)" );
+        return -1;
     }
     
     return 0;
@@ -2343,7 +2356,7 @@ void bdAdd_hdf5_matrix(RObject object, std::string filename, std::string group, 
 //' @return none
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdRemove_hdf5_element(std::string filename, std::string element)
+void bdRemove_hdf5_element(std::string filename, std::string element)
 {
   
   H5File* file;
@@ -2367,23 +2380,29 @@ Rcpp::RObject bdRemove_hdf5_element(std::string filename, std::string element)
     file->close();
     
   } catch(FileIException& error) { // catch failure caused by the H5File operations
-    ::Rf_error( "c++ exception Remove_hdf5_element (File IException)" );
-    return(wrap(-1));
+      file->close();
+      ::Rf_error( "c++ exception Remove_hdf5_element (File IException)" );
+      return void();
   } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+      file->close();
     ::Rf_error( "c++ exception Remove_hdf5_element (DataSet IException)" );
-    return(wrap(-1));
+    return void();
   } catch(GroupIException& error) { // catch failure caused by the Group operations
-    ::Rf_error( "c++ exception Remove_hdf5_element (Group IException)" );
-    return(wrap(-1));
+      file->close();
+      ::Rf_error( "c++ exception Remove_hdf5_element (Group IException)" );
+      return void();
   } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-    ::Rf_error( "c++ exception Remove_hdf5_element (DataSpace IException)" );
-    return(wrap(-1));
+      file->close();
+      ::Rf_error( "c++ exception Remove_hdf5_element (DataSpace IException)" );
+      return void();
   } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
-    ::Rf_error( "c++ exception Remove_hdf5_element (Data TypeIException)" );
-    return(wrap(-1));
+      file->close();
+      ::Rf_error( "c++ exception Remove_hdf5_element (Data TypeIException)" );
+      return void();
   }
   
-  return(wrap(0));
+  Rcpp::Rcout<<element<<" has been removed\n";
+  return void();
   
 }
   
@@ -2516,6 +2535,75 @@ IntegerVector get_HDF5_dataset_size(DataSet dataset)
   
   return(dims);
 }  
+  
+  
+  
+  
+//' Get dataset dimensions
+//'
+//' get dataset dimensions
+//' 
+//' @param filename, character array indicating the name of the file to create
+//' @param element path to element, character array indicating the complete route to the element to query size (folder or dataset). 
+//' @return none
+//' @export
+// [[Rcpp::export]]
+Rcpp::RObject bdgetDim_hdf5(std::string filename, std::string element)
+{
+    
+    H5File* file = nullptr;
+    DataSet dataset;
+    IntegerVector dims_out(2), tmp_dims_out;
+  
+  try
+  {
+      // int res;
+      
+      if(!ResFileExist(filename))
+          throw std::range_error("File not exits, create file before query datasett");
+      
+      file = new H5File( filename, H5F_ACC_RDWR );
+      
+      if(!exists_HDF5_element_ptr(file, element)) {
+          file->close();
+          throw std::range_error("Element not exits");
+      } else{
+          dataset = file->openDataSet(element);
+          tmp_dims_out = get_HDF5_dataset_size(dataset);  
+          dims_out[0] = tmp_dims_out[1];
+          dims_out[1] = tmp_dims_out[0];
+      }
+      
+      
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
+      dataset.close();
+      file->close();
+      ::Rf_error( "c++ exception bdgetDim (File IException)" );
+      return(wrap(-1));
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+      dataset.close();
+      file->close();
+      ::Rf_error( "c++ exception bdgetDim (DataSet IException)" );
+      return(wrap(-1));
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
+      dataset.close();
+      file->close();
+      ::Rf_error( "c++ exception bdgetDim (Group IException)" );
+      return(wrap(-1));
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+      dataset.close();
+      file->close();
+      ::Rf_error( "c++ exception bdgetDim (Data TypeIException)" );
+      return(wrap(-1));
+  }
+  
+  dataset.close();
+  file->close();
+  return (dims_out);
+  
+}
+
+  
   
   
   
