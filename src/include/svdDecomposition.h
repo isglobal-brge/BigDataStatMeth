@@ -5,7 +5,7 @@
   #include "spectra/SymEigsSolver.h"   // To access symmetric matrix
   #include "spectra/SymGEigsSolver.h"  // To access symmetric matrix
   #include "tgmath.h"
-  #include "parallel_CrossProd.h"
+  //..// #include "parallel_CrossProd.h"
   #include "matrix_utilities.h"
   #include "hdf5_to_Eigen.h"
   #include "svdutils.h"
