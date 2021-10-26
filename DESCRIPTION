@@ -23,7 +23,8 @@ LinkingTo:
     beachmat,
     Rhdf5lib,
     RSpectra,
-    BH
+    BH,
+    RCurl
 Suggests: 
     HDF5Array,
     DelayedArray,
