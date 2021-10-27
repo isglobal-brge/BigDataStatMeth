@@ -18,29 +18,39 @@
 bdImportData_hdf5 <- function( inFile, destFile, destGroup, destDataset, header = TRUE, rownames = FALSE, overwrite = FALSE, sep = NULL)
 {
     
+    untarExtensions <- c("tar.gz", "gzip", "bzip2", "gz", "tgz")
+    
+    extension <- substr(inFile, regexpr("\\.[^\\.]*$", inFile)[1]+1, nchar(inFile))
+    filename <- substr(inFile, regexpr("\\/[^\\/]*$", inFile)[1]+1, nchar(inFile)-nchar(extension)-1)
+    importfile <- ""
+    
     if( url.exists(inFile))
     {
-        extension <- substr(inFile, regexpr("\\.[^\\.]*$", inFile)[1]+1, nchar(inFile))
-        filename <- substr(inFile, regexpr("\\/[^\\/]*$", inFile)[1]+1, nchar(inFile)-nchar(extension)-1)
-        
         download.file(url = inFile, destfile = paste0(getwd(), "/", filename, ".", extension))
-        if(extension == "zip") {
-            inFile <- unzip(paste0(filename,".", extension), list = TRUE )$Name[1]
-            unzip(paste0(filename,".", extension) )
-        }
+        inFile <- paste0(filename,".", extension)
         
     } else {
         if(!file.exists(inFile)) {
             stop("File does not exists, please review the route")
-        }
+        } 
+        importfile <- inFile
+    }
+    
+    if(extension == "zip") {
+        importfile <- unzip(inFile, list = TRUE )$Name[1]
+        unzip(inFile)
+    }else if(extension %in% untarExtensions) {
+        importfile <- untar(inFile, list = TRUE )[1]
+        untar(inFile)
     }
     
     # Import files to hdf5
-    bdImport_text_to_hdf5(filename = inFile, 
+    bdImport_text_to_hdf5(filename = importfile, 
                           outputfile = destFile,
                           outGroup = destGroup,
                           outDataset = destDataset,
                           header = header,
                           rownames = rownames,
                           overwrite = overwrite)
+    unlink(importfile)
 }
