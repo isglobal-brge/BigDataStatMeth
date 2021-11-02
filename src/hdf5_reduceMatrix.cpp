@@ -61,18 +61,12 @@ int RcppReduce_matrix_hdf5 ( H5File* file,  std::string strgroup, std::string st
             
         }
         
-        Rcpp::Rcout<<"\n MATRIU ORIGINAL: \n"<<fullReduced<<"\n";
-    
-    
       // Transform to rowmajor
         Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mapBlock(fullReduced.data(), 
                                                                                                   fullReduced.cols() , fullReduced.rows());
         
         write_HDF5_matrix_from_R_ptr(file, strdatasetout, Rcpp::wrap(mapBlock.transpose()), false);
         
-        
-        
-
     }catch( FileIException& error ) {
         ploaddataset->close();
         file->close();
