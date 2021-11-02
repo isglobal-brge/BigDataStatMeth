@@ -222,7 +222,7 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
 //' @return Original hdf5 data file with imputed data
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::string dataset, 
+void bdImpute_snps_hdf5(std::string filename, std::string group, std::string dataset, 
                               Rcpp::Nullable<std::string> outgroup = R_NilValue, Rcpp::Nullable<std::string> outdataset = R_NilValue, 
                               Rcpp::Nullable<bool> bycols = true )
 {
@@ -299,12 +299,13 @@ Rcpp::RObject bdImpute_snps_hdf5(std::string filename, std::string group, std::s
     //.commented 20201120 - warning check().// pdataset->close();
     file->close();
     ::Rf_error( "c++ exception (File IException)" );
-    return(wrap(-1));
+    return void();
   }
   
   pdataset->close();
   file->close();
-  return(wrap(0));
+  Rcpp::Rcout<<"SNPs with missing values has been imputed\n";
+  return void();
   
 }
 

@@ -43,6 +43,7 @@ int get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
       // stop("Dataset does not exist !");
       file->close();
       ::Rf_error( "c++ exception in get_HDF5_PCA_variance_ptr (Dataset does not exist !)" );
+      return -1;
     }
 
     // Real data set dimension

@@ -321,7 +321,7 @@ bdImport_text_to_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #' @return Original hdf5 data file with imputed data
 #' @export
 bdImpute_snps_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE) {
-    .Call('_BigDataStatMeth_bdImpute_snps_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols)
+    invisible(.Call('_BigDataStatMeth_bdImpute_snps_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols))
 }
 
 #' Gets all dataset names inside a group

@@ -54,6 +54,7 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
             file = new H5File( filename, H5F_ACC_RDWR ); 
         } else {
             Rcpp::Rcout<<"\nFile not exits, create file before bind matrices";
+            return void();
             //..// return wrap(false);
         }
         
@@ -67,6 +68,7 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
             if( exists_HDF5_element_ptr(file, strdataset ) == 0 ) {
                 file->close();
                 Rcpp::Rcout<<"Group or dataset does not exists, please create the input dataset before proceed";
+                return void();
                 //..// return wrap(false);
             }
             
@@ -93,6 +95,7 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                         pdataset->close();
                         file->close();
                         Rcpp::Rcout<<"c++ exception can't bind datasets by columns, number of columns differ between datasets";
+                        return void();
                         //..// return (wrap(false));
                     }
                     offset[0] = offset[0] + count[0];
@@ -103,6 +106,7 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                         pdataset->close();
                         file->close();
                         Rcpp::Rcout<<"c++ exception can't bind datasets by rows, number of rows differ between datasets";
+                        return void();
                         //..// return (wrap(false));
                     }
                     offset[1] = offset[1] + count[1];
@@ -138,6 +142,7 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                 pdataset->close();
                 file->close();
                 Rcpp::Rcout<<"Group not exists, create the input dataset before proceed";
+                return void();
                 //..// return wrap(false);
                 
             }
@@ -151,11 +156,13 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
         pdataset->close();
         file->close();
         Rcpp::Rcout<<"c++ exception (File IException)";
+        return void();
         //..// return(wrap(-1));
     }
     
     file->close();
     Rcpp::Rcout<<outdataset<<" dataset has been recomposed from blocks\n";
+    return void();
     
     //..// return(wrap(0));
 }

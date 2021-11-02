@@ -65,6 +65,7 @@ void bdapply_Function_hdf5( std::string filename,
             file = new H5File( filename, H5F_ACC_RDWR ); 
         } else {
             Rcpp::Rcout<<"\nFile not exits, create file before apply function to datasets";
+            return void();
             // return wrap(false);
         }
 
@@ -76,6 +77,7 @@ void bdapply_Function_hdf5( std::string filename,
                 Rcpp::Rcout<<"To perform matrix multiplication, CrossProd, tCrossProd or solve "<<
                     "with two matrices b_datasets variable must be defined and the length "<<
                         " of datasets and b_datasets must be equal";
+                return void();
                 // return wrap(false);  
             }
             str_bdatasets = as<Rcpp::StringVector>(b_datasets);
@@ -101,6 +103,7 @@ void bdapply_Function_hdf5( std::string filename,
 
                 file->close();
                 Rcpp::Rcout<<"Group or dataset does not exists, create the input dataset before proceed";
+                return void();
                 // return wrap(false);
             }
             
@@ -151,6 +154,7 @@ void bdapply_Function_hdf5( std::string filename,
                 if( results.v == Eigen::MatrixXd::Zero(2,2) && results.u == Eigen::MatrixXd::Zero(2,2)) {
                     pdataset->close();
                     file->close();
+                    return void();
                     // return wrap(false);
                     
                 } else {
@@ -170,6 +174,7 @@ void bdapply_Function_hdf5( std::string filename,
                     pdataset->close();
                     file->close();
                     Rcpp::Rcout<<"Group or dataset does not exists, create the input dataset before proceed";
+                    return void();
                     // return wrap(false);
                 }
 
@@ -228,6 +233,7 @@ void bdapply_Function_hdf5( std::string filename,
                 pdataset->close();
                 file->close();
                 Rcpp::Rcout<<"Function does not exists, please use one of the following : 'QR', 'CrossProd', 'tCrossProd', 'invChol', 'blockmult' ";
+                return void();
                 // return wrap(false);
                 
             }
@@ -240,12 +246,14 @@ void bdapply_Function_hdf5( std::string filename,
         pdataset->close();
         file->close();
         ::Rf_error( "c++ exception (File IException)" );
+        return void();
         // return(wrap(-1));
     }
     
     file->close();
   
     Rcpp::Rcout<< func <<" function has been computed in all blocks\n";  
+    return void();
     // return(wrap(0));
 }
 
