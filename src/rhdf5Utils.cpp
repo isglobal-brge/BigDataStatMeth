@@ -33,9 +33,6 @@ bool ResFileExist_filestream(std::string name) {
 
 
 
-
-
-
 // Remove file if exists
 bool RemoveFile(std::string filename) 
 {
@@ -2606,7 +2603,91 @@ Rcpp::RObject bdgetDim_hdf5(std::string filename, std::string element)
   
   
   
+// Get dataset name inside a group
+void create_symLink( H5File* file, std::string original, std::string link)
+{
   
+  try{
+      
+      Exception::dontPrint();
+      
+      const char * charOriginal = original.c_str();
+      const char * charLink = link.c_str();
+      
+      herr_t status = H5Lcreate_soft(charOriginal, file->getId(), charLink, H5P_DEFAULT, H5P_DEFAULT);;
+      
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
+      file->close();
+      ::Rf_error( "c++ exception create_symLink (File IException)" );
+      return void();
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+      file->close();
+      ::Rf_error( "c++ exception create_symLink (DataSet IException)" );
+      return void();
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
+      file->close();
+      ::Rf_error( "c++ exception create_symLink (Group IException)" );
+      return void();
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+      file->close();
+      ::Rf_error( "c++ exception create_symLink (DataSpace IException)" );
+      return void();
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+      file->close();
+      ::Rf_error( "c++ exception create_symLink (Data TypeIException)" );
+      return void();
+  }
+  
+  return void();
+}
+  
+  
+// Get dataset name inside a group
+void create_hardLink( H5File* file, std::string original, std::string linkGroup, std::string linkDataset)
+{
+  
+  try{
+      
+      // status = H5Lcreate_soft("/YA/YB/YC/Y3", file_id, "/2010", H5P_DEFAULT, H5P_DEFAULT);
+      // 
+      // dataset = H5Dopen(file_id, "/2010", H5P_DEFAULT);
+      
+      Exception::dontPrint();
+      
+      const char * charOriginal = original.c_str();
+      const char * charLinkGroup = linkGroup.c_str();
+      const char * charLinkDataset = linkDataset.c_str();
+      
+      Rcpp::Rcout<<"Id grup : "<<file->getObjId(charLinkGroup)<<"\n";
+      herr_t status = H5Lcreate_hard(file->getId(), charOriginal, file->getObjId(charLinkGroup) , charLinkDataset, H5P_DEFAULT, H5P_DEFAULT);;
+      
+      Rcpp::Rcout<<"\nStatus val : "<<status;
+      
+  } catch(FileIException& error) { // catch failure caused by the H5File operations
+      file->close();
+      ::Rf_error( "c++ exception create_hardLink (File IException)" );
+      return void();
+  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+      file->close();
+      ::Rf_error( "c++ exception create_hardLink (DataSet IException)" );
+      return void();
+  } catch(GroupIException& error) { // catch failure caused by the Group operations
+      file->close();
+      ::Rf_error( "c++ exception create_hardLink (Group IException)" );
+      return void();
+  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+      file->close();
+      ::Rf_error( "c++ exception create_hardLink (DataSpace IException)" );
+      return void();
+  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+      file->close();
+      ::Rf_error( "c++ exception create_hardLink (Data TypeIException)" );
+      return void();
+  }
+  
+  return void();
+}
+
   
   
 /*** TODO : 

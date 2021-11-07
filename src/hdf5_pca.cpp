@@ -107,6 +107,7 @@ int get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
     Exception::dontPrint();
     
     std::string strSVDdataset_d = "SVD/"+strdataset+"/d";
+    std::string strSVDdataset_u = "SVD/"+strdataset+"/u";
     std::string strSVDdataset_v = "SVD/"+strdataset+"/v";
     
     std::string strlocpcadataset = "PCA/" + strdataset;
@@ -173,7 +174,9 @@ int get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
     Rcpp::Rcout<<"\nGetting Variables - Cos2";
     Eigen::MatrixXd var_cos2 = var_coord.unaryExpr([](double d) {return std::pow(d, 2);});;
     write_HDF5_matrix_transposed_ptr(file, strlocpcadataset+"/var.cos2", wrap(var_cos2.transpose()));
-
+    
+    Rcpp::Rcout<<"\nGetting Components";
+    create_symLink(file, "/" + strSVDdataset_u, strlocpcadataset+"/components");
     
   }catch( FileIException& error ) {
     ::Rf_error( "c++ exception (File IException )" );

@@ -96,6 +96,9 @@
                                            double* rdatablock);
     
     IntegerVector get_HDF5_dataset_size(DataSet dataset);
+    
+    void create_symLink( H5File* file, std::string original, std::string link);
+    void create_hardLink( H5File* file, std::string original, std::string linkGroup, std::string linkDataset);
 
 
 #endif
