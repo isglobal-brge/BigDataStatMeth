@@ -19,6 +19,8 @@ bdReduce_matrix_hdf5(
 
 \item{group, }{character array indicating the input group where the data sets are stored}
 
+\item{reducefunction, }{single character with function to apply, can be '+' or  '-' array indicating the input dataset to be imputed}
+
 \item{outgroup, }{optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group.}
 
 \item{outdataset, }{optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten.}
@@ -26,8 +28,6 @@ bdReduce_matrix_hdf5(
 \item{force, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
 
 \item{remove, }{boolean if true, removes original matrices, by default bremove = false.}
-
-\item{function, }{single character with function to apply, can be '+' or  '-' array indicating the input dataset to be imputed}
 }
 \value{
 Full matrix with results from reduction

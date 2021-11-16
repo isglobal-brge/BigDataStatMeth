@@ -13,7 +13,7 @@
 #' @param overwrite (optional) either a logical value indicating whether the output file can be overwritten or not.
 #' @param sep (optional), by default = "\\t". The field separator string. Values within each row of x are separated by this string.
 #' @examples
-#' 
+#'    print ("Example in vignette")
 #' 
 bdImportData_hdf5 <- function( inFile, destFile, destGroup, destDataset, header = TRUE, rownames = FALSE, overwrite = FALSE, sep = NULL)
 {

@@ -13,14 +13,14 @@ using namespace std;
 //' @param filename, character array indicating the name of the file to create
 //' @param group, character array indicating the input group where the data set to be imputed is. 
 //' @param datasets, character array indicating the input dataset to be imputed
+//' @param outgroup, character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
+//' @param outdataset, character array indicating the name for the new merged dataset
 //' @param func, character array function to be applyed
 //' \describe{
 //'     \item{bindRows}{merge datasets by rows}
 //'     \item{bindCols}{apply datasets by columns}
 //' }
-//' @param outgroup, character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
-//' @param outdataset, character array indicating the name for the new merged dataset
-//' @param bforce, boolean if true, previous results in same location inside hdf5 will be overwritten.
+//' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
 //' @return Original hdf5 data file with results after input datasets
 //' @export
 // [[Rcpp::export]]

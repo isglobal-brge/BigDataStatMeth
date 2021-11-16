@@ -7,26 +7,34 @@
 #' @export
 #' 
 #' @param strdataset string, dataset path within the hdf5 data file from which we want to calculate the QR
-#' @param filename string file name where dataset to normalize is stored
+#' @param file string file name where dataset to normalize is stored
 #' @param mblocks number of blocks in which we want to partition the matrix to perform the calculations
 #' @param center, boolean, if true, dataset is centered to perform calculus
+#' @param bcols boolean if bcols = TRUE matrix it´s splitted by columns if bcols = FALSE, then matrix or dataset is splitted by rows.
 #' @param scale, boolean, if true, dataset is centered to perform calculus
 #' @param overwrt, boolean, if true, datasets existing inside a file must be overwritten if we are using the same names
 #' @return hdf5 data file with CCA results, 
 #' @examples
 #' 
+#'    print ("Example in vignette")
+#' 
 getQRbyBlocks <- function(strdataset, file, mblocks, center, scale, bcols, overwrt)
 {
     
+    strgroup <- gsub("/.?$", "", strdataset)
+    strdataset <- gsub("^.*/", "", strdataset)
+    
+    
     # Prepare data - Normalize data (only Center)
     bdNormalize_hdf5(filename = file, 
-                     group = "data", dataset = strdataset, 
+                     group = strgroup, dataset = strdataset, 
                      bcenter = center, bscale = scale) 
     
     # Step 1
     # Split datasets X abd Y by rows and store data to data file
     bdSplit_matrix_hdf5( filename = file, 
-                         group = "NORMALIZED/data", dataset = strdataset, 
+                         group = paste0("NORMALIZED/",strgroup), 
+                         dataset = strdataset, 
                          outgroup = paste0( "Step1/", strdataset, "rows"), 
                          nblocks = mblocks, bycols = bcols, force = overwrt)
     
@@ -78,15 +86,15 @@ getQRbyBlocks <- function(strdataset, file, mblocks, center, scale, bcols, overw
 writeCCAComponents_hdf5 <- function(filename, ncolsX, ncolsY)
 {
     
-    if(file.exists(filename)){
+    if(!file.exists(filename)){
         message("ERROR - File doesn't exists")
         return()
     }
     
     # Read data from file
     h5f = H5Fopen(filename)
-    XQ <- h5f$Step6$XQ[1:ncol(X), 1:ncol(X)]
-    YQ <- h5f$Step6$YQ[1:ncol(Y), 1:ncol(Y)]
+    XQ <- h5f$Step6$XQ[1:ncolsX, 1:ncolsX]
+    YQ <- h5f$Step6$YQ[1:ncolsY, 1:ncolsY]
     XR <- h5f$Step3$Final_QR$XRt.R
     YR <- h5f$Step3$Final_QR$YRt.R
     d <- h5f$SVD$CrossProd_XQxYQ$d
@@ -142,28 +150,29 @@ writeCCAComponents_hdf5 <- function(filename, ncolsX, ncolsY)
 #' 
 #' @export
 #' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param X dataset path inside the hdf5 data file
-#' @param X dataset path inside the hdf5 data file
-#' @param m number of blocks in which we want to partition the matrix to perform the calculations
-#' @param bcenter, boolean, if true, dataset is centered to perform calculus
-#' @param bscale, boolean, if true, dataset is centered to perform calculus
-#' @param overwriteResults, boolean, if true, datasets existing inside a file must be overwritten if we are using the same names
-#' @param keepInteResults, boolean, if false, intermediate results will be removed
+#' @param filename string file name where dataset to normalize is stored.
+#' @param X Dataset, path inside the hdf5 data file.
+#' @param Y Dataset, path inside the hdf5 data file.
+#' @param m Integer, number of blocks in which we want to partition the matrix to perform the calculations.
+#' @param bcenter, Boolean, if true, dataset is centered to perform calculus.
+#' @param bscale, Boolean, if true, dataset is centered to perform calculus.
+#' @param bycols, Boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows.
+#' @param overwriteResults, Boolean, if true, datasets existing inside a file must be overwritten if we are using the same names.
+#' @param keepInteResults, Boolean, if false, intermediate results will be removed.
 #' @return hdf5 data file with CCA results, 
 #' @examples
-#' 
+#'    print ("Example in vignette")
 #' 
 bdCCA_hdf5 <- function(filename, X, Y, m = 10, bcenter = TRUE, bscale = FALSE, bycols = FALSE, overwriteResults = FALSE, keepInteResults = FALSE)
 {
     
-    if(file.exists(filename)){
-        if(overwritefile == FALSE ){
-            stop("File already exists, please set overwrite = TRUE if you want to remove previous file")
-        } else {
-            message("File will be overwritten")
-        }
-    } 
+    # if(file.exists(filename)){
+    #     if(overwritefile == FALSE ){
+    #         stop("File already exists, please set overwrite = TRUE if you want to remove previous file")
+    #     } else {
+    #         message("File will be overwritten")
+    #     }
+    # } 
 
     matrices <- c(X, Y)
     sapply( matrices, getQRbyBlocks, file = filename, mblocks = m, center = bcenter, scale = bscale, bcols = bycols, overwrt = overwriteResults )

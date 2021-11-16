@@ -36,6 +36,6 @@ bdImportData_hdf5(
 This function download data from an url and decompress data (if needed), then imports the file to hdf5 data file
 }
 \examples{
-
+   print ("Example in vignette")
 
 }

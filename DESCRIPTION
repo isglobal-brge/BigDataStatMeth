@@ -14,8 +14,12 @@ License: MIT + file LICENSE
 Depends: 
   R (>= 3.6.0)
 Imports: 
+    data.table,
     Rcpp (>= 1.0.6), 
-    RcppParallel (>= 5.0.2)
+    RcppParallel (>= 5.0.2),
+    RCurl,
+    rhdf5,
+    utils
 LinkingTo: 
     Rcpp,
     RcppEigen,
@@ -23,15 +27,13 @@ LinkingTo:
     beachmat,
     Rhdf5lib,
     RSpectra,
-    BH,
-    RCurl
+    BH
 Suggests: 
     HDF5Array,
     DelayedArray,
     Matrix,
     BiocStyle,
     knitr,
-    rhdf5,
     rmarkdown,
     ggplot2,
     microbenchmark

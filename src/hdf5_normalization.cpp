@@ -60,6 +60,7 @@ Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, 
 //' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @param wsize integer (default = 1000), file block size to read to perform normalization
+//' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
 //' @return file with scaled, centered or scaled and centered dataset
 //' @examples
 //'   a = "See vignette"
@@ -100,12 +101,11 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
     
     
     if(!ResFileExist(filename)) {
-        file->close();
         Rcpp::Rcout<<"\nFile not exits, create file before normalize dataset\n";  
         return void();
     }
-    file = new H5File( filename, H5F_ACC_RDWR );
     
+    file = new H5File( filename, H5F_ACC_RDWR );
     
     if(exists_HDF5_element_ptr(file, group)==0) {
       Rcpp::Rcout<<"\nGroup not exits, create file and dataset before normalize data\n";
@@ -114,7 +114,7 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
     }  else{
         
       if(!exists_HDF5_element_ptr(file, group + "/" + dataset)) {
-        Rcpp::Rcout<<"\n Dataset not exits, create file and dataset before normalize data \n";
+        Rcpp::Rcout<<"\n Dataset not exits, create dataset before normalize data \n";
         file->close();
         return void();
       }

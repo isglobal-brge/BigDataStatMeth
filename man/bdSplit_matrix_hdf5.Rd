@@ -33,7 +33,7 @@ bdSplit_matrix_hdf5(
 
 \item{bycols, }{boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows}
 
-\item{bforce, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
+\item{force, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
 }
 \value{
 Original hdf5 data file with imputed data

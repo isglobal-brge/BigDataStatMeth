@@ -23,6 +23,8 @@ bdAdd_hdf5_matrix(
 \item{dataset, }{character array indicating the dataset name that contains the matix data}
 
 \item{transp, }{boolean if true, data is manipulated in transposed form}
+
+\item{force, }{optional boolean if true and file exists, removes old file and creates a new file with de dataset data.}
 }
 \value{
 none

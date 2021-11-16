@@ -17,19 +17,23 @@ bdCCA_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{string file name where dataset to normalize is stored.}
 
-\item{X}{dataset path inside the hdf5 data file}
+\item{X}{Dataset, path inside the hdf5 data file.}
 
-\item{m}{number of blocks in which we want to partition the matrix to perform the calculations}
+\item{Y}{Dataset, path inside the hdf5 data file.}
 
-\item{bcenter, }{boolean, if true, dataset is centered to perform calculus}
+\item{m}{Integer, number of blocks in which we want to partition the matrix to perform the calculations.}
 
-\item{bscale, }{boolean, if true, dataset is centered to perform calculus}
+\item{bcenter, }{Boolean, if true, dataset is centered to perform calculus.}
 
-\item{overwriteResults, }{boolean, if true, datasets existing inside a file must be overwritten if we are using the same names}
+\item{bscale, }{Boolean, if true, dataset is centered to perform calculus.}
 
-\item{keepInteResults, }{boolean, if false, intermediate results will be removed}
+\item{bycols, }{Boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows.}
+
+\item{overwriteResults, }{Boolean, if true, datasets existing inside a file must be overwritten if we are using the same names.}
+
+\item{keepInteResults, }{Boolean, if false, intermediate results will be removed.}
 }
 \value{
 hdf5 data file with CCA results,
@@ -39,6 +43,6 @@ This function is an application of the BigDataStatMeth functions to generate new
 from two matrices stored in hdf5 data file. This function applies matrix partitioning, merge bloks to create a full matrix, apply a function to different blocks, etc.
 }
 \examples{
-
+   print ("Example in vignette")
 
 }

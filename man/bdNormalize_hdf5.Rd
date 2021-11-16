@@ -26,6 +26,8 @@ bdNormalize_hdf5(
 \item{bscale}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
 
 \item{wsize}{integer (default = 1000), file block size to read to perform normalization}
+
+\item{force, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
 }
 \value{
 file with scaled, centered or scaled and centered dataset

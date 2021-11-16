@@ -235,18 +235,23 @@ extern "C" {
         bexists = true;
       
     } catch(FileIException& error) { // catch failure caused by the H5File operations
+        file->close();
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (File IException)" );
       return -1;
     } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+        file->close();
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (DataSet IException)" );
       return -1;
     } catch(GroupIException& error) { // catch failure caused by the Group operations
+        file->close();
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (Group IException)" );
       return -1;
     } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+        file->close();
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (DataSpace IException)" );
       return -1;
     } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+        file->close();
       ::Rf_error( "c++ exception exists_HDF5_element_ptr (Data TypeIException)" );
       return -1;
     }
@@ -2227,15 +2232,20 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
 //'
 //' Creates a hdf5 file with numerical data matrix,
 //' 
-//' @param filename, character array indicating the name of the file to create
 //' @param object numerical data matrix
+//' @param filename, character array indicating the name of the file to create
 //' @param group, character array indicating folder or group name to put the matrix in hdf5 file
 //' @param dataset, character array indicating the dataset name that contains the matix data
 //' @param transp, boolean if true, data is manipulated in transposed form
+//' @param force, optional boolean if true and file exists, removes old file and creates a new file with de dataset data.
 //' @return none
 //' @export
 // [[Rcpp::export]]
-void bdAdd_hdf5_matrix(RObject object, std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> transp = R_NilValue, Rcpp::Nullable<bool> force = false )
+    void bdAdd_hdf5_matrix(RObject object, 
+                           std::string filename, 
+                           std::string group, std::string dataset, 
+                           Rcpp::Nullable<bool> transp = R_NilValue, 
+                           Rcpp::Nullable<bool> force = false )
 {
     
   H5File* file;

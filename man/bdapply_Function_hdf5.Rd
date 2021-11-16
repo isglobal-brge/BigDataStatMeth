@@ -16,17 +16,31 @@ bdapply_Function_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file to create}
+\item{filename, }{Character array, indicating the name of the file to create}
 
-\item{group, }{character array indicating the input group where the data set to be imputed is.}
+\item{group, }{Character array, indicating the input group where the data set to be imputed is.}
 
-\item{datasets, }{character array indicating the input datasets to be used}
+\item{datasets, }{Character array, indicating the input datasets to be used}
 
-\item{outgroup, }{character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group.}
+\item{outgroup, }{Character, array, indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group.}
 
-\item{b_datasets, }{optional character array indicating the input datasets to be used when we need a second dataset in functions like matrix multiplication}
+\item{func, }{Character array, function to be applyed : 
+QR to apply bdQR() function to datasets
+CrossProd to apply bdCrossprod() function to datasets
+tCrossProd to apply bdtCrossprod() function to datasets
+invChol to apply bdInvCholesky() function to datasets
+blockmult to apply matrix multiplication, in that case, we need the datasets to be used defined
+    in b_datasets variable, datasets and b_datasets must be of the same lenght, in that case, the operation is performed according to index, for example,
+    if we have datasets = {"A1", "A2", "A3} and b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, A2%*%B2 and A3%*%B3 
+CrossProd_double to  performs crossprod using two matrices, see blockmult 
+tCrossProd_double to  performs transposed crossprod using two matrices, see blockmult 
+solve to solve matrix equation system, see blockmult for parametrization}
 
-\item{bforce, }{optional boolean if true, previous results in same location inside hdf5 will be overwritten, by default force = false, data was not overwritten..}
+\item{b_group, }{optional Character array indicating the input group where data are stored when we need a second dataset to operate, for example in functions like matrix multiplication}
+
+\item{b_datasets, }{optional Character array indicating the input datasets to be used when we need a second dataset in functions like matrix multiplication}
+
+\item{force, }{optional Boolean if true, previous results in same location inside hdf5 will be overwritten, by default force = false, data was not overwritten..}
 }
 \value{
 Original hdf5 data file with results after apply function to different datasets

@@ -31,7 +31,7 @@ bdBind_hdf5(
     \item{bindCols}{apply datasets by columns}
 }}
 
-\item{bforce, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
+\item{force, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
 }
 \value{
 Original hdf5 data file with results after input datasets

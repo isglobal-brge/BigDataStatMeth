@@ -86,7 +86,7 @@ int RcppSplit_matrix_hdf5 ( H5File* file, DataSet* dataset, bool bycols, std::st
 //' @param nblocks, integer number of blocks in which we want to split the data
 //' @param blocksize, integer, number of elements in each block
 //' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
-//' @param bforce, boolean if true, previous results in same location inside hdf5 will be overwritten.
+//' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
 //' @return Original hdf5 data file with imputed data
 //' @export
 // [[Rcpp::export]]

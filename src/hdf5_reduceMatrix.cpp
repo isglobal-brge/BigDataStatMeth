@@ -99,7 +99,7 @@ int RcppReduce_matrix_hdf5 ( H5File* file,  std::string strgroup, std::string st
 //' 
 //' @param filename, character array indicating the name of the file to create
 //' @param group, character array indicating the input group where the data sets are stored 
-//' @param function, single character with function to apply, can be '+' or  '-' array indicating the input dataset to be imputed
+//' @param reducefunction, single character with function to apply, can be '+' or  '-' array indicating the input dataset to be imputed
 //' @param outgroup, optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
 //' @param outdataset, optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
 //' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
