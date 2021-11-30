@@ -42,6 +42,8 @@ bdImportData_hdf5 <- function( inFile, destFile, destGroup, destDataset, header 
     }else if(extension %in% untarExtensions) {
         importfile <- untar(inFile, list = TRUE )[1]
         untar(inFile)
+    } else {
+        importfile <- inFile
     }
     
     # Import files to hdf5
