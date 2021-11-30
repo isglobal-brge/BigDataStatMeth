@@ -15,9 +15,11 @@ author:
 date: "`r Sys.Date()`"
 package: "`r pkg_ver('BigDataStatMeth')`"
 output:
-  BiocStyle::pdf_document:
-    toc_float: true
-  BiocStyle::html_document: default
+  BiocStyle::html_document:
+    number_sections: yes
+    toc: yes
+    fig_caption: yes
+    toc_float: yes
 abstract: |
   Description of functions to perform matrix operations, algebra and basic statistical analyses using HDF5 data files.
 vignette: |

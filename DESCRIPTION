@@ -1,8 +1,7 @@
 Package: BigDataStatMeth
 Type: Package
 Title: Statistical Methods and Algorithms for Big Data
-Version: 0.99.10
-Date: 2021-08-11
+Version: 0.99.11
 Authors@R: c(person("Dolors", "Pelegri-Siso", , "dolors.pelegri@isglobal.org", role = c("aut", "cre")),
   person("Juan R.", "Gonzalez", ,"juanr.gonzalez@isglobal.org", role = c("aut")))
 Maintainer: Dolors Pelegri-Siso <dolors.pelegri@isglobal.org>

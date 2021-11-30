@@ -15,9 +15,11 @@ author:
 date: "`r Sys.Date()`"
 package: "`r pkg_ver('BigDataStatMeth')`"
 output:
-  BiocStyle::pdf_document: default
-  BiocStyle::html_document: 
-    toc_float: true
+  BiocStyle::html_document:
+    number_sections: yes
+    toc: yes
+    fig_caption: yes
+    toc_float: yes
 abstract: |
   Description of functions to perform matrix operations, algebra and some basic statistical models using _Matrix_ (CRAN) and _DelayedMatrix_ (Bioconductor) objects.
 vignette: |
@@ -30,6 +32,7 @@ bibliography: references.bib
 
 ```{r setup, include = FALSE}
 library(knitr)
+library(rmarkdown)
 library(BiocStyle)
 
 options(tinytex.verbose = TRUE)
