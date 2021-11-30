@@ -167,9 +167,9 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
    try{
       
       if(sep.isNull()){
-         stdsep = "\t";
+          stdsep = "\t";
       }else {
-         stdsep = as<std::string>(sep);
+          stdsep = as<std::string>(sep);
       }
       
       std::string delim = "[^" + stdsep  + "]+";
