@@ -59,6 +59,12 @@ Rcpp::RObject blockmult_hdf5(std::string filename,
     } else {
         strsubgroupInB =  group + "/";
     }
+    
+    if( outdataset.isNotNull()) {
+        strdatasetOut =  Rcpp::as<std::string> (outdataset);    
+    } else {
+        strdatasetOut =  A + "_x_" + B;
+    }
 
     // Open file and get dataset
     file = new H5File( filename, H5F_ACC_RDWR );
@@ -68,16 +74,11 @@ Rcpp::RObject blockmult_hdf5(std::string filename,
     DataSet dsB = file->openDataSet(strsubgroupInB + B);
     IntegerVector dsizeB = get_HDF5_dataset_size(dsB);
     
+
     bexistgroup = exists_HDF5_element_ptr(file,strsubgroupOut+ "/" );
 
     if(bexistgroup) {
 
-        if( outdataset.isNotNull()) {
-            strdatasetOut =  Rcpp::as<std::string> (outdataset);    
-        } else {
-            strdatasetOut =  A + "_x_" + B;
-        }
-        
         std::string strdataset = strsubgroupOut + "/" + strdatasetOut;
         
         if(exists_HDF5_element_ptr(file, strdataset )) {

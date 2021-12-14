@@ -888,11 +888,9 @@ bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcent
 #' @return d singular values, nxn diagonal matrix (non-negative real values)
 #' @examples
 #' 
-#' library(DelayedArray)
-#' 
+#' library(BigDataStatMeth)
 #' n <- 500
 #' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
-#' AD <- DelayedArray(A)
 #' 
 #' # svd without normalization
 #' decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
@@ -907,13 +905,6 @@ bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcent
 #' 
 #' # svd with scaled matrix (sd)
 #' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
-#' 
-#' decsvd$d
-#' decsvd$u
-#' # svd with centered matrix (sd)
-#' decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE) # Centered matrix
-#' decsvd$d
-#' decsvd$u
 #' 
 #' @export
 bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE, complete = FALSE) {

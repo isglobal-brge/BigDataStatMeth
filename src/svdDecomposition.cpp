@@ -711,11 +711,9 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
 //' @return d singular values, nxn diagonal matrix (non-negative real values)
 //' @examples
 //' 
-//' library(DelayedArray)
-//' 
+//' library(BigDataStatMeth)
 //' n <- 500
 //' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
-//' AD <- DelayedArray(A)
 //' 
 //' # svd without normalization
 //' decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
@@ -730,13 +728,6 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
 //' 
 //' # svd with scaled matrix (sd)
 //' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
-//' 
-//' decsvd$d
-//' decsvd$u
-//' # svd with centered matrix (sd)
-//' decvsd <- bdSVD_lapack( A, bscale = FALSE, bcenter = TRUE) # Centered matrix
-//' decsvd$d
-//' decsvd$u
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -780,7 +771,3 @@ Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true,
                       Named("v") = retsvd.v);
 }
 
-
-/***R
-
-*/
