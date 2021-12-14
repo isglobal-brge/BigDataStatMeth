@@ -16,13 +16,17 @@
 // // '   a = "See vignette"
 // //' @export
 // [[Rcpp::export(.blockmult_hdf5)]]
-Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group, 
-                             std::string A, std::string B,
+Rcpp::RObject blockmult_hdf5(std::string filename, 
+                             const std::string group, 
+                             std::string A, 
+                             std::string B,
+                             Rcpp::Nullable<std::string> groupB = R_NilValue, 
                              Rcpp::Nullable<int> block_size = R_NilValue, 
                              Rcpp::Nullable<bool> paral = R_NilValue,
                              Rcpp::Nullable<int> threads = R_NilValue,
                              Rcpp::Nullable<double> mixblock_size = R_NilValue,
-                             Rcpp::Nullable<std::string> outgroup = R_NilValue)
+                             Rcpp::Nullable<std::string> outgroup = R_NilValue,
+                             Rcpp::Nullable<std::string> outdataset = R_NilValue)
 {
   
   int iblock_size, res;
@@ -31,7 +35,7 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
   
   H5File* file;
   
-  std::string strsubgroupOut;
+  std::string strsubgroupOut, strdatasetOut;
 
   IntegerVector dsizeA, dsizeB;
   
@@ -48,24 +52,37 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
     
     //..// std::string strsubgroup = "Base.matrices/";
     std::string strsubgroupIn = group + "/";
+    std::string strsubgroupInB;
+    
+    if(groupB.isNotNull()){
+        strsubgroupInB =  Rcpp::as<std::string> (groupB) + "/";
+    } else {
+        strsubgroupInB =  group + "/";
+    }
 
     // Open file and get dataset
     file = new H5File( filename, H5F_ACC_RDWR );
     
     DataSet dsA = file->openDataSet(strsubgroupIn + A);
     IntegerVector dsizeA = get_HDF5_dataset_size(dsA);
-    DataSet dsB = file->openDataSet(strsubgroupIn + B);
+    DataSet dsB = file->openDataSet(strsubgroupInB + B);
     IntegerVector dsizeB = get_HDF5_dataset_size(dsB);
     
     bexistgroup = exists_HDF5_element_ptr(file,strsubgroupOut+ "/" );
 
     if(bexistgroup) {
-      
-      std::string strdataset = strsubgroupOut+ "/" + A + "_x_" + B;
 
-      if(exists_HDF5_element_ptr(file, strdataset )) {
-        remove_HDF5_element_ptr(file, strdataset);
-      }
+        if( outdataset.isNotNull()) {
+            strdatasetOut =  Rcpp::as<std::string> (outdataset);    
+        } else {
+            strdatasetOut =  A + "_x_" + B;
+        }
+        
+        std::string strdataset = strsubgroupOut + "/" + strdatasetOut;
+        
+        if(exists_HDF5_element_ptr(file, strdataset )) {
+            remove_HDF5_element_ptr(file, strdataset);
+        }
     } 
     
     file->close();
@@ -108,15 +125,15 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
           memory_block = 128;
         
         // Test mix versión read block from file and calculate multiplication in memory (with paral·lel algorithm)
-        hdf5_block_matrix_mul_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut + "/", 
-                                               memory_block, bparal,true, threads);
+        hdf5_block_matrix_mul_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupInB, strsubgroupOut + "/", strdatasetOut, 
+                                               memory_block, bparal, true, threads);
 
       
     } else if (bparal == false) {
 
         // Not parallel
-        hdf5_block_matrix_mul_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupOut + "/", 
-                                                         0, bparal,true, threads);
+        hdf5_block_matrix_mul_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupInB, strsubgroupOut + "/", strdatasetOut,
+                                                         0, bparal, true, threads);
 
     }
 
@@ -138,7 +155,7 @@ Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group,
   
   //..// return(C);
   return List::create(Named("filename") = filename,
-                      Named("dataset") = strsubgroupOut + "/" + A + "_x_" + B,
+                      Named("dataset") = strsubgroupOut + "/" + strdatasetOut,
                       Named("result") = wrap(0));
   
 }

@@ -7,6 +7,7 @@
 #' @param group string with the group name where matrix is stored inside HDF5 file
 #' @param a a double matrix.
 #' @param b a double matrix.
+#' @param groupB, string, (optional) group name where dataset b is stored
 #' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 #' @param paral, (optional, default = FALSE) paral = true --> TO BE IMPLEMENTED 
 #' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
@@ -14,6 +15,7 @@
 #' Block size for mixed computation in big matrix parallel. Size of the block to be used to perform parallelized memory 
 #' memory of the block read from the disk being processed.
 #' @param outgroup (optional) string with group name where we want to store the result matrix
+#' @param outdataset (optional) string with dataset name where we want to store the results
 #' @return A list with an HDF5 object with numerical matrix and  HDF5 file name with results
 #' \itemize{
 #'  #### \item{"res"}{rhdf5 object with result matrix - link to hdf5 file contents . IMPORTANT !!, we have to close the object after fihish to work}
@@ -33,11 +35,11 @@
 #' 
 #' C <- bdblockmult(A, B, 128, TRUE)
 #' 
-bdblockmult_hdf5 <- function( filename, group, a, b, block_size = 128, paral = FALSE, threads = NULL,  mixblock_size = 128, 
-                       outgroup = "OUTPUT")
+bdblockmult_hdf5 <- function( filename, group, a, b, groupB = NULL, block_size = 128, paral = FALSE, threads = NULL,  mixblock_size = 128, 
+                       outgroup = "OUTPUT", outdataset = NULL)
 { 
 
-  res <- .Call('_BigDataStatMeth_blockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, a, b, block_size, paral, threads, mixblock_size, outgroup)
+  res <- .Call('_BigDataStatMeth_blockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, a, b, groupB, block_size, paral, threads, mixblock_size, outgroup, outdataset)
 
   if (res$result == 0)
     #..# return( list("res" = rhdf5::H5Fopen(res$filename), "file" = res$filename, "dataset" = res$dataset) )

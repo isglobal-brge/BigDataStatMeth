@@ -124,21 +124,21 @@ writeCCAComponents_hdf5 <- function(filename, ncolsX, ncolsY)
     # Store results to hdf5 data file under Results group/folder
     #     cor, xcoef, ycoef, xcenter, ycenter, xscores, yscores
     #     corr.X.xscores, corr.Y.xscores, corr.X.yscores, corr.Y.yscores
-    
-    # xscores <- bdblockmult(X, xcoef)
-    # yscores <- bdblockmult(Y, ycoef)
-    
+
+    print("Getting and writting xcoef and ycoef")
     bdAdd_hdf5_matrix( xcoef, filename,  "Results", "xcoef", force = TRUE)
     bdAdd_hdf5_matrix( ycoef, filename,  "Results", "ycoef", force = TRUE)
+    
+    print("Getting and writting cor matrix")
     bdAdd_hdf5_matrix( diag(d), filename,  "Results", "cor", force = TRUE)
+    
+    print("Getting and writting xcenter and ycenter vectors")
     bdAdd_hdf5_matrix( xcenter, filename,  "Results", "xcenter", force = TRUE)
     bdAdd_hdf5_matrix( ycenter, filename,  "Results", "ycenter", force = TRUE)
-    # bdAdd_hdf5_matrix( xscores, filename,  "Results", "xscores", force = TRUE)
-    # bdAdd_hdf5_matrix( yscores, filename,  "Results", "yscores", force = TRUE)
-    # bdAdd_hdf5_matrix( cor(X, xscores, use = "pairwise"), filename,  "Results", "corr.X.xscores", force = TRUE)
-    # bdAdd_hdf5_matrix( cor(Y, xscores, use = "pairwise"), filename,  "Results", "corr.Y.xscores", force = TRUE)
-    # bdAdd_hdf5_matrix( cor(X, yscores, use = "pairwise"), filename,  "Results", "corr.X.yscores", force = TRUE)
-    # bdAdd_hdf5_matrix( cor(Y, yscores, use = "pairwise"), filename,  "Results", "corr.Y.yscores", force = TRUE)
+    
+    print("Getting and writting xscores and yscores matrix")
+    bdblockmult_hdf5(filename, group = "data", a = "X", b = "xcoef", groupB = "Results", outgroup = "Results", outdataset = "xscores")
+    bdblockmult_hdf5(filename, group = "data", a = "Y", b = "ycoef", groupB = "Results", outgroup = "Results", outdataset = "yscores")
     
 }
 
@@ -195,7 +195,8 @@ bdCCA_hdf5 <- function(filename, X, Y, m = 10, bcenter = TRUE, bscale = FALSE, b
     
     if( keepInteResults == FALSE){
         sapply(paste0 ("Step",1:7), function (x) {
-            bdRemove_hdf5_element( filename, element = x)
+            invisible(bdRemove_hdf5_element( filename, element = x))
+            print(paste0 ("Step",x, "Removed"))
         })
     }
     

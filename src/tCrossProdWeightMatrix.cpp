@@ -84,8 +84,9 @@ Eigen::MatrixXd Bblock_weighted_tcrossprod(const Eigen::MatrixXd& A, Eigen::Matr
 Eigen::MatrixXd Bblock_weighted_tcrossprod_parallel(const Eigen::MatrixXd& A, Eigen::MatrixXd& B, 
                                                    int block_size, Rcpp::Nullable<int> threads  = R_NilValue)
 {
-  int ii=0, jj=0, kk=0;
-  int chunk = 1, tid;
+  //. 2021/12/13 .// int ii=0, jj=0, kk=0;
+  //. 2021/12/13 .// int chunk = 1;
+  int tid;
   unsigned int ithreads;
   int M = A.rows();
   int K = A.cols();
@@ -107,7 +108,8 @@ Eigen::MatrixXd Bblock_weighted_tcrossprod_parallel(const Eigen::MatrixXd& A, Ei
   omp_set_dynamic(0);   // omp_set_dynamic(0); omp_set_num_threads(4);
   omp_set_num_threads(ithreads);
   
-#pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+  //. 2021/12/13 .// #pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+#pragma omp parallel shared(A, B, C) private(ii, jj, kk, tid ) 
 {
 
   tid = omp_get_thread_num();

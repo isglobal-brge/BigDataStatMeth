@@ -97,8 +97,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // blockmult_hdf5
-Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group, std::string A, std::string B, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<double> mixblock_size, Rcpp::Nullable<std::string> outgroup);
-RcppExport SEXP _BigDataStatMeth_blockmult_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP mixblock_sizeSEXP, SEXP outgroupSEXP) {
+Rcpp::RObject blockmult_hdf5(std::string filename, const std::string group, std::string A, std::string B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<double> mixblock_size, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
+RcppExport SEXP _BigDataStatMeth_blockmult_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP mixblock_sizeSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -106,12 +106,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string >::type group(groupSEXP);
     Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
     Rcpp::traits::input_parameter< std::string >::type B(BSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type mixblock_size(mixblock_sizeSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    rcpp_result_gen = Rcpp::wrap(blockmult_hdf5(filename, group, A, B, block_size, paral, threads, mixblock_size, outgroup));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(blockmult_hdf5(filename, group, A, B, groupB, block_size, paral, threads, mixblock_size, outgroup, outdataset));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -675,7 +677,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdapply_Function_hdf5", (DL_FUNC) &_BigDataStatMeth_bdapply_Function_hdf5, 8},
     {"_BigDataStatMeth_bdBind_hdf5", (DL_FUNC) &_BigDataStatMeth_bdBind_hdf5, 7},
     {"_BigDataStatMeth_bdCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_hdf5, 10},
-    {"_BigDataStatMeth_blockmult_hdf5", (DL_FUNC) &_BigDataStatMeth_blockmult_hdf5, 9},
+    {"_BigDataStatMeth_blockmult_hdf5", (DL_FUNC) &_BigDataStatMeth_blockmult_hdf5, 11},
     {"_BigDataStatMeth_bdblockmult_sparse_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockmult_sparse_hdf5, 5},
     {"_BigDataStatMeth_bdtCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_hdf5, 10},
     {"_BigDataStatMeth_bdget_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdget_maf_hdf5, 6},

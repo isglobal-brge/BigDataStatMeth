@@ -158,8 +158,8 @@ bdCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_
     .Call('_BigDataStatMeth_bdCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, groupB, B, block_size, paral, threads, mixblock_size, outgroup)
 }
 
-.blockmult_hdf5 <- function(filename, group, A, B, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
-    .Call('_BigDataStatMeth_blockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, block_size, paral, threads, mixblock_size, outgroup)
+.blockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL, outdataset = NULL) {
+    .Call('_BigDataStatMeth_blockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, mixblock_size, outgroup, outdataset)
 }
 
 #' Block matrix multiplication with Delayed Array Object

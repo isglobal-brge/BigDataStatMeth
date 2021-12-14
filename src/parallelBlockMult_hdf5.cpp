@@ -285,7 +285,9 @@ int hdf5_block_matrix_mul_hdf5_transposed( IntegerVector sizeA, IntegerVector si
 //             else, indicates that R data is stored in hdf5 as column major
 int hdf5_block_matrix_mul_hdf5_indatasets_transposed( std::string matA, std::string matB, 
                                                       IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
-                                                      std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
+                                                      std::string filename, std::string strsubgroupIN, 
+                                                      std::string strsubgroupINB, std::string strsubgroupOUT, 
+                                                      std::string strdatasetOUT, 
                                                       int mem_block_size, bool bparal, bool browmajor, 
                                                       Rcpp::Nullable<int> threads  = R_NilValue)
 {
@@ -320,14 +322,16 @@ int hdf5_block_matrix_mul_hdf5_indatasets_transposed( std::string matA, std::str
     //.commented 20201120 - warning check().// int res = create_HDF5_dataset( filename, strsubgroupOUT + "/C", M, N, "real");
     
     //..// Rcpp::Rcout<<"\n Crearem dataset "<<  strsubgroupOUT + matA + "_x_" + matB<<"\n";
-    create_HDF5_dataset( filename, strsubgroupOUT + matA + "_x_" + matB, M, N, "real");
+    //.2021/12/13.// create_HDF5_dataset( filename, strsubgroupOUT + matA + "_x_" + matB, M, N, "real");
+    create_HDF5_dataset( filename, strsubgroupOUT + strdatasetOUT, M, N, "real");
     //..// Rcpp::Rcout<<"Dataset Creat\n";  
     // Open file and get dataset
     H5File* file = new H5File( filename, H5F_ACC_RDWR );
     
     DataSet* datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
-    DataSet* datasetB = new DataSet(file->openDataSet(strsubgroupIN + matB));
-    DataSet* datasetC = new DataSet(file->openDataSet(strsubgroupOUT + matA + "_x_" + matB));
+    DataSet* datasetB = new DataSet(file->openDataSet(strsubgroupINB + matB));
+    //.2021/12/13.// DataSet* datasetC = new DataSet(file->openDataSet(strsubgroupOUT + matA + "_x_" + matB));
+    DataSet* datasetC = new DataSet(file->openDataSet(strsubgroupOUT + strdatasetOUT));
     
 
     // Això haurien de ser les columnes de la matriu i no les files com ara....
