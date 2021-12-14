@@ -9,11 +9,13 @@ bdblockmult_hdf5(
   group,
   a,
   b,
+  groupB = NULL,
   block_size = 128,
   paral = FALSE,
   threads = NULL,
   mixblock_size = 128,
-  outgroup = "OUTPUT"
+  outgroup = "OUTPUT",
+  outdataset = NULL
 )
 }
 \arguments{
@@ -24,6 +26,8 @@ bdblockmult_hdf5(
 \item{a}{a double matrix.}
 
 \item{b}{a double matrix.}
+
+\item{groupB, }{string, (optional) group name where dataset b is stored}
 
 \item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)}
 
@@ -36,6 +40,8 @@ Block size for mixed computation in big matrix parallel. Size of the block to be
 memory of the block read from the disk being processed.}
 
 \item{outgroup}{(optional) string with group name where we want to store the result matrix}
+
+\item{outdataset}{(optional) string with dataset name where we want to store the results}
 }
 \value{
 A list with an HDF5 object with numerical matrix and  HDF5 file name with results
