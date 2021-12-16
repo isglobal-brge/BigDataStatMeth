@@ -137,6 +137,7 @@ bool manage_Dataset( H5File* file, std::string outGroup, std::string outDataset,
 //' @param rownames (optional) either a logical value indicating whether the row names of x are to be written along with x, or a character vector of row names to be written.
 //' @param overwrite (optional) either a logical value indicating whether the output file can be overwritten or not.
 //' 
+//' @return none value returned, data are stored in a dataset inside an hdf5 data file.
 //' @export
 // [[Rcpp::export]]
 void bdImport_text_to_hdf5( Rcpp::CharacterVector filename, 

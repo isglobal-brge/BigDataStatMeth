@@ -61,6 +61,8 @@ struct Sum : public RcppParallel::Worker
 //' # with numeric matrix
 //' res <- bdparallelVectorSum(x)
 //' 
+//' @return none value returned, data are stored in a dataset inside an hdf5 data file.
+//' 
 //' @export
 // [[Rcpp::export]]
 double bdparallelVectorSum(Rcpp::NumericVector x) {
@@ -111,6 +113,8 @@ struct Pow : public RcppParallel::Worker
 //' 
 //' # with numeric matrix
 //' res <- bdparallelpow2(x)
+//' 
+//' @return Numeric Vector
 //' 
 //' @export
 // [[Rcpp::export]]

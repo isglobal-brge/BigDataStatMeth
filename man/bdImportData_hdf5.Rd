@@ -32,10 +32,13 @@ bdImportData_hdf5(
 
 \item{sep}{(optional), by default = "\\t". The field separator string. Values within each row of x are separated by this string.}
 }
+\value{
+none value returned, data are stored in a dataset inside an hdf5 data file.
+}
 \description{
 This function download data from an url and decompress data (if needed), then imports the file to hdf5 data file
 }
 \examples{
    print ("Example in vignette")
-
+   
 }

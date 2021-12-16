@@ -169,6 +169,12 @@ int hdf5_block_matrix_crossprod_hdf5( std::string matA, IntegerVector sizeA,
 //'     file.remove("BasicMatVect.hdf5")
 //'   }
 //'   
+//' @return If all process is ok, returns a list with : 
+//' \itemize{
+//'   \item{"filename"}{ File name where results are storesd }
+//'   \item{"dataset"}{ route to results inside hdf5 data file }
+//' }
+//' 
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
@@ -319,9 +325,9 @@ Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
     strname = "CrossProd_" + A + "x" + as<std::string>(B);
   }
   
-  return List::create(Named("filename") = filename,
-                      Named("dataset") = strsubgroupOut + "/" +  strname,
-                      Named("result") = wrap(0));
+  return List::create( Named("filename") = filename,
+                       Named("dataset") = strsubgroupOut + "/" +  strname
+                     );
   
 }
 

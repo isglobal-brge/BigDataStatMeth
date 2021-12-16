@@ -14,7 +14,8 @@
 #' @param sep (optional), by default = "\\t". The field separator string. Values within each row of x are separated by this string.
 #' @examples
 #'    print ("Example in vignette")
-#' 
+#'    
+#' @return none value returned, data are stored in a dataset inside an hdf5 data file.
 bdImportData_hdf5 <- function( inFile, destFile, destGroup, destDataset, header = TRUE, rownames = FALSE, overwrite = FALSE, sep = NULL)
 {
     

@@ -32,6 +32,9 @@ bdImport_text_to_hdf5(
 
 \item{overwrite}{(optional) either a logical value indicating whether the output file can be overwritten or not.}
 }
+\value{
+none value returned, data are stored in a dataset inside an hdf5 data file.
+}
 \description{
 Converts text file to hdf5 data file
 }

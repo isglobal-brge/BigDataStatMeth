@@ -9,6 +9,9 @@ bdparallelVectorSum(x)
 \arguments{
 \item{x}{numerical vector}
 }
+\value{
+none value returned, data are stored in a dataset inside an hdf5 data file.
+}
 \description{
 This function sumarize the elements of a vector
 }

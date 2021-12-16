@@ -9,6 +9,9 @@ bdparallelpow2(x)
 \arguments{
 \item{x}{numerical vector}
 }
+\value{
+Numeric Vector
+}
 \description{
 Gets pow2 vector
 }

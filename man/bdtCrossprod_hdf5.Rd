@@ -38,6 +38,13 @@ bdtCrossprod_hdf5(
 
 \item{outgroup}{(optional) group name to store results from Crossprod inside hdf5 data file}
 }
+\value{
+If all process is ok, returns a list with : 
+\itemize{
+  \item{"filename"}{ File name where results are storesd }
+  \item{"dataset"}{ route to results inside hdf5 data file }
+}
+}
 \description{
 This function performs the transposed crossprod from a matrix inside and hdf5 data file
 }

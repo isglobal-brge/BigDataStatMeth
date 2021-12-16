@@ -153,6 +153,12 @@ bdBind_hdf5 <- function(filename, group, datasets, outgroup, outdataset, func, f
 #'     file.remove("BasicMatVect.hdf5")
 #'   }
 #'   
+#' @return If all process is ok, returns a list with : 
+#' \itemize{
+#'   \item{"filename"}{ File name where results are storesd }
+#'   \item{"dataset"}{ route to results inside hdf5 data file }
+#' }
+#' 
 #' @export
 bdCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
     .Call('_BigDataStatMeth_bdCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, groupB, B, block_size, paral, threads, mixblock_size, outgroup)
@@ -259,6 +265,14 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, outgroup = NULL) {
 #'   file.remove("BasicMatVect.hdf5")
 #' }
 #' 
+#' @return If all process is ok, returns a list with : 
+#' \itemize{
+#'   \item{"filename"}{ File name where results are storesd }
+#'   \item{"dataset"}{ route to results inside hdf5 data file }
+#' }
+#' 
+#' 
+#' 
 #' @export
 bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_size = NULL, paral = NULL, threads = NULL, mixblock_size = NULL, outgroup = NULL) {
     .Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, groupB, B, block_size, paral, threads, mixblock_size, outgroup)
@@ -302,6 +316,7 @@ bdget_maf_hdf5 <- function(filename, group, dataset, byrows = NULL, bparallel = 
 #' @param rownames (optional) either a logical value indicating whether the row names of x are to be written along with x, or a character vector of row names to be written.
 #' @param overwrite (optional) either a logical value indicating whether the output file can be overwritten or not.
 #' 
+#' @return none value returned, data are stored in a dataset inside an hdf5 data file.
 #' @export
 bdImport_text_to_hdf5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdImport_text_to_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite))
@@ -961,6 +976,8 @@ bdtCrossprod_Weighted <- function(A, W, block_size = NULL, paral = NULL, threads
 #' # with numeric matrix
 #' res <- bdparallelVectorSum(x)
 #' 
+#' @return none value returned, data are stored in a dataset inside an hdf5 data file.
+#' 
 #' @export
 bdparallelVectorSum <- function(x) {
     .Call('_BigDataStatMeth_bdparallelVectorSum', PACKAGE = 'BigDataStatMeth', x)
@@ -979,6 +996,8 @@ bdparallelVectorSum <- function(x) {
 #' 
 #' # with numeric matrix
 #' res <- bdparallelpow2(x)
+#' 
+#' @return Numeric Vector
 #' 
 #' @export
 bdparallelpow2 <- function(x) {
