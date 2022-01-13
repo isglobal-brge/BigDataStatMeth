@@ -100,8 +100,8 @@ Rcpp::RObject bdQR( const Rcpp::RObject & X, Rcpp::Nullable<bool> thin = R_NilVa
 //' 
 //' 
 //' 
-//' @param R numerical or Delayed Array matrix. 
-//' @param Z numerical or Delayed Array matrix.
+//' @param R numerical matrix. 
+//' @param Z numerical matrix.
 //' @param threads integer with number of threads to use with parallelized execution
 //' @return X numerical matrix. 
 //' @examples

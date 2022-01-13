@@ -109,7 +109,6 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @return numerical matrix
 //' @examples
-//' library(DelayedArray)
 //' 
 //' m <- 500
 //' n <- 100 
@@ -118,17 +117,11 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 //' # with numeric matrix
 //' bdNormalize_Data(x)
 //' 
-//' # with Delaeyd Array
-//' Dx <- DelayedArray(x)
-//' 
-//' # Center and scale
-//' bdNormalize_Data(Dx)
-//' 
 //' # Only scale
-//' bdNormalize_Data(Dx, bcenter = FALSE)
+//' bdNormalize_Data(x, bcenter = FALSE)
 //' 
 //' # Only center
-//' bdNormalize_Data(Dx, bscale = FALSE)
+//' bdNormalize_Data(x, bscale = FALSE)
 //' 
 //' @export
 // [[Rcpp::export]]

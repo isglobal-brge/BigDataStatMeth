@@ -55,8 +55,8 @@ Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, 
 //' This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file
 //' 
 //' @param filename string file name where dataset to normalize is stored
-//' @param group string or Delayed Array Matrix
-//' @param dataset string or Delayed Array Matrix
+//' @param group string Matrix
+//' @param dataset string Matrix
 //' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @param wsize integer (default = 1000), file block size to read to perform normalization

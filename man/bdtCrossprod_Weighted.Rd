@@ -25,19 +25,12 @@ This function performs a Crossproduct with weigths matrix A%*%W%*%t(A) multiplic
 }
 \examples{
 
-library(DelayedArray)
-
 # with numeric matrix
 m <- 500
 k <- 1500
 n <- 400
 A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 B <- matrix(rnorm(n*k), nrow=k, ncol=n)
-
-
-# with Delaeyd Array
-AD <- DelayedArray(A)
-BD <- DelayedArray(B)
 
 # Serial execution
 Serie<- bdtCrossprod_Weighted(A, B, paral = FALSE)

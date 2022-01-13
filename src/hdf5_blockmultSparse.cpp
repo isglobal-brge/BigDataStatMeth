@@ -1,12 +1,12 @@
 #include "include/hdf5_blockmultSparse.h"
 
 
-//' Block matrix multiplication with Delayed Array Object
+//' Block matrix multiplication
 //' 
-//' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+//' This function performs a block matrix-matrix multiplication with numeric matrix
 //' 
 //' @param filename string file name where dataset to normalize is stored
-//' @param group string or Delayed Array Matrix
+//' @param group string Matrix
 //' @param A, string with dataset name where matrix is stored
 //' @param B, string with dataset name where matrix is stored
 //' @param outgroup string with de group name under the matrix will be stored

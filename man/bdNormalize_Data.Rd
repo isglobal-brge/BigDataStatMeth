@@ -20,7 +20,6 @@ numerical matrix
 This function performs a numerical or Delayed Array matrix normalization
 }
 \examples{
-library(DelayedArray)
 
 m <- 500
 n <- 100 
@@ -29,16 +28,10 @@ x <- matrix(rnorm(m*n), nrow=m, ncol=n)
 # with numeric matrix
 bdNormalize_Data(x)
 
-# with Delaeyd Array
-Dx <- DelayedArray(x)
-
-# Center and scale
-bdNormalize_Data(Dx)
-
 # Only scale
-bdNormalize_Data(Dx, bcenter = FALSE)
+bdNormalize_Data(x, bcenter = FALSE)
 
 # Only center
-bdNormalize_Data(Dx, bscale = FALSE)
+bdNormalize_Data(x, bscale = FALSE)
 
 }

@@ -38,8 +38,6 @@ This function performs a block matrix-vector multiplication with R-Objects or De
 \examples{
 # with numeric matrix
 
-library(DelayedArray)
-
 k <- 100
 n <- 400
 A <- matrix(rnorm(n*k), nrow=n, ncol=k)

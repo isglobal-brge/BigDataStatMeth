@@ -29,11 +29,8 @@ This function gets k first components from svd decomposition of numerical or Del
 }
 \examples{
 
-library(DelayedArray)
-
 n <- 500
 A <- matrix(rnorm(n*n), nrow=n, ncol=n)
-AD <- DelayedArray(A)
 
 # svd without normalization
 decsvd <- bdSVD( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization

@@ -47,8 +47,6 @@ This function performs a block matrix-matrix multiplication with numeric matrix 
 \examples{
 # with numeric matrix
 
-library(DelayedArray)
-
 m <- 500
 k <- 1500
 n <- 400
@@ -56,11 +54,5 @@ A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 
 C <- bdblockmult(A, B, 128, TRUE)
-
-# with Delaeyd Array
-AD <- DelayedArray(A)
-BD <- DelayedArray(B)
-
-CD <- bdblockmult( AD, BD, 128, TRUE)
 
 }

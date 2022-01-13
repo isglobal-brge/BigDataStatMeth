@@ -20,8 +20,6 @@
 #' @examples
 #' # with numeric matrix
 #' 
-#' library(DelayedArray)
-#' 
 #' m <- 500
 #' k <- 1500
 #' n <- 400
@@ -29,12 +27,6 @@
 #' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 #' 
 #' C <- bdblockmult(A, B, 128, TRUE)
-#' 
-#' # with Delaeyd Array
-#' AD <- DelayedArray(A)
-#' BD <- DelayedArray(B)
-#' 
-#' CD <- bdblockmult( AD, BD, 128, TRUE)
 #' 
 bdblockmult <- function( A, B, block_size = 128, paral = TRUE, threads = NULL, bigmatrix = 10000, mixblock_size = 128, 
                        outfile = "tmp_blockmult.hdf5", onmemory = FALSE)

@@ -16,9 +16,9 @@ bdget_maf_hdf5(
 \arguments{
 \item{filename}{string file name where dataset to normalize is stored}
 
-\item{group}{string or Delayed Array Matrix}
+\item{group}{string Matrix}
 
-\item{dataset}{string or Delayed Array Matrix}
+\item{dataset}{string  Matrix}
 
 \item{byrows, }{boolean, default TRUE. If true, the frequency is calculated by rows, else, if byrows= FALSE, frequency is calculated by columns}
 

@@ -36,7 +36,10 @@
   // Functions : Matrix multiplication directly from file
   int hdf5_block_matrix_mul_hdf5_indatasets_transposed( std::string matA, std::string matB, 
                                                       IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
-                                                      std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
+                                                      std::string filename, std::string strsubgroupIN, 
+                                                      std::string strsubgroupINB,
+                                                      std::string strsubgroupOUT, 
+                                                      std::string strdatasetOUT, 
                                                       int mem_block_size, bool bparal, bool browmajor, 
                                                       Rcpp::Nullable<int> threads );
 

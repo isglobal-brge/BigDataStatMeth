@@ -50,7 +50,7 @@ void bdapply_Function_hdf5( std::string filename,
     oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd",
                "invChol", "blockmult", "CrossProd_double", "tCrossProd_double",
                "solve"});
-    
+
     try
     {
 
@@ -68,17 +68,16 @@ void bdapply_Function_hdf5( std::string filename,
             // return wrap(false);
         }
 
-
         if( b_datasets.isNotNull() &&  ( oper(oper.findName( func )) == 1 ||  oper(oper.findName( func )) == 2 ||  
             oper(oper.findName( func )) == 4 ||  oper(oper.findName( func )) == 5) ) {
             
-            if( as<Rcpp::StringVector>(b_datasets).size() != datasets.size() ){
-                Rcpp::Rcout<<"To perform matrix multiplication, CrossProd, tCrossProd or solve "<<
-                    "with two matrices b_datasets variable must be defined and the length "<<
-                        " of datasets and b_datasets must be equal";
-                return void();
-                // return wrap(false);  
-            }
+            //. 01/01/2022 . // if( as<Rcpp::StringVector>(b_datasets).size() != datasets.size() ){
+            //. 01/01/2022 . //      Rcpp::Rcout<<"To perform matrix multiplication, CrossProd, tCrossProd or solve "<<
+            //. 01/01/2022 . //          "with two matrices b_datasets variable must be defined and the length "<<
+            //. 01/01/2022 . //              " of datasets and b_datasets must be equal";
+            //. 01/01/2022 . //      return void();
+            // return wrap(false);  
+            // }
             str_bdatasets = as<Rcpp::StringVector>(b_datasets);
             
             if( oper.findName( func ) == 1){
@@ -89,13 +88,13 @@ void bdapply_Function_hdf5( std::string filename,
             
         }
         
-        
         if(b_group.isNull()) { str_bgroup = group; } 
         else {   str_bgroup = Rcpp::as<std::string>(b_group); }
-
+        
         // Seek all datasets to perform calculus
         for( int i=0; i < datasets.size(); i++ ) 
         {
+            
             std::string strdataset = group +"/" + datasets(i);
             
             if( exists_HDF5_element_ptr(file, strdataset ) == 0 ) {
@@ -176,16 +175,23 @@ void bdapply_Function_hdf5( std::string filename,
                     return void();
                     // return wrap(false);
                 }
-
-                pbdataset = new DataSet(file->openDataSet(b_strdataset));
                 
+                pbdataset = new DataSet(file->openDataSet(b_strdataset));
+
                 // Real data set dimension
                 IntegerVector dims_outB = get_HDF5_dataset_size(*pbdataset);
 
                 originalB = GetCurrentBlock_hdf5_Original( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
-                
+
                 if( oper(oper.findName( func )) == 4 ) {
+
                     outputdataset = outgroup + "/" + datasets(i) + "_x_" + str_bdatasets(i);
+                    // If matrix size is different, remove possible cols or rows with 0s added to facilitate merge
+                    // if( original.cols() > originalB.rows() ) {
+                    //     if( original.rightCols(original.cols() - originalB.rows()).isZero(0)) {
+                    //         originalB.resize(original.cols(), originalB.cols());
+                    //     }
+                    // }
                 } else if  (oper(oper.findName( func )) == 11) {
                     outputdataset = outgroup + "/Cross_" + datasets(i) + str_bdatasets(i);
                     original = GetCurrentBlock_hdf5( file, pdataset, 0, 0, dims_out[0], dims_out[1]);
@@ -198,14 +204,20 @@ void bdapply_Function_hdf5( std::string filename,
                 prepare_outGroup(file, outgroup, bforce);
                 prepare_outDataset(file, outputdataset, bforce);
 
-                Eigen::MatrixXd results = Bblock_matrix_mul_parallel(original, originalB, 128, R_NilValue);
+                Eigen::MatrixXd results;
                 
+                
+                // if(  (originalB.rows() == 1 && originalB.cols()==1) || (original.rows() == 1 && original.cols()==1)) {
+                //     results = original * originalB;
+                // } else {
+                results = Bblock_matrix_mul_parallel(original, originalB, 1024, R_NilValue);
+                // }
+
                 write_HDF5_matrix_from_R_ptr(file, outputdataset, Rcpp::wrap(results), false);
-                
+
                 pdataset->close();
                 pbdataset->close();
 
-                
             } else if( oper(oper.findName( func )) == 5) {
                 
                 std::string outputdataset;
@@ -243,6 +255,7 @@ void bdapply_Function_hdf5( std::string filename,
     }
     catch( FileIException& error ) { // catch failure caused by the H5File operations
         pdataset->close();
+        pbdataset->close();
         file->close();
         ::Rf_error( "c++ exception (File IException)" );
         return void();

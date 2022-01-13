@@ -94,9 +94,9 @@ Eigen::SparseMatrix<double> matmult_sparse( Eigen::Map<Eigen::SparseMatrix<doubl
 
 
 
-//' Block matrix multiplication with Delayed Array Object
+//' Block matrix multiplication 
 //' 
-//' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+//' This function performs a block matrix-matrix multiplication with numeric matrix
 //' 
 //' @param A a sparse double matrix.
 //' @param B a sparse double matrix.

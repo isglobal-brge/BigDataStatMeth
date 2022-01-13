@@ -620,8 +620,6 @@ return(C);
 //' }
 //' @examples
 //' 
-//' library(DelayedArray)
-//' 
 //' # with numeric matrix
 //' m <- 500
 //' k <- 1500
@@ -630,12 +628,6 @@ return(C);
 //' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 //' 
 //' C <- blockmult(A,B,128, TRUE)
-//' 
-//' # with Delaeyd Array
-//' AD <- DelayedArray(A)
-//' BD <- DelayedArray(B)
-//' 
-//' CD <- blockmult(AD,BD,128, TRUE)
 //' 
 //' @export
 // [[Rcpp::export]]

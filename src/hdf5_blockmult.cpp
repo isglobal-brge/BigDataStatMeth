@@ -6,8 +6,8 @@
 // // ' This function multiply matrix stored in hdf5 data file
 // // '
 // // ' @param filename string file name where dataset to normalize is stored
-// // ' @param group string or Delayed Array Matrix
-// // ' @param dataset string or Delayed Array Matrix
+// // ' @param group string Matrix
+// // ' @param dataset string Matrix
 // // ' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 // // ' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 // // ' @param wsize integer (default = 1000), file block size to read to perform normalization

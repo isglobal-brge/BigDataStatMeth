@@ -2,7 +2,7 @@
 % Please edit documentation in R/bdCrossprod.R
 \name{bdCrossprod}
 \alias{bdCrossprod}
-\title{Crossproduct  of DelayedArray}
+\title{Crossproduct}
 \usage{
 bdCrossprod(A, B = NULL, block_size = 256, paral = TRUE, threads = NULL)
 }
@@ -25,29 +25,20 @@ This function performs a crossproduct or transposed crossproduct of numerical or
 }
 \examples{
 
-library(DelayedArray)
-
 n <- 100
 p <- 60
 
 X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+res <- bdCrossprod(X)
 
-# without DelayedArray
-bdCrossprod(X)
-
-# with DelayedArray
-XD <- DelayedArray(X)
-bdCrossprod(XD)
-
-all.equal(crossprod(X), bdCrossprod(X))
-
+all.equal(crossprod(X), res)
 
 n <- 100
 p <- 100
 
 Y <- matrix(rnorm(n*p), nrow=n)
 
-# without DelayedArray
+# With two matrices
 bdCrossprod(X,Y)
 
 }

@@ -176,8 +176,8 @@ int get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
     write_HDF5_matrix_transposed_ptr(file, strlocpcadataset+"/var.cos2", wrap(var_cos2.transpose()));
     
     Rcpp::Rcout<<"\nGetting Components";
-    create_symLink(file, "/" + strSVDdataset_u, strlocpcadataset+"/components");
-    
+    create_hardLink(file, "/" + strSVDdataset_u, strlocpcadataset+"/components");
+
   }catch( FileIException& error ) {
     ::Rf_error( "c++ exception (File IException )" );
     return -1;

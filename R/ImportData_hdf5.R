@@ -56,5 +56,5 @@ bdImportData_hdf5 <- function( inFile, destFile, destGroup, destDataset, header 
                           header = header,
                           rownames = rownames,
                           overwrite = overwrite)
-    unlink(importfile)
+    # unlink(importfile)
 }

@@ -54,7 +54,7 @@ if( isTRUE(file.exists('tmp_blockmult.hdf5'))){
 
 # Overview
 
-This package implements several matrix operations using `Matrix` and `DelayMatrix` objects as well as HDF5 data files. Some basic algebra operations that can also be computed that are useful to implement  statistical analyses using standard methodologies such as principal component analyses (PCA) or least squares estimation. The package also contains specific statistical methods mainly used in `omic` data analysis such as lasso regression. All procedures to work with objects loaded in memory can be found in [BigDataStatMeth_memory]() vignette.
+This package implements several matrix operations using `Matrix` and `DelayMatrix` objects as well as HDF5 data files. Some basic algebra operations that can also be computed that are useful to implement  statistical analyses using standard methodologies such as principal component analyses (PCA) or least squares estimation. The package also contains specific statistical methods mainly used in `omic` data analysis such as lasso regression. All procedures to work with objects loaded in memory can be found in [BigDataStatMeth_memory](https://github.com/isglobal-brge/BigDataStatMeth/blob/master/vignettes/BigDataStatMeth_memory.html) vignette.
 
 
 # Prerequisites
@@ -152,7 +152,7 @@ bdCreate_hdf5_matrix_file(filename = "robject.hdf5",
 We see 0 in the console, indicating that no errors where found when creating the hdf5 file. Notice that a file called "robject.hdf5" will be created in the working directory
 
 ```{r ls}
-dir()
+list.files()
 ```
 
 

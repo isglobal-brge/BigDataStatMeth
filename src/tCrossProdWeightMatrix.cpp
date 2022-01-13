@@ -84,8 +84,8 @@ Eigen::MatrixXd Bblock_weighted_tcrossprod(const Eigen::MatrixXd& A, Eigen::Matr
 Eigen::MatrixXd Bblock_weighted_tcrossprod_parallel(const Eigen::MatrixXd& A, Eigen::MatrixXd& B, 
                                                    int block_size, Rcpp::Nullable<int> threads  = R_NilValue)
 {
-  //. 2021/12/13 .// int ii=0, jj=0, kk=0;
-  //. 2021/12/13 .// int chunk = 1;
+  int ii=0, jj=0, kk=0;
+  int chunk = 1;
   int tid;
   unsigned int ithreads;
   int M = A.rows();
@@ -108,8 +108,7 @@ Eigen::MatrixXd Bblock_weighted_tcrossprod_parallel(const Eigen::MatrixXd& A, Ei
   omp_set_dynamic(0);   // omp_set_dynamic(0); omp_set_num_threads(4);
   omp_set_num_threads(ithreads);
   
-  //. 2021/12/13 .// #pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
-#pragma omp parallel shared(A, B, C) private(ii, jj, kk, tid ) 
+#pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
 {
 
   tid = omp_get_thread_num();
@@ -190,19 +189,12 @@ return(C);
 //' @return Matrix with A%*%W%*%t(A) product 
 //' @examples
 //' 
-//' library(DelayedArray)
-//' 
 //' # with numeric matrix
 //' m <- 500
 //' k <- 1500
 //' n <- 400
 //' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 //' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
-//' 
-//' 
-//' # with Delaeyd Array
-//' AD <- DelayedArray(A)
-//' BD <- DelayedArray(B)
 //' 
 //' # Serial execution
 //' Serie<- bdtCrossprod_Weighted(A, B, paral = FALSE)

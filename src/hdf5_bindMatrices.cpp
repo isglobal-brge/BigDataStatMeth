@@ -92,22 +92,26 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                     
                     // Test if dimmensions are correct
                     if( original.cols() != count[1] && i!=0) {
-                        pdataset->close();
-                        file->close();
-                        Rcpp::Rcout<<"c++ exception can't bind datasets by columns, number of columns differ between datasets";
-                        return void();
-                        //..// return (wrap(false));
+                        // Append needed cols to merge by cols
+                        int iappend = count[1] - original.cols();
+                        original.conservativeResize(original.rows(), original.cols() + iappend);
+                        //. 31/12/2021 .// pdataset->close();
+                        //. 31/12/2021 .// file->close();
+                        //. 31/12/2021 .// Rcpp::Rcout<<"c++ exception can't bind datasets by columns, number of columns differ between datasets";
+                        //. 31/12/2021 .// return void();
                     }
                     offset[0] = offset[0] + count[0];
                 } else {
                     
                     // Test if dimmensions are correct
                     if( original.rows() != count[0]  && i!=0) {
-                        pdataset->close();
-                        file->close();
-                        Rcpp::Rcout<<"c++ exception can't bind datasets by rows, number of rows differ between datasets";
-                        return void();
-                        //..// return (wrap(false));
+                        // Append needed rows to merge by rows
+                        int iappend = count[0] - original.rows();
+                        original.conservativeResize(original.rows() + iappend, original.cols());
+                        //. 31/12/2021 .// pdataset->close();
+                        //. 31/12/2021 .// file->close();
+                        //. 31/12/2021 .// Rcpp::Rcout<<"c++ exception can't bind datasets by rows, number of rows differ between datasets";
+                        //. 31/12/2021 .// return void();
                     }
                     offset[1] = offset[1] + count[1];
                 }

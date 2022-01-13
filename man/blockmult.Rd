@@ -55,8 +55,6 @@ This function performs a block matrix-matrix multiplication with numeric matrix 
 }
 \examples{
 
-library(DelayedArray)
-
 # with numeric matrix
 m <- 500
 k <- 1500
@@ -65,11 +63,5 @@ A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 
 C <- blockmult(A,B,128, TRUE)
-
-# with Delaeyd Array
-AD <- DelayedArray(A)
-BD <- DelayedArray(B)
-
-CD <- blockmult(AD,BD,128, TRUE)
 
 }

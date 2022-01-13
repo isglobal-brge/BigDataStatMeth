@@ -206,8 +206,6 @@ Eigen::MatrixXd Bblock_weighted_crossprod_parallel(const Eigen::MatrixXd& A, Eig
 //' @return Matrix with t(A)%*%W%*%A product 
 //' @examples
 //' 
-//' library(DelayedArray)
-//' 
 //' # with numeric matrix
 //' m <- 500
 //' k <- 1500

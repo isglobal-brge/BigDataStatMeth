@@ -43,7 +43,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "", cache=FALSE, message = FALS
 
 # Overview
 
-This package implements several matrix operations using `Matrix` and `DelayMatrix` objects as well as HDF5 data files. Some basic algebra operations that can also be computed that are useful to implement  statistical analyses using standard methodologies such as principal component analyses (PCA) or least squares estimation. The package also contains specific statistical methods mainly used in `omic` data analysis such as lasso regression. All procedures referred to HDF5 can be found in [BigDataStatMeth_hdf5](https://github.com/isglobal-brge/BigDataStatMeth/blob/main/vignettes/BigDataStatMeth_hdf5.html) vignette. 
+This package implements several matrix operations using `Matrix` and `DelayMatrix` objects as well as HDF5 data files. Some basic algebra operations that can also be computed that are useful to implement  statistical analyses using standard methodologies such as principal component analyses (PCA) or least squares estimation. The package also contains specific statistical methods mainly used in `omic` data analysis such as lasso regression. All procedures referred to HDF5 can be found in [BigDataStatMeth_hdf5](https://github.com/isglobal-brge/BigDataStatMeth/blob/master/vignettes/BigDataStatMeth_hdf5.html) vignette. 
 
 # Prerequisites
 
@@ -52,7 +52,7 @@ The package requires other packages from `CRAN` and `Bioconductor` to be install
 - `CRAN`: `Matrix`, `RcppEigen` and `RSpectra`.
 - `Bioconductor`: `beachmat`, `DelayedArray` 
 
-As the package can also deal with [hdf5 files](https://www.hdfgroup.org/solutions/hdf5/) [See Vignette [BigDataStatMeth_hdf5]()], these other packages are required: `HDF5Array`, `rhdf5`. The user can execute this code to install the required packages:
+As the package can also deal with [hdf5 files](https://www.hdfgroup.org/solutions/hdf5/) [See Vignette [BigDataStatMeth_hdf5](https://github.com/isglobal-brge/BigDataStatMeth/blob/master/vignettes/BigDataStatMeth_hdf5.html)], these other packages are required: `HDF5Array`, `rhdf5`. The user can execute this code to install the required packages:
 
 ```{r install_required, eval=FALSE}
 # Install BiocManager (if not previously installed)
@@ -154,16 +154,12 @@ Matrix multiplication using block matrices is implemented in the `bdblockmult()`
 ```{r blockmult }
 # Use 10x10 blocks
 AxB <- bdblockmult(A, B, block_size = 10)
-
-# Use 256x256 blocks
-AxBDelay <- bdblockmult(DA, DB, block_size = 256 )
 ```
 
 As expected the results obtained using this procedure are the correct ones
 
 ```{r check_equal_x}
-all.equal(AxBDelay,A%*%B)
-all.equal(AxB, AxBDelay)
+all.equal(AxB, A%*%B)
 ```
 
 Note that when the argument `block_size` is larger than any of the dimensions of matrix A or B the `blocks_size` is set to `min(cols(A), rows(A), cols(B), rows(B))`. 

@@ -7,9 +7,9 @@
 bdSolve(A, B)
 }
 \arguments{
-\item{A}{numerical or Delayed Array matrix.}
+\item{A}{numerical matrix.}
 
-\item{B}{numerical or Delayed Array matrix.}
+\item{B}{numerical matrix.}
 }
 \value{
 X numerical matrix.
@@ -21,7 +21,6 @@ where A is an N-by-N matrix and X and B are N-by-NRHS matrices.
 }
 \examples{
 
-library(DelayedArray)
 library(BigDataStatMeth)
 
 n <- 500
@@ -33,15 +32,9 @@ A <- matrix(runif(n*m), nrow = n, ncol = m)
 B <- matrix(runif(n), nrow = n)
 AS <- A\%*\%t(A)
       
-DA <- DelayedArray(A)
-DB <- DelayedArray(B)
-ASD <- DelayedArray(AS)
-  
 X <- bdSolve(A, B)
 XR <- solve(A,B)
-XRD <- bdSolve(DA,DB)
       
 all.equal(X, XR, check.attributes=FALSE)
-all.equal(XR, XRD, check.attributes=FALSE)
   
 }

@@ -28,8 +28,15 @@ getQRbyBlocks <- function(strdataset, file, mblocks, center, scale, bcols, overw
     # Prepare data - Normalize data (only Center)
     bdNormalize_hdf5(filename = file, 
                      group = strgroup, dataset = strdataset, 
-                     bcenter = center, bscale = scale) 
-    
+                     bcenter = center, bscale = scale, force = overwrt) 
+
+    # Review m size block must be equal than number of samples
+    # if( bdgetDim_hdf5(file, paste0(strgroup, "/",strdataset))[1] / mblocks <  bdgetDim_hdf5(file, paste0(strgroup, "/",strdataset))[2] ) {
+    #     mblocks <- floor( bdgetDim_hdf5(file, paste0(strgroup, "/",strdataset))[1] / bdgetDim_hdf5(file, paste0(strgroup, "/",strdataset))[2]) - 1
+    #     if(mblocks <= 0) mblocks = 1
+    #     message("m set to ", mblocks)
+    # }
+
     # Step 1
     # Split datasets X abd Y by rows and store data to data file
     bdSplit_matrix_hdf5( filename = file, 
@@ -47,12 +54,16 @@ getQRbyBlocks <- function(strdataset, file, mblocks, center, scale, bcols, overw
                            func = "QR", 
                            force = overwrt )
     
+    # stop("Reviewing")
+    
     # Step 3
     blocks.qr <- bdgetDatasetsList_hdf5(file, paste0( "Step2/", strdataset, "rows"))
     bdBind_hdf5(filename = file, group =  paste0( "Step2/", strdataset, "rows"), 
                 datasets = blocks.qr[which(blocks.qr %like% ".R")],
                 outgroup = "Step3/merged", outdataset =  paste0( strdataset, "Rt"), 
                 func = "bindRows", force = overwrt )
+    
+    # stop("Reviewing")
     bdapply_Function_hdf5( file, "Step3/merged", paste0( strdataset, "Rt"), "Step3/Final_QR", "QR", force = overwrt )
     
     # Step 4
@@ -173,17 +184,21 @@ bdCCA_hdf5 <- function(filename, X, Y, m = 10, bcenter = TRUE, bscale = FALSE, b
     #         message("File will be overwritten")
     #     }
     # } 
+    
+    # if( bdgetDim_hdf5(filename, Y)[1] < (m * 2) |  bdgetDim_hdf5(filename, X)[2] < (m * 2) ) {
+    #     stop("m is too big for data size. Please set m to a small value")
+    # }
 
     matrices <- c(X, Y)
     sapply( matrices, getQRbyBlocks, file = filename, mblocks = m, center = bcenter, scale = bscale, bcols = bycols, overwrt = overwriteResults )
-    
-    
+
     # Step 7
     #   tQXQY <- crossprod(t(QX), QY)[1:ncol(x), ]
     res <- bdCrossprod_hdf5(filename = filename, 
                             group = "Step6", A = "XQ",
                             groupB = "Step6", B = "YQ", 
                             outgroup = "Step7")
+    
     # Step 8 : 
     # z <- svd( tQXQY )
     res <- bdSVD_hdf5(file = filename, 
@@ -191,6 +206,7 @@ bdCCA_hdf5 <- function(filename, X, Y, m = 10, bcenter = TRUE, bscale = FALSE, b
                       bcenter = FALSE, bscale = FALSE, k = 16, q = 2, threads = 3)
     
     res <- sapply( matrices, bdgetDim_hdf5, filename = filename )
+    
     writeCCAComponents_hdf5( filename, res[2,X], res[2,Y])
     
     if( keepInteResults == FALSE){
@@ -199,7 +215,6 @@ bdCCA_hdf5 <- function(filename, X, Y, m = 10, bcenter = TRUE, bscale = FALSE, b
             print(paste0 ("Step",x, "Removed"))
         })
     }
-    
     
 }
 

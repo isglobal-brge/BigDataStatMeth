@@ -57,7 +57,6 @@ This function performs a block matrix-matrix multiplication with mattrix stored 
 \examples{
 # with numeric matrix
 
-library(DelayedArray)
 
 m <- 500
 k <- 1500

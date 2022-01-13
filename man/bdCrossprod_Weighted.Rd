@@ -25,8 +25,6 @@ This function performs a Crossproduct with weigths matrix t(A)%*%W%*%A multiplic
 }
 \examples{
 
-library(DelayedArray)
-
 # with numeric matrix
 m <- 500
 k <- 1500

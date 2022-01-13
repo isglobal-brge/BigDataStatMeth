@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdblockmult_sparse}
 \alias{bdblockmult_sparse}
-\title{Block matrix multiplication with Delayed Array Object}
+\title{Block matrix multiplication}
 \usage{
 bdblockmult_sparse(A, B, paral = NULL, threads = NULL)
 }
@@ -19,7 +19,7 @@ bdblockmult_sparse(A, B, paral = NULL, threads = NULL)
 Sparse matrix with results
 }
 \description{
-This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+This function performs a block matrix-matrix multiplication with numeric matrix
 }
 \examples{
 

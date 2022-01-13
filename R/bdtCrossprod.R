@@ -1,6 +1,6 @@
-#' Crossproduct  of DelayedArray
+#' Crossproduct
 #' 
-#' This function performs a transposed crossproduct of numerical or DelayedArray matrix.
+#' This function performs a transposed crossproduct of numerical matrix.
 #' 
 #' @export
 #' 
@@ -12,7 +12,6 @@
 #' @return numerical matrix with crossproduct
 #' @examples
 #' 
-#' library(DelayedArray)
 #' 
 #' n <- 100
 #' p <- 60
@@ -22,19 +21,13 @@
 #' # without DelayedArray
 #' bdtCrossprod(X)
 #' 
-#' # with DelayedArray
-#' XD <- DelayedArray(X)
-#' bdtCrossprod(XD)
-#' 
 #' all.equal(crossprod(X), bdtCrossprod(X))
-#' 
 #' 
 #' n <- 100
 #' p <- 100
 #' 
 #' Y <- matrix(rnorm(n*p), nrow=n)
 #' 
-#' # without DelayedArray
 #' bdtCrossprod(X,Y)
 #' 
 bdtCrossprod <- function( A, B = NULL, block_size = 256, paral = TRUE, threads = NULL)

@@ -478,23 +478,18 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
 
 
 
-//' Inverse Cholesky of Delayed Array
+//' Inverse Cholesky
 //' 
-//' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then gets the inverse using Cholesky decomposition
+//' This function get the inverse of a numerical matrix. If x is hermitian and positive-definite matrix then gets the inverse using Cholesky decomposition
 //' 
 //' 
-//' @param X numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
+//' @param X numerical matrix. If x is Hermitian and positive-definite performs
 //' @return inverse matrix of d 
 //' @examples
 //' 
-//' library(DelayedArray)
 //' 
 //' A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
 //' bdInvCholesky(A)
-//' 
-//' # with Delayed Array
-//' DA <- DelayedArray(A)
-//' bdInvCholesky(DA)
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -536,11 +531,8 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & X )
 //' @return d singular values, nxn diagonal matrix (non-negative real values)
 //' @examples
 //' 
-//' library(DelayedArray)
-//' 
 //' n <- 500
 //' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
-//' AD <- DelayedArray(A)
 //' 
 //' # svd without normalization
 //' decsvd <- bdSVD( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization

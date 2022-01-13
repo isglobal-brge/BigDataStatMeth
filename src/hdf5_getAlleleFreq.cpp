@@ -30,8 +30,8 @@ double calc_freq(NumericVector x)
 //' This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file
 //' 
 //' @param filename string file name where dataset to normalize is stored
-//' @param group string or Delayed Array Matrix
-//' @param dataset string or Delayed Array Matrix
+//' @param group string Matrix
+//' @param dataset string  Matrix
 //' @param byrows, boolean, default TRUE. If true, the frequency is calculated by rows, else, if byrows= FALSE, frequency is calculated by columns
 //' @param bparallel, boolean, Perform calculous in parallel?, by default TRUE.
 //' @param wsize integer (default = 1000), file block size to read to perform normalization

@@ -13,8 +13,6 @@
 #' @return Matrix with t(A)%*%W%*%A product 
 #' @examples
 #' 
-#' library(DelayedArray)
-#' 
 #' # with numeric matrix
 #' m <- 500
 #' k <- 1500
@@ -168,12 +166,12 @@ bdCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block_
     .Call('_BigDataStatMeth_blockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, mixblock_size, outgroup, outdataset)
 }
 
-#' Block matrix multiplication with Delayed Array Object
+#' Block matrix multiplication
 #' 
-#' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+#' This function performs a block matrix-matrix multiplication with numeric matrix
 #' 
 #' @param filename string file name where dataset to normalize is stored
-#' @param group string or Delayed Array Matrix
+#' @param group string Matrix
 #' @param A, string with dataset name where matrix is stored
 #' @param B, string with dataset name where matrix is stored
 #' @param outgroup string with de group name under the matrix will be stored
@@ -283,8 +281,8 @@ bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block
 #' This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file
 #' 
 #' @param filename string file name where dataset to normalize is stored
-#' @param group string or Delayed Array Matrix
-#' @param dataset string or Delayed Array Matrix
+#' @param group string Matrix
+#' @param dataset string  Matrix
 #' @param byrows, boolean, default TRUE. If true, the frequency is calculated by rows, else, if byrows= FALSE, frequency is calculated by columns
 #' @param bparallel, boolean, Perform calculous in parallel?, by default TRUE.
 #' @param wsize integer (default = 1000), file block size to read to perform normalization
@@ -358,8 +356,8 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #' This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file
 #' 
 #' @param filename string file name where dataset to normalize is stored
-#' @param group string or Delayed Array Matrix
-#' @param dataset string or Delayed Array Matrix
+#' @param group string Matrix
+#' @param dataset string Matrix
 #' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 #' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 #' @param wsize integer (default = 1000), file block size to read to perform normalization
@@ -454,7 +452,6 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 #' @return numerical matrix
 #' @examples
-#' library(DelayedArray)
 #' 
 #' m <- 500
 #' n <- 100 
@@ -463,17 +460,11 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' # with numeric matrix
 #' bdNormalize_Data(x)
 #' 
-#' # with Delaeyd Array
-#' Dx <- DelayedArray(x)
-#' 
-#' # Center and scale
-#' bdNormalize_Data(Dx)
-#' 
 #' # Only scale
-#' bdNormalize_Data(Dx, bcenter = FALSE)
+#' bdNormalize_Data(x, bcenter = FALSE)
 #' 
 #' # Only center
-#' bdNormalize_Data(Dx, bscale = FALSE)
+#' bdNormalize_Data(x, bscale = FALSE)
 #' 
 #' @export
 bdNormalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
@@ -553,9 +544,9 @@ bdScalarwproduct <- function(A, w, op) {
     .Call('_BigDataStatMeth_bdScalarwproduct', PACKAGE = 'BigDataStatMeth', A, w, op)
 }
 
-#' Block matrix multiplication with Delayed Array Object
+#' Block matrix multiplication 
 #' 
-#' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+#' This function performs a block matrix-matrix multiplication with numeric matrix
 #' 
 #' @param A a sparse double matrix.
 #' @param B a sparse double matrix.
@@ -616,8 +607,6 @@ bdblockmult_sparse <- function(A, B, paral = NULL, threads = NULL) {
 #' }
 #' @examples
 #' 
-#' library(DelayedArray)
-#' 
 #' # with numeric matrix
 #' m <- 500
 #' k <- 1500
@@ -626,12 +615,6 @@ bdblockmult_sparse <- function(A, B, paral = NULL, threads = NULL) {
 #' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
 #' 
 #' C <- blockmult(A,B,128, TRUE)
-#' 
-#' # with Delaeyd Array
-#' AD <- DelayedArray(A)
-#' BD <- DelayedArray(B)
-#' 
-#' CD <- blockmult(AD,BD,128, TRUE)
 #' 
 #' @export
 blockmult <- function(a, b, block_size = NULL, paral = NULL, threads = NULL, bigmatrix = NULL, mixblock_size = NULL, outfile = NULL, onmemory = NULL) {
@@ -691,8 +674,8 @@ bdQR <- function(X, thin = NULL) {
 #' 
 #' 
 #' 
-#' @param R numerical or Delayed Array matrix. 
-#' @param Z numerical or Delayed Array matrix.
+#' @param R numerical matrix. 
+#' @param Z numerical matrix.
 #' @param threads integer with number of threads to use with parallelized execution
 #' @return X numerical matrix. 
 #' @examples
@@ -764,12 +747,11 @@ bdgetDim_hdf5 <- function(filename, element) {
 #'  \code{A * X = B } 
 #' where A is an N-by-N matrix and X and B are N-by-NRHS matrices.
 #' 
-#' @param A numerical or Delayed Array matrix. 
-#' @param B numerical or Delayed Array matrix.
+#' @param A numerical matrix. 
+#' @param B numerical matrix.
 #' @return X numerical matrix. 
 #' @examples
 #' 
-#' library(DelayedArray)
 #' library(BigDataStatMeth)
 #' 
 #' n <- 500
@@ -781,39 +763,28 @@ bdgetDim_hdf5 <- function(filename, element) {
 #' B <- matrix(runif(n), nrow = n)
 #' AS <- A%*%t(A)
 #'       
-#' DA <- DelayedArray(A)
-#' DB <- DelayedArray(B)
-#' ASD <- DelayedArray(AS)
-#'   
 #' X <- bdSolve(A, B)
 #' XR <- solve(A,B)
-#' XRD <- bdSolve(DA,DB)
 #'       
 #' all.equal(X, XR, check.attributes=FALSE)
-#' all.equal(XR, XRD, check.attributes=FALSE)
 #'   
 #' @export
 bdSolve <- function(A, B) {
     .Call('_BigDataStatMeth_bdSolve', PACKAGE = 'BigDataStatMeth', A, B)
 }
 
-#' Inverse Cholesky of Delayed Array
+#' Inverse Cholesky
 #' 
-#' This function get the inverse of a numerical or Delayed Array matrix. If x is hermitian and positive-definite matrix then gets the inverse using Cholesky decomposition
+#' This function get the inverse of a numerical matrix. If x is hermitian and positive-definite matrix then gets the inverse using Cholesky decomposition
 #' 
 #' 
-#' @param X numerical or Delayed Array matrix. If x is Hermitian and positive-definite performs
+#' @param X numerical matrix. If x is Hermitian and positive-definite performs
 #' @return inverse matrix of d 
 #' @examples
 #' 
-#' library(DelayedArray)
 #' 
 #' A <- matrix(c(3,4,3,4,8,6,3,6,9), byrow = TRUE, ncol = 3)
 #' bdInvCholesky(A)
-#' 
-#' # with Delayed Array
-#' DA <- DelayedArray(A)
-#' bdInvCholesky(DA)
 #' 
 #' @export
 bdInvCholesky <- function(X) {
@@ -834,11 +805,8 @@ bdInvCholesky <- function(X) {
 #' @return d singular values, nxn diagonal matrix (non-negative real values)
 #' @examples
 #' 
-#' library(DelayedArray)
-#' 
 #' n <- 500
 #' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
-#' AD <- DelayedArray(A)
 #' 
 #' # svd without normalization
 #' decsvd <- bdSVD( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
@@ -938,19 +906,12 @@ bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE, complete = FALSE) {
 #' @return Matrix with A%*%W%*%t(A) product 
 #' @examples
 #' 
-#' library(DelayedArray)
-#' 
 #' # with numeric matrix
 #' m <- 500
 #' k <- 1500
 #' n <- 400
 #' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
 #' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
-#' 
-#' 
-#' # with Delaeyd Array
-#' AD <- DelayedArray(A)
-#' BD <- DelayedArray(B)
 #' 
 #' # Serial execution
 #' Serie<- bdtCrossprod_Weighted(A, B, paral = FALSE)

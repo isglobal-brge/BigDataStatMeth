@@ -25,7 +25,6 @@
 #' @examples
 #' # with numeric matrix
 #' 
-#' library(DelayedArray)
 #' 
 #' m <- 500
 #' k <- 1500

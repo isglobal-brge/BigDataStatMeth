@@ -143,64 +143,6 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
 
 
 
-// //' Crossproduct and transposed crossproduct of DelayedArray
-// //'
-// //' This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
-// //'
-// //' @param a numerical or Delayed Array matrix
-// //' @param transposed (optional, default = false) boolean indicating if we have to perform a crossproduct (transposed=false) or transposed crossproduct (transposed = true)
-// //' @return numerical matrix with crossproduct or transposed crossproduct
-// //' @examples
-// //'
-// //' library(DelayedArray)
-// //'
-// //' n <- 100
-// //' p <- 60
-// //'
-// //' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
-// //'
-// //' # without DelayedArray
-// //' bdcrossprod(X)
-// //' bdcrossprod(X, transposed = TRUE)
-// //'
-// //' # with DelayedArray
-// //' XD <- DelayedArray(X)
-// //' bdcrossprod(XD)
-// //' bdcrossprod(XD, transposed = TRUE)
-// //'
-// //' @export
-// // [[Rcpp::export]]
-// Eigen::MatrixXd bdcrossprod(Rcpp::RObject a, Rcpp::Nullable<Rcpp::Function> transposed = R_NilValue)
-// {
-// 
-//   Eigen::MatrixXd A;
-//   bool btrans;
-// 
-//   if(transposed.isNotNull())
-//     btrans = Rcpp::as<bool> (transposed);
-//   else
-//     btrans = FALSE;
-// 
-//   // Read DelayedArray's a and b
-//   if ( a.isS4() == true)
-//   {
-//     A = read_DelayedArray(a);
-//   } else {
-//     try{
-//       A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(a);
-//     }
-//     catch(std::exception &ex) { }
-//   }
-// 
-//   if(btrans == true) {
-//     return(bdtcrossproduct(A)) ;
-//   }else {
-//     return(bdcrossproduct(A));
-//   }
-// }
-
-
-
 
 // [[Rcpp::export(.bdCrossprod_generic)]]
 Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B=  R_NilValue, 

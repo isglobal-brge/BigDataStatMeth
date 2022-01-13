@@ -2,14 +2,14 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdblockmult_sparse_hdf5}
 \alias{bdblockmult_sparse_hdf5}
-\title{Block matrix multiplication with Delayed Array Object}
+\title{Block matrix multiplication}
 \usage{
 bdblockmult_sparse_hdf5(filename, group, A, B, outgroup = NULL)
 }
 \arguments{
 \item{filename}{string file name where dataset to normalize is stored}
 
-\item{group}{string or Delayed Array Matrix}
+\item{group}{string Matrix}
 
 \item{A, }{string with dataset name where matrix is stored}
 
@@ -21,7 +21,7 @@ bdblockmult_sparse_hdf5(filename, group, A, B, outgroup = NULL)
 list with filename and the group and dataset name under the results are stored
 }
 \description{
-This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+This function performs a block matrix-matrix multiplication with numeric matrix
 }
 \examples{
 

@@ -17,9 +17,9 @@ bdNormalize_hdf5(
 \arguments{
 \item{filename}{string file name where dataset to normalize is stored}
 
-\item{group}{string or Delayed Array Matrix}
+\item{group}{string Matrix}
 
-\item{dataset}{string or Delayed Array Matrix}
+\item{dataset}{string Matrix}
 
 \item{bcenter}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
 

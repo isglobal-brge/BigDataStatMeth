@@ -7,9 +7,9 @@
 bddtrsm(R, Z, threads = NULL)
 }
 \arguments{
-\item{R}{numerical or Delayed Array matrix.}
+\item{R}{numerical matrix.}
 
-\item{Z}{numerical or Delayed Array matrix.}
+\item{Z}{numerical matrix.}
 
 \item{threads}{integer with number of threads to use with parallelized execution}
 }
