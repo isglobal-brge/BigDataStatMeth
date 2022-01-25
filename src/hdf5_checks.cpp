@@ -4,7 +4,7 @@ bool exist_FileGroupDataset(std::string filename, std::string group, std::string
 {
   
   H5File* file;
-  DataSet* pdataset = nullptr;
+  // DataSet* pdataset = nullptr;
   
   try {
     

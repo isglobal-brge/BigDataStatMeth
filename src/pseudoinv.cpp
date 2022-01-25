@@ -31,9 +31,9 @@ Eigen::MatrixXd rcpp_bdpseudoinv(Eigen::MatrixXd* A)
   
   Eigen::MatrixXd pinv = Eigen::MatrixXd::Zero(n,m);
   
-  omp_set_dynamic(1);
+  //.OpenMP.// omp_set_dynamic(1);
   
-#pragma omp parallel for
+#pragma omp parallel for 
   for (int i = 0; i < k; i++){
     double tempS;
     if(s[i] > 1.0e-9)

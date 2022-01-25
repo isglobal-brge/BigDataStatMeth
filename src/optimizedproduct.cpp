@@ -98,9 +98,10 @@ Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
   }
   else    ithreads = std::thread::hardware_concurrency() / 2; //omp_get_max_threads();
   
-  omp_set_num_threads(ithreads);
+  //.OpenMP.//omp_set_num_threads(ithreads);
 
-#pragma omp parallel shared(X, w, C) 
+  //.OpenMP.//#pragma omp parallel shared(X, w, C) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(X, w, C) 
 {
 #pragma omp for schedule (dynamic)
   for (int i=0; i<n; i++)
@@ -128,9 +129,10 @@ Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w,
   }
   else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
-  omp_set_num_threads(ithreads);
+  //.OpenMP.// omp_set_num_threads(ithreads);
   
-#pragma omp parallel shared(X, w, C) 
+  //.OpenMP.//#pragma omp parallel shared(X, w, C) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(X, w, C) 
 {
 #pragma omp for schedule (dynamic)
   for (int i=0; i<n; i++)

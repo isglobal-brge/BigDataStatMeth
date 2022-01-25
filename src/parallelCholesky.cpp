@@ -30,9 +30,10 @@ Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A, Rcpp::Nulla
       }
       else    ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads();
       
-      omp_set_num_threads(ithreads);
+      //.OpenMP.// omp_set_num_threads(ithreads);
       
-#pragma omp parallel for private(i,k,sum) shared (A,L,j) schedule(static) if (j < dimensionSize - chunk)
+//.OpenMP.// #pragma omp parallel for private(i,k,sum) shared (A,L,j) schedule(static) if (j < dimensionSize - chunk)
+#pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(i,k,sum) shared (A,L,j) schedule(static) if (j < dimensionSize - chunk)
       for (int i = j + 1; i < dimensionSize; i++) 
       {
         sum = 0;
@@ -70,12 +71,13 @@ Eigen::VectorXd Forward_Substituion_parallel(Eigen::MatrixXd L, Eigen::VectorXd 
   }
   else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
-  omp_set_num_threads(ithreads);
+  //.OpenMP.// omp_set_num_threads(ithreads);
   
   if( L.rows()== L.cols() )
   {
     for( i=1; i<n; i++)
-#pragma omp parallel shared(L,y) private(j)
+//.OpenMP.// #pragma omp parallel shared(L,y) private(j)
+#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(L,y) private(j)
 {
   for(j=i; j<n; j++)
   {
@@ -117,14 +119,15 @@ Eigen::MatrixXd Inverse_of_Cholesky_decomposition_parallel( Eigen::MatrixXd& A, 
   }
   else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
-  omp_set_num_threads(ithreads);
+  //.OpenMP.// omp_set_num_threads(ithreads);
   
   if( L.rows()== L.cols() )
   {
     for (int i = 0; i < dimensionSize; i++) 
     {
       R(i,i) = 1/L(i,i);
-#pragma omp parallel for private(j,k,sum) shared (L,R,A,i,dimensionSize) schedule(static) if (j < dimensionSize)
+//.OpenMP.// #pragma omp parallel for private(j,k,sum) shared (L,R,A,i,dimensionSize) schedule(static) if (j < dimensionSize)
+#pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(j,k,sum) shared (L,R,A,i,dimensionSize) schedule(static) if (j < dimensionSize)
       for (int j = i + 1; j < dimensionSize; j++) 
       {
         sum = 0;
@@ -163,7 +166,7 @@ Eigen::MatrixXd Inverse_Matrix_Cholesky_parallel( Eigen::MatrixXd L, Rcpp::Nulla
   }
   else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
-  omp_set_num_threads(ithreads);
+  //.OpenMP.//  omp_set_num_threads(ithreads);
   
   if( L.rows()== L.cols() )
   {
@@ -171,7 +174,8 @@ Eigen::MatrixXd Inverse_Matrix_Cholesky_parallel( Eigen::MatrixXd L, Rcpp::Nulla
     for (i = 0; i < dimensionSize; i++) 
     {
       InvCh(i,i) = std::pow(InvCh(i,i),2);
-#pragma omp parallel for private(j,k) shared (InvCh,i,L,dimensionSize) schedule(static) if (j < dimensionSize)
+//..// #pragma omp parallel for private(j,k) shared (InvCh,i,L,dimensionSize) schedule(static) if (j < dimensionSize)
+#pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(j,k) shared (InvCh,i,L,dimensionSize) schedule(static) if (j < dimensionSize)
       for (k = i + 1; k < dimensionSize; k++) {
         InvCh(i,i) += InvCh(k,i) * InvCh(k,i);
       }

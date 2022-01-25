@@ -26,14 +26,15 @@ Eigen::MatrixXd Rcpp_mlr_mr(Eigen::MatrixXd x, Eigen::MatrixXd y, int iblocks, R
   else  ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads()
   
 
-  omp_set_num_threads(ithreads); 
+  //.OpenMP.// omp_set_num_threads(ithreads); 
   
   // Define variables
   Eigen::MatrixXd R1(iblocks*x.cols(), x.cols());
   Eigen::MatrixXd Q1( irows, icols );
   Eigen::VectorXd indexQ1( iblocks+1 );
   
-#pragma omp parallel shared( R1, Q1, indexQ1, chunk) 
+//.OpenMP.// #pragma omp parallel shared( R1, Q1, indexQ1, chunk) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared( R1, Q1, indexQ1, chunk) 
   {
     // First steps --> (1) Read block
     //                 (2) Make decomposition by block and reduce result matrix

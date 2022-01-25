@@ -47,3 +47,6 @@ rsconnect/
 *.csv
 *.hdf5
 *.icloud
+
+# Duplicated icloud files
+* 2*

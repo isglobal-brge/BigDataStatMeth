@@ -2,7 +2,8 @@
 #define qrdecomp
 
    #include <RcppEigen.h>
-   #include <omp.h>
+   //#include <omp.h>
+   #include "pkg_omp.h"
    #include "pseudoinv.h"
    #include "ReadDelayedData.h"
    #include "parallelBlockMult_hdf5.h"

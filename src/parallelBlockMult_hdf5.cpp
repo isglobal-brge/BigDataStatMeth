@@ -430,12 +430,13 @@ int hdf5_block_matrix_mul_parallel( IntegerVector sizeA, IntegerVector sizeB, in
     }
     else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
     
-    omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
-    omp_set_num_threads(ithreads);
+    //.OpenMP.// omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
+    //.OpenMP.// omp_set_num_threads(ithreads);
     
     // H5File sharedfile = Open_hdf5_file(filename);
     
-  #pragma omp parallel shared( file, datasetA, datasetB, datasetC, chunk) private(ii, jj, kk, tid ) 
+    //.OpenMP.// #pragma omp parallel shared( file, datasetA, datasetB, datasetC, chunk) private(ii, jj, kk, tid ) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, false)) shared( file, datasetA, datasetB, datasetC, chunk) private(ii, jj, kk, tid ) 
   {
     
     // tid = omp_get_thread_num();
@@ -557,10 +558,11 @@ Eigen::MatrixXd Bblock_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen
   }
   else    ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads();
 
-  omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
-  omp_set_num_threads(ithreads);
+  //.OpenMP.//omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
+  //.OpenMP.//omp_set_num_threads(ithreads);
   
-#pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+  //.OpenMP.//#pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, false)) shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
 {
 
   tid = omp_get_thread_num();

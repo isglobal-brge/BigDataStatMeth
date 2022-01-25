@@ -106,17 +106,18 @@ Eigen::MatrixXd Bblock_weighted_crossprod_parallel(const Eigen::MatrixXd& A, Eig
     
     if(threads.isNotNull()) 
     {
-      if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+      if (Rcpp::as<int>(threads) <= std::thread::hardware_concurrency())
         ithreads = Rcpp::as<int> (threads);
       else 
         ithreads = std::thread::hardware_concurrency()/2;
     }
     else    ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads();
     
-    omp_set_dynamic(0);   // omp_set_dynamic(0); omp_set_num_threads(4);
-    omp_set_num_threads(ithreads);
+    //.OpenMP.// omp_set_dynamic(0);   // omp_set_dynamic(0); omp_set_num_threads(4);
+    //.OpenMP.// omp_set_num_threads(ithreads);
     
-#pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+//.OpenMP.// #pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C, chunk) private(ii, jj, kk, tid )   
   {
   
     tid = omp_get_thread_num();
@@ -156,10 +157,11 @@ Eigen::MatrixXd Bblock_weighted_crossprod_parallel(const Eigen::MatrixXd& A, Eig
     N = A.cols();
     K = B.cols();
     
-    omp_set_dynamic(0);   
-    omp_set_num_threads(ithreads);
+    //.OpenMP.// omp_set_dynamic(0);   
+    //.OpenMP.// omp_set_num_threads(ithreads);
 
-#pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+//.OpenMP.//#pragma omp shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
     {
   
       tid = omp_get_thread_num();
