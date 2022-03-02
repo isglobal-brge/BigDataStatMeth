@@ -489,45 +489,64 @@ int hdf5_block_matrix_mul_parallel( IntegerVector sizeA, IntegerVector sizeB, in
 // In-memory execution - Serial version
 Eigen::MatrixXd Bblock_matrix_mul(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, int block_size)
 {
-
+  
+  
   int M = A.rows();
   int K = A.cols();
   int N = B.cols();
-  if( A.cols()==B.rows())
-  {
-    Eigen::MatrixXd C = Eigen::MatrixXd::Zero(M,N) ; 
+  Eigen::MatrixXd C;
     
-    int isize = block_size+1;
-    int ksize = block_size+1;
-    int jsize = block_size+1;
+  try{
     
-    for (int ii = 0; ii < M; ii += block_size)
+    int M = A.rows();
+    int K = A.cols();
+    int N = B.cols();
+    
+    if( A.cols()==B.rows())
     {
-      if( ii + block_size > M ) isize = M - ii;
-      for (int jj = 0; jj < N; jj += block_size)
+      C = Eigen::MatrixXd::Zero(M,N) ; 
+      
+      int isize = block_size+1;
+      int ksize = block_size+1;
+      int jsize = block_size+1;
+      
+      for (int ii = 0; ii < M; ii += block_size)
       {
-        if( jj + block_size > N) jsize = N - jj;
-        for(int kk = 0; kk < K; kk += block_size)
+        if( ii + block_size > M ) isize = M - ii;
+        for (int jj = 0; jj < N; jj += block_size)
         {
-          if( kk + block_size > K ) ksize = K - kk;
-          
-          C.block(ii, jj, std::min(block_size,isize), std::min(block_size,jsize)) = 
-            C.block(ii, jj, std::min(block_size,isize), std::min(block_size,jsize)) + 
-            (A.block(ii, kk, std::min(block_size,isize), std::min(block_size,ksize)) * 
-            B.block(kk, jj, std::min(block_size,ksize), std::min(block_size,jsize)));
-
-          if( kk + block_size > K ) ksize = block_size+1;
+          if( jj + block_size > N) jsize = N - jj;
+          for(int kk = 0; kk < K; kk += block_size)
+          {
+            if( kk + block_size > K ) ksize = K - kk;
+            
+            C.block(ii, jj, std::min(block_size,isize), std::min(block_size,jsize)) = 
+              C.block(ii, jj, std::min(block_size,isize), std::min(block_size,jsize)) + 
+              (A.block(ii, kk, std::min(block_size,isize), std::min(block_size,ksize)) * 
+              B.block(kk, jj, std::min(block_size,ksize), std::min(block_size,jsize)));
+            
+            if( kk + block_size > K ) ksize = block_size+1;
+          }
+          if( jj + block_size > N ) jsize = block_size+1;
         }
-        if( jj + block_size > N ) jsize = block_size+1;
+        if( ii + block_size > M ) isize = block_size+1;
       }
-      if( ii + block_size > M ) isize = block_size+1;
-    }
+      
+      
+    } else {
+      throw std::range_error("non-conformable arguments");
+    }    
     
+  } catch(std::exception &ex) {
+    Rcpp::Rcout<<"c++ error : Bblock_matrix_mul : " <<ex.what();
     return(C);
     
-  }else {
-    throw std::range_error("non-conformable arguments");
+  } catch(...) { 
+    ::Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
   }
+  
+
+  return(C);
   
 }
 
@@ -549,20 +568,31 @@ Eigen::MatrixXd Bblock_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen
   if(block_size > std::min( N, std::min(M,K)) )
     block_size = std::min( N, std::min(M,K)); 
   
+  // if(threads.isNotNull()) 
+  // {
+  //   if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+  //     ithreads = (Rcpp::as<int> (threads)) * 1025;
+  //   else 
+  //     ithreads = (std::thread::hardware_concurrency()/2)*1025;
+  // }
+  // else    ithreads = (std::thread::hardware_concurrency()/2)*1025; //omp_get_max_threads();
+  
+  
   if(threads.isNotNull()) 
   {
-    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
-      ithreads = Rcpp::as<int> (threads);
-    else 
-      ithreads = std::thread::hardware_concurrency()/2;
+      if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+          ithreads = Rcpp::as<int> (threads);
+      else 
+          ithreads = std::thread::hardware_concurrency()/2;
   }
   else    ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads();
-
+  
+  
   //.OpenMP.//omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
   //.OpenMP.//omp_set_num_threads(ithreads);
   
   //.OpenMP.//#pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
-#pragma omp parallel num_threads(getDTthreads(ithreads, false)) shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
 {
 
   tid = omp_get_thread_num();

@@ -10,10 +10,10 @@
     #include "H5Cpp.h"
     #include "solveMatrixEquation.h"
 
-// // cpp functions
-// int RcppApply_Function_hdf5 ( H5File* file, DataSet* dataset, std::string stroutgroup, std::string stroutdataset);
+    // // cpp functions
+    // int RcppApply_Function_hdf5 ( H5File* file, DataSet* dataset, std::string stroutgroup, std::string stroutdataset);
 
-// R functions
+    // R functions
     void bdapply_Function_hdf5( std::string filename, std::string group, Rcpp::StringVector datasets,
                                 std::string outgroup, std::string func, 
                                 Rcpp::Nullable<std::string> b_group, Rcpp::Nullable<Rcpp::StringVector> b_datasets ,

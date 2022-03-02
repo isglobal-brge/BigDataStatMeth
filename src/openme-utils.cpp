@@ -60,6 +60,9 @@ void initDTthreads() {
 }
 
 int getDTthreads(const int64_t n, const bool throttle) {
+    
+    initDTthreads();
+    
     // throttle==true  : a number of iterations per thread (DTthrottle) is applied before a second thread is utilized
     // throttle==false : parallel region is already pre-chunked such as in fread; e.g. two batches intended for two threads
     if (n<1) return 1; // 0 or negative could be deliberate in calling code for edge cases where loop is not intended to run at all

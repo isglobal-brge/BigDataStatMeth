@@ -10,18 +10,18 @@
 #' @param threads, threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 #' @return Lineal regression coefficients 
 #' @examples
-#' # with numeric matrix
 #' 
-#' library(BigDataStatMeth)
-#' data(mtcars)
+#' \dontrun{
+#'     library(BigDataStatMeth)
+#'     data(mtcars)
 #' 
-#' Y <- mtcars$mpg
-#' X <- model.matrix(~ wt + cyl, data=mtcars)
-#' m <- 7
+#'     Y <- mtcars$mpg
+#'     X <- model.matrix(~ wt + cyl, data=mtcars)
+#'     m <- 4
+#'     res <- bdlm_paral( X, Y, m, 1)
+#'     res
+#' }
 #' 
-#' 
-#' res <- bdlm_paral( X, Y, m, 1)
-#' res
 #' 
 bdlm_paral <- function( Y, model, blocks, threads = NULL)
 { 

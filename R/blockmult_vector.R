@@ -18,7 +18,7 @@
 #' k <- 100
 #' n <- 400
 #' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
-#' B <- sample(1:100,50, replace = TRUE);
+#' B <- sample(1:100,100, replace = TRUE);
 #' 
 #' res <- bdblockmult_vector(A, B, 128, TRUE)
 #' 
@@ -27,6 +27,9 @@ bdblockmult_vector <- function( A, b, block_size = 128, paral = TRUE, threads = 
 { 
    
    if(is.array(b) || is.vector(b)) {
+       if(length(b) !=  dim(A)[2]){
+           stop("Product can't be computed - vector length must be equal to the number of columns in A matrix")
+       }
       b <- matrix(b);
    } else if( is.matrix(b) && dim(b)[1]>1 && dim(b)[2]>1) {
       stop("b should be a vector not a matrix")

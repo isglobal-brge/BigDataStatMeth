@@ -41,7 +41,7 @@ This function performs a block matrix-vector multiplication with R-Objects or De
 k <- 100
 n <- 400
 A <- matrix(rnorm(n*k), nrow=n, ncol=k)
-B <- sample(1:100,50, replace = TRUE);
+B <- sample(1:100,100, replace = TRUE);
 
 res <- bdblockmult_vector(A, B, 128, TRUE)
 

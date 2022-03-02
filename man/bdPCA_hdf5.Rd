@@ -8,10 +8,12 @@ bdPCA_hdf5(
   filename,
   group,
   dataset,
+  ncomponents = 0L,
   bcenter = FALSE,
   bscale = FALSE,
   k = 2L,
   q = 1L,
+  rankthreshold = 0,
   force = FALSE,
   threads = NULL
 )
@@ -23,6 +25,8 @@ bdPCA_hdf5(
 
 \item{dataset}{string dataset name with data to perform PCA}
 
+\item{ncomponents}{integer, number of components to be computed, by default ncomponents = 0, all components are computed}
+
 \item{bcenter}{logical value if true data is centered to zero}
 
 \item{bscale}{logical value, if true data is scaled}
@@ -30,6 +34,10 @@ bdPCA_hdf5(
 \item{k}{number of local SVDs to concatenate at each level, performance parameter}
 
 \item{q}{number of levels to compute SVD for PCA, performance parameter}
+
+\item{rankthreshold}{double, threshold used to determine the range of the array. The matrix rank is equal to the number of
+singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
+changed to an approximation of 0.}
 
 \item{force}{logical value, if true, the SVD is forced to be computed although the SVD exists}
 

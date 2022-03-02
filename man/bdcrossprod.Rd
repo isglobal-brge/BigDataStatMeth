@@ -39,6 +39,6 @@ p <- 100
 Y <- matrix(rnorm(n*p), nrow=n)
 
 # With two matrices
-bdCrossprod(X,Y)
+res <- bdCrossprod(X,Y)
 
 }

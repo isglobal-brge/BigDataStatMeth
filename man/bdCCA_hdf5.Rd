@@ -13,7 +13,10 @@ bdCCA_hdf5(
   bscale = FALSE,
   bycols = FALSE,
   overwriteResults = FALSE,
-  keepInteResults = FALSE
+  keepInteResults = FALSE,
+  threads = 1,
+  k = 4,
+  q = 1
 )
 }
 \arguments{
@@ -34,6 +37,12 @@ bdCCA_hdf5(
 \item{overwriteResults, }{Boolean, if true, datasets existing inside a file must be overwritten if we are using the same names.}
 
 \item{keepInteResults, }{Boolean, if false, intermediate results will be removed.}
+
+\item{threads}{(optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.}
+
+\item{k}{(optional) number of local SVDs to concatenate at each level}
+
+\item{q}{(optional) number of levels}
 }
 \value{
 hdf5 data file with CCA results,

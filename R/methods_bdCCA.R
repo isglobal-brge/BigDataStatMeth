@@ -170,28 +170,20 @@ writeCCAComponents_hdf5 <- function(filename, ncolsX, ncolsY)
 #' @param bycols, Boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows.
 #' @param overwriteResults, Boolean, if true, datasets existing inside a file must be overwritten if we are using the same names.
 #' @param keepInteResults, Boolean, if false, intermediate results will be removed.
+#' @param threads (optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.
+#' @param k (optional) number of local SVDs to concatenate at each level 
+#' @param q (optional) number of levels
 #' @return hdf5 data file with CCA results, 
 #' @examples
 #'    print ("Example in vignette")
 #' 
-bdCCA_hdf5 <- function(filename, X, Y, m = 10, bcenter = TRUE, bscale = FALSE, bycols = FALSE, overwriteResults = FALSE, keepInteResults = FALSE)
+bdCCA_hdf5 <- function(filename, X, Y, m = 10, bcenter = TRUE, bscale = FALSE, bycols = FALSE, overwriteResults = FALSE, keepInteResults = FALSE, threads = 1, k = 4, q = 1)
 {
     
-    # if(file.exists(filename)){
-    #     if(overwritefile == FALSE ){
-    #         stop("File already exists, please set overwrite = TRUE if you want to remove previous file")
-    #     } else {
-    #         message("File will be overwritten")
-    #     }
-    # } 
-    
-    # if( bdgetDim_hdf5(filename, Y)[1] < (m * 2) |  bdgetDim_hdf5(filename, X)[2] < (m * 2) ) {
-    #     stop("m is too big for data size. Please set m to a small value")
-    # }
 
     matrices <- c(X, Y)
     sapply( matrices, getQRbyBlocks, file = filename, mblocks = m, center = bcenter, scale = bscale, bcols = bycols, overwrt = overwriteResults )
-
+    
     # Step 7
     #   tQXQY <- crossprod(t(QX), QY)[1:ncol(x), ]
     res <- bdCrossprod_hdf5(filename = filename, 
@@ -203,7 +195,7 @@ bdCCA_hdf5 <- function(filename, X, Y, m = 10, bcenter = TRUE, bscale = FALSE, b
     # z <- svd( tQXQY )
     res <- bdSVD_hdf5(file = filename, 
                       group = "Step7", dataset = "CrossProd_XQxYQ",
-                      bcenter = FALSE, bscale = FALSE, k = 16, q = 2, threads = 3)
+                      bcenter = FALSE, bscale = FALSE, k = k, q = q, threads = threads)
     
     res <- sapply( matrices, bdgetDim_hdf5, filename = filename )
     

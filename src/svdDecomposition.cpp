@@ -4,129 +4,174 @@
 // SVD decomposition 
 svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale )
 {
-  
-  svdeig retsvd;
-  Eigen::MatrixXd nX;
-  int nconv;
-  
-  if( k==0 )    k = (std::min(X.rows(), X.cols()))-1;
-  else if (k > (std::min(X.rows(), X.cols()))-1 ) k = (std::min(X.rows(), X.cols()))-1;
-  
-  if(ncv == 0)  ncv = k + 1 ;
-  if(ncv<k) ncv = k + 1;
-  
-  {
-    Eigen::MatrixXd Xtcp;
-    if(bcenter ==true || bscale == true)  {
-      nX = RcppNormalize_Data(X, bcenter, bscale);
-      Xtcp =  bdtcrossproduct(nX);
-    }else {
-      Xtcp =  bdtcrossproduct(X);
-    }
     
+    svdeig retsvd;
+    Eigen::MatrixXd nX;
+    int nconv;
     
-    Spectra::DenseSymMatProd<double> op(Xtcp);
-    Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigs(&op, k, ncv);
-
-    // Initialize and compute
-    eigs.init();
-    nconv = eigs.compute();
-
-    if(eigs.info() == Spectra::SUCCESSFUL)
+    if( k==0 )    k = (std::min(X.rows(), X.cols()))-1;
+    else if (k > (std::min(X.rows(), X.cols()))-1 ) k = (std::min(X.rows(), X.cols()))-1;
+    
+    if(ncv == 0)  ncv = k + 1 ;
+    if(ncv<k) ncv = k + 1;
+    
     {
-      retsvd.d = eigs.eigenvalues().cwiseSqrt();
-      retsvd.u = eigs.eigenvectors();
-      retsvd.bokuv = true;
-    } else {
-      retsvd.bokuv = false;
+        Eigen::MatrixXd Xtcp;
+        if(bcenter ==true || bscale == true)  {
+            nX = RcppNormalize_Data(X, bcenter, bscale);
+            Xtcp =  bdtcrossproduct(nX);
+        } else {
+            Xtcp =  bdtcrossproduct(X);
+        }
+        
+        Spectra::DenseSymMatProd<double> op(Xtcp);
+        Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigs(&op, k, ncv);
+        
+        // Initialize and compute
+        eigs.init();
+        nconv = eigs.compute();
+        
+        if(eigs.info() == Spectra::SUCCESSFUL) {
+            retsvd.d = eigs.eigenvalues().cwiseSqrt();
+            retsvd.u = eigs.eigenvectors();
+            retsvd.bokuv = true;
+        } else {
+            retsvd.bokuv = false;
+        }
     }
     
-  }
-  
-  if(retsvd.bokuv == true)
-  {
-    Eigen::MatrixXd Xcp;
-    if(bcenter ==true || bscale==true )  {
-      Xcp =  bdcrossproduct(nX);  
-    }else {
-      Xcp =  bdcrossproduct(X);
-    }  
-
-    Spectra::DenseSymMatProd<double> opv(Xcp);
-    Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigsv(&opv, k, ncv);
-    
-    // Initialize and compute
-    eigsv.init();
-    nconv = eigsv.compute();
-    
-    // Retrieve results
-    if(eigsv.info() == Spectra::SUCCESSFUL)
+    if(retsvd.bokuv == true)
     {
-      retsvd.v = eigsv.eigenvectors();
-    } else {
-      retsvd.bokd = false;
+        Eigen::MatrixXd Xcp;
+        if(bcenter ==true || bscale==true ) {
+            Xcp =  bdcrossproduct(nX);  
+        } else {
+            Xcp =  bdcrossproduct(X);
+        }  
+        
+        Spectra::DenseSymMatProd<double> opv(Xcp);
+        Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigsv(&opv, k, ncv);
+        
+        // Initialize and compute
+        eigsv.init();
+        nconv = eigsv.compute();
+        
+        // Retrieve results
+        if(eigsv.info() == Spectra::SUCCESSFUL) {
+            retsvd.v = eigsv.eigenvectors();
+        } else {
+            retsvd.bokd = false;
+        }
     }
     
-  }
-  
-  return retsvd;
+    return retsvd;
 }
 
 
 
 
 // Lapack SVD decomposition
-svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale, bool complete )
+svdeig RcppbdSVD_lapack_not_optim( Eigen::MatrixXd& X, bool bcenter, bool bscale, bool complete )
 {
-  
-  svdeig retsvd;
-  
-  char Schar='S';
-  char Achar='A';
-  int info = 0;
-  
-  
-   if(bcenter ==true || bscale == true)
-     X = RcppNormalize_Data(X, bcenter, bscale);
-  
-  int m = X.rows();
-  int n = X.cols();
-  int lda = std::max(1,m);
-  int ldu = std::max(1,m);
-  int ldvt = std::min(m, n);
-  int k = std::min(m,n);
-  int lwork;
-  
-  /*if(n>5*m)
+    
+    svdeig retsvd;
+    
+    char Schar='S';
+    char Achar='A';
+    int info = 0;
+    
+    
+    if(bcenter ==true || bscale == true) {
+        X = RcppNormalize_Data(X, bcenter, bscale);
+    }
+    
+    int m = X.rows();
+    int n = X.cols();
+    int lda = std::max(1,m);
+    int ldu = std::max(1,m);
+    int ldvt = std::min(m, n);
+    int k = std::min(m,n);
+    int lwork;
+    
+    /*if(n>5*m)
     lwork = std::max(1,5*std::min(m,n));
-  else
+    else
     lwork = std::max( 1, 4*std::min(m,n)* std::min(m,n) + 7*std::min(m, n) );
-  */
-  lwork = std::max( 5*std::min(m,n)+ std::max(m,n), 9*std::min(m, n) ); //.. ORIGINAL ..//
-  //..// lwork = std::max( 3*std::min(m,n)+ std::max(m,n), 5*std::min(m, n) ); //.. ORIGINAL ..//
-  
-
-  Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
-  Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);
-  Eigen::MatrixXd u;
-  Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
-
-  if( complete == false ){
-      u = Eigen::MatrixXd::Zero(ldu,k);
-      dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
-  } else {
-      u = Eigen::MatrixXd::Zero(ldu,m);
-      dgesvd_( &Achar, &Achar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
-      
-  }
-
-  retsvd.d = s;
-  retsvd.u = u;
-  retsvd.v = vt.transpose();
-  
-  return retsvd;
+    */
+    lwork = std::max( 5*std::min(m,n)+ std::max(m,n), 9*std::min(m, n) ); //.. ORIGINAL ..//
+    //..// lwork = std::max( 3*std::min(m,n)+ std::max(m,n), 5*std::min(m, n) ); //.. ORIGINAL ..//
+    
+    
+    Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
+    Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);
+    Eigen::MatrixXd u;
+    Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
+    
+    if( complete == false ) {
+        u = Eigen::MatrixXd::Zero(ldu,k);
+        dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
+    } else {
+        u = Eigen::MatrixXd::Zero(ldu,m);
+        dgesvd_( &Achar, &Achar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
+    }
+    
+    retsvd.d = s;
+    retsvd.u = u;
+    retsvd.v = vt.transpose();
+    
+    return retsvd;
 }
 
+
+
+// Lapack SVD decomposition - Optimized algorithm with dgesdd
+svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale, bool complete )
+{
+    
+    svdeig retsvd;
+    
+    char Schar='S';
+    char Achar='A';
+    int info = 0;
+    
+    if(bcenter ==true || bscale == true) {
+        X = RcppNormalize_Data(X, bcenter, bscale);
+    }
+    
+    int m = X.rows();
+    int n = X.cols();
+    int lda = std::max(1,m);
+    int ldu = std::max(1,m);
+    int ldvt = std::min(m, n);
+    int k = std::min(m,n);
+    int lwork;
+    
+    if( complete == false ) {
+        lwork = 4*std::min(m,n)*std::min(m,n) + 7*std::min(m,n);
+    } else {
+        lwork = 4*std::min(m,n)*std::min(m,n) + 6*std::min(m,n) + std::max(m,n);
+    }
+    
+    Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
+    Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);
+    Eigen::VectorXi iwork(8*std::min(m,n));
+    Eigen::MatrixXd u;
+    Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
+    
+    if( complete == false ) {
+        u = Eigen::MatrixXd::Zero(ldu,k);
+        dgesdd_( &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, iwork.data(), &info);
+    } else {
+        u = Eigen::MatrixXd::Zero(ldu,m);
+        dgesdd_( &Achar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, iwork.data(), &info);
+    }
+    
+    retsvd.d = s;
+    retsvd.u = u;
+    retsvd.v = vt.transpose();
+    
+    return retsvd;
+}
 
 
 
@@ -134,7 +179,7 @@ svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale, bool com
 // ##' @param k number of local SVDs to concatenate at each level 
 // ##' @param q number of levels
 svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int nev, bool bcenter, bool bscale, 
-                             int irows, int icols, Rcpp::Nullable<int> threads )
+                             int irows, int icols, double dthreshold, Rcpp::Nullable<int> threads = R_NilValue )
 {
   
   IntegerVector stride = IntegerVector::create(1, 1);
@@ -153,10 +198,10 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     if(irows >= icols)
       transp = true;
     
-    First_level_SvdBlock_decomposition_hdf5( file, dataset, k, q, nev, bcenter, bscale, irows, icols, threads);
+    First_level_SvdBlock_decomposition_hdf5( file, dataset, k, q, nev, bcenter, bscale, irows, icols, dthreshold, threads);
 
-    for(int j = 1; j < q; j++) { // For each decomposition level : 
-      Next_level_SvdBlock_decomposition_hdf5(file, strGroupName, k, j, bcenter, bscale, threads);
+    for(int j = 1; j < q; j++) { // For each decomposition level :
+        Next_level_SvdBlock_decomposition_hdf5(file, strGroupName, k, j, bcenter, bscale, dthreshold, threads);
     }
     
     // Get dataset names
@@ -173,9 +218,15 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
 
     Eigen::MatrixXd matlast;
     matlast = GetCurrentBlock_hdf5(file, &datasetlast, 0, 0, dims_out[0],dims_out[1]);
-
-    retsvd = RcppbdSVD_lapack(matlast, false, false, false);
     
+
+    if( nev < std::min( int(matlast.rows()), int(matlast.cols()) )) {
+        retsvd = RcppbdSVD(matlast, nev, 0, false, false);
+    } else {
+        retsvd = RcppbdSVD_lapack(matlast, false, false, false);
+    }
+    
+
     // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
     // Create structure and write d 
     StringVector name = get_dataset_names_from_dataset_ptr(dataset);
@@ -192,35 +243,47 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
 ***/ 
     DataSet* normalizedData;
     if( bcenter == true || bscale == true) {
-      normalizedData = new DataSet(file->openDataSet(strGroupName + "/normalmatrix"));
+        normalizedData = new DataSet(file->openDataSet(strGroupName + "/normalmatrix"));
     } else {
-      normalizedData = dataset;
+        normalizedData = dataset;
     }
     
     IntegerVector dims_out_normal = get_HDF5_dataset_size(*normalizedData);
     
     Eigen::MatrixXd A = GetCurrentBlock_hdf5_Original(file, normalizedData, 0, 0,dims_out_normal[0], dims_out_normal[1] );
-    v = Bblock_matrix_mul_parallel(A, retsvd.u, 1024, threads); // ABANS no PARALLEL
     normalizedData->close();
+    
+    v = Bblock_matrix_mul_parallel(A, retsvd.u, 1024, threads); // ABANS no PARALLEL
 
     // 4.- resuls / svdA$d
     v = v.array().rowwise()/(retsvd.d).transpose().array();
 
+    
     // 5.- Get u and v : 
     //        --> If trans : u=v i v=u  
     
+    // Simplified in next lines (24/02/2022)
+    //
+    // if (transp == true)  {
+    //     retsvd.v = retsvd.u;
+    //     retsvd.u = v;
+    // } else {
+    //     retsvd.v = v;
+    // }
+    // write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.u));
+    // write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.v));
+    //
+
+    
     if (transp == true)  {
-      retsvd.v = retsvd.u;
-      retsvd.u = v;
+        write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.v));
+        write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.u));
     } else {
-      retsvd.v = v;
+        write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.u));
+        write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.v));
     }
 
-
-    write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.u));
-    write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.v));
-    
-    // Remove group and normalmatrix dataset
+    // Clean data
     remove_HDF5_multiple_elements_ptr(file, strGroupName, "normalmatrix");
     remove_HDF5_element_ptr(file, strGroupName);
   
@@ -245,10 +308,14 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     // file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (Data TypeIException)" );
     return retsvd;
-  }catch(std::exception &ex) {
+  } catch(std::exception &ex) {
     file->close();
-    Rcpp::Rcout<< ex.what();
-  }
+    Rcpp::Rcout<< "C++ exception RcppbdSVD_hdf5_Block : "<< ex.what();
+  } catch (...) {
+      file->close();
+      ::Rf_error("C++ exception RcppbdSVD_hdf5_Block (unknown reason)");
+      return retsvd;
+  } 
   
   return retsvd;
 }
@@ -267,7 +334,8 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
 //  @param q number of levels
 //  
 svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::string strdataset,  
-                       int k, int q, int nev, bool bcenter, bool bscale, Rcpp::Nullable<int> ithreads = R_NilValue )
+                       int k, int q, int nev, bool bcenter, bool bscale, double dthreshold, 
+                       Rcpp::Nullable<int> ithreads = R_NilValue )
 {
   
   svdeig retsvd;
@@ -323,7 +391,7 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
       int xdim = (unsigned long long)dims_out[1];
       int ydim = (unsigned long long)dims_out[0];
       
-      retsvd = RcppbdSVD_hdf5_Block( file, dataset, k, q, nev, bcenter, bscale, xdim, ydim, wrap(ithreads));
+      retsvd = RcppbdSVD_hdf5_Block( file, dataset, k, q, nev, bcenter, bscale, xdim, ydim, dthreshold, wrap(ithreads));
 
     }
     
@@ -352,7 +420,8 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
 
 
 svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string strdataset,  
-                       int k, int q, int nev, bool bcenter, bool bscale, bool bstorehdf5, Rcpp::Nullable<int> ithreads = R_NilValue)
+                       int k, int q, int nev, bool bcenter, bool bscale, bool bstorehdf5, 
+                       double dthreshold, Rcpp::Nullable<int> ithreads = R_NilValue)
 {
   
   svdeig retsvd;
@@ -372,8 +441,7 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
       file->close();
       throw std::range_error("Dataset not exits"); 
     }
-    
-    
+
     // Get dataset dims
     IntegerVector dims_out = get_HDF5_dataset_size(dataset);
     
@@ -381,12 +449,12 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
     //..// hsize_t count[2] = {as<hsize_t>(dims_out[0]), as<hsize_t>(dims_out[1])};
     hsize_t count[2] = { (unsigned long long)dims_out[0], (unsigned long long)dims_out[1]};
     
-    
+
     // In memory computation for small matrices (rows or columns<5000)
     // Block decomposition for big mattrix
     if( std::max(dims_out[0], dims_out[1]) < MAXSVDBLOCK && bstorehdf5 == false )
     {
-      
+
       X = GetCurrentBlock_hdf5( file, &dataset, offset[0], offset[1], count[0], count[1]);
       X.transposeInPlace();
       
@@ -394,12 +462,11 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
       
     }
     else{
-      
+
       // data stored transposed in hdf5
       int xdim = (unsigned long long)dims_out[1];
       int ydim = (unsigned long long)dims_out[0];
-      
-      
+
       // Remove previous results
       if(exists_HDF5_element_ptr(file,"SVD/"+strdataset))
       {
@@ -407,10 +474,10 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
         remove_HDF5_element_ptr(file,"SVD/"+strdataset);
       }
       
-      retsvd = RcppbdSVD_hdf5_Block( file, &dataset, k, q, nev, bcenter, bscale, xdim, ydim, wrap(ithreads));
-      
-      
+      retsvd = RcppbdSVD_hdf5_Block( file, &dataset, k, q, nev, bcenter, bscale, xdim, ydim, dthreshold, wrap(ithreads) );
+
     }
+
   } catch(FileIException& error) { // catch failure caused by the H5File operations
     file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (File IException)" );
@@ -426,6 +493,12 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
   } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
     file->close();
     ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (Data TypeIException)" );
+  } catch(std::exception &ex) {
+      Rcpp::Rcout<<"c++ exception in RcppbdSVD_hdf5_ptr : "<< ex.what();
+      file->close();
+  } catch (...) {
+      file->close();
+      ::Rf_error("C++ exception RcppbdSVD_hdf5_ptr (unknown reason)");
   }
   
   
@@ -622,6 +695,9 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & X, Rcpp::Nullable<int> k=0, Rcpp::Nul
 //' @param q number of levels
 //' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
 //' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+//' @param rankthreshold double, threshold used to determine the range of the array. The matrix rank is equal to the number of
+//'  singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
+//'  changed to an approximation of 0.
 //' @param threads (optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.
 //' @return a list of three components with the singular values and left and right singular vectors of the matrix
 //' @return A List with : 
@@ -636,11 +712,13 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
                           Rcpp::Nullable<CharacterVector> dataset = R_NilValue,
                           Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
                           Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
+                          Rcpp::Nullable<double> rankthreshold = 0.0,
                           Rcpp::Nullable<int> threads = R_NilValue)
 {
   
   std::string filename;
   svdeig retsvd;
+  double dthreshold;
   
   try {
     
@@ -666,6 +744,20 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
     
     if(dataset.isNull())  strdataset = "";
     else    strdataset = Rcpp::as<std::string>(dataset);
+    
+    if(rankthreshold.isNull()) {  
+        dthreshold = 0 ;
+    } else {
+        if( Rcpp::as<double>(rankthreshold) > 0.1 ) {
+            Rcpp::Rcout<< "Threshold to big, please set threshold with value lower than 0.1";
+            return List::create(Named("file") = filename);
+        } else if( Rcpp::as<double>(rankthreshold) < 0 ) {
+            Rcpp::Rcout<< "Threshold must be a positive value near zero";
+            return List::create(Named("file") = filename);
+        } else {
+            dthreshold = Rcpp::as<double>(rankthreshold);
+        }
+    }
    
    /* 
     if(threads.isNull())  ithreads = std::thread::hardware_concurrency() - 1;
@@ -677,7 +769,7 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
       throw std::invalid_argument("File name must be character string");
 
       
-    retsvd = RcppbdSVD_hdf5( filename, as<std::string>(strgroup), as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, threads );
+    retsvd = RcppbdSVD_hdf5( filename, as<std::string>(strgroup), as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, threads );
     
     
   }catch(std::exception &ex) {
@@ -689,6 +781,8 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
   
 }
 
+
+/***
 
 //' Complete SVD with Lapack Functions for DelayedArray and RObjects
 //' 
@@ -708,22 +802,22 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
 //' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 //' 
 //' # svd without normalization
-//' decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
+//' decsvd <- bdSVD_lapack_not_optim( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 //' decsvd$d
 //' decsvd$u
 //' 
 //' # svd with normalization
-//' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
-//' decvsd <- bdSVD_lapack( A ) # Matrix normalization too
+//' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
+//' decvsd <- bdSVD_lapack_not_optim( A ) # Matrix normalization too
 //' decsvd$d
 //' decsvd$u
 //' 
 //' # svd with scaled matrix (sd)
-//' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
-//' 
+//' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,  Rcpp::Nullable<bool> complete=false )
+
+Rcpp::RObject bdSVD_lapack_not_optim ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,  Rcpp::Nullable<bool> complete=false )
 {
   auto dmtype = beachmat::find_sexp_type(X);
   bool bcent, bscal, bcomp;
@@ -761,5 +855,84 @@ Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true,
   return List::create(Named("d") = retsvd.d,
                       Named("u") = retsvd.u,
                       Named("v") = retsvd.v);
+}
+
+***/
+
+
+
+
+
+//' Complete SVD with Lapack Functions for DelayedArray and RObjects
+//' 
+//' This function performs a complete svd decomposition of numerical matrix or Delayed Array with 
+//' 
+//' @param X numerical or Delayed Array matrix
+//' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
+//' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+//' @param complete (optional, defalut = FALSE) . If complete is TRUE svd function returns complete u and v
+//' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
+//' @return v eigenvectors of A^tA, nxn orthogonal matrix
+//' @return d singular values, nxn diagonal matrix (non-negative real values)
+//' @examples
+//' 
+//' library(BigDataStatMeth)
+//' n <- 500
+//' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
+//' 
+//' # svd without normalization
+//' decsvd <- bdSVD_lapack_not_optim( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
+//' decsvd$d
+//' decsvd$u
+//' 
+//' # svd with normalization
+//' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
+//' decvsd <- bdSVD_lapack_not_optim( A ) # Matrix normalization too
+//' decsvd$d
+//' decsvd$u
+//' 
+//' # svd with scaled matrix (sd)
+//' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
+//' 
+//' @export
+// [[Rcpp::export]]
+Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,  Rcpp::Nullable<bool> complete=false )
+{
+    auto dmtype = beachmat::find_sexp_type(X);
+    bool bcent, bscal, bcomp;
+    
+    if(bcenter.isNull())  bcent = true ;
+    else    bcent = Rcpp::as<bool>(bcenter);
+    
+    if(bscale.isNull())  bscal = true ;
+    else    bscal = Rcpp::as<bool>(bscale);
+    
+    if(complete.isNull())  bcomp = false;
+    else    bcomp = Rcpp::as<bool>(complete);
+    
+    
+    Eigen::MatrixXd mX;
+    Rcpp::List ret;
+    
+    if ( dmtype == INTSXP || dmtype==REALSXP ) {
+        if ( X.isS4() == true){
+            mX = read_DelayedArray(X);
+        }else {
+            try{
+                mX = Rcpp::as<Eigen::MatrixXd >(X);
+            }catch(std::exception &ex) {
+                mX = Rcpp::as<Eigen::VectorXd >(X);
+            }
+        }
+        
+    } else {
+        throw std::runtime_error("unacceptable matrix type");
+    }
+    
+    svdeig retsvd =  RcppbdSVD_lapack( mX, bcent, bscal, bcomp);
+    
+    return List::create(Named("d") = retsvd.d,
+                        Named("u") = retsvd.u,
+                        Named("v") = retsvd.v);
 }
 

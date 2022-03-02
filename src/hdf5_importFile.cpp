@@ -267,7 +267,6 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
          bool btowrite;
          std::vector<std::string> strValues;
 
-      
          while( !inFile.eof()  )
          {
             
@@ -298,14 +297,20 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             if( counter>0 && (int)counter % (int)blockCounter == 0)
             {
                
-               offset[1] = counter - blockCounter;
-               count[1] = blockCounter;
+               // offset[1] = counter - blockCounter;
+               // count[1] = blockCounter;
+               
+                
+                count[1] = strBlockValues.size() / incols;
+               
                
                std::vector<double> doubleVector = get_data_as_Matrix(strBlockValues);
                
                double *p = doubleVector.data();
-               Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, blockCounter);
+               Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, strBlockValues.size() / incols );
                write_HDF5_matrix_subset_v2(file, datasetOut, offset, count, stride, block, wrap(resMat));
+               
+               offset[1] = offset[1] + (strBlockValues.size() / incols);
                
                // Clear Vector
                strBlockValues.clear();
@@ -323,27 +328,28 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
             
          }
          
-         if(counter - blockCounter <0){
-            offset[1] = 0;
-         }else {
-            offset[1] = (floor((counter-1) / blockCounter) * blockCounter);
-         }
+         // if(counter - blockCounter <0){
+         //    offset[1] = 0;
+         // }else {
+         //    offset[1] = (floor((counter-1) / blockCounter) * blockCounter);
+         // }
          
-         if(irows - (floor(irows/blockCounter)*blockCounter) == 0 && btowrite == true){
-            count[1] = blockCounter;
-         } else {
-            count[1] = irows - (floor(irows/blockCounter)*blockCounter);   
-         }
+
+         // if(irows - (floor(irows/blockCounter)*blockCounter) == 0 && btowrite == true){
+         //    count[1] = blockCounter;
+         // } else {
+            // count[1] = irows - (floor(irows/blockCounter)*blockCounter);
+            count[1] = strBlockValues.size() / incols;
+         // }
          
          if((irows - (floor(irows/blockCounter)*blockCounter)>0 && strBlockValues.size()>0) || btowrite == true)
          {
-            
             std::vector<double> doubleVector = get_data_as_Matrix(strBlockValues);
-            
             double *p = doubleVector.data();
+
             Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, count[1] );
             write_HDF5_matrix_subset_v2(file, datasetOut, offset, count, stride, block, wrap(resMat));
-            
+
          }
          
          if(as<bool>(rownames) == true || as<bool>(header) == true ) {
@@ -359,7 +365,6 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
              }
          }
           
-         
          datasetOut->close();
          file->close();
          
@@ -372,43 +377,35 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
       file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (File IException)" );
       return void();
-      //..// return(-1);
    } catch( GroupIException& error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (Group IException)" );
       return void();
-      //..// return(-1);
    } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
       datasetOut->close();
        file->close();
       ::Rf_error( "c++ exception Import_text_to_hdf5 (DataSet IException)" );
       return void();
-      //..// return(-1);
    } catch(const std::runtime_error& re) {
       // speciffic handling for runtime_error
       datasetOut->close();
        file->close();
       ::Rcerr << "Runtime error: " << re.what() << std::endl;
       return void();
-      //..// return(-1);
    } catch(const std::exception& ex) {
       // datasetOut->close();
       file->close();
       ::Rcerr << "Error occurred: " << ex.what() << std::endl;
       return void();
-      //..// return(-1);
    } catch(...) {
       // catch any other errors (that we have no information about)
       datasetOut->close();
        file->close();
       ::Rcerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
       return void();
-      //..// return(-1);
    }
    
-
-;
    Rcpp::Rcout<<"\n"<<outDataset<<" dataset has been imported successfully.\n";
    return void();
    //..// return(0);

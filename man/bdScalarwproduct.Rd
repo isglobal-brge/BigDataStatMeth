@@ -21,8 +21,6 @@ This function performs a weighted product of a matrix(X) with a weighted diagona
 }
 \examples{
 
-library(DelayedArray)
-
 n <- 100
 p <- 60
 
@@ -31,12 +29,5 @@ w <- 0.75
 
 bdScalarwproduct(X, w,"Xw")
 bdScalarwproduct(X, w,"wX")
-
-# with Delayed Array
-
-DX <- DelayedArray(X)
-
-bdScalarwproduct(DX, w,"Xw")
-bdScalarwproduct(DX, w,"wX")
 
 }

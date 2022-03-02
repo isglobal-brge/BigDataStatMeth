@@ -1,7 +1,7 @@
 Package: BigDataStatMeth
 Type: Package
 Title: Statistical Methods and Algorithms for Big Data
-Version: 0.99.22
+Version: 0.99.27
 Authors@R: 
     c(
         person( given = "Dolors", 
@@ -20,35 +20,20 @@ Description: Basic Algebra methods using parallel
     The functions will consider as input an HDF5 data file, an object of
     class DelayedArray or an R object.
 License: MIT + file LICENSE
-Depends: 
-  R (>= 3.6.0)
-Imports: 
-    data.table,
-    Rcpp (>= 1.0.6), 
-    RcppParallel (>= 5.0.2),
-    RCurl,
-    rhdf5,
-    utils
-LinkingTo: 
-    Rcpp,
-    RcppEigen,
-    RcppParallel,
-    beachmat,
-    Rhdf5lib,
-    RSpectra,
-    BH
-Suggests: 
-    HDF5Array,
-    DelayedArray,
-    Matrix,
-    BiocStyle,
-    knitr,
-    rmarkdown,
-    ggplot2,
-    microbenchmark
-SystemRequirements: 
-    GNU make, 
-    C++11
+Depends: R (>= 3.6.0)
+Imports: data.table, Rcpp (>= 1.0.6), RcppParallel (>= 5.0.2), RCurl,
+        rhdf5, utils
+LinkingTo: Rcpp, RcppEigen, RcppParallel, beachmat, Rhdf5lib, RSpectra,
+        BH
+Suggests: HDF5Array, DelayedArray, Matrix, BiocStyle, knitr, rmarkdown,
+        ggplot2, microbenchmark
+SystemRequirements: GNU make, C++11
 Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 7.1.2
+NeedsCompilation: yes
+Packaged: 2022-02-21 18:36:52 UTC; mailos
+Author: Dolors Pelegri-Siso [aut, cre]
+    (<https://orcid.org/0000-0002-5993-3003>),
+  Juan R. Gonzalez [aut] (<https://orcid.org/0000-0003-3267-2146>)
+Maintainer: Dolors Pelegri-Siso <dolors.pelegri@isglobal.org>

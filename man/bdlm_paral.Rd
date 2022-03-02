@@ -22,17 +22,17 @@ Lineal regression coefficients
 Linear regression for Big Data using MLR-MR algorithm to perform lm regression with big data :  https://isglobal-brge.github.io/Master_Modelling/dealing-with-big-data-in-r.html#linear-regression-for-big-data
 }
 \examples{
-# with numeric matrix
 
-library(BigDataStatMeth)
-data(mtcars)
+\dontrun{
+    library(BigDataStatMeth)
+    data(mtcars)
 
-Y <- mtcars$mpg
-X <- model.matrix(~ wt + cyl, data=mtcars)
-m <- 7
+    Y <- mtcars$mpg
+    X <- model.matrix(~ wt + cyl, data=mtcars)
+    m <- 4
+    res <- bdlm_paral( X, Y, m, 1)
+    res
+}
 
-
-res <- bdlm_paral( X, Y, m, 1)
-res
 
 }

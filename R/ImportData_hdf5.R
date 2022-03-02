@@ -25,17 +25,26 @@ bdImportData_hdf5 <- function( inFile, destFile, destGroup, destDataset, header 
     filename <- substr(inFile, regexpr("\\/[^\\/]*$", inFile)[1]+1, nchar(inFile)-nchar(extension)-1)
     importfile <- ""
     
-    if( url.exists(inFile))
-    {
-        download.file(url = inFile, destfile = paste0(getwd(), "/", filename, ".", extension))
-        inFile <- paste0(filename,".", extension)
-        
-    } else {
+    # if( url.exists(inFile))
+    # {
+    dfile <- try (download.file(url = inFile, destfile = paste0(getwd(), "/", filename, ".", extension)), TRUE)
+    if (inherits(dfile, "try-error")) {
         if(!file.exists(inFile)) {
             stop("File does not exists, please review the route")
         } 
+        
         importfile <- inFile
+        
+    } else {
+        inFile <- paste0(filename,".", extension)
     }
+        
+    # } else {
+    #     if(!file.exists(inFile)) {
+    #         stop("File does not exists, please review the route")
+    #     } 
+    #     importfile <- inFile
+    # }
     
     if(extension == "zip") {
         importfile <- unzip(inFile, list = TRUE )$Name[1]

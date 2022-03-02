@@ -46,10 +46,10 @@ void bdapply_Function_hdf5( std::string filename,
     DataSet* pbdataset = nullptr;
     Rcpp::StringVector str_bdatasets;
     std::string str_bgroup;
-    Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5};
+    Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5, 6};
     oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd",
                "invChol", "blockmult", "CrossProd_double", "tCrossProd_double",
-               "solve"});
+               "solve", "normalize"});
 
     try
     {
@@ -69,7 +69,7 @@ void bdapply_Function_hdf5( std::string filename,
         }
 
         if( b_datasets.isNotNull() &&  ( oper(oper.findName( func )) == 1 ||  oper(oper.findName( func )) == 2 ||  
-            oper(oper.findName( func )) == 4 ||  oper(oper.findName( func )) == 5) ) {
+            oper(oper.findName( func )) == 4 ||  oper(oper.findName( func )) == 5 ||  oper(oper.findName( func )) == 6) ) {
             
             //. 01/01/2022 . // if( as<Rcpp::StringVector>(b_datasets).size() != datasets.size() ){
             //. 01/01/2022 . //      Rcpp::Rcout<<"To perform matrix multiplication, CrossProd, tCrossProd or solve "<<
@@ -240,6 +240,16 @@ void bdapply_Function_hdf5( std::string filename,
                 write_HDF5_matrix_from_R_ptr(file, outputdataset, results, false);
                 pdataset->close();
                 
+            // } else if( oper(oper.findName( func )) == 6) {
+            // bdNormalize_Data()
+            //     Eigen::MatrixXd results = bdcrossproduct(original);    
+            //     write_HDF5_matrix_from_R_ptr(file, outgroup + "/" + datasets(i), Rcpp::wrap(results), false);
+            //     pdataset->close();
+            // 
+            //     
+            //     
+            //     
+            //     
             } else {
                 pdataset->close();
                 file->close();

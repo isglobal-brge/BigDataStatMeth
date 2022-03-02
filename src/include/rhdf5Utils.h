@@ -29,12 +29,22 @@
     const hsize_t MAXSTRBLOCK = 100000;
     const hsize_t MAXELEMSINBLOCK = 250000;
     
+    // Struct
+    struct fullpath {
+        std::string path ;
+        std::string datasetname ;
+    };
+    
     // a typedef for our managed H5File pointer
     typedef std::shared_ptr<H5::H5File> H5FilePtr;
+    
+    
+    // C++ functions :
     
     bool ResFileExist(const std::string& name);
     bool ResFileExist_filestream(std::string name);
     bool RemoveFile(std::string filename);
+    fullpath SplitElementName (const std::string& str);
     
     //..// extern "C" StringVector get_dataset_names_from_group( H5File* file, std::string strgroup);
     StringVector get_dataset_names_from_group( H5File* file, std::string strgroup, std::string strprefix);
@@ -50,8 +60,8 @@
     H5FilePtr Open_hdf5_file(const std::string& fname);
     extern "C" int create_HDF5_dataset(H5std_string filename, const std::string CDatasetName,
                                       const size_t rows, const size_t cols, std::string strdatatype);
-    extern "C" int create_HDF5_dataset_ptr(H5File* file, const std::string CDatasetName, 
-                                const size_t rows, const size_t cols, std::string strdatatype);
+    extern "C" int create_HDF5_dataset_ptr(H5File* file, const std::string CDatasetName,
+                                          const size_t rows, const size_t cols, std::string strdatatype);
     extern "C" int create_HDF5_unlimited_matrix_dataset_ptr(H5File* file, const std::string CDatasetName, 
                                           const size_t rows, const size_t cols, std::string strdatatype);
     extern "C" int create_HDF5_unlimited_vector_dataset_ptr(H5File* file, const std::string CDatasetName, 
@@ -101,4 +111,17 @@
     void create_hardLink( H5File* file, std::string original, std::string link);
 
 
+    
+    // R functions :
+    void bdCreate_hdf5_matrix_file( std::string filename, RObject object, Rcpp::Nullable<std::string> group, Rcpp::Nullable<std::string> dataset, 
+                                    Rcpp::Nullable<bool> transp, Rcpp::Nullable<bool> force );
+    void bdAdd_hdf5_matrix( RObject object, std::string filename, std::string group, std::string dataset, 
+                            Rcpp::Nullable<bool> transp, Rcpp::Nullable<bool> force );
+    void bdRemove_hdf5_element( std::string filename, std::string element);
+    void bdCreateLink_hdf5( std::string filename, std::string source, std::string dest);
+    void bdCreateGroup_hdf5( std::string filename, std::string group);
+    void bdCreateEmptyDataset_hdf5(std::string filename, std::string group, std::string dataset, 
+                                   int nrows, int ncols, Rcpp::Nullable<bool> overwrite);
+    Rcpp::RObject bdgetDim_hdf5( std::string filename, std::string element);
+    
 #endif

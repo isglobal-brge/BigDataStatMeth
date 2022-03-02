@@ -31,7 +31,6 @@
 
 
 // openme-utils.cpp functions
-static int getIntEnv(const char *name, int def);
 void initDTthreads();
 int getDTthreads(const int64_t n, const bool throttle);
 static const char *mygetenv(const char *name, const char *unset);

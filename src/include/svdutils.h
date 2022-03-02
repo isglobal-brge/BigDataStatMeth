@@ -9,8 +9,8 @@
     Eigen::VectorXd d;
     Eigen::MatrixXd u;
     Eigen::MatrixXd v;
-    bool bokuv;
-    bool bokd;
+    bool bokuv = false;
+    bool bokd = false;
     std::string hdf5file = "";
   };
 

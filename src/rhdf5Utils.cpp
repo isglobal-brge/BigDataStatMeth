@@ -262,42 +262,54 @@ extern "C" {
   // Create multiple group in hdf5 data file, groups must be separated by "/"
   int create_HDF5_groups_ptr( H5File* file, const H5std_string mGroup)
   {
-    try
-    {
-      Exception::dontPrint();
-      
-      std::string strgroup = mGroup;
-      std::string results = "";
-      vector<string> result; 
-      
-      boost::split(result, mGroup, boost::is_any_of("/")); 
-      
-      for (int i = 0; i < result.size(); i++) {
-        if(!pathExists( file->getId(), results + result[i])) 
-          file->createGroup(results + result[i]);
-        
-        results = result[i] + "/";
+      try
+      {
+          Exception::dontPrint();
+          
+          char * pch;
+          std::string strgroup = mGroup;
+          char*  cpgroup = &strgroup[0];
+          std::string results = "";
+          
+          pch = strtok(cpgroup, "/"); 
+          
+          while (pch != NULL)  
+          {  
+              if( results.compare("") == 0 ) {
+                  results = pch;
+              } else {
+                  results = results + "/" + pch;
+              }
+              
+              if(!pathExists( file->getId(), results )) {
+                  file->createGroup(results);
+              }
+              pch = strtok (NULL, "/");  
+          }  
+          
+      } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+          file->close();
+          ::Rf_error( "c++ exception create_HDF5_groups_ptr (File IException)" );
+          return -1;
+      } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
+          file->close();
+          ::Rf_error( "c++ exception create_HDF5_groups_ptr (DataSet IException)" );
+          return -1;
+      } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
+          file->close();
+          ::Rf_error( "c++ exception create_HDF5_groups_ptr (Group IException)" );
+          return -1;
+      } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+          file->close();
+          ::Rf_error( "c++ exception create_HDF5_groups_ptr (DataSpace IException)" );
+          return -1;
+      } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
+          file->close();
+          ::Rf_error( "c++ exception create_HDF5_groups_ptr (Data TypeIException)" );
+          return -1;
       }
-        
       
-    } catch(FileIException& error) { // catch failure caused by the H5File operations
-      ::Rf_error( "c++ exception create_HDF5_groups_ptr (File IException)" );
-      return -1;
-    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
-      ::Rf_error( "c++ exception create_HDF5_groups_ptr (DataSet IException)" );
-      return -1;
-    } catch(GroupIException& error) { // catch failure caused by the Group operations
-      ::Rf_error( "c++ exception create_HDF5_groups_ptr (Group IException)" );
-      return -1;
-    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-      ::Rf_error( "c++ exception create_HDF5_groups_ptr (DataSpace IException)" );
-      return -1;
-    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
-      ::Rf_error( "c++ exception create_HDF5_groups_ptr (Data TypeIException)" );
-      return -1;
-    }
-    
-    return 0;
+      return 0;
   }
   
   
@@ -434,6 +446,7 @@ extern "C" {
   }
   
   
+
   
   /* Create empty dataset in hdf5 file (pointer to file) */
   int create_HDF5_dataset_ptr(H5File* file, const std::string CDatasetName, 
@@ -2104,6 +2117,18 @@ H5FilePtr Open_hdf5_file(const std::string& fname)
 //' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 //' @param force, optional boolean if true and file exists, removes old file and creates a new file with de dataset data.
 //' @return none
+//' 
+//' @examples
+//' 
+//' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+//' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+//' 
+//' # Remove file (used as example)
+//'   if (file.exists("BasicMatVect.hdf5")) {
+//'     # Delete file if it exist
+//'     file.remove("BasicMatVect.hdf5")
+//'   }
+//' 
 //' @export
 // [[Rcpp::export]]
 void bdCreate_hdf5_matrix_file(std::string filename, RObject object, 
@@ -2122,7 +2147,6 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
     
     if(group.isNull())  strsubgroup = "INPUT" ;
     else    strsubgroup = Rcpp::as<std::string>(group);
-    
 
     if(dataset.isNull())  strdataset = "A" ;
     else    strdataset = Rcpp::as<std::string>(dataset);
@@ -2135,8 +2159,7 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
     
     if ( object.sexp_type()==0   )
       throw std::range_error("Data matrix must exsits and mustn't be null");
-    
-    
+
     CharacterVector svrows, svrcols;
     List dimnames;
     
@@ -2145,6 +2168,7 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
             RemoveFile(filename);
         } else {
             Rcpp::Rcout<<"\n File already exits, please set force = TRUE if you want to overwrite the old file";
+            return void();
         }
     } 
     
@@ -2185,9 +2209,6 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
     // Write dimnaes from RObject to hdf5 data file
     if( (dimnames.size()>0) && (!Rf_isNull(dimnames)) ) {
       
-      //..// Rcpp::Rcout<<"\n Dimnames [1] : "<<Rf_isNull(dimnames[1])<<"\n";
-      //..// Rcpp::Rcout<<"\n Dimnames [0] : "<<Rf_isNull(dimnames[0])<<"\n";
-      
       if(!Rf_isNull(dimnames[1]) ){  svrcols = dimnames[1]; }
       if(!Rf_isNull(dimnames[0]) ){ svrows = dimnames[0]; }
 
@@ -2197,33 +2218,32 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
       }else{
         write_hdf5_matrix_dimnames(file, strsubgroup, strdataset, svrcols, svrows );
       }
-      
     }
 
-    // Read dimnames and colnames from hdf5 data file (working ok)
-    //..// StringVector rownames,colnames;
-    //..// rownames = get_hdf5_matrix_dimnames(&file, strdataset, 1);
-    //..// colnames = get_hdf5_matrix_dimnames(&file, strsubgroup, strdataset, 2);
-    
   } catch(FileIException& error) { // catch failure caused by the H5File operations
+      file->close();
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (File IException)" );
-    //..// return(wrap(-1));
+      return void();
   } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+      file->close();
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (DataSet IException)" );
-    //..// return(wrap(-1));
+      return void();
   } catch(GroupIException& error) { // catch failure caused by the Group operations
+      file->close();
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (Group IException)" );
-    //..// return(wrap(-1));
+      return void();
   } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+      file->close();
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (DataSpace IException)" );
-    //..// return(wrap(-1));
+      return void();
   } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+      file->close();
     ::Rf_error( "c++ exception Create_hdf5_matrix_file (Data TypeIException)" );
-    //..// return(wrap(-1));
+      return void();
   }
   file->close();
   Rcpp::Rcout<<"\nFile and dataset has been created\n";
-  //..// return(wrap(0));
+  return void();
 
 }
 
@@ -2239,13 +2259,29 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
 //' @param transp, boolean if true, data is manipulated in transposed form
 //' @param force, optional boolean if true and file exists, removes old file and creates a new file with de dataset data.
 //' @return none
+//' 
+//' @examples
+//' 
+//' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+//' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+//'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
+//'                    
+//' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+//' bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+//' 
+//' # Remove file (used as example)
+//'   if (file.exists("BasicMatVect.hdf5")) {
+//'     # Delete file if it exist
+//'     file.remove("BasicMatVect.hdf5")
+//'   }
+//' 
 //' @export
 // [[Rcpp::export]]
-    void bdAdd_hdf5_matrix(RObject object, 
-                           std::string filename, 
-                           std::string group, std::string dataset, 
-                           Rcpp::Nullable<bool> transp = R_NilValue, 
-                           Rcpp::Nullable<bool> force = false )
+void bdAdd_hdf5_matrix(RObject object, 
+                       std::string filename, 
+                       std::string group, std::string dataset, 
+                       Rcpp::Nullable<bool> transp = R_NilValue, 
+                       Rcpp::Nullable<bool> force = false )
 {
     
   H5File* file;
@@ -2362,6 +2398,25 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
 //' @param element path to element, character array indicating the complete route to the element to be removed (folder or dataset). 
 //' @return none
 //' @export
+//' 
+//' @examples
+//' 
+//' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+//' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+//'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
+//'                    
+//' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+//' bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+//' 
+//' bdRemove_hdf5_element("BasicMatVect.hdf5", "INPUT/matA")
+//' 
+//' 
+//' # Remove file (used as example)
+//'   if (file.exists("BasicMatVect.hdf5")) {
+//'     # Delete file if it exist
+//'     file.remove("BasicMatVect.hdf5")
+//'   }
+//' 
 // [[Rcpp::export]]
 void bdRemove_hdf5_element(std::string filename, std::string element)
 {
@@ -2553,6 +2608,20 @@ IntegerVector get_HDF5_dataset_size(DataSet dataset)
 //' @param filename, character array indicating the name of the file to create
 //' @param element path to element, character array indicating the complete route to the element to query size (folder or dataset). 
 //' @return none
+//' 
+//' @examples
+//' 
+//' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+//' 
+//' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+//' bdgetDim_hdf5("BasicMatVect.hdf5", "INPUT/matA")
+//' 
+//' # Remove file (used as example)
+//'   if (file.exists("BasicMatVect.hdf5")) {
+//'     # Delete file if it exist
+//'     file.remove("BasicMatVect.hdf5")
+//'   }
+//'   
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdgetDim_hdf5(std::string filename, std::string element)
@@ -2567,7 +2636,7 @@ Rcpp::RObject bdgetDim_hdf5(std::string filename, std::string element)
       // int res;
       
       if(!ResFileExist(filename))
-          throw std::range_error("File not exits, create file before query datasett");
+          throw std::range_error("File not exits, create file before query dataset");
       
       file = new H5File( filename, H5F_ACC_RDWR );
       
@@ -2690,16 +2759,221 @@ void create_symLink( H5File* file, std::string original, std::string link)
       return void();
   }
 
-  
-/*** TODO : 
- * Write slots
- *  Slot : path
- *  Objects ? Matrixs inside file??
- *  Size : Size of each object
- *  
- * Write all data inside a list for each object ??!!!
-*/
-  
+
+//' Create hard link between two datasets
+//'
+//' Create hard link between two datasets 
+//' 
+//' @param filename, character array indicating the name of the file to create
+//' @param source, string with route to source dataset
+//' @param dest, string with route to destination dataset
+//' @return none
+//' @export
+// [[Rcpp::export]]
+void bdCreateLink_hdf5(std::string filename, std::string source, std::string dest)
+{
+    
+    H5File* file = nullptr;
+    
+    try
+    {
+        if(!ResFileExist(filename))
+            throw std::range_error("File not exits, create file before query dataset");
+        
+        file = new H5File( filename, H5F_ACC_RDWR );
+        
+        if(!exists_HDF5_element_ptr(file, source)) {
+            file->close();
+            throw std::range_error("Element not exits");
+        } else {
+            create_hardLink( file, source, dest);
+        }
+        
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
+        file->close();
+        ::Rf_error( "c++ exception bdCreateLink_hdf5 (File IException)" );
+        return void();
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+        file->close();
+        ::Rf_error( "c++ exception bdCreateLink_hdf5 (DataSet IException)" );
+        return void();
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
+        file->close();
+        ::Rf_error( "c++ exception bdCreateLink_hdf5 (Group IException)" );
+        return void();
+    } 
+    
+    file->close();
+    return void();
+    
+}
+
+
+//' Create groups
+//'
+//' Create groups in hdf5 data file
+//' 
+//' @param filename, character array indicating the name of the file to create
+//' @param group, string with the name for the new group (complete route)
+//' @return none
+//' @export
+//' 
+//' @examples
+//' 
+//' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+//' 
+//' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA", force = TRUE)
+//' bdCreateGroup_hdf5("BasicMatVect.hdf5", "INPUT/NEWGROUP")
+//' bdCreateGroup_hdf5("BasicMatVect.hdf5", "NEWGROUP2")
+//' 
+//' # Remove file (used as example)
+//'   if (file.exists("BasicMatVect.hdf5")) {
+//'     # Delete file if it exist
+//'     file.remove("BasicMatVect.hdf5")
+//'   }
+//' 
+// [[Rcpp::export]]
+void bdCreateGroup_hdf5(std::string filename, std::string group)
+{
+    
+    H5File* file = nullptr;
+    
+    try
+    {
+        if(!ResFileExist(filename))
+            throw std::range_error("File not exits, create file before query dataset");
+        
+        file = new H5File( filename, H5F_ACC_RDWR );
+        
+        if(exists_HDF5_element_ptr(file, group)) {
+            file->close();
+            throw std::range_error("Element also exits");
+        } else {
+            create_HDF5_groups_ptr( file, group);
+        }
+        
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
+        file->close();
+        ::Rf_error( "c++ exception bdCreateGroup_hdf5 (File IException)" );
+        return void();
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+        file->close();
+        ::Rf_error( "c++ exception bdCreateGroup_hdf5 (DataSet IException)" );
+        return void();
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
+        file->close();
+        ::Rf_error( "c++ exception bdCreateGroup_hdf5 (Group IException)" );
+        return void();
+    } 
+    
+    file->close();
+    return void();
+    
+}
+
+
+
+//' Create groups
+//'
+//' Create groups in hdf5 data file
+//' 
+//' @param filename, character array indicating the name of the file to create
+//' @param group, string with name of the group where the new dataset will be created
+//' @param dataset, string with name for the new dataset
+//' @param nrows, integer with the number of rows for the new dataset
+//' @param ncols, integer with the number of columns for the new dataset
+//' @param overwrite, optional boolean if true datasets exists, replaces old dataset with a new empty dataset
+//' @return none
+//' 
+//' @examples
+//' 
+//' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+//' 
+//' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+//' 
+//' bdCreateEmptyDataset_hdf5("BasicMatVect.hdf5", "INPUT", "EmptyMat", 100, 10)
+//' 
+//' 
+//' # Remove file (used as example)
+//'   if (file.exists("BasicMatVect.hdf5")) {
+//'     # Delete file if it exist
+//'     file.remove("BasicMatVect.hdf5")
+//'   }
+//'   
+//' @export
+// [[Rcpp::export]]
+void bdCreateEmptyDataset_hdf5(std::string filename, std::string group, std::string dataset, 
+                               int nrows, int ncols, Rcpp::Nullable<bool> overwrite = false)
+{
+    
+    H5File* file = nullptr;
+    bool boverwrite;
+    
+    try
+    {
+        if(overwrite.isNull())  boverwrite = false ;
+        else    boverwrite = Rcpp::as<bool>(overwrite);
+        
+        if(!ResFileExist(filename))
+            throw std::range_error("File not exits, create file before query dataset");
+        
+        file = new H5File( filename, H5F_ACC_RDWR );
+        
+        if(!exists_HDF5_element_ptr(file, group)) {
+            create_HDF5_groups_ptr( file, group);
+        } else{
+            //Test if exists dataset
+            if(exists_HDF5_element_ptr(file, group + "/" + dataset)) {
+                if( boverwrite == true ) {
+                    Rcpp::Rcout<<"Element also exits, dataset will be overwritten";
+                } else {
+                    file->close();
+                    Rcpp::Rcout<<"Element also exits, please remove dataset or set overwrite = TRUE";    
+                    return void();
+                }
+            }
+        }
+        
+        create_HDF5_dataset_ptr(file, group + "/" + dataset, ncols, nrows, "real");
+        
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
+        file->close();
+        ::Rf_error( "c++ exception bdCreateEmptyDataset_hdf5 (File IException)" );
+        return void();
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
+        file->close();
+        ::Rf_error( "c++ exception bdCreateEmptyDataset_hdf5 (Group IException)" );
+        return void();
+    } 
+    
+    file->close();
+    Rcpp::Rcout<<"\nDataset has been created\n";
+    return void();
+    
+}
+
+
+
+
+fullpath SplitElementName (const std::string& str)
+{
+    
+    fullpath currentpath;
+    std::size_t found = str.find_last_of("/\\");
+    
+    if( found< str.length() ) {
+        currentpath.datasetname =  str.substr(found+1);
+        currentpath.path = str.substr(0,found);
+    }else {
+        currentpath.datasetname = str;
+        currentpath.path = "";
+    }
+    
+    return(currentpath);
+}
+
+
+
 
 /***R
 

@@ -26,7 +26,7 @@
 #' Y <- matrix(rnorm(n*p), nrow=n)
 #' 
 #' # With two matrices
-#' bdCrossprod(X,Y)
+#' res <- bdCrossprod(X,Y)
 #' 
 bdCrossprod <- function( A, B = NULL, block_size = 256, paral = TRUE, threads = NULL)
 { 

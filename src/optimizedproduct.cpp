@@ -343,8 +343,6 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op)
 //' @return numerical matrix 
 //' @examples
 //' 
-//' library(DelayedArray)
-//' 
 //' n <- 100
 //' p <- 60
 //' 
@@ -353,13 +351,6 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op)
 //' 
 //' bdScalarwproduct(X, w,"Xw")
 //' bdScalarwproduct(X, w,"wX")
-//' 
-//' # with Delayed Array
-//' 
-//' DX <- DelayedArray(X)
-//' 
-//' bdScalarwproduct(DX, w,"Xw")
-//' bdScalarwproduct(DX, w,"wX")
 //' 
 //' @export
 // [[Rcpp::export]]

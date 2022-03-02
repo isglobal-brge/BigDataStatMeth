@@ -377,16 +377,20 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' @param filename string, file name where dataset is stored 
 #' @param group string group name  where dataset is stored in file
 #' @param dataset string dataset name with data to perform PCA
+#' @param ncomponents integer, number of components to be computed, by default ncomponents = 0, all components are computed
 #' @param bcenter logical value if true data is centered to zero
 #' @param bscale logical value, if true data is scaled
 #' @param k number of local SVDs to concatenate at each level, performance parameter 
 #' @param q number of levels to compute SVD for PCA, performance parameter
+#' @param rankthreshold double, threshold used to determine the range of the array. The matrix rank is equal to the number of
+#'  singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
+#'  changed to an approximation of 0.
 #' @param force logical value, if true, the SVD is forced to be computed although the SVD exists
 #' @param threads integer number of threads used to run PCA
 #' @return original file with results in folder PCA/<datasetname>
 #' @export
-bdPCA_hdf5 <- function(filename, group, dataset, bcenter = FALSE, bscale = FALSE, k = 2L, q = 1L, force = FALSE, threads = NULL) {
-    .Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, k, q, force, threads)
+bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FALSE, bscale = FALSE, k = 2L, q = 1L, rankthreshold = 0.0, force = FALSE, threads = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, force, threads))
 }
 
 #' Reduce hdf5 dataset
@@ -521,8 +525,6 @@ bdwproduct <- function(X, w, op) {
 #' @return numerical matrix 
 #' @examples
 #' 
-#' library(DelayedArray)
-#' 
 #' n <- 100
 #' p <- 60
 #' 
@@ -531,13 +533,6 @@ bdwproduct <- function(X, w, op) {
 #' 
 #' bdScalarwproduct(X, w,"Xw")
 #' bdScalarwproduct(X, w,"wX")
-#' 
-#' # with Delayed Array
-#' 
-#' DX <- DelayedArray(X)
-#' 
-#' bdScalarwproduct(DX, w,"Xw")
-#' bdScalarwproduct(DX, w,"wX")
 #' 
 #' @export
 bdScalarwproduct <- function(A, w, op) {
@@ -696,6 +691,18 @@ bddtrsm <- function(R, Z, threads = NULL) {
 #' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 #' @param force, optional boolean if true and file exists, removes old file and creates a new file with de dataset data.
 #' @return none
+#' 
+#' @examples
+#' 
+#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#' 
+#' # Remove file (used as example)
+#'   if (file.exists("BasicMatVect.hdf5")) {
+#'     # Delete file if it exist
+#'     file.remove("BasicMatVect.hdf5")
+#'   }
+#' 
 #' @export
 bdCreate_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = NULL, transp = NULL, force = NULL) {
     invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_matrix_file', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp, force))
@@ -712,6 +719,22 @@ bdCreate_hdf5_matrix_file <- function(filename, object, group = NULL, dataset = 
 #' @param transp, boolean if true, data is manipulated in transposed form
 #' @param force, optional boolean if true and file exists, removes old file and creates a new file with de dataset data.
 #' @return none
+#' 
+#' @examples
+#' 
+#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+#' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+#'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
+#'                    
+#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#' bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#' 
+#' # Remove file (used as example)
+#'   if (file.exists("BasicMatVect.hdf5")) {
+#'     # Delete file if it exist
+#'     file.remove("BasicMatVect.hdf5")
+#'   }
+#' 
 #' @export
 bdAdd_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL, force = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdAdd_hdf5_matrix', PACKAGE = 'BigDataStatMeth', object, filename, group, dataset, transp, force))
@@ -725,6 +748,25 @@ bdAdd_hdf5_matrix <- function(object, filename, group, dataset, transp = NULL, f
 #' @param element path to element, character array indicating the complete route to the element to be removed (folder or dataset). 
 #' @return none
 #' @export
+#' 
+#' @examples
+#' 
+#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+#' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+#'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
+#'                    
+#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#' bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#' 
+#' bdRemove_hdf5_element("BasicMatVect.hdf5", "INPUT/matA")
+#' 
+#' 
+#' # Remove file (used as example)
+#'   if (file.exists("BasicMatVect.hdf5")) {
+#'     # Delete file if it exist
+#'     file.remove("BasicMatVect.hdf5")
+#'   }
+#' 
 bdRemove_hdf5_element <- function(filename, element) {
     invisible(.Call('_BigDataStatMeth_bdRemove_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, element))
 }
@@ -736,9 +778,95 @@ bdRemove_hdf5_element <- function(filename, element) {
 #' @param filename, character array indicating the name of the file to create
 #' @param element path to element, character array indicating the complete route to the element to query size (folder or dataset). 
 #' @return none
+#' 
+#' @examples
+#' 
+#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+#' 
+#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#' bdgetDim_hdf5("BasicMatVect.hdf5", "INPUT/matA")
+#' 
+#' # Remove file (used as example)
+#'   if (file.exists("BasicMatVect.hdf5")) {
+#'     # Delete file if it exist
+#'     file.remove("BasicMatVect.hdf5")
+#'   }
+#'   
 #' @export
 bdgetDim_hdf5 <- function(filename, element) {
     .Call('_BigDataStatMeth_bdgetDim_hdf5', PACKAGE = 'BigDataStatMeth', filename, element)
+}
+
+#' Create hard link between two datasets
+#'
+#' Create hard link between two datasets 
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param source, string with route to source dataset
+#' @param dest, string with route to destination dataset
+#' @return none
+#' @export
+bdCreateLink_hdf5 <- function(filename, source, dest) {
+    invisible(.Call('_BigDataStatMeth_bdCreateLink_hdf5', PACKAGE = 'BigDataStatMeth', filename, source, dest))
+}
+
+#' Create groups
+#'
+#' Create groups in hdf5 data file
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, string with the name for the new group (complete route)
+#' @return none
+#' @export
+#' 
+#' @examples
+#' 
+#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+#' 
+#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA", force = TRUE)
+#' bdCreateGroup_hdf5("BasicMatVect.hdf5", "INPUT/NEWGROUP")
+#' bdCreateGroup_hdf5("BasicMatVect.hdf5", "NEWGROUP2")
+#' 
+#' # Remove file (used as example)
+#'   if (file.exists("BasicMatVect.hdf5")) {
+#'     # Delete file if it exist
+#'     file.remove("BasicMatVect.hdf5")
+#'   }
+#' 
+bdCreateGroup_hdf5 <- function(filename, group) {
+    invisible(.Call('_BigDataStatMeth_bdCreateGroup_hdf5', PACKAGE = 'BigDataStatMeth', filename, group))
+}
+
+#' Create groups
+#'
+#' Create groups in hdf5 data file
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, string with name of the group where the new dataset will be created
+#' @param dataset, string with name for the new dataset
+#' @param nrows, integer with the number of rows for the new dataset
+#' @param ncols, integer with the number of columns for the new dataset
+#' @param overwrite, optional boolean if true datasets exists, replaces old dataset with a new empty dataset
+#' @return none
+#' 
+#' @examples
+#' 
+#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+#' 
+#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#' 
+#' bdCreateEmptyDataset_hdf5("BasicMatVect.hdf5", "INPUT", "EmptyMat", 100, 10)
+#' 
+#' 
+#' # Remove file (used as example)
+#'   if (file.exists("BasicMatVect.hdf5")) {
+#'     # Delete file if it exist
+#'     file.remove("BasicMatVect.hdf5")
+#'   }
+#'   
+#' @export
+bdCreateEmptyDataset_hdf5 <- function(filename, group, dataset, nrows, ncols, overwrite = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdCreateEmptyDataset_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, nrows, ncols, overwrite))
 }
 
 #' Solve matrix equations
@@ -845,6 +973,9 @@ bdSVD <- function(X, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
 #' @param q number of levels
 #' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
 #' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+#' @param rankthreshold double, threshold used to determine the range of the array. The matrix rank is equal to the number of
+#'  singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
+#'  changed to an approximation of 0.
 #' @param threads (optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.
 #' @return a list of three components with the singular values and left and right singular vectors of the matrix
 #' @return A List with : 
@@ -854,8 +985,8 @@ bdSVD <- function(X, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
 #'   \item{"v"}{ singular values, nxn diagonal matrix (non-negative real values) }
 #' }
 #' @export
-bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, threads = NULL) {
-    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, threads)
+bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, threads = NULL) {
+    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, rankthreshold, threads)
 }
 
 #' Complete SVD with Lapack Functions for DelayedArray and RObjects
@@ -876,18 +1007,18 @@ bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcent
 #' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 #' 
 #' # svd without normalization
-#' decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
+#' decsvd <- bdSVD_lapack_not_optim( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with normalization
-#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
-#' decvsd <- bdSVD_lapack( A ) # Matrix normalization too
+#' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
+#' decvsd <- bdSVD_lapack_not_optim( A ) # Matrix normalization too
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with scaled matrix (sd)
-#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
+#' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 #' 
 #' @export
 bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE, complete = FALSE) {

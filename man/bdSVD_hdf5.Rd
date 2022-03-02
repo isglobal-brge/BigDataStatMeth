@@ -12,6 +12,7 @@ bdSVD_hdf5(
   q = 1L,
   bcenter = TRUE,
   bscale = TRUE,
+  rankthreshold = 0,
   threads = NULL
 )
 }
@@ -29,6 +30,10 @@ bdSVD_hdf5(
 \item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.}
 
 \item{bscale}{(optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.}
+
+\item{rankthreshold}{double, threshold used to determine the range of the array. The matrix rank is equal to the number of
+singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
+changed to an approximation of 0.}
 
 \item{threads}{(optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.}
 }

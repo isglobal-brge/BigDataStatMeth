@@ -22,11 +22,6 @@
   // functions called from R
   Rcpp::RObject bdNormalize_Data(Rcpp::RObject & X, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<bool> bcenter);
   
-  /**Rcpp::RObject Normalize_hdf5(std::string filename, std::string group, std::string dataset, 
-                               Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale,
-                               Rcpp::Nullable<int> wsize); **/
-  
-
 #endif
 
 
