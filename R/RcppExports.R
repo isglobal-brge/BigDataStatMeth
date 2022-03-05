@@ -1007,18 +1007,18 @@ bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcent
 #' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 #' 
 #' # svd without normalization
-#' decsvd <- bdSVD_lapack_not_optim( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
+#' decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with normalization
-#' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
-#' decvsd <- bdSVD_lapack_not_optim( A ) # Matrix normalization too
+#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
+#' decvsd <- bdSVD_lapack( A ) # Matrix normalization too
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with scaled matrix (sd)
-#' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
+#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 #' 
 #' @export
 bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE, complete = FALSE) {
