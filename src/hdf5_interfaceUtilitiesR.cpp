@@ -18,7 +18,7 @@ using namespace Rcpp;
 Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix = R_NilValue)
 {
     
-    H5File* file;
+    H5File* file = nullptr;
     StringVector groupDatasets;
     
     try

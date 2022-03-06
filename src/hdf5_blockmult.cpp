@@ -33,7 +33,7 @@ Rcpp::RObject blockmult_hdf5(std::string filename,
   bool bparal, bexistgroup;// = Rcpp::as<double>;
   Eigen::MatrixXd C;
   
-  H5File* file;
+  H5File* file = nullptr;
   
   std::string strsubgroupOut, strdatasetOut;
 

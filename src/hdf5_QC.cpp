@@ -201,7 +201,7 @@ Rcpp::RObject bdRemovelowdata( std::string filename, std::string group, std::str
                          Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> bycols )
 {
   
-  H5File* file;
+  H5File* file = nullptr;
   int iremoved = 0;
     
   try

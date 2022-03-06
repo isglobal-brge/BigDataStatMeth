@@ -164,7 +164,7 @@ Rcpp::RObject bdremove_maf_hdf5( std::string filename, std::string group, std::s
                                Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<int> blocksize )
 {
   
-  H5File* file;
+  H5File* file = nullptr;
   int iremoved = 0;
   int iblocksize = 100;
   

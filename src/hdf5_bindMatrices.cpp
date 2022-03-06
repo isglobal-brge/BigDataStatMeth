@@ -29,7 +29,7 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                            Rcpp::Nullable<bool> force = false )
 {
     
-    H5File* file;
+    H5File* file = nullptr;
     DataSet* pdataset = nullptr;
     DataSet* unlimDataset = nullptr;
     Rcpp::NumericVector oper = {0, 1};

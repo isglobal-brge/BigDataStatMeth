@@ -21,16 +21,20 @@ int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA,
   
   int N = sizeA[1];
   int K = sizeA[0];
-  
-  
   int M = sizeB[1];
   int L = sizeB[0];
   
   IntegerVector stride = {1,1};
   IntegerVector block = {1,1};
   
+  H5File* file = nullptr;
+  DataSet* datasetA = nullptr;
+  DataSet* datasetB = nullptr;
+  DataSet* datasetC = nullptr;
+  
   if( K == L)
   {
+      
     int isize = hdf5_block + 1;
     int ksize = hdf5_block + 1;
     int jsize = hdf5_block + 1;
@@ -43,11 +47,12 @@ int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA,
     create_HDF5_dataset( filename, strsubgroupOUT + "tCrossProd_" + matA + "x" + matB, M, N, "real");
 
     // Open file and get dataset
-    H5File* file = new H5File( filename, H5F_ACC_RDWR );
+    file = new H5File( filename, H5F_ACC_RDWR );
     
-    DataSet* datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
-    DataSet* datasetB = new DataSet(file->openDataSet(strsubgroupINB + matB));
-    DataSet* datasetC = new DataSet(file->openDataSet(strsubgroupOUT + "tCrossProd_" + matA + "x" + matB));
+    datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
+    datasetB = new DataSet(file->openDataSet(strsubgroupINB + matB));
+    datasetC = new DataSet(file->openDataSet(strsubgroupOUT + "tCrossProd_" + matA + "x" + matB));
+    
     
     for (int ii = 0; ii < N; ii += hdf5_block)
     {
@@ -97,15 +102,22 @@ int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA,
       if( ii + hdf5_block > N ) isize = hdf5_block + 1;
     }
     
-    datasetA->close();
-    datasetB->close();
-    datasetC->close();
-    file->close();
     
-    return(0);
   }else {
     throw std::range_error("non-conformable arguments");
   }
+  
+  datasetA->close();
+  datasetB->close();
+  datasetC->close();
+  file->close();
+  
+  delete(datasetA);
+  delete(datasetC);
+  delete(datasetB);
+  delete(file);
+  
+  return(0);
 }
 
 
@@ -192,14 +204,14 @@ Rcpp::RObject bdtCrossprod_hdf5(std::string filename, const std::string group,
   std::string strsubgroupIn, strsubgroupInB;
   
   
-  H5File* file;
+  H5File* file = nullptr;
   
   std::string strsubgroupOut;
 
   IntegerVector dsizeA;
   
   // hdf5 parameters
-  try{
+  try {
     
     H5::Exception::dontPrint();  
     
@@ -223,6 +235,7 @@ Rcpp::RObject bdtCrossprod_hdf5(std::string filename, const std::string group,
     
     dsA.close();
     file->close();
+    delete(file);
     
     DataSet dsB;
     IntegerVector dsizeB;
@@ -232,6 +245,7 @@ Rcpp::RObject bdtCrossprod_hdf5(std::string filename, const std::string group,
       strsubgroupInB = group + "/";
       dsizeB = dsizeA;
       matB =  A;
+      
     } else {
       
       strsubgroupInB = as<std::string>(groupB) + "/";
@@ -247,6 +261,7 @@ Rcpp::RObject bdtCrossprod_hdf5(std::string filename, const std::string group,
       
       dsB.close();
       file->close();
+      delete(file);
     }
     
     if(block_size.isNotNull())
@@ -293,24 +308,26 @@ Rcpp::RObject bdtCrossprod_hdf5(std::string filename, const std::string group,
                                        0, bparal,true, threads);
       
     }
+    
 
   } catch( FileIException& error ) { // catch failure caused by the H5File operations
-    file->close();
-    ::Rf_error( "c++ exception tCrossprod_hdf5 (File IException)" );
-    return wrap(-1);
+      file->close();
+      delete(file); 
+      ::Rf_error( "c++ exception tCrossprod_hdf5 (File IException)" );
+      return wrap(-1);
   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-    file->close();
-    ::Rf_error( "c++ exception tCrossprod_hdf5 (DataSet IException)" );
-    return wrap(-1);
+      file->close();
+      delete(file);
+      ::Rf_error( "c++ exception tCrossprod_hdf5 (DataSet IException)" );
+      return wrap(-1);
   } catch(std::exception &ex) {
-    Rcpp::Rcout<< ex.what();
-    return wrap(-1);
+      file->close();
+      delete(file);
+      Rcpp::Rcout<< ex.what();
+      return wrap(-1);
   }
   
-  
-  //..// return wrap(wrap(C));
-  
-  //..// return(C);
+
   std::string strname;
   
   if(B.isNull()) {

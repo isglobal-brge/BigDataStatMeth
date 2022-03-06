@@ -41,7 +41,7 @@ void bdapply_Function_hdf5( std::string filename,
                                      Rcpp::Nullable<bool> force = false )
 {
     
-    H5File* file;
+    H5File* file = nullptr;
     DataSet* pdataset = nullptr;
     DataSet* pbdataset = nullptr;
     Rcpp::StringVector str_bdatasets;

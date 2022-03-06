@@ -685,7 +685,7 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
   Eigen::MatrixXd B;
   Eigen::MatrixXd C;
   
-  H5File* file;
+  H5File* file = nullptr;
   
   IntegerVector dsizeA = {0, 0}, 
                 dsizeB = {0, 0};

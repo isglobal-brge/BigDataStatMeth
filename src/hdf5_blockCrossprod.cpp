@@ -101,12 +101,16 @@ int hdf5_block_matrix_crossprod_hdf5( std::string matA, IntegerVector sizeA,
     }
     
     datasetA->close();
+    delete(datasetA);
     datasetB->close();
+    delete(datasetB);
     datasetC->close();
+    delete(datasetC);
     file->close();
+    delete(file);
     
     return(0);
-  }else {
+  } else {
     throw std::range_error("non-conformable arguments");
   }
 }
@@ -197,7 +201,7 @@ Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
   std::string strsubgroupIn, strsubgroupInB;
   
   
-  H5File* file;
+  H5File* file = nullptr;
   
   std::string strsubgroupOut;
 
@@ -226,7 +230,7 @@ Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
     
     dsA.close();
     file->close();
-    
+    delete(file);
     
     DataSet dsB;
     IntegerVector dsizeB;
@@ -236,6 +240,7 @@ Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
       strsubgroupInB = group + "/";
       dsizeB = dsizeA;
       matB =  A;
+      
     } else {
       
       strsubgroupInB = as<std::string>(groupB) + "/";
@@ -250,6 +255,8 @@ Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
       
       dsB.close();
       file->close();
+      delete(file);
+
     }
     
       
@@ -301,16 +308,20 @@ Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
     }
 
   } catch( FileIException& error ) { // catch failure caused by the H5File operations
-    file->close();
-    ::Rf_error( "c++ exception Crossprod_hdf5 (File IException)" );
-    return wrap(-1);
+      file->close();
+      delete(file);
+      ::Rf_error( "c++ exception Crossprod_hdf5 (File IException)" );
+      return wrap(-1);
   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-    file->close();
-    ::Rf_error( "c++ exception Crossprod_hdf5 (DataSet IException)" );
-    return wrap(-1);
+      file->close();
+      delete(file);
+      ::Rf_error( "c++ exception Crossprod_hdf5 (DataSet IException)" );
+      return wrap(-1);
   } catch(std::exception& ex) {
-    Rcpp::Rcout<< ex.what();
-    return wrap(-1);
+      file->close();
+      delete(file);
+      Rcpp::Rcout<< ex.what();
+      return wrap(-1);
   }
   
   

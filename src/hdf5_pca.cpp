@@ -319,7 +319,7 @@ void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
 {
   
 
-  H5File* file;
+  H5File* file = nullptr;
   int incomponents = 0;
   double dthreshold;
   

@@ -52,9 +52,9 @@ Rcpp::RObject bdget_maf_hdf5( std::string filename, const std::string group, std
                                   Rcpp::Nullable<int> wsize  = R_NilValue)
 {
   
-  H5File* file;
+  H5File* file = nullptr;
   
-  DataSet* pdatasetin;
+  DataSet* pdatasetin = nullptr;
 
   Rcpp::NumericVector freqs;
   

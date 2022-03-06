@@ -227,7 +227,7 @@ void bdImpute_snps_hdf5(std::string filename, std::string group, std::string dat
                               Rcpp::Nullable<bool> bycols = true )
 {
   
-  H5File* file;
+  H5File* file = nullptr;
   DataSet* pdataset = nullptr;
   
   try

@@ -113,6 +113,7 @@
 
     
     // R functions :
+    /*
     void bdCreate_hdf5_matrix_file( std::string filename, RObject object, Rcpp::Nullable<std::string> group, Rcpp::Nullable<std::string> dataset, 
                                     Rcpp::Nullable<bool> transp, Rcpp::Nullable<bool> force );
     void bdAdd_hdf5_matrix( RObject object, std::string filename, std::string group, std::string dataset, 
@@ -123,5 +124,6 @@
     void bdCreateEmptyDataset_hdf5(std::string filename, std::string group, std::string dataset, 
                                    int nrows, int ncols, Rcpp::Nullable<bool> overwrite);
     Rcpp::RObject bdgetDim_hdf5( std::string filename, std::string element);
+     */
     
 #endif

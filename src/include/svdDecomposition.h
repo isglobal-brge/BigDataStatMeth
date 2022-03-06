@@ -19,7 +19,7 @@
   
 
 
-  #define MAXSVDBLOCK 500
+  #define MAXSVDBLOCK 1500
 
   // dgesvd_ is a symbol in the LAPACK-BLAS Level 3 
   //    DGESVD computes the singular value decomposition (SVD) of a real M-by-N matrix A, 

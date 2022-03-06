@@ -162,8 +162,8 @@ void bdImport_text_to_hdf5( Rcpp::CharacterVector filename,
    double blockCounter = 1000;
    
    // hdf5 variables
-   H5File* file;
-   DataSet* datasetOut;
+   H5File* file = nullptr;
+   DataSet* datasetOut = nullptr;
    
    try{
       

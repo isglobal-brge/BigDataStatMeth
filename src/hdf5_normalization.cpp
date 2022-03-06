@@ -77,10 +77,10 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
   IntegerVector stride = IntegerVector::create(1, 1);
   IntegerVector block = IntegerVector::create(1, 1);
   
-  H5File* file;
+  H5File* file = nullptr;
   
-  DataSet* pdatasetin;
-  DataSet* pdatasetout;
+  DataSet* pdatasetin = nullptr;
+  DataSet* pdatasetout = nullptr;
   
 
   try{

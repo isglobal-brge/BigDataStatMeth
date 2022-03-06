@@ -52,7 +52,7 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
       p = icols;
     }
 
-    get_HDF5_mean_sd_by_column_ptr( file, dataset, datanormal);
+    //. 2022/030/05.// get_HDF5_mean_sd_by_column_ptr( file, dataset, datanormal);
     
     M = pow(k, q);
     if(M>p)
@@ -63,9 +63,11 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
     
     
     if (bcenter==true || bscale==true) {
-      // Create dataset to store normalized data
-      create_HDF5_dataset_ptr(file, strGroupName + "/normalmatrix", n, p, "numeric");
-      normalizedData = new DataSet(file->openDataSet(strGroupName + "/normalmatrix"));
+        get_HDF5_mean_sd_by_column_ptr( file, dataset, datanormal); //. Moved here 2022/030/05.// 
+        
+        // Create dataset to store normalized data
+        create_HDF5_dataset_ptr(file, strGroupName + "/normalmatrix", n, p, "numeric");
+        normalizedData = new DataSet(file->openDataSet(strGroupName + "/normalmatrix"));
     }
     
     //.OMP.// omp_set_num_threads(getDTthreads(ithreads, false));
@@ -178,7 +180,6 @@ restmp = Bblock_matrix_mul(retsvd.u, d, 1024);
 
 ***/
 
-
       {
           
           //    b) SVD for each block
@@ -210,7 +211,6 @@ restmp = Bblock_matrix_mul(retsvd.u, d, 1024);
           restmp = Bblock_matrix_mul((retsvd.u).block(0, 0, (retsvd.u).rows(), isize), d, 1024);
           
       }
-
 
 
 

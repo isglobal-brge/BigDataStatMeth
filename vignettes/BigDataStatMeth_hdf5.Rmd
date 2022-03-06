@@ -34,7 +34,7 @@ bibliography: references.bib
 library(knitr)
 library(BiocStyle)
 
-knitr::opts_chunk$set(collapse = TRUE, comment = "", cache = TRUE, message = FALSE, width = 180)
+knitr::opts_chunk$set(collapse = TRUE, comment = "", cache = FALSE, message = FALSE, width = 180)
 ```
 
 ```{r, cleanup, echo=FALSE, include=FALSE}
@@ -613,14 +613,14 @@ We have to indicate the file to work with, the dataset name and the group where 
 ```{r BlockSVDNorm}
 # Create dataframe data with 'odata' matrix in delayed hdf5 file at OMIC group
 set.seed(5234)
-n <- 150000
-m <- 50
+n <- 50
+m <- 150000
 odata <- matrix(rnorm(n*m, mean=0, sd=1), n,m)
 
 bdAdd_hdf5_matrix(odata, "delayed.hdf5", "OMICS", "data")
 
 # Direct from hdf5 data file
-svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data")
+svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", k = 2, q = 1)
 
 # with R implementation from data in memory
 test <- H5Fopen("delayed.hdf5")
@@ -643,7 +643,9 @@ Like in Simple Singular Value Decomposition we can normalize, center or scale da
 ```{r BlockSVDNotNorm}
 # Direct from hdf5 data file
 svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", 
-                    bcenter = FALSE, bscale = FALSE)
+                    bcenter = FALSE, bscale = FALSE,
+                     k = 2, q = 1)
+
 
 # get results svd (d)
 test <- H5Fopen("delayed.hdf5")
@@ -662,7 +664,7 @@ In the SVD decomposition by blocks we can indicate the number of decomposition l
 
 ```{r BlockSVDk4}
 # Block decomposition with 1 level and 4 local SVDs at each level
-svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", q=1, k=4)
+svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data")
 
 # get results svd (d)
 fprova <- H5Fopen("delayed.hdf5")

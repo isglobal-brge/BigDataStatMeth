@@ -113,7 +113,7 @@ Rcpp::RObject bdReduce_matrix_hdf5( std::string filename, std::string group,
                                     Rcpp::Nullable<bool> force = false , Rcpp::Nullable<bool> remove = false )
 {
   
-  H5File* file;
+  H5File* file = nullptr;
 
   try
   {
