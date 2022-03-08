@@ -21,8 +21,6 @@ This function performs a weighted product of a matrix(X) with a weighted diagona
 }
 \examples{
 
-library(DelayedArray)
-
 n <- 100
 p <- 60
 
@@ -32,10 +30,5 @@ u <- runif(n)
 w <- u * (1 - u)
 ans <- bdwproduct(X, w,"xtwx")
 
-# with Delayed Array
-
-DX <- DelayedArray(X)
-
-ans <- bdwproduct(DX, w,"xtwx")
 
 }

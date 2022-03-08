@@ -274,8 +274,6 @@ Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObje
 //' @return numerical matrix 
 //' @examples
 //' 
-//' library(DelayedArray)
-//' 
 //' n <- 100
 //' p <- 60
 //' 
@@ -285,11 +283,6 @@ Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObje
 //' w <- u * (1 - u)
 //' ans <- bdwproduct(X, w,"xtwx")
 //' 
-//' # with Delayed Array
-//' 
-//' DX <- DelayedArray(X)
-//' 
-//' ans <- bdwproduct(DX, w,"xtwx")
 //' 
 //' @export
 // [[Rcpp::export]]

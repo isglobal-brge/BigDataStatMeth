@@ -263,6 +263,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
         A = GetCurrentBlock_hdf5_Original(file, normalizedData, 0, 0,dims_out_normal[0], dims_out_normal[1] );
         
         normalizedData->close();
+        delete(normalizedData);
     } else {
         
         IntegerVector dims_out_normal = get_HDF5_dataset_size(*dataset);
@@ -275,7 +276,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     // Eigen::MatrixXd A = GetCurrentBlock_hdf5_Original(file, normalizedData, 0, 0,dims_out_normal[0], dims_out_normal[1] );
     // normalizedData->close();
     
-    v = Bblock_matrix_mul_parallel(A, retsvd.u, 1024, threads); // ABANS no PARALLEL
+    v = Bblock_matrix_mul_parallel(A, retsvd.u, 1024, threads); //  PARALLEL ==> NOT PARALLEL
 
     // 4.- resuls / svdA$d
     v = v.array().rowwise()/(retsvd.d).transpose().array();
@@ -296,6 +297,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     //
 
     
+    
     if (transp == true)  {
         write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/u", wrap(retsvd.v));
         write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.u));
@@ -304,6 +306,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
         write_HDF5_matrix_transposed_ptr(file, "SVD/"+ name[0]+"/v", wrap(retsvd.v));
     }
 
+    
     // Clean data
     if( bcenter == true || bscale == true) {
         remove_HDF5_multiple_elements_ptr(file, strGroupName, "normalmatrix");
@@ -314,36 +317,50 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
   } catch(FileIException& error) { // catch failure caused by the H5File operations
         dataset->close();
         file->close();
+        delete(dataset);
+        delete(file);
         ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (File IException)" );
         return retsvd;
   } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
         dataset->close();
         file->close();
+        delete(dataset);
+        delete(file);
         ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (DataSet IException)" );
         return retsvd;
   } catch(GroupIException& error) { // catch failure caused by the Group operations
         dataset->close();
         file->close();
+        delete(dataset);
+        delete(file);
         ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (Group IException)" );
         return retsvd;
   } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
         dataset->close();
         file->close();
+        delete(dataset);
+        delete(file);
         ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (DataSpace IException)" );
         return retsvd;
   } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
         dataset->close();
         file->close();
+        delete(dataset);
+        delete(file);
         ::Rf_error( "c++ exception RcppbdSVD_hdf5_Block (Data TypeIException)" );
         return retsvd;  
   } catch(std::exception &ex) {
         dataset->close();
         file->close();
+        delete(dataset);
+        delete(file);
         Rcpp::Rcout<< "C++ exception RcppbdSVD_hdf5_Block : "<< ex.what();
         return retsvd;  
   } catch (...) {
         dataset->close();
         file->close();
+        delete(dataset);
+        delete(file);
         ::Rf_error("C++ exception RcppbdSVD_hdf5_Block (unknown reason)");
         return retsvd;
   } 
@@ -368,83 +385,94 @@ svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::strin
                        int k, int q, int nev, bool bcenter, bool bscale, double dthreshold, 
                        Rcpp::Nullable<int> ithreads = R_NilValue )
 {
-  
-  svdeig retsvd;
-  Eigen::MatrixXd X;
+    
+    svdeig retsvd;
+    Eigen::MatrixXd X;
+    
+    H5File* file = nullptr;
+    DataSet* dataset = nullptr;
+    
+    try {
+    
+        // Open an existing file and dataset.
+        file = new H5File( filename, H5F_ACC_RDWR );
+        
+        if(exists_HDF5_element_ptr(file, strsubgroup + "/" + strdataset)){
+            dataset = new DataSet(file->openDataSet(strsubgroup + "/" + strdataset));
+        } else {
+            file->close();
+            delete(file);
+            throw std::range_error("Dataset not exits"); 
+        }
+        
+        // Remove previous results
+        if(exists_HDF5_element_ptr(file,"SVD/"+strdataset)) {
+            Rcpp::Rcout<<"SVD - old dataset have been REMOVED \n";
+            remove_HDF5_element_ptr(file,"SVD/"+strdataset);
+        }
+        
+        // Get dataset dims
+        IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
+        
+        hsize_t offset[2] = {0,0};
+        hsize_t count[2] = { (unsigned long long)dims_out[0], (unsigned long long)dims_out[1]};
 
-  H5File* file = nullptr;
-  DataSet* dataset = nullptr;
-
-  try {
-
-    // Open an existing file and dataset.
-    file = new H5File( filename, H5F_ACC_RDWR );
-
-    if(exists_HDF5_element_ptr(file, strsubgroup + "/" + strdataset)){
-      dataset = new DataSet(file->openDataSet(strsubgroup + "/" + strdataset));
-    } else {
-      file->close();
-      throw std::range_error("Dataset not exits"); 
+        // Small matrices ==> Direct SVD
+        if( dims_out[0] < MAXSVDBLOCK &&  dims_out[1] < MAXSVDBLOCK ) {
+            
+            X = GetCurrentBlock_hdf5_Original(file, dataset, offset[0], offset[1], count[0], count[1]); 
+            
+            
+            // retsvd = RcppbdSVD(X, k, nev, bcenter, bscale);
+            retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
+            
+            create_HDF5_groups_ptr(file,"SVD/"+ strdataset);
+            
+            // Create filegroup
+            write_HDF5_matrix_transposed_ptr(file, "SVD/"+ strdataset+"/u", wrap(retsvd.u));
+            write_HDF5_matrix_transposed_ptr(file, "SVD/"+ strdataset+"/v", wrap(retsvd.v));
+            write_HDF5_matrix_transposed_ptr(file, "SVD/"+ strdataset+"/d", wrap(retsvd.d));
+        
+        } else {
+        
+            // data stored transposed in hdf5
+            int xdim = (unsigned long long)dims_out[1];
+            int ydim = (unsigned long long)dims_out[0];
+            
+            retsvd = RcppbdSVD_hdf5_Block( file, dataset, k, q, nev, bcenter, bscale, xdim, ydim, dthreshold, wrap(ithreads));
+            
+        }
+        
+    }  catch( FileIException& error ) { // catch failure caused by the H5File operations
+        dataset->close();
+        file->close();
+        delete(dataset);
+        delete(file);
+        ::Rf_error( "c++ exception RcppbdSVD_hdf5 (File IException)" );
+        return retsvd;
+    } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
+        dataset->close();
+        file->close();
+        delete(dataset);
+        delete(file);
+        ::Rf_error( "c++ exception RcppbdSVD_hdf5 (DataSet IException)" );
+        return retsvd;
+    } catch(std::exception &ex) {
+        dataset->close();
+        file->close();
+        delete(dataset);
+        delete(file);
+        Rcpp::Rcout<< ex.what();
+        return retsvd;
     }
     
-    // Remove previous results
-    if(exists_HDF5_element_ptr(file,"SVD/"+strdataset)) {
-      Rcpp::Rcout<<"SVD - old dataset have been REMOVED \n";
-      remove_HDF5_element_ptr(file,"SVD/"+strdataset);
-    }
-
-    // Get dataset dims
-    IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
+    dataset->close();
+    file->close();
     
-    hsize_t offset[2] = {0,0};
-    hsize_t count[2] = { (unsigned long long)dims_out[0], (unsigned long long)dims_out[1]};
-
-    // Small matrices ==> Direct SVD
-    if( dims_out[0] < MAXSVDBLOCK &&  dims_out[1] < MAXSVDBLOCK )
-    {
-      
-      X = GetCurrentBlock_hdf5_Original(file, dataset, offset[0], offset[1], count[0], count[1]); 
-      
-      // retsvd = RcppbdSVD(X, k, nev, bcenter, bscale);
-      retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
-
-      create_HDF5_groups_ptr(file,"SVD/"+ strdataset);
-      
-      // Create filegroup
-      write_HDF5_matrix_transposed_ptr(file, "SVD/"+ strdataset+"/u", wrap(retsvd.u));
-      write_HDF5_matrix_transposed_ptr(file, "SVD/"+ strdataset+"/v", wrap(retsvd.v));
-      write_HDF5_matrix_transposed_ptr(file, "SVD/"+ strdataset+"/d", wrap(retsvd.d));
-      
-    }
-    else{
-
-      // data stored transposed in hdf5
-      int xdim = (unsigned long long)dims_out[1];
-      int ydim = (unsigned long long)dims_out[0];
-      
-      retsvd = RcppbdSVD_hdf5_Block( file, dataset, k, q, nev, bcenter, bscale, xdim, ydim, dthreshold, wrap(ithreads));
-
-    }
+    delete(dataset);
+    delete(file);
     
-  }  catch( FileIException& error ) { // catch failure caused by the H5File operations
-    dataset->close();
-    file->close();
-    ::Rf_error( "c++ exception RcppbdSVD_hdf5 (File IException)" );
     return retsvd;
-  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-    dataset->close();
-    file->close();
-    ::Rf_error( "c++ exception RcppbdSVD_hdf5 (DataSet IException)" );
-    return retsvd;
-  } catch(std::exception &ex) {
-    dataset->close();
-    file->close();
-    Rcpp::Rcout<< ex.what();
-    return retsvd;
-  }
-  dataset->close();
-  file->close();
-  return retsvd;
    
 }
 
@@ -457,27 +485,27 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
   
   svdeig retsvd;
   Eigen::MatrixXd X;
-  // int nconv;
+  
+  DataSet* dataset;
+  
   
   try
   {
     // Open an existing file and dataset.
-    //..// H5File file(filename, H5F_ACC_RDWR);
-    DataSet dataset;
-    
     if(exists_HDF5_element_ptr(file, strsubgroup + "/" + strdataset)){
-      dataset = file->openDataSet(strsubgroup + "/" + strdataset);
+      //..// dataset = file->openDataSet(strsubgroup + "/" + strdataset);
+        dataset = new DataSet(file->openDataSet(strsubgroup + "/" + strdataset));
     }
     else {
-      file->close();
-      throw std::range_error("Dataset not exits"); 
+        file->close();
+        delete(file);
+        throw std::range_error("Dataset not exits"); 
     }
 
     // Get dataset dims
-    IntegerVector dims_out = get_HDF5_dataset_size(dataset);
+    IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
     
     hsize_t offset[2] = {0,0};
-    //..// hsize_t count[2] = {as<hsize_t>(dims_out[0]), as<hsize_t>(dims_out[1])};
     hsize_t count[2] = { (unsigned long long)dims_out[0], (unsigned long long)dims_out[1]};
     
 
@@ -486,53 +514,74 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
     if( std::max(dims_out[0], dims_out[1]) < MAXSVDBLOCK && bstorehdf5 == false )
     {
 
-      X = GetCurrentBlock_hdf5( file, &dataset, offset[0], offset[1], count[0], count[1]);
+      X = GetCurrentBlock_hdf5( file, dataset, offset[0], offset[1], count[0], count[1]);
       X.transposeInPlace();
       
       retsvd = RcppbdSVD(X, k, nev, bcenter, bscale);
       
-    }
-    else{
+    } else {
 
       // data stored transposed in hdf5
       int xdim = (unsigned long long)dims_out[1];
       int ydim = (unsigned long long)dims_out[0];
 
       // Remove previous results
-      if(exists_HDF5_element_ptr(file,"SVD/"+strdataset))
-      {
-        //..// Rcpp::Rcout<<"\n Old DATASET have been removed \n";
-        remove_HDF5_element_ptr(file,"SVD/"+strdataset);
+      if(exists_HDF5_element_ptr(file,"SVD/"+strdataset))  {
+          remove_HDF5_element_ptr(file,"SVD/"+strdataset);
       }
       
-      retsvd = RcppbdSVD_hdf5_Block( file, &dataset, k, q, nev, bcenter, bscale, xdim, ydim, dthreshold, wrap(ithreads) );
+      retsvd = RcppbdSVD_hdf5_Block( file, dataset, k, q, nev, bcenter, bscale, xdim, ydim, dthreshold, wrap(ithreads) );
 
     }
 
   } catch(FileIException& error) { // catch failure caused by the H5File operations
-    file->close();
-    ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (File IException)" );
+      dataset->close();
+      delete(dataset);
+        file->close();
+        delete(file);
+        ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (File IException)" );
   } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
-    file->close();
-    ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (DataSet IException)" );
+      dataset->close();
+      delete(dataset);
+        file->close();
+        delete(file);
+        ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (DataSet IException)" );
   } catch(GroupIException& error) { // catch failure caused by the Group operations
-    file->close();
-    ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (Group IException)" );
+      dataset->close();
+      delete(dataset);
+        file->close();
+        delete(file);
+        ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (Group IException)" );
   } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-    file->close();
-    ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (DataSpace IException)" );
+      dataset->close();
+      delete(dataset);
+        file->close();
+        
+        delete(file);
+        ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (DataSpace IException)" );
   } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
-    file->close();
-    ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (Data TypeIException)" );
+      dataset->close();
+      delete(dataset);
+        file->close();
+        delete(file);
+        ::Rf_error( "c++ exception RcppbdSVD_hdf5_ptr (Data TypeIException)" );
   } catch(std::exception &ex) {
-      Rcpp::Rcout<<"c++ exception in RcppbdSVD_hdf5_ptr : "<< ex.what();
+      dataset->close();
+      delete(dataset);
       file->close();
+      delete(file);
+        Rcpp::Rcout<<"c++ exception in RcppbdSVD_hdf5_ptr : "<< ex.what();
   } catch (...) {
-      file->close();
-      ::Rf_error("C++ exception RcppbdSVD_hdf5_ptr (unknown reason)");
+      dataset->close();
+      delete(dataset);
+        file->close();
+        delete(file);
+        ::Rf_error("C++ exception RcppbdSVD_hdf5_ptr (unknown reason)");
   }
   
   
+  dataset->close();
+  delete(dataset);
   
   return retsvd;
   
@@ -739,7 +788,7 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & X, Rcpp::Nullable<int> k=0, Rcpp::Nul
 //' }
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVector> group = R_NilValue, 
+Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject file, Rcpp::Nullable<CharacterVector> group = R_NilValue, 
                           Rcpp::Nullable<CharacterVector> dataset = R_NilValue,
                           Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
                           Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
@@ -756,8 +805,7 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
     int ks, qs, nvs = 0;
     bool bcent, bscal;
     CharacterVector strgroup, strdataset;
-    // int ithreads=1;
-    
+
     if(k.isNull())  ks = 2 ;
     else    ks = Rcpp::as<int>(k);
     
@@ -776,6 +824,18 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
     if(dataset.isNull())  strdataset = "";
     else    strdataset = Rcpp::as<std::string>(dataset);
     
+   
+   /* 
+    if(threads.isNull())  ithreads = std::thread::hardware_concurrency() - 1;
+    else    ithreads = Rcpp::as<int>(threads);*/
+    
+    if(is<CharacterVector>(file)) {
+      filename = as<std::string>(file);
+    } else {
+        Rcpp::Rcout<< "File name must be character string";
+        return List::create(Named("file") = "");
+    }
+    
     if(rankthreshold.isNull()) {  
         dthreshold = 0 ;
     } else {
@@ -789,23 +849,14 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVe
             dthreshold = Rcpp::as<double>(rankthreshold);
         }
     }
-   
-   /* 
-    if(threads.isNull())  ithreads = std::thread::hardware_concurrency() - 1;
-    else    ithreads = Rcpp::as<int>(threads);*/
-    
-    if(is<CharacterVector>(file))
-      filename = as<std::string>(file);
-    else
-      throw std::invalid_argument("File name must be character string");
 
       
     retsvd = RcppbdSVD_hdf5( filename, as<std::string>(strgroup), as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, threads );
     
     
-  }catch(std::exception &ex) {
-    Rcpp::Rcout<< ex.what();
-    return List::create(Named("file") = R_NilValue);
+  } catch(std::exception &ex) {
+        Rcpp::Rcout<< ex.what();
+        return List::create(Named("file") = R_NilValue);
   }
 
   return List::create(Named("file") = filename);

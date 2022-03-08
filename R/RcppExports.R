@@ -493,8 +493,6 @@ bdNormalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
 #' @return numerical matrix 
 #' @examples
 #' 
-#' library(DelayedArray)
-#' 
 #' n <- 100
 #' p <- 60
 #' 
@@ -504,11 +502,6 @@ bdNormalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
 #' w <- u * (1 - u)
 #' ans <- bdwproduct(X, w,"xtwx")
 #' 
-#' # with Delayed Array
-#' 
-#' DX <- DelayedArray(X)
-#' 
-#' ans <- bdwproduct(DX, w,"xtwx")
 #' 
 #' @export
 bdwproduct <- function(X, w, op) {

@@ -21,7 +21,7 @@ output:
     fig_caption: yes
     toc_float: yes
 abstract: |
-  Description of functions to perform matrix operations, algebra and some basic statistical models using _Matrix_ (CRAN) and _DelayedMatrix_ (Bioconductor) objects.
+  Description of functions to perform matrix operations, algebra and some basic statistical models using _Matrix_ (CRAN) objects.
 vignette: |
   %\VignetteIndexEntry{Algebra and Statistical Methods for Big Data with Bioconductor}
   %\VignetteEncoding{UTF-8}
@@ -50,7 +50,7 @@ This package implements several matrix operations using `Matrix` and `DelayMatri
 The package requires other packages from `CRAN` and `Bioconductor` to be installed. 
 
 - `CRAN`: `Matrix`, `RcppEigen` and `RSpectra`.
-- `Bioconductor`: `beachmat`, `DelayedArray` 
+- `Bioconductor`: `DelayedArray` 
 
 As the package can also deal with [hdf5 files](https://www.hdfgroup.org/solutions/hdf5/) [See Vignette [BigDataStatMeth_hdf5](https://github.com/isglobal-brge/BigDataStatMeth/blob/master/vignettes/BigDataStatMeth_hdf5.html)], these other packages are required: `HDF5Array`, `rhdf5`. The user can execute this code to install the required packages:
 
@@ -59,8 +59,7 @@ As the package can also deal with [hdf5 files](https://www.hdfgroup.org/solution
 install.packages("BiocManager") 
 
 # Install required packages
-BiocManager::install(c("Matrix", "RcppEigen", "RSpectra",
-                       "beachmat", "DelayedArray",
+BiocManager::install(c("Matrix", "RcppEigen", "RSpectra", "DelayedArray",
                        "HDF5Array", "rhdf5"))
 ```
 
@@ -99,16 +98,6 @@ This packages is also required to reproduce this vignette
 library(microbenchmark)
 ```
 
-# Previous knowledge
-
-## `DelayedMatrix`
-
-A `DelayedMatrix` is a type of `DelayedArray` which is like an ordinary array in R, but allows for the data to be in-memory, on-disk in a file, or even hosted on a remote server.
-
-The [DelayedArray framework](https://bioconductor.org/packages/3.12/bioc/vignettes/DelayedArray/inst/doc/02-Implementing_a_backend.html) supports some on-disk backends for genomic data. We can deal with HDF5 files via rhdf5 and the HDF5Array package, GenomicDataStorage (GDS) via the gdsfmt and GDSArray package, and Variant Calling Format (VCF) files via the VCFArray package. However, this can be extended to support other on-disk backends. In theory, it should be possible to implement a DelayedArray backend for any file format that has the capability to store array data with fast random access.
-
-Having data in such format allows to perform very fast operations for a given matrix. This has been implemented in the [DelayedMatrixStats](https://bioconductor.org/packages/release/bioc/vignettes/DelayedMatrixStats/inst/doc/DelayedMatrixStatsOverview.html) package. Several examples of how to deal with `DelayedArray` can be found in [this workshop](http://biocworkshops2019.bioconductor.org.s3-website-us-east-1.amazonaws.com/page/DelayedArrayWorkshop__Effectively_using_the_DelayedArray_framework_for_users/).
-
 
 # Matrix Multiplication
 
@@ -141,13 +130,6 @@ Abig <- matrix(rnorm(n*n), nrow=n, ncol=n)
 Bbig <- matrix(rnorm(n*p), nrow=n, ncol=p)
 ```
 
-They can be converted into `DelayedMatrix` object by simply
-
-```{r getDelayed}
-DA <- DelayedArray(A)
-DB <- DelayedArray(B)
-```
-
 
 Matrix multiplication using block matrices is implemented in the `bdblockmult()` function. It only requires to setting the argument `block_size`, by default `block_size = 128`. An optimal block size is important to better performance but it is difficult to asses what is the optimum block size for each matrix.
 
@@ -168,26 +150,19 @@ The process can be speed up by making computations in parallel using `paral=TRUE
 
 ```{r blockmultparal}
 AxB <- bdblockmult(A, B, block_size = 10, paral = TRUE)
-AxBDelay <- bdblockmult(DA, DB, block_size = 10, paral = TRUE )
-AxBDelayT <- bdblockmult(DA, DB, block_size = 10, paral = TRUE, threads =  3 )
 
-all.equal(AxBDelay,A%*%B)
-all.equal(AxB, AxBDelay)
-all.equal(AxBDelay, AxBDelayT)
+all.equal(AxB,A%*%B)
 ```
 
 To work with big matrices `bdblockmult()` can save matrices in hdf5 file format in order to be able to operate with them in blocks and not overload the memory, by default are considered large matrices if the number of rows or columns is greater than 5000, but it can be changed with `bigmatrix` argument. Or we can also force to execute the matrix multiplication with data on memory setting the parameter `onmemory = TRUE`
 
 
 ```{r blockmultbm1}
-DAbig <- DelayedArray(Abig)
-DBbig <- DelayedArray(Abig)
-
 # We want to force it to run in memory
 AxBNOBig <- bdblockmult(Abig, Bbig, onmemory = TRUE) 
 
 # Run matrix multiplication with data on memory using submatrices of 256x256
-AxBBig3000 <- bdblockmult(DAbig, DBbig, block_size = 256 , onmemory = TRUE)
+AxBBig3000 <- bdblockmult(Abig, Bbig, block_size = 256 , onmemory = TRUE)
 ```
 
 
@@ -282,7 +257,7 @@ We can observe the huge difference in execution time
 
 # Cross-product and Transposed Cross-product
 
-To perform a cross-product and tcrossproduct with BigDataStatMeth we use the same function `bdcrossprod()` setting parameter `transposed` to TRUE or FALSE. Like other functions implemented in BigDataStatMeth, we can work with DelayedArray or R Objects. Setting parameter transposed for Crossproduct and tCrossProduct
+To perform a cross-product and tcrossproduct with BigDataStatMeth we use the same function `bdcrossprod()` setting parameter `transposed` to TRUE or FALSE. Like other functions implemented in BigDataStatMeth, we can work with R Objects. Setting parameter transposed for Crossproduct and tCrossProduct
 
 - if `transposed = FALSE` (default), we perform a Crossproduct \[\left( C \right) ={ \left( A \right)  }^{ t }\left( A \right) \]
 
@@ -294,18 +269,15 @@ Here we shown some examples using `bdcrossprod` function
 n <- 500
 m <- 250
 A <- matrix(rnorm(n*m), nrow=n, ncol=m)
-DA <- DelayedArray(A)
 
 # Cross Product of a standard R matrix
 cpA <- bdCrossprod(A)
-# Result with DelayedArray data type
-cpDA <- bdCrossprod(DA)
 ```
 
 We obtain the expected values computed using `crossprod` R function
 
 ```{r check_cp}
-all.equal(cpDA, crossprod(A))
+all.equal(cpA, crossprod(A))
 ```
 
 you may also set `transposed=TRUE`
@@ -313,14 +285,12 @@ you may also set `transposed=TRUE`
 ```{r nocrossprod}
 # Transposed Cross Product R matrices
 tcpA <- bdtCrossprod(A)
-# With DelayeArray data types
-tcpDA <- bdtCrossprod(DA)
 ```
 
 We obtain the expected values computed using `tcrossprod` function
 
 ```{r check_tcp}
-all.equal(tcpDA, tcrossprod(A))
+all.equal(tcpA, tcrossprod(A))
 ```
 
 We can show that the implemented version really improves the  R implementation computational speed.
@@ -352,19 +322,16 @@ n <- 250
 X <- matrix(rnorm(n*n), nrow=n, ncol=n)
 u <- runif(n)
 w <- u * (1 - u)
-DX <- DelayedArray(X)
-Dw <- DelayedArray(as.matrix(w))
 
 wcpX <- bdwproduct(X, w,"xwxt")
-wcpDX <- bdwproduct(DX, Dw,"xwxt") # with DelayedArray
 
-wcpDX[1:5,1:5]
+wcpX[1:5,1:5]
 ```
 
 Those are the expected values as it is indicated by executing:
 
 ```{r check_wcp}
-all.equal( wcpDX, X%*%diag(w)%*%t(X) )
+all.equal( wcpX, X%*%diag(w)%*%t(X) )
 ```
 
 
@@ -374,15 +341,14 @@ With argument `transposed=TRUE`, we can perform a transposed weighted cross-prod
 
 ```{r wtcrossprod }
 wtcpX <- bdwproduct(X, w,"xtwx")
-wtcpDX <- bdwproduct(DX, Dw,"xtwx") # with DelayedArray
 
-wtcpDX[1:5,1:5]
+wtcpX[1:5,1:5]
 ```
 
 Those are the expected values as it is indicated by executing:
 
 ```{r check_wtcp}
-all.equal(wtcpDX, t(X)%*%diag(w)%*%X)
+all.equal(wtcpX, t(X)%*%diag(w)%*%X)
 ```
 
 # Inverse Cholesky
@@ -410,17 +376,15 @@ Posdef <- function (n, ev = runif(n, 0, 10))
 }
 
 A <- Posdef(n = 500, ev = 1:500)
-DA <- DelayedArray(A)
 
 invchol <- bdInvCholesky(A)
-Dinvchol <- bdInvCholesky(DA)
 
 round(invchol[1:5,1:5],8)
 ```
 
 We can check whether this function returns the expected values obtained with the standard R function `solve`:
 ```{r invCholsequal }
-all.equal(Dinvchol, solve(A))
+all.equal(invchol, solve(A))
 ```
 
 
@@ -428,7 +392,6 @@ We can show that the implemented version really improves the  R implementation c
 
 ```{r benchmark_invChol}
 res <- microbenchmark(invchol = bdInvCholesky(A),
-                      invcholDelayedA = bdInvCholesky(DA),
                       invcholR = solve(A),
                       times = 3)
 res
@@ -464,15 +427,12 @@ QR decomposition, also known as a QR factorization or QU factorization is a deco
 \[A = QR\]
 of an orthogonal matrix Q and an upper triangular matrix R. QR decomposition is often used to solve the linear least squares problems. 
 
-In BigDataStatMeth we implemented QR decomposition in function `bdQR`, the QR decomposition can be performed in R objects or in DelayedArray objects. To show how to use this function we performa a QR decomposition from the previous simulated data in matrix A.
+In BigDataStatMeth we implemented QR decomposition in function `bdQR`, the QR decomposition can be performed in R objects. To show how to use this function we performa a QR decomposition from the previous simulated data in matrix A.
 
 ```{r QRdecomp }
 
-# Get Delayed array from A
-DA <- DelayedArray(A)
 
 QR_A <- bdQR(A)
-QR_DA <- bdQR(DA)
 QR_R <- qr(A)
 
 # Show results for Q
@@ -547,19 +507,16 @@ Notice that:
 - The columns of $V$ are called the right-singular vectors of $A$.
 
 ## Simple Singular Values Decomposition
-He have implemented the SVD for R matrices and Delayed Array objects in the function `bdSVD()`. The method, so far, only allows SVD of real matrices $A$.  This code illustrate how to perform such computations:
+He have implemented the SVD for R matrices in the function `bdSVD()`. The method, so far, only allows SVD of real matrices $A$.  This code illustrate how to perform such computations:
 
 ```{r svd_default}
 # Matrix simulation
 set.seed(413)
 n <- 500
 A <- matrix(rnorm(n*n), nrow=n, ncol=n)
-# Get a Delayed Array object
-DA <- DelayedArray(A)
 
 # SVD
 bsvd <- bdSVD(A)
-Dbsvd <- bdSVD(DA)
 
 # Singular values, and right and left singular vectors
 bsvd$d[1:5]
@@ -571,14 +528,12 @@ We get the expected results obtained with standard R functions:
 
 ```{r check_svd}
 all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), bsvd$d[1:10] )
-all.equal( sqrt( svd( tcrossprod( scale(A) ) )$d[1:10] ), Dbsvd$d[1:10] )
 ```
 
 you get the $\sigma_i$, $U$ and $V$ of normalized matrix $A$, if you want to perform the SVD from not normalized matrix $A$ then you have to set the parameter `bcenter = false` and `bscale = false`.
 
 ```{r svd_nonorm}
 bsvd <- bdSVD(A, bcenter = FALSE, bscale = FALSE)
-Dbsvd <- bdSVD(DA, bcenter = FALSE, bscale = FALSE)
 
 
 bsvd$d[1:5]
@@ -586,7 +541,6 @@ bsvd$u[1:5,1:5]
 bsvd$v[1:5,1:5]
 
 all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), bsvd$d[1:10] )
-all.equal( sqrt(svd(tcrossprod(A))$d[1:10]), Dbsvd$d[1:10] )
 
 ```
 
@@ -599,7 +553,7 @@ This approach is only implemented using HDF5 files. This method is implemented i
 
 
 
-# Using algebra procedure for `DelayedMatrix` objects to implement basic statistical methods
+# Using algebra procedure to implement basic statistical methods
 
 
 ## Principal component analysis (PCA)
@@ -637,13 +591,11 @@ points(pc$x[, 1], pc$x[, 2], col = cancer,
 legend("topright", levels(cancer), pch=16, col=1:3)
 ```
 
-The same analysis can be performed using SVD decomposition and having miRNAs as a `DelayedMatrix` object. The PCA is equivalent to performing the SVD on the centered data, where the centering occurs on the columns. In that case the function `bdSVD` requires to set the argument `bcenter` and `bscale` equal to TRUE, the dafault values. Notice that `sweep()` and `colMeans()` functions can be applied to a `DelayedMAtrix` object since this method is implemented for that type of objects in the `DelayedArray` package.
+The PCA is equivalent to performing the SVD on the centered data, where the centering occurs on the columns. In that case the function `bdSVD` requires to set the argument `bcenter` and `bscale` equal to TRUE, the dafault values.
 
 ```{r cia_da}
-miRNAD <- DelayedArray(miRNA)
-miRNAD.c <- DelayedArray::sweep(miRNAD, 2,
-      DelayedArray::colMeans(miRNAD), "-")
-svd.da <- bdSVD(miRNAD.c, bcenter = FALSE, bscale = FALSE)
+miRNA.c <- sweep(miRNA, 2, colMeans(miRNA), "-")
+svd.da <- bdSVD(miRNA.c, bcenter = FALSE, bscale = FALSE)
 ```
 
 
@@ -660,60 +612,6 @@ legend("topright", levels(cancer), pch=16, col=1:3)
 ```
 
 We can observe that both figures are equal irrespective to a sign change of second component (that can happen in SVD).
-
-
-
-<!-- # Statistical methods implemented for `DelayedMatrix` objects -->
-
-<!-- In this section we illustrate how to estimate some of the state of the art methods used in omic data analyses having a `DelayedMatrix` as the input object. So far, we have implemented the lasso regression, but other methods are going to be implemented in the near future. -->
-
-
-<!-- ## Lasso regression -->
-
-<!-- The standard linear model (or the ordinary least squares method) performs poorly in a situation, where you have a large multivariate data set containing a number of variables superior to the number of samples. This is the case, for instance, of genomic, transcriptomic or epigenomic studies where the number of variables (SNPs, genes, CpGs) exceed the number of samples (i.e. transcriptomic analysis deals with ~20,000 genes on hundreds of individuals). -->
-
-<!-- A better alternative is the penalized regression allowing to create a linear regression model that is penalized, for having too many variables in the model, by adding a constraint in the equation. This is also known as shrinkage or regularization methods. Lasso regression is one of the methods which are based on this idea. Lasso stands for Least Absolute Shrinkage and Selection Operator. It shrinks the regression coefficients toward zero by penalizing the regression model with a penalty term called L1-norm, which is the sum of the absolute coefficients. -->
-
-<!-- In the case of lasso regression, the penalty has the effect of forcing some of the coefficient estimates, with a minor contribution to the model, to be exactly equal to zero. This means that, lasso can be also seen as an alternative to the subset selection methods for performing variable selection in order to reduce the complexity of the model, or in other words, the number of variables. Selecting a good value of $\lambda$ is critical. -->
-
-<!-- This tunning parameter can be estimated using cross-validation. However, this procedure can be very time consuming since the inversion of a matrix is highly time consuming and it must be computed for each cross-validated sub-sample. In order to avoid this, we have implemented a method proposed by [Rifkin and Lippert]( http://cbcl.mit.edu/publications/ps/MIT-CSAIL-TR-2007-025.pdf) who stated that in the context of regularized least squares, one can search for a good regularization parameter $\lambda$ -->
-<!-- at essentially no additional cost (i.e. estimating only one inverion matrix). -->
-
-<!-- Let us illustrate how this works in our package. Let us start by simulating a dataset with 200 variables when only 3 of them are associated with the outcome. -->
-
-<!-- ```{r simul_lasso} -->
-<!-- # # number of samples -->
-<!-- # n <- 500 -->
-<!-- # # number of variables -->
-<!-- # p <- 200 -->
-<!-- # # covariates -->
-<!-- # M <- matrix(rnorm(n*p), nrow=n, ncol=p) -->
-<!-- # # outcome (only variables 1, 2 and 5 are different from 0) -->
-<!-- # Y <- 2.4*M[,1] + 1.6*M[,2] - 0.4*M[,5] -->
-<!-- ``` -->
-
-
-<!-- Then the model can be fitted (using `DelayedMatrix` objects) by -->
-
-<!-- ```{r looe} -->
-<!-- # # Get DealyedArray matrices -->
-<!-- # MD <- DelayedArray(M) -->
-<!-- # YD <- DelayedArray(as.matrix(Y)) -->
-<!-- # -->
-<!-- # # Model -->
-<!-- # mod <- LOOE(MD, YD, paral=FALSE) -->
-<!-- # mod$coef[abs(mod$coef)>mean(mod$coef)] -->
-<!-- ``` -->
-
-<!-- The argument `paral` is required to indicate whether paralell implementation is used or not. The `lambda` argument can be provided by the user, but it can also be estimated if `l` parameter is missing: -->
-
-
-<!-- ```{r glmnet} -->
-<!-- # library(glmnet) -->
-<!-- # mod.cv <- cv.glmnet(M, Y) -->
-<!-- # mod.glmnet <- glmnet(M, Y, lambda=mod.cv$lambda.min) -->
-<!-- # mod.glmnet$beta[1:7,] -->
-<!-- ``` -->
 
 
 # Session information
