@@ -168,7 +168,7 @@ AxBBig3000 <- bdblockmult(Abig, Bbig, block_size = 256 , onmemory = TRUE)
 
 Here, we compare the performance of the block method with the different options.
 
-```{r bench2, cache=TRUE}
+```{r bench2, cache=FALSE}
 bench1 <- microbenchmark( 
   # Parallel block size = 128
   Paral128Mem = bdblockmult(Abig, Bbig, paral = TRUE), 
@@ -235,7 +235,7 @@ all.equal(d,f)
 
 Here, we compare the performace using sparse matrix multiplication with sparse matrices and the blockmult multiplication with the same matrices not declared as sparce.
 
-```{r bench3, cache=TRUE}
+```{r bench3, cache=FALSE}
 res <- microbenchmark( 
   sparse_mult = bdblockmult_sparse(x_sparse, y_sparse),
   matrix_mult = bdblockmult(as.matrix(x_sparse), as.matrix(y_sparse)), 

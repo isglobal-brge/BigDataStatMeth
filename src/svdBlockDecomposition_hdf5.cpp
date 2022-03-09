@@ -77,7 +77,7 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
 #pragma omp parallel num_threads(getDTthreads(ithreads, false))
         
         /*
-        int tid = omp_get_thread_num();
+        int tid = omp_get_thread_num();B
         if( tid == 0 )   {
         Rcpp::Rcout << "Number of threads C++ : " << omp_get_num_threads() << "\n";
         Rcpp::Rcout << "Thread number C++ : " << omp_get_thread_num() << "\n";
@@ -86,7 +86,7 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
         
         
         // Get data from M blocks in initial matrix
-#pragma omp for ordered schedule (static) 
+#pragma omp for ordered schedule (static) private(unlimDataset)
         for( int i = 0; i< M ; i++)  
         {
         
@@ -209,7 +209,7 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
                     if(i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !exists_HDF5_element_ptr(file,strDatasetName)) ) ) {
                     
                         // If dataset exists --> remove dataset
-                        if( exists_HDF5_element_ptr(file,strDatasetName)){
+                        if( exists_HDF5_element_ptr(file,strDatasetName)) {
                             remove_HDF5_element_ptr(file,strDatasetName);
                         }
                         
@@ -236,6 +236,8 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
             }
         
         }
+        
+#pragma omp barrier 
         
         delete(unlimDataset);
         
@@ -448,6 +450,8 @@ void Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupNa
         
         
         }
+        
+#pragma omp barrier 
         
         delete(unlimDataset);
         
