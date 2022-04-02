@@ -34,7 +34,7 @@ bibliography: references.bib
 library(knitr)
 library(BiocStyle)
 
-knitr::opts_chunk$set(collapse = TRUE, comment = "", cache = FALSE, message = FALSE, width = 180)
+knitr::opts_chunk$set(collapse = TRUE, comment = "", cache = FALSE, message = FALSE, width = 180, crop = NULL)
 ```
 
 ```{r, cleanup, echo=FALSE, include=FALSE}

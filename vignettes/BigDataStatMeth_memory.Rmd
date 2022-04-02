@@ -37,7 +37,7 @@ library(BiocStyle)
 
 options(tinytex.verbose = TRUE)
 
-knitr::opts_chunk$set(collapse = TRUE, comment = "", cache=FALSE, message = FALSE, width = 180)
+knitr::opts_chunk$set(collapse = TRUE, comment = "", cache=FALSE, message = FALSE, width = 180, crop = NULL)
 ```
 
 
