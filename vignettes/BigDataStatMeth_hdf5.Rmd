@@ -641,11 +641,12 @@ Like in Simple Singular Value Decomposition we can normalize, center or scale da
 
 ```{r BlockSVDNotNorm}
 # Direct from hdf5 data file
-svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", 
-                    bcenter = FALSE, bscale = FALSE,
-                     k = 2, q = 1)
+svdh5 <- bdSVD_hdf5( "delayed.hdf5", "OMICS", "data", 
+                     bcenter = FALSE, bscale = FALSE,
+                     k = 2, q = 1, threads = 2)
+```
 
-
+```{r BlockSVDNotNormResults}
 # get results svd (d)
 test <- H5Fopen("delayed.hdf5")
 svd_hdf5_d <- test$SVD$data$d[1:7] 

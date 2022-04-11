@@ -423,12 +423,16 @@ int hdf5_block_matrix_mul_parallel( IntegerVector sizeA, IntegerVector sizeB, in
     
     if(threads.isNotNull()) 
     {
-      if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+      if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()) {
         ithreads = Rcpp::as<int> (threads);
-      else 
-        ithreads = std::thread::hardware_concurrency()/2;
+      } else {
+        ithreads = getDTthreads(0, true);
+        //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+      }
+    } else {
+        ithreads = getDTthreads(0, true);
+        //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
     }
-    else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
     
     //.OpenMP.// omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);
     //.OpenMP.// omp_set_num_threads(ithreads);
@@ -578,14 +582,17 @@ Eigen::MatrixXd Bblock_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen
   // else    ithreads = (std::thread::hardware_concurrency()/2)*1025; //omp_get_max_threads();
   
   
-  if(threads.isNotNull()) 
-  {
-      if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
-          ithreads = Rcpp::as<int> (threads);
-      else 
-          ithreads = std::thread::hardware_concurrency()/2;
+  if(threads.isNotNull()) {
+    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+      ithreads = Rcpp::as<int> (threads);
+    } else {
+      ithreads = getDTthreads(0, true);
+      //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+    }
+  } else {
+    ithreads = getDTthreads(0, true);
+    //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads();
   
   
   //.OpenMP.//omp_set_dynamic(1);   // omp_set_dynamic(0); omp_set_num_threads(4);

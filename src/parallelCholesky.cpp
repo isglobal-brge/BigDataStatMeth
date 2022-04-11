@@ -21,14 +21,17 @@ Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A, Rcpp::Nulla
       else 
         L(j,j) = std::sqrt(A(j,j) - (L.row(j).head(j).array().pow(2).sum() ));
       
-      if(threads.isNotNull()) 
-      {
-        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+      if(threads.isNotNull()) {
+        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
           ithreads = Rcpp::as<int> (threads);
-        else 
-          ithreads = std::thread::hardware_concurrency() /2;
+        } else {
+          ithreads = getDTthreads(0, true);
+          //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+        }
+      } else {
+        ithreads = getDTthreads(0, true);
+        //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
       }
-      else    ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads();
       
       //.OpenMP.// omp_set_num_threads(ithreads);
       
@@ -62,14 +65,17 @@ Eigen::VectorXd Forward_Substituion_parallel(Eigen::MatrixXd L, Eigen::VectorXd 
   int n = L.cols();
   unsigned int ithreads;
   
-  if(threads.isNotNull()) 
-  {
-    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+  if(threads.isNotNull()) {
+    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
       ithreads = Rcpp::as<int> (threads);
-    else 
-      ithreads = std::thread::hardware_concurrency()/2;
+    } else {
+      ithreads = getDTthreads(0, true);
+      //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+    }
+  } else {
+    ithreads = getDTthreads(0, true);
+    //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
   //.OpenMP.// omp_set_num_threads(ithreads);
   
@@ -110,14 +116,17 @@ Eigen::MatrixXd Inverse_of_Cholesky_decomposition_parallel( Eigen::MatrixXd& A, 
   double sum = 0;
   unsigned int ithreads;
   
-  if(threads.isNotNull()) 
-  {
-    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+  if(threads.isNotNull()) {
+    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
       ithreads = Rcpp::as<int> (threads);
-    else 
-      ithreads = std::thread::hardware_concurrency()/2;
+    } else {
+      ithreads = getDTthreads(0, true);
+      //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+    }
+  } else {
+    ithreads = getDTthreads(0, true);
+    //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
   //.OpenMP.// omp_set_num_threads(ithreads);
   
@@ -157,14 +166,17 @@ Eigen::MatrixXd Inverse_Matrix_Cholesky_parallel( Eigen::MatrixXd L, Rcpp::Nulla
   Eigen::MatrixXd InvCh = Eigen::MatrixXd::Zero(dimensionSize,dimensionSize);
   InvCh = L.triangularView<Eigen::Lower>();
   
-  if(threads.isNotNull()) 
-  {
-    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+  if(threads.isNotNull()) {
+    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
       ithreads = Rcpp::as<int> (threads);
-    else 
-      ithreads = std::thread::hardware_concurrency()/2;
+    } else {
+      ithreads = getDTthreads(0, true);
+      //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+    }
+  } else {
+    ithreads = getDTthreads(0, true);
+    //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency() /2; //omp_get_max_threads();
   
   //.OpenMP.//  omp_set_num_threads(ithreads);
   

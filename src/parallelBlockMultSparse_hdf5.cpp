@@ -21,14 +21,17 @@ Eigen::SparseMatrix<double> matmult_sparse_parallel ( Eigen::Map<Eigen::SparseMa
   
   Eigen::MatrixXd C(M, N);
   
-  if(threads.isNotNull()) 
-  {
-    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+  if(threads.isNotNull()) {
+    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
       ithreads = Rcpp::as<int> (threads);
-    else 
-      ithreads = std::thread::hardware_concurrency()-1;
+    } else {
+      ithreads = getDTthreads(0, true);
+      //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+    }
+  } else {
+    ithreads = getDTthreads(0, true);
+    //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
   }
-  else    ithreads = std::thread::hardware_concurrency()-1; //omp_get_max_threads();
   
   // Columns x thread
   iblocks = N / ithreads;

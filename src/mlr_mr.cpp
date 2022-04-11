@@ -16,14 +16,17 @@ Eigen::MatrixXd Rcpp_mlr_mr(Eigen::MatrixXd x, Eigen::MatrixXd y, int iblocks, R
       icols = x.cols();
   
   // Get number of threads
-  if(threads.isNotNull()) 
-  {
-    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency())
+  if(threads.isNotNull()) {
+    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
       ithreads = Rcpp::as<int> (threads);
-    else 
-      ithreads = std::thread::hardware_concurrency()/2;
+    } else {
+      ithreads = getDTthreads(0, true);
+      //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+    }
+  } else {
+    ithreads = getDTthreads(0, true);
+    //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
   }
-  else  ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads()
   
 
   //.OpenMP.// omp_set_num_threads(ithreads); 
