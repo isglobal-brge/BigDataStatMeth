@@ -13,7 +13,6 @@ author:
   - *brge
   email: juanr.gonzalez@isglobal.org
 date: "`r Sys.Date()`"
-package: "`r pkg_ver('BigDataStatMeth')`"
 output:
   BiocStyle::html_document:
     number_sections: yes
@@ -124,7 +123,7 @@ B <- matrix(rnorm(n*p), nrow=n, ncol=p)
 
 
 # Define big matrix Abig and Bbig
-n <- 1000
+n <- 100
 p <- 10000
 Abig <- matrix(rnorm(n*n), nrow=n, ncol=n)
 Bbig <- matrix(rnorm(n*p), nrow=n, ncol=p)
@@ -410,8 +409,8 @@ In BigDataStatMeth we implemented Moore-Penrose pseudoinverse in function `bdpse
 
 ```{r pseudoinv }
 
-m <- 1300
-n <- 1200
+m <- 800
+n <- 700
 
 A <- matrix(rnorm(n*m), nrow=n, ncol=m)
 

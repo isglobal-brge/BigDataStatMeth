@@ -13,7 +13,6 @@ author:
   - *brge
   email: juanr.gonzalez@isglobal.org
 date: "`r Sys.Date()`"
-package: "`r pkg_ver('BigDataStatMeth')`"
 output:
   BiocStyle::html_document:
     number_sections: yes
@@ -335,17 +334,16 @@ In that case, by default the function `bdblockmult()`, by default, this function
 
 
 ```{r blockmultbm1}
-n <- 1000
+n <- 500
 p <- 10000
 Abig <- matrix(rnorm(n*n), nrow=n, ncol=n)
 Bbig <- matrix(rnorm(n*p), nrow=n, ncol=p)
 
-
 # We want to force it to run in memory
-AxBNOBig <- bdblockmult(Abig, Bbig, bigmatrix = 100000)
+AxBNOBig <- bdblockmult(Abig, Bbig, onmemory = T)
 
-# We consider a big matrix if number of rows or columns are > 500
-AxBBig3000 <- bdblockmult(Abig, Bbig, bigmatrix = 500)
+# We want to run it on disk
+AxBBig3000 <- bdblockmult(Abig, Bbig, onmemory = F)
 ```
 
 Depending on whether the calculation has been performed directly in memory or from an hdf5 file, the returned object type is different.
@@ -613,7 +611,7 @@ We have to indicate the file to work with, the dataset name and the group where 
 # Create dataframe data with 'odata' matrix in delayed hdf5 file at OMIC group
 set.seed(5234)
 n <- 100
-m <- 150000
+m <- 15000
 odata <- matrix(rnorm(n*m, mean=0, sd=1), n,m)
 
 bdAdd_hdf5_matrix(odata, "delayed.hdf5", "OMICS", "data")
@@ -640,10 +638,10 @@ svd$d[1:7]
 Like in Simple Singular Value Decomposition we can normalize, center or scale data before proceed with SVD decomposition with `bscale` and `bcenter` parameters, by default this parameter are TRUE, data is normalized before SVD decomposition. To proceed with SVD without normalization :
 
 ```{r BlockSVDNotNorm}
-# Direct from hdf5 data file
+# Direct from hdf5 data file (using only one thread, serial execution)
 svdh5 <- bdSVD_hdf5( "delayed.hdf5", "OMICS", "data", 
                      bcenter = FALSE, bscale = FALSE,
-                     k = 2, q = 1, threads = 2)
+                     k = 2, q = 1, threads = 1)
 ```
 
 ```{r BlockSVDNotNormResults}
@@ -696,7 +694,7 @@ The imputation method implemented is generated from the information of the SNP d
 We first simulate a genotype matrix with 0, 1, 2 and 3 and store it in hdf5 file and show data stored in file:
 ```{r snpgenotype}
 set.seed(108432)
-geno.sim <- matrix(sample(0:3, 10000, replace = TRUE), byrow = TRUE, ncol = 10)
+geno.sim <- matrix(sample(0:3, 10000, replace = TRUE), byrow = TRUE, ncol = 20)
 bdAdd_hdf5_matrix(geno.sim, "delayed.hdf5", "OMICS", "geno")
 
 # Get data and show the first 5 rows
