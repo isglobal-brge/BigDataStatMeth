@@ -447,6 +447,20 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
     invisible(.Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, force))
 }
 
+#' Write diagonal matrix
+#'
+#' Write diagonal matrix to an existing dataset inside hdf5
+#'
+#' @param diagonal, numeric vector with diagonal elements to be written in existing dataset. 
+#' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
+#' @param group, character array indicating the input group where the data set to be modified. 
+#' @param datasets, character array indicating the input dataset to be modified
+#' @return Original hdf5 dataset with new diagonal elements
+#' @export
+bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
+    invisible(.Call('_BigDataStatMeth_bdWriteDiagonal_hdf5', PACKAGE = 'BigDataStatMeth', diagonal, filename, group, dataset))
+}
+
 #' Normalize Delayed Array matrix
 #' 
 #' This function performs a numerical or Delayed Array matrix normalization

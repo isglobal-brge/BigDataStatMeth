@@ -5,6 +5,11 @@
     #include "rhdf5Utils.h"
     #include "hdf5_checks.h"
     #include "H5Cpp.h"
+
+    // [[Rcpp::depends(RcppEigen)]]
+    using namespace Rcpp;
+    using namespace std;
+
     
     // R functions
     void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector datasets, 

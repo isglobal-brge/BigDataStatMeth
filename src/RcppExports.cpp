@@ -302,6 +302,19 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// bdWriteDiagonal_hdf5
+void bdWriteDiagonal_hdf5(Rcpp::RObject diagonal, std::string filename, std::string group, std::string dataset);
+RcppExport SEXP _BigDataStatMeth_bdWriteDiagonal_hdf5(SEXP diagonalSEXP, SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type diagonal(diagonalSEXP);
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    bdWriteDiagonal_hdf5(diagonal, filename, group, dataset);
+    return R_NilValue;
+END_RCPP
+}
 // bdNormalize_Data
 Rcpp::RObject bdNormalize_Data(Rcpp::RObject& X, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale);
 RcppExport SEXP _BigDataStatMeth_bdNormalize_Data(SEXP XSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP) {
@@ -729,6 +742,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdReduce_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdReduce_matrix_hdf5, 7},
     {"_BigDataStatMeth_bdremove_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdremove_maf_hdf5, 8},
     {"_BigDataStatMeth_bdSplit_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSplit_matrix_hdf5, 9},
+    {"_BigDataStatMeth_bdWriteDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteDiagonal_hdf5, 4},
     {"_BigDataStatMeth_bdNormalize_Data", (DL_FUNC) &_BigDataStatMeth_bdNormalize_Data, 3},
     {"_BigDataStatMeth_bdMLR_MR", (DL_FUNC) &_BigDataStatMeth_bdMLR_MR, 4},
     {"_BigDataStatMeth_bdCrossprod_generic", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_generic, 6},

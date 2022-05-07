@@ -56,7 +56,7 @@
   // R functions (Calls)
   Rcpp::RObject bdSVD (const Rcpp::RObject & X, int k=0, int nev=0, bool bcenter=true, bool bscale = true );
   
-  Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject & file, Rcpp::Nullable<CharacterVector> group, 
+  Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject file, Rcpp::Nullable<CharacterVector> group, 
                             Rcpp::Nullable<CharacterVector> dataset,
                             Rcpp::Nullable<int> k, Rcpp::Nullable<int> q,
                             Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale,
