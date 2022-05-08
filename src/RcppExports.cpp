@@ -168,6 +168,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdgetDiagonal_hdf5
+Rcpp::RObject bdgetDiagonal_hdf5(std::string filename, std::string group, std::string dataset);
+RcppExport SEXP _BigDataStatMeth_bdgetDiagonal_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdgetDiagonal_hdf5(filename, group, dataset));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdImport_text_to_hdf5
 void bdImport_text_to_hdf5(Rcpp::CharacterVector filename, std::string outputfile, std::string outGroup, std::string outDataset, Rcpp::Nullable<std::string> sep, Rcpp::Nullable<bool> header, Rcpp::Nullable<bool> rownames, Rcpp::Nullable<bool> overwrite);
 RcppExport SEXP _BigDataStatMeth_bdImport_text_to_hdf5(SEXP filenameSEXP, SEXP outputfileSEXP, SEXP outGroupSEXP, SEXP outDatasetSEXP, SEXP sepSEXP, SEXP headerSEXP, SEXP rownamesSEXP, SEXP overwriteSEXP) {
@@ -734,6 +747,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdblockmult_sparse_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockmult_sparse_hdf5, 5},
     {"_BigDataStatMeth_bdtCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_hdf5, 10},
     {"_BigDataStatMeth_bdget_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdget_maf_hdf5, 6},
+    {"_BigDataStatMeth_bdgetDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDiagonal_hdf5, 3},
     {"_BigDataStatMeth_bdImport_text_to_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImport_text_to_hdf5, 8},
     {"_BigDataStatMeth_bdImpute_snps_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImpute_snps_hdf5, 6},
     {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
