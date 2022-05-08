@@ -21,3 +21,18 @@ Original hdf5 dataset with new diagonal elements
 \description{
 Write diagonal matrix to an existing dataset inside hdf5
 }
+\examples{
+library(BigDataStatMeth)
+library(rhdf5)
+
+# Prepare data and functions
+X <- matrix(rnorm(150), 10, 10)
+diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
+
+# Create hdf5 data file with  data (Y)
+bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+
+# Update diagonal
+bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
+
+}

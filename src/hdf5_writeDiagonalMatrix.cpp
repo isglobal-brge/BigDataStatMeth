@@ -10,6 +10,20 @@
 //' @param group, character array indicating the input group where the data set to be modified. 
 //' @param datasets, character array indicating the input dataset to be modified
 //' @return Original hdf5 dataset with new diagonal elements
+//' @examples
+//' library(BigDataStatMeth)
+//' library(rhdf5)
+//' 
+//' # Prepare data and functions
+//' X <- matrix(rnorm(150), 10, 10)
+//' diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
+//' 
+//' # Create hdf5 data file with  data (Y)
+//' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+//' 
+//' # Update diagonal
+//' bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
+//' 
 //' @export
 // [[Rcpp::export]]
 void bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, std::string group, std::string dataset)
@@ -86,7 +100,6 @@ void bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, std::st
 
 library(BigDataStatMeth)
 library(rhdf5)
-library(data.table)
 
 setwd("C:/tmp_test/")
 

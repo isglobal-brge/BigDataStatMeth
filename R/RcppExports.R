@@ -309,6 +309,18 @@ bdget_maf_hdf5 <- function(filename, group, dataset, byrows = NULL, bparallel = 
 #' @param group, character array indicating the input group where the data set to be modified. 
 #' @param datasets, character array indicating the input dataset to be modified
 #' @return Numeric vector with all diagonal elements from hdf5 dataset
+#' @examples
+#' 
+#' library(BigDataStatMeth)
+#' library(rhdf5)
+#' 
+#' X <- matrix(rnorm(150), 10, 10)
+#' diag(X) <- 0.5
+#' # Create hdf5 data file with  data (Y)
+#' bdCreate_hdf5_matrix_file("test_file2.hdf5", X, "data", "X", force = T)
+#' # Update diagonal
+#' diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
+#' 
 #' @export
 bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
     .Call('_BigDataStatMeth_bdgetDiagonal_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset)
@@ -469,6 +481,20 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' @param group, character array indicating the input group where the data set to be modified. 
 #' @param datasets, character array indicating the input dataset to be modified
 #' @return Original hdf5 dataset with new diagonal elements
+#' @examples
+#' library(BigDataStatMeth)
+#' library(rhdf5)
+#' 
+#' # Prepare data and functions
+#' X <- matrix(rnorm(150), 10, 10)
+#' diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
+#' 
+#' # Create hdf5 data file with  data (Y)
+#' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+#' 
+#' # Update diagonal
+#' bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
+#' 
 #' @export
 bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
     invisible(.Call('_BigDataStatMeth_bdWriteDiagonal_hdf5', PACKAGE = 'BigDataStatMeth', diagonal, filename, group, dataset))

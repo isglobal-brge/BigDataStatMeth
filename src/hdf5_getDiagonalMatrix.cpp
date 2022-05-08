@@ -9,6 +9,18 @@
 //' @param group, character array indicating the input group where the data set to be modified. 
 //' @param datasets, character array indicating the input dataset to be modified
 //' @return Numeric vector with all diagonal elements from hdf5 dataset
+//' @examples
+//' 
+//' library(BigDataStatMeth)
+//' library(rhdf5)
+//' 
+//' X <- matrix(rnorm(150), 10, 10)
+//' diag(X) <- 0.5
+//' # Create hdf5 data file with  data (Y)
+//' bdCreate_hdf5_matrix_file("test_file2.hdf5", X, "data", "X", force = T)
+//' # Update diagonal
+//' diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
+//' 
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::string dataset)
@@ -77,9 +89,6 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
     return(intNewDiagonal);
     
 }
-
-
-
 
 
 
