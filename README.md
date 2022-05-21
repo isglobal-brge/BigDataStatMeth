@@ -44,6 +44,7 @@ library(BigDataStatMeth)
 |--------------------------------------------------|:-------------------------------------------------------:|----------------|:---------:|----------|------|
 | **Basic functions with vectors and matrices**    |                                                         |                |           |          |      |
 | Matrix Product                                   |             bdblockmult(…) / bdblockmult_hdf5(…)            |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
+| Matrix/Matrix and Matrix/Array Summatory         |                    blockSum_hdf5(…)                     |                |           |     ︎     |   ✔   |
 | Sparse Matrix Product                            |      bdblockmult_sparse(…) / bdblockmult_sparse_hdf5(…)     |                |           |          |   ✔︎  |
 | Matrix product with its transpose                | bdCrossprod(…) / bdtCrossprod(…) / bdCrossprod_hdf5(…) / bdtCrossprod_hdf5(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
 | Matrix - Matrix weighted product (XWXt, XtWX)    |      bdtCrossprod_Weighted(…) / bdCrossprod_Weighted(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
@@ -52,6 +53,7 @@ library(BigDataStatMeth)
 | Data Normalization (center, scale and both)      |          bdNormalize_Data(…) / bdNormalize_hdf5(…)      |        ✔︎       |     ✔︎     |          |   ✔︎  |
 | **Other functions**                              |                                                         |                |           |          |      |
 | Vector sum                                       |                   bdparallelVectorSum(…)                |                |           |     ✔︎    |      |
+| Write diagonal to an hdf5 matrix dataset         |                    bdgetDiagonal_hdf5(…)                |                |           |     ︎     |   ✔w   |
 | Pow(2) vector elements                           |                     bdparallelpow2(…)                   |                |           |     ✔︎    |      |
 | **Lineal Algebra Functions**                     |                                                         |                |           |          |      |
 | SVD matrix decomposition                         |                 bdSVD(…) / bdSVD_hdf5(…)                |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
