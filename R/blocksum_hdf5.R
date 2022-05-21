@@ -24,6 +24,25 @@
 #' }
 #' @examples
 #'
+#' library(BigDataStatMeth)
+#' library(rhdf5)
+#' 
+#' 
+#' # Sum matrix twice
+#' 
+#' # Prepare data and functions
+#' X <- matrix(rnorm(200*10), nrow = 10, ncol = 200)
+#' diag(X) <- 0.5
+#' 
+#' # Create hdf5 data file with  two X matrices ( named X and Y)
+#' bdCreate_hdf5_matrix_file("test_file3.hdf5", X, "data", "X", force = T)
+#' bdAdd_hdf5_matrix(X, "test_file3.hdf5", "data", "Y", force = T)
+#' 
+#' # Update diagonal
+#' diagonal <- bdblockSum_hdf5( filename = "test_file3.hdf5", group = "data", a = "X", b = "Y", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")
+#' 
+#'
+#' # Sum matrix with an Array
 #' K <- 1
 #' N <- 300
 #' 
@@ -41,7 +60,7 @@
 #' results <- bdblockSum_hdf5( filename = "test_file4.hdf5", group = "data", a = "A", b = "B", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")
 #'
 
-bdblockSum_hdf5 <- function( filename, group, a, b, groupB = NULL, block_size = 128, paral = FALSE, threads = NULL,
+bdblockSum_hdf5 <- function( filename, group, a, b, groupB = NULL, block_size = 2048, paral = FALSE, threads = NULL,
                        outgroup = "OUTPUT", outdataset = NULL)
 {
 

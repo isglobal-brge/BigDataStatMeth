@@ -177,7 +177,7 @@ void hdf5_block_matrix_vector_sum_hdf5_transposed( std::string matA, std::string
     try {
         
         if(hdf5_block == 1) {
-            hdf5_block = 1024;
+            hdf5_block = 8192;
         }
         
         int isize = hdf5_block + 1;
@@ -200,7 +200,6 @@ void hdf5_block_matrix_vector_sum_hdf5_transposed( std::string matA, std::string
         
         if(  N == M )
         {
-            Rcpp::Rcout<<"\n N = M \n";
             for (int ii = 0; ii < L; ii += hdf5_block)
             {
                 if( ii + hdf5_block > L ) 
@@ -392,8 +391,8 @@ Rcpp::RObject blockSum_hdf5(std::string filename,
         iblock_size = Rcpp::as<int> (block_size);
     } else {
         iblock_size = std::min( std::min(dsizeA[0],dsizeA[1]),  std::min(dsizeB[0],dsizeB[1]));
-        if (iblock_size>512) {
-            iblock_size = 512; 
+        if (iblock_size > 8192) {
+            iblock_size = 8192; 
         }
     }
 
