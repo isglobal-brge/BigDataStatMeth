@@ -23,17 +23,24 @@
 #'  \item{"dataset"}{string complete path inside hdf5 file where results are stored.}
 #' }
 #' @examples
-#' # with numeric matrix
 #'
+#' K <- 1
+#' N <- 300
+#' 
+#' M <- 300
+#' L <- 2500
+#' 
+#' 
+#' A <- rnorm(K*N)
+#' B <- matrix(rnorm(M*L), nrow = M, ncol = L)
+#' 
+#' # Create hdf5 data file with A and B matrices
+#' bdCreate_hdf5_matrix_file("test_file4.hdf5", as.matrix(A), "data", "A", force = T)
+#' bdAdd_hdf5_matrix(B, "test_file4.hdf5", "data", "B", force = T)
+#' 
+#' results <- bdblockSum_hdf5( filename = "test_file4.hdf5", group = "data", a = "A", b = "B", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")
 #'
-#' m <- 500
-#' k <- 1500
-#' n <- 400
-#' A <- matrix(rnorm(n*k), nrow=n, ncol=k)
-#' B <- matrix(rnorm(n*k), nrow=k, ncol=n)
-#'
-#' C <- bdblockSum_hdf5(A, B, 128, TRUE)
-#'
+
 bdblockSum_hdf5 <- function( filename, group, a, b, groupB = NULL, block_size = 128, paral = FALSE, threads = NULL,
                        outgroup = "OUTPUT", outdataset = NULL)
 {

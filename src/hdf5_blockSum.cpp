@@ -142,6 +142,148 @@ void hdf5_block_matrix_sum_hdf5_indatasets_transposed( std::string matA, std::st
 
 
 
+// This function makes summatori with a matrix and a vector, returns a matrix. 
+// 
+// Working directly with C-matrix in hdf5 file
+// browmajor : if = true, indicates that R data is stored in hdf5 as row major (default in hdf5)
+//             else, indicates that R data is stored in hdf5 as column major
+void hdf5_block_matrix_vector_sum_hdf5_transposed( std::string matA, std::string matB,
+                                                   IntegerVector sizeA, IntegerVector sizeB, int hdf5_block, 
+                                                   std::string filename, std::string strsubgroupIN, 
+                                                   std::string strsubgroupINB, std::string strsubgroupOUT, 
+                                                   std::string strdatasetOUT, 
+                                                   int mem_block_size, bool bparal, bool browmajor, 
+                                                   Rcpp::Nullable<int> threads  = R_NilValue)
+{
+    
+    
+    int K = sizeA[0];
+    int N = sizeA[1];
+    
+    int M = sizeB[0];
+    int L = sizeB[1];
+    
+    
+    //..// Rcpp::Rcout<<"Estem tractant unes matriu de tamany : \n\tMatriu A : "<<sizeA<<"\n\tMatriu B : "<<sizeB<<"\n\tMatriu C : "<<M<<" "<<N;
+    
+    IntegerVector stride = {1,1};
+    IntegerVector block = {1,1};
+    H5File* file  = nullptr;
+    DataSet* datasetA = nullptr;
+    DataSet* datasetB = nullptr;
+    DataSet* datasetC = nullptr;
+    
+
+    try {
+        
+        if(hdf5_block == 1) {
+            hdf5_block = 1024;
+        }
+        
+        int isize = hdf5_block + 1;
+        
+        IntegerVector stride = IntegerVector::create(1, 1);
+        IntegerVector block = IntegerVector::create(1, 1); 
+        
+        create_HDF5_dataset( filename, strsubgroupOUT + strdatasetOUT, M, L, "real");
+        
+        // Open file and get dataset
+        file = new H5File( filename, H5F_ACC_RDWR );
+        
+        datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
+        datasetB = new DataSet(file->openDataSet(strsubgroupINB + matB));
+        datasetC = new DataSet(file->openDataSet(strsubgroupOUT + strdatasetOUT));
+        
+        Eigen::MatrixXd A_tmp = GetCurrentBlock_hdf5( file, datasetA, 0, 0, K, N);
+        
+        Eigen::VectorXd A(Eigen::Map<Eigen::VectorXd>(A_tmp.data(), A_tmp.cols()*A_tmp.rows()));
+        
+        if(  N == M )
+        {
+            Rcpp::Rcout<<"\n N = M \n";
+            for (int ii = 0; ii < L; ii += hdf5_block)
+            {
+                if( ii + hdf5_block > L ) 
+                    isize = L - ii;
+                
+                Eigen::MatrixXd B = GetCurrentBlock_hdf5( file, datasetB, 0, ii, N, std::min(hdf5_block,isize));
+                Eigen::MatrixXd C = A.replicate( 1, std::min(hdf5_block,isize)) + B;
+                
+                IntegerVector count = { N, std::min(hdf5_block,isize) };
+                IntegerVector offset = { 00, ii};
+                
+                write_HDF5_matrix_subset_v2( file, datasetC, offset, count, stride, block, Rcpp::wrap(C));
+                
+                if( ii + hdf5_block > L ) isize = hdf5_block + 1;
+            }
+            
+        } else if(  N == L ) {
+            
+            for (int ii = 0; ii < M; ii += hdf5_block)
+            {
+                if( ii + hdf5_block > M ) 
+                    isize = M - ii;
+                
+                Eigen::MatrixXd B = GetCurrentBlock_hdf5( file, datasetB, ii, 0, std::min(hdf5_block,isize), N);
+                Eigen::MatrixXd C = A.transpose().replicate( 1, std::min(hdf5_block,isize)) + B;
+                
+                IntegerVector count = { std::min(hdf5_block,isize), N};
+                IntegerVector offset = {ii, 0};
+                
+                write_HDF5_matrix_subset_v2( file, datasetC, offset, count, stride, block, Rcpp::wrap(C));
+                
+                if( ii + hdf5_block > M ) isize = hdf5_block + 1;
+            }
+            
+        } else {
+            Rcpp::Rcout<<"non-conformable arguments\n";
+            return void();
+        }
+        
+        
+    } catch( FileIException& error ) { // catch failure caused by the H5File operations
+        datasetA->close();
+        datasetB->close();
+        datasetC->close();
+        file->close();
+        ::Rf_error( "c++ exception hdf5_block_matrix_mul_hdf5_indatasets_transposed (File IException)" );
+        return void();
+    } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
+        datasetA->close();
+        datasetB->close();
+        datasetC->close();
+        file->close();
+        ::Rf_error( "c++ exception hdf5_block_matrix_mul_hdf5_indatasets_transposed (DataSet IException)" );
+        return void();
+    } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
+        datasetA->close();
+        datasetB->close();
+        datasetC->close();
+        file->close();
+        ::Rf_error( "c++ exception hdf5_block_matrix_mul_hdf5_indatasets_transposed (DataType IException)" );
+        return void();
+    }catch(std::exception &ex) {
+        datasetA->close();
+        datasetB->close();
+        datasetC->close();
+        file->close();
+        Rcpp::Rcout<< ex.what();
+        return void();
+    }
+    
+    datasetA->close();
+    datasetB->close();
+    datasetC->close();
+    file->close();
+    
+    return void();
+
+}
+
+
+
+
+
 // [[Rcpp::export(.blockSum_hdf5)]]
 Rcpp::RObject blockSum_hdf5(std::string filename, 
                              const std::string group, 
@@ -246,34 +388,51 @@ Rcpp::RObject blockSum_hdf5(std::string filename,
     dsA.close();
     dsB.close();
 
-    if(block_size.isNotNull())
-    {
-      iblock_size = Rcpp::as<int> (block_size);
-      
+    if(block_size.isNotNull()) {
+        iblock_size = Rcpp::as<int> (block_size);
     } else {
-      iblock_size = std::min(  std::min(dsizeA[0],dsizeA[1]),  std::min(dsizeB[0],dsizeB[1]));
-      if (iblock_size>512)
-        iblock_size = 512;
+        iblock_size = std::min( std::min(dsizeA[0],dsizeA[1]),  std::min(dsizeB[0],dsizeB[1]));
+        if (iblock_size>512) {
+            iblock_size = 512; 
+        }
     }
 
     if( paral.isNull()) {
-      bparal = false;
+        bparal = false;
     } else {
-      bparal = Rcpp::as<bool> (paral);
+        bparal = Rcpp::as<bool> (paral);
     }
     
 
     if(!bexistgroup) {
-      res = create_HDF5_group(filename, strsubgroupOut + "/" );
-    } 
+        res = create_HDF5_group(filename, strsubgroupOut + "/" );
+    }
     
-
+    if( dsizeA[0] != 1 && dsizeA[1]!= 1 && dsizeB[0] != 1 && dsizeB[1]!= 1) {
         
-        // Test mix versión read block from file and calculate multiplication in memory (with paral·lel algorithm)
         hdf5_block_matrix_sum_hdf5_indatasets_transposed(A, B, dsizeA, dsizeB, iblock_size, filename, 
                                                          strsubgroupIn, strsubgroupInB, 
                                                          strsubgroupOut + "/", strdatasetOut, 
                                                          bparal, true, threads);
+    } else {
+        
+        if(dsizeA[0]==1 || dsizeA[1]==1) {
+            hdf5_block_matrix_vector_sum_hdf5_transposed(A, B, dsizeA, dsizeB, iblock_size, filename,
+                                                         strsubgroupIn, strsubgroupInB, 
+                                                         strsubgroupOut + "/", strdatasetOut, 
+                                                         bparal, true, threads);
+        } else {
+            hdf5_block_matrix_vector_sum_hdf5_transposed(B, A, dsizeB, dsizeA, iblock_size, filename,
+                                                         strsubgroupInB, strsubgroupIn, 
+                                                         strsubgroupOut + "/", strdatasetOut, 
+                                                         bparal, true, threads);
+        }
+        
+        
+        
+    }
+        
+    
 
 
   } catch( FileIException& error ) { // catch failure caused by the H5File operations
@@ -318,5 +477,30 @@ bdAdd_hdf5_matrix(X, "test_file3.hdf5", "data", "Y", force = T)
 
 # Update diagonal
 diagonal <- bdblockSum_hdf5( filename = "test_file3.hdf5", group = "data", a = "X", b = "Y", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")
+
+
+setwd("C:/tmp_test/")
+
+K <- 1
+N <- 300
+
+M <- 2500
+L <- 300
+
+
+A <- rnorm(K*N)
+B <- matrix(rnorm(M*L), nrow = M, ncol = L)
+
+# Create hdf5 data file with  data (Y)
+bdCreate_hdf5_matrix_file("test_file4.hdf5", as.matrix(A), "data", "A", force = T)
+bdAdd_hdf5_matrix(B, "test_file4.hdf5", "data", "B", force = T)
+
+# Update diagonal
+results <- bdblockSum_hdf5( filename = "test_file4.hdf5", group = "data", a = "A", b = "B", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")
+(A+B)[1:5,1:5]
+
+(A+B)[,1:5]
+
+
 
 */

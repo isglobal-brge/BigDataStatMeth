@@ -54,15 +54,21 @@ A list with an HDF5 object with numerical matrix and  HDF5 file name with result
 This function performs a block matrix-matrix multiplication with mattrix stored in HDF5 file
 }
 \examples{
-# with numeric matrix
+
+K <- 1
+N <- 300
+
+M <- 300
+L <- 2500
 
 
-m <- 500
-k <- 1500
-n <- 400
-A <- matrix(rnorm(n*k), nrow=n, ncol=k)
-B <- matrix(rnorm(n*k), nrow=k, ncol=n)
+A <- rnorm(K*N)
+B <- matrix(rnorm(M*L), nrow = M, ncol = L)
 
-C <- bdblockSum_hdf5(A, B, 128, TRUE)
+# Create hdf5 data file with A and B matrices
+bdCreate_hdf5_matrix_file("test_file4.hdf5", as.matrix(A), "data", "A", force = T)
+bdAdd_hdf5_matrix(B, "test_file4.hdf5", "data", "B", force = T)
+
+results <- bdblockSum_hdf5( filename = "test_file4.hdf5", group = "data", a = "A", b = "B", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")
 
 }
