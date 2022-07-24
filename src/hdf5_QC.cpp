@@ -33,7 +33,7 @@ int Remove_snp_low_data_HDF5( H5File* file, DataSet* dataset, bool bycols, std::
   IntegerVector offset = IntegerVector::create(0, 0);
   IntegerVector newoffset = IntegerVector::create(0, 0);
   IntegerVector count = IntegerVector::create(0, 0);
-  DataSet* unlimDataset;
+  DataSet* unlimDataset = nullptr;
   int ilimit;
   int blocksize = 1000;
   int itotrem = 0;

@@ -69,61 +69,6 @@ svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale 
 
 
 
-// 
-// // Lapack SVD decomposition
-// svdeig RcppbdSVD_lapack_not_optim( Eigen::MatrixXd& X, bool bcenter, bool bscale, bool complete )
-// {
-//     
-//     svdeig retsvd;
-//     
-//     char Schar='S';
-//     char Achar='A';
-//     int info = 0;
-//     
-//     
-//     if(bcenter ==true || bscale == true) {
-//         X = RcppNormalize_Data(X, bcenter, bscale);
-//     }
-//     
-//     int m = X.rows();
-//     int n = X.cols();
-//     int lda = std::max(1,m);
-//     int ldu = std::max(1,m);
-//     int ldvt = std::min(m, n);
-//     int k = std::min(m,n);
-//     int lwork;
-//     
-//     /*if(n>5*m)
-//     lwork = std::max(1,5*std::min(m,n));
-//     else
-//     lwork = std::max( 1, 4*std::min(m,n)* std::min(m,n) + 7*std::min(m, n) );
-//     */
-//     lwork = std::max( 5*std::min(m,n)+ std::max(m,n), 9*std::min(m, n) ); //.. ORIGINAL ..//
-//     //..// lwork = std::max( 3*std::min(m,n)+ std::max(m,n), 5*std::min(m, n) ); //.. ORIGINAL ..//
-//     
-//     
-//     Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
-//     Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);
-//     Eigen::MatrixXd u;
-//     Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
-//     
-//     if( complete == false ) {
-//         u = Eigen::MatrixXd::Zero(ldu,k);
-//         dgesvd_( &Schar, &Schar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
-//     } else {
-//         u = Eigen::MatrixXd::Zero(ldu,m);
-//         dgesvd_( &Achar, &Achar, &m, &n, X.data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
-//     }
-//     
-//     retsvd.d = s;
-//     retsvd.u = u;
-//     retsvd.v = vt.transpose();
-//     
-//     return retsvd;
-// }
-
-
-
 // Lapack SVD decomposition - Optimized algorithm with dgesdd
 svdeig RcppbdSVD_lapack( Eigen::MatrixXd& X, bool bcenter, bool bscale, bool complete )
 {
@@ -257,7 +202,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
     
 
     if( bcenter == true || bscale == true) {
-        DataSet* normalizedData;
+        DataSet* normalizedData = nullptr;
         normalizedData = new DataSet(file->openDataSet(strGroupName + "/normalmatrix"));
         IntegerVector dims_out_normal = get_HDF5_dataset_size(*normalizedData);
         A = GetCurrentBlock_hdf5_Original(file, normalizedData, 0, 0,dims_out_normal[0], dims_out_normal[1] );
@@ -486,7 +431,7 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
   svdeig retsvd;
   Eigen::MatrixXd X;
   
-  DataSet* dataset;
+  DataSet* dataset = nullptr;
   
   
   try
@@ -604,6 +549,7 @@ svdeig RcppCholDec(const Eigen::MatrixXd& X)
   Eigen::LDLT<Eigen::MatrixXd> cholSolv = mX.ldlt();
   
   Eigen::LLT<Eigen::MatrixXd> lltOfA(X); // compute the Cholesky decomposition of A
+  
   if(lltOfA.info() == Eigen::NumericalIssue)  {
     Rcpp::Rcout<<"Possibly non semi-positive definitie matrix!. Matrix returned as 0";
     decomp.v = Eigen::MatrixXd::Zero(2,2);
@@ -652,16 +598,17 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & X )
   svdeig result;
   Eigen::MatrixXd mX;
   
-  if ( X.isS4() == true)    
-  {
-    mX = read_DelayedArray(X);
-  } else {
+
     try{  
-      mX = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
+        
+        if ( TYPEOF(X) == INTSXP ) {
+            mX = Rcpp::as<Eigen::MatrixXi>(X).cast<double>();
+        } else {
+            mX = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
+        }
     }
     catch(std::exception &ex) { }
-  }
-  
+
   result = RcppCholDec(mX);
   
   return (result.v);

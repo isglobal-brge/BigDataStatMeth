@@ -1353,7 +1353,7 @@ extern "C" {
         mtype.insertMember("chr", HOFFSET(name, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
         
         // Create the dataset.
-        DataSet* dataset;
+        DataSet* dataset = nullptr;
         dataset = new DataSet(file->createDataSet(datasetname, mtype, dataspace));
         
         // Get dataspace of the dataset.
@@ -2344,6 +2344,31 @@ IntegerVector get_HDF5_dataset_size(DataSet dataset)
     dims = IntegerVector::create(static_cast<int>(dims_out[0]), static_cast<int>(dims_out[1]));
   
   return(dims);
+}  
+
+
+
+IntegerVector get_HDF5_dataset_size_ptr(DataSet* dataset)
+{
+    // Get dataspace from dataset
+    DataSpace dataspace = dataset->getSpace();
+    IntegerVector dims;
+    int ndims;
+    
+    // Get the number of dimensions in the dataspace.
+    int rank = dataspace.getSimpleExtentNdims();
+    
+    // Get the dimension size of each dimension in the dataspace and
+    // display them.
+    hsize_t dims_out[2];
+    ndims = dataspace.getSimpleExtentDims( dims_out, NULL);
+    
+    if(rank==1)
+        dims = IntegerVector::create( static_cast<int>(dims_out[0]), static_cast<int>(1));
+    else
+        dims = IntegerVector::create(static_cast<int>(dims_out[0]), static_cast<int>(dims_out[1]));
+    
+    return(dims);
 }  
   
   

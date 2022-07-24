@@ -1,6 +1,29 @@
 #include "include/hdf5_writeDiagonalMatrix.h"
 
 
+void Rcpp_setDiagonalMatrix( H5File* file, DataSet* pdataset, Rcpp::NumericVector intNewDiagonal)
+{
+    
+    // Rcpp::NumericVector intNewDiagonal;
+    Rcpp::IntegerVector count = Rcpp::IntegerVector::create(1, 1);
+    Rcpp::IntegerVector stride = Rcpp::IntegerVector::create(1, 1);
+    Rcpp::IntegerVector block = Rcpp::IntegerVector::create(1, 1);
+    
+    Rcpp::IntegerVector dims_out = get_HDF5_dataset_size(*pdataset);
+
+    // H5Sselect_elements()
+    for(int i=0; i < intNewDiagonal.size(); i++) {
+        Rcpp::IntegerVector offset = Rcpp::IntegerVector::create(i, i);
+        write_HDF5_matrix_subset_v2(file, pdataset, offset, count, stride, block, wrap(intNewDiagonal(i)) );
+    }
+    
+    return void();
+}
+
+
+
+
+
 //' Write diagonal matrix
 //'
 //' Write diagonal matrix to an existing dataset inside hdf5
@@ -36,9 +59,9 @@ void bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, std::st
     try
     {
         
-        Rcpp::IntegerVector count = Rcpp::IntegerVector::create(1, 1);
-        Rcpp::IntegerVector stride = Rcpp::IntegerVector::create(1, 1);
-        Rcpp::IntegerVector block = Rcpp::IntegerVector::create(1, 1);
+        // Rcpp::IntegerVector count = Rcpp::IntegerVector::create(1, 1);
+        // Rcpp::IntegerVector stride = Rcpp::IntegerVector::create(1, 1);
+        // Rcpp::IntegerVector block = Rcpp::IntegerVector::create(1, 1);
         
         std::string strDataset = group + "/" + dataset;
         
@@ -65,10 +88,12 @@ void bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, std::st
             return void();
         }
         
-        for(int i=0; i < intNewDiagonal.size(); i++) {
-            Rcpp::IntegerVector offset = Rcpp::IntegerVector::create(i, i);
-            write_HDF5_matrix_subset_v2(file, pdataset, offset, count, stride, block, wrap(intNewDiagonal(i)) );
-        }
+        Rcpp_setDiagonalMatrix( file, pdataset, intNewDiagonal);
+            
+        // for(int i=0; i < intNewDiagonal.size(); i++) {
+        //     Rcpp::IntegerVector offset = Rcpp::IntegerVector::create(i, i);
+        //     write_HDF5_matrix_subset_v2(file, pdataset, offset, count, stride, block, wrap(intNewDiagonal(i)) );
+        // }
         
     }
     catch( FileIException& error ) { // catch failure caused by the H5File operations
@@ -101,7 +126,8 @@ void bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, std::st
 library(BigDataStatMeth)
 library(rhdf5)
 
-setwd("C:/tmp_test/")
+# setwd("C:/tmp_test/")
+setwd("/Volumes/XtraSpace/PhD_Test/BigDataStatMeth")
 
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
 

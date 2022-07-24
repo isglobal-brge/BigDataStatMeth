@@ -471,7 +471,7 @@ X <- matrix(rnorm(200*10), nrow = 10, ncol = 200)
 diag(X) <- 0.5
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file3.hdf5", X, "data", "X", force = T)
+bdCreate_hdf5_matrix_file("test_file44.hdf5", X, "data", "X", force = T)
 bdAdd_hdf5_matrix(X, "test_file3.hdf5", "data", "Y", force = T)
 
 # Update diagonal

@@ -9,7 +9,7 @@ int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string st
   IntegerVector offset = IntegerVector::create(0, 0);
   IntegerVector newoffset = IntegerVector::create(0, 0);
   IntegerVector count = IntegerVector::create(0, 0);
-  DataSet* unlimDataset;
+  DataSet* unlimDataset = nullptr;
   int ilimit;
   // int blocksize = 100;
   int itotrem = 0;
@@ -204,7 +204,7 @@ Rcpp::RObject bdremove_maf_hdf5( std::string filename, std::string group, std::s
     if(exists_HDF5_element_ptr(file, strdataset)) 
     {
       
-      DataSet* pdataset; 
+      DataSet* pdataset = nullptr;
       
       pdataset = new DataSet(file->openDataSet(strdataset));
       

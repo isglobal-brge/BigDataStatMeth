@@ -380,6 +380,42 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
     .Call('_BigDataStatMeth_bdgetDatasetsList_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, prefix)
 }
 
+#' Compute inverse cholesky with hdf5 data files
+#'
+#' Compute inverse cholesky with datasets stored in hdf5 data files
+#'
+#' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
+#' @param group, character array indicating the input group where the data set to be modified. 
+#' @param datasets, character array indicating the input dataset to be modified
+#' @param outdataset character array with output dataset name where we want to store results
+#' @param outgroup optional, character array with output group name where we want to 
+#' store results if not provided then results are stored in the same group as original dataset
+#' @param threads optional parameter. Integer with numbers of threads to be used
+#' @param force, optional boolean if true, previous results in same location inside 
+#' hdf5 will be overwritten, by default force = false, data was not overwritten.
+#' @param elementsBlock, optional integer defines de maximum number of elements to read from hdf5 data file in each block. 
+#' By default this value is set to 10000. If matrix is bigger thant 5000x5000 then block is set to number of rows or columns x 2
+#' @return Original hdf5 data file with Inverse of Cholesky
+#' @examples
+#' 
+#' library(BigDataStatMeth)
+#' library(rhdf5)
+#' 
+#' set.seed(1234)
+#' A  <- matrix(sample.int(10, 10000, replace = TRUE), ncol = 100)
+#' A <- crossprod(A)
+#' 
+#' # Create hdf5 data file with  data (Y)
+#' bdCreate_hdf5_matrix_file("test_file2.hdf5", A, "data", "A", force = T)
+#' 
+#' # Get Inverse Cholesky
+#' res <- bdInvCholesky_hdf5("test_file.hdf5", "data", "A", "results", "InverseA", force = T)
+#' 
+#' @export
+bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, force = NULL, threads = 2L, elementsBlock = 1000000L) {
+    invisible(.Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, force, threads, elementsBlock))
+}
+
 #' Normalize dataset in hdf5 file
 #' 
 #' This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file

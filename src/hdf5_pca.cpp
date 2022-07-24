@@ -21,7 +21,7 @@ Eigen::VectorXd cumsum_hdf5(Eigen::VectorXd x){
 void get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
 {
   
-  DataSet* dataset;
+  DataSet* dataset = nullptr;
   
   try
   {
@@ -92,9 +92,9 @@ void get_HDF5_PCA_variance_ptr(  H5File* file, std::string strdataset)
 void get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
 {
   
-  DataSet* d_ds;
-  DataSet* v_ds;
-  DataSet* u_ds;
+  DataSet* d_ds = nullptr;
+  DataSet* v_ds = nullptr;
+  DataSet* u_ds = nullptr;
   
   try
   {

@@ -71,7 +71,7 @@ void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string st
   IntegerVector block = IntegerVector::create(1, 1);
   IntegerVector offset = IntegerVector::create(0, 0);
   IntegerVector count = IntegerVector::create(0, 0);
-  DataSet* outdataset;
+  DataSet* outdataset = nullptr;
   int ilimit;
   int blocksize = 1000;
   

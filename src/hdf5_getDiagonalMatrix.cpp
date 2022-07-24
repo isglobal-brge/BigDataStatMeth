@@ -1,6 +1,32 @@
 #include "include/hdf5_getDiagonalMatrix.h"
 
 
+Rcpp::NumericVector Rcpp_getDiagonalfromMatrix( H5File* file, DataSet* pdataset)
+{
+    
+    Rcpp::NumericVector intNewDiagonal;
+    
+    Rcpp::IntegerVector offset = Rcpp::IntegerVector::create(0, 0);
+    Rcpp::IntegerVector count = Rcpp::IntegerVector::create(1, 1);
+    Rcpp::IntegerVector stride = Rcpp::IntegerVector::create(1, 1);
+    Rcpp::IntegerVector block = Rcpp::IntegerVector::create(1, 1);
+    
+    
+    Rcpp::IntegerVector dims_out = get_HDF5_dataset_size(*pdataset);
+    Rcpp::NumericVector data(1);
+    
+    // H5Sselect_elements()
+    for(int i=0; i < dims_out[0]; i++) {
+        offset[0] = i; offset[1] = i;
+        read_HDF5_matrix_subset(file, pdataset, offset, count, stride, block, REAL(data));
+        intNewDiagonal.push_back(data[0]);
+    }
+    
+    return(intNewDiagonal);
+}
+
+
+
 //' Write diagonal matrix
 //'
 //' Write diagonal matrix to an existing dataset inside hdf5
@@ -33,10 +59,10 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
     try
     {
         
-        Rcpp::IntegerVector offset = Rcpp::IntegerVector::create(0, 0);
-        Rcpp::IntegerVector count = Rcpp::IntegerVector::create(1, 1);
-        Rcpp::IntegerVector stride = Rcpp::IntegerVector::create(1, 1);
-        Rcpp::IntegerVector block = Rcpp::IntegerVector::create(1, 1);
+        // Rcpp::IntegerVector offset = Rcpp::IntegerVector::create(0, 0);
+        // Rcpp::IntegerVector count = Rcpp::IntegerVector::create(1, 1);
+        // Rcpp::IntegerVector stride = Rcpp::IntegerVector::create(1, 1);
+        // Rcpp::IntegerVector block = Rcpp::IntegerVector::create(1, 1);
         
         std::string strDataset = group + "/" + dataset; 
         
@@ -56,15 +82,17 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
             return(Rcpp::wrap(0));
         }
         
-        Rcpp::IntegerVector dims_out = get_HDF5_dataset_size(*pdataset);
-        Rcpp::NumericVector data(1);
-        
-        // H5Sselect_elements()
-        for(int i=0; i < dims_out[0]; i++) {
-            offset[0] = i; offset[1] = i;
-            read_HDF5_matrix_subset(file, pdataset, offset, count, stride, block, REAL(data));
-            intNewDiagonal.push_back(data[0]);
-        }
+        intNewDiagonal = Rcpp_getDiagonalfromMatrix(file, pdataset);
+            
+        // Rcpp::IntegerVector dims_out = get_HDF5_dataset_size(*pdataset);
+        // Rcpp::NumericVector data(1);
+        // 
+        // // H5Sselect_elements()
+        // for(int i=0; i < dims_out[0]; i++) {
+        //     offset[0] = i; offset[1] = i;
+        //     read_HDF5_matrix_subset(file, pdataset, offset, count, stride, block, REAL(data));
+        //     intNewDiagonal.push_back(data[0]);
+        // }
         
     }
     catch( FileIException& error ) { // catch failure caused by the H5File operations
@@ -97,7 +125,8 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
 library(BigDataStatMeth)
 library(rhdf5)
 
-setwd("C:/tmp_test/")
+#..# setwd("C:/tmp_test/")
+setwd("/Volumes/XtraSpace/PhD_Test/BigDataStatMeth")
 
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
 
@@ -106,9 +135,10 @@ X <- matrix(rnorm(150), 10, 10)
 diag(X) <- 0.5
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file2.hdf5", X, "data", "X", force = T)
+bdCreate_hdf5_matrix_file("tt_file.hdf5", X, "data", "A", force = T)
+
 
 # Update diagonal
-diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
+diagonal <- bdgetDiagonal_hdf5("tt_file.hdf5", "data", "A")
 
 */
