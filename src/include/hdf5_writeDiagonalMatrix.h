@@ -2,7 +2,6 @@
 #define hdf5_writeDiagonalMatrix
 
     #include <RcppEigen.h>
-    // #include "BigDataStatMeth.h"
     #include "rhdf5Utils.h"
     #include "hdf5_checks.h"
     #include "H5Cpp.h"
