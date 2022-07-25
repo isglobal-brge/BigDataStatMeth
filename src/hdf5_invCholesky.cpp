@@ -474,7 +474,7 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
                 
                 Eigen::MatrixXd verticalData = GetCurrentBlock_hdf5(file, InOutDataset, offset[0], offset[1], count[0], count[1]);
                 
-#pragma omp parallel for num_threads(getDTthreads(ithreads, true)) shared (verticalData, colstoRead, offset, ) schedule(static)
+#pragma omp parallel for num_threads(getDTthreads(ithreads, true)) shared (verticalData, colstoRead, offset) schedule(static)
                 for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columnes
                 {
                     int init;
