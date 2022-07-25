@@ -3,7 +3,7 @@
 
     #include <RcppEigen.h>
     #include "rhdf5Utils.h"
-    #include "BigDataStatMeth.h"
+    //#include "BigDataStatMeth.h"
     #include "hdf5_to_Eigen.h"
     #include "hdf5_getDiagonalMatrix.h"
     #include "hdf5_writeDiagonalMatrix.h"
