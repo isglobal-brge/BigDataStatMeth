@@ -5,13 +5,20 @@
 //    Eigen and R works with ColMajor and hdf5 in RowMajor
 Eigen::MatrixXd RowMajorVector_to_ColMajorMatrix(double* datablock, int countx, int county)
 {
-  Eigen::MatrixXd mdata(countx, county);
+    Eigen::MatrixXd mdata(countx, county);
+    
+    Rcpp::Rcout<<"\nENTREM A LA FUNCIó - reated matrix with size : "<<countx<<" - "<<county;
   
-  for (size_t i=0; i<countx; i++)
-    for(size_t j=0;j<county;j++)
-      mdata(i,j) = datablock[i*county+j];
+    for (size_t i=0; i<countx; i++){
+        for(size_t j=0;j<county;j++) {
+            mdata(i,j) = datablock[i*county+j];
+            // Rcpp::Rcout<<"\t Escrivim a : "<<i<<" - "<<j;
+        }
+        // Rcpp::Rcout<<"\n Canvi de linia\n";
+    }
   
-  return(mdata);
+    Rcpp::Rcout<<"\nSORTIM DE LA FUNCIÓ - Created matrix with size : "<<countx<<" - "<<county;
+    return(mdata);
 }
 
 
@@ -22,12 +29,12 @@ Eigen::MatrixXd GetCurrentBlock_hdf5( H5File* file, DataSet* dataset,
                                       hsize_t countx, hsize_t county)
 {
   
-  IntegerVector offset = IntegerVector::create(offsetx, offsety) ;
-  IntegerVector count = IntegerVector::create(countx, county) ;
-  IntegerVector stride = IntegerVector::create(1, 1) ;
-  IntegerVector block = IntegerVector::create(1, 1) ;
+  Rcpp::IntegerVector offset = IntegerVector::create(offsetx, offsety) ;
+  Rcpp::IntegerVector count = IntegerVector::create(countx, county) ;
+  Rcpp::IntegerVector stride = IntegerVector::create(1, 1) ;
+  Rcpp::IntegerVector block = IntegerVector::create(1, 1) ;
   
-  NumericMatrix data(countx, county);
+  Rcpp::NumericMatrix data(countx, county);
   
   // read_HDF5_matrix_subset(filename, dataset, offset, count, stride, block, REAL(data));
   read_HDF5_matrix_subset(file, dataset, offset, count, stride, block, REAL(data));

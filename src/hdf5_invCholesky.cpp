@@ -21,7 +21,7 @@ int get_rowsinBlock( int start, int size) {
 
 
 
-void Cholesky_decomposition_hdf5( H5File* file, DataSet* inDataset, DataSet* outDataset, int idim0, int idim1, double dElementsBlock, Rcpp::Nullable<int> threads )
+void Cholesky_decomposition_hdf5( H5File* file, DataSet* inDataset, DataSet* outDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads )
 {
 
     try {
@@ -271,7 +271,7 @@ void Cholesky_decomposition_hdf5( H5File* file, DataSet* inDataset, DataSet* out
 
 
 
-void Inverse_of_Cholesky_decomposition_hdf5(  H5File* file, DataSet* InOutDataset, int idim0, int idim1, double dElementsBlock, Rcpp::Nullable<int> threads = R_NilValue)
+void Inverse_of_Cholesky_decomposition_hdf5(  H5File* file, DataSet* InOutDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads = R_NilValue)
 {
     
     try{
@@ -410,7 +410,7 @@ void Inverse_of_Cholesky_decomposition_hdf5(  H5File* file, DataSet* InOutDatase
 
 
 
-void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int idim0, int idim1, double dElementsBlock, Rcpp::Nullable<int> threads = R_NilValue)
+void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads = R_NilValue)
 {
 
     try {
@@ -472,6 +472,14 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
                     Rcpp::Rcout<<"\nWWWWHHHHHAAAAAATTTTT !!!!! offset[1] + count[1]> idim1 ------ PAAAAANNNNNIIIIICCCCCC!!!!\n";
                 }
                 
+                
+                Rcpp::Rcout<<"\n ================================================================== \n";
+                // Rcpp::Rcout<<"\n ar_j dimension "<< size_j;
+                Rcpp::Rcout<<"\n Offset : "<< offset[0]<<" \t -- \t "<<offset[1];
+                Rcpp::Rcout<<"\n Count : "<< count[0]<<" \t -- \t "<<count[1];
+                Rcpp::Rcout<<"\n Posició : "<< offset[0] + count[0]<<" \t -- \t "<<offset[1] + count[1];
+                
+                
                 Eigen::MatrixXd verticalData = GetCurrentBlock_hdf5(file, InOutDataset, offset[0], offset[1], count[0], count[1]);
                 
 #pragma omp parallel for num_threads(getDTthreads(ithreads, true)) shared (verticalData, colstoRead, offset) schedule(static)
@@ -517,11 +525,16 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
                     Rcpp::Rcout<<"\nWWWWHHHHHAAAAAATTTTT !!!!! offset[1] + count[1]> idim1 ------ PAAAAANNNNNIIIIICCCCCC!!!!\n";
                 }
                 
+                Rcpp::Rcout<<"\n Escrivim a la matriu : Offset : "<<offset;
+                Rcpp::Rcout<<"\n Escrivim a la matriu : Count : "<<count;
+                
+                Rcpp::Rcout<<"\n Escrivim a la matriu : Dades : \n"<<verticalData;
+                
                 write_HDF5_matrix_subset_v2( file, InOutDataset, offset, count, stride, block, Rcpp::wrap( verticalData ) );
                 readedCols = readedCols + colstoRead; // Ho preparem perquè desprès necessitarem llegir a partir de la línea anterior
             }
 
-            Rcpp_setDiagonalMatrix(file, InOutDataset, Rcpp::wrap(newDiag));
+            // Rcpp_setDiagonalMatrix(file, InOutDataset, Rcpp::wrap(newDiag));
 
         } else {
             throw std::range_error("non-conformable arguments");
@@ -593,13 +606,13 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
                          Rcpp::Nullable<std::string> outgroup = R_NilValue, 
                          Rcpp::Nullable<bool> force = R_NilValue,
                          Rcpp::Nullable<int> threads = 2,
-                         Rcpp::Nullable<double> elementsBlock = 1000000)
+                         Rcpp::Nullable<long> elementsBlock = 1000000)
 {
     
     H5File* file = nullptr;
     DataSet* pdataset = nullptr;
     DataSet* poutdataset_tmp = nullptr;
-    double dElementsBlock;
+    long dElementsBlock;
     std::string strOutgroup, strIndataset, 
                 strOutdataset, strOutdataset_tmp;
     
@@ -608,7 +621,7 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
     
     try
     {
-     
+        
         // Get default values for Nullable variables
         if(force.isNull()) { bforce = false; } 
         else {  bforce = Rcpp::as<bool>(force); }
@@ -620,7 +633,7 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
         else { ithreads = Rcpp::as<int>(threads); }
         
         if(elementsBlock.isNull()) { dElementsBlock = MAXELEMSINBLOCK; } 
-        else { dElementsBlock = Rcpp::as<double>(elementsBlock); }
+        else { dElementsBlock = Rcpp::as<long>(elementsBlock); }
         
         // Rcpp::Rcout<<"\n Maxim elements block : "<<dElementsBlock<<"\n";
         
@@ -685,6 +698,9 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
             }
             
                 poutdataset_tmp = new DataSet(file->openDataSet(strOutdataset_tmp));
+            
+            Rcpp::Rcout<<"Dimensions : "<<dims_out;
+            
                 
                 Cholesky_decomposition_hdf5(file, pdataset, poutdataset_tmp, dims_out[0], dims_out[1], dElementsBlock, threads);
                 // Rcpp::Rcout<<"\n =================>>>>>>>>>>>>< Acabat el primer pas !!! \n";
@@ -790,17 +806,5 @@ microbenchmark::microbenchmark( res <- bdInvCholesky_hdf5("test_file22.hdf5", "d
 
 
 devtools::reload(pkgload::inst("BigDataStatMeth"))
-library(BigDataStatMeth)
-setwd("/Volumes/XtraSpace/PhD_Test/BigDataStatMeth")
-set.seed(1234)
-A  <- matrix(sample.int(10, 10000, replace = TRUE), ncol = 100)
-A <- crossprod(A)
-
-
-library(BigDataStatMeth)
-
-setwd("/Volumes/XtraSpace/PhD_Test/BigDataStatMeth")
-# Get Inverse Cholesky
-res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA", force = T,elementsBlock = 20)
 
 */
