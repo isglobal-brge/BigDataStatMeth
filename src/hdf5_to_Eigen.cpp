@@ -5,19 +5,14 @@
 //    Eigen and R works with ColMajor and hdf5 in RowMajor
 Eigen::MatrixXd RowMajorVector_to_ColMajorMatrix(double* datablock, int countx, int county)
 {
-    Eigen::MatrixXd mdata(countx, county);
-    
-    Rcpp::Rcout<<"\nENTREM A LA FUNCIó - reated matrix with size : "<<countx<<" - "<<county;
+    Eigen::MatrixXd mdata = Eigen::MatrixXd::Zero(countx, county);
   
     for (size_t i=0; i<countx; i++){
         for(size_t j=0;j<county;j++) {
             mdata(i,j) = datablock[i*county+j];
-            // Rcpp::Rcout<<"\t Escrivim a : "<<i<<" - "<<j;
         }
-        // Rcpp::Rcout<<"\n Canvi de linia\n";
     }
   
-    Rcpp::Rcout<<"\nSORTIM DE LA FUNCIÓ - Created matrix with size : "<<countx<<" - "<<county;
     return(mdata);
 }
 
