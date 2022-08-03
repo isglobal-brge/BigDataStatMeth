@@ -465,28 +465,30 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
                 count[0] =  dimensionSize - readedCols;
                 count[1] = readedCols + colstoRead;
                 
-                Rcpp::Rcout<<"\n ================================================================== \n";
-                // Rcpp::Rcout<<"\n ar_j dimension "<< size_j;
-                Rcpp::Rcout<<"\n Offset : "<< offset[0]<<" \t -- \t "<<offset[1];
-                Rcpp::Rcout<<"\n Count : "<< count[0]<<" \t -- \t "<<count[1];
-                Rcpp::Rcout<<"\n Posició : "<< offset[0] + count[0]<<" \t -- \t "<<offset[1] + count[1];
-                
-                
                 Eigen::MatrixXd verticalData = GetCurrentBlock_hdf5(file, InOutDataset, offset[0], offset[1], count[0], count[1]);
                 
 #pragma omp parallel for num_threads(getDTthreads(ithreads, true)) shared (verticalData, colstoRead, offset) schedule(static)
-                for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columnes
-                {
+                 for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columnes
+                 {
                     int init;
                     int end;
-                    newDiag( offset[0] + i) = verticalData.block(i, i + offset[0], verticalData.rows()-i, 1 ).array().pow(2).sum();
+                    
+                    // if(offset[0] == 0) {
+                    //     newDiag(i) = verticalData.block(i, i, idim0-i, 1 ).array().pow(2).sum();
+                    // } else {
+                    //     if( i >= offset[0] ) {
+                    //         newDiag(i) = verticalData.block( i-offset[0], i, idim0-i, 1 ).array().pow(2).sum();
+                    //     }
+                    // }
                     
                     if(offset[0] == 0) {
                         init = i + 1;
+                        newDiag(i) = verticalData.block(i, i, idim0-i, 1 ).array().pow(2).sum();
                     } else {
                         if(  i < offset[0]) {
                             init = 0;
                         } else {
+                            newDiag(i) = verticalData.block( i-offset[0], i, idim0-i, 1 ).array().pow(2).sum();
                             if( i < offset[0] + colstoRead - 1) {
                                 init = i - offset[0] + 1;
                             } else {
@@ -494,26 +496,20 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
                             }
                         }
                     }
-                    
-                    // Rcpp::Rcout<<"\n Offset[0] val : "<<offset[0]<<" i val : "<<i<<" init val "<<init;
-                    
-                    for ( int j = init; j < colstoRead ; j++) {     // Files
-                        
-                        if( offset[0] + j < verticalData.cols()) {
-                            verticalData(j,i) = (verticalData.block( j, i , verticalData.rows() - j, 1).array() * verticalData.block( j, j + offset[0],  verticalData.rows() - j, 1).array()).sum();    
-                        }
-                        
-                    }
-                }
 
-                Rcpp::Rcout<<"\n Escrivim a la matriu : Offset : "<<offset;
-                Rcpp::Rcout<<"\n Escrivim a la matriu : Count : "<<count;
-                
+                    for ( int j = init; j < colstoRead ; j++) {     // Files
+
+                        if( offset[0] + j < verticalData.cols()) {
+                            verticalData(j,i) = (verticalData.block( j, i , verticalData.rows() - j, 1).array() * verticalData.block( j, j + offset[0],  verticalData.rows() - j, 1).array()).sum();
+                        }
+                    }
+                 }
+
                 write_HDF5_matrix_subset_v2( file, InOutDataset, offset, count, stride, block, Rcpp::wrap( verticalData ) );
                 readedCols = readedCols + colstoRead; // Ho preparem perquè desprès necessitarem llegir a partir de la línea anterior
             }
 
-            // Rcpp_setDiagonalMatrix(file, InOutDataset, Rcpp::wrap(newDiag));
+            Rcpp_setDiagonalMatrix(file, InOutDataset, Rcpp::wrap(newDiag));
 
         } else {
             throw std::range_error("non-conformable arguments");
@@ -679,21 +675,15 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
                 create_HDF5_dataset_ptr(file, strOutdataset_tmp, nrows, ncols, "real"); 
             }
             
-                poutdataset_tmp = new DataSet(file->openDataSet(strOutdataset_tmp));
+            poutdataset_tmp = new DataSet(file->openDataSet(strOutdataset_tmp));
             
             Rcpp::Rcout<<"Dimensions : "<<nrows<<" x "<<ncols;
             
                 
                 Cholesky_decomposition_hdf5(file, pdataset, poutdataset_tmp, nrows, ncols, dElementsBlock, threads);
-                // Rcpp::Rcout<<"\n =================>>>>>>>>>>>>< Acabat el primer pas !!! \n";
                 pdataset->close();
-                
                 Inverse_of_Cholesky_decomposition_hdf5(  file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular inferior (menys diagonal)
-                // // Rcpp::Rcout<<"\n =================>>>>>>>>>>>>< Acabat el segon pas !!! \n";
                 Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
-                //  Rcpp::Rcout<<"\n =================>>>>>>>>>>>>< Acabat el tercer pas !!! \n";
-                
-                
             
         } else {
             pdataset->close();
@@ -752,11 +742,12 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
 library(BigDataStatMeth)
 library(rhdf5)
 
+# break set -n malloc_error_break
 #..# setwd("C:/tmp_test/")
 setwd("/Volumes/XtraSpace/PhD_Test/BigDataStatMeth")
 
 set.seed(1234)
-A  <- matrix(sample.int(10, 1000000, replace = TRUE), ncol = 1000)
+A  <- matrix(sample.int(10, 1000000, replace = TRUE), ncol = 100)
 A <- crossprod(A)
 E <- BigDataStatMeth:::inversechol_par(A,threads = 2)
 # 
@@ -769,15 +760,20 @@ bdCreate_hdf5_matrix_file("test_file22.hdf5", A, "data", "A", force = TRUE)
 
 # Get Inverse Cholesky
 # res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA", force = T)
-res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA",elementsBlock = 100)
+res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA",elementsBlock = 10)
 
 #..# E <- BigDataStatMeth:::inversechol_par(A,threads = 2)
+
+microbenchmark::microbenchmark( T <- solve(A),
+                                res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA", elementsBlock = 10),
+                                times = 5
+)
 
 
 microbenchmark::microbenchmark( T <- solve(A),
                                 # res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA",elementsBlock = 20),
                                 res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA", elementsBlock = 100000),
-                                # res <- bdInvCholesky_hdf5("test_file23.hdf5", "data", "A", "results", "InverseA", elementsBlock = 10),
+                                res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA", elementsBlock = 10),
                                 F <- BigDataStatMeth:::inversechol_par(A),
                                 G2 <- BigDataStatMeth:::inversechol_par(A,threads = 4),
                                 times = 5
