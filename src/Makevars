@@ -1,3 +1,13 @@
+PKG_CXXFLAGS =  $(SHLIB_OPENMP_CXXFLAGS) 
+PKG_LIBS =  $(SHLIB_OPENMP_CXXFLAGS) -lz
+# See WRE $1.2.1.1. But retain user supplied PKG_* too, #4664.
+# WRE states ($1.6) that += isn't portable and that we aren't allowed to use it.
+# Otherwise we could use the much simpler PKG_LIBS += $(SHLIB_OPENMP_CXXFLAGS) -lz.
+# Can't do PKG_LIBS = $(PKG_LIBS)...  either because that's a 'recursive variable reference' error in make
+# Hence the onerous @...@ substitution. Is it still appropriate in 2020 that we can't use +=?
+# Note that -lz is now escaped via -lz when zlib is not installed
+
+
 ## With Rcpp 0.11.0 and later, we no longer need to set PKG_LIBS as there is
 ## no user-facing library. The include path to headers is already set by R.
 #PKG_LIBS = 
@@ -21,4 +31,4 @@ PKG_LIBS += $(RHDF5_LIBS)
 ## enable compilation with C++11 (or even C++14) where available
 #..#CXXFLAGS = -g3 -O3 -Wall
 # CXXFLAGS += -g3 -O3 -std=c++11 -Wall
-CXX_STD = CXX17
+CXX_STD = CXX11
