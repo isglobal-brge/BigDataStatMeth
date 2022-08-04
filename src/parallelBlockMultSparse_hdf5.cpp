@@ -41,7 +41,7 @@ Eigen::SparseMatrix<double> matmult_sparse_parallel ( Eigen::Map<Eigen::SparseMa
  
  
  //.OpenMP.//#pragma omp parallel shared( A, B, C) private(ii, tid) 
-#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared( A, B, C) private(ii, tid) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared( A, B, C) private( tid) 
 {
   
   // tid = omp_get_thread_num();
