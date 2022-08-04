@@ -330,7 +330,7 @@ void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
     Eigen::MatrixXd U, V, Lambda;
     Eigen::VectorXd lambda;
     Eigen::MatrixXd C, D, varcoord;
-    int ks, qs = 1, nvs = 0;
+    int ks, qs = 1;
     
     
     if(ncomponents.isNull())  incomponents = 0 ;

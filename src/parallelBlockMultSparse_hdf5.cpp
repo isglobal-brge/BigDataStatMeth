@@ -14,7 +14,7 @@ Eigen::SparseMatrix<double> matmult_sparse_parallel ( Eigen::Map<Eigen::SparseMa
                                                       Rcpp::Nullable<int> threads  = R_NilValue )
 {
   
-  int ii;
+  // int ii;
   int tid, iblocks; // chunk = 1,
   int ithreads;
   int M = A.rows(), N = B.cols();

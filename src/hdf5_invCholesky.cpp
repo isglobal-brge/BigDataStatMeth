@@ -30,8 +30,8 @@ void Cholesky_decomposition_hdf5( H5File* file, DataSet* inDataset, DataSet* out
             readedRows = 0,
             chunk = 1,
             rowstoRead,
-            minimumBlockSize,
-            i,k;
+            minimumBlockSize;
+            // i,k;
         double sum = 0;
         unsigned int ithreads;
         
@@ -105,7 +105,7 @@ void Cholesky_decomposition_hdf5( H5File* file, DataSet* inDataset, DataSet* out
                         L(j, j + offset[0]) = std::sqrt(A(j,j + offset[0]) - (L.row(j).head(j + offset[0]).array().pow(2).sum() ));    
                     }
 
-    #pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(i,sum) shared (A,L,j) schedule(static) if (j < readedRows - chunk)
+    #pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(sum) shared (A,L,j) schedule(static) if (j < readedRows - chunk)
                     for ( int i = j + 1; i < dimensionSize - offset[0]  ; i++ )
                     {
                         if( j + offset[0] > 0) {
@@ -471,7 +471,7 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
                  for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columnes
                  {
                     int init;
-                    int end;
+                    // int end;
                     
                     // if(offset[0] == 0) {
                     //     newDiag(i) = verticalData.block(i, i, idim0-i, 1 ).array().pow(2).sum();

@@ -2758,9 +2758,3 @@ fullpath SplitElementName (const std::string& str)
     return(currentpath);
 }
 
-
-
-
-/***R
-
-*/

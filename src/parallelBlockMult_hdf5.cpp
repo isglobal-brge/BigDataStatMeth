@@ -395,7 +395,7 @@ int hdf5_block_matrix_mul_parallel( IntegerVector sizeA, IntegerVector sizeB, in
                                                std::string filename, std::string strsubgroup, 
                                                Rcpp::Nullable<int> threads  = R_NilValue)
 {
-  int ii=0, jj=0, kk=0;
+  //..// int ii=0, jj=0, kk=0;
   int chunk = 1, tid;
   unsigned int ithreads;
   
@@ -440,7 +440,7 @@ int hdf5_block_matrix_mul_parallel( IntegerVector sizeA, IntegerVector sizeB, in
     // H5File sharedfile = Open_hdf5_file(filename);
     
     //.OpenMP.// #pragma omp parallel shared( file, datasetA, datasetB, datasetC, chunk) private(ii, jj, kk, tid ) 
-#pragma omp parallel num_threads(getDTthreads(ithreads, false)) shared( file, datasetA, datasetB, datasetC, chunk) private(ii, jj, kk, tid ) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, false)) shared( file, datasetA, datasetB, datasetC, chunk) private( tid ) 
   {
     
     // tid = omp_get_thread_num();
@@ -495,9 +495,9 @@ Eigen::MatrixXd Bblock_matrix_mul(const Eigen::MatrixXd& A, const Eigen::MatrixX
 {
   
   
-  int M = A.rows();
-  int K = A.cols();
-  int N = B.cols();
+  // int M = A.rows();
+  // int K = A.cols();
+  // int N = B.cols();
   Eigen::MatrixXd C;
     
   try{
@@ -561,7 +561,7 @@ Eigen::MatrixXd Bblock_matrix_mul(const Eigen::MatrixXd& A, const Eigen::MatrixX
 Eigen::MatrixXd Bblock_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, 
                                           int block_size, Rcpp::Nullable<int> threads  = R_NilValue)
 {
-  int ii=0, jj=0, kk=0;
+  //..// int ii=0, jj=0, kk=0;
   int chunk = 1, tid;
   unsigned int ithreads;
   int M = A.rows();
@@ -599,7 +599,7 @@ Eigen::MatrixXd Bblock_matrix_mul_parallel(const Eigen::MatrixXd& A, const Eigen
   //.OpenMP.//omp_set_num_threads(ithreads);
   
   //.OpenMP.//#pragma omp parallel shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
-#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C, chunk) private(ii, jj, kk, tid ) 
+#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C, chunk) private(tid ) 
 {
 
   tid = omp_get_thread_num();
