@@ -11,24 +11,43 @@ using namespace std;
 //' Apply function to different datasets inside a group
 //' 
 //' @param filename, Character array, indicating the name of the file to create
-//' @param group, Character array, indicating the input group where the data set to be imputed is. 
+//' @param group, Character array, indicating the input group where the data set
+//' to be imputed is. 
 //' @param datasets, Character array, indicating the input datasets to be used
-//' @param outgroup, Character, array, indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
+//' @param outgroup, Character, array, indicating group where the data set will 
+//' be saved after imputation if `outgroup` is NULL, output dataset is stored 
+//' in the same input group. 
 //' @param func, Character array, function to be applyed : 
 //' QR to apply bdQR() function to datasets
 //' CrossProd to apply bdCrossprod() function to datasets
 //' tCrossProd to apply bdtCrossprod() function to datasets
 //' invChol to apply bdInvCholesky() function to datasets
-//' blockmult to apply matrix multiplication, in that case, we need the datasets to be used defined
-//'     in b_datasets variable, datasets and b_datasets must be of the same lenght, in that case, the operation is performed according to index, for example,
-//'     if we have datasets = {"A1", "A2", "A3} and b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, A2%*%B2 and A3%*%B3 
+//' blockmult to apply matrix multiplication, in that case, we need the datasets 
+//' to be used defined in b_datasets variable, datasets and b_datasets must be 
+//' of the same lenght, in that case, the operation is performed according to 
+//' index, for example, if we have datasets = {"A1", "A2", "A3} and 
+//' b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, 
+//' A2%*%B2 and A3%*%B3 
 //' CrossProd_double to  performs crossprod using two matrices, see blockmult 
-//' tCrossProd_double to  performs transposed crossprod using two matrices, see blockmult 
+//' tCrossProd_double to  performs transposed crossprod using two matrices, 
+//' see blockmult 
 //' solve to solve matrix equation system, see blockmult for parametrization 
-//' @param b_group, optional Character array indicating the input group where data are stored when we need a second dataset to operate, for example in functions like matrix multiplication
-//' @param b_datasets, optional Character array indicating the input datasets to be used when we need a second dataset in functions like matrix multiplication
-//' @param force, optional Boolean if true, previous results in same location inside hdf5 will be overwritten, by default force = false, data was not overwritten..
-//' @return Original hdf5 data file with results after apply function to different datasets
+//' @param b_group, optional Character array indicating the input group where 
+//' data are stored when we need a second dataset to operate, for example in 
+//' functions like matrix multiplication
+//' @param b_datasets, optional Character array indicating the input datasets 
+//' to be used when we need a second dataset in functions like matrix 
+//' multiplication
+//' @param force, optional Boolean if true, previous results in same location 
+//' inside hdf5 will be overwritten, by default force = false, data was not 
+//' overwritten.
+// //' @param only_hdf5, optional Boolean if true, The calculations are made by 
+// //' blocks directly in the hdf5 data file without loading the entire matrix in 
+// //' memory. The calculations are slower due to disk accesses, Use in case the 
+// //' data cannot be stored in memory, .
+//' @param threads optional parameter. Integer with numbers of threads to be used
+//' @return Original hdf5 data file with results after apply function to 
+//' different datasets
 //' @export
 // [[Rcpp::export]]
 void bdapply_Function_hdf5( std::string filename, 
@@ -38,7 +57,8 @@ void bdapply_Function_hdf5( std::string filename,
                                      std::string func, 
                                      Rcpp::Nullable<std::string> b_group = R_NilValue, 
                                      Rcpp::Nullable<Rcpp::StringVector> b_datasets = R_NilValue,
-                                     Rcpp::Nullable<bool> force = false )
+                                     Rcpp::Nullable<bool> force = false,
+                                     Rcpp::Nullable<int> threads = 2 )
 {
     
     H5File* file = nullptr;
@@ -68,8 +88,9 @@ void bdapply_Function_hdf5( std::string filename,
             // return wrap(false);
         }
 
-        if( b_datasets.isNotNull() &&  ( oper(oper.findName( func )) == 1 ||  oper(oper.findName( func )) == 2 ||  
-            oper(oper.findName( func )) == 4 ||  oper(oper.findName( func )) == 5 ||  oper(oper.findName( func )) == 6) ) {
+        if( b_datasets.isNotNull() &&  ( oper(oper.findName(func)) == 1 ||  
+           oper(oper.findName(func)) == 2 || oper(oper.findName(func)) == 4 || 
+           oper(oper.findName(func)) == 5 || oper(oper.findName(func)) == 6) ) {
             
             //. 01/01/2022 . // if( as<Rcpp::StringVector>(b_datasets).size() != datasets.size() ){
             //. 01/01/2022 . //      Rcpp::Rcout<<"To perform matrix multiplication, CrossProd, tCrossProd or solve "<<
@@ -80,16 +101,19 @@ void bdapply_Function_hdf5( std::string filename,
             // }
             str_bdatasets = as<Rcpp::StringVector>(b_datasets);
             
-            if( oper.findName( func ) == 1){
+            if( oper.findName( func ) == 1) {
                 func = "CrossProd_double";
-            }else if( oper.findName( func ) == 2){
+            } else if( oper.findName( func ) == 2) {
                 func = "tCrossProd_double";
             }
             
         }
         
-        if(b_group.isNull()) { str_bgroup = group; } 
-        else {   str_bgroup = Rcpp::as<std::string>(b_group); }
+        if( b_group.isNull()) { 
+            str_bgroup = group; 
+        } else {   
+            str_bgroup = Rcpp::as<std::string>(b_group); 
+        }
         
         // Seek all datasets to perform calculus
         for( int i=0; i < datasets.size(); i++ ) 
@@ -147,20 +171,32 @@ void bdapply_Function_hdf5( std::string filename,
                 pdataset->close();
                 
             } else if( oper(oper.findName( func )) == 3) {
+                int ithreads;
                 
-                svdeig results = RcppCholDec(original);    
-                if( results.v == Eigen::MatrixXd::Zero(2,2) && results.u == Eigen::MatrixXd::Zero(2,2)) {
-                    pdataset->close();
-                    file->close();
-                    return void();
-                    // return wrap(false);
-                    
-                } else {
-                    write_HDF5_matrix_from_R_ptr(file, outgroup + "/" + datasets(i), Rcpp::wrap(results.v), false);
-                    pdataset->close();
-                }
+                Rcpp::Nullable<long> elementsBlock = R_NilValue;
                 
-            } else if( oper(oper.findName( func )) == 4 || oper(oper.findName( func )) == 11 || oper(oper.findName( func )) == 22) {
+                Rcpp_bdInvCholesky_hdf5(file, pdataset, 
+                                        outgroup, Rcpp::as<std::string>(datasets[i]), 
+                                        bforce, threads, elementsBlock);
+                pdataset->close();
+                
+                // svdeig results = RcppCholDec(original);    
+                // if( results.v == Eigen::MatrixXd::Zero(2,2) && results.u == Eigen::MatrixXd::Zero(2,2)) {
+                //     pdataset->close();
+                //     file->close();
+                //     return void();
+                //     // return wrap(false);
+                //     
+                // } else {
+                //     write_HDF5_matrix_from_R_ptr(file, outgroup + "/" + datasets(i), Rcpp::wrap(results.v), false);
+                //     pdataset->close();
+                // }
+                
+                // bdInvCholesky_hdf5(filename, group, dataset, outgroup, "InverseA", elementsBlock = 100000),
+                
+            } else if( oper(oper.findName( func )) == 4 || 
+                       oper(oper.findName( func )) == 11 || 
+                       oper(oper.findName( func )) == 22) {
                 
                 std::string outputdataset;
                 Eigen::MatrixXd originalB;
@@ -260,7 +296,6 @@ void bdapply_Function_hdf5( std::string filename,
             }
             
         }
-        
         
     }
     catch( FileIException& error ) { // catch failure caused by the H5File operations
