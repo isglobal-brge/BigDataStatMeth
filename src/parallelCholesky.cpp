@@ -273,7 +273,7 @@ Eigen::MatrixXd inversechol_par(Rcpp::RObject a, Rcpp::Nullable<int> threads = R
             
             // Rcpp::Rcout<<"\n La matriu Z val : \n"<<Z<<"\n";
             
-            return(  Inverse_Matrix_Cholesky_parallel(Z));  
+            return(Inverse_Matrix_Cholesky_parallel(Z));  
         }
         
     } else   {
@@ -294,7 +294,7 @@ library(microbenchmark)
 
 
 
-A  <- matrix(sample.int(10, 25, replace = TRUE), ncol = 5)
+A  <- matrix(sample.int(10, 100, replace = TRUE), ncol = 10)
 A <- crossprod(A)
 # b <- diag(100)
 
@@ -305,7 +305,7 @@ E <- BigDataStatMeth:::inversechol_par(A)
 
 microbenchmark::microbenchmark( T <- solve(A),
                                 E <- BigDataStatMeth:::inversechol_par(A),
-                                F <- BigDataStatMeth:::inversechol_par(A)
+                                F <- BigDataStatMeth:::bdInvCholesky(A)
                               )
 
 

@@ -543,6 +543,111 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
     
 
 
+    
+void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
+                              std::string outgroup, std::string outdataset, 
+                              bool bforce, Rcpp::Nullable<int> threads,
+                              Rcpp::Nullable<long> elementsBlock = R_NilValue) 
+{
+    
+    DataSet* poutdataset_tmp = nullptr;
+    long dElementsBlock;
+    std::string strOutgroup, strIndataset, 
+    strOutdataset, strOutdataset_tmp;
+    
+    int ithreads;
+    int nrows = 0, ncols = 0;
+    
+    try
+    {
+        
+        // Get default values for Nullable variables
+        if(threads.isNull()) { ithreads = 2; } 
+        else { ithreads = Rcpp::as<int>(threads); }
+        
+        if(elementsBlock.isNull()) { dElementsBlock = MAXELEMSINBLOCK; } 
+        else { dElementsBlock = Rcpp::as<long>(elementsBlock); }
+        
+        // Rcpp::Rcout<<"\n Maxim elements block : "<<dElementsBlock<<"\n";
+        strOutdataset = strOutgroup + "/" + outdataset;
+        
+        // Real data set dimension
+        //.. Square matrix allowed 2022/08/07 ..// IntegerVector dims_out = get_HDF5_dataset_size_ptr(pdataset);
+        //.. Square matrix allowed 2022/08/07 ..// nrows = dims_out[0];
+        //.. Square matrix allowed 2022/08/07 ..// ncols = dims_out[1];
+        
+        //.. Square matrix allowed 2022/08/07 ..// if(nrows == ncols) {
+            
+            // ESTIC AQUÍ, FALTARIA TESTEJAR-HO TOT + ACABAR DE REPASSAR EL CODI PER A QUE
+            // FUNCIONI LA CRIDA DIRECTA AL RCPP I NO NOMÉS A LA CRIDA DE LA FUNCIÓ
+            // DES DE Rrocamadourrocamrocama
+
+            if( !exists_HDF5_element_ptr(file, strOutdataset)) {
+                create_HDF5_group_ptr(file, outgroup);
+                create_HDF5_dataset_ptr(file, strOutdataset, nrows, ncols, "real"); 
+            } else {
+                remove_HDF5_element_ptr(file, strOutdataset);
+                create_HDF5_dataset_ptr(file, strOutdataset, nrows, ncols, "real"); 
+            }
+            
+            poutdataset_tmp = new DataSet(file->openDataSet(strOutdataset));
+            
+            Cholesky_decomposition_hdf5(file, pdataset, poutdataset_tmp, nrows, ncols, dElementsBlock, threads);
+            Inverse_of_Cholesky_decomposition_hdf5(  file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular inferior (menys diagonal)
+            Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
+            // Moure o crear el link per poder accedir amb el nom que realment ens interessa.... 
+            
+            //.. Square matrix allowed 2022/08/07 ..// } else {
+            //.. Square matrix allowed 2022/08/07 ..// Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition \n";
+            //.. Square matrix allowed 2022/08/07 ..// return void();
+            //.. Square matrix allowed 2022/08/07 ..// }
+        
+        
+    } catch( FileIException& error ) { // catch failure caused by the H5File operations
+        // Rcpp::Rcout<<"\nPASSA PER FILE\n";
+        // poutdataset->close();
+        poutdataset_tmp->close();
+        pdataset->close();
+        file->close();
+        Rcpp::Rcout<<"c++ exception Rcpp_bdInvCholesky_hdf5 (File IException)";
+        return void();
+    } catch( GroupIException & error ) { // catch failure caused by the DataSet operations
+        // Rcpp::Rcout<<"\nPASSA PER GROUP\n";
+        // poutdataset->close();
+        poutdataset_tmp->close();
+        pdataset->close();
+        file->close();
+        Rcpp::Rcout << "c++ exception Rcpp_bdInvCholesky_hdf5 (Group IException)";
+        return void();
+    } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
+        // Rcpp::Rcout<<"\nPASSA PER DATASET\n";
+        // poutdataset->close();
+        poutdataset_tmp->close();
+        pdataset->close();
+        file->close();
+        Rcpp::Rcout << "c++ exception Rcpp_bdInvCholesky_hdf5 (DataSet IException)";
+        return void();
+    } catch(std::exception& ex) {
+        // Rcpp::Rcout<<"\nPASSA PER EXCEPTION\n";
+        // poutdataset->close();
+        poutdataset_tmp->close();
+        pdataset->close();
+        file->close();
+        Rcpp::Rcout << "c++ exception Rcpp_bdInvCholesky_hdf5" << ex.what();
+        return void();
+    }
+    
+    poutdataset_tmp->close();
+    return void();
+}
+    
+    
+
+    
+    
+    
+    
+
 //' Compute inverse cholesky with hdf5 data files
 //'
 //' Compute inverse cholesky with datasets stored in hdf5 data files
@@ -676,14 +781,10 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
             }
             
             poutdataset_tmp = new DataSet(file->openDataSet(strOutdataset_tmp));
-            
-            Rcpp::Rcout<<"Dimensions : "<<nrows<<" x "<<ncols;
-            
-                
-                Cholesky_decomposition_hdf5(file, pdataset, poutdataset_tmp, nrows, ncols, dElementsBlock, threads);
-                pdataset->close();
-                Inverse_of_Cholesky_decomposition_hdf5(  file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular inferior (menys diagonal)
-                Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
+            Cholesky_decomposition_hdf5(file, pdataset, poutdataset_tmp, nrows, ncols, dElementsBlock, threads);
+            pdataset->close();
+            Inverse_of_Cholesky_decomposition_hdf5(  file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular inferior (menys diagonal)
+            Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
             
         } else {
             pdataset->close();

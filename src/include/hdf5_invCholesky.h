@@ -17,6 +17,7 @@
     void Cholesky_decomposition_hdf5( H5File* file, DataSet* inDataset, DataSet* outDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads);
     void Inverse_of_Cholesky_decomposition_hdf5(  H5File* file, DataSet* InOutDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads);
     void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads);
+    void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset, std::string outgroup, std::string outdataset, bool bforce, Rcpp::Nullable<int> threads, Rcpp::Nullable<long> elementsBlock);
     
     // R functions
     void bdInvCholesky_hdf5( std::string filename, std::string group, std::string dataset, std::string  outdataset, 
