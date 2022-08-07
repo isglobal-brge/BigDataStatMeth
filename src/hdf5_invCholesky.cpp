@@ -569,14 +569,14 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
         else { dElementsBlock = Rcpp::as<long>(elementsBlock); }
         
         // Rcpp::Rcout<<"\n Maxim elements block : "<<dElementsBlock<<"\n";
-        strOutdataset = strOutgroup + "/" + outdataset;
+        strOutdataset = outgroup + "/" + outdataset;
         
         // Real data set dimension
-        //.. Square matrix allowed 2022/08/07 ..// IntegerVector dims_out = get_HDF5_dataset_size_ptr(pdataset);
-        //.. Square matrix allowed 2022/08/07 ..// nrows = dims_out[0];
-        //.. Square matrix allowed 2022/08/07 ..// ncols = dims_out[1];
+        IntegerVector dims_out = get_HDF5_dataset_size_ptr(pdataset);
+        nrows = dims_out[0];
+        ncols = dims_out[1];
         
-        //.. Square matrix allowed 2022/08/07 ..// if(nrows == ncols) {
+        if(nrows == ncols) {
             
             // ESTIC AQUÍ, FALTARIA TESTEJAR-HO TOT + ACABAR DE REPASSAR EL CODI PER A QUE
             // FUNCIONI LA CRIDA DIRECTA AL RCPP I NO NOMÉS A LA CRIDA DE LA FUNCIÓ
@@ -590,6 +590,9 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
                 create_HDF5_dataset_ptr(file, strOutdataset, nrows, ncols, "real"); 
             }
             
+            
+            Rcpp::Rcout<<"\nOut dataset dins Cholesky: "<< strOutdataset<<"\n";
+            
             poutdataset_tmp = new DataSet(file->openDataSet(strOutdataset));
             
             Cholesky_decomposition_hdf5(file, pdataset, poutdataset_tmp, nrows, ncols, dElementsBlock, threads);
@@ -597,10 +600,10 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
             Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
             // Moure o crear el link per poder accedir amb el nom que realment ens interessa.... 
             
-            //.. Square matrix allowed 2022/08/07 ..// } else {
-            //.. Square matrix allowed 2022/08/07 ..// Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition \n";
-            //.. Square matrix allowed 2022/08/07 ..// return void();
-            //.. Square matrix allowed 2022/08/07 ..// }
+            } else {
+            Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition \n";
+            return void();
+            }
         
         
     } catch( FileIException& error ) { // catch failure caused by the H5File operations
