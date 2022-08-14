@@ -83,8 +83,6 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' @param force, optional Boolean if true, previous results in same location 
 #' inside hdf5 will be overwritten, by default force = false, data was not 
 #' overwritten.
-NULL
-
 #' @param threads optional parameter. Integer with numbers of threads to be used
 #' @return Original hdf5 data file with results after apply function to 
 #' different datasets
@@ -105,7 +103,7 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #' @param func, character array function to be applyed
 #' \describe{
 #'     \item{bindRows}{merge datasets by rows}
-#'     \item{bindCols}{apply datasets by columns}
+#'     \item{bindCols}{merge datasets by columns}
 #' }
 #' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
 #' @return Original hdf5 data file with results after input datasets
@@ -508,6 +506,59 @@ bdReduce_matrix_hdf5 <- function(filename, group, reducefunction, outgroup = NUL
 #' @export
 bdremove_maf_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize) {
     .Call('_BigDataStatMeth_bdremove_maf_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize)
+}
+
+#' Sort existing dataset 
+#'
+#' Sort an existing dataset taking in to account a list with sorted positions
+#' 
+#' @param filename, character array indicating the name of the file to be sorted
+#' @param group, character array indicating the input group where the data set 
+#' to be sorted is stored.
+#' @param datasets, character array indicating the input dataset to be sorted
+#' @param outdataset, character array indicating the name for the new sorted 
+#' dataset
+#' @param blockedSortlist, a list with blocks with sorted positions, see example
+#' $`1`
+#'                       chr order newOrder Diagonal
+#' TCGA-OR-A5J1 TCGA-OR-A5J1     1        1        1
+#' TCGA-OR-A5J2 TCGA-OR-A5J2     2        2        1
+#' TCGA-OR-A5J3 TCGA-OR-A5J3     3        3        1
+#' TCGA-OR-A5J4 TCGA-OR-A5J4     4        4        1
+#' 
+#' $`2`
+#'                       chr order newOrder
+#' TCGA-OR-A5J5 TCGA-OR-A5JA    10        5        1
+#' TCGA-OR-A5J6 TCGA-OR-A5JB    11        6        1
+#' TCGA-OR-A5J7 TCGA-OR-A5JC    12        7        0
+#' TCGA-OR-A5J8 TCGA-OR-A5JD    13        8        1
+#' 
+#' $`3`
+#'                       chr order newOrder
+#' TCGA-OR-A5J9 TCGA-OR-A5J5     5        9        1
+#' TCGA-OR-A5JA TCGA-OR-A5J6     6       10        1
+#' TCGA-OR-A5JB TCGA-OR-A5J7     7       11        1
+#' TCGA-OR-A5JC TCGA-OR-A5J8     8       12        1
+#' TCGA-OR-A5JD TCGA-OR-A5J9     9       13        0
+#' 
+#' where rownames is the current rowname char is the new rowname, order is the
+#' current position and newOrder is the new position
+#' @param func, character array function to be applyed
+#' \describe{
+#'     \item{sortRows}{sort datasets rows}
+#'     \item{sortCols}{sort datasets columns}
+#' }
+#' @param outgroup, optional, character array indicating group where the data 
+#' set will be saved after imputation if `outgroup` is NULL, output dataset is 
+#' stored in the same input group. 
+#' @param force, boolean if true, previous results in same location inside hdf5
+#' will be overwritten.
+#' @return Original hdf5 data file with sorted dataset
+#' @examples
+#' 
+#' @export
+bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSortlist, func, outgroup = NULL, force = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdSort_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, blockedSortlist, func, outgroup, force))
 }
 
 #' Split hdf5 dataset
@@ -972,6 +1023,31 @@ bdCreateEmptyDataset_hdf5 <- function(filename, group, dataset, nrows, ncols, ov
     invisible(.Call('_BigDataStatMeth_bdCreateEmptyDataset_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, nrows, ncols, overwrite))
 }
 
+#' Exists hdf5 element
+#' 
+#' Query if exists element inside hdf5 data file
+#' 
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param element, string with name of the group or dataset full route group or dataset to search 
+#' @return boolean, true if element exists in hdf5 data faile or false if not.
+#' @examples
+#' 
+#' # Prepare data to write dataset inside a file and test if exists
+#' X <- matrix(rnorm(20*10), nrow = 10, ncol = 20)
+#' 
+#' # Create hdf5 data file with  two X matrices ( named X and Y)
+#' bdCreate_hdf5_matrix_file("test_file3.hdf5", X, "data", "X")
+#' bdAdd_hdf5_matrix(X, "test_file3.hdf5", "data", "Y")
+#' 
+#' bdExists_hdf5_element("test_file3.hdf5", "data/X")
+#' bdExists_hdf5_element("test_file3.hdf5", "data/F")
+#' 
+#' @export
+bdExists_hdf5_element <- function(filename, element) {
+    .Call('_BigDataStatMeth_bdExists_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, element)
+}
+
 #' Solve matrix equations
 #' 
 #' This function solve matrix equations 
@@ -1068,7 +1144,7 @@ bdSVD <- function(X, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
 #' Block SVD decomposition for hdf5 files using an incremental algorithm.
 #'
 #' Singular values and left singular vectors of a real nxp matrix 
-#' @title Block SVD decomposition using an incremental algorithm.
+#' Block SVD decomposition using an incremental algorithm.
 #' @param file a real nxp matrix in hdf5 file
 #' @param group group in hdf5 data file where dataset is located
 #' @param dataset matrix dataset with data to perform SVD

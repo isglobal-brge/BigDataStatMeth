@@ -28,7 +28,7 @@ bdBind_hdf5(
 \item{func, }{character array function to be applyed
 \describe{
     \item{bindRows}{merge datasets by rows}
-    \item{bindCols}{apply datasets by columns}
+    \item{bindCols}{merge datasets by columns}
 }}
 
 \item{force, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}

@@ -335,6 +335,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdSort_hdf5_dataset
+void bdSort_hdf5_dataset(std::string filename, std::string group, std::string dataset, std::string outdataset, Rcpp::List blockedSortlist, std::string func, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> force);
+RcppExport SEXP _BigDataStatMeth_bdSort_hdf5_dataset(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outdatasetSEXP, SEXP blockedSortlistSEXP, SEXP funcSEXP, SEXP outgroupSEXP, SEXP forceSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type blockedSortlist(blockedSortlistSEXP);
+    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type force(forceSEXP);
+    bdSort_hdf5_dataset(filename, group, dataset, outdataset, blockedSortlist, func, outgroup, force);
+    return R_NilValue;
+END_RCPP
+}
 // bdSplit_matrix_hdf5
 void bdSplit_matrix_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<int> nblocks, Rcpp::Nullable<int> blocksize, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> force);
 RcppExport SEXP _BigDataStatMeth_bdSplit_matrix_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP nblocksSEXP, SEXP blocksizeSEXP, SEXP bycolsSEXP, SEXP forceSEXP) {
@@ -666,6 +683,18 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// bdExists_hdf5_element
+bool bdExists_hdf5_element(std::string filename, std::string element);
+RcppExport SEXP _BigDataStatMeth_bdExists_hdf5_element(SEXP filenameSEXP, SEXP elementSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type element(elementSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdExists_hdf5_element(filename, element));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdSolve
 Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B);
 RcppExport SEXP _BigDataStatMeth_bdSolve(SEXP ASEXP, SEXP BSEXP) {
@@ -795,6 +824,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 11},
     {"_BigDataStatMeth_bdReduce_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdReduce_matrix_hdf5, 7},
     {"_BigDataStatMeth_bdremove_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdremove_maf_hdf5, 8},
+    {"_BigDataStatMeth_bdSort_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdSort_hdf5_dataset, 8},
     {"_BigDataStatMeth_bdSplit_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSplit_matrix_hdf5, 9},
     {"_BigDataStatMeth_bdWriteDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteDiagonal_hdf5, 4},
     {"_BigDataStatMeth_bdNormalize_Data", (DL_FUNC) &_BigDataStatMeth_bdNormalize_Data, 3},
@@ -820,6 +850,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdCreateLink_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCreateLink_hdf5, 3},
     {"_BigDataStatMeth_bdCreateGroup_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCreateGroup_hdf5, 2},
     {"_BigDataStatMeth_bdCreateEmptyDataset_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCreateEmptyDataset_hdf5, 6},
+    {"_BigDataStatMeth_bdExists_hdf5_element", (DL_FUNC) &_BigDataStatMeth_bdExists_hdf5_element, 2},
     {"_BigDataStatMeth_bdSolve", (DL_FUNC) &_BigDataStatMeth_bdSolve, 2},
     {"_BigDataStatMeth_bdInvCholesky", (DL_FUNC) &_BigDataStatMeth_bdInvCholesky, 1},
     {"_BigDataStatMeth_bdSVD", (DL_FUNC) &_BigDataStatMeth_bdSVD, 5},
