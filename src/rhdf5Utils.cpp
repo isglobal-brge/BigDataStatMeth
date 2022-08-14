@@ -2019,7 +2019,7 @@ void bdAdd_hdf5_matrix(RObject object,
   {
 
     if( object.sexp_type()==0   )
-      throw std::range_error("Data matrix must exsits and mustn't be null");
+      throw std::range_error("Data matrix must exsits and not NULL");
 
     if(!ResFileExist(filename))
       throw std::range_error("File not exits, create file before add new dataset");
@@ -2758,3 +2758,59 @@ fullpath SplitElementName (const std::string& str)
     return(currentpath);
 }
 
+
+//' Exists hdf5 element
+//' 
+//' Query if exists element inside hdf5 data file
+//' 
+//' 
+//' @param filename, character array indicating the name of the file to create
+//' @param element, string with name of the group or dataset full route group or dataset to search 
+//' @return boolean, true if element exists in hdf5 data faile or false if not.
+//' @examples
+//' 
+//' # Prepare data to write dataset inside a file and test if exists
+//' X <- matrix(rnorm(20*10), nrow = 10, ncol = 20)
+//' 
+//' # Create hdf5 data file with  two X matrices ( named X and Y)
+//' bdCreate_hdf5_matrix_file("test_file3.hdf5", X, "data", "X")
+//' bdAdd_hdf5_matrix(X, "test_file3.hdf5", "data", "Y")
+//' 
+//' bdExists_hdf5_element("test_file3.hdf5", "data/X")
+//' bdExists_hdf5_element("test_file3.hdf5", "data/F")
+//' 
+//' @export
+// [[Rcpp::export]]
+bool bdExists_hdf5_element( std::string filename, std::string element)
+{ 
+    H5File* file = nullptr;
+    bool exists;
+    
+    try
+    {
+
+        if(!ResFileExist(filename))
+            throw std::range_error("File not exits, create file before query element");
+        
+        file = new H5File( filename, H5F_ACC_RDWR );
+        
+        if(exists_HDF5_element_ptr(file, element)) {
+            exists = true;
+        } else{
+            exists = false;
+        }
+        
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
+        file->close();
+        ::Rf_error( "c++ exception bdExists_hdf5_element (File IException)" );
+        return (false);
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
+        file->close();
+        ::Rf_error( "c++ exception bdExists_hdf5_element (Group IException)" );
+        return (false);
+    } 
+    
+    file->close();
+    return(exists);   
+
+}
