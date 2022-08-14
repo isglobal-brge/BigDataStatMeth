@@ -13,7 +13,7 @@
 //' @param func, character array function to be applyed
 //' \describe{
 //'     \item{bindRows}{merge datasets by rows}
-//'     \item{bindCols}{apply datasets by columns}
+//'     \item{bindCols}{merge datasets by columns}
 //' }
 //' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
 //' @return Original hdf5 data file with results after input datasets
@@ -27,8 +27,8 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
     H5File* file = nullptr;
     DataSet* pdataset = nullptr;
     DataSet* unlimDataset = nullptr;
-    Rcpp::NumericVector oper = {0, 1};
-    oper.names() = Rcpp::CharacterVector({ "bindCols", "bindRows"});
+    Rcpp::NumericVector oper = {0, 1, 2};
+    oper.names() = Rcpp::CharacterVector({ "bindCols", "bindRows", "bindRowsbyIndex"});
     
     try
     {
@@ -50,9 +50,7 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
         } else {
             Rcpp::Rcout<<"\nFile not exits, create file before bind matrices";
             return void();
-            //..// return wrap(false);
         }
-        
         
         // Seek all datasets to perform calculus
         for( int i=0; i < datasets.size(); i++ ) 
@@ -64,7 +62,6 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                 file->close();
                 Rcpp::Rcout<<"Group or dataset does not exists, please create the input dataset before proceed";
                 return void();
-                //..// return wrap(false);
             }
             
             pdataset = new DataSet(file->openDataSet(strdataset));
@@ -90,10 +87,6 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                         // Append needed cols to merge by cols
                         int iappend = count[1] - original.cols();
                         original.conservativeResize(original.rows(), original.cols() + iappend);
-                        //. 31/12/2021 .// pdataset->close();
-                        //. 31/12/2021 .// file->close();
-                        //. 31/12/2021 .// Rcpp::Rcout<<"c++ exception can't bind datasets by columns, number of columns differ between datasets";
-                        //. 31/12/2021 .// return void();
                     }
                     offset[0] = offset[0] + count[0];
                 } else {
@@ -103,10 +96,6 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                         // Append needed rows to merge by rows
                         int iappend = count[0] - original.rows();
                         original.conservativeResize(original.rows() + iappend, original.cols());
-                        //. 31/12/2021 .// pdataset->close();
-                        //. 31/12/2021 .// file->close();
-                        //. 31/12/2021 .// Rcpp::Rcout<<"c++ exception can't bind datasets by rows, number of rows differ between datasets";
-                        //. 31/12/2021 .// return void();
                     }
                     offset[1] = offset[1] + count[1];
                 }
@@ -137,18 +126,13 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
                 unlimDataset->close();
                 pdataset->close();
 
-            }else {
+            } else {
                 pdataset->close();
                 file->close();
                 Rcpp::Rcout<<"Group not exists, create the input dataset before proceed";
                 return void();
-                //..// return wrap(false);
-                
             }
-            
         }
-        
-        
     }
     catch( FileIException& error ) { // catch failure caused by the H5File operations
         unlimDataset->close();
@@ -156,14 +140,12 @@ void bdBind_hdf5( std::string filename, std::string group, Rcpp::StringVector da
         file->close();
         Rcpp::Rcout<<"c++ exception (File IException)";
         return void();
-        //..// return(wrap(-1));
     }
     
     file->close();
     Rcpp::Rcout<<outdataset<<" dataset has been recomposed from blocks\n";
     return void();
     
-    //..// return(wrap(0));
 }
 
 
