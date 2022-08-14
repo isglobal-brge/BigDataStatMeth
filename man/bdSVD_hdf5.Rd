@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdSVD_hdf5}
 \alias{bdSVD_hdf5}
-\title{Block SVD decomposition using an incremental algorithm.}
+\title{Block SVD decomposition for hdf5 files using an incremental algorithm.}
 \usage{
 bdSVD_hdf5(
   file,
@@ -48,8 +48,6 @@ A List with :
 }
 }
 \description{
-Block SVD decomposition for hdf5 files using an incremental algorithm.
-}
-\details{
-Singular values and left singular vectors of a real nxp matrix
+Singular values and left singular vectors of a real nxp matrix 
+Block SVD decomposition using an incremental algorithm.
 }

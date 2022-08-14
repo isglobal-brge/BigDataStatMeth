@@ -714,7 +714,7 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & X, Rcpp::Nullable<int> k=0, Rcpp::Nul
 //' Block SVD decomposition for hdf5 files using an incremental algorithm.
 //'
 //' Singular values and left singular vectors of a real nxp matrix 
-//' @title Block SVD decomposition using an incremental algorithm.
+//' Block SVD decomposition using an incremental algorithm.
 //' @param file a real nxp matrix in hdf5 file
 //' @param group group in hdf5 data file where dataset is located
 //' @param dataset matrix dataset with data to perform SVD
