@@ -41,10 +41,6 @@ using namespace std;
 //' @param force, optional Boolean if true, previous results in same location 
 //' inside hdf5 will be overwritten, by default force = false, data was not 
 //' overwritten.
-// //' @param only_hdf5, optional Boolean if true, The calculations are made by 
-// //' blocks directly in the hdf5 data file without loading the entire matrix in 
-// //' memory. The calculations are slower due to disk accesses, Use in case the 
-// //' data cannot be stored in memory, .
 //' @param threads optional parameter. Integer with numbers of threads to be used
 //' @return Original hdf5 data file with results after apply function to 
 //' different datasets
@@ -121,6 +117,8 @@ void bdapply_Function_hdf5( std::string filename,
             
             std::string strdataset = group +"/" + datasets(i);
             
+            Rcpp::Rcout<<"\nIn dataset : "<<strdataset<<"\n";
+            
             if( exists_HDF5_element_ptr(file, strdataset ) == 0 ) {
 
                 file->close();
@@ -174,6 +172,8 @@ void bdapply_Function_hdf5( std::string filename,
                 int ithreads;
                 
                 Rcpp::Nullable<long> elementsBlock = R_NilValue;
+                
+                Rcpp::Rcout<<"\nOut dataset : "<< Rcpp::as<std::string>(datasets[i])<<"\n";
                 
                 Rcpp_bdInvCholesky_hdf5(file, pdataset, 
                                         outgroup, Rcpp::as<std::string>(datasets[i]), 
