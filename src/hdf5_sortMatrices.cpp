@@ -65,6 +65,7 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
     Rcpp::NumericVector oper = {0, 1};
     oper.names() = Rcpp::CharacterVector({ "sortRows", "sortCols"});
     std::string strOutgroup;
+    StringVector rownames, colnames;
     
     try
     {
@@ -141,8 +142,8 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
             
             Rcpp::DataFrame df(blockedSortlist[i]);
             std::vector<double> order = df[1];
-            std::vector<double> neworder = df[2];
-            std::vector<double> diagonal = df[3];
+            std::vector<double> neworder = df[3];
+            std::vector<double> diagonal = df[2];
             
             auto indices_0 = find_all(diagonal.begin(), diagonal.end(), 0);
             
@@ -156,11 +157,12 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
             } else {
                 
                 if( oper.findName( func ) == 0 ) {
-                    offset[1] = order[0] - 1;
-                    count[0] = order[order.size() - order[0]];
-                    count[1] = dims_out[1]; 
-                } else if( oper.findName( func ) == 1 ) {
                     offset[0] = order[0] - 1;
+                    count[0] = order.size();
+                    count[1] = dims_out[1]; 
+                    
+                } else if( oper.findName( func ) == 1 ) {
+                    offset[1] = order[0] - 1;
                     count[1] = dims_out[1]; 
                     count[0] = order[order.size() - order[0]];
                 } 
@@ -171,9 +173,9 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
                 Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, pdataset, offset[0], offset[1], count[0], count[1]);
                 
                 if( oper.findName( func ) == 0 ) {
-                    offset[1] = neworder[0]-1;
-                } else if( oper.findName( func ) == 1 ) {
                     offset[0] = neworder[0]-1;
+                } else if( oper.findName( func ) == 1 ) {
+                    offset[1] = neworder[0]-1;
                 }
                 
                 Rcpp::Rcout<<"\n-> Escriurem des de : "<<offset[0]<<" - "<<offset[1]<<"\n";
@@ -181,35 +183,8 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
                 write_HDF5_matrix_subset_v2( file, poutdataset, offset, count, stride, block, Rcpp::wrap( A ) );
                 
             }
-
-            // 
-            // if( oper.findName( func ) == 0 ) {
-            //     offset[1] = order[0];
-            //     count[0] = dims_out[1]; 
-            //     count[1] = order[order.size() - order[0]];
-            //     
-            //     Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, pdataset, offset[0], offset[1], count[0], count[1]);
-            //     offset[1] = neworder[0];
-            //     write_HDF5_matrix_subset_v2( file, poutdataset, offset, count, stride, block, Rcpp::wrap( A ) );
-            //     
-            // } else if( oper.findName( func ) == 1 ) {
-            //     offset[0] = order[0];
-            //     count[1] = dims_out[1]; 
-            //     count[0] = order[order.size() - order[0]];
-            //     
-            //     
-            //     
-            //     Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, pdataset, offset[0], offset[1], count[0], count[1]);
-            //     offset[0] = neworder[0];
-            //     write_HDF5_matrix_subset_v2( file, poutdataset, offset, count, stride, block, Rcpp::wrap( A ) );
-            // }    
-            // 
-            
         }
         
-        
-        
-
     } catch( FileIException& error ) { // catch failure caused by the H5File operations
         poutdataset->close();
         pdataset->close();
