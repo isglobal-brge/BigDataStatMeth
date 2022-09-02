@@ -433,21 +433,29 @@ bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = 
 
 #' Normalize dataset in hdf5 file
 #' 
-#' This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file
+#' This function normalize data scaling, centering or scaling and centering 
+#' in a dataset stored in hdf5 file
 #' 
 #' @param filename string file name where dataset to normalize is stored
 #' @param group string Matrix
 #' @param dataset string Matrix
-#' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
-#' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
-#' @param wsize integer (default = 1000), file block size to read to perform normalization
-#' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @param bcenter logical (default = TRUE) if TRUE, centering is done by 
+#' subtracting the column means
+#' @param bscale logical (default = TRUE) if TRUE, centering is done by 
+#' subtracting the column means
+#' @param byrows logical (default = FALSE) if TRUE, centering is done by 
+#' subtracting the rows means, util when working with hdf5 datasets stored 
+#' in Row Major format.
+#' @param wsize integer (default = 1000), file block size to read to 
+#' perform normalization
+#' @param force, boolean if true, previous results in same location inside 
+#' hdf5 will be overwritten.
 #' @return file with scaled, centered or scaled and centered dataset
 #' @examples
 #'   a = "See vignette"
 #' @export
-bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, wsize = NULL, force = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, wsize, force))
+bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, byrows = NULL, wsize = NULL, force = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, byrows, wsize, force))
 }
 
 #' PCA Descomposition

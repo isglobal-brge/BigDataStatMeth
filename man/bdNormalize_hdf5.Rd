@@ -10,6 +10,7 @@ bdNormalize_hdf5(
   dataset,
   bcenter = NULL,
   bscale = NULL,
+  byrows = NULL,
   wsize = NULL,
   force = FALSE
 )
@@ -21,19 +22,28 @@ bdNormalize_hdf5(
 
 \item{dataset}{string Matrix}
 
-\item{bcenter}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
+\item{bcenter}{logical (default = TRUE) if TRUE, centering is done by 
+subtracting the column means}
 
-\item{bscale}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
+\item{bscale}{logical (default = TRUE) if TRUE, centering is done by 
+subtracting the column means}
 
-\item{wsize}{integer (default = 1000), file block size to read to perform normalization}
+\item{byrows}{logical (default = FALSE) if TRUE, centering is done by 
+subtracting the rows means, util when working with hdf5 datasets stored 
+in Row Major format.}
 
-\item{force, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
+\item{wsize}{integer (default = 1000), file block size to read to 
+perform normalization}
+
+\item{force, }{boolean if true, previous results in same location inside 
+hdf5 will be overwritten.}
 }
 \value{
 file with scaled, centered or scaled and centered dataset
 }
 \description{
-This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file
+This function normalize data scaling, centering or scaling and centering 
+in a dataset stored in hdf5 file
 }
 \examples{
   a = "See vignette"

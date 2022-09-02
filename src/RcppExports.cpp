@@ -265,8 +265,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdNormalize_hdf5
-void bdNormalize_hdf5(std::string filename, const std::string group, std::string dataset, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> force);
-RcppExport SEXP _BigDataStatMeth_bdNormalize_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP wsizeSEXP, SEXP forceSEXP) {
+void bdNormalize_hdf5(std::string filename, const std::string group, std::string dataset, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<bool> byrows, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> force);
+RcppExport SEXP _BigDataStatMeth_bdNormalize_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP byrowsSEXP, SEXP wsizeSEXP, SEXP forceSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
@@ -274,9 +274,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type byrows(byrowsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type force(forceSEXP);
-    bdNormalize_hdf5(filename, group, dataset, bcenter, bscale, wsize, force);
+    bdNormalize_hdf5(filename, group, dataset, bcenter, bscale, byrows, wsize, force);
     return R_NilValue;
 END_RCPP
 }
@@ -820,7 +821,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdImpute_snps_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImpute_snps_hdf5, 6},
     {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
     {"_BigDataStatMeth_bdInvCholesky_hdf5", (DL_FUNC) &_BigDataStatMeth_bdInvCholesky_hdf5, 8},
-    {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 7},
+    {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 8},
     {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 11},
     {"_BigDataStatMeth_bdReduce_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdReduce_matrix_hdf5, 7},
     {"_BigDataStatMeth_bdremove_maf_hdf5", (DL_FUNC) &_BigDataStatMeth_bdremove_maf_hdf5, 8},
