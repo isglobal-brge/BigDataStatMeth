@@ -279,7 +279,8 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
     # setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/")
     
     # Prepare data and functions
-    Y <- matrix(rnorm(250), 50, 5)
+    Y <- matrix(rnorm(250), 10, 10)
+    X <- matrix(rnorm(250), 10, 10)
     
     # Create hdf5 data file with  data (Y)
     bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = T)

@@ -13,6 +13,8 @@ bdapply_Function_hdf5(
   b_group = NULL,
   b_datasets = NULL,
   force = FALSE,
+  transp_dataset = FALSE,
+  transp_bdataset = FALSE,
   threads = 2L
 )
 }
@@ -55,6 +57,16 @@ multiplication}
 \item{force, }{optional Boolean if true, previous results in same location 
 inside hdf5 will be overwritten, by default force = false, data was not 
 overwritten.}
+
+\item{transp_dataset}{optional parameter. Boolean if true we use the 
+transposed dataframe to perform calculus. By default transp_dataset = false, 
+we use the original dataset stored in hdf5 data file. Currently this option 
+is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"}
+
+\item{transp_bdataset}{optional parameter. Boolean if true we use the 
+transposed dataframe to perform calculus.By default transp_bdataset = false, 
+we use the original dataset stored in hdf5 data file. Currently this option 
+is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"}
 
 \item{threads}{optional parameter. Integer with numbers of threads to be used}
 }

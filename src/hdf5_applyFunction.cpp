@@ -41,6 +41,14 @@ using namespace std;
 //' @param force, optional Boolean if true, previous results in same location 
 //' inside hdf5 will be overwritten, by default force = false, data was not 
 //' overwritten.
+//' @param transp_dataset optional parameter. Boolean if true we use the 
+//' transposed dataframe to perform calculus. By default transp_dataset = false, 
+//' we use the original dataset stored in hdf5 data file. Currently this option 
+//' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
+//' @param transp_bdataset optional parameter. Boolean if true we use the 
+//' transposed dataframe to perform calculus.By default transp_bdataset = false, 
+//' we use the original dataset stored in hdf5 data file. Currently this option 
+//' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
 //' @param threads optional parameter. Integer with numbers of threads to be used
 //' @return Original hdf5 data file with results after apply function to 
 //' different datasets
@@ -54,6 +62,8 @@ void bdapply_Function_hdf5( std::string filename,
                                      Rcpp::Nullable<std::string> b_group = R_NilValue, 
                                      Rcpp::Nullable<Rcpp::StringVector> b_datasets = R_NilValue,
                                      Rcpp::Nullable<bool> force = false,
+                                     Rcpp::Nullable<bool> transp_dataset = false,
+                                     Rcpp::Nullable<bool> transp_bdataset = false,
                                      Rcpp::Nullable<int> threads = 2 )
 {
     
@@ -62,6 +72,7 @@ void bdapply_Function_hdf5( std::string filename,
     DataSet* pbdataset = nullptr;
     Rcpp::StringVector str_bdatasets;
     std::string str_bgroup;
+    bool btransdataA, btransdataB;
     Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5, 6};
     oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd",
                "invChol", "blockmult", "CrossProd_double", "tCrossProd_double",
@@ -74,7 +85,13 @@ void bdapply_Function_hdf5( std::string filename,
         
         if(force.isNull()) { bforce = false; } 
         else {   bforce = Rcpp::as<bool>(force); }
+        
+        if(transp_dataset.isNull()) { btransdataA = false; } 
+        else {   btransdataA = Rcpp::as<bool>(transp_dataset); }
 
+        if(transp_bdataset.isNull()) { btransdataB = false; } 
+        else {   btransdataB = Rcpp::as<bool>(transp_bdataset); }
+        
         // Test file
         if( ResFileExist_filestream(filename) ) {
             file = new H5File( filename, H5F_ACC_RDWR ); 
@@ -242,12 +259,15 @@ void bdapply_Function_hdf5( std::string filename,
 
                 Eigen::MatrixXd results;
                 
-                
-                // if(  (originalB.rows() == 1 && originalB.cols()==1) || (original.rows() == 1 && original.cols()==1)) {
-                //     results = original * originalB;
-                // } else {
-                results = Bblock_matrix_mul_parallel(original, originalB, 1024, R_NilValue);
-                // }
+                if (btransdataA == false && btransdataA == false) {
+                    results = Bblock_matrix_mul_parallel(original, originalB, 1024, R_NilValue);
+                } else if (btransdataA == true && btransdataA == false) {
+                    results = Bblock_matrix_mul_parallel(original.transpose(), originalB, 1024, R_NilValue);
+                }else if (btransdataA == false && btransdataA == true) {
+                    results = Bblock_matrix_mul_parallel(original, originalB.transpose(), 1024, R_NilValue);
+                } else {
+                    results = Bblock_matrix_mul_parallel(original.transpose(), originalB.transpose(), 1024, R_NilValue);
+                }
 
                 write_HDF5_matrix_from_R_ptr(file, outputdataset, Rcpp::wrap(results), false);
 

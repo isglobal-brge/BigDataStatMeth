@@ -83,12 +83,20 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' @param force, optional Boolean if true, previous results in same location 
 #' inside hdf5 will be overwritten, by default force = false, data was not 
 #' overwritten.
+#' @param transp_dataset optional parameter. Boolean if true we use the 
+#' transposed dataframe to perform calculus. By default transp_dataset = false, 
+#' we use the original dataset stored in hdf5 data file. Currently this option 
+#' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
+#' @param transp_bdataset optional parameter. Boolean if true we use the 
+#' transposed dataframe to perform calculus.By default transp_bdataset = false, 
+#' we use the original dataset stored in hdf5 data file. Currently this option 
+#' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
 #' @param threads optional parameter. Integer with numbers of threads to be used
 #' @return Original hdf5 data file with results after apply function to 
 #' different datasets
 #' @export
-bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, force = FALSE, threads = 2L) {
-    invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force, threads))
+bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, force = FALSE, transp_dataset = FALSE, transp_bdataset = FALSE, threads = 2L) {
+    invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force, transp_dataset, transp_bdataset, threads))
 }
 
 #' Bind matrices by rows or columns
