@@ -590,9 +590,6 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
                 create_HDF5_dataset_ptr(file, strOutdataset, nrows, ncols, "real"); 
             }
             
-            
-            Rcpp::Rcout<<"\nOut dataset dins Cholesky: "<< strOutdataset<<"\n";
-            
             poutdataset_tmp = new DataSet(file->openDataSet(strOutdataset));
             
             Cholesky_decomposition_hdf5(file, pdataset, poutdataset_tmp, nrows, ncols, dElementsBlock, threads);

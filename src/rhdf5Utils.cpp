@@ -2195,7 +2195,7 @@ void bdAdd_hdf5_matrix(RObject object,
   
   file->close();
   delete(file);
-  Rcpp::Rcout<<"\nDataset has been added to the file\n";
+  Rcpp::Rcout<<"\nDataset has been added to the file";
   return void();
   
 }

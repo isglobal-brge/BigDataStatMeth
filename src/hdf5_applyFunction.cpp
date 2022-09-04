@@ -134,8 +134,6 @@ void bdapply_Function_hdf5( std::string filename,
             
             std::string strdataset = group +"/" + datasets(i);
             
-            Rcpp::Rcout<<"\nIn dataset : "<<strdataset<<"\n";
-            
             if( exists_HDF5_element_ptr(file, strdataset ) == 0 ) {
 
                 file->close();
@@ -189,8 +187,6 @@ void bdapply_Function_hdf5( std::string filename,
                 int ithreads;
                 
                 Rcpp::Nullable<long> elementsBlock = R_NilValue;
-                
-                Rcpp::Rcout<<"\nOut dataset : "<< Rcpp::as<std::string>(datasets[i])<<"\n";
                 
                 Rcpp_bdInvCholesky_hdf5(file, pdataset, 
                                         outgroup, Rcpp::as<std::string>(datasets[i]), 

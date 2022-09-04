@@ -167,9 +167,6 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
                     count[0] = order[order.size() - order[0]];
                 } 
                 
-                Rcpp::Rcout<<"\n-> Llegirem des de : "<<offset[0]<<" - "<<offset[1]<<"\n";
-                Rcpp::Rcout<<"La quantitat de files - columnes  : "<<count[0]<<" - "<<count[1]<<"\n";
-                
                 Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, pdataset, offset[0], offset[1], count[0], count[1]);
                 
                 if( oper.findName( func ) == 0 ) {
@@ -178,8 +175,6 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
                     offset[1] = neworder[0]-1;
                 }
                 
-                Rcpp::Rcout<<"\n-> Escriurem des de : "<<offset[0]<<" - "<<offset[1]<<"\n";
-                Rcpp::Rcout<<"La quantitat de files - columnes  : "<<count[0]<<" - "<<count[1]<<"\n";
                 write_HDF5_matrix_subset_v2( file, poutdataset, offset, count, stride, block, Rcpp::wrap( A ) );
                 
             }
