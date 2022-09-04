@@ -20,6 +20,11 @@
     void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset, std::string outgroup, std::string outdataset, bool bforce, Rcpp::Nullable<int> threads, Rcpp::Nullable<long> elementsBlock);
     
     // R functions
-    void bdInvCholesky_hdf5( std::string filename, std::string group, std::string dataset, std::string  outdataset, 
-                             Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> force, Rcpp::Nullable<int> threads, Rcpp::Nullable<long> elementsBlock);
+    void bdInvCholesky_hdf5( std::string filename, std::string group, 
+                             std::string dataset, std::string  outdataset, 
+                             Rcpp::Nullable<std::string> outgroup, 
+                             Rcpp::Nullable<std::string> fullMatrix, 
+                             Rcpp::Nullable<bool> force, 
+                             Rcpp::Nullable<int> threads, 
+                             Rcpp::Nullable<long> elementsBlock);
 #endif

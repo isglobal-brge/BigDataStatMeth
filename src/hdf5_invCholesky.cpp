@@ -471,15 +471,6 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
                  for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columnes
                  {
                     int init;
-                    // int end;
-                    
-                    // if(offset[0] == 0) {
-                    //     newDiag(i) = verticalData.block(i, i, idim0-i, 1 ).array().pow(2).sum();
-                    // } else {
-                    //     if( i >= offset[0] ) {
-                    //         newDiag(i) = verticalData.block( i-offset[0], i, idim0-i, 1 ).array().pow(2).sum();
-                    //     }
-                    // }
                     
                     if(offset[0] == 0) {
                         init = i + 1;
@@ -506,6 +497,7 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
                  }
 
                 write_HDF5_matrix_subset_v2( file, InOutDataset, offset, count, stride, block, Rcpp::wrap( verticalData ) );
+
                 readedCols = readedCols + colstoRead; // Ho preparem perquè desprès necessitarem llegir a partir de la línea anterior
             }
 
@@ -658,11 +650,16 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
 //' @param outdataset character array with output dataset name where we want to store results
 //' @param outgroup optional, character array with output group name where we want to 
 //' store results if not provided then results are stored in the same group as original dataset
-//' @param threads optional parameter. Integer with numbers of threads to be used
+//' @param fullMatrix optional parameter, by default false. If fullMatrix = true,
+//' in the hdf5 file the complete matrix is stored. If false, only the lower 
+//' triangular matrix is saved
 //' @param force, optional boolean if true, previous results in same location inside 
 //' hdf5 will be overwritten, by default force = false, data was not overwritten.
-//' @param elementsBlock, optional integer defines de maximum number of elements to read from hdf5 data file in each block. 
-//' By default this value is set to 10000. If matrix is bigger thant 5000x5000 then block is set to number of rows or columns x 2
+//' @param threads optional parameter. Integer with numbers of threads to be used
+//' @param elementsBlock, optional integer defines de maximum number of elements 
+//' to read from hdf5 data file in each block. By default this value is set 
+//' to 10000. If matrix is bigger thant 5000x5000 then block is set to number 
+//' of rows or columns x 2
 //' @return Original hdf5 data file with Inverse of Cholesky
 //' @examples
 //' 
@@ -684,6 +681,7 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
 void bdInvCholesky_hdf5( std::string filename, std::string group, std::string dataset,
                          std::string  outdataset,
                          Rcpp::Nullable<std::string> outgroup = R_NilValue, 
+                         Rcpp::Nullable<std::string> fullMatrix = R_NilValue, 
                          Rcpp::Nullable<bool> force = R_NilValue,
                          Rcpp::Nullable<int> threads = 2,
                          Rcpp::Nullable<long> elementsBlock = 1000000)
@@ -697,7 +695,7 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
                 strOutdataset, strOutdataset_tmp;
     
     int ithreads;
-    bool bforce;
+    bool bforce, bfull;
     int nrows = 0, ncols = 0;
     
     try
@@ -706,6 +704,9 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
         // Get default values for Nullable variables
         if(force.isNull()) { bforce = false; } 
         else {  bforce = Rcpp::as<bool>(force); }
+        
+        if(fullMatrix.isNull()) { bfull = false; } 
+        else {  bfull = Rcpp::as<bool>(fullMatrix); }
         
         if(outgroup.isNull()) { strOutgroup = group; } 
         else {   strOutgroup = Rcpp::as<std::string>(outgroup); }
@@ -786,6 +787,11 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
             Inverse_of_Cholesky_decomposition_hdf5(  file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular inferior (menys diagonal)
             Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
             
+            // Ger full matrix Copy lower triangular matrix to upper triangular matrix
+            if( bfull == true ) {
+                // Copy Lower triangular matrix to upper triangular matrix
+            }
+            
         } else {
             pdataset->close();
             file->close();
@@ -848,7 +854,7 @@ library(rhdf5)
 setwd("/Volumes/XtraSpace/PhD_Test/BigDataStatMeth")
 
 set.seed(1234)
-A  <- matrix(sample.int(10, 1000000, replace = TRUE), ncol = 100)
+A  <- matrix(sample.int(10, 100000, replace = TRUE), ncol = 100)
 A <- crossprod(A)
 E <- BigDataStatMeth:::inversechol_par(A,threads = 2)
 # 
