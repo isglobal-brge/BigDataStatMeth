@@ -33,16 +33,23 @@ Write diagonal matrix to an existing dataset inside hdf5
 }
 \examples{
 library(BigDataStatMeth)
-library(rhdf5)
 
 # Prepare data and functions
 X <- matrix(rnorm(150), 10, 10)
-diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
-
+X.1 <- X
+X[lower.tri(X)] <- 0
 # Create hdf5 data file with  data (Y)
 bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+# Update Lower triangular matrix in hdf5
+bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
+        group = "data", dataset = "X", copytolower = T, elementsBlock = 10)
 
-# Update diagonal
-bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
+X <- X.1
+X[upper.tri(X)] <- 0
+# CAdd matrix data to a file
+bdAdd_hdf5_matrix(X, "test_file.hdf5", "data", "Y", force = T )
+# Update Upper triangular matrix in hdf5
+bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
+        group = "data", dataset = "Y", copytolower = F, elementsBlock = 10)
 
 }

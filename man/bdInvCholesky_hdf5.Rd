@@ -26,9 +26,9 @@ bdInvCholesky_hdf5(
 \item{outgroup}{optional, character array with output group name where we want to 
 store results if not provided then results are stored in the same group as original dataset}
 
-\item{fullMatrix}{optional parameter, by default false. If fullMatrix = true,
-in the hdf5 file the complete matrix is stored. If false, only the lower 
-triangular matrix is saved}
+\item{fullMatrix}{boolean, optional parameter, by default false. 
+If fullMatrix = true, in the hdf5 file the complete matrix is stored. 
+If false, only the lower triangular matrix is saved}
 
 \item{force, }{optional boolean if true, previous results in same location inside 
 hdf5 will be overwritten, by default force = false, data was not overwritten.}

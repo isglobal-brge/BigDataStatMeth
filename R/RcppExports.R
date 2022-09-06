@@ -413,9 +413,9 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #' @param outdataset character array with output dataset name where we want to store results
 #' @param outgroup optional, character array with output group name where we want to 
 #' store results if not provided then results are stored in the same group as original dataset
-#' @param fullMatrix optional parameter, by default false. If fullMatrix = true,
-#' in the hdf5 file the complete matrix is stored. If false, only the lower 
-#' triangular matrix is saved
+#' @param fullMatrix boolean, optional parameter, by default false. 
+#' If fullMatrix = true, in the hdf5 file the complete matrix is stored. 
+#' If false, only the lower triangular matrix is saved
 #' @param force, optional boolean if true, previous results in same location inside 
 #' hdf5 will be overwritten, by default force = false, data was not overwritten.
 #' @param threads optional parameter. Integer with numbers of threads to be used

@@ -7,6 +7,7 @@
     #include "hdf5_to_Eigen.h"
     #include "hdf5_getDiagonalMatrix.h"
     #include "hdf5_writeDiagonalMatrix.h"
+    #include "hdf5_writeOppositeTriangular.h"
     #include "pkg_omp.h"
     #include <iostream>
     #include <cstdlib>
@@ -23,7 +24,7 @@
     void bdInvCholesky_hdf5( std::string filename, std::string group, 
                              std::string dataset, std::string  outdataset, 
                              Rcpp::Nullable<std::string> outgroup, 
-                             Rcpp::Nullable<std::string> fullMatrix, 
+                             Rcpp::Nullable<bool> fullMatrix, 
                              Rcpp::Nullable<bool> force, 
                              Rcpp::Nullable<int> threads, 
                              Rcpp::Nullable<long> elementsBlock);

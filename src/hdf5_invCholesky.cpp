@@ -650,9 +650,9 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
 //' @param outdataset character array with output dataset name where we want to store results
 //' @param outgroup optional, character array with output group name where we want to 
 //' store results if not provided then results are stored in the same group as original dataset
-//' @param fullMatrix optional parameter, by default false. If fullMatrix = true,
-//' in the hdf5 file the complete matrix is stored. If false, only the lower 
-//' triangular matrix is saved
+//' @param fullMatrix boolean, optional parameter, by default false. 
+//' If fullMatrix = true, in the hdf5 file the complete matrix is stored. 
+//' If false, only the lower triangular matrix is saved
 //' @param force, optional boolean if true, previous results in same location inside 
 //' hdf5 will be overwritten, by default force = false, data was not overwritten.
 //' @param threads optional parameter. Integer with numbers of threads to be used
@@ -681,7 +681,7 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
 void bdInvCholesky_hdf5( std::string filename, std::string group, std::string dataset,
                          std::string  outdataset,
                          Rcpp::Nullable<std::string> outgroup = R_NilValue, 
-                         Rcpp::Nullable<std::string> fullMatrix = R_NilValue, 
+                         Rcpp::Nullable<bool> fullMatrix = R_NilValue, 
                          Rcpp::Nullable<bool> force = R_NilValue,
                          Rcpp::Nullable<int> threads = 2,
                          Rcpp::Nullable<long> elementsBlock = 1000000)
@@ -786,6 +786,11 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
             pdataset->close();
             Inverse_of_Cholesky_decomposition_hdf5(  file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular inferior (menys diagonal)
             Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
+            if( bfull==true ) {
+                Rcpp_setUpperTriangularMatrix( file, poutdataset_tmp, nrows, dElementsBlock);    
+            }
+            
+            
             
             // Ger full matrix Copy lower triangular matrix to upper triangular matrix
             if( bfull == true ) {
@@ -868,6 +873,7 @@ bdCreate_hdf5_matrix_file("test_file22.hdf5", A, "data", "A", force = TRUE)
 # Get Inverse Cholesky
 # res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA", force = T)
 res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA",elementsBlock = 10)
+res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA",elementsBlock = 10, fullMatrix = T)
 
 #..# E <- BigDataStatMeth:::inversechol_par(A,threads = 2)
 
