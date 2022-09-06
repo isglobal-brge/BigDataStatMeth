@@ -387,6 +387,20 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// bdWriteOppsiteTriangularMatrix_hdf5
+void bdWriteOppsiteTriangularMatrix_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> copytolower, Rcpp::Nullable<long> elementsBlock);
+RcppExport SEXP _BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP copytolowerSEXP, SEXP elementsBlockSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type copytolower(copytolowerSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<long> >::type elementsBlock(elementsBlockSEXP);
+    bdWriteOppsiteTriangularMatrix_hdf5(filename, group, dataset, copytolower, elementsBlock);
+    return R_NilValue;
+END_RCPP
+}
 // bdNormalize_Data
 Rcpp::RObject bdNormalize_Data(Rcpp::RObject& X, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale);
 RcppExport SEXP _BigDataStatMeth_bdNormalize_Data(SEXP XSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP) {
@@ -831,6 +845,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdSort_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdSort_hdf5_dataset, 8},
     {"_BigDataStatMeth_bdSplit_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSplit_matrix_hdf5, 9},
     {"_BigDataStatMeth_bdWriteDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteDiagonal_hdf5, 4},
+    {"_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5, 5},
     {"_BigDataStatMeth_bdNormalize_Data", (DL_FUNC) &_BigDataStatMeth_bdNormalize_Data, 3},
     {"_BigDataStatMeth_bdMLR_MR", (DL_FUNC) &_BigDataStatMeth_bdMLR_MR, 4},
     {"_BigDataStatMeth_bdCrossprod_generic", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_generic, 6},

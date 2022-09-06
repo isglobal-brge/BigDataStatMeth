@@ -629,6 +629,46 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
     invisible(.Call('_BigDataStatMeth_bdWriteDiagonal_hdf5', PACKAGE = 'BigDataStatMeth', diagonal, filename, group, dataset))
 }
 
+#' Write Upper/Lower triangular matrix
+#'
+#' Write diagonal matrix to an existing dataset inside hdf5
+#'
+#' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
+#' @param group, character array indicating the input group where the data set to be modified. 
+#' @param datasets, character array indicating the input dataset to be modified
+#' @param copytolower, boolean with default value = false. If true, sets lower 
+#' triangular matrix using upper triangular matrix, if lower=false (default 
+#' value) sets upper triangular matrix using lower triangular matrix.
+#' @param elementsBlock, optional integer defines de maximum number of elements 
+#' to read from hdf5 data file in each block. By default this value is set 
+#' to 10000. If matrix is bigger thant 5000x5000 then block is set to number 
+#' of rows or columns x 2
+#' @examples
+#' library(BigDataStatMeth)
+#' 
+#' # Prepare data and functions
+#' X <- matrix(rnorm(150), 10, 10)
+#' X.1 <- X
+#' X[lower.tri(X)] <- 0
+#' # Create hdf5 data file with  data (Y)
+#' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+#' # Update Lower triangular matrix in hdf5
+#' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
+#'         group = "data", dataset = "X", copytolower = T, elementsBlock = 10)
+#' 
+#' X <- X.1
+#' X[upper.tri(X)] <- 0
+#' # CAdd matrix data to a file
+#' bdAdd_hdf5_matrix(X, "test_file.hdf5", "data", "Y", force = T )
+#' # Update Upper triangular matrix in hdf5
+#' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
+#'         group = "data", dataset = "Y", copytolower = F, elementsBlock = 10)
+#' 
+#' @export
+bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copytolower = NULL, elementsBlock = 1000000L) {
+    invisible(.Call('_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, copytolower, elementsBlock))
+}
+
 #' Normalize Delayed Array matrix
 #' 
 #' This function performs a numerical or Delayed Array matrix normalization
