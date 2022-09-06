@@ -10,6 +10,7 @@ bdInvCholesky_hdf5(
   dataset,
   outdataset,
   outgroup = NULL,
+  fullMatrix = NULL,
   force = NULL,
   threads = 2L,
   elementsBlock = 1000000L
@@ -25,13 +26,19 @@ bdInvCholesky_hdf5(
 \item{outgroup}{optional, character array with output group name where we want to 
 store results if not provided then results are stored in the same group as original dataset}
 
+\item{fullMatrix}{optional parameter, by default false. If fullMatrix = true,
+in the hdf5 file the complete matrix is stored. If false, only the lower 
+triangular matrix is saved}
+
 \item{force, }{optional boolean if true, previous results in same location inside 
 hdf5 will be overwritten, by default force = false, data was not overwritten.}
 
 \item{threads}{optional parameter. Integer with numbers of threads to be used}
 
-\item{elementsBlock, }{optional integer defines de maximum number of elements to read from hdf5 data file in each block. 
-By default this value is set to 10000. If matrix is bigger thant 5000x5000 then block is set to number of rows or columns x 2}
+\item{elementsBlock, }{optional integer defines de maximum number of elements 
+to read from hdf5 data file in each block. By default this value is set 
+to 10000. If matrix is bigger thant 5000x5000 then block is set to number 
+of rows or columns x 2}
 
 \item{datasets, }{character array indicating the input dataset to be modified}
 }
