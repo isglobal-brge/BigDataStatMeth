@@ -65,10 +65,10 @@ void bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, std::st
         
         std::string strDataset = group + "/" + dataset;
         
-        if( !is<Rcpp::IntegerVector>(diagonal) ) {
-            intNewDiagonal = Rcpp::as<Rcpp::IntegerVector>(diagonal);
+        if( !is<Rcpp::IntegerVector>(diagonal) || !is<Rcpp::NumericVector>(diagonal) ) {
+            intNewDiagonal = Rcpp::as<Rcpp::NumericVector>(diagonal);
         } else {
-            Rcpp::Rcout<<"\n Diagonal vector isn't a Integer vector";
+            Rcpp::Rcout<<"\n Diagonal vector isn't a Numeric vector";
             return void();
         }
         
