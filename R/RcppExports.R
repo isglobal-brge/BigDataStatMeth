@@ -91,12 +91,15 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #' transposed dataframe to perform calculus.By default transp_bdataset = false, 
 #' we use the original dataset stored in hdf5 data file. Currently this option 
 #' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
+#' @param fullMatrix boolean, optional parameter used in Inverse Cholesky, by 
+#' default false. If fullMatrix = true, in the hdf5 file the complete matrix 
+#' is stored. If false, only the lower triangular matrix is saved
 #' @param threads optional parameter. Integer with numbers of threads to be used
 #' @return Original hdf5 data file with results after apply function to 
 #' different datasets
 #' @export
-bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, force = FALSE, transp_dataset = FALSE, transp_bdataset = FALSE, threads = 2L) {
-    invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force, transp_dataset, transp_bdataset, threads))
+bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, force = FALSE, transp_dataset = FALSE, transp_bdataset = FALSE, fullMatrix = FALSE, threads = 2L) {
+    invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force, transp_dataset, transp_bdataset, fullMatrix, threads))
 }
 
 #' Bind matrices by rows or columns

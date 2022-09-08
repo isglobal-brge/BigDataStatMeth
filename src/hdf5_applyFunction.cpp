@@ -49,6 +49,9 @@ using namespace std;
 //' transposed dataframe to perform calculus.By default transp_bdataset = false, 
 //' we use the original dataset stored in hdf5 data file. Currently this option 
 //' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
+//' @param fullMatrix boolean, optional parameter used in Inverse Cholesky, by 
+//' default false. If fullMatrix = true, in the hdf5 file the complete matrix 
+//' is stored. If false, only the lower triangular matrix is saved
 //' @param threads optional parameter. Integer with numbers of threads to be used
 //' @return Original hdf5 data file with results after apply function to 
 //' different datasets
@@ -64,6 +67,7 @@ void bdapply_Function_hdf5( std::string filename,
                                      Rcpp::Nullable<bool> force = false,
                                      Rcpp::Nullable<bool> transp_dataset = false,
                                      Rcpp::Nullable<bool> transp_bdataset = false,
+                                     Rcpp::Nullable<bool> fullMatrix = false,
                                      Rcpp::Nullable<int> threads = 2 )
 {
     
@@ -72,7 +76,7 @@ void bdapply_Function_hdf5( std::string filename,
     DataSet* pbdataset = nullptr;
     Rcpp::StringVector str_bdatasets;
     std::string str_bgroup;
-    bool btransdataA, btransdataB;
+    bool btransdataA, btransdataB, bfullMatrix;
     Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5, 6};
     oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd",
                "invChol", "blockmult", "CrossProd_double", "tCrossProd_double",
@@ -91,6 +95,9 @@ void bdapply_Function_hdf5( std::string filename,
 
         if(transp_bdataset.isNull()) { btransdataB = false; } 
         else {   btransdataB = Rcpp::as<bool>(transp_bdataset); }
+        
+        if(fullMatrix.isNull()) { bfullMatrix = false; } 
+        else {   bfullMatrix = Rcpp::as<bool>(fullMatrix); }
         
         // Test file
         if( ResFileExist_filestream(filename) ) {
@@ -188,9 +195,10 @@ void bdapply_Function_hdf5( std::string filename,
                 
                 Rcpp::Nullable<long> elementsBlock = R_NilValue;
                 
+                Rcpp::Rcout<<"\nValor fullMatrix : "<<bfullMatrix<<"\n";
                 Rcpp_bdInvCholesky_hdf5(file, pdataset, 
                                         outgroup, Rcpp::as<std::string>(datasets[i]), 
-                                        bforce, threads, elementsBlock);
+                                        bforce, bfullMatrix, threads, elementsBlock );
                 pdataset->close();
                 
                 // svdeig results = RcppCholDec(original);    

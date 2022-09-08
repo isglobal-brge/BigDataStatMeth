@@ -538,7 +538,8 @@ void Inverse_Matrix_Cholesky_parallel(  H5File* file, DataSet* InOutDataset, int
     
 void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
                               std::string outgroup, std::string outdataset, 
-                              bool bforce, Rcpp::Nullable<int> threads,
+                              bool bforce, bool fullMatrix, 
+                              Rcpp::Nullable<int> threads,
                               Rcpp::Nullable<long> elementsBlock = R_NilValue) 
 {
     
@@ -587,7 +588,14 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
             Cholesky_decomposition_hdf5(file, pdataset, poutdataset_tmp, nrows, ncols, dElementsBlock, threads);
             Inverse_of_Cholesky_decomposition_hdf5(  file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular inferior (menys diagonal)
             Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
+            // Ger full matrix Copy lower triangular matrix to upper triangular matrix
+            if( fullMatrix == true ) {
+                Rcpp::Rcout<<"\nEstem clonant la triangular\n";
+                Rcpp_setUpperTriangularMatrix( file, poutdataset_tmp, nrows, dElementsBlock);    
+            }
             // Moure o crear el link per poder accedir amb el nom que realment ens interessa.... 
+            
+            
             
             } else {
             Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition \n";
@@ -786,15 +794,9 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
             pdataset->close();
             Inverse_of_Cholesky_decomposition_hdf5(  file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular inferior (menys diagonal)
             Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
+            // Ger full matrix Copy lower triangular matrix to upper triangular matrix
             if( bfull==true ) {
                 Rcpp_setUpperTriangularMatrix( file, poutdataset_tmp, nrows, dElementsBlock);    
-            }
-            
-            
-            
-            // Ger full matrix Copy lower triangular matrix to upper triangular matrix
-            if( bfull == true ) {
-                // Copy Lower triangular matrix to upper triangular matrix
             }
             
         } else {

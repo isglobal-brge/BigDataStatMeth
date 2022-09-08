@@ -15,12 +15,17 @@
     // int RcppApply_Function_hdf5 ( H5File* file, DataSet* dataset, std::string stroutgroup, std::string stroutdataset);
 
     // R functions
-    void bdapply_Function_hdf5( std::string filename, std::string group, 
-                                Rcpp::StringVector datasets,
-                                std::string outgroup, std::string func, 
+    void bdapply_Function_hdf5( std::string filename, 
+                                std::string group, 
+                                Rcpp::StringVector datasets, 
+                                std::string outgroup, 
+                                std::string func, 
                                 Rcpp::Nullable<std::string> b_group, 
-                                Rcpp::Nullable<Rcpp::StringVector> b_datasets ,
-                                Rcpp::Nullable<bool> force, 
-                                Rcpp::Nullable<bool> only_hdf5 );
+                                Rcpp::Nullable<Rcpp::StringVector> b_datasets,
+                                Rcpp::Nullable<bool> force,
+                                Rcpp::Nullable<bool> transp_dataset,
+                                Rcpp::Nullable<bool> transp_bdataset,
+                                Rcpp::Nullable<bool> fullMatrix,
+                                Rcpp::Nullable<int> threads );
 
 #endif
