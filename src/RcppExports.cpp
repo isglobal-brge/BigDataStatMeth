@@ -43,6 +43,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdWeightedProduct_hdf5
+void bdWeightedProduct_hdf5(std::string filename, std::string group, std::string dataset, std::string vectorgroup, std::string vectordataset, std::string outdataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> byrows, Rcpp::Nullable<int> force);
+RcppExport SEXP _BigDataStatMeth_bdWeightedProduct_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP vectorgroupSEXP, SEXP vectordatasetSEXP, SEXP outdatasetSEXP, SEXP outgroupSEXP, SEXP byrowsSEXP, SEXP forceSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type vectorgroup(vectorgroupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type vectordataset(vectordatasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type byrows(byrowsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type force(forceSEXP);
+    bdWeightedProduct_hdf5(filename, group, dataset, vectorgroup, vectordataset, outdataset, outgroup, byrows, force);
+    return R_NilValue;
+END_RCPP
+}
 // bdapply_Function_hdf5
 void bdapply_Function_hdf5(std::string filename, std::string group, Rcpp::StringVector datasets, std::string outgroup, std::string func, Rcpp::Nullable<std::string> b_group, Rcpp::Nullable<Rcpp::StringVector> b_datasets, Rcpp::Nullable<bool> force, Rcpp::Nullable<bool> transp_dataset, Rcpp::Nullable<bool> transp_bdataset, Rcpp::Nullable<bool> fullMatrix, Rcpp::Nullable<int> threads);
 RcppExport SEXP _BigDataStatMeth_bdapply_Function_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetsSEXP, SEXP outgroupSEXP, SEXP funcSEXP, SEXP b_groupSEXP, SEXP b_datasetsSEXP, SEXP forceSEXP, SEXP transp_datasetSEXP, SEXP transp_bdatasetSEXP, SEXP fullMatrixSEXP, SEXP threadsSEXP) {
@@ -826,6 +844,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdCrossprod_Weighted", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_Weighted, 5},
     {"_BigDataStatMeth_bdRemovelowdata", (DL_FUNC) &_BigDataStatMeth_bdRemovelowdata, 7},
+    {"_BigDataStatMeth_bdWeightedProduct_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWeightedProduct_hdf5, 9},
     {"_BigDataStatMeth_bdapply_Function_hdf5", (DL_FUNC) &_BigDataStatMeth_bdapply_Function_hdf5, 12},
     {"_BigDataStatMeth_bdBind_hdf5", (DL_FUNC) &_BigDataStatMeth_bdBind_hdf5, 7},
     {"_BigDataStatMeth_bdCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_hdf5, 10},

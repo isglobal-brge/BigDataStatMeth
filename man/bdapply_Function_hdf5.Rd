@@ -15,6 +15,7 @@ bdapply_Function_hdf5(
   force = FALSE,
   transp_dataset = FALSE,
   transp_bdataset = FALSE,
+  fullMatrix = FALSE,
   threads = 2L
 )
 }
@@ -67,6 +68,10 @@ is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"}
 transposed dataframe to perform calculus.By default transp_bdataset = false, 
 we use the original dataset stored in hdf5 data file. Currently this option 
 is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"}
+
+\item{fullMatrix}{boolean, optional parameter used in Inverse Cholesky, by 
+default false. If fullMatrix = true, in the hdf5 file the complete matrix 
+is stored. If false, only the lower triangular matrix is saved}
 
 \item{threads}{optional parameter. Integer with numbers of threads to be used}
 }

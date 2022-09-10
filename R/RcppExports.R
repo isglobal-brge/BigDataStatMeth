@@ -48,6 +48,49 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
     .Call('_BigDataStatMeth_bdRemovelowdata', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, bycols)
 }
 
+#' Apply weights to a dataset in hdf5 file
+#' 
+#' This function applies a weight vector to a matrix. Multiplies each matrix 
+#' row/column from a hdf5 dataset with a weight vector
+#' 
+#' @param filename string file name where dataset to apply weights is located
+#' @param group string with the path inside the hdf5 data file where matrix 
+#' is located
+#' @param dataset string with the matrix name
+#' @param vectorgroup string with the path inside the hdf5 data file where 
+#' vector is located
+#' @param vectordataset with the vector name
+#' @param outdataset character array with output dataset name where we want to 
+#' store results
+#' @param outgroup optional, character array with output group name where we 
+#' want to store results if not provided then results are stored in the same 
+#' group as original dataset
+#' @param byrows logical (default = FALSE). By default weights are applied by 
+#' columns but if byrows=TRUE then weights are applied by rows 
+#' @param force, boolean if true, previous results in same location inside 
+#' hdf5 will be overwritten.
+#' @return file with weighted dataset
+#' @examples
+#'library(BigDataStatMeth)
+#'    
+#'# Prepare data and functions
+#'set.seed(123)
+#'Y <- matrix(rnorm(250), 5, 10)
+#'X <- matrix(rnorm(250), 10, 1)
+#'        
+#'# Create hdf5 data file with  data (Y)
+#'bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = T)
+#'bdAdd_hdf5_matrix( X, "cca_cars.hdf5",  "data", "X", force = TRUE)
+#'            
+#'bdWeightedProduct_hdf5("cca_cars.hdf5", 
+#'                       group = "data", dataset = "Y",
+#'                       vectorgroup = "data", vectordataset = "X", 
+#'                       outdataset = "Prod", byrows = T, force = T)
+#' @export
+bdWeightedProduct_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, outgroup = NULL, byrows = NULL, force = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdWeightedProduct_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, outgroup, byrows, force))
+}
+
 #' Apply function to different datasets inside a group
 #'
 #' Apply function to different datasets inside a group
