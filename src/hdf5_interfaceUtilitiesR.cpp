@@ -41,13 +41,20 @@ Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rc
     }
     catch( FileIException& error ) { // catch failure caused by the H5File operations
         file->close();
-        ::Rf_error( "c++ exception (File IException)" );
+        ::Rf_error( "c++ exception in bdgetDatasetsList_hdf5 (File IException)" );
+        return(wrap(-1));
+    }catch( GroupIException& error ) { // catch failure caused by the H5File operations
+        file->close();
+        ::Rf_error( "c++ exception in bdgetDatasetsList_hdf5 (Group IException)" );
+        return(wrap(-1));
+    }catch( DataSetIException& error ) { // catch failure caused by the H5File operations
+        file->close();
+        ::Rf_error( "c++ exception in bdgetDatasetsList_hdf5 (DataSet IException)" );
         return(wrap(-1));
     }
     
     file->close();
     return(groupDatasets);
-
     
 }
 
