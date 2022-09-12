@@ -4,7 +4,6 @@
     #include <RcppEigen.h>
     #include "rhdf5Utils.h"
     
-    static const int maxElemBlock = 3000000;
     // C++ functions
     
     

@@ -28,6 +28,7 @@
     const int	MAXSTRING = 20;
     const hsize_t MAXSTRBLOCK = 100000;
     const hsize_t MAXELEMSINBLOCK = 250000;
+    const int maxElemBlock = 3000000;
     
     // Struct
     struct fullpath {
@@ -74,8 +75,8 @@
     extern "C" int create_HDF5_group_ptr( H5File* file, const H5std_string mGroup);
     extern "C" int create_HDF5_groups_ptr( H5File* file, const H5std_string mGroup);
     
-    extern "C" int get_HDF5_mean_sd_by_column_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize );
-    extern "C" int get_HDF5_mean_sd_by_row_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize );
+    // extern "C" int get_HDF5_mean_sd_by_column_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize );
+    // extern "C" int get_HDF5_mean_sd_by_row_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize );
     
     extern "C" int Create_hdf5_file(std::string filename);
     extern "C" int create_HDF5_matrix(H5std_string filename, const std::string DatasetName, RObject DatasetValues);
