@@ -117,6 +117,7 @@ bdWeightedProduct_hdf5 <- function(filename, group, dataset, vectorgroup, vector
 #' tCrossProd_double to  performs transposed crossprod using two matrices, 
 #' see blockmult 
 #' solve to solve matrix equation system, see blockmult for parametrization 
+#' sdmean to get sd and mean from de datasets by cols or rows
 #' @param b_group, optional Character array indicating the input group where 
 #' data are stored when we need a second dataset to operate, for example in 
 #' functions like matrix multiplication
@@ -137,12 +138,15 @@ bdWeightedProduct_hdf5 <- function(filename, group, dataset, vectorgroup, vector
 #' @param fullMatrix boolean, optional parameter used in Inverse Cholesky, by 
 #' default false. If fullMatrix = true, in the hdf5 file the complete matrix 
 #' is stored. If false, only the lower triangular matrix is saved
+#' @param byrows boolean, optional parameter used in sd and mean calculus, by 
+#' default false. If byrows = true, the sd and mean is computed by columns. 
+#' If false, sd and mean is computed by rows.
 #' @param threads optional parameter. Integer with numbers of threads to be used
 #' @return Original hdf5 data file with results after apply function to 
 #' different datasets
 #' @export
-bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, force = FALSE, transp_dataset = FALSE, transp_bdataset = FALSE, fullMatrix = FALSE, threads = 2L) {
-    invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force, transp_dataset, transp_bdataset, fullMatrix, threads))
+bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, force = FALSE, transp_dataset = FALSE, transp_bdataset = FALSE, fullMatrix = FALSE, byrows = FALSE, threads = 2L) {
+    invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force, transp_dataset, transp_bdataset, fullMatrix, byrows, threads))
 }
 
 #' Bind matrices by rows or columns
@@ -349,6 +353,71 @@ bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block
     .Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, groupB, B, block_size, paral, threads, mixblock_size, outgroup)
 }
 
+#' Apply vector calculus to a dataset in hdf5 file
+#' 
+#' This function applies a calculus with a vector to a matrix. Multiplies, 
+#' sums, substract or divide each matrix row/column from a hdf5 dataset 
+#' using a vector
+#' 
+#' @param filename string file name where dataset to apply weights is located
+#' @param group string with the path inside the hdf5 data file where matrix 
+#' is located
+#' @param dataset string with the matrix name
+#' @param vectorgroup string with the path inside the hdf5 data file where 
+#' vector is located
+#' @param vectordataset string with the vector name
+#' @param outdataset character array with output dataset name where we want to 
+#' store results
+#' @param outgroup optional, character array with output group name where we 
+#' want to store results if not provided then results are stored in the same 
+#' group as original dataset
+#' @param func, Character array, function to be applyed : 
+#'"+" : to sum a vector to a matrix dataset by columns or rows
+#'"-" : to substract a vector to a matrix dataset by columns or rows
+#'"*" : to multiply a vector to a matrix dataset by columns or rows
+#'"/" : to divide a vector to a matrix dataset by columns or rows
+#' @param byrows logical (default = FALSE). By default weights are applied by 
+#' columns but if byrows=TRUE then weights are applied by rows 
+#' @param force, boolean if true, previous results in same location inside 
+#' hdf5 will be overwritten.
+#' @return file with weighted dataset
+#' @examples
+#'library(BigDataStatMeth)
+#'    
+#'# Prepare data and functions
+#'set.seed(123)
+#'Y <- matrix(rnorm(250), 10, 10)
+#'X <- matrix(rnorm(250), 10, 1)
+#'        
+#'# Create hdf5 data file with  data (Y)
+#'bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+#'bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
+#'            
+#'bdcomputeMatrixVector_hdf5("test.hdf5", 
+#'                           group = "data", dataset = "Y",
+#'                           vectorgroup = "data", vectordataset = "X", 
+#'                           outdataset = "ProdComputed", 
+#'                           func = "*",
+#'                           byrows = T, force = T)
+#'    
+#'bdcomputeMatrixVector_hdf5("test.hdf5", 
+#'                           group = "data", dataset = "Y",
+#'                           vectorgroup = "data", vectordataset = "X", 
+#'                           outdataset = "SumComputed", 
+#'                           func = "-",
+#'                           byrows = T, force = T)
+#'    
+#'bdcomputeMatrixVector_hdf5("test.hdf5", 
+#'                           group = "data", dataset = "Y",
+#'                           vectorgroup = "data", vectordataset = "X", 
+#'                           outdataset = "SubsComputed", 
+#'                           func = "-",
+#'                           byrows = F, force = T)
+#' @export
+bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup = NULL, byrows = NULL, force = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, force))
+}
+
 #' Get minor allele frequency
 #' 
 #' This function normalize data scaling, centering or scaling and centering in a dataset stored in hdf5 file
@@ -397,6 +466,47 @@ bdget_maf_hdf5 <- function(filename, group, dataset, byrows = NULL, bparallel = 
 #' @export
 bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
     .Call('_BigDataStatMeth_bdgetDiagonal_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset)
+}
+
+#' Get sd and Mean by Rows or Columns
+#' 
+#' This functions gets Standard Deviation (sd) or Mean by Rows or Columns and
+#' store results in hdf5 dataset inside the file
+#' 
+#' @param filename string file name where dataset to normalize is stored
+#' @param group string Matrix
+#' @param dataset string Matrix
+#' @param sd logical (default = TRUE) if TRUE, standard deviation is computed
+#' @param mean logical (default = TRUE) if TRUE, mean is computed 
+#' @param byrows logical (default = FALSE) if TRUE, sd and mean are computed
+#' by columns, if byrows=TRUE then sd and mean are computed by Rows.
+#' @param wsize integer (default = 1000), file block size to read to 
+#' perform calculus exitexit
+#' @param force, boolean if true, previous results in same location inside 
+#' hdf5 will be overwritten.
+#' @return hdf5 data file containing a dataset with sd, and mean 
+#' @examples
+#' 
+#' library(BigDataStatMeth)
+#' # devtools::reload(pkgload::inst("BigDataStatMeth"))
+#' setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/")
+#'     
+#' # Prepare data and functions
+#' et.seed(123)
+#' Y <- matrix(rnorm(250), 10, 10)
+#' X <- matrix(rnorm(250), 10, 1)
+#'     
+#' # Create hdf5 data file with  data (Y)
+#' bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+#' bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
+#' 
+#' # Get mean and sd        
+#' bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
+#'                     sd = T, mean = T,byrows = T)
+#'         
+#' @export
+bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL, byrows = NULL, wsize = NULL, force = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdgetSDandMean_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, sd, mean, byrows, wsize, force))
 }
 
 #' Converts text file to hdf5 data file

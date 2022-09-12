@@ -32,6 +32,7 @@ using namespace std;
 //' tCrossProd_double to  performs transposed crossprod using two matrices, 
 //' see blockmult 
 //' solve to solve matrix equation system, see blockmult for parametrization 
+//' sdmean to get sd and mean from de datasets by cols or rows
 //' @param b_group, optional Character array indicating the input group where 
 //' data are stored when we need a second dataset to operate, for example in 
 //' functions like matrix multiplication
@@ -52,6 +53,9 @@ using namespace std;
 //' @param fullMatrix boolean, optional parameter used in Inverse Cholesky, by 
 //' default false. If fullMatrix = true, in the hdf5 file the complete matrix 
 //' is stored. If false, only the lower triangular matrix is saved
+//' @param byrows boolean, optional parameter used in sd and mean calculus, by 
+//' default false. If byrows = true, the sd and mean is computed by columns. 
+//' If false, sd and mean is computed by rows.
 //' @param threads optional parameter. Integer with numbers of threads to be used
 //' @return Original hdf5 data file with results after apply function to 
 //' different datasets
@@ -68,6 +72,7 @@ void bdapply_Function_hdf5( std::string filename,
                                      Rcpp::Nullable<bool> transp_dataset = false,
                                      Rcpp::Nullable<bool> transp_bdataset = false,
                                      Rcpp::Nullable<bool> fullMatrix = false,
+                                     Rcpp::Nullable<bool> byrows = false,
                                      Rcpp::Nullable<int> threads = 2 )
 {
     
@@ -76,11 +81,11 @@ void bdapply_Function_hdf5( std::string filename,
     DataSet* pbdataset = nullptr;
     Rcpp::StringVector str_bdatasets;
     std::string str_bgroup;
-    bool btransdataA, btransdataB, bfullMatrix;
-    Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5, 6};
+    bool btransdataA, btransdataB, bfullMatrix, bbyrows;
+    Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5, 6, 7};
     oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd",
                "invChol", "blockmult", "CrossProd_double", "tCrossProd_double",
-               "solve", "normalize"});
+               "solve", "normalize", "sdmean"});
 
     try
     {
@@ -98,6 +103,9 @@ void bdapply_Function_hdf5( std::string filename,
         
         if(fullMatrix.isNull()) { bfullMatrix = false; } 
         else {   bfullMatrix = Rcpp::as<bool>(fullMatrix); }
+        
+        if(byrows.isNull()) { bbyrows = false; } 
+        else {   bbyrows = Rcpp::as<bool>(byrows); }
         
         // Test file
         if( ResFileExist_filestream(filename) ) {
@@ -162,7 +170,10 @@ void bdapply_Function_hdf5( std::string filename,
                 if(oper.findName( func ) == 0){
                     prepare_outDataset(file, outgroup + "/" + datasets(i) + ".Q", bforce);
                     prepare_outDataset(file, outgroup + "/" + datasets(i) + ".R", bforce);
-                }else {
+                } else if (oper.findName( func ) == 7) {
+                    prepare_outDataset(file, outgroup + "/" + datasets(i) + ".mean", bforce);
+                    prepare_outDataset(file, outgroup + "/" + datasets(i) + ".sd", bforce);
+                } else {
                     prepare_outDataset(file, outgroup + "/" + datasets(i), bforce);
                 }
             }
@@ -300,16 +311,46 @@ void bdapply_Function_hdf5( std::string filename,
                 write_HDF5_matrix_from_R_ptr(file, outputdataset, results, false);
                 pdataset->close();
                 
-            // } else if( oper(oper.findName( func )) == 6) {
-            // bdNormalize_Data()
-            //     Eigen::MatrixXd results = bdcrossproduct(original);    
-            //     write_HDF5_matrix_from_R_ptr(file, outgroup + "/" + datasets(i), Rcpp::wrap(results), false);
-            //     pdataset->close();
-            // 
-            //     
-            //     
-            //     
-            //     
+            } else if( oper(oper.findName( func )) == 7) {
+                
+                int blocksize;
+                
+                // std::string strgroupout = "mean_sd/" + group;
+                // prepare_outGroup(file, outgroup, bforce);
+
+                IntegerVector dims_out = get_HDF5_dataset_size_ptr(pdataset);
+                Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2,dims_out[0]);
+                
+                if( bbyrows == false) {
+                    
+                    if(dims_out[1] > maxElemBlock){
+                        blocksize = 1;
+                    } else {
+                        int maxsize = std::max( dims_out[0], dims_out[1]);
+                        blocksize = std::ceil( maxElemBlock / maxsize); }
+                    
+                    datanormal = Eigen::MatrixXd::Zero(2,dims_out[0]);
+                    get_HDF5_mean_sd_by_column_ptr( file, pdataset, datanormal);
+                } else {
+                    
+                    if(dims_out[0] > maxElemBlock) {
+                        blocksize = 1;
+                    } else {
+                        int maxsize = std::max( dims_out[0], dims_out[1]);
+                        blocksize = std::ceil( maxElemBlock / maxsize); }
+                    
+                    datanormal = Eigen::MatrixXd::Zero(2,dims_out[1]);
+                    get_HDF5_mean_sd_by_row_ptr( file, pdataset, datanormal);
+                }
+                
+                // if(exists_HDF5_element_ptr(file, strgroupout) == 0) {
+                //     create_HDF5_groups_ptr( file, strgroupout); }
+                
+                // Store center and scale for each column
+                write_HDF5_matrix_ptr(file, outgroup + "/"+ datasets(i) + ".mean", wrap(datanormal.row(0)));
+                write_HDF5_matrix_ptr(file, outgroup + "/"+ datasets(i) + ".sd", wrap(datanormal.row(1)));
+                pdataset->close();
+
             } else {
                 pdataset->close();
                 file->close();
@@ -341,5 +382,30 @@ void bdapply_Function_hdf5( std::string filename,
 
 
 /***R
+
+library(BigDataStatMeth)
+# devtools::reload(pkgload::inst("BigDataStatMeth"))
+setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/")
+
+# Prepare data and functions
+set.seed(123)
+Y <- matrix(rnorm(250), 10, 10)
+X <- matrix(rnorm(250), 20, 20)
+filename <- "test.hdf5"
+
+# Create hdf5 data file with  data (Y)
+bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
+
+
+data <- bdgetDatasetsList_hdf5("test.hdf5", group = "data")
+
+bdapply_Function_hdf5(filename = filename,
+                      group = "data",datasets = data,
+                      outgroup = "KXA",func = "sdmean",
+                      force = T)
+
+
+
 
 */

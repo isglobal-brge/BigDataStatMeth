@@ -10,6 +10,7 @@
     #include "H5Cpp.h"
     #include "solveMatrixEquation.h"
     #include "hdf5_invCholesky.h"
+    #include "hdf5_getSDandMean.h"
 
     // // cpp functions
     // int RcppApply_Function_hdf5 ( H5File* file, DataSet* dataset, std::string stroutgroup, std::string stroutdataset);
