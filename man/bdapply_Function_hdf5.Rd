@@ -16,6 +16,7 @@ bdapply_Function_hdf5(
   transp_dataset = FALSE,
   transp_bdataset = FALSE,
   fullMatrix = FALSE,
+  byrows = FALSE,
   threads = 2L
 )
 }
@@ -45,7 +46,8 @@ A2%*%B2 and A3%*%B3
 CrossProd_double to  performs crossprod using two matrices, see blockmult 
 tCrossProd_double to  performs transposed crossprod using two matrices, 
 see blockmult 
-solve to solve matrix equation system, see blockmult for parametrization}
+solve to solve matrix equation system, see blockmult for parametrization 
+sdmean to get sd and mean from de datasets by cols or rows}
 
 \item{b_group, }{optional Character array indicating the input group where 
 data are stored when we need a second dataset to operate, for example in 
@@ -72,6 +74,10 @@ is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"}
 \item{fullMatrix}{boolean, optional parameter used in Inverse Cholesky, by 
 default false. If fullMatrix = true, in the hdf5 file the complete matrix 
 is stored. If false, only the lower triangular matrix is saved}
+
+\item{byrows}{boolean, optional parameter used in sd and mean calculus, by 
+default false. If byrows = true, the sd and mean is computed by columns. 
+If false, sd and mean is computed by rows.}
 
 \item{threads}{optional parameter. Integer with numbers of threads to be used}
 }
