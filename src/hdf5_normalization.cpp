@@ -121,8 +121,8 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
             return void();
         } else if( exists_HDF5_element_ptr(file, strgroupout) && bforce == true) {
             remove_HDF5_element_ptr(file, strgroupout + "/" + dataset); 
-            remove_HDF5_element_ptr(file, strgroupout + "/" + dataset + ".mean"); 
-            remove_HDF5_element_ptr(file, strgroupout + "/" + dataset + ".scale"); 
+            remove_HDF5_element_ptr(file, strgroupout + "/mean." + dataset); 
+            remove_HDF5_element_ptr(file, strgroupout + "/sd." + dataset); 
         }
         
         pdatasetin = new DataSet(file->openDataSet(group + "/" + dataset));
@@ -176,8 +176,8 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
         }
         
         // Store center and scale for each column
-        write_HDF5_matrix_ptr(file, strgroupout + "/"+dataset + ".mean", wrap(datanormal.row(0)));
-        write_HDF5_matrix_ptr(file, strgroupout + "/"+dataset + ".scale", wrap(datanormal.row(1)));
+        write_HDF5_matrix_ptr(file, strgroupout + "/mean." + dataset, wrap(datanormal.row(0)));
+        write_HDF5_matrix_ptr(file, strgroupout + "/sd." + dataset, wrap(datanormal.row(1)));
         
         if( bbyrows == false) {
             for(hsize_t i=0; i*blocksize <= dims_out[0] ; i++)
