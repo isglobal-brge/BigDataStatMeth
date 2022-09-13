@@ -590,7 +590,6 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
             Inverse_Matrix_Cholesky_parallel( file, poutdataset_tmp, nrows, ncols, dElementsBlock, threads); // Resultats emmagatzemats Triangular superior (juntament amb diagonal)
             // Ger full matrix Copy lower triangular matrix to upper triangular matrix
             if( fullMatrix == true ) {
-                Rcpp::Rcout<<"\nEstem clonant la triangular\n";
                 Rcpp_setUpperTriangularMatrix( file, poutdataset_tmp, nrows, dElementsBlock);    
             }
             // Moure o crear el link per poder accedir amb el nom que realment ens interessa.... 
@@ -604,32 +603,24 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
         
         
     } catch( FileIException& error ) { // catch failure caused by the H5File operations
-        // Rcpp::Rcout<<"\nPASSA PER FILE\n";
-        // poutdataset->close();
         poutdataset_tmp->close();
         pdataset->close();
         file->close();
         Rcpp::Rcout<<"c++ exception Rcpp_bdInvCholesky_hdf5 (File IException)";
         return void();
     } catch( GroupIException & error ) { // catch failure caused by the DataSet operations
-        // Rcpp::Rcout<<"\nPASSA PER GROUP\n";
-        // poutdataset->close();
         poutdataset_tmp->close();
         pdataset->close();
         file->close();
         Rcpp::Rcout << "c++ exception Rcpp_bdInvCholesky_hdf5 (Group IException)";
         return void();
     } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-        // Rcpp::Rcout<<"\nPASSA PER DATASET\n";
-        // poutdataset->close();
         poutdataset_tmp->close();
         pdataset->close();
         file->close();
         Rcpp::Rcout << "c++ exception Rcpp_bdInvCholesky_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
-        // Rcpp::Rcout<<"\nPASSA PER EXCEPTION\n";
-        // poutdataset->close();
         poutdataset_tmp->close();
         pdataset->close();
         file->close();
@@ -808,32 +799,24 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
         
         
     } catch( FileIException& error ) { // catch failure caused by the H5File operations
-        // Rcpp::Rcout<<"\nPASSA PER FILE\n";
-        // poutdataset->close();
         poutdataset_tmp->close();
         pdataset->close();
         file->close();
         Rcpp::Rcout<<"c++ exception bdInvCholesky_hdf5 (File IException)";
         return void();
     } catch( GroupIException & error ) { // catch failure caused by the DataSet operations
-        // Rcpp::Rcout<<"\nPASSA PER GROUP\n";
-        // poutdataset->close();
         poutdataset_tmp->close();
         pdataset->close();
         file->close();
         Rcpp::Rcout << "c++ exception bdInvCholesky_hdf5 (Group IException)";
         return void();
     } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-        // Rcpp::Rcout<<"\nPASSA PER DATASET\n";
-        // poutdataset->close();
         poutdataset_tmp->close();
         pdataset->close();
         file->close();
         Rcpp::Rcout << "c++ exception bdInvCholesky_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
-        // Rcpp::Rcout<<"\nPASSA PER EXCEPTION\n";
-        // poutdataset->close();
         poutdataset_tmp->close();
         pdataset->close();
         file->close();
