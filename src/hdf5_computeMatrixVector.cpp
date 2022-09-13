@@ -5,6 +5,7 @@
 // by Rows
 
 Eigen::MatrixXd Rcpp_matrixVectorMultiplication_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
+    
     X = X.array().colwise() * v.array();
     return(X);
 }
@@ -186,7 +187,7 @@ void bdcomputeMatrixVector_hdf5( std::string filename, std::string group,
             file->close();
             return void();
         } else {
-            if(!exists_HDF5_element_ptr(file, group + "/" + vectordataset)) {
+            if(!exists_HDF5_element_ptr(file, vectorgroup + "/" + vectordataset)) {
                 Rcpp::Rcout<<"\nDataset not exits, create vector dataset before proceed";
                 file->close();
                 return void();
@@ -395,5 +396,18 @@ bdcomputeMatrixVector_hdf5("test.hdf5",
                            outdataset = "SubsComputed", 
                            func = "-",
                            byrows = F, force = T)
+
+
+setwd("/Users/mailos/DOCTORAT_Local/mgcca")
+filename <- "tmp/gettables2.hdf5"
+bdcomputeMatrixVector_hdf5(filename, group = "FinalRes", dataset = "M",
+                           vectorgroup = "FinalRes", vectordataset = "Ksum05",
+                           outdataset = "MMKsum05", func = "*",
+                           byrows = T,force = T)
+
+
+
+
+
 
 */
