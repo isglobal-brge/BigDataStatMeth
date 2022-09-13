@@ -2180,18 +2180,23 @@ void bdRemove_hdf5_element(std::string filename, std::string element)
         
       }
     } catch(FileIException& error) { // catch failure caused by the H5File operations
+      file->close();
       ::Rf_error( "c++ exception get_dataset_names_from_group (File IException)" );
       return -1;
     } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+        file->close();
       ::Rf_error( "c++ exception get_dataset_names_from_group (DataSet IException)" );
       return -1;
     } catch(GroupIException& error) { // catch failure caused by the Group operations
+        file->close();
       ::Rf_error( "c++ exception get_dataset_names_from_group (Group IException)" );
       return -1;
     } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+        file->close();
       ::Rf_error( "c++ exception get_dataset_names_from_group (DataSpace IException)" );
       return -1;
     } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+        file->close();
       ::Rf_error( "c++ exception get_dataset_names_from_group (Data TypeIException)" );
       return -1;
     }
@@ -2629,6 +2634,7 @@ void bdCreateEmptyDataset_hdf5(std::string filename, std::string group, std::str
             if(exists_HDF5_element_ptr(file, group + "/" + dataset)) {
                 if( boverwrite == true ) {
                     Rcpp::Rcout<<"Element also exits, dataset will be overwritten";
+                    remove_HDF5_element_ptr(file, group + "/" + dataset);
                 } else {
                     file->close();
                     delete(file);
