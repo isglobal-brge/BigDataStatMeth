@@ -170,9 +170,13 @@ void bdapply_Function_hdf5( std::string filename,
                 if(oper.findName( func ) == 0){
                     prepare_outDataset(file, outgroup + "/" + datasets(i) + ".Q", bforce);
                     prepare_outDataset(file, outgroup + "/" + datasets(i) + ".R", bforce);
+                } else if (oper.findName( func ) == 5) {
+                    std::string tmp_strdataset = str_bgroup + "/" + str_bdatasets(i);
+                    std::string tmp_outputdataset = outgroup + "/solved_" + datasets(i) + "x_eq_" + str_bdatasets(i);
+                    prepare_outDataset(file, tmp_outputdataset, bforce);
                 } else if (oper.findName( func ) == 7) {
-                    prepare_outDataset(file, outgroup + "/" + datasets(i) + ".mean", bforce);
-                    prepare_outDataset(file, outgroup + "/" + datasets(i) + ".sd", bforce);
+                    prepare_outDataset(file, outgroup + "/mean." + datasets(i), bforce);
+                    prepare_outDataset(file, outgroup + "/sd." + datasets(i), bforce);
                 } else {
                     prepare_outDataset(file, outgroup + "/" + datasets(i), bforce);
                 }
@@ -206,7 +210,6 @@ void bdapply_Function_hdf5( std::string filename,
                 
                 Rcpp::Nullable<long> elementsBlock = R_NilValue;
                 
-                Rcpp::Rcout<<"\nValor fullMatrix : "<<bfullMatrix<<"\n";
                 Rcpp_bdInvCholesky_hdf5(file, pdataset, 
                                         outgroup, Rcpp::as<std::string>(datasets[i]), 
                                         bforce, bfullMatrix, threads, elementsBlock );
@@ -248,18 +251,15 @@ void bdapply_Function_hdf5( std::string filename,
 
                 // Real data set dimension
                 IntegerVector dims_outB = get_HDF5_dataset_size(*pbdataset);
-
+                
                 originalB = GetCurrentBlock_hdf5_Original( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
 
                 if( oper(oper.findName( func )) == 4 ) {
 
-                    outputdataset = outgroup + "/" + datasets(i) + "_x_" + str_bdatasets(i);
-                    // If matrix size is different, remove possible cols or rows with 0s added to facilitate merge
-                    // if( original.cols() > originalB.rows() ) {
-                    //     if( original.rightCols(original.cols() - originalB.rows()).isZero(0)) {
-                    //         originalB.resize(original.cols(), originalB.cols());
-                    //     }
-                    // }
+                    //. Changed Criteria - names too long ---> Not portable .// 
+                    //      outputdataset = outgroup + "/" + datasets(i) + "_x_" + str_bdatasets(i);
+                    outputdataset = outgroup + "/" + datasets(i);
+                    
                 } else if  (oper(oper.findName( func )) == 11) {
                     outputdataset = outgroup + "/Cross_" + datasets(i) + str_bdatasets(i);
                     original = GetCurrentBlock_hdf5( file, pdataset, 0, 0, dims_out[0], dims_out[1]);
@@ -274,14 +274,14 @@ void bdapply_Function_hdf5( std::string filename,
 
                 Eigen::MatrixXd results;
                 
-                if (btransdataA == false && btransdataA == false) {
-                    results = Bblock_matrix_mul_parallel(original, originalB, 1024, R_NilValue);
-                } else if (btransdataA == true && btransdataA == false) {
-                    results = Bblock_matrix_mul_parallel(original.transpose(), originalB, 1024, R_NilValue);
-                }else if (btransdataA == false && btransdataA == true) {
-                    results = Bblock_matrix_mul_parallel(original, originalB.transpose(), 1024, R_NilValue);
+                if (btransdataA == false && btransdataB == false) {
+                    results = Bblock_matrix_mul_parallel(original, originalB, 2048, R_NilValue);
+                } else if (btransdataA == true && btransdataB == false) {
+                    results = Bblock_matrix_mul_parallel(original.transpose(), originalB, 2048, R_NilValue);
+                }else if (btransdataA == false && btransdataB == true) {
+                    results = Bblock_matrix_mul_parallel(original, originalB.transpose(), 2048, R_NilValue);
                 } else {
-                    results = Bblock_matrix_mul_parallel(original.transpose(), originalB.transpose(), 1024, R_NilValue);
+                    results = Bblock_matrix_mul_parallel(original.transpose(), originalB.transpose(), 2048, R_NilValue);
                 }
 
                 write_HDF5_matrix_from_R_ptr(file, outputdataset, Rcpp::wrap(results), false);
@@ -347,8 +347,8 @@ void bdapply_Function_hdf5( std::string filename,
                 //     create_HDF5_groups_ptr( file, strgroupout); }
                 
                 // Store center and scale for each column
-                write_HDF5_matrix_ptr(file, outgroup + "/"+ datasets(i) + ".mean", wrap(datanormal.row(0)));
-                write_HDF5_matrix_ptr(file, outgroup + "/"+ datasets(i) + ".sd", wrap(datanormal.row(1)));
+                write_HDF5_matrix_ptr(file, outgroup + "/mean."+ datasets(i), wrap(datanormal.row(0)));
+                write_HDF5_matrix_ptr(file, outgroup + "/sd."+ datasets(i), wrap(datanormal.row(1)));
                 pdataset->close();
 
             } else {
