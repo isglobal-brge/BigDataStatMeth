@@ -9,7 +9,7 @@ bool exist_FileGroupDataset(std::string filename, std::string group, std::string
   try {
     
       if( ResFileExist_filestream(filename) ) {
-        file = new H5File( filename, H5F_ACC_RDWR ); 
+        file = new H5File( filename, H5F_ACC_RDONLY ); 
       } else {
         Rcpp::Rcout<<"\nFile not exits, create file before split dataset";
         return false;

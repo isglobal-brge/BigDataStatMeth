@@ -2337,7 +2337,7 @@ Rcpp::RObject bdgetDim_hdf5(std::string filename, std::string element)
       if(!ResFileExist(filename))
           throw std::range_error("File not exits, create file before query dataset");
       
-      file = new H5File( filename, H5F_ACC_RDWR );
+      file = new H5File( filename, H5F_ACC_RDONLY );
       
       if(!exists_HDF5_element_ptr(file, element)) {
           file->close();
@@ -2719,7 +2719,7 @@ bool bdExists_hdf5_element( std::string filename, std::string element)
         if(!ResFileExist(filename))
             throw std::range_error("File not exits, create file before query element");
         
-        file = new H5File( filename, H5F_ACC_RDWR );
+        file = new H5File( filename, H5F_ACC_RDONLY );
         
         if(exists_HDF5_element_ptr(file, element)) {
             exists = true;
@@ -2741,3 +2741,74 @@ bool bdExists_hdf5_element( std::string filename, std::string element)
     return(exists);   
 
 }
+
+
+
+//' Exists hdf5 element
+//' 
+//' Query if exists element inside hdf5 data file
+//' 
+//' 
+//' @param filename, character array indicating the name of the file to create
+//' @param group, string with name of the group where the new dataset will be 
+//' created
+//' @param dataset, string with name for the new dataset
+//' @param rownames, character vector, with the rownames, if rownames is NULL 
+//' no rownames are written to the dataset
+//' @param colnames, character vector, with the colnames, if colnames is NULL
+//' no colnames are written to the dataset
+//' @return boolean, true if element exists in hdf5 data faile or false if not.
+//' @examples
+//' 
+//' # Prepare data to write dataset inside a file and test if exists
+//' 
+//' @export
+// [[Rcpp::export]]
+bool bdWriteDimnames_hdf5( std::string filename, 
+                           std::string group, std::string dataset, 
+                           Rcpp::Nullable<StringVector> rownames = R_NilValue,
+                           Rcpp::Nullable<StringVector> colnames = R_NilValue)
+{ 
+    H5File* file = nullptr;
+    bool exists;
+    
+    Rcpp::CharacterVector svrows, svrcols;
+    
+    try
+    {
+        
+        if(!ResFileExist(filename)){
+            throw std::range_error("File not exits, create file before query element");
+        }
+        
+        if(!rownames.isNotNull()) {
+            svrows = Rcpp::as<Rcpp::CharacterVector>(rownames);
+        } else {
+            svrows = Rcpp::CharacterVector::create();
+        }
+        
+        if(!colnames.isNotNull()) {
+            svrcols = Rcpp::as<Rcpp::CharacterVector>(colnames);
+        } else {
+            svrcols = Rcpp::CharacterVector::create();
+        }
+        
+        file = new H5File( filename, H5F_ACC_RDWR );
+        
+        write_hdf5_matrix_dimnames(file, group, dataset, svrows, svrcols );
+        
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
+        file->close();
+        ::Rf_error( "c++ exception bdWriteDimnames_hdf5 (File IException)" );
+        return (false);
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
+        file->close();
+        ::Rf_error( "c++ exception bdWriteDimnames_hdf5 (Group IException)" );
+        return (false);
+    } 
+    
+    file->close();
+    return(exists);   
+    
+}
+

@@ -769,6 +769,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdWriteDimnames_hdf5
+bool bdWriteDimnames_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<StringVector> rownames, Rcpp::Nullable<StringVector> colnames);
+RcppExport SEXP _BigDataStatMeth_bdWriteDimnames_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP rownamesSEXP, SEXP colnamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<StringVector> >::type rownames(rownamesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<StringVector> >::type colnames(colnamesSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdWriteDimnames_hdf5(filename, group, dataset, rownames, colnames));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdSolve
 Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B);
 RcppExport SEXP _BigDataStatMeth_bdSolve(SEXP ASEXP, SEXP BSEXP) {
@@ -929,6 +944,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdCreateGroup_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCreateGroup_hdf5, 2},
     {"_BigDataStatMeth_bdCreateEmptyDataset_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCreateEmptyDataset_hdf5, 6},
     {"_BigDataStatMeth_bdExists_hdf5_element", (DL_FUNC) &_BigDataStatMeth_bdExists_hdf5_element, 2},
+    {"_BigDataStatMeth_bdWriteDimnames_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteDimnames_hdf5, 5},
     {"_BigDataStatMeth_bdSolve", (DL_FUNC) &_BigDataStatMeth_bdSolve, 2},
     {"_BigDataStatMeth_bdInvCholesky", (DL_FUNC) &_BigDataStatMeth_bdInvCholesky, 1},
     {"_BigDataStatMeth_bdSVD", (DL_FUNC) &_BigDataStatMeth_bdSVD, 5},
