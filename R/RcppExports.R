@@ -1265,6 +1265,29 @@ bdExists_hdf5_element <- function(filename, element) {
     .Call('_BigDataStatMeth_bdExists_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, element)
 }
 
+#' Exists hdf5 element
+#' 
+#' Query if exists element inside hdf5 data file
+#' 
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, string with name of the group where the new dataset will be 
+#' created
+#' @param dataset, string with name for the new dataset
+#' @param rownames, character vector, with the rownames, if rownames is NULL 
+#' no rownames are written to the dataset
+#' @param colnames, character vector, with the colnames, if colnames is NULL
+#' no colnames are written to the dataset
+#' @return boolean, true if element exists in hdf5 data faile or false if not.
+#' @examples
+#' 
+#' # Prepare data to write dataset inside a file and test if exists
+#' 
+#' @export
+bdWriteDimnames_hdf5 <- function(filename, group, dataset, rownames = NULL, colnames = NULL) {
+    .Call('_BigDataStatMeth_bdWriteDimnames_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, rownames, colnames)
+}
+
 #' Solve matrix equations
 #' 
 #' This function solve matrix equations 
