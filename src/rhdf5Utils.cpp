@@ -1494,7 +1494,6 @@ extern "C" {
       // else
       //   Rcpp::Rcout<<"Info : no colnames to save";
       
-
     } catch(FileIException& error) { // catch failure caused by the H5File operations
       ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (File IException)" );
       return -1;
@@ -2766,13 +2765,12 @@ bool bdExists_hdf5_element( std::string filename, std::string element)
 // [[Rcpp::export]]
 bool bdWriteDimnames_hdf5( std::string filename, 
                            std::string group, std::string dataset, 
-                           Rcpp::Nullable<StringVector> rownames = R_NilValue,
-                           Rcpp::Nullable<StringVector> colnames = R_NilValue)
+                           StringVector rownames, StringVector colnames)
 { 
     H5File* file = nullptr;
     bool exists;
     
-    Rcpp::CharacterVector svrows, svrcols;
+    Rcpp::StringVector svrows, svrcols;
     
     try
     {
@@ -2781,21 +2779,18 @@ bool bdWriteDimnames_hdf5( std::string filename,
             throw std::range_error("File not exits, create file before query element");
         }
         
-        if(!rownames.isNotNull()) {
-            svrows = Rcpp::as<Rcpp::CharacterVector>(rownames);
-        } else {
-            svrows = Rcpp::CharacterVector::create();
-        }
+        // if(!Rf_isArray(rownames) && !Rf_isVector(rownames) ) {
+        //     Rcpp::Rcout<< "bdWriteDimnames_hdf5: rownames must be an array or a string Vector";
+        // }
         
-        if(!colnames.isNotNull()) {
-            svrcols = Rcpp::as<Rcpp::CharacterVector>(colnames);
-        } else {
-            svrcols = Rcpp::CharacterVector::create();
-        }
+        // if(!Rf_isArray(colnames) && !Rf_isVector(colnames) ) {
+        //     Rcpp::Rcout<< "bdWriteDimnames_hdf5: colnames must be an array or a string Vector";
+        // }
+
         
         file = new H5File( filename, H5F_ACC_RDWR );
         
-        write_hdf5_matrix_dimnames(file, group, dataset, svrows, svrcols );
+        write_hdf5_matrix_dimnames(file, group, dataset, rownames, colnames );
         
     } catch(FileIException& error) { // catch failure caused by the H5File operations
         file->close();
@@ -2805,7 +2800,11 @@ bool bdWriteDimnames_hdf5( std::string filename,
         file->close();
         ::Rf_error( "c++ exception bdWriteDimnames_hdf5 (Group IException)" );
         return (false);
-    } 
+    } catch(std::exception &ex) {
+        file->close();
+        Rcpp::Rcout<< "bdWriteDimnames_hdf5: "<<ex.what();
+        return (false);
+    }
     
     file->close();
     return(exists);   

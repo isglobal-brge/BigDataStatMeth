@@ -1284,7 +1284,7 @@ bdExists_hdf5_element <- function(filename, element) {
 #' # Prepare data to write dataset inside a file and test if exists
 #' 
 #' @export
-bdWriteDimnames_hdf5 <- function(filename, group, dataset, rownames = NULL, colnames = NULL) {
+bdWriteDimnames_hdf5 <- function(filename, group, dataset, rownames, colnames) {
     .Call('_BigDataStatMeth_bdWriteDimnames_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, rownames, colnames)
 }
 
