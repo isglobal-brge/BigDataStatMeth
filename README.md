@@ -45,7 +45,7 @@ library(BigDataStatMeth)
 |--------------------------------------------------|:-------------------------------------------------------:|----------------|:---------:|----------|------|
 | **Basic functions with vectors and matrices**    |                                                         |                |           |          |      |
 | Matrix Product                                   |             bdblockmult(…) / bdblockmult_hdf5(…)            |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
-| Matrix/Matrix and Matrix/Array Summatory         |                    blockSum_hdf5(…)                     |                |           |     ︎     |   ✔   |
+| Matrix/Matrix and Matrix/Array Summatory         |                    blockSum_hdf5(…)                     |                |           |          |   ✔︎  |
 | Sparse Matrix Product                            |      bdblockmult_sparse(…) / bdblockmult_sparse_hdf5(…)     |                |           |          |   ✔︎  |
 | Matrix product with its transpose                | bdCrossprod(…) / bdtCrossprod(…) / bdCrossprod_hdf5(…) / bdtCrossprod_hdf5(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
 | Matrix - Matrix weighted product (XWXt, XtWX)    |      bdtCrossprod_Weighted(…) / bdCrossprod_Weighted(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
@@ -86,11 +86,11 @@ library(BigDataStatMeth)
 | Create a group inside a hdf5 datafile            |                  bdCreateGroup_hdf5(…)                  |                |           |          |   ✔︎  |
 | Create empty dataset inside a hdf5 datafile      |                  bdCreateEmptyDataset_hdf5(…)                   |                |           |          |   ✔︎  |
 | Check if dataset exists in a hdf5 datafile       |                  bdExists_hdf5_element(…)                   |                |           |          |   ✔︎  |
-| Import data from text file or url to HDF5        |                  bdImportData_hdf5(…)                   |                |   ✔      |          |   ✔︎  |
+| Import data from text file or url to HDF5        |                  bdImportData_hdf5(…)                   |                |     ✔︎     |          |   ✔︎  |
 | Write dimnames inside the hdf5 datafile          |                  bdWriteDimnames_hdf5(…)                   |                |           |          |   ✔︎  |
 | **Develop methods with hdf5 - examples**         |                                                         |                |          |          |      |
-| Perform QR decomposition by blocks in hdf5       |                  getQRbyBlocks(…)                       |                |   ✔      |          |   ✔︎  |
-| Perform CCA by blocks in hdf5                    |                  bdCCA_hdf5(…)                          |                |   ✔      |          |   ✔︎  |
+| Perform QR decomposition by blocks in hdf5       |                  getQRbyBlocks(…)                       |                |     ✔︎     |          |   ✔︎  |
+| Perform CCA by blocks in hdf5                    |                  bdCCA_hdf5(…)                          |                |     ✔︎     |          |   ✔︎  |
 
 
 
