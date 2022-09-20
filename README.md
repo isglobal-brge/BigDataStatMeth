@@ -8,6 +8,7 @@ This package implements basic Algebra methods using parallel algorithms to be us
      - Matrix multiplication (by blocks, parallel, ...)
      - Cross-product and transpose cross-product
      - Matrix vector multiplication
+     - Apply vector to each matrix column/row (+, -, *, /)
      - Weighted cross-product and weighted transposed cross-product
      - Inverse Cholesky
      - Singular Value Decomposition
@@ -48,17 +49,22 @@ library(BigDataStatMeth)
 | Sparse Matrix Product                            |      bdblockmult_sparse(…) / bdblockmult_sparse_hdf5(…)     |                |           |          |   ✔︎  |
 | Matrix product with its transpose                | bdCrossprod(…) / bdtCrossprod(…) / bdCrossprod_hdf5(…) / bdtCrossprod_hdf5(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
 | Matrix - Matrix weighted product (XWXt, XtWX)    |      bdtCrossprod_Weighted(…) / bdCrossprod_Weighted(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
-| Matrix - vector weighted product (XwXt, XtwX)    |           bdwproduct(…) / bdScalarwproduct(…)           |        ✔︎       |           |          |      |
+| Matrix - vector weighted product (XwXt, XtwX)    |           bdwproduct(…) / bdScalarwproduct(…) / bdWeightedProduct_hdf5(...)          |        ✔︎       |     ✔       |       |  ✔     |
 | Matrix vector product                            |                   bdblockmult_vector(…)                 |        ✔︎       |     ✔︎     |     ✔︎    |      |
+| Apply calculus to each Matrix col/row (+, -, *, /)|           bdcomputeMatrixVector_hdf5(...)              |        ︎       |      ✔︎     |     ✔︎      |   ✔︎  |
 | Data Normalization (center, scale and both)      |          bdNormalize_Data(…) / bdNormalize_hdf5(…)      |        ✔︎       |     ✔︎     |          |   ✔︎  |
 | **Other functions**                              |                                                         |                |           |          |      |
 | Vector sum                                       |                   bdparallelVectorSum(…)                |                |           |     ✔︎    |      |
-| Write diagonal to an hdf5 matrix dataset         |                    bdgetDiagonal_hdf5(…)                |                |           |     ︎     |   ✔w   |
+| Get the diagonal from a hdf5 matrix dataset      |                    bdgetDiagonal_hdf5(…)                |                |           |     ︎      |   ✔︎  |
+| Write the diagonal to a hdf5 matrix dataset      |                    bdWriteDiagonal_hdf5(…)                |                |           |     ︎      |   ✔︎  |
+| Duplicate the lower/upper triangular hdf5 dataset|            bdWriteOppsiteTriangularMatrix_hdf5(…)       |                |           |     ︎      |   ✔︎  |
+| Get mean and sd from a hdf5 dataset by cols/rows)|                    bdgetSDandMean_hdf5(…)               |        ︎        |     ✔︎     |          |   ✔︎  |
 | Pow(2) vector elements                           |                     bdparallelpow2(…)                   |                |           |     ✔︎    |      |
+| Sum two vectors                                  |                     bdparallelVectorSum(…)              |                |           |     ✔︎    |      |
 | **Lineal Algebra Functions**                     |                                                         |                |           |          |      |
 | SVD matrix decomposition                         |                 bdSVD(…) / bdSVD_hdf5(…)                |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
 | QR matrix decomposition                          |                         bdQR(…)                         |        ✔︎       |           |          |      |
-| Cholesky decomposition                           |                     bdInvCholesky(…)                    |        ✔︎       |           |          |      |
+| Cholesky decomposition                           |            bdInvCholesky(…) / bdInvCholesky_hdf5(...)                    |        ✔︎  |          |   ✔︎  |
 | Matrix Pseudoinverse                             |                      bdpseudoinv(…)                     |        ✔︎       |           |          |      |
 | Solve matrix equation (A * X = B )               |                        bdSolve(…)                       |        ✔︎       |           |          |      |
 | **Data Analysis**                                |                                                         |                |           |          |      |
@@ -70,12 +76,18 @@ library(BigDataStatMeth)
 | Create hdf5 data file with one dataset inside    |                bdCreate_hdf5_matrix_file(…)             |                |           |          |   ✔︎  |
 | Add one dataset in hdf5 data file                |                  bdAdd_hdf5_matrix(…)                   |                |           |          |   ✔︎  |
 | Split an hdf5 dataset in small datasets          |                  bdSplit_matrix_hdf5(…)                 |                |           |          |   ✔︎  |
+| Sort an hdf5 dataset                             |                  bdSort_hdf5_dataset(…)                 |                |           |          |   ✔︎  |
 | Reduce multiple datasets applying a function     |                  bdReduce_matrix_hdf5(…)                |                |           |          |   ✔︎  |
 | Merge multiple datasets by rows or columns       |                  bdBind_hdf5(…)                         |                |           |          |   ✔︎  |
 | Apply a function to multiple datasets            |                  bdapply_Function_hdf5(…)               |                |           |          |   ✔︎  |
 | Get a list with all datasets inside a group      |                  bdgetDatasetsList_hdf5(…)              |                |           |          |   ✔︎  |
 | Remove one dataset from hdf5 data file           |                  bdRemove_hdf5_element(…)               |                |           |          |   ✔︎  |
+| Create a link to other dataset inside a hdf5 file|                  bdCreateLink_hdf5(…)                   |                |           |          |   ✔︎  |
+| Create a group inside a hdf5 datafile            |                  bdCreateGroup_hdf5(…)                  |                |           |          |   ✔︎  |
+| Create empty dataset inside a hdf5 datafile      |                  bdCreateEmptyDataset_hdf5(…)                   |                |           |          |   ✔︎  |
+| Check if dataset exists in a hdf5 datafile       |                  bdExists_hdf5_element(…)                   |                |           |          |   ✔︎  |
 | Import data from text file or url to HDF5        |                  bdImportData_hdf5(…)                   |                |   ✔      |          |   ✔︎  |
+| Write dimnames inside the hdf5 datafile          |                  bdWriteDimnames_hdf5(…)                   |                |           |          |   ✔︎  |
 | **Develop methods with hdf5 - examples**         |                                                         |                |          |          |      |
 | Perform QR decomposition by blocks in hdf5       |                  getQRbyBlocks(…)                       |                |   ✔      |          |   ✔︎  |
 | Perform CCA by blocks in hdf5                    |                  bdCCA_hdf5(…)                          |                |   ✔      |          |   ✔︎  |
