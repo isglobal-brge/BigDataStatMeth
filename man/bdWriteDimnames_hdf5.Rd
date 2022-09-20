@@ -4,13 +4,7 @@
 \alias{bdWriteDimnames_hdf5}
 \title{Exists hdf5 element}
 \usage{
-bdWriteDimnames_hdf5(
-  filename,
-  group,
-  dataset,
-  rownames = NULL,
-  colnames = NULL
-)
+bdWriteDimnames_hdf5(filename, group, dataset, rownames, colnames)
 }
 \arguments{
 \item{filename, }{character array indicating the name of the file to create}
