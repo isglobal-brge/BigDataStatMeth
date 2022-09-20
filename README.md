@@ -49,7 +49,7 @@ library(BigDataStatMeth)
 | Sparse Matrix Product                            |      bdblockmult_sparse(…) / bdblockmult_sparse_hdf5(…)     |                |           |          |   ✔︎  |
 | Matrix product with its transpose                | bdCrossprod(…) / bdtCrossprod(…) / bdCrossprod_hdf5(…) / bdtCrossprod_hdf5(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
 | Matrix - Matrix weighted product (XWXt, XtWX)    |      bdtCrossprod_Weighted(…) / bdCrossprod_Weighted(…) |        ✔︎       |     ✔︎     |     ✔︎    |   ✔︎  |
-| Matrix - vector weighted product (XwXt, XtwX)    |           bdwproduct(…) / bdScalarwproduct(…) / bdWeightedProduct_hdf5(...)          |        ✔︎       |     ✔       |       |  ✔     |
+| Matrix - vector weighted product (XwXt, XtwX)    |           bdwproduct(…) / bdScalarwproduct(…) / bdWeightedProduct_hdf5(...)          |        ✔︎       |     ✔︎     |          |   ✔︎  |
 | Matrix vector product                            |                   bdblockmult_vector(…)                 |        ✔︎       |     ✔︎     |     ✔︎    |      |
 | Apply calculus to each Matrix col/row (+, -, *, /)|           bdcomputeMatrixVector_hdf5(...)              |        ︎       |      ✔︎     |     ✔︎      |   ✔︎  |
 | Data Normalization (center, scale and both)      |          bdNormalize_Data(…) / bdNormalize_hdf5(…)      |        ✔︎       |     ✔︎     |          |   ✔︎  |
