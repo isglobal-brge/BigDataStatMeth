@@ -1472,47 +1472,44 @@ extern "C" {
   int write_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string datasetname, StringVector rownames, StringVector colnames )
   {
     
-    try{
+    try {
+        
+        Exception::dontPrint();
+        std::string strGroup = groupname + "/." + datasetname + "_dimnames";
       
-      
-      Exception::dontPrint();
-      
-      std::string strGroup = groupname + "/." + datasetname + "_dimnames";
-      
-      // Add rownames
-      create_HDF5_groups_ptr(file, strGroup);
-      
-      //..// create_HDF5_group_ptr(file, strGroup);
-      if( rownames.length()>1 )
-        write_hdf5_string_vector(file, strGroup + "/1" , rownames);
-      // else
-      //   Rcpp::Rcout<<"Info : no rownames to save";
-      
-      // Add colnames
-      if( colnames.length()>1 )
-        write_hdf5_string_vector(file, strGroup + "/2", colnames);
-      // else
-      //   Rcpp::Rcout<<"Info : no colnames to save";
+        // Add rownames
+        create_HDF5_groups_ptr(file, strGroup);
+        
+        if( rownames.length()>1 ) {
+            prepare_outDataset(file, strGroup + "/1", true);
+            write_hdf5_string_vector(file, strGroup + "/1" , rownames);
+        }
+        
+        // Add colnames
+        if( colnames.length()>1 ) {
+            prepare_outDataset(file, strGroup + "/2", true);
+            write_hdf5_string_vector(file, strGroup + "/2", colnames);
+        }
       
     } catch(FileIException& error) { // catch failure caused by the H5File operations
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (File IException)" );
-      return -1;
+        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (File IException)" );
+        return -1;
     } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSet IException)" );
-      return -1;
+        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSet IException)" );
+        return -1;
     } catch(GroupIException& error) { // catch failure caused by the Group operations
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Group IException)" );
-      return -1;
+        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Group IException)" );
+        return -1;
     } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSpace IException)" );
-      return -1;
+        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSpace IException)" );
+        return -1;
     } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Data TypeIException)" );
-      return -1;
+        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Data TypeIException)" );
+        return -1;
     }
     
     return(0);
-  }
+ }
   
   
   
@@ -1818,7 +1815,8 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
     // Create HDF5 file
     file = new H5::H5File( filename, H5F_ACC_TRUNC );
     
-    create_HDF5_group_ptr(file, strsubgroup);
+    //..20220920..// create_HDF5_group_ptr(file, strsubgroup);
+    create_HDF5_groups_ptr(file, strsubgroup);
 
     if ( object.isS4() == true)    
     {
@@ -1957,8 +1955,11 @@ void bdAdd_hdf5_matrix(RObject object,
     
     file = new H5::H5File( filename, H5F_ACC_RDWR );
     
-    if(!exists_HDF5_element_ptr(file, group)) 
-      create_HDF5_group_ptr(file, group);
+    if(!exists_HDF5_element_ptr(file, group)){ 
+        //..20220920..// create_HDF5_group_ptr(file, group);
+        create_HDF5_groups_ptr(file, group);
+    }
+      
     
     if( exists_HDF5_element_ptr(file, group + "/" + dataset) ) {
         if(bforce == true) {
@@ -2549,8 +2550,9 @@ void bdCreateGroup_hdf5(std::string filename, std::string group)
         file = new H5File( filename, H5F_ACC_RDWR );
         
         if(exists_HDF5_element_ptr(file, group)) {
-            file->close();
-            throw std::range_error("Element also exits");
+            //..2022/09/20..// file->close();
+            //..2022/09/20..// throw std::range_error("Element also exits");
+            Rcpp::Rcout<<"Element exists, nothing to do";
         } else {
             create_HDF5_groups_ptr( file, group);
         }
@@ -2778,6 +2780,8 @@ bool bdWriteDimnames_hdf5( std::string filename,
         if(!ResFileExist(filename)){
             throw std::range_error("File not exits, create file before query element");
         }
+        
+        
         
         // if(!Rf_isArray(rownames) && !Rf_isVector(rownames) ) {
         //     Rcpp::Rcout<< "bdWriteDimnames_hdf5: rownames must be an array or a string Vector";

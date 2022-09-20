@@ -10,6 +10,7 @@
     #include "H5Cpp.h"
     #include "ReadDelayedData.h"
     #include "hdf5_to_Eigen.h"
+    #include "hdf5_checks.h"
   
 
     // [[Rcpp::depends(RcppEigen)]]
