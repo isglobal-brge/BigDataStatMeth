@@ -155,7 +155,7 @@ svdeig RcppbdSVD_hdf5_Block( H5File* file, DataSet* dataset, int k, int q, int n
       transp = true;
     
     First_level_SvdBlock_decomposition_hdf5( file, dataset, k, q, nev, bcenter, bscale, irows, icols, dthreshold, threads);
-
+    
     for(int j = 1; j < q; j++) { // For each decomposition level :
         Next_level_SvdBlock_decomposition_hdf5(file, strGroupName, k, j, bcenter, bscale, dthreshold, threads);
     }
@@ -430,12 +430,15 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
   
   svdeig retsvd;
   Eigen::MatrixXd X;
+  std::string strdatasetFull;
   
   DataSet* dataset = nullptr;
   
   
   try
   {
+      
+      strdatasetFull = strsubgroup + "/" + strdataset;
     // Open an existing file and dataset.
     if(exists_HDF5_element_ptr(file, strsubgroup + "/" + strdataset)){
       //..// dataset = file->openDataSet(strsubgroup + "/" + strdataset);
@@ -448,12 +451,11 @@ svdeig RcppbdSVD_hdf5_ptr( H5File* file, std::string strsubgroup, std::string st
     }
 
     // Get dataset dims
-    IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
+    IntegerVector dims_out = get_HDF5_dataset_size_ptr(dataset);
     
     hsize_t offset[2] = {0,0};
     hsize_t count[2] = { (unsigned long long)dims_out[0], (unsigned long long)dims_out[1]};
     
-
     // In memory computation for small matrices (rows or columns<5000)
     // Block decomposition for big mattrix
     if( std::max(dims_out[0], dims_out[1]) < MAXSVDBLOCK && bstorehdf5 == false )

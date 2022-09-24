@@ -30,7 +30,7 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
     ret = create_HDF5_group_ptr(file, strGroupName);
     
     try{
-    
+        
         if(threads.isNotNull()) {
           if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
             ithreads = Rcpp::as<int> (threads);
@@ -42,7 +42,6 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
           ithreads = getDTthreads(0, true);
           //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
         }
-        
         
         // Work with transposed matrix
         if(irows >= icols) {
@@ -58,6 +57,7 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
         //. 2022/030/05.// get_HDF5_mean_sd_by_column_ptr( file, dataset, datanormal);
         
         M = pow(k, q);
+        
         if(M>p) {
             throw std::runtime_error("k^q must not be greater than the number of columns of the matrix");
         }
@@ -73,6 +73,7 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
             create_HDF5_dataset_ptr(file, strGroupName + "/normalmatrix", n, p, "numeric");
             normalizedData = new DataSet(file->openDataSet(strGroupName + "/normalmatrix"));
         }
+        
         
         //.OMP.// omp_set_num_threads(getDTthreads(ithreads, false));
         
@@ -102,7 +103,6 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
             IntegerVector count; // Blocks size
             maxsizetoread = block_size;
             
-            
             // Get max block size to read - for blocks smaller than default block size 
             if(transp == true)
             {
@@ -128,9 +128,7 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
                 }
             }
             
-            
             Eigen::MatrixXd X;
-            
             
             #pragma omp critical(accessFile)
             {
@@ -144,7 +142,7 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
                 } else {
                     X = GetCurrentBlock_hdf5( file, dataset, offset[0], offset[1], count[0], count[1]);
                 }
-            
+                
             }
             
             // Normalize data
@@ -152,21 +150,23 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
                 IntegerVector offset_tmp = IntegerVector::create(offset[0], offset[1]);
                 IntegerVector count_tmp = IntegerVector::create(count[0], count[1]);
                 
+                
                 if(transp == false) {
                     offset_tmp[0] = offset[1]; offset_tmp[1] = offset[0];
                     count_tmp[0] = count[1]; count_tmp[1] = count[0];
                 }
                 
                 #pragma omp critical(accessFile)
-                {   
-                    X = RcppNormalize_Data_hdf5(X, bcenter, bscale, transp, datanormal);
+                {
+                    //..// X = RcppNormalize_Data_hdf5(X, bcenter, bscale, transp, datanormal);
+                    X = RcppNormalize_byblocks_Data_hdf5(X, bcenter, bscale, transp, datanormal);
                     write_HDF5_matrix_subset_v2(file, normalizedData, offset_tmp, count_tmp, stride, block, Rcpp::wrap(X));
                 }
             
             }
             
             {
-            
+                
                 //    b) SVD for each block
                 svdeig retsvd;
                 retsvd = RcppbdSVD_lapack(X, false, false, false);
