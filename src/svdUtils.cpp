@@ -21,17 +21,17 @@ Rcpp::IntegerVector getInitialPosition(bool transp, int desp )
 
 Rcpp::IntegerVector getSizetoRead(bool transp, int count, int rows, int cols )
 {
-  Rcpp::IntegerVector vcount(2);
-  
-  if(transp == true)
-  {
-    vcount[0] = rows;
-    vcount[1] = count;
+    Rcpp::IntegerVector vcount(2);
     
-  } else {
-    vcount[0] = count;
-    vcount[1] = cols;
-  }
-  
-  return(vcount);
+    if(transp == true)
+    {
+        vcount[0] = rows;
+        vcount[1] = count;
+    
+    } else {
+        vcount[0] = count;
+        vcount[1] = cols;
+    }
+    
+    return(vcount);
 }
