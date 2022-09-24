@@ -27,6 +27,52 @@ Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs,
     return(rX);
 }
 
+// Internal call - 2
+Eigen::MatrixXd RcppNormalize_byblocks_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata )
+{
+    Eigen::MatrixXd rX;
+    
+    if( btransp == true)
+    {
+        if( bc==true && bs==true )  {
+            
+            rX = (X.colwise() - normdata.row(0).transpose() ).array().colwise() / normdata.row(1).transpose().array();
+            
+        }   else if (bc == true  && bs==false)   {
+            
+            Eigen::VectorXd mean = X.rowwise().mean();
+            rX = (X.colwise() - normdata.row(0).transpose());
+            
+        }  else if ( bc == false && bs == true)   {
+            rX = X.array().colwise() / normdata.row(1).transpose().array();
+        }
+        
+    } else {
+        
+        if( bc==true && bs==true )  {
+            
+            Eigen::RowVectorXd mean = X.colwise().mean();
+            Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+            rX = (X.rowwise() - mean).array().rowwise() / std.array();
+            
+        }   else if (bc == true  && bs==false)   {
+            
+            Eigen::RowVectorXd mean = X.colwise().mean();
+            rX = (X.rowwise() - mean);
+            
+        }  else if ( bc == false && bs == true)   {
+            
+            Eigen::RowVectorXd mean = X.colwise().mean();
+            Eigen::RowVectorXd std = (X.array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+            rX = X.array().rowwise() / std.array();
+        } 
+    }
+    
+    return(rX);
+}
+
+
+
 
 
 //' Normalize dataset in hdf5 file
