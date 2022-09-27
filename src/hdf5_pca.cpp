@@ -262,7 +262,7 @@ void get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
 //       
 //       IntegerVector dims_out = get_HDF5_dataset_size(dataset);
 //       Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2,dims_out[1]);
-//       get_HDF5_mean_sd_by_column_ptr( file, dataset, datanormal);
+//       get_HDF5_mean_sd_by_column_partial_ptr( file, dataset, datanormal);
 //     }
 //     
 //     Eigen::MatrixXd Y = 

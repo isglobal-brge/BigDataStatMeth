@@ -21,6 +21,8 @@ int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA,
   
   int N = sizeA[1];
   int K = sizeA[0];
+  
+  
   int M = sizeB[1];
   int L = sizeB[0];
   
@@ -107,17 +109,16 @@ int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA,
     throw std::range_error("non-conformable arguments");
   }
   
-  datasetA->close();
-  datasetB->close();
-  datasetC->close();
-  file->close();
-  
+    datasetA->close();
+    datasetB->close();
+    datasetC->close();
+    file->close();
+    
   delete(datasetA);
   delete(datasetC);
   delete(datasetB);
   delete(file);
   
-  return(0);
 }
 
 
@@ -308,26 +309,29 @@ Rcpp::RObject bdtCrossprod_hdf5(std::string filename, const std::string group,
                                        0, bparal,true, threads);
       
     }
-    
+
 
   } catch( FileIException& error ) { // catch failure caused by the H5File operations
-      file->close();
+    file->close();
       delete(file); 
-      ::Rf_error( "c++ exception tCrossprod_hdf5 (File IException)" );
-      return wrap(-1);
+    ::Rf_error( "c++ exception tCrossprod_hdf5 (File IException)" );
+    return wrap(-1);
   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-      file->close();
+    file->close();
       delete(file);
-      ::Rf_error( "c++ exception tCrossprod_hdf5 (DataSet IException)" );
-      return wrap(-1);
+    ::Rf_error( "c++ exception tCrossprod_hdf5 (DataSet IException)" );
+    return wrap(-1);
   } catch(std::exception &ex) {
       file->close();
       delete(file);
-      Rcpp::Rcout<< ex.what();
-      return wrap(-1);
+    Rcpp::Rcout<< ex.what();
+    return wrap(-1);
   }
   
-
+  
+  //..// return wrap(wrap(C));
+  
+  //..// return(C);
   std::string strname;
   
   if(B.isNull()) {

@@ -130,11 +130,11 @@ Rcpp::RObject bdblockmult_sparse_hdf5(std::string filename, const std::string gr
       if(bsparseA || bsparseB) 
       {
          
-         if(!bsparseA) {
+         if(!bsparseA){
             Rcpp::Rcout<<"Matrix A isn't a sparse matrix";
          } 
          
-         if(!bsparseB) {
+         if(!bsparseB){
             Rcpp::Rcout<<"Matrix B isn't a sparse matrix";
          }
          
@@ -170,8 +170,8 @@ Rcpp::RObject bdblockmult_sparse_hdf5(std::string filename, const std::string gr
    } catch(std::exception &ex) {
        file->close();
        delete(file);
-       Rcpp::Rcout<< ex.what();
-       return wrap(-1);
+      Rcpp::Rcout<< ex.what();
+      return wrap(-1);
    }
    
    

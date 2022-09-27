@@ -29,8 +29,7 @@ int RcppSplit_matrix_hdf5 ( H5File* file, DataSet* dataset, bool bycols, std::st
     
     for ( int i=0; i<blocks; i++)
     {
-      //.Removed .incols by Warning message.// newDatasetName = stroutgroup + "/" + stroutdataset + "." + std::to_string(i), incols;
-      newDatasetName = stroutgroup + "/" + stroutdataset + "." + std::to_string(i);
+      newDatasetName = stroutgroup + "/" + stroutdataset + "." + std::to_string(i), incols;
       
       if( bycols == true) { 
         kk = i * blocksize;

@@ -100,7 +100,8 @@ extern "C" {
   }
   
   
-  bool pathExists(hid_t id, const std::string& path) {
+  bool pathExists(hid_t id, const std::string& path)
+  {
     return H5Lexists( id, path.c_str(), H5P_DEFAULT ) > 0;
   }
   
@@ -760,6 +761,78 @@ extern "C" {
     
   }
   
+/*
+  int write_HDF5_matrix(H5std_string filename, const std::string CDatasetName, RObject DatasetValues)
+  {
+    try
+    {
+      // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
+      Exception::dontPrint();
+      
+      // Open file
+      H5File file(filename, H5F_ACC_RDWR);
+      
+      // Create the data space for the dataset.
+      std::vector<int> dims;
+      if(is<NumericMatrix>(DatasetValues)) 
+      {
+        
+        hsize_t dims[2];
+        dims[0] = as<NumericMatrix>(DatasetValues).rows();
+        dims[1] = as<NumericMatrix>(DatasetValues).cols();
+        DataSpace dataspace(RANK2, dims);
+        
+        std::vector<double> matHiCValues = as<std::vector<double> >(as<NumericMatrix>(DatasetValues));
+        
+        DataSet dataset = file.createDataSet(CDatasetName,PredType::NATIVE_DOUBLE, dataspace);
+        dataset = file.openDataSet(CDatasetName);
+
+        dataset.write( &matHiCValues[0] , PredType::NATIVE_DOUBLE);
+        
+        dataset.close();
+        dataspace.close();
+          
+
+      } 
+      else if( Rcpp::is<IntegerMatrix>(DatasetValues)) 
+      {
+        hsize_t dims[2];
+        dims[0] = as<IntegerMatrix>(DatasetValues).rows();
+        dims[1] = as<IntegerMatrix>(DatasetValues).cols();
+        DataSpace dataspace(RANK2, dims);
+        
+        std::vector<double> matHiCValues = as<std::vector<double> >(transpose(as<NumericMatrix>(DatasetValues)));
+  
+        DataSet dataset = file.createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
+        dataset = file.openDataSet(CDatasetName);
+        dataset.write( &matHiCValues[0], PredType::NATIVE_DOUBLE);
+        
+        dataset.close();
+        dataspace.close();
+      } 
+      
+      file.close();
+    
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception write_HDF5_matrix (File IException)" );
+      return -1;
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception write_HDF5_matrix (DataSet IException)" );
+      return -1;
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception write_HDF5_matrix (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception write_HDF5_matrix (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception write_HDF5_matrix (Data TypeIException)" );
+      return -1;
+    }
+    
+    return 0;
+  }
+*/  
   
   int write_HDF5_matrix_ptr(H5File* file, const std::string CDatasetName, RObject DatasetValues)
   {
@@ -1136,7 +1209,221 @@ extern "C" {
     return 0;
   }
   
- 
+
+  
+/*  
+  // Write dat from R to a HDF5 file by blocks ( faster? )
+  int write_HDF5_matrix_by_blocks_from_R_ptr(H5File* file, const std::string CDatasetName, RObject DatasetValues, bool transposed)
+  {
+    
+    IntegerVector stride = {1,1};
+    IntegerVector block = {1,1};
+    
+    DataSet* dataset;
+    
+    
+    try
+    {
+      // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
+      Exception::dontPrint();
+      
+      // Create the data space for the dataset.
+      std::vector<int> dims;
+      
+      if(is<NumericMatrix>(DatasetValues)) 
+      {
+        
+        hsize_t dims[2];
+        
+        int icols = as<NumericMatrix>(DatasetValues).cols(), 
+            irows = as<NumericMatrix>(DatasetValues).rows();
+        
+        // Reserve space
+        if(transposed == true){
+          // dims[0] = as<NumericMatrix>(DatasetValues).rows();
+          // dims[1] = as<NumericMatrix>(DatasetValues).cols();
+          dims[0] = irows;
+          dims[1] = icols;
+        } else{
+          // dims[0] = as<NumericMatrix>(DatasetValues).cols();
+          // dims[1] = as<NumericMatrix>(DatasetValues).rows();
+          dims[0] = icols;
+          dims[1] = irows;
+        }
+        
+        DataSpace dataspace(RANK2, dims);
+        
+        dataset = new DataSet(file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace));
+        // dataset = file->openDataSet(CDatasetName);
+
+        // Get block dimensions and number of blocks to read        
+        int rowsInBlocks =  MAXELEMSINBLOCK / icols ;
+        int nBlocks = irows / rowsInBlocks;
+
+        
+        for (int i=0; i<nBlocks; i++ )
+        {
+          int maxoffset;
+          
+          if( ((i+1) * rowsInBlocks ) < irows) { maxoffset = rowsInBlocks;
+          } else { maxoffset = irows - ((i+1) * rowsInBlocks); }
+          
+          NumericMatrix BlockMatrix =  as<NumericMatrix>(DatasetValues)(Range(i*rowsInBlocks,(i+1)*rowsInBlocks), Range(0, icols ) );
+          
+          if(transposed == true){
+
+            IntegerVector count = {icols, irows };
+            IntegerVector offset = {icols, maxoffset};
+            
+
+            
+            //.good.// std::vector<double> matHiCValues = as<std::vector<double> >(transpose(as<NumericMatrix>(DatasetValues)(Range(i*rowsInBlocks, (i+1)*rowsInBlocks), 
+            //.good.//                                                                                                        Range(0, icols ) )));
+            //.good.// dataset.write( &matHiCValues[0] , PredType::NATIVE_DOUBLE);
+            write_HDF5_matrix_subset_v2(file, dataset, offset, count, stride, block, transpose( BlockMatrix) );
+              
+          }else{
+            //.good.// std::vector<double> matHiCValues = as<std::vector<double> >(as<NumericMatrix>(DatasetValues));
+            //.good.// dataset.write( &matHiCValues[0] , PredType::NATIVE_DOUBLE);
+            
+            IntegerVector count = {irows, icols };
+            IntegerVector offset = {maxoffset, icols };
+            
+            write_HDF5_matrix_subset_v2(file, dataset, offset, count, stride, block, BlockMatrix);
+          }
+        }
+        
+        dataset->close();
+        dataspace.close();
+        
+      } 
+      else if( Rcpp::is<IntegerMatrix>(DatasetValues) ) 
+      {
+        
+        int icols = as<IntegerMatrix>(DatasetValues).cols(), 
+          irows = as<IntegerMatrix>(DatasetValues).rows();
+        
+        // Get block dimensions and number of blocks to read        
+        int rowsInBlocks =  MAXELEMSINBLOCK / icols ;
+        int nBlocks = irows / rowsInBlocks;
+        
+        hsize_t dims[2];
+        if(transposed == true){
+          // dims[0] = as<IntegerMatrix>(DatasetValues).rows();
+          // dims[1] = as<IntegerMatrix>(DatasetValues).cols();
+          dims[0] = irows;
+          dims[1] = icols;
+        }else {
+          // dims[0] = as<IntegerMatrix>(DatasetValues).cols();
+          // dims[1] = as<IntegerMatrix>(DatasetValues).rows();
+          dims[0] = icols;
+          dims[1] = irows;
+        }
+        
+        DataSpace dataspace(RANK2, dims);
+        
+        dataset = new DataSet(file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace));
+        // dataset = file->openDataSet(CDatasetName);
+        
+        for (int i=0; i<nBlocks; i++ )
+        {
+          int maxoffset;
+          
+          if( ((i+1) * rowsInBlocks ) < irows) { maxoffset = rowsInBlocks;
+          } else { maxoffset = irows - ((i+1) * rowsInBlocks); }
+          
+          NumericMatrix BlockMatrix =  as<NumericMatrix>(DatasetValues)(Range(i*rowsInBlocks,(i+1)*rowsInBlocks), Range(0, icols ) );
+        
+          if(transposed == true){
+            //.good.// std::vector<double> matHiCValues = as<std::vector<double> >(transpose(as<NumericMatrix>(DatasetValues)));
+            //.good.// dataset.write( &matHiCValues[0], PredType::NATIVE_DOUBLE);
+            
+            IntegerVector count = {icols, irows };
+            IntegerVector offset = {icols, maxoffset};
+            
+            write_HDF5_matrix_subset_v2(file, dataset, offset, count, stride, block, transpose(BlockMatrix));
+            
+          } else {
+            //.good.// std::vector<double> matHiCValues = as<std::vector<double> >(as<NumericMatrix>(DatasetValues));
+            //.good.// dataset.write( &matHiCValues[0], PredType::NATIVE_DOUBLE);
+            
+            IntegerVector count = {irows, icols };
+            IntegerVector offset = {maxoffset, icols };
+            
+            write_HDF5_matrix_subset_v2(file, dataset, offset, count, stride, block, BlockMatrix);
+          }
+        }
+        
+        dataset->close();
+        dataspace.close();
+      } else if(is<NumericVector>(DatasetValues) || is<IntegerVector>(DatasetValues)) 
+      {
+        
+        hsize_t vectorsize;
+        
+        if(is<IntegerVector>(DatasetValues) || is<LogicalVector>(DatasetValues)) 
+          vectorsize = as<IntegerVector>(DatasetValues).length();
+        else if (is<NumericVector>(DatasetValues))
+          vectorsize = as<NumericVector>(DatasetValues).length();
+        else 
+          vectorsize = 1;
+        
+        hsize_t dims[] = {vectorsize};
+        DataSpace dataspace(RANK1, dims);
+        
+        
+        if(is<IntegerVector>(DatasetValues) || is<LogicalVector>(DatasetValues) ) 
+        {
+          int vectHiCValues[dims[0]];
+          for(int i=0;i<dims[0]; i++)
+            vectHiCValues[i] = as<IntegerVector>(DatasetValues)(i);
+          
+          DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_INT, dataspace);
+          dataset = file->openDataSet(CDatasetName);
+          dataset.write( vectHiCValues, PredType::NATIVE_INT);
+          dataspace.close();
+          dataset.close();
+        } 
+        else if(is<NumericVector>(DatasetValues) ) 
+        {
+          double vectValues[dims[0]];
+          for(int i=0;i<dims[0]; i++)
+            vectValues[i] = as<NumericVector>(DatasetValues)(i);
+          
+          DataSet dataset = file->createDataSet(CDatasetName, PredType::NATIVE_DOUBLE, dataspace);
+          dataset = file->openDataSet(CDatasetName);
+          dataset.write(vectValues, PredType::NATIVE_DOUBLE);
+          dataspace.close();
+          dataset.close();
+        } 
+        
+      } else {
+        Rcpp::Rcout<<"\n\n Unknown data type - Dataset not created !!\n";
+      }
+      
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (File IException)" );
+      return -1;
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (DataSet IException)" );
+      return -1;
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception write_HDF5_matrix_from_R_ptr (Data TypeIException)" );
+      return -1;
+    }
+    
+    return 0;
+  }
+  
+*/  
+  
+  
   
 
   int write_HDF5_matrix_subset_v2( H5File* file, DataSet* dataset,
@@ -1203,28 +1490,28 @@ extern "C" {
     } catch(FileIException& error) { // catch failure caused by the H5File operations
         dataset->close();
         file->close();
-        ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (File IException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (File IException)" );
+      return -1;
     } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
         dataset->close();
         file->close();
-        ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (DataSet IException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (DataSet IException)" );
+      return -1;
     } catch(GroupIException& error) { // catch failure caused by the Group operations
         dataset->close();
         file->close();
-        ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (Group IException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (Group IException)" );
+      return -1;
     } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
         dataset->close();
         file->close();
-        ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (DataSpace IException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (DataSpace IException)" );
+      return -1;
     } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
         dataset->close();
         file->close();
-        ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (Data TypeIException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_HDF5_matrix_subset_v2 (Data TypeIException)" );
+      return -1;
     }
     
     return 0;
@@ -1473,43 +1760,44 @@ extern "C" {
   {
     
     try {
-        
-        Exception::dontPrint();
-        std::string strGroup = groupname + "/." + datasetname + "_dimnames";
       
-        // Add rownames
-        create_HDF5_groups_ptr(file, strGroup);
-        
+      Exception::dontPrint();
+      
+      std::string strGroup = groupname + "/." + datasetname + "_dimnames";
+      
+      // Add rownames
+      create_HDF5_groups_ptr(file, strGroup);
+      
         if( rownames.length()>1 ) {
             prepare_outDataset(file, strGroup + "/1", true);
-            write_hdf5_string_vector(file, strGroup + "/1" , rownames);
-        }
-        
-        // Add colnames
-        if( colnames.length()>1 ) {
-            prepare_outDataset(file, strGroup + "/2", true);
-            write_hdf5_string_vector(file, strGroup + "/2", colnames);
+        write_hdf5_string_vector(file, strGroup + "/1" , rownames);
         }
       
+      // Add colnames
+        if( colnames.length()>1 ) {
+            prepare_outDataset(file, strGroup + "/2", true);
+        write_hdf5_string_vector(file, strGroup + "/2", colnames);
+        }
+
     } catch(FileIException& error) { // catch failure caused by the H5File operations
-        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (File IException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (File IException)" );
+      return -1;
     } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
-        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSet IException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSet IException)" );
+      return -1;
     } catch(GroupIException& error) { // catch failure caused by the Group operations
-        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Group IException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Group IException)" );
+      return -1;
     } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSpace IException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSpace IException)" );
+      return -1;
     } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Data TypeIException)" );
-        return -1;
+      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Data TypeIException)" );
+      return -1;
     }
     
     return(0);
- }
+  }
   
   
   
@@ -1598,7 +1886,86 @@ extern "C" {
   
   
 
+  // Get mean and corrected sd from each column in dataset in the case of n<<m, this information is used
+  // to normalize data, center or scale.
+  int get_HDF5_mean_sd_by_column_partial_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize )
+  {
+    
+    IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
+    // Eigen::MatrixXd meansd (2,dims_out[0]);
+    
+    try
+    {
+      
+      // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
+      Exception::dontPrint();
+      
+      int block_size = 500;
+      
+      IntegerVector stride = IntegerVector::create(1, 1);
+      IntegerVector block = IntegerVector::create(1, 1);
+      IntegerVector offset = IntegerVector::create(0, 0);
+      IntegerVector count = IntegerVector::create(0, 0);
+      
+      
+      // IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
+      // Eigen::MatrixXd meansd (2,dims_out[0]);
+      
+      
+      count[1] = dims_out[1];
+      if( block_size < dims_out[0] )
+        count[0] = block_size;
+      else
+        count[0] = dims_out[0];
+      
+      
+      // Read data in blocks of 500 columns
+      for(int i=0; (i < floor(dims_out[0]/block_size)) || i==0; i++)
+      {
 
+        if(i>0){
+          offset[0] = offset[0] + block_size;
+        
+          if( offset[0] + block_size <= dims_out[0] ) {
+            count[0] = block_size;
+          }else {
+            count[0] = dims_out[0] - offset[1]+block_size; 
+          }
+        }
+        
+        Eigen::MatrixXd X = GetCurrentBlock_hdf5(file, dataset, offset[0], offset[1], count[0], count[1]);
+
+        Eigen::VectorXd mean = X.rowwise().mean();
+        Eigen::VectorXd std = ((X.colwise() - mean).array().square().rowwise().sum() / (X.cols() - 1)).sqrt();
+
+        normalize.block( 0, offset[0] , 1, mean.size()) = mean.transpose();
+        normalize.block( 1, offset[0], 1, std.size()) = std.transpose();
+        
+      }
+      
+      // normalize = meansd;
+      
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
+      ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (File IException)" );
+      return -1;
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+      ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (DataSet IException)" );
+      return -1;
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
+      ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (Group IException)" );
+      return -1;
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (DataSpace IException)" );
+      return -1;
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+      ::Rf_error( "c++ exception get_HDF5_mean_sd_by_column_ptr (Data TypeIException)" );
+      return -1;
+    }
+    
+    return(0);  // successfully terminated
+    
+  }
+  
 
 }
 
@@ -1771,9 +2138,9 @@ H5FilePtr Open_hdf5_file(const std::string& fname)
 //' 
 //' @export
 // [[Rcpp::export]]
-void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
-                               Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue,
-                               Rcpp::Nullable<bool> transp = R_NilValue, Rcpp::Nullable<bool> force = R_NilValue )
+void bdCreate_hdf5_matrix_file(std::string filename, RObject object, 
+                                        Rcpp::Nullable<std::string> group = R_NilValue, Rcpp::Nullable<std::string> dataset = R_NilValue,
+                                        Rcpp::Nullable<bool> transp = R_NilValue, Rcpp::Nullable<bool> force = R_NilValue )
 {
   
   H5File* file = nullptr;
@@ -1811,7 +2178,7 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
             return void();
         }
     } 
-
+    
     // Create HDF5 file
     file = new H5::H5File( filename, H5F_ACC_TRUNC );
     
@@ -2016,27 +2383,27 @@ void bdAdd_hdf5_matrix(RObject object,
   } catch(FileIException& error) { // catch failure caused by the H5File operations
         file->close();
         delete(file);
-        ::Rf_error( "c++ exception Create_HDF5_matrix (File IException)" );
+    ::Rf_error( "c++ exception Create_HDF5_matrix (File IException)" );
         return void();
   } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
       file->close();
       delete(file);
-      ::Rf_error( "c++ exception Create_HDF5_matrix (DataSet IException)" );
+    ::Rf_error( "c++ exception Create_HDF5_matrix (DataSet IException)" );
       return void();
   } catch(GroupIException& error) { // catch failure caused by the Group operations
       file->close();
       delete(file);
-      ::Rf_error( "c++ exception Create_HDF5_matrix (Group IException)" );
+    ::Rf_error( "c++ exception Create_HDF5_matrix (Group IException)" );
       return void();
   } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
       file->close();
       delete(file);
-      ::Rf_error( "c++ exception Create_HDF5_matrix (DataSpace IException)" );
+    ::Rf_error( "c++ exception Create_HDF5_matrix (DataSpace IException)" );
       return void();
   } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
       file->close();
       delete(file);
-      ::Rf_error( "c++ exception Create_HDF5_matrix (Data TypeIException)" );
+    ::Rf_error( "c++ exception Create_HDF5_matrix (Data TypeIException)" );
       return void();
   }
   
@@ -2095,11 +2462,11 @@ void bdRemove_hdf5_element(std::string filename, std::string element)
     file = new H5File( filename, H5F_ACC_RDWR );
     
     if(!exists_HDF5_element_ptr(file, element)) {
-        file->close();
+      file->close();
         delete(file);
-        throw std::range_error("Element not exits");
+      throw std::range_error("Element not exits");
     } else{
-        remove_HDF5_element_ptr(file, element);
+      remove_HDF5_element_ptr(file, element);
     }
       
     file->close();
@@ -2745,23 +3112,22 @@ bool bdExists_hdf5_element( std::string filename, std::string element)
 
 
 
-//' Exists hdf5 element
+//' Write dimnames in HDF5
 //' 
-//' Query if exists element inside hdf5 data file
+//' Write dimnames in HDF5 related to an existing dataset
 //' 
 //' 
-//' @param filename, character array indicating the name of the file to create
-//' @param group, string with name of the group where the new dataset will be 
-//' created
-//' @param dataset, string with name for the new dataset
+//' @param filename, character array indicating the name of the file
+//' @param group, string with name of the group where the dataset is located
+//' @param dataset, string with the dataset name
 //' @param rownames, character vector, with the rownames, if rownames is NULL 
 //' no rownames are written to the dataset
 //' @param colnames, character vector, with the colnames, if colnames is NULL
 //' no colnames are written to the dataset
-//' @return boolean, true if element exists in hdf5 data faile or false if not.
+//' @return none
 //' @examples
 //' 
-//' # Prepare data to write dataset inside a file and test if exists
+//' # Writes dimnames
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -2780,8 +3146,6 @@ bool bdWriteDimnames_hdf5( std::string filename,
         if(!ResFileExist(filename)){
             throw std::range_error("File not exits, create file before query element");
         }
-        
-        
         
         // if(!Rf_isArray(rownames) && !Rf_isVector(rownames) ) {
         //     Rcpp::Rcout<< "bdWriteDimnames_hdf5: rownames must be an array or a string Vector";
@@ -2809,9 +3173,9 @@ bool bdWriteDimnames_hdf5( std::string filename,
         Rcpp::Rcout<< "bdWriteDimnames_hdf5: "<<ex.what();
         return (false);
     }
-    
+
     file->close();
     return(exists);   
-    
+
 }
 

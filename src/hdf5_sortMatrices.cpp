@@ -49,6 +49,7 @@
 //' @return Original hdf5 data file with sorted dataset
 //' @examples
 //' 
+//' print("See vignette")
 //' @export
 // [[Rcpp::export]]
 void bdSort_hdf5_dataset( std::string filename, std::string group, 

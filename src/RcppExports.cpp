@@ -823,12 +823,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdSVD_hdf5
-Rcpp::RObject bdSVD_hdf5(const Rcpp::RObject file, Rcpp::Nullable<CharacterVector> group, Rcpp::Nullable<CharacterVector> dataset, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<double> rankthreshold, Rcpp::Nullable<int> threads);
+Rcpp::RObject bdSVD_hdf5(const Rcpp::RObject& file, Rcpp::Nullable<CharacterVector> group, Rcpp::Nullable<CharacterVector> dataset, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<double> rankthreshold, Rcpp::Nullable<int> threads);
 RcppExport SEXP _BigDataStatMeth_bdSVD_hdf5(SEXP fileSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP kSEXP, SEXP qSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP rankthresholdSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::RObject >::type file(fileSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type file(fileSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<CharacterVector> >::type group(groupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<CharacterVector> >::type dataset(datasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type k(kSEXP);

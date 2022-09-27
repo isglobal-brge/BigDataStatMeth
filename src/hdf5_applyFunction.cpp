@@ -94,7 +94,7 @@ void bdapply_Function_hdf5( std::string filename,
         
         if(force.isNull()) { bforce = false; } 
         else {   bforce = Rcpp::as<bool>(force); }
-        
+
         if(transp_dataset.isNull()) { btransdataA = false; } 
         else {   btransdataA = Rcpp::as<bool>(transp_dataset); }
 
@@ -209,11 +209,11 @@ void bdapply_Function_hdf5( std::string filename,
                 int ithreads;
                 
                 Rcpp::Nullable<long> elementsBlock = R_NilValue;
-                
+                    
                 Rcpp_bdInvCholesky_hdf5(file, pdataset, 
                                         outgroup, Rcpp::as<std::string>(datasets[i]), 
                                         bforce, bfullMatrix, threads, elementsBlock );
-                pdataset->close();
+                    pdataset->close();
                 
                 // svdeig results = RcppCholDec(original);    
                 // if( results.v == Eigen::MatrixXd::Zero(2,2) && results.u == Eigen::MatrixXd::Zero(2,2)) {
@@ -251,7 +251,7 @@ void bdapply_Function_hdf5( std::string filename,
 
                 // Real data set dimension
                 IntegerVector dims_outB = get_HDF5_dataset_size(*pbdataset);
-                
+
                 originalB = GetCurrentBlock_hdf5_Original( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
 
                 if( oper(oper.findName( func )) == 4 ) {
@@ -361,6 +361,7 @@ void bdapply_Function_hdf5( std::string filename,
             }
             
         }
+        
         
     }
     catch( FileIException& error ) { // catch failure caused by the H5File operations

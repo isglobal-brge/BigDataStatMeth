@@ -76,8 +76,7 @@
     extern "C" int create_HDF5_group_ptr( H5File* file, const H5std_string mGroup);
     extern "C" int create_HDF5_groups_ptr( H5File* file, const H5std_string mGroup);
     
-    // extern "C" int get_HDF5_mean_sd_by_column_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize );
-    // extern "C" int get_HDF5_mean_sd_by_row_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize );
+    extern "C" int get_HDF5_mean_sd_by_column_partial_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd& normalize );
     
     extern "C" int Create_hdf5_file(std::string filename);
     extern "C" int create_HDF5_matrix(H5std_string filename, const std::string DatasetName, RObject DatasetValues);
@@ -117,7 +116,6 @@
 
     
     // R functions :
-    /*
     void bdCreate_hdf5_matrix_file( std::string filename, RObject object, Rcpp::Nullable<std::string> group, Rcpp::Nullable<std::string> dataset, 
                                     Rcpp::Nullable<bool> transp, Rcpp::Nullable<bool> force );
     void bdAdd_hdf5_matrix( RObject object, std::string filename, std::string group, std::string dataset, 
@@ -128,6 +126,5 @@
     void bdCreateEmptyDataset_hdf5(std::string filename, std::string group, std::string dataset, 
                                    int nrows, int ncols, Rcpp::Nullable<bool> overwrite);
     Rcpp::RObject bdgetDim_hdf5( std::string filename, std::string element);
-     */
     
 #endif

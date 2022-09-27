@@ -73,4 +73,5 @@ Sort an existing dataset taking in to account a list with sorted positions
 }
 \examples{
 
+print("See vignette")
 }

@@ -2,17 +2,16 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdWriteDimnames_hdf5}
 \alias{bdWriteDimnames_hdf5}
-\title{Exists hdf5 element}
+\title{Write dimnames in HDF5}
 \usage{
 bdWriteDimnames_hdf5(filename, group, dataset, rownames, colnames)
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file to create}
+\item{filename, }{character array indicating the name of the file}
 
-\item{group, }{string with name of the group where the new dataset will be 
-created}
+\item{group, }{string with name of the group where the dataset is located}
 
-\item{dataset, }{string with name for the new dataset}
+\item{dataset, }{string with the dataset name}
 
 \item{rownames, }{character vector, with the rownames, if rownames is NULL 
 no rownames are written to the dataset}
@@ -21,13 +20,13 @@ no rownames are written to the dataset}
 no colnames are written to the dataset}
 }
 \value{
-boolean, true if element exists in hdf5 data faile or false if not.
+none
 }
 \description{
-Query if exists element inside hdf5 data file
+Write dimnames in HDF5 related to an existing dataset
 }
 \examples{
 
-# Prepare data to write dataset inside a file and test if exists
+# Writes dimnames
 
 }

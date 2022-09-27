@@ -733,6 +733,7 @@ bdremove_maf_hdf5 <- function(filename, group, dataset, outgroup, outdataset, ma
 #' @return Original hdf5 data file with sorted dataset
 #' @examples
 #' 
+#' print("See vignette")
 #' @export
 bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSortlist, func, outgroup = NULL, force = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdSort_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, blockedSortlist, func, outgroup, force))
@@ -871,6 +872,8 @@ bdNormalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
 #' @return numerical matrix 
 #' @examples
 #' 
+#' library(DelayedArray)
+#' 
 #' n <- 100
 #' p <- 60
 #' 
@@ -880,6 +883,11 @@ bdNormalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
 #' w <- u * (1 - u)
 #' ans <- bdwproduct(X, w,"xtwx")
 #' 
+#' # with Delayed Array
+#' 
+#' DX <- DelayedArray(X)
+#' 
+#' ans <- bdwproduct(DX, w,"xtwx")
 #' 
 #' @export
 bdwproduct <- function(X, w, op) {
@@ -1265,23 +1273,22 @@ bdExists_hdf5_element <- function(filename, element) {
     .Call('_BigDataStatMeth_bdExists_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, element)
 }
 
-#' Exists hdf5 element
+#' Write dimnames in HDF5
 #' 
-#' Query if exists element inside hdf5 data file
+#' Write dimnames in HDF5 related to an existing dataset
 #' 
 #' 
-#' @param filename, character array indicating the name of the file to create
-#' @param group, string with name of the group where the new dataset will be 
-#' created
-#' @param dataset, string with name for the new dataset
+#' @param filename, character array indicating the name of the file
+#' @param group, string with name of the group where the dataset is located
+#' @param dataset, string with the dataset name
 #' @param rownames, character vector, with the rownames, if rownames is NULL 
 #' no rownames are written to the dataset
 #' @param colnames, character vector, with the colnames, if colnames is NULL
 #' no colnames are written to the dataset
-#' @return boolean, true if element exists in hdf5 data faile or false if not.
+#' @return none
 #' @examples
 #' 
-#' # Prepare data to write dataset inside a file and test if exists
+#' # Writes dimnames
 #' 
 #' @export
 bdWriteDimnames_hdf5 <- function(filename, group, dataset, rownames, colnames) {
@@ -1384,7 +1391,7 @@ bdSVD <- function(X, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
 #' Block SVD decomposition for hdf5 files using an incremental algorithm.
 #'
 #' Singular values and left singular vectors of a real nxp matrix 
-#' Block SVD decomposition using an incremental algorithm.
+#' @title Block SVD decomposition using an incremental algorithm.
 #' @param file a real nxp matrix in hdf5 file
 #' @param group group in hdf5 data file where dataset is located
 #' @param dataset matrix dataset with data to perform SVD
@@ -1426,18 +1433,18 @@ bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcent
 #' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 #' 
 #' # svd without normalization
-#' decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
+#' decsvd <- bdSVD_lapack_not_optim( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with normalization
-#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
-#' decvsd <- bdSVD_lapack( A ) # Matrix normalization too
+#' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
+#' decvsd <- bdSVD_lapack_not_optim( A ) # Matrix normalization too
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with scaled matrix (sd)
-#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
+#' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 #' 
 #' @export
 bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE, complete = FALSE) {

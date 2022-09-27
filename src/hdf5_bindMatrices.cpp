@@ -1,6 +1,11 @@
 #include "include/hdf5_bindMatrices.h"
 
 
+// [[Rcpp::depends(RcppEigen)]]
+using namespace Rcpp;
+using namespace std;
+
+
 //' Bind matrices by rows or columns
 //'
 //' Merge existing matrices inside hdf5 data file by rows or by columns

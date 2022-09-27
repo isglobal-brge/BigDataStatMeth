@@ -9,11 +9,11 @@ Eigen::MatrixXd RowMajorVector_to_ColMajorMatrix(double* datablock, int countx, 
   
     for (size_t i=0; i<countx; i++){
         for(size_t j=0;j<county;j++) {
-            mdata(i,j) = datablock[i*county+j];
+      mdata(i,j) = datablock[i*county+j];
         }
     }
   
-    return(mdata);
+  return(mdata);
 }
 
 

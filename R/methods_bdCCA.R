@@ -111,8 +111,8 @@ writeCCAComponents_hdf5 <- function(filename, ncolsX, ncolsY)
     d <- h5f$SVD$CrossProd_XQxYQ$d
     u <- h5f$SVD$CrossProd_XQxYQ$u
     v <- h5f$SVD$CrossProd_XQxYQ$v
-    xcenter <- h5f$NORMALIZED$data$X.mean
-    ycenter <- h5f$NORMALIZED$data$Y.mean
+    xcenter <- h5f$NORMALIZED$data$mean.X
+    ycenter <- h5f$NORMALIZED$data$mean.Y
     x.names <- h5f$data$.X_dimnames$`2`
     y.names <- h5f$data$.Y_dimnames$`2`
     h5closeAll()

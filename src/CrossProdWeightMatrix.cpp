@@ -110,7 +110,7 @@ Eigen::MatrixXd Bblock_weighted_crossprod_parallel(const Eigen::MatrixXd& A, Eig
       } else {
         ithreads = getDTthreads(0, true);
         //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
-      }
+    }
     } else {    
       ithreads = getDTthreads(0, true);
       //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;

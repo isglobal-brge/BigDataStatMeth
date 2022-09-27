@@ -1,7 +1,7 @@
 Package: BigDataStatMeth
 Type: Package
 Title: Statistical Methods and Algorithms for Big Data
-Version: 0.99.38
+Version: 0.99.50
 Authors@R: 
     c(
         person( given = "Dolors", 
@@ -30,7 +30,7 @@ Suggests: HDF5Array, DelayedArray, Matrix, BiocStyle, knitr, rmarkdown,
 SystemRequirements: GNU make, C++11
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 NeedsCompilation: yes
 Packaged: 2022-02-21 18:36:52 UTC; mailos
 Author: Dolors Pelegri-Siso [aut, cre]

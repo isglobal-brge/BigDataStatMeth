@@ -308,20 +308,20 @@ Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
     }
 
   } catch( FileIException& error ) { // catch failure caused by the H5File operations
-      file->close();
+    file->close();
       delete(file);
-      ::Rf_error( "c++ exception Crossprod_hdf5 (File IException)" );
-      return wrap(-1);
+    ::Rf_error( "c++ exception Crossprod_hdf5 (File IException)" );
+    return wrap(-1);
   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-      file->close();
+    file->close();
       delete(file);
-      ::Rf_error( "c++ exception Crossprod_hdf5 (DataSet IException)" );
-      return wrap(-1);
+    ::Rf_error( "c++ exception Crossprod_hdf5 (DataSet IException)" );
+    return wrap(-1);
   } catch(std::exception& ex) {
       file->close();
       delete(file);
-      Rcpp::Rcout<< ex.what();
-      return wrap(-1);
+    Rcpp::Rcout<< ex.what();
+    return wrap(-1);
   }
   
   
