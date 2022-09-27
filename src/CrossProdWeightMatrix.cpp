@@ -242,9 +242,6 @@ Rcpp::RObject bdCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
   IntegerVector dsizeA = {0, 0}, 
     dsizeB = {0, 0};
   
-  // Rcpp::Rcout<<"\n Tipus de dades :  "<<TYPEOF(A)<<"\n";
-  // Rcpp::Rcout<<"\n Clase objecte :  "<<  as<std::string>(A.slot("class"))  <<"\n";
-  
   
   try{
     
@@ -323,11 +320,7 @@ Rcpp::RObject bdCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
     
     if(dsizeB[0]==dsizeB[1] && dsizeA[0]==dsizeB[0])
     {
-      
-      /**********************************/
-      /**** START IN-MEMORY PROCESSING **/
-      /**********************************/
-      
+
       // Read DelayedArray's A and b
       if ( A.isS4() == true)    
       {
@@ -363,23 +356,7 @@ Rcpp::RObject bdCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
       
       
       return (wrap(C));
-      
-      /********************************/
-      /**** END IN-MEMORY PROCESSING **/
-      /********************************/
-      
-      // } 
-      // else 
-      // {
-      
-      /********************************/
-      /**** START ON-DISK PROCESSING **/
-      /********************************/
-      
-      // TODO 
-      
-      // }
-      
+
       
     } else {
       
