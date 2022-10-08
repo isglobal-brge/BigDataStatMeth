@@ -68,9 +68,9 @@ void First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int
       normalizedData = new DataSet(file->openDataSet(strGroupName + "/normalmatrix"));
     }
     
-    omp_set_num_threads(getDTthreads(ithreads, false));
+    //.OpenMP.// omp_set_num_threads(getDTthreads(ithreads, false));
     
-#pragma omp parallel //..// num_threads(getDTthreads(ithreads, false))
+#pragma omp parallel num_threads(getDTthreads(ithreads, false))
 
     /*
     int tid = omp_get_thread_num();
@@ -348,9 +348,9 @@ void Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupNa
         }
         
         
-        omp_set_num_threads(getDTthreads(ithreads, false));
+        //.OpenMP.// omp_set_num_threads(getDTthreads(ithreads, false));
         
-        #pragma omp parallel //..// num_threads(getDTthreads(ithreads, false))
+        #pragma omp parallel num_threads(getDTthreads(ithreads, false))
         
         
         #pragma omp for ordered schedule (static)

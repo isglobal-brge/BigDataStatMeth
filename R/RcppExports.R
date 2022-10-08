@@ -872,8 +872,6 @@ bdNormalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
 #' @return numerical matrix 
 #' @examples
 #' 
-#' library(DelayedArray)
-#' 
 #' n <- 100
 #' p <- 60
 #' 
@@ -883,11 +881,6 @@ bdNormalize_Data <- function(X, bcenter = NULL, bscale = NULL) {
 #' w <- u * (1 - u)
 #' ans <- bdwproduct(X, w,"xtwx")
 #' 
-#' # with Delayed Array
-#' 
-#' DX <- DelayedArray(X)
-#' 
-#' ans <- bdwproduct(DX, w,"xtwx")
 #' 
 #' @export
 bdwproduct <- function(X, w, op) {
@@ -1391,7 +1384,7 @@ bdSVD <- function(X, k = 0L, nev = 0L, bcenter = TRUE, bscale = TRUE) {
 #' Block SVD decomposition for hdf5 files using an incremental algorithm.
 #'
 #' Singular values and left singular vectors of a real nxp matrix 
-#' @title Block SVD decomposition using an incremental algorithm.
+#' Block SVD decomposition using an incremental algorithm.
 #' @param file a real nxp matrix in hdf5 file
 #' @param group group in hdf5 data file where dataset is located
 #' @param dataset matrix dataset with data to perform SVD
@@ -1433,18 +1426,18 @@ bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcent
 #' A <- matrix(rnorm(n*n), nrow=n, ncol=n)
 #' 
 #' # svd without normalization
-#' decsvd <- bdSVD_lapack_not_optim( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
+#' decsvd <- bdSVD_lapack( A, bscale = FALSE, bcenter = FALSE ) # No matrix normalization
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with normalization
-#' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
-#' decvsd <- bdSVD_lapack_not_optim( A ) # Matrix normalization too
+#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = TRUE) # Matrix normalization
+#' decvsd <- bdSVD_lapack( A ) # Matrix normalization too
 #' decsvd$d
 #' decsvd$u
 #' 
 #' # svd with scaled matrix (sd)
-#' decvsd <- bdSVD_lapack_not_optim( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
+#' decvsd <- bdSVD_lapack( A, bscale = TRUE, bcenter = FALSE) # Scaled matrix
 #' 
 #' @export
 bdSVD_lapack <- function(X, bcenter = TRUE, bscale = TRUE, complete = FALSE) {
