@@ -82,11 +82,11 @@ Eigen::MatrixXd Rcpp_matrixVectorDivision_byCol(Eigen::MatrixXd X, Eigen::Vector
 //'    
 //'# Prepare data and functions
 //'set.seed(123)
-//'Y <- matrix(rnorm(250), 10, 10)
-//'X <- matrix(rnorm(250), 10, 1)
+//'Y <- matrix(rnorm(100), 10, 10)
+//'X <- matrix(rnorm(10), 10, 1)
 //'        
 //'# Create hdf5 data file with  data (Y)
-//'bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+//'bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
 //'bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
 //'            
 //'bdcomputeMatrixVector_hdf5("test.hdf5", 
@@ -94,21 +94,21 @@ Eigen::MatrixXd Rcpp_matrixVectorDivision_byCol(Eigen::MatrixXd X, Eigen::Vector
 //'                           vectorgroup = "data", vectordataset = "X", 
 //'                           outdataset = "ProdComputed", 
 //'                           func = "*",
-//'                           byrows = T, force = T)
+//'                           byrows = TRUE, force = TRUE)
 //'    
 //'bdcomputeMatrixVector_hdf5("test.hdf5", 
 //'                           group = "data", dataset = "Y",
 //'                           vectorgroup = "data", vectordataset = "X", 
 //'                           outdataset = "SumComputed", 
 //'                           func = "-",
-//'                           byrows = T, force = T)
+//'                           byrows = TRUE, force = TRUE)
 //'    
 //'bdcomputeMatrixVector_hdf5("test.hdf5", 
 //'                           group = "data", dataset = "Y",
 //'                           vectorgroup = "data", vectordataset = "X", 
 //'                           outdataset = "SubsComputed", 
 //'                           func = "-",
-//'                           byrows = F, force = T)
+//'                           byrows = FALSE, force = TRUE)
 //' @export
 // [[Rcpp::export]]
 void bdcomputeMatrixVector_hdf5( std::string filename, std::string group, 
@@ -368,11 +368,11 @@ library(BigDataStatMeth)
 
 # Prepare data and functions
 set.seed(123)
-Y <- matrix(rnorm(250), 10, 10)
-X <- matrix(rnorm(250), 10, 1)
+Y <- matrix(rnorm(100), 10, 10)
+X <- matrix(rnorm(10), 10, 1)
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
 bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
 
 
@@ -381,21 +381,21 @@ bdcomputeMatrixVector_hdf5("test.hdf5",
                        vectorgroup = "data", vectordataset = "X", 
                        outdataset = "ProdComputed", 
                        func = "*",
-                       byrows = T, force = T)
+                       byrows = TRUE, force = TRUE)
 
 bdcomputeMatrixVector_hdf5("test.hdf5", 
                            group = "data", dataset = "Y",
                            vectorgroup = "data", vectordataset = "X", 
                            outdataset = "SumComputed", 
                            func = "-",
-                           byrows = T, force = T)
+                           byrows = TRUE, force = TRUE)
 
 bdcomputeMatrixVector_hdf5("test.hdf5", 
                            group = "data", dataset = "Y",
                            vectorgroup = "data", vectordataset = "X", 
                            outdataset = "SubsComputed", 
                            func = "-",
-                           byrows = F, force = T)
+                           byrows = FALSE, force = TRUE)
 
 
 setwd("/Users/mailos/DOCTORAT_Local/mgcca")
@@ -403,7 +403,7 @@ filename <- "tmp/gettables2.hdf5"
 bdcomputeMatrixVector_hdf5(filename, group = "FinalRes", dataset = "M",
                            vectorgroup = "FinalRes", vectordataset = "Ksum05",
                            outdataset = "MMKsum05", func = "*",
-                           byrows = T,force = T)
+                           byrows = TRUE,force = TRUE)
 
 
 

@@ -171,7 +171,7 @@ Y <- matrix(rnorm(250), 50, 5)
 
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = T)
+bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = TRUE)
 
 # Create hdf5 data file with data (X)
 bdAdd_hdf5_matrix( X, "cca_cars.hdf5",  "data", "X", force = TRUE)
@@ -338,12 +338,12 @@ h5closeAll()
 
 # Get qr compact (more or less)
 XR[lower.tri(XR, diag = F)] <- 0
-XQ[upper.tri(XQ, diag = T)] <- 0
+XQ[upper.tri(XQ, diag = TRUE)] <- 0
 XQR <- XR + XQ
 
 
 YR[lower.tri(YR, diag = F)] <- 0
-YQ[upper.tri(YQ, diag = T)] <- 0
+YQ[upper.tri(YQ, diag = TRUE)] <- 0
 YQR <- YR + YQ
 
 

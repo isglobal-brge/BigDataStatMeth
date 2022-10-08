@@ -8,7 +8,7 @@
 //' @param filename, character array indicating the name of the file to be sorted
 //' @param group, character array indicating the input group where the data set 
 //' to be sorted is stored.
-//' @param datasets, character array indicating the input dataset to be sorted
+//' @param dataset, character array indicating the input dataset to be sorted
 //' @param outdataset, character array indicating the name for the new sorted 
 //' dataset
 //' @param blockedSortlist, a list with blocks with sorted positions, see example

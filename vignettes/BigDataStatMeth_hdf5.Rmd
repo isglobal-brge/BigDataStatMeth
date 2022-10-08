@@ -340,7 +340,7 @@ Abig <- matrix(rnorm(n*n), nrow=n, ncol=n)
 Bbig <- matrix(rnorm(n*p), nrow=n, ncol=p)
 
 # We want to force it to run in memory
-AxBNOBig <- bdblockmult(Abig, Bbig, onmemory = T)
+AxBNOBig <- bdblockmult(Abig, Bbig, onmemory = TRUE)
 
 # We want to run it on disk
 AxBBig3000 <- bdblockmult(Abig, Bbig, onmemory = F)

@@ -471,8 +471,8 @@ X <- matrix(rnorm(200*10), nrow = 10, ncol = 200)
 diag(X) <- 0.5
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file44.hdf5", X, "data", "X", force = T)
-bdAdd_hdf5_matrix(X, "test_file3.hdf5", "data", "Y", force = T)
+bdCreate_hdf5_matrix_file("test_file44.hdf5", X, "data", "X", force = TRUE)
+bdAdd_hdf5_matrix(X, "test_file3.hdf5", "data", "Y", force = TRUE)
 
 # Update diagonal
 diagonal <- bdblockSum_hdf5( filename = "test_file3.hdf5", group = "data", a = "X", b = "Y", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")
@@ -491,8 +491,8 @@ A <- rnorm(K*N)
 B <- matrix(rnorm(M*L), nrow = M, ncol = L)
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file4.hdf5", as.matrix(A), "data", "A", force = T)
-bdAdd_hdf5_matrix(B, "test_file4.hdf5", "data", "B", force = T)
+bdCreate_hdf5_matrix_file("test_file4.hdf5", as.matrix(A), "data", "A", force = TRUE)
+bdAdd_hdf5_matrix(B, "test_file4.hdf5", "data", "B", force = TRUE)
 
 # Update diagonal
 results <- bdblockSum_hdf5( filename = "test_file4.hdf5", group = "data", a = "A", b = "B", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")

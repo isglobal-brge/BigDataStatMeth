@@ -21,6 +21,8 @@ bdSort_hdf5_dataset(
 \item{group, }{character array indicating the input group where the data set 
 to be sorted is stored.}
 
+\item{dataset, }{character array indicating the input dataset to be sorted}
+
 \item{outdataset, }{character array indicating the name for the new sorted 
 dataset}
 
@@ -62,8 +64,6 @@ stored in the same input group.}
 
 \item{force, }{boolean if true, previous results in same location inside hdf5
 will be overwritten.}
-
-\item{datasets, }{character array indicating the input dataset to be sorted}
 }
 \value{
 Original hdf5 data file with sorted dataset

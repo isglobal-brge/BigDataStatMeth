@@ -118,12 +118,12 @@ writeCCAComponents_hdf5 <- function(filename, ncolsX, ncolsY)
     h5closeAll()
     
     # Get qr compact (more or less)
-    XR[lower.tri(XR, diag = F)] <- 0
-    XQ[upper.tri(XQ, diag = T)] <- 0
+    XR[lower.tri(XR, diag = FALSE)] <- 0
+    XQ[upper.tri(XQ, diag = TRUE)] <- 0
     XQR <- XR + XQ
     
-    YR[lower.tri(YR, diag = F)] <- 0
-    YQ[upper.tri(YQ, diag = T)] <- 0
+    YR[lower.tri(YR, diag = FALSE)] <- 0
+    YQ[upper.tri(YQ, diag = TRUE)] <- 0
     YQR <- YR + YQ
     
     xcoef <- bdSolve(XQR, u)

@@ -645,7 +645,7 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
 //'
 //' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
 //' @param group, character array indicating the input group where the data set to be modified. 
-//' @param datasets, character array indicating the input dataset to be modified
+//' @param dataset, character array indicating the input dataset to be modified
 //' @param outdataset character array with output dataset name where we want to store results
 //' @param outgroup optional, character array with output group name where we want to 
 //' store results if not provided then results are stored in the same group as original dataset
@@ -670,10 +670,11 @@ void Rcpp_bdInvCholesky_hdf5( H5File* file, DataSet* pdataset,
 //' A <- crossprod(A)
 //' 
 //' # Create hdf5 data file with  data (Y)
-//' bdCreate_hdf5_matrix_file("test_file2.hdf5", A, "data", "A", force = T)
+//' bdCreate_hdf5_matrix_file("test_file2.hdf5", A, "data", "A", force = TRUE)
 //' 
 //' # Get Inverse Cholesky
-//' res <- bdInvCholesky_hdf5("test_file.hdf5", "data", "A", "results", "InverseA", force = T)
+//' res <- bdInvCholesky_hdf5("test_file.hdf5", "data", "A", "results", 
+//'                           "InverseA", force = TRUE)
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -856,9 +857,9 @@ bdCreate_hdf5_matrix_file("test_file22.hdf5", A, "data", "A", force = TRUE)
 # bdCreate_hdf5_matrix_file("test_file23.hdf5", A, "data", "A", force = TRUE)
 
 # Get Inverse Cholesky
-# res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA", force = T)
+# res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA", force = TRUE)
 res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA",elementsBlock = 10)
-res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA",elementsBlock = 10, fullMatrix = T)
+res <- bdInvCholesky_hdf5("test_file22.hdf5", "data", "A", "results", "InverseA",elementsBlock = 10, fullMatrix = TRUE)
 
 #..# E <- BigDataStatMeth:::inversechol_par(A,threads = 2)
 

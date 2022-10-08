@@ -167,20 +167,19 @@ int get_HDF5_mean_sd_by_row_ptr(H5File* file, DataSet* dataset, Eigen::MatrixXd&
 //' 
 //' library(BigDataStatMeth)
 //' # devtools::reload(pkgload::inst("BigDataStatMeth"))
-//' setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/")
 //'     
 //' # Prepare data and functions
-//' et.seed(123)
-//' Y <- matrix(rnorm(250), 10, 10)
-//' X <- matrix(rnorm(250), 10, 1)
+//' set.seed(123)
+//' Y <- matrix(rnorm(100), 10, 10)
+//' X <- matrix(rnorm(10), 10, 1)
 //'     
 //' # Create hdf5 data file with  data (Y)
-//' bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+//' bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
 //' bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
 //' 
 //' # Get mean and sd        
 //' bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
-//'                     sd = T, mean = T,byrows = T)
+//'                     sd = TRUE, mean = TRUE,byrows = TRUE)
 //'         
 //' @export
 // [[Rcpp::export]]
@@ -357,15 +356,15 @@ setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/")
 
 # Prepare data and functions
 set.seed(123)
-Y <- matrix(rnorm(250), 10, 10)
-X <- matrix(rnorm(250), 10, 1)
+Y <- matrix(rnorm(100), 10, 10)
+X <- matrix(rnorm(10), 10, 1)
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
 bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
 
 bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
-                    sd = T, mean = T,byrows = T)
+                    sd = TRUE, mean = TRUE,byrows = TRUE)
 
 
 */

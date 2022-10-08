@@ -17,6 +17,8 @@ bdWriteOppsiteTriangularMatrix_hdf5(
 
 \item{group, }{character array indicating the input group where the data set to be modified.}
 
+\item{dataset, }{character array indicating the input dataset to be modified}
+
 \item{copytolower, }{boolean with default value = false. If true, sets lower 
 triangular matrix using upper triangular matrix, if lower=false (default 
 value) sets upper triangular matrix using lower triangular matrix.}
@@ -25,8 +27,6 @@ value) sets upper triangular matrix using lower triangular matrix.}
 to read from hdf5 data file in each block. By default this value is set 
 to 10000. If matrix is bigger thant 5000x5000 then block is set to number 
 of rows or columns x 2}
-
-\item{datasets, }{character array indicating the input dataset to be modified}
 }
 \description{
 Write diagonal matrix to an existing dataset inside hdf5
@@ -35,21 +35,21 @@ Write diagonal matrix to an existing dataset inside hdf5
 library(BigDataStatMeth)
 
 # Prepare data and functions
-X <- matrix(rnorm(150), 10, 10)
+X <- matrix(rnorm(100), 10, 10)
 X.1 <- X
 X[lower.tri(X)] <- 0
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = TRUE)
 # Update Lower triangular matrix in hdf5
 bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
-        group = "data", dataset = "X", copytolower = T, elementsBlock = 10)
+        group = "data", dataset = "X", copytolower = TRUE, elementsBlock = 10)
 
 X <- X.1
 X[upper.tri(X)] <- 0
 # CAdd matrix data to a file
-bdAdd_hdf5_matrix(X, "test_file.hdf5", "data", "Y", force = T )
+bdAdd_hdf5_matrix(X, "test_file.hdf5", "data", "Y", force = TRUE)
 # Update Upper triangular matrix in hdf5
 bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
-        group = "data", dataset = "Y", copytolower = F, elementsBlock = 10)
+        group = "data", dataset = "Y", copytolower = FALSE, elementsBlock = 10)
 
 }

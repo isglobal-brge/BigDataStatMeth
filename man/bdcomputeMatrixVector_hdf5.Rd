@@ -62,11 +62,11 @@ library(BigDataStatMeth)
    
 # Prepare data and functions
 set.seed(123)
-Y <- matrix(rnorm(250), 10, 10)
-X <- matrix(rnorm(250), 10, 1)
+Y <- matrix(rnorm(100), 10, 10)
+X <- matrix(rnorm(10), 10, 1)
        
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
 bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
            
 bdcomputeMatrixVector_hdf5("test.hdf5", 
@@ -74,19 +74,19 @@ bdcomputeMatrixVector_hdf5("test.hdf5",
                           vectorgroup = "data", vectordataset = "X", 
                           outdataset = "ProdComputed", 
                           func = "*",
-                          byrows = T, force = T)
+                          byrows = TRUE, force = TRUE)
    
 bdcomputeMatrixVector_hdf5("test.hdf5", 
                           group = "data", dataset = "Y",
                           vectorgroup = "data", vectordataset = "X", 
                           outdataset = "SumComputed", 
                           func = "-",
-                          byrows = T, force = T)
+                          byrows = TRUE, force = TRUE)
    
 bdcomputeMatrixVector_hdf5("test.hdf5", 
                           group = "data", dataset = "Y",
                           vectorgroup = "data", vectordataset = "X", 
                           outdataset = "SubsComputed", 
                           func = "-",
-                          byrows = F, force = T)
+                          byrows = FALSE, force = TRUE)
 }

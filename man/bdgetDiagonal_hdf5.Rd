@@ -11,7 +11,7 @@ bdgetDiagonal_hdf5(filename, group, dataset)
 
 \item{group, }{character array indicating the input group where the data set to be modified.}
 
-\item{datasets, }{character array indicating the input dataset to be modified}
+\item{dataset, }{character array indicating the input dataset to be modified}
 }
 \value{
 Numeric vector with all diagonal elements from hdf5 dataset
@@ -24,10 +24,10 @@ Write diagonal matrix to an existing dataset inside hdf5
 library(BigDataStatMeth)
 library(rhdf5)
 
-X <- matrix(rnorm(150), 10, 10)
+X <- matrix(rnorm(100), 10, 10)
 diag(X) <- 0.5
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file2.hdf5", X, "data", "X", force = T)
+bdCreate_hdf5_matrix_file("test_file2.hdf5", X, "data", "X", force = TRUE)
 # Update diagonal
 diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
 

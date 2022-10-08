@@ -31,18 +31,18 @@ void Rcpp_setDiagonalMatrix( H5File* file, DataSet* pdataset, Rcpp::NumericVecto
 //' @param diagonal, numeric vector with diagonal elements to be written in existing dataset. 
 //' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
 //' @param group, character array indicating the input group where the data set to be modified. 
-//' @param datasets, character array indicating the input dataset to be modified
+//' @param dataset, character array indicating the input dataset to be modified
 //' @return Original hdf5 dataset with new diagonal elements
 //' @examples
 //' library(BigDataStatMeth)
 //' library(rhdf5)
 //' 
 //' # Prepare data and functions
-//' X <- matrix(rnorm(150), 10, 10)
+//' X <- matrix(rnorm(100), 10, 10)
 //' diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
 //' 
 //' # Create hdf5 data file with  data (Y)
-//' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+//' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = TRUE)
 //' 
 //' # Update diagonal
 //' bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
@@ -132,12 +132,12 @@ setwd("/Volumes/XtraSpace/PhD_Test/BigDataStatMeth")
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
 
 # Prepare data and functions
-X <- matrix(rnorm(150), 10, 10)
+X <- matrix(rnorm(100), 10, 10)
 Y <- matrix(rnorm(250), 50, 5)
 diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = TRUE)
 
 # Update diagonal
 bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")

@@ -54,15 +54,15 @@ library(BigDataStatMeth)
    
 # Prepare data and functions
 set.seed(123)
-Y <- matrix(rnorm(250), 5, 10)
-X <- matrix(rnorm(250), 10, 1)
+Y <- matrix(rnorm(250), 5, 50)
+X <- matrix(rnorm(50), 50, 1)
        
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = T)
+bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = TRUE)
 bdAdd_hdf5_matrix( X, "cca_cars.hdf5",  "data", "X", force = TRUE)
            
 bdWeightedProduct_hdf5("cca_cars.hdf5", 
                       group = "data", dataset = "Y",
                       vectorgroup = "data", vectordataset = "X", 
-                      outdataset = "Prod", byrows = T, force = T)
+                      outdataset = "Prod", byrows = TRUE, force = TRUE)
 }

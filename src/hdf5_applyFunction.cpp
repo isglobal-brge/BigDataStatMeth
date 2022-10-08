@@ -390,12 +390,12 @@ setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/")
 
 # Prepare data and functions
 set.seed(123)
-Y <- matrix(rnorm(250), 10, 10)
-X <- matrix(rnorm(250), 20, 20)
+Y <- matrix(rnorm(100), 10, 10)
+X <- matrix(rnorm(400), 20, 20)
 filename <- "test.hdf5"
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
 bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
 
 
@@ -404,7 +404,7 @@ data <- bdgetDatasetsList_hdf5("test.hdf5", group = "data")
 bdapply_Function_hdf5(filename = filename,
                       group = "data",datasets = data,
                       outgroup = "KXA",func = "sdmean",
-                      force = T)
+                      force = TRUE)
 
 
 

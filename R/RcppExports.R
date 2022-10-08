@@ -75,17 +75,17 @@ bdRemovelowdata <- function(filename, group, dataset, outgroup, outdataset, pcen
 #'    
 #'# Prepare data and functions
 #'set.seed(123)
-#'Y <- matrix(rnorm(250), 5, 10)
-#'X <- matrix(rnorm(250), 10, 1)
+#'Y <- matrix(rnorm(250), 5, 50)
+#'X <- matrix(rnorm(50), 50, 1)
 #'        
 #'# Create hdf5 data file with  data (Y)
-#'bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = T)
+#'bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = TRUE)
 #'bdAdd_hdf5_matrix( X, "cca_cars.hdf5",  "data", "X", force = TRUE)
 #'            
 #'bdWeightedProduct_hdf5("cca_cars.hdf5", 
 #'                       group = "data", dataset = "Y",
 #'                       vectorgroup = "data", vectordataset = "X", 
-#'                       outdataset = "Prod", byrows = T, force = T)
+#'                       outdataset = "Prod", byrows = TRUE, force = TRUE)
 #' @export
 bdWeightedProduct_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, outgroup = NULL, byrows = NULL, force = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdWeightedProduct_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, outgroup, byrows, force))
@@ -386,11 +386,11 @@ bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block
 #'    
 #'# Prepare data and functions
 #'set.seed(123)
-#'Y <- matrix(rnorm(250), 10, 10)
-#'X <- matrix(rnorm(250), 10, 1)
+#'Y <- matrix(rnorm(100), 10, 10)
+#'X <- matrix(rnorm(10), 10, 1)
 #'        
 #'# Create hdf5 data file with  data (Y)
-#'bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+#'bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
 #'bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
 #'            
 #'bdcomputeMatrixVector_hdf5("test.hdf5", 
@@ -398,21 +398,21 @@ bdtCrossprod_hdf5 <- function(filename, group, A, groupB = NULL, B = NULL, block
 #'                           vectorgroup = "data", vectordataset = "X", 
 #'                           outdataset = "ProdComputed", 
 #'                           func = "*",
-#'                           byrows = T, force = T)
+#'                           byrows = TRUE, force = TRUE)
 #'    
 #'bdcomputeMatrixVector_hdf5("test.hdf5", 
 #'                           group = "data", dataset = "Y",
 #'                           vectorgroup = "data", vectordataset = "X", 
 #'                           outdataset = "SumComputed", 
 #'                           func = "-",
-#'                           byrows = T, force = T)
+#'                           byrows = TRUE, force = TRUE)
 #'    
 #'bdcomputeMatrixVector_hdf5("test.hdf5", 
 #'                           group = "data", dataset = "Y",
 #'                           vectorgroup = "data", vectordataset = "X", 
 #'                           outdataset = "SubsComputed", 
 #'                           func = "-",
-#'                           byrows = F, force = T)
+#'                           byrows = FALSE, force = TRUE)
 #' @export
 bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup = NULL, byrows = NULL, force = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, force))
@@ -449,17 +449,17 @@ bdget_maf_hdf5 <- function(filename, group, dataset, byrows = NULL, bparallel = 
 #'
 #' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
 #' @param group, character array indicating the input group where the data set to be modified. 
-#' @param datasets, character array indicating the input dataset to be modified
+#' @param dataset, character array indicating the input dataset to be modified
 #' @return Numeric vector with all diagonal elements from hdf5 dataset
 #' @examples
 #' 
 #' library(BigDataStatMeth)
 #' library(rhdf5)
 #' 
-#' X <- matrix(rnorm(150), 10, 10)
+#' X <- matrix(rnorm(100), 10, 10)
 #' diag(X) <- 0.5
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix_file("test_file2.hdf5", X, "data", "X", force = T)
+#' bdCreate_hdf5_matrix_file("test_file2.hdf5", X, "data", "X", force = TRUE)
 #' # Update diagonal
 #' diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
 #' 
@@ -489,20 +489,19 @@ bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
 #' 
 #' library(BigDataStatMeth)
 #' # devtools::reload(pkgload::inst("BigDataStatMeth"))
-#' setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/")
 #'     
 #' # Prepare data and functions
-#' et.seed(123)
-#' Y <- matrix(rnorm(250), 10, 10)
-#' X <- matrix(rnorm(250), 10, 1)
+#' set.seed(123)
+#' Y <- matrix(rnorm(100), 10, 10)
+#' X <- matrix(rnorm(10), 10, 1)
 #'     
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = T)
+#' bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
 #' bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
 #' 
 #' # Get mean and sd        
 #' bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
-#'                     sd = T, mean = T,byrows = T)
+#'                     sd = TRUE, mean = TRUE,byrows = TRUE)
 #'         
 #' @export
 bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL, byrows = NULL, wsize = NULL, force = FALSE) {
@@ -565,7 +564,7 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #'
 #' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
 #' @param group, character array indicating the input group where the data set to be modified. 
-#' @param datasets, character array indicating the input dataset to be modified
+#' @param dataset, character array indicating the input dataset to be modified
 #' @param outdataset character array with output dataset name where we want to store results
 #' @param outgroup optional, character array with output group name where we want to 
 #' store results if not provided then results are stored in the same group as original dataset
@@ -590,10 +589,11 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #' A <- crossprod(A)
 #' 
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix_file("test_file2.hdf5", A, "data", "A", force = T)
+#' bdCreate_hdf5_matrix_file("test_file2.hdf5", A, "data", "A", force = TRUE)
 #' 
 #' # Get Inverse Cholesky
-#' res <- bdInvCholesky_hdf5("test_file.hdf5", "data", "A", "results", "InverseA", force = T)
+#' res <- bdInvCholesky_hdf5("test_file.hdf5", "data", "A", "results", 
+#'                           "InverseA", force = TRUE)
 #' 
 #' @export
 bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, force = NULL, threads = 2L, elementsBlock = 1000000L) {
@@ -692,7 +692,7 @@ bdremove_maf_hdf5 <- function(filename, group, dataset, outgroup, outdataset, ma
 #' @param filename, character array indicating the name of the file to be sorted
 #' @param group, character array indicating the input group where the data set 
 #' to be sorted is stored.
-#' @param datasets, character array indicating the input dataset to be sorted
+#' @param dataset, character array indicating the input dataset to be sorted
 #' @param outdataset, character array indicating the name for the new sorted 
 #' dataset
 #' @param blockedSortlist, a list with blocks with sorted positions, see example
@@ -765,18 +765,18 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' @param diagonal, numeric vector with diagonal elements to be written in existing dataset. 
 #' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
 #' @param group, character array indicating the input group where the data set to be modified. 
-#' @param datasets, character array indicating the input dataset to be modified
+#' @param dataset, character array indicating the input dataset to be modified
 #' @return Original hdf5 dataset with new diagonal elements
 #' @examples
 #' library(BigDataStatMeth)
 #' library(rhdf5)
 #' 
 #' # Prepare data and functions
-#' X <- matrix(rnorm(150), 10, 10)
+#' X <- matrix(rnorm(100), 10, 10)
 #' diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
 #' 
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+#' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = TRUE)
 #' 
 #' # Update diagonal
 #' bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
@@ -792,7 +792,7 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #'
 #' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
 #' @param group, character array indicating the input group where the data set to be modified. 
-#' @param datasets, character array indicating the input dataset to be modified
+#' @param dataset, character array indicating the input dataset to be modified
 #' @param copytolower, boolean with default value = false. If true, sets lower 
 #' triangular matrix using upper triangular matrix, if lower=false (default 
 #' value) sets upper triangular matrix using lower triangular matrix.
@@ -804,22 +804,22 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' library(BigDataStatMeth)
 #' 
 #' # Prepare data and functions
-#' X <- matrix(rnorm(150), 10, 10)
+#' X <- matrix(rnorm(100), 10, 10)
 #' X.1 <- X
 #' X[lower.tri(X)] <- 0
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+#' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = TRUE)
 #' # Update Lower triangular matrix in hdf5
 #' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
-#'         group = "data", dataset = "X", copytolower = T, elementsBlock = 10)
+#'         group = "data", dataset = "X", copytolower = TRUE, elementsBlock = 10)
 #' 
 #' X <- X.1
 #' X[upper.tri(X)] <- 0
 #' # CAdd matrix data to a file
-#' bdAdd_hdf5_matrix(X, "test_file.hdf5", "data", "Y", force = T )
+#' bdAdd_hdf5_matrix(X, "test_file.hdf5", "data", "Y", force = TRUE)
 #' # Update Upper triangular matrix in hdf5
 #' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
-#'         group = "data", dataset = "Y", copytolower = F, elementsBlock = 10)
+#'         group = "data", dataset = "Y", copytolower = FALSE, elementsBlock = 10)
 #' 
 #' @export
 bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copytolower = NULL, elementsBlock = 1000000L) {

@@ -28,24 +28,26 @@ bdblockSum_hdf5(
 
 \item{groupB, }{string, (optional) group name where dataset b is stored}
 
-\item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)}
+\item{block_size}{(optional, defalut = 128) block size to make matrix 
+multiplication, if `block_size = 1` no block size is applied 
+(size 1 = 1 element per block)}
 
 \item{paral, }{(optional, default = FALSE) paral = true --> TO BE IMPLEMENTED}
 
-\item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
+\item{threads}{(optional) only if bparal = true, number of concurrent threads 
+in parallelization if threads is null then threads =  maximum number of 
+threads available}
 
-\item{outgroup}{(optional) string with group name where we want to store the result matrix}
+\item{outgroup}{(optional) string with group name where we want to store the 
+result matrix}
 
-\item{outdataset}{(optional) string with dataset name where we want to store the results}
-
-\item{mixblock_size}{(optiona, default = 128), only if we are working with big matrix and parallel computation = true.
-Block size for mixed computation in big matrix parallel. Size of the block to be used to perform parallelized memory
-memory of the block read from the disk being processed.}
+\item{outdataset}{(optional) string with dataset name where we want to store 
+the results}
 }
 \value{
-A list with an HDF5 object with numerical matrix and  HDF5 file name with results
+A list with an HDF5 object with numerical matrix and  HDF5 file name 
+with results
 \itemize{
- #### \item{"res"}{rhdf5 object with result matrix - link to hdf5 file contents . IMPORTANT !!, we have to close the object after fihish to work}
  \item{"file"}{string with hdf5 file name with result and original matrixs}
  \item{"dataset"}{string complete path inside hdf5 file where results are stored.}
 }
@@ -66,11 +68,13 @@ X <- matrix(rnorm(200*10), nrow = 10, ncol = 200)
 diag(X) <- 0.5
 
 # Create hdf5 data file with  two X matrices ( named X and Y)
-bdCreate_hdf5_matrix_file("test_file3.hdf5", X, "data", "X", force = T)
-bdAdd_hdf5_matrix(X, "test_file3.hdf5", "data", "Y", force = T)
+bdCreate_hdf5_matrix_file("test_file3.hdf5", X, "data", "X", force = TRUE)
+bdAdd_hdf5_matrix(X, "test_file3.hdf5", "data", "Y", force = TRUE)
 
 # Update diagonal
-diagonal <- bdblockSum_hdf5( filename = "test_file3.hdf5", group = "data", a = "X", b = "Y", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")
+diagonal <- bdblockSum_hdf5( filename = "test_file3.hdf5", 
+                   group = "data", a = "X", b = "Y", groupB = "data", 
+                   block_size = 128, outgroup = "tmp", outdataset = "Z")
 
 
 # Sum matrix with an Array
@@ -85,9 +89,11 @@ A <- rnorm(K*N)
 B <- matrix(rnorm(M*L), nrow = M, ncol = L)
 
 # Create hdf5 data file with A and B matrices
-bdCreate_hdf5_matrix_file("test_file4.hdf5", as.matrix(A), "data", "A", force = T)
-bdAdd_hdf5_matrix(B, "test_file4.hdf5", "data", "B", force = T)
+bdCreate_hdf5_matrix_file("test_file4.hdf5", as.matrix(A), "data", "A", force = TRUE)
+bdAdd_hdf5_matrix(B, "test_file4.hdf5", "data", "B", force = TRUE)
 
-results <- bdblockSum_hdf5( filename = "test_file4.hdf5", group = "data", a = "A", b = "B", groupB = "data", block_size = 128, outgroup = "tmp", outdataset = "Z")
+results <- bdblockSum_hdf5( filename = "test_file4.hdf5", 
+            group = "data", a = "A", b = "B", groupB = "data", 
+            block_size = 128, outgroup = "tmp", outdataset = "Z")
 
 }

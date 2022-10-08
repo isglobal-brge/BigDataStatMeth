@@ -21,6 +21,8 @@ bdInvCholesky_hdf5(
 
 \item{group, }{character array indicating the input group where the data set to be modified.}
 
+\item{dataset, }{character array indicating the input dataset to be modified}
+
 \item{outdataset}{character array with output dataset name where we want to store results}
 
 \item{outgroup}{optional, character array with output group name where we want to 
@@ -39,8 +41,6 @@ hdf5 will be overwritten, by default force = false, data was not overwritten.}
 to read from hdf5 data file in each block. By default this value is set 
 to 10000. If matrix is bigger thant 5000x5000 then block is set to number 
 of rows or columns x 2}
-
-\item{datasets, }{character array indicating the input dataset to be modified}
 }
 \value{
 Original hdf5 data file with Inverse of Cholesky
@@ -58,9 +58,10 @@ A  <- matrix(sample.int(10, 10000, replace = TRUE), ncol = 100)
 A <- crossprod(A)
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file2.hdf5", A, "data", "A", force = T)
+bdCreate_hdf5_matrix_file("test_file2.hdf5", A, "data", "A", force = TRUE)
 
 # Get Inverse Cholesky
-res <- bdInvCholesky_hdf5("test_file.hdf5", "data", "A", "results", "InverseA", force = T)
+res <- bdInvCholesky_hdf5("test_file.hdf5", "data", "A", "results", 
+                          "InverseA", force = TRUE)
 
 }

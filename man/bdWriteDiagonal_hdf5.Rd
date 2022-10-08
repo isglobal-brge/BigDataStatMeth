@@ -13,7 +13,7 @@ bdWriteDiagonal_hdf5(diagonal, filename, group, dataset)
 
 \item{group, }{character array indicating the input group where the data set to be modified.}
 
-\item{datasets, }{character array indicating the input dataset to be modified}
+\item{dataset, }{character array indicating the input dataset to be modified}
 }
 \value{
 Original hdf5 dataset with new diagonal elements
@@ -26,11 +26,11 @@ library(BigDataStatMeth)
 library(rhdf5)
 
 # Prepare data and functions
-X <- matrix(rnorm(150), 10, 10)
+X <- matrix(rnorm(100), 10, 10)
 diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
 
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = T)
+bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = TRUE)
 
 # Update diagonal
 bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")

@@ -332,11 +332,11 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
     # setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/")
     
     # Prepare data and functions
-    Y <- matrix(rnorm(250), 10, 10)
-    X <- matrix(rnorm(250), 10, 10)
+    Y <- matrix(rnorm(100), 10, 10)
+    X <- matrix(rnorm(100), 10, 10)
     
     # Create hdf5 data file with  data (Y)
-    bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = T)
+    bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = TRUE)
     bdAdd_hdf5_matrix( t(Y), "cca_cars.hdf5",  "data", "Yt", force = TRUE)
     
     bdNormalize_hdf5(filename = "cca_cars.hdf5", 
@@ -344,7 +344,7 @@ void bdNormalize_hdf5( std::string filename, const std::string group, std::strin
                      bcenter = TRUE, bscale = TRUE)
     
     bdNormalize_hdf5(filename = "cca_cars.hdf5", 
-                     group = "data", dataset = "Yt", byrows = T,
+                     group = "data", dataset = "Yt", byrows = TRUE,
                      bcenter = TRUE, bscale = TRUE)
     
 */
