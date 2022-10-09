@@ -5,10 +5,8 @@
     
     #include <RcppEigen.h>
     #include "BigDataStatMeth.h"
-    //#include <omp.h>
     #include "pkg_omp.h"
     #include <thread>
-    // #include "ReadDelayedData.h"
     #include "parallelBlockMult_hdf5.h"
     
     Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& mat);

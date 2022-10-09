@@ -74,7 +74,7 @@ res2 <- h5fdelay$OUTPUT$tCrossProd_matAxmatB
 all.equal(tcrossprod(matA), res)
 all.equal(tcrossprod(matA, matB), res2)
 
-# Close delayed.hdf5 file
+# Close.hdf5 file
 H5Fclose(h5fdelay)
 
 # Remove file (used as example)

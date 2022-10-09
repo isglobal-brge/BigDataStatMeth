@@ -2,12 +2,12 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdSVD_lapack}
 \alias{bdSVD_lapack}
-\title{Complete SVD with Lapack Functions for DelayedArray and RObjects}
+\title{Complete SVD with Lapack Functions for RObjects}
 \usage{
 bdSVD_lapack(X, bcenter = TRUE, bscale = TRUE, complete = FALSE)
 }
 \arguments{
-\item{X}{numerical or Delayed Array matrix}
+\item{X}{numerical matrix}
 
 \item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.}
 
@@ -23,7 +23,7 @@ v eigenvectors of A^tA, nxn orthogonal matrix
 d singular values, nxn diagonal matrix (non-negative real values)
 }
 \description{
-This function performs a complete svd decomposition of numerical matrix or Delayed Array with
+This function performs a complete svd decomposition of numerical matrix
 }
 \examples{
 

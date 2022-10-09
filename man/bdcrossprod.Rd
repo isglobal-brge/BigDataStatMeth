@@ -7,9 +7,9 @@
 bdCrossprod(A, B = NULL, block_size = 256, paral = TRUE, threads = NULL)
 }
 \arguments{
-\item{A}{numerical or Delayed Array matrix}
+\item{A}{numerical matrix}
 
-\item{B}{optional, numerical or Delayed Array matrix}
+\item{B}{optional, numerical matrix}
 
 \item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)}
 
@@ -21,7 +21,7 @@ bdCrossprod(A, B = NULL, block_size = 256, paral = TRUE, threads = NULL)
 numerical matrix with crossproduct
 }
 \description{
-This function performs a crossproduct or transposed crossproduct of numerical or DelayedArray matrix.
+This function performs a crossproduct or transposed crossproduct of numerical matrix.
 }
 \examples{
 

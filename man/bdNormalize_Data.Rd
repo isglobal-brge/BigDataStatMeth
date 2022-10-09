@@ -2,12 +2,12 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdNormalize_Data}
 \alias{bdNormalize_Data}
-\title{Normalize Delayed Array matrix}
+\title{Normalize  matrix}
 \usage{
 bdNormalize_Data(X, bcenter = NULL, bscale = NULL)
 }
 \arguments{
-\item{X}{numerical or Delayed Array Matrix}
+\item{X}{numerical Matrix}
 
 \item{bcenter}{logical (default = TRUE) if TRUE, centering is done by subtracting the column means}
 
@@ -17,7 +17,7 @@ bdNormalize_Data(X, bcenter = NULL, bscale = NULL)
 numerical matrix
 }
 \description{
-This function performs a numerical or Delayed Array matrix normalization
+This function performs a numerical matrix normalization
 }
 \examples{
 

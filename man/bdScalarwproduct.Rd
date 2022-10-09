@@ -2,12 +2,12 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdScalarwproduct}
 \alias{bdScalarwproduct}
-\title{Matrix - Weighted Scalar Multiplication with numerical or DelayedArray data}
+\title{Matrix - Weighted Scalar Multiplication with numerical data}
 \usage{
 bdScalarwproduct(A, w, op)
 }
 \arguments{
-\item{A}{numerical or Delayed Array matrix}
+\item{A}{numerical matrix}
 
 \item{w}{scalar, weight}
 

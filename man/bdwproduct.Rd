@@ -2,12 +2,12 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdwproduct}
 \alias{bdwproduct}
-\title{Matrix - Weighted vector Multiplication with numerical or DelayedArray data}
+\title{Matrix - Weighted vector Multiplication with numerical matrix}
 \usage{
 bdwproduct(X, w, op)
 }
 \arguments{
-\item{X}{numerical or Delayed Array matrix}
+\item{X}{numerical matrix}
 
 \item{w}{vector with weights}
 

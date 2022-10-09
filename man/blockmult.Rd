@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{blockmult}
 \alias{blockmult}
-\title{Block matrix multiplication with Delayed Array Object}
+\title{Block matrix multiplication}
 \usage{
 blockmult(
   a,
@@ -51,7 +51,7 @@ A List with :
 }
 }
 \description{
-This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+This function performs a block matrix-matrix multiplication with numeric matrix
 }
 \examples{
 

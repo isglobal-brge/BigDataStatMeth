@@ -2,7 +2,7 @@
 % Please edit documentation in R/blockmult.R
 \name{bdblockmult}
 \alias{bdblockmult}
-\title{Block matrix multiplication with Delayed Array Object}
+\title{Block matrix multiplication}
 \usage{
 bdblockmult(
   A,
@@ -42,7 +42,7 @@ memory of the block read from the disk being processed.}
 numerical matrix
 }
 \description{
-This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+This function performs a block matrix-matrix multiplication with numeric matrix
 }
 \examples{
 # with numeric matrix

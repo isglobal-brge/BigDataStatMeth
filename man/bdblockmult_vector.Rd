@@ -2,7 +2,7 @@
 % Please edit documentation in R/blockmult_vector.R
 \name{bdblockmult_vector}
 \alias{bdblockmult_vector}
-\title{Block matrix-vector multiplication with Delayed Array Object}
+\title{Block matrix-vector multiplication}
 \usage{
 bdblockmult_vector(
   A,
@@ -33,7 +33,7 @@ bdblockmult_vector(
 numerical matrix
 }
 \description{
-This function performs a block matrix-vector multiplication with R-Objects or Delayed Arrays
+This function performs a block matrix-vector multiplication with R-Objects
 }
 \examples{
 # with numeric matrix

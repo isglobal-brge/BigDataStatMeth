@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdtCrossprod_Weighted}
 \alias{bdtCrossprod_Weighted}
-\title{Block matrix multiplication with Delayed Array Object}
+\title{Block matrix multiplication}
 \usage{
 bdtCrossprod_Weighted(A, W, block_size = NULL, paral = NULL, threads = NULL)
 }
@@ -21,7 +21,7 @@ bdtCrossprod_Weighted(A, W, block_size = NULL, paral = NULL, threads = NULL)
 Matrix with A%*%W%*%t(A) product
 }
 \description{
-This function performs a Crossproduct with weigths matrix A%*%W%*%t(A) multiplication with numeric matrix or Delayed Arrays
+This function performs a Crossproduct with weigths matrix A%*%W%*%t(A) multiplication with numeric matrix
 }
 \examples{
 
