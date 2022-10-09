@@ -3,9 +3,9 @@
 
   
     #include <RcppEigen.h>
-    #include "ReadDelayedData.h"
     #include "BigDataStatMeth.h"
-    //#include <omp.h>
+    #include "beachmat/numeric_matrix.h"  // To access numeric matrix
+    #include "beachmat/integer_matrix.h"  // To access numeric matrix
     #include "pkg_omp.h"
     
     // dgemm_ is a symbol in the LAPACK-BLAS library files 

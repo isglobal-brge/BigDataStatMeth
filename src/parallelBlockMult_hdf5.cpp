@@ -631,9 +631,9 @@ return(C);
 
 
 
-//' Block matrix multiplication with Delayed Array Object
+//' Block matrix multiplication 
 //' 
-//' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+//' This function performs a block matrix-matrix multiplication with numeric matrix
 //' 
 //' @param a a double matrix.
 //' @param b a double matrix.
@@ -733,7 +733,8 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
     // Get matrix sizes
     if ( a.isS4() == true )    
     {
-      dsizeA = get_DelayedArray_size(a);
+      // dsizeA = get_DelayedArray_size(a);
+      throw("Only numeric matrix allowd");
     } else { 
       try{  
         if ( TYPEOF(a) == INTSXP ) {
@@ -758,7 +759,8 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
     
     if ( b.isS4() == true)    
     {
-      dsizeB = get_DelayedArray_size(b);
+      // dsizeB = get_DelayedArray_size(b);
+      throw("Only numeric matrix allowd");
     } else { 
       try{  
         if ( TYPEOF(b) == INTSXP ) {
@@ -807,10 +809,11 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
       /**** START IN-MEMORY PROCESSING **/
       /**********************************/
   
-      // Read DelayedArray's a and b
+      // Read a and b
       if ( a.isS4() == true)    
       {
-        A = read_DelayedArray(a);
+        // A = read_DelayedArray(a);
+        throw("Only numeric matrix allowd");
       } else {
         try{  
           if ( TYPEOF(a) == INTSXP ) {
@@ -823,7 +826,8 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
       }
       
       if ( b.isS4() == true) {
-        B = read_DelayedArray(b);
+        // B = read_DelayedArray(b);
+        throw("Only numeric matrix allowd");
       }  else {
         
         if ( TYPEOF(b) == INTSXP ) {
@@ -867,14 +871,15 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
       // Open file to work with
       file = new H5File( filename, H5F_ACC_RDWR );
       
-      // Read DelayedArray a and b
+      // Read  a and b
       if ( a.isS4() == true)    
       {
         //.Created before.// res = Create_hdf5_file(filename);
         //.Created before.// res = create_HDF5_group(filename, strsubgroupIn );
-        res = create_HDF5_group_ptr(file, strsubgroupIn );
         
-        write_DelayedArray_to_hdf5(filename, strsubgroupIn + "/A", a);
+        //.. 20221009 ..// res = create_HDF5_group_ptr(file, strsubgroupIn );
+        //.. 20221009 ..// write_DelayedArray_to_hdf5(filename, strsubgroupIn + "/A", a);
+        throw("Only numeric matrix allowd");
   
       } else {
         
@@ -903,13 +908,13 @@ Rcpp::List blockmult(Rcpp::RObject a, Rcpp::RObject b,
       
       if ( b.isS4() == true)    
       {
-        if(!ResFileExist(filename))  {
-          //.Created before.// res = Create_hdf5_file(filename);
-          //.Created before.// res = create_HDF5_group(filename, strsubgroupIn );
-          res = create_HDF5_group_ptr(file, strsubgroupIn );
-        }
-        
-        write_DelayedArray_to_hdf5(filename, strsubgroupIn + "/B", b);
+        //.. 20221009 ..// if(!ResFileExist(filename))  {
+        //.. 20221009 ..//   //.Created before.// res = Create_hdf5_file(filename);
+        //.. 20221009 ..//   //.Created before.// res = create_HDF5_group(filename, strsubgroupIn );
+        //.. 20221009 ..//   res = create_HDF5_group_ptr(file, strsubgroupIn );
+        //.. 20221009 ..// }
+        //.. 20221009 ..// write_DelayedArray_to_hdf5(filename, strsubgroupIn + "/B", b);
+        throw("Only numeric matrix allowd");
         
       } else {
         

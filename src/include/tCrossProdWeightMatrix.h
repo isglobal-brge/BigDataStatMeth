@@ -2,11 +2,9 @@
 #define tCrossProdWeightMatrix
 
     #include <RcppEigen.h>
-    // #include <omp.h>
     #include "BigDataStatMeth.h"
     #include "pkg_omp.h"
     #include <thread>
-    #include "ReadDelayedData.h"
     
     // C++ functions :
     Eigen::MatrixXd Bblock_weighted_tcrossprod(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, int block_size);

@@ -4,8 +4,8 @@
 #' 
 #' @export
 #' 
-#' @param A numerical or Delayed Array matrix
-#' @param B optional, numerical or Delayed Array matrix
+#' @param A numerical matrix
+#' @param B optional, numerical matrix
 #' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
 #' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
 #' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
@@ -18,7 +18,6 @@
 #' 
 #' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
 #' 
-#' # without DelayedArray
 #' bdtCrossprod(X)
 #' 
 #' all.equal(crossprod(X), bdtCrossprod(X))

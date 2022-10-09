@@ -160,47 +160,44 @@ Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObje
                                      Rcpp::Nullable<int> threads = R_NilValue )
 {
   
-  Eigen::MatrixXd mA;
-  Eigen::MatrixXd mB;
-  Eigen::MatrixXd C;
+    Eigen::MatrixXd mA;
+    Eigen::MatrixXd mB;
+    Eigen::MatrixXd C;
+    
+    bool btrans, bparal;
+    int iblock_size;
+    
+    if(transposed.isNotNull())
+        btrans = Rcpp::as<bool> (transposed);
+    else
+        btrans = FALSE;
+    
+    if( paral.isNull()) {
+        bparal = false;
+    } else {
+        bparal = Rcpp::as<bool> (paral);
+    }
   
-  bool btrans, bparal;
-  int iblock_size;
+    if(block_size.isNotNull())
+    {
+        iblock_size = Rcpp::as<int> (block_size);
+    } else {
+        iblock_size = 128;
+    }
   
-  if(transposed.isNotNull())
-    btrans = Rcpp::as<bool> (transposed);
-  else
-    btrans = FALSE;
-  
-  if( paral.isNull()) {
-    bparal = false;
-  } else {
-    bparal = Rcpp::as<bool> (paral);
-  }
-  
-  
-  
-  if(block_size.isNotNull())
-  {
-    iblock_size = Rcpp::as<int> (block_size);
-  } else {
-      iblock_size = 128;
-  }
-  
-  
-  
-  if( paral.isNull()) {
-    bparal = false;
-  } else {
-    bparal = Rcpp::as<bool> (paral);
-  }
+    if( paral.isNull()) {
+        bparal = false;
+    } else {
+        bparal = Rcpp::as<bool> (paral);
+    }
   
   
-  // Read DelayedmArray's A and b
-  if ( A.isS4() == true)    
-  {
-    mA = read_DelayedArray(A);
-  } else {
+    // Read DelayedmArray's A and b
+    if ( A.isS4() == true)    
+    {
+    // mA = read_DelayedArray(A);
+        throw("Only numeric matrix allowd");
+    } else {
     try{  
       mA = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(A);
     }
@@ -224,7 +221,8 @@ Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObje
     
     // Read DelayedArray's a and b
     if ( as<Rcpp::RObject>(B).isS4() == true) {
-      mB = read_DelayedArray(as<Rcpp::RObject>(B));
+      // mB = read_DelayedArray(as<Rcpp::RObject>(B));
+        throw("Only numeric matrix allowd");
     } else {
       try{  
         mB = Rcpp::as<Eigen::MatrixXd>(B); 
@@ -234,13 +232,12 @@ Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObje
     
     if( btrans == true )
     {
-      Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mTrans(mB.data(), mB.cols(), mB.rows());
-      if(bparal == true) {
-        C = Bblock_matrix_mul_parallel(mA, mTrans, iblock_size, threads);
-        
-      } else if (bparal == false)  {
-        C = Bblock_matrix_mul(mA, mTrans, iblock_size);
-      }
+        Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mTrans(mB.data(), mB.cols(), mB.rows());
+        if(bparal == true) {
+            C = Bblock_matrix_mul_parallel(mA, mTrans, iblock_size, threads);
+        } else if (bparal == false)  {
+            C = Bblock_matrix_mul(mA, mTrans, iblock_size);
+        }
       
       
     } else {
@@ -270,11 +267,11 @@ Eigen::MatrixXd bdCrossprod_generic( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObje
 
 
 // Weighted product
-//' Matrix - Weighted vector Multiplication with numerical or DelayedArray data
+//' Matrix - Weighted vector Multiplication with numerical matrix
 //' 
 //' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 //' 
-//' @param X numerical or Delayed Array matrix
+//' @param X numerical matrix
 //' @param w vector with weights
 //' @param op string indicating if operation 'XtwX' and 'XwXt' for weighted cross product (Matrix - Vector - Matrix) or 'Xw' and 'wX' for weighted product (Matrix - Vector)
 //' @return numerical matrix 
@@ -302,7 +299,9 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op)
   // Read DelayedArray's X and b
   if ( X.isS4() == true)    
   {
-    A = read_DelayedArray(X);
+    // A = read_DelayedArray(X);
+      throw("Only numeric matrix allowd");
+      // return(C);
   } else {
     try{  
       A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
@@ -312,7 +311,8 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op)
   
   if ( w.isS4() == true)   
   {
-    W = read_DelayedArray(w);
+    // W = read_DelayedArray(w);
+    throw("Only numeric matrix allowd");
   }  else {
     W = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(w);
   } 
@@ -332,11 +332,11 @@ Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op)
 }
 
 // Weighted product
-//' Matrix - Weighted Scalar Multiplication with numerical or DelayedArray data
+//' Matrix - Weighted Scalar Multiplication with numerical data
 //' 
 //' This function performs a weighted product of a matrix(X) with a weighted diagonal matrix (w)
 //' 
-//' @param A numerical or Delayed Array matrix
+//' @param A numerical matrix
 //' @param w scalar, weight
 //' @param op string indicating if operation  "Xw" or "wX"
 //' @return numerical matrix 
@@ -358,10 +358,11 @@ Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject A, double w, std::string op)
   
   Eigen::MatrixXd mA;
 
-  // Read DelayedArray's A and b
+  // Read A and b
   if ( A.isS4() == true)    
   {
-    mA = read_DelayedArray(A);
+    // mA = read_DelayedArray(A);
+    throw("Only numeric matrix allowd");
   } else {
     try{  
       mA = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(A);

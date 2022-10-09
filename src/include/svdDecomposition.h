@@ -1,21 +1,19 @@
 #ifndef svdDecomposition
 #define svdDecomposition
 
-  #include <RcppEigen.h>
-  #include "spectra/SymEigsSolver.h"   // To access symmetric matrix
-  #include "spectra/SymGEigsSolver.h"  // To access symmetric matrix
-  #include "tgmath.h"
-  //..// #include "parallel_CrossProd.h"
-  #include "matrix_utilities.h"
-  #include "hdf5_to_Eigen.h"
-  #include "svdutils.h"
-  #include "parallelBlockMult_hdf5.h"
-  #include "svdBlockDecomposition_hdf5.h"
-  #include "pseudoinv.h"
-  #include "ReadDelayedData.h"
-  // #include "beachmat/numeric_matrix.h" // To access numeric matrix
-  // #include "beachmat/integer_matrix.h" // To access numeric matrix
-  #include "optimizedproduct.h"
+    #include <RcppEigen.h>
+    #include "spectra/SymEigsSolver.h"   // To access symmetric matrix
+    #include "spectra/SymGEigsSolver.h"  // To access symmetric matrix
+    #include "tgmath.h"
+    #include "matrix_utilities.h"
+    #include "hdf5_to_Eigen.h"
+    #include "svdutils.h"
+    #include "parallelBlockMult_hdf5.h"
+    #include "svdBlockDecomposition_hdf5.h"
+    #include "pseudoinv.h"
+    #include "beachmat/numeric_matrix.h" // To access numeric matrix
+    #include "beachmat/integer_matrix.h" // To access numeric matrix
+    #include "optimizedproduct.h"
   
 
 

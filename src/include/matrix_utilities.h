@@ -2,7 +2,7 @@
 #define matrix_utilities
 
   #include <RcppEigen.h>
-  #include "ReadDelayedData.h"
+  // #include "ReadDelayedData.h"
   #include "rhdf5Utils.h"
   #include "hdf5_to_Eigen.h"
   #include <regex>

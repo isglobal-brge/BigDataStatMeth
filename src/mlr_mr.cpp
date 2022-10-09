@@ -149,10 +149,13 @@ Rcpp::RObject bdMLR_MR(Rcpp::RObject X, Rcpp::RObject y, int blocks, Rcpp::Nulla
     Eigen::MatrixXd eX;
     Eigen::MatrixXd eY;
     
-    // Read DelayedArray's X   
+    // Read X   
     if ( X.isS4() == true)    
     {
-      eX = read_DelayedArray(X); // Modify this function
+      // eX = read_DelayedArray(X); // Modify this function
+        // Rcpp::Rcout<<"Only numeric matrix allowd";
+        // return(wrap(-1));
+        throw("Only numeric matrix allowd");
     } else {
       try{
         eX = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
@@ -160,10 +163,11 @@ Rcpp::RObject bdMLR_MR(Rcpp::RObject X, Rcpp::RObject y, int blocks, Rcpp::Nulla
       catch(std::exception &ex) { }
     }
     
-    // Read DelayedArray's Y  
+    // Read Y  
     if ( y.isS4() == true)    
     {
-      eY = read_DelayedArray(y); // Modify this function
+      // eY = read_DelayedArray(y); // Modify this function
+        throw("Only numeric matrix allowd");
     } else {
       try{
         eY = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(y);

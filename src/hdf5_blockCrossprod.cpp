@@ -164,7 +164,7 @@ int hdf5_block_matrix_crossprod_hdf5( std::string matA, IntegerVector sizeA,
 //'   all.equal(crossprod(matA), res)
 //'   all.equal(crossprod(matA,matB), res2)
 //'   
-//'   # Close delayed.hdf5 file
+//'   # Close hdf5 data file
 //'   H5Fclose(h5fdelay)
 //'   
 //'   # Remove file (used as example)

@@ -5,11 +5,9 @@
     #include <iostream>
     #include <cstdlib>
     #include <chrono>
-    //#include <omp.h>
     #include "BigDataStatMeth.h"
     #include "pkg_omp.h"
     #include <thread>
-    #include "ReadDelayedData.h"
     #include <cmath>
     
     Eigen::MatrixXd Cholesky_decomposition_parallel( Eigen::MatrixXd& A, Rcpp::Nullable<int> threads );

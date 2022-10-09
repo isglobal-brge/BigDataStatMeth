@@ -1,5 +1,4 @@
 #include "include/svdDecomposition.h"
-#include "include/ReadDelayedData.h"
 
 // SVD decomposition 
 svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale )
@@ -621,13 +620,19 @@ Eigen::MatrixXd bdInvCholesky (const Rcpp::RObject & X )
 
 //' k first SVD components for DelayedArray 
 //' 
-//' This function gets k first components from svd decomposition of numerical or Delayed Array 
+//' This function gets k first components from svd decomposition of numerical matrix
 //' 
-//' @param X numerical or Delayed Array matrix
+//' @param X numerical matrix
 //' @param k number of eigen values , this should satisfy k = min(n, m) - 1
-//' @param nev (optional, default nev = n-1) Number of eigenvalues requested. This should satisfy 1<= nev <= n, where n is the size of matrix. 
-//' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
-//' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
+//' @param nev (optional, default nev = n-1) Number of eigenvalues requested. 
+//' This should satisfy 1<= nev <= n, where n is the size of matrix. 
+//' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering 
+//' is done by subtracting the column means (omitting NAs) of x from their 
+//' corresponding columns, and if center is FALSE, no centering is done.
+//' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is 
+//' done by dividing the (centered) columns of x by their standard deviations if 
+//' center is TRUE, and the root mean square otherwise. If scale is FALSE, no 
+//' scaling is done.
 //' @return u eigenvectors of AA^t, mxn and column orthogonal matrix
 //' @return v eigenvectors of A^tA, nxn orthogonal matrix
 //' @return d singular values, nxn diagonal matrix (non-negative real values)
@@ -686,7 +691,8 @@ Rcpp::RObject bdSVD (const Rcpp::RObject & X, Rcpp::Nullable<int> k=0, Rcpp::Nul
   
   if ( dmtype == INTSXP || dmtype==REALSXP ) {
     if ( X.isS4() == true){
-      mX = read_DelayedArray(X);
+      // mX = read_DelayedArray(X);
+      throw("Only numeric matrix allowd");
     }else {
       try{
         mX = Rcpp::as<Eigen::MatrixXd >(X);
@@ -815,9 +821,9 @@ Rcpp::RObject bdSVD_hdf5 (const Rcpp::RObject file, Rcpp::Nullable<CharacterVect
 
 /***
 
-//' Complete SVD with Lapack Functions for DelayedArray and RObjects
+//' Complete SVD with Lapack Functions for  RObjects
 //' 
-//' This function performs a complete svd decomposition of numerical matrix or Delayed Array with 
+//' This function performs a complete svd decomposition of numerical matrix
 //' 
 //' @param X numerical or Delayed Array matrix
 //' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
@@ -894,11 +900,11 @@ Rcpp::RObject bdSVD_lapack_not_optim ( Rcpp::RObject X, Rcpp::Nullable<bool> bce
 
 
 
-//' Complete SVD with Lapack Functions for DelayedArray and RObjects
+//' Complete SVD with Lapack Functions for RObjects
 //' 
-//' This function performs a complete svd decomposition of numerical matrix or Delayed Array with 
+//' This function performs a complete svd decomposition of numerical matrix
 //' 
-//' @param X numerical or Delayed Array matrix
+//' @param X numerical matrix
 //' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
 //' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
 //' @param complete (optional, defalut = FALSE) . If complete is TRUE svd function returns complete u and v
@@ -947,7 +953,8 @@ Rcpp::RObject bdSVD_lapack ( Rcpp::RObject X, Rcpp::Nullable<bool> bcenter=true,
     
     if ( dmtype == INTSXP || dmtype==REALSXP ) {
         if ( X.isS4() == true){
-            mX = read_DelayedArray(X);
+            // mX = read_DelayedArray(X);
+            throw("Only numeric matrix allowd");
         }else {
             try{
                 mX = Rcpp::as<Eigen::MatrixXd >(X);

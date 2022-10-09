@@ -2187,12 +2187,13 @@ void bdCreate_hdf5_matrix_file(std::string filename, RObject object,
 
     if ( object.isS4() == true)    
     {
-      //..// write_DelayedArray_to_hdf5(filename, strsubgroup + "/" + strdataset, mat);
-      write_DelayedArray_to_hdf5_ptr(file, strsubgroup + "/" + strdataset, object, transposed);
-      // Get attribs from DelayedArray Object
-      RObject S4content = object.slot("seed");
-      // Get dimnames attribs 
-      dimnames = S4content.attr("dimnames");
+        throw("Only numeric matrix allowd");
+      // //..// write_DelayedArray_to_hdf5(filename, strsubgroup + "/" + strdataset, mat);
+      // write_DelayedArray_to_hdf5_ptr(file, strsubgroup + "/" + strdataset, object, transposed);
+      // // Get attribs from DelayedArray Object
+      // RObject S4content = object.slot("seed");
+      // // Get dimnames attribs 
+      // dimnames = S4content.attr("dimnames");
       
     } else {
       
@@ -2347,7 +2348,8 @@ void bdAdd_hdf5_matrix(RObject object,
     //..04-07-2020..// file->close();
 
     if ( object.isS4() == true) {
-      write_DelayedArray_to_hdf5_ptr(file, group + "/" + dataset, object, transposed);
+      // write_DelayedArray_to_hdf5_ptr(file, group + "/" + dataset, object, transposed);
+      throw("Only numeric matrix allowd");
     } else {
       
       try{  

@@ -49,7 +49,6 @@ This package implements several matrix operations using `Matrix` and `DelayMatri
 The package requires other packages from `CRAN` and `Bioconductor` to be installed. 
 
 - `CRAN`: `Matrix`, `RcppEigen` and `RSpectra`.
-- `Bioconductor`: `DelayedArray` 
 
 As the package can also deal with [hdf5 files](https://www.hdfgroup.org/solutions/hdf5/) [See Vignette [BigDataStatMeth_hdf5](https://github.com/isglobal-brge/BigDataStatMeth/blob/master/vignettes/BigDataStatMeth_hdf5.html)], these other packages are required: `HDF5Array`, `rhdf5`. The user can execute this code to install the required packages:
 
@@ -86,7 +85,6 @@ First, let us start by loading the required packages to describe the main capabi
 
 ```{r, load}
 library(Matrix)
-library(DelayedArray)
 library(BigDataStatMeth)
 library(ggplot2)
 ```

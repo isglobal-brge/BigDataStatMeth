@@ -2,7 +2,6 @@
 #define svdBlockDecomposition_hdf5
 
     #include <RcppEigen.h>
-    #include "ReadDelayedData.h"
     #include "svdDecomposition.h"
     #include "svdutils.h"
     #include "rhdf5Utils.h"

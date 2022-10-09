@@ -66,7 +66,8 @@ Rcpp::RObject bdQR( const Rcpp::RObject & X, Rcpp::Nullable<bool> thin = R_NilVa
   
   if ( dmtype == INTSXP || dmtype==REALSXP ) {
     if ( X.isS4() == true){
-      A = read_DelayedArray(X);
+      // A = read_DelayedArray(X);
+      throw("Only numeric matrix allowd");
     }else {
       try{
         A = Rcpp::as<Eigen::MatrixXd >(X);

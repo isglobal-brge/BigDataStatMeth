@@ -1,6 +1,6 @@
-#' Block matrix multiplication with Delayed Array Object
+#' Block matrix multiplication 
 #' 
-#' This function performs a block matrix-matrix multiplication with numeric matrix or Delayed Arrays
+#' This function performs a block matrix-matrix multiplication with numeric matrix
 #' 
 #' @export
 #' 

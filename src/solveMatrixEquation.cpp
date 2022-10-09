@@ -50,7 +50,8 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
       
       if ( dmtypeA == INTSXP || dmtypeA==REALSXP ) {
          if ( A.isS4() == true){
-            a = read_DelayedArray(A);
+            // a = read_DelayedArray(A);
+            throw("Only numeric matrix allowd");
          }else {
             a = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(A);
          }
@@ -60,7 +61,8 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
       
       if ( dmtypeB == INTSXP || dmtypeB==REALSXP ) {
          if ( B.isS4() == true){
-            b = read_DelayedArray(B);
+            // b = read_DelayedArray(B);
+            throw("Only numeric matrix allowd");
          }else {
             b = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(B);
          }
@@ -94,7 +96,7 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
       
    } catch(std::exception &ex) {
       Rcpp::Rcout<< ex.what();
-      return wrap(-1);
+      return Rcpp::wrap(-1);
    }
     
     return(Rcpp::wrap(b));

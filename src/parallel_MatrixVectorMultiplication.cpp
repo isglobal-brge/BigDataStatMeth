@@ -1,5 +1,4 @@
 #include "include/parallel_MatrixVectorMultiplication.h"
-#include "include/ReadDelayedData.h"
 
 
 
@@ -376,283 +375,283 @@ Rcpp::NumericMatrix rcpp_xtwx(Rcpp::NumericMatrix mat, Rcpp::NumericVector w) {
 
 
 /** CRIDES R **/
-
-// [[Rcpp::export]]
-Rcpp::RObject parxwxt(Rcpp::RObject X, Rcpp::RObject W)
-{
-  auto dmtype = beachmat::find_sexp_type(X);
-  size_t ncols = 0, nrows=0;
-  Eigen::MatrixXd eX;
-  Rcpp::List ret;
-  Rcpp::NumericVector w = Rcpp::as<Rcpp::NumericVector >(W);
-  
-  if ( dmtype == INTSXP ) {
-    if ( X.isS4() == true){
-      eX = read_DelayedArray_int( X );
-    }else {
-      eX = Rcpp::as<Eigen::MatrixXd >(X);
-    }
-    
-    Rcpp::NumericMatrix XX = rcpp_xwxt( Rcpp::wrap(eX), w);
-    
-    if ( X.isS4() == true)
-    {
-
-      ncols = XX.cols();
-      nrows = XX.rows();
-      
-      //beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
-      beachmat::output_param oparam(X);
-      auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
-      
-      Rcpp::IntegerVector vint;
-      
-      for (size_t ncol=0; ncol < ncols; ++ncol) {
-        vint =  XX.column(ncol) ;
-        out_dmat -> set_col(ncol, vint.begin());
-      }
-      
-      return(out_dmat->yield());
-    }
-    else
-    {
-      return(wrap(XX));
-    }
-  }
-  else if (dmtype==REALSXP) 
-  {
-    if ( X.isS4() == true){
-      eX = read_DelayedArray_real( X );
-    }else {
-      eX = Rcpp::as<Eigen::MatrixXd >(X);
-    }
-
-    
-    Rcpp::NumericMatrix XX = rcpp_xwxt( Rcpp::wrap(eX), w);;
-    
-    
-    if ( X.isS4() == true)
-    {
-      ncols = XX.cols();
-      nrows = XX.rows();
-  
-      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
-      beachmat::output_param oparam(X);
-      auto out_dmat = beachmat::create_numeric_output(XX.rows(), XX.cols(), oparam);
-      
-      Rcpp::NumericVector vint;
-      
-      if ( XX.cols()<= XX.rows())
-      {
-        // ESCRIVIM PER COLUMNES !!!
-        for (size_t ncol=0; ncol<ncols; ++ncol) {
-          vint = XX.column(ncol);
-          out_dmat ->set_col(ncol, vint.begin());
-        }
-      }
-      else
-      {
-        // ESCRIVIM PER FILES !!!
-        for (size_t nrow=0; nrow<nrows; ++nrow) {
-          vint = XX.row(nrow);
-          out_dmat ->set_row(nrow, vint.begin());
-        }  
-      }
-      return(out_dmat->yield());
-    }
-    else
-    {
-      return(wrap(XX));
-    }
-    
-  } else {
-    throw std::runtime_error("unacceptable matrix type");
-  }
-  
-}
-
-// [[Rcpp::export]]
-Rcpp::RObject parxtwx(Rcpp::RObject X, Rcpp::RObject W)
-{
-  auto dmtype = beachmat::find_sexp_type(X);
-  size_t ncols = 0, nrows=0;
-  Eigen::MatrixXd eX;
-  Rcpp::List ret;
-  Rcpp::NumericVector w = Rcpp::as<Rcpp::NumericVector >(W);
-  
-  // Rcpp::Rcout<<"Soc una matriu, i sóc S4? "<<X.isS4()<<"\n";
-  // Rcpp::Rcout<<"Soc un vector, i sóc S4? "<<W.isS4()<<"\n";
-  
-  
-  if ( dmtype == INTSXP ) {
-    if ( X.isS4() == true){
-      eX = read_DelayedArray_int( X );
-    }else {
-      eX = Rcpp::as<Eigen::MatrixXd >(X);
-    }
-    
-    Rcpp::NumericMatrix XX = rcpp_xtwx( Rcpp::wrap(eX), w);
-    if ( X.isS4() == true)
-    {
-    
-      ncols = XX.cols();
-      nrows = XX.rows();
-      
-      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
-      beachmat::output_param oparam(X);
-      auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
-      
-      Rcpp::IntegerVector vint;
-      
-      for (size_t ncol=0; ncol < ncols; ++ncol) {
-        vint =  XX.column(ncol) ;
-        out_dmat -> set_col(ncol, vint.begin());
-      }
-      
-      return(out_dmat->yield());
-    }
-    else
-    {
-      return(wrap(XX));
-    }
-  }
-  else if (dmtype==REALSXP) 
-  {
-    
-    if ( X.isS4() == true){
-      eX = read_DelayedArray_real( X );
-    }else {
-      eX = Rcpp::as<Eigen::MatrixXd >(X);
-    }
-    
-    Rcpp::NumericMatrix XX = rcpp_xtwx( Rcpp::wrap(eX), w);;
-    
-    
-    if ( X.isS4() == true)
-    {
-      ncols = XX.cols();
-      nrows = XX.rows();
-      
-      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
-      beachmat::output_param oparam(X);
-      auto out_dmat = beachmat::create_numeric_output(XX.rows(), XX.cols(), oparam);
-      
-      Rcpp::NumericVector vint;
-      
-      if ( XX.cols()<= XX.rows())
-      {
-        // ESCRIVIM PER COLUMNES !!!
-        for (size_t ncol=0; ncol<ncols; ++ncol) {
-          vint = XX.column(ncol);
-          out_dmat ->set_col(ncol, vint.begin());
-        }
-      }
-      else
-      {
-        // ESCRIVIM PER FILES !!!
-        for (size_t nrow=0; nrow<nrows; ++nrow) {
-          vint = XX.row(nrow);
-          out_dmat ->set_row(nrow, vint.begin());
-        }  
-      }
-      return(out_dmat->yield());
-      
-    }
-    else 
-    {
-      return(wrap(XX));
-    }
-    
-    
-  } else {
-    throw std::runtime_error("unacceptable matrix type");
-  }
-  
-}
-
-
-
-// [[Rcpp::export]]
-Rcpp::RObject parXy(Rcpp::RObject X, Rcpp::RObject Y)
-{
-  auto dmtype = beachmat::find_sexp_type(X);
-  size_t ncols = 0, nrows=0;
-  Rcpp::NumericMatrix eX;
-  Rcpp::NumericVector y = Rcpp::as<Rcpp::NumericVector >(Y);
-  
-  if ( dmtype == INTSXP ) {
-    if ( X.isS4() == true){
-      eX = read_DelayedArray_int_r( X );
-    }else {
-      eX = Rcpp::as<Rcpp::NumericMatrix >(X);
-    }
-    
-    Rcpp::NumericMatrix XX = rcpp_parallel_Xy( eX, y);
-    
-    if ( X.isS4() == true)  {
-      ncols = XX.cols();
-      nrows = XX.rows();
-      
-      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
-      beachmat::output_param oparam(X);
-      auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
-      
-      Rcpp::IntegerVector vint;
-      
-      for (size_t ncol=0; ncol < ncols; ++ncol) {
-        vint =  XX.column(ncol) ;
-        out_dmat -> set_col(ncol, vint.begin());
-      }
-      
-      return(out_dmat->yield());
-    } else {
-      return(XX);
-    }
-  } else if (dmtype==REALSXP) {
-    if ( X.isS4() == true){
-      eX = read_DelayedArray_real_r( X );
-    }else {
-      eX = Rcpp::NumericMatrix(X);
-    }
-
-    Rcpp::NumericMatrix XX = rcpp_parallel_Xy( eX, y);
-
-    if ( X.isS4() == true)
-    {
-      ncols = XX.cols();
-      nrows = XX.rows();
-      
-      // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
-      beachmat::output_param oparam(X);
-      auto out_dmat = beachmat::create_numeric_output(XX.rows(), XX.cols(), oparam);
-      
-      Rcpp::NumericVector vint;
-      
-      if ( XX.cols()<= XX.rows())
-      {
-        // ESCRIVIM PER COLUMNES !!!
-        for (size_t ncol=0; ncol<ncols; ++ncol) {
-          vint = XX.column(ncol);
-          out_dmat ->set_col(ncol, vint.begin());
-        }
-      } else{
-        // ESCRIVIM PER FILES !!!
-        for (size_t nrow=0; nrow<nrows; ++nrow) {
-          vint = XX.row(nrow);
-          out_dmat ->set_row(nrow, vint.begin());
-        }  
-      }
-      return(out_dmat->yield());
-    }  else  {
-      return(XX);
-    }
-    
-  } else {
-    throw std::runtime_error("unacceptable matrix type");
-  }
-  
-}
-
+// 
+// // [[Rcpp::export]]
+// Rcpp::RObject parxwxt(Rcpp::RObject X, Rcpp::RObject W)
+// {
+//   auto dmtype = beachmat::find_sexp_type(X);
+//   size_t ncols = 0, nrows=0;
+//   Eigen::MatrixXd eX;
+//   Rcpp::List ret;
+//   Rcpp::NumericVector w = Rcpp::as<Rcpp::NumericVector >(W);
+//   
+//   if ( dmtype == INTSXP ) {
+//     if ( X.isS4() == true){
+//       eX = read_DelayedArray_int( X );
+//     }else {
+//       eX = Rcpp::as<Eigen::MatrixXd >(X);
+//     }
+//     
+//     Rcpp::NumericMatrix XX = rcpp_xwxt( Rcpp::wrap(eX), w);
+//     
+//     if ( X.isS4() == true)
+//     {
+// 
+//       ncols = XX.cols();
+//       nrows = XX.rows();
+//       
+//       //beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+//       beachmat::output_param oparam(X);
+//       auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
+//       
+//       Rcpp::IntegerVector vint;
+//       
+//       for (size_t ncol=0; ncol < ncols; ++ncol) {
+//         vint =  XX.column(ncol) ;
+//         out_dmat -> set_col(ncol, vint.begin());
+//       }
+//       
+//       return(out_dmat->yield());
+//     }
+//     else
+//     {
+//       return(wrap(XX));
+//     }
+//   }
+//   else if (dmtype==REALSXP) 
+//   {
+//     if ( X.isS4() == true){
+//       eX = read_DelayedArray_real( X );
+//     }else {
+//       eX = Rcpp::as<Eigen::MatrixXd >(X);
+//     }
+// 
+//     
+//     Rcpp::NumericMatrix XX = rcpp_xwxt( Rcpp::wrap(eX), w);;
+//     
+//     
+//     if ( X.isS4() == true)
+//     {
+//       ncols = XX.cols();
+//       nrows = XX.rows();
+//   
+//       // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
+//       beachmat::output_param oparam(X);
+//       auto out_dmat = beachmat::create_numeric_output(XX.rows(), XX.cols(), oparam);
+//       
+//       Rcpp::NumericVector vint;
+//       
+//       if ( XX.cols()<= XX.rows())
+//       {
+//         // ESCRIVIM PER COLUMNES !!!
+//         for (size_t ncol=0; ncol<ncols; ++ncol) {
+//           vint = XX.column(ncol);
+//           out_dmat ->set_col(ncol, vint.begin());
+//         }
+//       }
+//       else
+//       {
+//         // ESCRIVIM PER FILES !!!
+//         for (size_t nrow=0; nrow<nrows; ++nrow) {
+//           vint = XX.row(nrow);
+//           out_dmat ->set_row(nrow, vint.begin());
+//         }  
+//       }
+//       return(out_dmat->yield());
+//     }
+//     else
+//     {
+//       return(wrap(XX));
+//     }
+//     
+//   } else {
+//     throw std::runtime_error("unacceptable matrix type");
+//   }
+//   
+// }
+// 
+// // [[Rcpp::export]]
+// Rcpp::RObject parxtwx(Rcpp::RObject X, Rcpp::RObject W)
+// {
+//   auto dmtype = beachmat::find_sexp_type(X);
+//   size_t ncols = 0, nrows=0;
+//   Eigen::MatrixXd eX;
+//   Rcpp::List ret;
+//   Rcpp::NumericVector w = Rcpp::as<Rcpp::NumericVector >(W);
+//   
+//   // Rcpp::Rcout<<"Soc una matriu, i sóc S4? "<<X.isS4()<<"\n";
+//   // Rcpp::Rcout<<"Soc un vector, i sóc S4? "<<W.isS4()<<"\n";
+//   
+//   
+//   if ( dmtype == INTSXP ) {
+//     if ( X.isS4() == true){
+//       eX = read_DelayedArray_int( X );
+//     }else {
+//       eX = Rcpp::as<Eigen::MatrixXd >(X);
+//     }
+//     
+//     Rcpp::NumericMatrix XX = rcpp_xtwx( Rcpp::wrap(eX), w);
+//     if ( X.isS4() == true)
+//     {
+//     
+//       ncols = XX.cols();
+//       nrows = XX.rows();
+//       
+//       // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+//       beachmat::output_param oparam(X);
+//       auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
+//       
+//       Rcpp::IntegerVector vint;
+//       
+//       for (size_t ncol=0; ncol < ncols; ++ncol) {
+//         vint =  XX.column(ncol) ;
+//         out_dmat -> set_col(ncol, vint.begin());
+//       }
+//       
+//       return(out_dmat->yield());
+//     }
+//     else
+//     {
+//       return(wrap(XX));
+//     }
+//   }
+//   else if (dmtype==REALSXP) 
+//   {
+//     
+//     if ( X.isS4() == true){
+//       eX = read_DelayedArray_real( X );
+//     }else {
+//       eX = Rcpp::as<Eigen::MatrixXd >(X);
+//     }
+//     
+//     Rcpp::NumericMatrix XX = rcpp_xtwx( Rcpp::wrap(eX), w);;
+//     
+//     
+//     if ( X.isS4() == true)
+//     {
+//       ncols = XX.cols();
+//       nrows = XX.rows();
+//       
+//       // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
+//       beachmat::output_param oparam(X);
+//       auto out_dmat = beachmat::create_numeric_output(XX.rows(), XX.cols(), oparam);
+//       
+//       Rcpp::NumericVector vint;
+//       
+//       if ( XX.cols()<= XX.rows())
+//       {
+//         // ESCRIVIM PER COLUMNES !!!
+//         for (size_t ncol=0; ncol<ncols; ++ncol) {
+//           vint = XX.column(ncol);
+//           out_dmat ->set_col(ncol, vint.begin());
+//         }
+//       }
+//       else
+//       {
+//         // ESCRIVIM PER FILES !!!
+//         for (size_t nrow=0; nrow<nrows; ++nrow) {
+//           vint = XX.row(nrow);
+//           out_dmat ->set_row(nrow, vint.begin());
+//         }  
+//       }
+//       return(out_dmat->yield());
+//       
+//     }
+//     else 
+//     {
+//       return(wrap(XX));
+//     }
+//     
+//     
+//   } else {
+//     throw std::runtime_error("unacceptable matrix type");
+//   }
+//   
+// }
+// 
+// 
+// 
+// // [[Rcpp::export]]
+// Rcpp::RObject parXy(Rcpp::RObject X, Rcpp::RObject Y)
+// {
+//   auto dmtype = beachmat::find_sexp_type(X);
+//   size_t ncols = 0, nrows=0;
+//   Rcpp::NumericMatrix eX;
+//   Rcpp::NumericVector y = Rcpp::as<Rcpp::NumericVector >(Y);
+//   
+//   if ( dmtype == INTSXP ) {
+//     if ( X.isS4() == true){
+//       eX = read_DelayedArray_int_r( X );
+//     }else {
+//       eX = Rcpp::as<Rcpp::NumericMatrix >(X);
+//     }
+//     
+//     Rcpp::NumericMatrix XX = rcpp_parallel_Xy( eX, y);
+//     
+//     if ( X.isS4() == true)  {
+//       ncols = XX.cols();
+//       nrows = XX.rows();
+//       
+//       // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);
+//       beachmat::output_param oparam(X);
+//       auto out_dmat = beachmat::create_numeric_output(nrows, ncols, oparam);
+//       
+//       Rcpp::IntegerVector vint;
+//       
+//       for (size_t ncol=0; ncol < ncols; ++ncol) {
+//         vint =  XX.column(ncol) ;
+//         out_dmat -> set_col(ncol, vint.begin());
+//       }
+//       
+//       return(out_dmat->yield());
+//     } else {
+//       return(XX);
+//     }
+//   } else if (dmtype==REALSXP) {
+//     if ( X.isS4() == true){
+//       eX = read_DelayedArray_real_r( X );
+//     }else {
+//       eX = Rcpp::NumericMatrix(X);
+//     }
+// 
+//     Rcpp::NumericMatrix XX = rcpp_parallel_Xy( eX, y);
+// 
+//     if ( X.isS4() == true)
+//     {
+//       ncols = XX.cols();
+//       nrows = XX.rows();
+//       
+//       // beachmat::output_param oparam(beachmat::DELAYED, FALSE, TRUE);  
+//       beachmat::output_param oparam(X);
+//       auto out_dmat = beachmat::create_numeric_output(XX.rows(), XX.cols(), oparam);
+//       
+//       Rcpp::NumericVector vint;
+//       
+//       if ( XX.cols()<= XX.rows())
+//       {
+//         // ESCRIVIM PER COLUMNES !!!
+//         for (size_t ncol=0; ncol<ncols; ++ncol) {
+//           vint = XX.column(ncol);
+//           out_dmat ->set_col(ncol, vint.begin());
+//         }
+//       } else{
+//         // ESCRIVIM PER FILES !!!
+//         for (size_t nrow=0; nrow<nrows; ++nrow) {
+//           vint = XX.row(nrow);
+//           out_dmat ->set_row(nrow, vint.begin());
+//         }  
+//       }
+//       return(out_dmat->yield());
+//     }  else  {
+//       return(XX);
+//     }
+//     
+//   } else {
+//     throw std::runtime_error("unacceptable matrix type");
+//   }
+//   
+// }
+// 
 
 
 

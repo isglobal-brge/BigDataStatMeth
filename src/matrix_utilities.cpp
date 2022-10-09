@@ -100,11 +100,11 @@ Rcpp::NumericMatrix RcppNormalize_Data_r ( Rcpp::NumericMatrix  x )
 }
 
 
-//' Normalize Delayed Array matrix
+//' Normalize  matrix
 //' 
-//' This function performs a numerical or Delayed Array matrix normalization
+//' This function performs a numerical matrix normalization
 //' 
-//' @param X numerical or Delayed Array Matrix
+//' @param X numerical Matrix
 //' @param bcenter logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @param bscale logical (default = TRUE) if TRUE, centering is done by subtracting the column means
 //' @return numerical matrix
@@ -142,10 +142,12 @@ Rcpp::RObject bdNormalize_Data ( Rcpp::RObject & X,
   }
   
   
-  // Read DelayedArray's X and b
+  // Read X and b
   if ( X.isS4() == true)    
   {
-    mX = read_DelayedArray(X);
+    // mX = read_DelayedArray(X);
+      Rcpp::Rcout<<"Only numeric matrix allowd";
+      return(wrap(-1));
   } else {
     try{  
       if ( TYPEOF(X) == INTSXP ) {

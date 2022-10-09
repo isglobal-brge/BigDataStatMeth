@@ -1,9 +1,9 @@
 #ifndef solveMatrixEquation
 #define solveMatrixEquation
 
-   #include <RcppEigen.h>
-   #include "ReadDelayedData.h"
-
+    #include <RcppEigen.h>
+    #include "beachmat/numeric_matrix.h"  // To access numeric matrix
+    #include "beachmat/integer_matrix.h"  // To access numeric matrix
 
    // Symbols in the LAPACK library files : 
 

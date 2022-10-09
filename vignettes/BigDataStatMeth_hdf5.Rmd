@@ -71,7 +71,7 @@ install.packages("BiocManager")
 
 # Install required packages
 BiocManager::install(c("Matrix", "RcppEigen", "RSpectra",
-                       "DelayedArray", "HDF5Array", "rhdf5"))
+                       "HDF5Array", "rhdf5"))
 ```
 
 

@@ -6,14 +6,7 @@
   #include "parallelBlockMult_hdf5.h"
   
   // functions called from c++
-  // int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA, 
-  //                                        std::string matB, IntegerVector sizeB, 
-  //                                        int hdf5_block,
-  //                                        std::string filename, std::string strsubgroupIN, std::string strsubgroupOUT, 
-  //                                        int mem_block_size, bool bparal, bool browmajor, 
-  //                                        Rcpp::Nullable<int> threads);
-  // 
-  int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA, 
+  void hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA, 
                                          std::string matB, IntegerVector sizeB, 
                                          int hdf5_block,
                                          std::string filename, 

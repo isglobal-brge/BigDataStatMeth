@@ -1,6 +1,6 @@
-#' Block matrix-vector multiplication with Delayed Array Object
+#' Block matrix-vector multiplication
 #' 
-#' This function performs a block matrix-vector multiplication with R-Objects or Delayed Arrays
+#' This function performs a block matrix-vector multiplication with R-Objects
 #' 
 #' @export
 #' 

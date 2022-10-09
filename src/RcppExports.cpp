@@ -594,42 +594,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// parxwxt
-Rcpp::RObject parxwxt(Rcpp::RObject X, Rcpp::RObject W);
-RcppExport SEXP _BigDataStatMeth_parxwxt(SEXP XSEXP, SEXP WSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type W(WSEXP);
-    rcpp_result_gen = Rcpp::wrap(parxwxt(X, W));
-    return rcpp_result_gen;
-END_RCPP
-}
-// parxtwx
-Rcpp::RObject parxtwx(Rcpp::RObject X, Rcpp::RObject W);
-RcppExport SEXP _BigDataStatMeth_parxtwx(SEXP XSEXP, SEXP WSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type W(WSEXP);
-    rcpp_result_gen = Rcpp::wrap(parxtwx(X, W));
-    return rcpp_result_gen;
-END_RCPP
-}
-// parXy
-Rcpp::RObject parXy(Rcpp::RObject X, Rcpp::RObject Y);
-RcppExport SEXP _BigDataStatMeth_parXy(SEXP XSEXP, SEXP YSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(parXy(X, Y));
-    return rcpp_result_gen;
-END_RCPP
-}
 // bdpseudoinv
 Rcpp::RObject bdpseudoinv(const Rcpp::RObject& X);
 RcppExport SEXP _BigDataStatMeth_bdpseudoinv(SEXP XSEXP) {
@@ -930,9 +894,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_CholFactor", (DL_FUNC) &_BigDataStatMeth_CholFactor, 1},
     {"_BigDataStatMeth_CholSolve", (DL_FUNC) &_BigDataStatMeth_CholSolve, 2},
     {"_BigDataStatMeth_inversechol_par", (DL_FUNC) &_BigDataStatMeth_inversechol_par, 2},
-    {"_BigDataStatMeth_parxwxt", (DL_FUNC) &_BigDataStatMeth_parxwxt, 2},
-    {"_BigDataStatMeth_parxtwx", (DL_FUNC) &_BigDataStatMeth_parxtwx, 2},
-    {"_BigDataStatMeth_parXy", (DL_FUNC) &_BigDataStatMeth_parXy, 2},
     {"_BigDataStatMeth_bdpseudoinv", (DL_FUNC) &_BigDataStatMeth_bdpseudoinv, 1},
     {"_BigDataStatMeth_bdQR", (DL_FUNC) &_BigDataStatMeth_bdQR, 2},
     {"_BigDataStatMeth_bddtrsm", (DL_FUNC) &_BigDataStatMeth_bddtrsm, 3},

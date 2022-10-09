@@ -73,7 +73,8 @@ Rcpp::RObject bdpseudoinv(const Rcpp::RObject & X)
     
     if ( dmtype == INTSXP || dmtype==REALSXP ) {
       if ( X.isS4() == true){
-        A = read_DelayedArray(X);
+        // A = read_DelayedArray(X);
+          throw("Only numeric matrix allowd");
       }else {
         try{
           A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
@@ -92,7 +93,7 @@ Rcpp::RObject bdpseudoinv(const Rcpp::RObject & X)
     
   } catch(std::exception &ex) {
     Rcpp::Rcout<< ex.what();
-    return wrap(-1);
+    return Rcpp::wrap(-1);
   }
   
   

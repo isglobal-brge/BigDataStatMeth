@@ -182,9 +182,9 @@ return(C);
 
 
 
-//' Block matrix multiplication with Delayed Array Object
+//' Block matrix multiplication
 //' 
-//' This function performs a Crossproduct with weigths matrix A%*%W%*%t(A) multiplication with numeric matrix or Delayed Arrays
+//' This function performs a Crossproduct with weigths matrix A%*%W%*%t(A) multiplication with numeric matrix
 //' 
 //' @param A a double matrix.
 //' @param W a Weighted matrix
@@ -233,7 +233,8 @@ Rcpp::RObject bdtCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
     // Get matrix sizes
     if ( A.isS4() == true )    
     {
-      dsizeA = get_DelayedArray_size(A);
+      // dsizeA = get_DelayedArray_size(A);
+      throw("Only numeric matrix allowd");
     } else { 
       try{  
         if ( TYPEOF(A) == INTSXP ) {
@@ -258,7 +259,8 @@ Rcpp::RObject bdtCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
     
     if ( W.isS4() == true)    
     {
-      dsizeB = get_DelayedArray_size(W);
+      // dsizeB = get_DelayedArray_size(W);
+      throw("Only numeric matrix allowd");
     } else { 
       try{  
         if ( TYPEOF(W) == INTSXP ) {
@@ -311,10 +313,11 @@ Rcpp::RObject bdtCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
       /**** START IN-MEMORY PROCESSING **/
       /**********************************/
       
-      // Read DelayedArray's A and b
+      // Read A and b
       if ( A.isS4() == true)    
       {
-        mA = read_DelayedArray(A);
+        // mA = read_DelayedArray(A);
+        throw("Only numeric matrix allowd");
       } else {
         try{  
           if ( TYPEOF(A) == INTSXP ) {
@@ -327,7 +330,8 @@ Rcpp::RObject bdtCrossprod_Weighted(Rcpp::RObject A, Rcpp::RObject W,
       }
       
       if ( W.isS4() == true) {
-        B = read_DelayedArray(W);
+        // B = read_DelayedArray(W);
+        throw("Only numeric matrix allowd");
       }  else {
         
         if ( TYPEOF(W) == INTSXP ) {

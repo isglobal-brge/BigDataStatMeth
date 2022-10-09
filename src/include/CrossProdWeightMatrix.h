@@ -3,10 +3,8 @@
     
     #include <RcppEigen.h>
     #include "BigDataStatMeth.h"
-    //#include <omp.h>
     #include "pkg_omp.h"
     #include <thread>
-    #include "ReadDelayedData.h"
     
     // C++ functions :
     Eigen::MatrixXd Bblock_weighted_crossprod(const Eigen::MatrixXd& A, const Eigen::MatrixXd& B, int block_size);

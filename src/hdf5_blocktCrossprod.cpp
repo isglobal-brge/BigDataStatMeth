@@ -8,7 +8,7 @@
 // by applying the parallel algorithm Bblock_matrix_mul_parallel (in-memory process)
 // browmajor : if = true, indicates that R data is stored in hdf5 as row major (default in hdf5)
 //             else, indicates that R data is stored in hdf5 as column major
-int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA, 
+void hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA, 
                                        std::string matB, IntegerVector sizeB, 
                                        int hdf5_block,
                                        std::string filename, 
@@ -18,106 +18,144 @@ int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA,
                                        Rcpp::Nullable<int> threads  = R_NilValue)
 {
   
-  
-  int N = sizeA[1];
-  int K = sizeA[0];
-  
-  
-  int M = sizeB[1];
-  int L = sizeB[0];
-  
-  IntegerVector stride = {1,1};
-  IntegerVector block = {1,1};
-  
-  H5File* file = nullptr;
-  DataSet* datasetA = nullptr;
-  DataSet* datasetB = nullptr;
-  DataSet* datasetC = nullptr;
-  
-  if( K == L)
-  {
-      
-    int isize = hdf5_block + 1;
-    int ksize = hdf5_block + 1;
-    int jsize = hdf5_block + 1;
     
-    IntegerVector stride = IntegerVector::create(1, 1);
-    IntegerVector block = IntegerVector::create(1, 1); 
-
-    // Create an empty dataset for C-matrix into hdf5 file
-    //.Works OK.// create_HDF5_dataset( filename, strsubgroupOUT + "tCrossProd_" + matA + "x" + matB, N, M, "real");
-    create_HDF5_dataset( filename, strsubgroupOUT + "tCrossProd_" + matA + "x" + matB, M, N, "real");
-
-    // Open file and get dataset
-    file = new H5File( filename, H5F_ACC_RDWR );
-    
-    datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
-    datasetB = new DataSet(file->openDataSet(strsubgroupINB + matB));
-    datasetC = new DataSet(file->openDataSet(strsubgroupOUT + "tCrossProd_" + matA + "x" + matB));
+    int N = sizeA[1];
+    int K = sizeA[0];
     
     
-    for (int ii = 0; ii < N; ii += hdf5_block)
-    {
-      
-      if( ii + hdf5_block > N ) isize = N - ii;
-      for (int jj = 0; jj < M; jj += hdf5_block)
-      {
-        
-        if( jj + hdf5_block > M) jsize = M - jj;
-        for(int kk = 0; kk < K; kk += hdf5_block)
+    int M = sizeB[1];
+    int L = sizeB[0];
+    
+    IntegerVector stride = {1,1};
+    IntegerVector block = {1,1};
+    
+    H5File* file = nullptr;
+    DataSet* datasetA = nullptr;
+    DataSet* datasetB = nullptr;
+    DataSet* datasetC = nullptr;
+    try{
+        if( K == L)
         {
-          if( kk + hdf5_block > K ) ksize = K - kk;
           
-          // Get blocks from hdf5 file
-          Eigen::MatrixXd A = GetCurrentBlock_hdf5_Original( file, datasetA, kk, ii, 
-                                                    std::min(hdf5_block,ksize),std::min(hdf5_block,isize));
-          
-          Eigen::MatrixXd B = GetCurrentBlock_hdf5( file, datasetB, kk, jj, 
-                                                    std::min(hdf5_block,ksize),std::min(hdf5_block,jsize));
-
-          //.Works OK.// Eigen::MatrixXd C = GetCurrentBlock_hdf5( file, datasetC, ii, jj, 
-          //.Works OK.//                                           std::min(hdf5_block,isize),std::min(hdf5_block,jsize));
-          
-          Eigen::MatrixXd C = GetCurrentBlock_hdf5( file, datasetC, jj, ii, 
-                                                    std::min(hdf5_block,jsize),std::min(hdf5_block,isize));
-          C.transposeInPlace();
-
-          if( bparal == false)
-            C = C + A*B;
-          else
-            C = C + Bblock_matrix_mul_parallel(A, B, mem_block_size, threads);
-
-          //.Works OK.// IntegerVector count = {std::min(hdf5_block,isize), std::min(hdf5_block,jsize)};
-          //.Works OK.// IntegerVector offset = {ii,jj};
-          
-          IntegerVector count = {std::min(hdf5_block,jsize), std::min(hdf5_block,isize)};
-          IntegerVector offset = {jj,ii};
-          
-          write_HDF5_matrix_subset_v2( file, datasetC, offset, count, stride, block, Rcpp::wrap(C.transpose()));
-          
-          if( kk + hdf5_block > K ) ksize = hdf5_block + 1;
-        }
+            int isize = hdf5_block + 1;
+            int ksize = hdf5_block + 1;
+            int jsize = hdf5_block + 1;
+            
+            IntegerVector stride = IntegerVector::create(1, 1);
+            IntegerVector block = IntegerVector::create(1, 1); 
+            
+            // Create an empty dataset for C-matrix into hdf5 file
+            //.Works OK.// create_HDF5_dataset( filename, strsubgroupOUT + "tCrossProd_" + matA + "x" + matB, N, M, "real");
+            create_HDF5_dataset( filename, strsubgroupOUT + "tCrossProd_" + matA + "x" + matB, M, N, "real");
+            
+            // Open file and get dataset
+            file = new H5File( filename, H5F_ACC_RDWR );
+            
+            datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
+            datasetB = new DataSet(file->openDataSet(strsubgroupINB + matB));
+            datasetC = new DataSet(file->openDataSet(strsubgroupOUT + "tCrossProd_" + matA + "x" + matB));
+            
+            
+            for (int ii = 0; ii < N; ii += hdf5_block)
+            {
+              
+              if( ii + hdf5_block > N ) isize = N - ii;
+              for (int jj = 0; jj < M; jj += hdf5_block)
+              {
+                
+                if( jj + hdf5_block > M) jsize = M - jj;
+                for(int kk = 0; kk < K; kk += hdf5_block)
+                {
+                  if( kk + hdf5_block > K ) ksize = K - kk;
+                  
+                  // Get blocks from hdf5 file
+                  Eigen::MatrixXd A = GetCurrentBlock_hdf5_Original( file, datasetA, kk, ii, 
+                                                            std::min(hdf5_block,ksize),std::min(hdf5_block,isize));
+                  
+                  Eigen::MatrixXd B = GetCurrentBlock_hdf5( file, datasetB, kk, jj, 
+                                                            std::min(hdf5_block,ksize),std::min(hdf5_block,jsize));
+            
+                  //.Works OK.// Eigen::MatrixXd C = GetCurrentBlock_hdf5( file, datasetC, ii, jj, 
+                  //.Works OK.//                                           std::min(hdf5_block,isize),std::min(hdf5_block,jsize));
+                  
+                  Eigen::MatrixXd C = GetCurrentBlock_hdf5( file, datasetC, jj, ii, 
+                                                            std::min(hdf5_block,jsize),std::min(hdf5_block,isize));
+                  C.transposeInPlace();
+            
+                  if( bparal == false)
+                    C = C + A*B;
+                  else
+                    C = C + Bblock_matrix_mul_parallel(A, B, mem_block_size, threads);
+            
+                  //.Works OK.// IntegerVector count = {std::min(hdf5_block,isize), std::min(hdf5_block,jsize)};
+                  //.Works OK.// IntegerVector offset = {ii,jj};
+                  
+                  IntegerVector count = {std::min(hdf5_block,jsize), std::min(hdf5_block,isize)};
+                  IntegerVector offset = {jj,ii};
+                  
+                  write_HDF5_matrix_subset_v2( file, datasetC, offset, count, stride, block, Rcpp::wrap(C.transpose()));
+                  
+                  if( kk + hdf5_block > K ) ksize = hdf5_block + 1;
+                }
+                
+                if( jj + hdf5_block > M ) jsize = hdf5_block + 1;
+              }
+              
+              if( ii + hdf5_block > N ) isize = hdf5_block + 1;
+            }
         
-        if( jj + hdf5_block > M ) jsize = hdf5_block + 1;
-      }
-      
-      if( ii + hdf5_block > N ) isize = hdf5_block + 1;
+        } else {
+            throw std::range_error("non-conformable arguments");
+        }
+    
+    } catch( FileIException& error ) { // catch failure caused by the H5File operations
+        datasetA->close();
+        datasetB->close();
+        datasetC->close();
+        file->close();
+        ::Rf_error( "c++ exception bdWeightedProduct_hdf5 (File IException)" );
+        return void();
+    } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
+        datasetA->close();
+        datasetB->close();
+        datasetC->close();
+        file->close();
+        ::Rf_error( "c++ exception bdWeightedProduct_hdf5 (DataSet IException)" );
+        return void();
+    } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
+        datasetA->close();
+        datasetB->close();
+        datasetC->close();
+        file->close();
+        ::Rf_error( "c++ exception bdWeightedProduct_hdf5 (DataSpace IException)" );
+        return void();
+    } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
+        datasetA->close();
+        datasetB->close();
+        datasetC->close();
+        file->close();
+        ::Rf_error( "c++ exception bdWeightedProduct_hdf5 (DataType IException)" );
+        return void();
+    }catch(std::exception &ex) {
+        datasetA->close();
+        datasetB->close();
+        datasetC->close();
+        file->close();
+        Rcpp::Rcout<< ex.what();
+        return void();
     }
-    
-    
-  }else {
-    throw std::range_error("non-conformable arguments");
-  }
   
     datasetA->close();
     datasetB->close();
     datasetC->close();
     file->close();
     
-  delete(datasetA);
-  delete(datasetC);
-  delete(datasetB);
-  delete(file);
+    delete(datasetA);
+    delete(datasetC);
+    delete(datasetB);
+    delete(file);
+  
+    return void();
   
 }
 
@@ -167,7 +205,7 @@ int hdf5_block_matrix_tcrossprod_hdf5( std::string matA, IntegerVector sizeA,
 //' all.equal(tcrossprod(matA), res)
 //' all.equal(tcrossprod(matA, matB), res2)
 //' 
-//' # Close delayed.hdf5 file
+//' # Close.hdf5 file
 //' H5Fclose(h5fdelay)
 //' 
 //' # Remove file (used as example)

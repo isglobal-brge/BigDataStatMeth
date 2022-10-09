@@ -1,12 +1,13 @@
 #ifndef qrdecomp
 #define qrdecomp
 
-   #include <RcppEigen.h>
-   //#include <omp.h>
-   #include "pkg_omp.h"
-   #include "pseudoinv.h"
-   #include "ReadDelayedData.h"
-   #include "parallelBlockMult_hdf5.h"
+    #include <RcppEigen.h>
+    //#include <omp.h>
+    #include "pkg_omp.h"
+    #include "pseudoinv.h"
+    #include "beachmat/numeric_matrix.h"  // To access numeric matrix
+    #include "beachmat/integer_matrix.h"  // To access numeric matrix
+    #include "parallelBlockMult_hdf5.h"
   
   
    // Symbols in the LAPACK library files : 
