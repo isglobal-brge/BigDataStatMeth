@@ -1,2 +1,0 @@
-CC=/usr/local/clang8/bin/clang -fopenmp
-CFLAGS=-Wall -g -O2

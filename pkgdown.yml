@@ -1,0 +1,11 @@
+pandoc: 2.19.2
+pkgdown: 2.0.6
+pkgdown_sha: ~
+articles:
+  BigDataStatMeth_hdf5: BigDataStatMeth_hdf5.html
+  BigDataStatMeth_memory: BigDataStatMeth_memory.html
+last_built: 2022-10-25T16:44Z
+urls:
+  reference: https://dpelegri.github.io/BigDataStatMeth/reference
+  article: https://dpelegri.github.io/BigDataStatMeth/articles
+
