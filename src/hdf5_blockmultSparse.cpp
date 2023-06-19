@@ -1,4 +1,5 @@
-#include "include/hdf5_blockmultSparse.h"
+#include <BigDataStatMeth.hpp>
+#include "hdf5Algebra/multiplicationSparse.hpp"
 
 
 //' Block matrix multiplication
@@ -6,10 +7,16 @@
 //' This function performs a block matrix-matrix multiplication with numeric matrix
 //' 
 //' @param filename string file name where dataset to normalize is stored
-//' @param group string Matrix
+//' @param group string path inside hdf5 data file where matrix A is stored
 //' @param A, string with dataset name where matrix is stored
 //' @param B, string with dataset name where matrix is stored
-//' @param outgroup string with de group name under the matrix will be stored
+//' @param groupB string path inside hdf5 data file where matrix B is stored
+//' @param block_size integer, block size used to perform calculus
+//' @param mixblock_size integer
+//' @param outgroup string with the group name under the matrix will be stored
+//' @param outdataset string with the dataset name to store results
+//' @param force, boolean
+//' 
 //' @return list with filename and the group and dataset name under the results are stored
 //' @examples
 //' 
@@ -46,136 +53,109 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdblockmult_sparse_hdf5(std::string filename, const std::string group, 
-                             std::string A, std::string B,
-                             Rcpp::Nullable<std::string> outgroup = R_NilValue )
+void bdblockmult_sparse_hdf5( std::string filename, 
+                              std::string group, 
+                              std::string A, 
+                              std::string B,
+                              Rcpp::Nullable<std::string> groupB = R_NilValue, 
+                              Rcpp::Nullable<int> block_size = R_NilValue,
+                              Rcpp::Nullable<int> mixblock_size = R_NilValue,
+                              Rcpp::Nullable<bool> paral = R_NilValue,
+                              Rcpp::Nullable<int> threads = R_NilValue,
+                              Rcpp::Nullable<std::string> outgroup = R_NilValue,
+                              Rcpp::Nullable<std::string> outdataset = R_NilValue,
+                              Rcpp::Nullable<bool> force = R_NilValue )
 {
-   
-   
-   std::string strsubgroupOut, strdataset;
-   std::string spMatrix("dgCMatrix");
-   
-   bool bexistgroup;
-   bool bsparseA, bsparseB;
-   int res;
-   
-   IntegerVector dsizeA, dsizeB;
-   
-   H5File* file = nullptr;
-   DataSet* dsA = nullptr; 
-   DataSet* dsB = nullptr;
-   
-   
-   
-   try{
-      
-      H5::Exception::dontPrint();  
-      
-      if( outgroup.isNull()) {
-         strsubgroupOut = "OUTPUT";
-      } else {
-         strsubgroupOut = Rcpp::as<std::string> (outgroup);
-      }
-      
-      //..// std::string strsubgroup = "Base.matrices/";
-      std::string strsubgroupIn = group + "/";
-
-      // Open file and get dataset
-      file = new H5File( filename, H5F_ACC_RDWR );
-
-      dsA = new DataSet(file->openDataSet(strsubgroupIn + A));
-      Rcpp::IntegerVector dsizeA = get_HDF5_dataset_size(*dsA);
-
-      dsB = new DataSet(file->openDataSet(strsubgroupIn + B));
-      Rcpp::IntegerVector dsizeB = get_HDF5_dataset_size(*dsB);
-      
      
-      bexistgroup = exists_HDF5_element_ptr(file,strsubgroupOut+ "/" );
-      strdataset = strsubgroupOut+ "/" + A + "_x_" + B;
-      
-      if(bexistgroup) {
-         if(exists_HDF5_element_ptr(file, strdataset )) {
-            remove_HDF5_element_ptr(file, strdataset);
-         }
-      }
-      
-      
+    
+    std::string strdataset;
+    std::string spMatrix("dgCMatrix");
+    
+    int iblock_size;
+    bool bparal, bforce;
+    
+    std::string strsubgroupOut,
+                strdatasetOut, 
+                strsubgroupIn,
+                strsubgroupInB;
+    
+    bool bexistgroup;
+    bool bsparseA, bsparseB;
+    int res;
+
+    try
+    {
      
-
-      Eigen::MatrixXd A = GetCurrentBlock_hdf5_Original(file, dsA, 0, 0, dsizeA[0], dsizeA[1] );
-      Eigen::SparseMatrix<double> A_sp(dsizeA[0], dsizeA[1]);
-      bsparseA = is_sparse(A);
-      
-      if(bsparseA) {
-         A_sp = A.sparseView();
-         A.resize(0,0); }
-      
-      Eigen::MatrixXd B = GetCurrentBlock_hdf5_Original(file, dsB, 0, 0, dsizeB[0], dsizeB[1] );
-      Eigen::SparseMatrix<double> B_sp(dsizeB[0], dsizeB[1]);
-      
-      bsparseB = is_sparse(B);
-      
-      if(bsparseB) {
-         B_sp = B.sparseView();
-         B.resize(0,0); }
-      
-      dsA->close();
-      delete(dsA);
-      dsB->close();
-      delete(dsB);
-      
-      
-      Eigen::SparseMatrix<double> C_sp(dsizeA[0], dsizeB[1]);
-      
-      if(bsparseA || bsparseB) 
-      {
-         
-         if(!bsparseA){
-            Rcpp::Rcout<<"Matrix A isn't a sparse matrix";
-         } 
-         
-         if(!bsparseB){
-            Rcpp::Rcout<<"Matrix B isn't a sparse matrix";
+        H5::Exception::dontPrint();  
+        
+        strsubgroupIn = group;
+        
+        if( outgroup.isNull()) { strsubgroupOut = "OUTPUT";
+        } else { strsubgroupOut = Rcpp::as<std::string> (outgroup); }
+        
+        if(groupB.isNotNull()){ strsubgroupInB =  Rcpp::as<std::string> (groupB) ; } 
+        else { strsubgroupInB =  group; }
+        
+        if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
+        else { strdatasetOut =  A + "_x_" + B; }
+        
+        if (paral.isNull()) { bparal = false; } 
+        else { bparal = Rcpp::as<bool> (paral); }
+        
+        if (force.isNull()) { bforce = false; } 
+        else { bforce = Rcpp::as<bool> (force); }
+        
+        
+        BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        dsA->openDataset();
+        BigDataStatMeth::hdf5Dataset* dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        dsB->openDataset();
+        BigDataStatMeth::hdf5Dataset* dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+        
+        iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), block_size);
+     
+     
+     // if (block_size.isNotNull()) {
+     //     iblock_size = Rcpp::as<int> (block_size);
+     // } else {
+     //     iblock_size = std::min(  std::min(dsA->nrows(),dsA->ncols()),  std::min(dsB->nrows(), dsB->ncols()));
+     //     if (iblock_size>1024)
+     //         iblock_size = 1024;
+     // }
+     
+         if(bparal == true) { // parallel
+             
+             int memory_block; 
+             if(mixblock_size.isNotNull()) {
+                 memory_block = Rcpp::as<int> (mixblock_size);
+             } else {
+                 memory_block = iblock_size/2;
+             }
+             
+             dsC = BigDataStatMeth::multiplicationSparse(dsA, dsB, dsC, iblock_size, memory_block, bparal, true, threads);
+             
+         } else if (bparal == false) { // Not parallel
+             dsC = BigDataStatMeth::multiplicationSparse(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
          }
-         
-         res = create_HDF5_group_ptr(file, strsubgroupOut );
-         
-         C_sp = A_sp * B_sp;
-
-         write_HDF5_matrix_transposed_ptr(file, strdataset, wrap( Eigen::MatrixXd(C_sp)) );
-         
-      } else {
-         
-         Rf_error("No sparse matrix found");
-         file->close();
-         delete(file);
-         return(wrap(-1));
-      }
-      
-      
-      file->close();
-      delete(file);
-      return(wrap(C_sp));
-      
-   } catch( FileIException& error ) { // catch failure caused by the H5File operations
-      file->close();
-       delete(file);
-      ::Rf_error( "c++ exception bdblockmult_sparse_hdf5 (File IException)" );
-      return wrap(-1);
-   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-      file->close();
-       delete(file);
-      ::Rf_error( "c++ exception bdblockmult_sparse_hdf5 (DataSet IException)" );
-      return wrap(-1);   
-   } catch(std::exception &ex) {
-       file->close();
-       delete(file);
-      Rcpp::Rcout<< ex.what();
-      return wrap(-1);
-   }
-   
-   
+     
+         delete dsA; 
+         delete dsB; 
+         delete dsC; 
+     
+     
+    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        ::Rf_error( "c++ exception bdblockmult_sparse_hdf5 (File IException)" );
+    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        ::Rf_error( "c++ exception bdblockmult_sparse_hdf5 (DataSet IException)" );
+    } catch(std::exception &ex) {
+        Rcpp::Rcout<< ex.what();
+    }
+    
+    return void();
+     
+     
 }
+
 
 
 

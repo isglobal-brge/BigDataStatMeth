@@ -8,13 +8,15 @@ bdCrossprod_hdf5(
   filename,
   group,
   A,
-  groupB = NULL,
   B = NULL,
+  groupB = NULL,
   block_size = NULL,
+  mixblock_size = NULL,
   paral = NULL,
   threads = NULL,
-  mixblock_size = NULL,
-  outgroup = NULL
+  outgroup = NULL,
+  outdataset = NULL,
+  force = NULL
 )
 }
 \arguments{
@@ -24,26 +26,22 @@ bdCrossprod_hdf5(
 
 \item{A}{string name inside HDF5 file}
 
-\item{groupB, }{string, group name where dataset b is stored}
-
 \item{B}{string, dataset name for matrix B inside HDF5 file}
 
+\item{groupB, }{string, group name where dataset b is stored}
+
 \item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)}
+
+\item{mixblock_size}{(optional) only for debug pourpose}
 
 \item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation}
 
 \item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
 
-\item{mixblock_size}{(optional) only for debug pourpose}
-
 \item{outgroup}{(optional) group name to store results from Crossprod inside hdf5 data file}
 }
 \value{
-If all process is ok, returns a list with : 
-\itemize{
-  \item{"filename"}{ File name where results are storesd }
-  \item{"dataset"}{ route to results inside hdf5 data file }
-}
+no value
 }
 \description{
 This function performs the crossprod from a matrix inside and hdf5 data file
@@ -88,4 +86,5 @@ This function performs the crossprod from a matrix inside and hdf5 data file
     file.remove("BasicMatVect.hdf5")
   }
   
+
 }

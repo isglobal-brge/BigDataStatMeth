@@ -2,19 +2,21 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdtCrossprod_hdf5}
 \alias{bdtCrossprod_hdf5}
-\title{Transposed Crossprod with hdf5 matrix}
+\title{tCrossprod with hdf5 matrix}
 \usage{
 bdtCrossprod_hdf5(
   filename,
   group,
   A,
-  groupB = NULL,
   B = NULL,
+  groupB = NULL,
   block_size = NULL,
+  mixblock_size = NULL,
   paral = NULL,
   threads = NULL,
-  mixblock_size = NULL,
-  outgroup = NULL
+  outgroup = NULL,
+  outdataset = NULL,
+  force = NULL
 )
 }
 \arguments{
@@ -24,63 +26,65 @@ bdtCrossprod_hdf5(
 
 \item{A}{string name inside HDF5 file}
 
-\item{groupB, }{string, group name where dataset b is stored}
-
 \item{B}{string, dataset name for matrix B inside HDF5 file}
 
+\item{groupB, }{string, group name where dataset b is stored}
+
 \item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)}
+
+\item{mixblock_size}{(optional) only for debug pourpose}
 
 \item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation}
 
 \item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
 
-\item{mixblock_size}{(optional) only for debug pourpose}
-
-\item{outgroup}{(optional) group name to store results from Crossprod inside hdf5 data file}
+\item{outgroup}{(optional) group name to store results from tCrossprod inside hdf5 data file}
 }
 \value{
-If all process is ok, returns a list with : 
-\itemize{
-  \item{"filename"}{ File name where results are storesd }
-  \item{"dataset"}{ route to results inside hdf5 data file }
-}
+no value
 }
 \description{
-This function performs the transposed crossprod from a matrix inside and hdf5 data file
+This function performs the tcrossprod from a matrix inside and hdf5 data file
 }
 \examples{
-
-library(BigDataStatMeth)
-library(rhdf5)
-
-matA <- matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
-                 42, 23, 23, 423,1,2), ncol = 5, byrow = TRUE)
-
-bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-bdAdd_hdf5_matrix( matB, "BasicMatVect.hdf5", "INPUT", "matB")
-
-res <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
-                                        "matA", block_size = 2)
-res2 <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT", 
-                                        "matA", "INPUT","matB", block_size = 2)
-
-# Open file
-h5fdelay = H5Fopen("BasicMatVect.hdf5")
-
-res <- h5fdelay$OUTPUT$tCrossProd_matAxmatA
-res2 <- h5fdelay$OUTPUT$tCrossProd_matAxmatB
-
-all.equal(tcrossprod(matA), res)
-all.equal(tcrossprod(matA, matB), res2)
-
-# Close.hdf5 file
-H5Fclose(h5fdelay)
-
-# Remove file (used as example)
-if (file.exists("BasicMatVect.hdf5")) {
-  # Delete file if it exist
-  file.remove("BasicMatVect.hdf5")
-}
+  
+  library(BigDataStatMeth)
+  library(rhdf5)
+     
+  matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+  matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+                   42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
+  
+  bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+  bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+  
+  res <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
+  res2 <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
+                           "matA", "INPUT","matB", block_size = 3)
+  
+  # Examine hierarchy before open file
+  h5ls("BasicMatVect.hdf5")
+  
+  # Open file
+  h5fdelay = H5Fopen("BasicMatVect.hdf5")
+  
+  # Show hdf5 hierarchy (groups)
+  h5fdelay
+  
+  res <- h5fdelay$OUTPUT$tCrossProd_matAxmatA
+  res2 <- h5fdelay$OUTPUT$tCrossProd_matAxmatB
+  
+  all.equal(tcrossprod(matA), res)
+  all.equal(tcrossprod(matA,matB), res2)
+  
+  # Close hdf5 data file
+  H5Fclose(h5fdelay)
+  
+  # Remove file (used as example)
+  if (file.exists("BasicMatVect.hdf5")) {
+    # Delete file if it exist
+    file.remove("BasicMatVect.hdf5")
+  }
+  
 
 }

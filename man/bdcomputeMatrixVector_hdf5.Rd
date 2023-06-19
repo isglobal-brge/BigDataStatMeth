@@ -14,6 +14,8 @@ bdcomputeMatrixVector_hdf5(
   func,
   outgroup = NULL,
   byrows = NULL,
+  paral = NULL,
+  threads = NULL,
   force = FALSE
 )
 }
@@ -45,6 +47,13 @@ group as original dataset}
 
 \item{byrows}{logical (default = FALSE). By default weights are applied by 
 columns but if byrows=TRUE then weights are applied by rows}
+
+\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel 
+computation else performs seria computation}
+
+\item{threads}{(optional) only if bparal = true, number of concurrent 
+threads in parallelization if threads is null then threads =  maximum 
+number of threads available}
 
 \item{force, }{boolean if true, previous results in same location inside 
 hdf5 will be overwritten.}

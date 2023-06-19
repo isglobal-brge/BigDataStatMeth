@@ -2,22 +2,22 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdgetDiagonal_hdf5}
 \alias{bdgetDiagonal_hdf5}
-\title{Write diagonal matrix}
+\title{Get diagonal matrix}
 \usage{
 bdgetDiagonal_hdf5(filename, group, dataset)
 }
 \arguments{
 \item{filename, }{character array with the name of an existin hdf5 data file containing the dataset to be modified}
 
-\item{group, }{character array indicating the input group where the data set to be modified.}
+\item{group, }{character array indicating the input group where dataset is stored}
 
-\item{dataset, }{character array indicating the input dataset to be modified}
+\item{dataset, }{character array indicating the input dataset name}
 }
 \value{
 Numeric vector with all diagonal elements from hdf5 dataset
 }
 \description{
-Write diagonal matrix to an existing dataset inside hdf5
+Gry diagonal matrix from an existing dataset inside hdf5
 }
 \examples{
 

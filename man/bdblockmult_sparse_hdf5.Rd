@@ -4,18 +4,41 @@
 \alias{bdblockmult_sparse_hdf5}
 \title{Block matrix multiplication}
 \usage{
-bdblockmult_sparse_hdf5(filename, group, A, B, outgroup = NULL)
+bdblockmult_sparse_hdf5(
+  filename,
+  group,
+  A,
+  B,
+  groupB = NULL,
+  block_size = NULL,
+  mixblock_size = NULL,
+  paral = NULL,
+  threads = NULL,
+  outgroup = NULL,
+  outdataset = NULL,
+  force = NULL
+)
 }
 \arguments{
 \item{filename}{string file name where dataset to normalize is stored}
 
-\item{group}{string Matrix}
+\item{group}{string path inside hdf5 data file where matrix A is stored}
 
 \item{A, }{string with dataset name where matrix is stored}
 
 \item{B, }{string with dataset name where matrix is stored}
 
-\item{outgroup}{string with de group name under the matrix will be stored}
+\item{groupB}{string path inside hdf5 data file where matrix B is stored}
+
+\item{block_size}{integer, block size used to perform calculus}
+
+\item{mixblock_size}{integer}
+
+\item{outgroup}{string with the group name under the matrix will be stored}
+
+\item{outdataset}{string with the dataset name to store results}
+
+\item{force, }{boolean}
 }
 \value{
 list with filename and the group and dataset name under the results are stored

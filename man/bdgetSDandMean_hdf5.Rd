@@ -36,7 +36,10 @@ perform calculus exitexit}
 hdf5 will be overwritten.}
 }
 \value{
-hdf5 data file containing a dataset with sd, and mean
+hdf5 data file containing two new datasets, one for sd (if sd is 
+requested) and another for the mean (if mean is requested). Results are
+stored inside a folder mean_sd inside hdf5 data file with names: 
+sd.<dataset>, mean.<dataset> respectively
 }
 \description{
 This functions gets Standard Deviation (sd) or Mean by Rows or Columns and
@@ -45,7 +48,6 @@ store results in hdf5 dataset inside the file
 \examples{
 
 library(BigDataStatMeth)
-# devtools::reload(pkgload::inst("BigDataStatMeth"))
     
 # Prepare data and functions
 set.seed(123)

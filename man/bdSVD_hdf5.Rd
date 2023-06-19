@@ -13,6 +13,7 @@ bdSVD_hdf5(
   bcenter = TRUE,
   bscale = TRUE,
   rankthreshold = 0,
+  force = NULL,
   threads = NULL
 )
 }

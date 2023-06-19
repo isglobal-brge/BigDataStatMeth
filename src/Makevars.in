@@ -1,4 +1,7 @@
-PKG_CXXFLAGS = @PKG_CFLAGS@ @openmp_cflags@ @zlib_cflags@
+# Register where the header files for the package can be found
+PKG_CXXFLAGS=-I../inst/include/
+
+PKG_CXXFLAGS += @PKG_CFLAGS@ @openmp_cflags@ @zlib_cflags@
 PKG_LIBS = @PKG_LIBS@ @openmp_cflags@ @zlib_libs@
 # See WRE $1.2.1.1. But retain user supplied PKG_* too, #4664.
 # WRE states ($1.6) that += isn't portable and that we aren't allowed to use it.
