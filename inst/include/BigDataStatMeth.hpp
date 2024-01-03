@@ -1,0 +1,92 @@
+#ifndef BigDataStatMeth_BigDataStatMeth_H
+#define BigDataStatMeth_BigDataStatMeth_H
+
+// Include the Rcpp Header
+#include <RcppEigen.h>
+
+// Common headers
+#include "H5Cpp.h" //1.8.18
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+#include <fstream>
+#include <sys/stat.h>
+#include <string>
+
+// Common headers - multi-threading
+#include <thread>
+
+#include "Utilities/pkg_omp.h" // first for clang-13-omp, #5122
+#include <R.h>
+#include <Rversion.h>
+#if !defined(R_VERSION) || R_VERSION < R_Version(3, 5, 0)  // R-exts$6.14
+#  define ALTREP(x) 0     // #2866
+#  define USE_RINTERNALS  // #3301
+#  define DATAPTR_RO(x) ((const void *)DATAPTR(x))
+#endif
+#include <Rinternals.h>
+#define SEXPPTR_RO(x) ((const SEXP *)DATAPTR_RO(x))  // to avoid overhead of looped STRING_ELT and VECTOR_ELT
+#include <stdint.h>    // for uint64_t rather than unsigned long long
+#include <stdbool.h>
+#ifdef WIN32  // positional specifiers (%n$) used in translations; #4402
+#  define snprintf dt_win_snprintf  // see our snprintf.c; tried and failed to link to _sprintf_p on Windows
+#endif
+#ifdef sprintf
+#undef sprintf
+#endif
+
+// #include <signal.h> // the debugging machinery + breakpoint aidee
+// raise(SIGINT);
+#define IS_TRUE_OR_FALSE(x) (TYPEOF(x)==LGLSXP && LENGTH(x)==1 && LOGICAL(x)[0]!=NA_LOGICAL)
+
+// for use with bit64::integer64
+#define NA_INTEGER64  INT64_MIN
+#define MAX_INTEGER64 INT64_MAX
+
+// Constants
+
+#define MAX_NAME 1024
+//. ORIGINAL - CORRECTE.//#define MAXSVDBLOCK 1500
+#define MAXSVDBLOCK 10 //..NOMÉS DEBUG..//
+const int RANK1 = 1;
+const int RANK2 = 2;
+const int RANK3 = 3;
+const int DIM1 = 1;
+const int DIM2 = 2;
+const int DIM3 = 3;
+const int MAXSTRING = 20;
+const hsize_t MAXSTRBLOCK = 100000;
+const hsize_t MAXELEMSINBLOCK = 250000;
+const int maxElemBlock = 3000000;
+//.Only test.// const int maxElemBlock = 30;
+const int EXEC_OK = 0;
+const int EXEC_ERROR = 1;
+const int EXEC_WARNING = 2;
+
+// openme-utils.cpp functions
+void initDTthreads();
+int getDTthreads(const int64_t n, const bool throttle);
+static const char *mygetenv(const char *name, const char *unset);
+SEXP getDTthreads_R(SEXP verbose);
+void when_fork();
+void after_fork();
+void avoid_openmp_hang_within_fork();
+
+// Load class headers from BigDataStatMeth
+
+// Classes
+#include "hdf5Utilities/hdf5Files.hpp"
+#include "hdf5Utilities/hdf5Groups.hpp"
+#include "hdf5Utilities/hdf5Datasets.hpp"
+#include "hdf5Utilities/hdf5DatasetsInternal.hpp"
+// #include "hdf5Utilities/hdf5Utilities.hpp"
+
+// #include "Utilities/Utilities.hpp"
+// #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
+// #include "hdf5Utilities/hdf5Utilities.hpp"
+
+
+// Load function definition from BigDataStatMeth
+
+
+
+#endif

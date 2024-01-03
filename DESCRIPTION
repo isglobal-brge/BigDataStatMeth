@@ -1,0 +1,38 @@
+Package: BigDataStatMeth
+Type: Package
+Title: Statistical Methods and Algorithms for Big Data
+Version: 0.55.0
+Authors@R: 
+    c(
+        person( given = "Dolors", 
+                family = "Pelegri-Siso", 
+                email = "dolors.pelegri@isglobal.org", 
+                role=c("aut", "cre"),
+                comment = c(ORCID = "0000-0002-5993-3003")),
+        person( given = "Juan R.", 
+                family = "Gonzalez", 
+                email = "juanr.gonzalez@isglobal.org", 
+                role = c("aut"), 
+                comment = c(ORCID = "0000-0003-3267-2146"))
+        )
+Description: Basic Algebra methods using parallel 
+    algorithms to be used in big data problems such as omics data analyses. 
+    The functions will consider as input an HDF5 data file or an R object.
+License: MIT + file LICENSE
+Depends: R (>= 3.6.0)
+Imports: data.table, Rcpp (>= 1.0.6), RcppParallel (>= 5.0.2), RCurl,
+        rhdf5, utils
+LinkingTo: Rcpp, RcppEigen, RcppParallel, beachmat, Rhdf5lib, RSpectra,
+        BH
+Suggests: HDF5Array, Matrix, BiocStyle, knitr, rmarkdown,
+        ggplot2, microbenchmark
+SystemRequirements: GNU make, C++11
+Encoding: UTF-8
+VignetteBuilder: knitr
+RoxygenNote: 7.2.1
+NeedsCompilation: yes
+Packaged: 2022-02-21 18:36:52 UTC; mailos
+Author: Dolors Pelegri-Siso [aut, cre]
+    (<https://orcid.org/0000-0002-5993-3003>),
+  Juan R. Gonzalez [aut] (<https://orcid.org/0000-0003-3267-2146>)
+Maintainer: Dolors Pelegri-Siso <dolors.pelegri@isglobal.org>

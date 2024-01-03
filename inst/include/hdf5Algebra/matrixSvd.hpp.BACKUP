@@ -1,0 +1,349 @@
+#ifndef BIGDATASTATMETH_HDF5_MATRIXSVD_HPP
+#define BIGDATASTATMETH_HDF5_MATRIXSVD_HPP
+
+#include <RcppEigen.h>
+#include "H5Cpp.h"
+
+#include "hdf5Algebra/matrixNormalization.hpp"
+#include "hdf5Algebra/matrixSvdBlock.hpp"
+#include "memAlgebra/memOptimizedProducts.hpp"
+#include "memAlgebra/memMultiplication.hpp"
+
+#include "hdf5Utilities/hdf5Utilities.hpp"
+#include "hdf5Utilities/hdf5Methods.hpp"
+
+#include "Utilities/Utilities.hpp"
+
+// #include "spectra/SymEigsSolver.h"   // To access symmetric matrix
+// #include "spectra/SymGEigsSolver.h"  // To access symmetric matrix
+#include <spectra/SymEigsSolver.h>
+
+
+namespace BigDataStatMeth {
+
+
+// SVD decomposition 
+extern inline svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale )
+{
+    
+    svdeig retsvd;
+    Eigen::MatrixXd nX;
+    int nconv;
+    
+    if( k==0 )    k = (std::min(X.rows(), X.cols()))-1;
+    else if (k > (std::min(X.rows(), X.cols()))-1 ) k = (std::min(X.rows(), X.cols()))-1;
+    
+    Rcpp::Rcout<<"\nDins RcppbdSVD - 1\n";
+    
+    if(ncv == 0)  ncv = k + 1 ;
+    if(ncv<k) ncv = k + 1;
+    
+    {
+        Eigen::MatrixXd Xtcp;
+        if(bcenter ==true || bscale == true)  {
+            nX = RcppNormalize_Data(X, bcenter, bscale, false);
+            Xtcp =  bdtcrossproduct(nX);
+        } else {
+            Xtcp =  bdtcrossproduct(X);
+        }
+        Rcpp::Rcout<<"\nDins RcppbdSVD - 2\n";
+        
+        Spectra::DenseSymMatProd<double> op(Xtcp);
+        Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigs(&op, k, ncv);
+        // Spectra::SymEigsSolver< Spectra::DenseSymMatProd<double> > eigs(op, k, ncv);
+        
+        
+        // Initialize and compute
+        eigs.init();
+        nconv = eigs.compute();
+        
+        // if(eigs.info() == Spectra::CompInfo::Successful) {
+        if(eigs.info() == Spectra::SUCCESSFUL) {
+            retsvd.d = eigs.eigenvalues().cwiseSqrt();
+            retsvd.u = eigs.eigenvectors();
+            retsvd.bokuv = true;
+        } else {
+            retsvd.bokuv = false;
+        }
+        Rcpp::Rcout<<"\nDins RcppbdSVD - 3\n";
+    }
+    Rcpp::Rcout<<"\nDins RcppbdSVD - 4\n";
+    if(retsvd.bokuv == true)
+    {
+        Eigen::MatrixXd Xcp;
+        if(bcenter ==true || bscale==true ) {
+            Xcp =  bdcrossproduct(nX);  
+        } else {
+            Xcp =  bdcrossproduct(X);
+        }  
+        
+        Rcpp::Rcout<<"\nDins RcppbdSVD - 5\n";
+        Spectra::DenseSymMatProd<double> opv(Xcp);
+        Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigsv(&opv, k, ncv);
+        // Spectra::SymEigsSolver< Spectra::DenseSymMatProd<double> > eigsv(opv, k, ncv);
+        
+        Rcpp::Rcout<<"\nDins RcppbdSVD - 6\n";
+        
+        // Initialize and compute
+        eigsv.init();
+        Rcpp::Rcout<<"\nDins RcppbdSVD - 6.1\n";
+        nconv = eigsv.compute();
+        Rcpp::Rcout<<"\nDins RcppbdSVD - 6.2\n";
+        
+        // Retrieve results
+        // if(eigsv.info() == Spectra::CompInfo::Successful) {
+        if(eigsv.info() == Spectra::SUCCESSFUL) {
+            Rcpp::Rcout<<"\nDins RcppbdSVD - 6.3.1\n";
+            retsvd.v = eigsv.eigenvectors();
+            Rcpp::Rcout<<"\nDins RcppbdSVD - 6.3.2\n";
+        } else {
+            Rcpp::Rcout<<"\nDins RcppbdSVD - 6.4.1\n";
+            retsvd.bokd = false;
+        }
+        Rcpp::Rcout<<"\nDins RcppbdSVD - 7\n";
+    }
+    
+    return retsvd;
+}
+
+
+
+// ##' @param k number of local SVDs to concatenate at each level 
+// ##' @param q number of levels
+extern inline svdeig RcppbdSVD_hdf5_Block( BigDataStatMeth::hdf5Dataset* dsA, 
+                                    BigDataStatMeth::hdf5Dataset* dsu, BigDataStatMeth::hdf5Dataset* dsv, 
+                                    BigDataStatMeth::hdf5Dataset* dsd, int k, int q, int nev, bool bcenter, bool bscale, 
+                                    int irows, int icols, double dthreshold, Rcpp::Nullable<int> threads = R_NilValue )
+{
+    
+    BigDataStatMeth::hdf5Dataset* dsJoined;
+    
+    std::vector<hsize_t> stride = {1, 1},
+        block = {1, 1};
+    
+    svdeig retsvd;
+    Eigen::MatrixXd nX;
+    bool transp = false;
+    std::string strGroupName  = "tmpgroup"; // Outpu group name for temporal data
+    std::string strPrefix;
+    
+    Rcpp::CharacterVector strvmatnames = {"A","B","C","D","E","F","G","H","I","J","K",
+                                          "L","M","N","O","P","Q","R","S","T","U","V",
+                                          "W","X","Y","Z"};
+    strPrefix = strvmatnames[q-1];
+    
+    try{
+        
+        if(irows >= icols)
+            transp = true;
+        
+        First_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, q, nev, bcenter, bscale, irows, icols, dthreshold, threads);
+        
+        for(int j = 1; j < q; j++) { // For each decomposition level :
+            Next_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, j, dthreshold, threads);
+            //..// Next_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, j, bcenter, bscale, irows, icols, dthreshold, threads);
+            // Next_level_SvdBlock_decomposition_hdf5(file, strGroupName, k, j, bcenter, bscale, dthreshold, threads);
+        }
+        
+        // Get dataset names
+        Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, strPrefix);
+        
+        // 1.- Join matrix and remove parts from file
+        std::string strnewdataset = std::string((joindata[0])).substr(0,1);
+        hdf5Dataset* dsJoined = new hdf5DatasetInternal(dsA->getFileName(), strGroupName, strnewdataset, true);
+        join_datasets( dsJoined, strGroupName, joindata, false, true );
+        
+        // 2.- Get SVD from Blocks full mattrix
+        hsize_t* dims_out = dsJoined->dim();
+        
+        std::vector<double> vdreaded( dims_out[0] * dims_out[1] ); 
+        dsJoined->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, {1, 1}, {1, 1}, vdreaded.data() );
+        
+        Eigen::MatrixXd matlast;
+        matlast = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdreaded.data(), dims_out[0], dims_out[1] );
+        
+        delete dsJoined;
+        
+        //2023/10/05// if( nev < std::min( int(matlast.rows()), int(matlast.cols()) )) {
+        //2023/10/05//     Rcpp::Rcout<<"\nDebug 2.1\n";
+        //2023/10/05//     retsvd = RcppbdSVD(matlast, nev, 0, false, false);
+        //2023/10/05// } else {
+        retsvd = RcppbdSVD_lapack(matlast, false, false, false);
+        //2023/10/05// }
+        
+        // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
+        // Create structure and write d 
+        
+        dsd->createDataset( 1, retsvd.d.size(), "real");
+        dsd->writeDataset( Rcpp::wrap(retsvd.d) );
+        
+        Eigen::MatrixXd v;    
+        
+        // 3.- crossprod initial matrix and svdA$u
+        
+        {
+            Eigen::MatrixXd A;
+            
+            if( bcenter == true || bscale == true) {
+                
+                BigDataStatMeth::hdf5Dataset* normalizedData = new BigDataStatMeth::hdf5Dataset( dsA->getFileName(), strGroupName, "normalmatrix", false);
+                normalizedData->openDataset();
+                
+                dims_out = normalizedData->dim();
+                
+                A = Eigen::MatrixXd::Zero(dims_out[1], dims_out[0]);
+                normalizedData->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
+                
+                delete normalizedData ;
+            } else {
+                
+                dims_out = dsA->dim();
+                
+                A = Eigen::MatrixXd::Zero(dims_out[0], dims_out[1]);
+                dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
+                
+            }
+            
+            v = block_matrix_mul_parallel(A, retsvd.u, 1024, threads); //  PARALLEL ==> NOT PARALLEL
+        }
+        
+        // 4.- resuls / svdA$d
+        v = v.array().rowwise()/(retsvd.d).transpose().array();
+        
+        dsu->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real");
+        dsv->createDataset( retsvd.v.rows(), retsvd.v.cols(), "real");
+        
+        if (transp == true)  {
+            dsu->writeDataset(Rcpp::wrap(retsvd.u));
+            dsv->writeDataset(Rcpp::wrap(retsvd.v));
+        } else {
+            dsu->writeDataset(Rcpp::wrap(retsvd.u));
+            dsv->writeDataset(Rcpp::wrap(retsvd.v));
+        }
+        
+        // Clean data
+        remove_elements(dsA->getFileptr(), strGroupName, {});
+        
+        
+    } catch(std::exception &ex) {
+        Rcpp::Rcout<< "C++ exception RcppbdSVD_hdf5_Block : "<< ex.what();
+        return retsvd;
+    } catch (...) {
+        ::Rf_error("C++ exception RcppbdSVD_hdf5_Block (unknown reason)");
+        return retsvd;
+    }
+    
+    return retsvd;
+}
+
+
+
+
+
+
+
+
+
+
+
+// SVD decomposition with hdf5 file
+//    input data : hdf5 file (object from crossproduct matrix) datagroup = 'strsubgroupIN'
+//    output data : hdf5 file svd data in datagroup svd 
+//                        svd/d 
+//                        svd/u 
+//                        svd/v 
+//                        
+//  https://github.com/isglobal-brge/svdParallel/blob/8b072f79c4b7c44a3f1ca5bb5cba4d0fceb93d5b/R/generalBlockSVD.R
+//  @param k number of local SVDs to concatenate at each level 
+//  @param q number of levels
+//  
+// extern svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::string strdataset,  
+//                        int k, int q, int nev, bool bcenter, bool bscale, double dthreshold, 
+//                        Rcpp::Nullable<int> ithreads = R_NilValue )
+extern inline void RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::string strdataset,  
+                            int k, int q, int nev, bool bcenter, bool bscale, double dthreshold, 
+                            bool bforce, bool asRowMajor, Rcpp::Nullable<int> ithreads = R_NilValue)
+{
+    
+    try {
+        
+        svdeig retsvd;
+        Eigen::MatrixXd X;
+        hdf5Dataset* dsu;
+        hdf5Dataset* dsv;
+        hdf5Dataset* dsd;
+        
+        std::vector<hsize_t> stride = {1, 1},
+            block = {1, 1},
+            offset = {0, 0},
+            count = {0, 0};
+        
+        hdf5Dataset* dsA = new hdf5Dataset(filename, strsubgroup, strdataset, false);
+        dsA->openDataset();
+        
+        // Create results folder
+        std::string stroutgroup = "SVD/"+ strdataset;
+        
+        
+        std::vector<hsize_t> dims_out = {dsA->nrows(), dsA->ncols()};;
+        count = { dims_out[0], dims_out[1]};
+        
+        // Small matrices ==> Direct SVD (lapack)
+        if( dims_out[0] < MAXSVDBLOCK &&  dims_out[1] < MAXSVDBLOCK ) {
+            
+            std::vector<double> vdA( count[0] * count[1] ); 
+            dsA->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
+            
+            if(asRowMajor == true) {
+                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdA.data(), count[0], count[1] );    
+                retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
+            } else {
+                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> X (vdA.data(), count[1], count[0] );
+                retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
+            }
+            
+            dsu = new hdf5Dataset(filename, stroutgroup, "u", bforce);
+            dsu->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real");
+            dsu->writeDataset( Rcpp::wrap(retsvd.u) );
+            
+            dsv = new hdf5Dataset(filename, stroutgroup, "v", bforce);
+            dsv->createDataset( retsvd.v.rows(), retsvd.v.cols(), "real");
+            dsv->writeDataset( Rcpp::wrap(retsvd.v) );
+            
+            dsd = new hdf5Dataset(filename, stroutgroup, "d", bforce);
+            dsd->createDataset( retsvd.d.size(), 1, "real");
+            dsd->writeDataset( Rcpp::wrap(retsvd.d) );
+            
+        } else {
+            
+            dsu = new hdf5Dataset(filename, stroutgroup, "u", true);
+            dsv = new hdf5Dataset(filename, stroutgroup, "v", true);
+            dsd = new hdf5Dataset(filename, stroutgroup, "d", true);
+            
+            //ORIGINAL// retsvd = RcppbdSVD_hdf5_Block( file, dataset, k, q, nev, bcenter, bscale, xdim, ydim, dthreshold, wrap(ithreads));
+            retsvd = RcppbdSVD_hdf5_Block( dsA, dsu, dsv, dsd, k, q, nev, bcenter, bscale, count[1], count[0], dthreshold, ithreads );
+        }
+        
+        delete dsu;
+        delete dsv;
+        delete dsd;
+        delete dsA;
+        
+    }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        ::Rf_error( "c++ exception RcppbdSVD_hdf5 (File IException)" );
+        return void();
+    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        ::Rf_error( "c++ exception RcppbdSVD_hdf5 (DataSet IException)" );
+        return void();
+    } catch(std::exception &ex) {
+        Rcpp::Rcout<<"c++ exception RcppbdSVD_hdf5 \n"<< ex.what();
+        return void();
+    }
+    return void();
+}
+
+
+}
+
+#endif // BIGDATASTATMETH_HDF5_MATRIXSVD_HPP
+

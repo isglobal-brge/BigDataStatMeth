@@ -1,0 +1,372 @@
+#ifndef BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
+#define BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
+
+#include <RcppEigen.h>
+#include "Utilities/openme-utils.hpp"
+#include "hdf5Utilities/hdf5Utilities.hpp"
+#include "hdf5Algebra/matrixSdMean.hpp"
+#include "H5Cpp.h"
+
+namespace BigDataStatMeth {
+
+
+    // Function declaration
+    // template< typename M> extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata );
+    template< typename M> extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata );
+    template< typename M> extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs);
+    // template< typename M> extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs);
+    template< typename M> extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool bRowMajor );
+    
+    
+    
+    // Internal call - 
+    //   To be used when we have SD and Mean computed for each row/column and we 
+    //   use this data to compute normalized matrix
+    
+    //.. ORIGINAL name ..// Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata )
+    template< typename M>
+    extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata )
+    {
+        
+        static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                      "Error - type not allowed");
+        
+        Eigen::MatrixXd rX = X;
+
+        if( btransp == true)
+        {
+            rX = RcppNormalizeColwise(X, bc, bs );
+
+        } else {
+            
+            rX = RcppNormalizeColwise(X, bc, bs );
+        }
+
+        return(rX);
+    }
+    
+
+    template< typename M>
+    extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata )
+    {
+        
+        static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                      "Error - type not allowed");
+        
+        Eigen::MatrixXd rX = X;
+        
+        Eigen::RowVectorXd std = normdata.row(1);
+        Eigen::RowVectorXd mean = normdata.row(0);
+        
+        if( bc==true && bs==true )  {
+            
+            rX = (X.rowwise() - mean).array().rowwise() / std.array();
+            
+        }   else if (bc == true  && bs==false)   {
+            
+            rX = (X.rowwise() - mean);
+            
+        }  else if ( bc == false && bs == true)   {
+            
+            rX = X.array().rowwise() / std.array();
+            // Rcpp::Rcout<<"Normalització 1: \n"<< X.array().rowwise() / normdata.row(1).array();
+            // Rcpp::Rcout<<"\n RX VAL:  \n"<< rX;
+        }
+        
+        return(rX);
+    }
+    
+    
+    
+    template< typename M>
+    extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs )
+    {
+        
+        static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                      "Error - type not allowed");
+        
+        Eigen::MatrixXd rX = X;
+        
+        if( bc==true && bs==true )  {
+            
+            Eigen::RowVectorXd mean = X.colwise().mean();
+            Eigen::RowVectorXd std = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+            rX = (X.rowwise() - mean).array().rowwise() / std.array();
+            
+        }   else if (bc == true  && bs==false)   {
+            
+            Eigen::RowVectorXd mean = X.colwise().mean();
+            rX = (X.rowwise() - mean);
+            
+        }  else if ( bc == false && bs == true)   {
+            
+            Eigen::RowVectorXd mean = X.colwise().mean();
+            Eigen::RowVectorXd std = (X.array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+            rX = X.array().rowwise() / std.array();
+        }
+        
+        return(rX);
+    }
+    
+    
+    template< typename M>
+    extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs )
+    {
+        
+        static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                      "Error - type not allowed");
+        
+        Eigen::MatrixXd rX = X;
+        
+        Eigen::VectorXd mean = X.rowwise().mean();
+        if( bc==true && bs==true )  {
+
+            Eigen::VectorXd std = ((X.colwise() - mean).array().square().rowwise().sum() / (X.cols() - 1)).sqrt();
+            rX = (X.colwise() - mean).array().colwise() / std.array();
+            
+        }   else if (bc == true  && bs==false)   {
+            rX = (X.colwise() - mean);
+            
+        }  else if ( bc == false && bs == true)   {
+            
+            Eigen::VectorXd std = ((X.colwise() - mean).array().square().rowwise().sum() / (X.cols() - 1)).sqrt();
+            rX = X.array().colwise() / std.array();
+        }
+        
+        return(rX);
+    }
+    
+    
+
+    // Internal call - 
+    //   To be used when we don't have SD and Mean computed and we need
+    //   to compute this data to get normalized matrix
+    template< typename M>
+    extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool bRowMajor )
+    {
+        static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                      "Error - type not allowed");
+        
+        
+        X = RcppNormalizeColwise(X, bc, bs );
+        
+        return(X); // Return data as initial type
+    };
+
+
+    extern inline Eigen::MatrixXd RcppNormalize_Data_R_hdf5( Eigen::MatrixXd  X, bool bc, bool bs,
+                                               bool btransp, Eigen::MatrixXd normdata)
+    {
+        Eigen::MatrixXd rX;
+
+        if( btransp == true) {
+            if( bc==true && bs==true )  {
+                rX = (X.colwise() - normdata.row(0).transpose() ).array().colwise() / normdata.row(1).transpose().array();
+            }   else if (bc == true  && bs==false)   {
+                rX = (X.colwise() - normdata.row(0).transpose());
+            }  else if ( bc == false && bs == true)   {
+                rX = X.array().colwise() / normdata.row(1).transpose().array();
+            }
+        } else {
+            if( bc==true && bs==true )  {
+                rX = (X.rowwise() - normdata.row(0)).array().rowwise() / normdata.row(1).array();
+            } else if (bc == true  && bs==false) {
+                rX = (X.rowwise() - normdata.row(0));
+            }  else if ( bc == false && bs == true)   {
+                rX = X.array().rowwise() / normdata.row(1).array();
+            }
+        }
+
+        return(rX);
+    }
+    
+    
+    
+    extern inline void RcppNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
+                                          BigDataStatMeth::hdf5Dataset* dsNormal,
+                                          Eigen::MatrixXd datanormal,
+                                          Rcpp::Nullable<int> wsize, 
+                                          bool bc, bool bs, bool bbyrows, bool bcorrected)
+    {
+        
+        try{
+            
+            std::vector<hsize_t> stride = {1, 1},
+                                 block = {1, 1};
+            
+            bool bgetTransposed;
+            hsize_t nrows, ncols, nRowsCols, blocksize;
+            double correction = 1;
+            
+            blocksize = BigDataStatMeth::get_block_size(wsize, nrows, ncols);
+            
+            nrows = dsA->nrows();
+            ncols = dsA->ncols();
+            
+            if(bbyrows == false ) {
+                nRowsCols = nrows;
+                bgetTransposed = true;
+            } else {
+                nRowsCols = ncols;
+                bgetTransposed = false;
+            }
+            
+            if(bcorrected){
+                if(bbyrows == false) {
+                    correction = 1/sqrt(ncols - 1 );
+                } else {
+                    correction = 1/sqrt(nrows - 1 );
+                }    
+            }
+            
+            for(hsize_t i=0; i*blocksize <= nRowsCols ; i++)
+            {
+                std::vector<hsize_t> offset, 
+                count;
+                hsize_t sizetoread = 0;
+                
+                if( (i+1) * blocksize < nRowsCols ) {
+                    sizetoread = blocksize;
+                } else {
+                    sizetoread = nRowsCols - ( i * blocksize );
+                }
+                
+                if(bbyrows == false) {
+                    offset = { i*blocksize, 0 };
+                    count = { sizetoread, ncols };    
+                } else {
+                    offset = {  0, i*blocksize };
+                    count = { nrows, sizetoread };
+                }
+                
+                // Normalize and write data
+                std::vector<double> vdA( count[0] * count[1] ); 
+                dsA->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
+                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdA.data(), count[0], count[1] );
+                
+                if(bbyrows == false) {
+                    X = BigDataStatMeth::RcppNormalize_Data_R_hdf5(X, bc, bs, bgetTransposed, datanormal.block(0,offset[0], 2, count[0]));    
+                } else {
+                    X = BigDataStatMeth::RcppNormalize_Data_R_hdf5(X, bc, bs, bgetTransposed, datanormal.block(0,offset[1], 2, count[1]));
+                }
+                
+                if(bcorrected){
+                    X = X*correction;
+                }
+                
+                dsNormal->writeRowMajorDatasetBlock( X, offset, count, stride, block);
+                
+            }
+            
+        }catch( H5::FileIException& error ) {
+            ::Rf_error( "c++ exception RcppNormalizeHdf5 (File IException)" );
+            return void();
+        } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataSet IException)" );
+            return void();
+        } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
+            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataSpace IException)" );
+            return void();
+        } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
+            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataType IException)" );
+            return void();
+        } catch(std::exception &ex) {
+            Rcpp::Rcout<< "C++ exception RcppNormalizeHdf5 : "<< ex.what();
+        } catch (...) {
+            ::Rf_error("C++ exception RcppNormalizeHdf5 (unknown reason)");
+            return void();
+        }
+        
+        return void();
+    }
+    
+    
+    
+    
+    // extern inline void RcppTypifyNormalizeHdf5( std::string filename, std::string strgroup, std::string strdataset,
+    //                                             bool bc, bool bs, bool bbyrows)
+    extern inline void RcppTypifyNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
+                                                bool bc, bool bs, bool bbyrows)
+    {
+        
+        try{
+            
+            Rcpp::Nullable<int> wsize = R_NilValue;
+            Eigen::MatrixXd datanormal;
+            hsize_t nrows, ncols;
+            std::string strgroupout;
+            bool corrected = true;
+            
+            nrows = dsA->nrows();
+            ncols = dsA->ncols();
+            
+            strgroupout = "NORMALIZED_T/" + dsA->getGroupName();
+            std::string strgroupout_ms = strgroupout + "/mean_sd";
+            std::string strdatasetmean = "mean." + dsA->getDatasetName();
+            std::string strdatasetsd = "sd." + dsA->getDatasetName();
+            
+            // Define blocksize atending number of elements in rows and cols
+            if( bbyrows == false) {
+                datanormal = Eigen::MatrixXd::Zero(2,nrows);
+                get_HDF5_mean_sd_by_column( dsA, datanormal, wsize);
+            } else {
+                datanormal = Eigen::MatrixXd::Zero(2,ncols);
+                get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
+            }
+            
+            BigDataStatMeth::hdf5Dataset* dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout_ms, strdatasetmean, true);
+            dsmean->createDataset( datanormal.cols(), 1, "real");
+            dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
+            delete dsmean;
+            
+            BigDataStatMeth::hdf5Dataset* dssd = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout_ms, strdatasetsd, true);
+            dssd->createDataset( datanormal.cols(), 1, "real");
+            dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
+            delete dssd;
+            
+            BigDataStatMeth::hdf5Dataset* dsNormal = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout, dsA->getDatasetName(), true);
+            dsNormal->createDataset( dsA, "real");
+            
+            BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal, datanormal, wsize, bc, bs, bbyrows, corrected);
+            
+            delete dsNormal;
+            
+        }catch( H5::FileIException& error ) {
+            ::Rf_error( "c++ exception RcppNormalizeHdf5 (File IException)" );
+            return void();
+        } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataSet IException)" );
+            return void();
+        } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
+            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataSpace IException)" );
+            return void();
+        } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
+            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataType IException)" );
+            return void();
+        } catch(std::exception &ex) {
+            Rcpp::Rcout<< "C++ exception RcppNormalizeHdf5 : "<< ex.what();
+        } catch (...) {
+            ::Rf_error("C++ exception RcppNormalizeHdf5 (unknown reason)");
+            return void();
+        }
+        
+        return void();
+    }
+    
+    
+    
+
+}
+
+#endif // BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
+
