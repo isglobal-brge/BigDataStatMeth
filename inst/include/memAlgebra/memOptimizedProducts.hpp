@@ -12,8 +12,11 @@ namespace BigDataStatMeth {
 //                                                                           int block_size, Rcpp::Nullable<int> threads  = R_NilValue);
 
 
-extern inline Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& mat);
-extern inline Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& mat);
+// extern inline Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& mat);
+// extern inline Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& mat);
+template< typename T> extern inline Eigen::MatrixXd bdcrossproduct ( T X );
+template< typename T> extern inline Eigen::MatrixXd bdtcrossproduct ( T X );
+
 extern inline Eigen::MatrixXd xwxt(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
 extern inline Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
 extern inline Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorXd& w);
@@ -24,21 +27,61 @@ extern inline Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::
 
 
 // Computes CrossProduct X'X
-extern inline Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& X)
+// extern inline Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& X)
+// {
+//     size_t nc(X.cols());
+//     Eigen::MatrixXd XtX(Eigen::MatrixXd(nc, nc).setZero().selfadjointView<Eigen::Lower>().rankUpdate(X.adjoint()));
+//     return(XtX);
+// }
+
+template< typename T>
+extern inline Eigen::MatrixXd bdcrossproduct ( T X )
 {
-    size_t nc(X.cols());
-    Eigen::MatrixXd XtX(Eigen::MatrixXd(nc, nc).setZero().selfadjointView<Eigen::Lower>().rankUpdate(X.adjoint()));
+    
+    static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
+                  std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                  std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value ||
+                  std::is_same<T, Eigen::Transpose<Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> > >::value ||
+                  std::is_same<T, Eigen::Transpose<Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> > >::value,
+                  "Error - type not allowed");
+    
+    Eigen::MatrixXd Xem = X;
+    size_t nc(Xem.cols());
+    Eigen::MatrixXd XtX(Eigen::MatrixXd(nc, nc).setZero().selfadjointView<Eigen::Lower>().rankUpdate(Xem.adjoint()));
     return(XtX);
 }
 
+
+
+
 // Compute tCrossProduct XX'
-extern inline Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& X)
+// extern inline Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& X)
+// {
+//     
+//     size_t nr(X.rows());
+//     Eigen::MatrixXd XXt(Eigen::MatrixXd(nr, nr).setZero().selfadjointView<Eigen::Lower>().rankUpdate(X));
+//     return(XXt);
+// }
+
+
+template< typename T>
+extern inline Eigen::MatrixXd bdtcrossproduct ( T X )
 {
     
-    size_t nr(X.rows());
-    Eigen::MatrixXd XXt(Eigen::MatrixXd(nr, nr).setZero().selfadjointView<Eigen::Lower>().rankUpdate(X));
+    static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
+                  std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                  std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value ||
+                  std::is_same<T, Eigen::Transpose<Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> > >::value ||
+                  std::is_same<T, Eigen::Transpose<Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> > >::value,
+                  "Error - type not allowed");
+    
+    Eigen::MatrixXd Xem = X;
+    
+    size_t nr(Xem.rows());
+    Eigen::MatrixXd XXt(Eigen::MatrixXd(nr, nr).setZero().selfadjointView<Eigen::Lower>().rankUpdate(Xem));
     return(XXt);
 }
+
 
 
 // Compute weighted crossproduct XwX'
