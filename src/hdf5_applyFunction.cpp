@@ -1,6 +1,7 @@
 #include <BigDataStatMeth.hpp>
 #include "memAlgebra/memOptimizedProducts.hpp"
 #include "hdf5Algebra/matrixQR.hpp"
+#include "hdf5Algebra/matrixInvCholesky.hpp"
 
 //' Apply function to different datasets inside a group
 //'
@@ -72,16 +73,14 @@ void bdapply_Function_hdf5( std::string filename,
                             Rcpp::Nullable<int> threads = 2 )
 {
     
-    // H5File* file = nullptr;
-    // DataSet* pdataset = nullptr;
-    // DataSet* pbdataset = nullptr;
     Rcpp::StringVector str_bdatasets;
     std::string str_bgroup;
     bool btransdataA, btransdataB, bfullMatrix, bbyrows;
-    Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5, 6, 7};
+    long dElementsBlock = MAXELEMSINBLOCK; 
+    Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5, 6, 7, 8};
     oper.names() = Rcpp::CharacterVector({"QR", "CrossProd", "tCrossProd",
                "invChol", "blockmult", "CrossProd_double", "tCrossProd_double",
-               "solve", "normalize", "sdmean"});
+               "solve", "normalize", "sdmean", "descChol"});
     
     try
     {
@@ -106,28 +105,18 @@ void bdapply_Function_hdf5( std::string filename,
         if(byrows.isNull()) { bbyrows = false; } 
         else {   bbyrows = Rcpp::as<bool>(byrows); }
         
-        //..NOU DEVEL..// // Test file
-        //..NOU DEVEL..// if( ResFileExist_filestream(filename) ) {
-        //..NOU DEVEL..//     file = new H5File( filename, H5F_ACC_RDWR ); 
-        //..NOU DEVEL..// } else {
-        //..NOU DEVEL..//     Rcpp::Rcout<<"\nFile not exits, create file before apply function to datasets";
-        //..NOU DEVEL..//     return void();
-        //..NOU DEVEL..//     // return wrap(false);
-        //..NOU DEVEL..// }
-        
         
         if( b_datasets.isNotNull() &&  ( oper(oper.findName(func)) == 1 ||  
             oper(oper.findName(func)) == 2 || oper(oper.findName(func)) == 4 || 
             oper(oper.findName(func)) == 5 || oper(oper.findName(func)) == 6) ) {
             
-            str_bdatasets = as<Rcpp::StringVector>(b_datasets);
+            str_bdatasets = Rcpp::as<Rcpp::StringVector>(b_datasets);
             
             if( oper.findName( func ) == 1) {
                 func = "CrossProd_double";
             } else if( oper.findName( func ) == 2) {
                 func = "tCrossProd_double";
             }
-            
         }
         
         if( b_group.isNull()) { 
@@ -140,77 +129,11 @@ void bdapply_Function_hdf5( std::string filename,
         for( int i=0; i < datasets.size(); i++ ) 
         {
             
-            //..NOU DEVEL..//std::string strdataset = group +"/" + datasets(i);
-            
-            //..NOU DEVEL..//if( exists_HDF5_element_ptr(file, strdataset ) == 0 ) {
-            //..NOU DEVEL..//    
-            //..NOU DEVEL..//    file->close();
-            //..NOU DEVEL..//    Rcpp::Rcout<<"Group or dataset does not exists, create the input dataset before proceed";
-            //..NOU DEVEL..//    return void();
-            //..NOU DEVEL..//    // return wrap(false);
-            //..NOU DEVEL..//}
-            
-            //..NOU DEVEL..// pdataset = new DataSet(file->openDataSet(strdataset));
-            
-            // std::string strdataset = group + "/" + datasets(i);
-            
             BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, Rcpp::as<std::string>(datasets(i)), false);
             dsA->openDataset();
 
-/***            
-            dsA->openDataset();
-            
-            // Real data set dimension
-            //..NOU DEVEL..// IntegerVector dims_out = get_HDF5_dataset_size(*pdataset);
-            hsize_t* dims_out = dsA->dim();
-            
-            // Get block from complete matrix
-            //.Original.// Eigen::MatrixXd original = GetCurrentBlock_hdf5_Original( file, pdataset, 0, 0, dims_out[0], dims_out[1]);
-            
-
-            std::vector<double> vdA( dims_out[0] * dims_out[1] ); 
-            dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
-            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> original (vdA.data(), dims_out[0], dims_out[1] );
-            
-
-            delete dsA;
-***/            
-            
-            // if(i==0) {
-            //     //..NOU DEVEL..// prepare_outGroup(file, outgroup, bforce);
-            //     if(oper.findName( func ) == 0){
-            //         // BigDataStatMeth::hdf5Dataset* dsOut_Q = new BigDataStatMeth::hdf5Dataset(filename, outgroup, datasets(i) + ".Q", true);
-            //         // dsOut_Q->createDataset(); delete dsOut_Q;
-            //         // BigDataStatMeth::hdf5Dataset* dsOut_R = new BigDataStatMeth::hdf5Dataset(filename, outgroup, datasets(i) + ".R", true);
-            //         // dsOut_R->createDataset(); delete dsOut_R;
-            //         // //..NOU DEVEL..// prepare_outDataset(file, outgroup + "/" + datasets(i) + ".Q", bforce);
-            //         // //..NOU DEVEL..// prepare_outDataset(file, outgroup + "/" + datasets(i) + ".R", bforce);
-            //         
-            //     } else if (oper.findName( func ) == 5) {
-            //         //..NOU DEVEL..// std::string tmp_strdataset = str_bgroup + "/" + str_bdatasets(i);
-            //         //..NOU DEVEL..// std::string tmp_outputdataset = outgroup + "/solved_" + datasets(i) + "x_eq_" + str_bdatasets(i);
-            //         //..NOU DEVEL..// prepare_outDataset(file, tmp_outputdataset, bforce);
-            //         BigDataStatMeth::hdf5Dataset* dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, "solved_" + datasets(i) + "x_eq_" + str_bdatasets(i), true);
-            //         dsOut.createDataset(); delete dsOut;
-            //     } else if (oper.findName( func ) == 7) {
-            //         //..NOU DEVEL..// prepare_outDataset(file, outgroup + "/mean." + datasets(i), bforce);
-            //         //..NOU DEVEL..// prepare_outDataset(file, outgroup + "/sd." + datasets(i), bforce);
-            //         
-            //         BigDataStatMeth::hdf5Dataset* dsOut.mean = new BigDataStatMeth::hdf5Dataset(filename, outgroup, "mean." + datasets(i) + ".Q", true);
-            //         dsOut_mean->reateDataset(); delete dsOut_mean;
-            //         BigDataStatMeth::hdf5Dataset* dsOut_sd = new BigDataStatMeth::hdf5Dataset(filename, outgroup, "sd." + datasets(i), true);
-            //         dsOut_sd->createDataset(); delete dsOut_sd;
-            //     } else {
-            //         //..NOU DEVEL..// prepare_outDataset(file, outgroup + "/" + datasets(i), bforce);
-            //         BigDataStatMeth::hdf5Dataset* dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, datasets(i) , true);
-            //         dsOut.createDataset(); delete dsOut;
-            //     }
-            // }
-            
-            
             if( oper(oper.findName( func )) == 0)
             {
-
                 BigDataStatMeth::hdf5Dataset* dsQ = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + ".Q", bforce);
                 BigDataStatMeth::hdf5Dataset* dsR = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + ".R", bforce);
                
@@ -222,15 +145,10 @@ void bdapply_Function_hdf5( std::string filename,
                 
             } else if( oper(oper.findName( func )) == 1 || oper(oper.findName( func )) == 2) {
 
-                // 
-                // REVISAR A VEURE QUE EN FAIG DE TOT AIXÒ .... POTSER HAURIA DE FER TOTES
-                // LES FUNCIONS TAL I COM ESTÀ FETA LA DEL QR ON ES PUGUI PASSAR DIRECTAMENT ELS DS's ????
-                //
                 //
                 //  PREPARAR LA FUNCIÓ PER A QUE TREBALLI EN MEMÒRIA SI DADES PETITES
                 //  I PER BLOCKS DIRECTAMETN DES DE DE FITXER SI DADES GRANS ???!!!!
                 //  TENIR-HO EN TCOMPTE QUAN TOT OK
-                //
                 //
                 
                 hsize_t* dims_out = dsA->dim();
@@ -256,41 +174,32 @@ void bdapply_Function_hdf5( std::string filename,
                 
                 delete dsOut;
                 
-            } else if( oper(oper.findName( func )) == 3) {
+            } else if( oper(oper.findName( func )) == 3 || oper(oper.findName( func )) == 8) {
                 int ithreads;
+
+                int nrows = dsA->nrows();
+                int ncols = dsA->ncols();
                 
-                //..NOU DEVEL..// Rcpp::Nullable<long> elementsBlock = R_NilValue;
+                if(nrows == ncols) {
+                    
+                    BigDataStatMeth::hdf5DatasetInternal* dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
+                    dsOut->createDataset(nrows, ncols, "real");
+                    
+                    if(oper(oper.findName( func )) == 3 ) {
+                        BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA, dsOut, bfullMatrix, dElementsBlock, threads);    
+                    } else {
+                        int res = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
+                    }
+                    
+                    delete dsA;
+                    delete dsOut;
+                    
+                } else {
+                    delete dsA;
+                    Rcpp::Rcout<<"\n Can't get inverse matrix for "<<Rcpp::as<std::string>(datasets(i))<<" dataset using Cholesky decomposition - not an square matrix\n";
+                    return void();
+                }
                 
-                //..NOU DEVEL..// Rcpp_bdInvCholesky_hdf5(file, pdataset, 
-                //..NOU DEVEL..//                         outgroup, Rcpp::as<std::string>(datasets[i]), 
-                //..NOU DEVEL..//                         bforce, bfullMatrix, threads, elementsBlock );
-                //..NOU DEVEL..// pdataset->close();
-                
-                
-//////////////**************************************
-//////////////*
-//////////////*     ESTIC AQUÍ !!! MIRAR A VEURE QUE HE DE FER AMB LA FUNCIÓ DE CHOLESKY !!! 
-//////////////*         - IMPLEMENTO UNA FUNCIÓ COM LA QUE TENÍA ABANS??
-//////////////*         - UTILITZO LA FUNCIÓ QUE CRIDO DES DE R?? 
-//////////////*         - ??
-//////////////*
-//////////////**************************************
-                
-                
-                
-                // svdeig results = RcppCholDec(original);    
-                // if( results.v == Eigen::MatrixXd::Zero(2,2) && results.u == Eigen::MatrixXd::Zero(2,2)) {
-                //     pdataset->close();
-                //     file->close();
-                //     return void();
-                //     // return wrap(false);
-                //     
-                // } else {
-                //     write_HDF5_matrix_from_R_ptr(file, outgroup + "/" + datasets(i), Rcpp::wrap(results.v), false);
-                //     pdataset->close();
-                // }
-                
-                // bdInvCholesky_hdf5(filename, group, dataset, outgroup, "InverseA", elementsBlock = 100000),
 /***                           
             } else if( oper(oper.findName( func )) == 4 || 
                 oper(oper.findName( func )) == 11 || 

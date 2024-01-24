@@ -60,9 +60,10 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
 {
     
     long dElementsBlock;
-    std::string strOutgroup, strIndataset, 
-    strOutdataset, strOutdataset_tmp;
+    // std::string strOutgroup, strIndataset, 
+    //             strOutdataset, strOutdataset_tmp;
     
+    std::string strOutgroup, strOutdataset;
     int ithreads;
     bool bforce, bfull;
     int nrows = 0, ncols = 0;
@@ -87,9 +88,9 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
         else { dElementsBlock = Rcpp::as<long>(elementsBlock); }
         
         
-        strIndataset = group + "/" + dataset;
+        // strIndataset = group + "/" + dataset;
         strOutdataset = strOutgroup + "/" + outdataset;
-        strOutdataset_tmp = "tmp/tmp_L";
+        // strOutdataset_tmp = "tmp/tmp_L";
 
         BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsA->openDataset();
@@ -103,24 +104,27 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
             BigDataStatMeth::hdf5DatasetInternal* dstmp = new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true);
             dstmp->createDataset(nrows, ncols, "real");
             
-            int res = Cholesky_decomposition_hdf5(dsA, dstmp, nrows, ncols, dElementsBlock, threads);
-            delete dsA;
+            BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA, dstmp, bfull, dElementsBlock, threads);
             
-            if(res == 0)
-            {
-                Inverse_of_Cholesky_decomposition_hdf5( dstmp, nrows, ncols, dElementsBlock, threads);
-                Inverse_Matrix_Cholesky_parallel( dstmp, nrows, ncols, dElementsBlock, threads); 
-                
-                if( bfull==true ) {
-                    setUpperTriangularMatrix( dstmp, dElementsBlock);
-                }
-            }
-    
+            // int res = Cholesky_decomposition_hdf5(dsA, dstmp, nrows, ncols, dElementsBlock, threads);
+            // delete dsA;
+            // 
+            // if(res == 0)
+            // {
+            //     Inverse_of_Cholesky_decomposition_hdf5( dstmp, nrows, ncols, dElementsBlock, threads);
+            //     Inverse_Matrix_Cholesky_parallel( dstmp, nrows, ncols, dElementsBlock, threads); 
+            //     
+            //     if( bfull==true ) {
+            //         setUpperTriangularMatrix( dstmp, dElementsBlock);
+            //     }
+            // }
+            
+            delete dsA;
             delete dstmp;
             
         } else {
             delete dsA;
-            Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition \n";
+            Rcpp::Rcout<<"\n Can't get inverse matrix for "<< group + "/" + dataset <<" using Cholesky decomposition \n";
             return void();
         }
         

@@ -6,9 +6,55 @@
 
 #include "Utilities/openme-utils.hpp"
 #include "hdf5Algebra/matrixDiagonal.hpp"
+#include "hdf5Algebra/matrixTriangular.hpp"
 
 
 namespace BigDataStatMeth {
+
+extern inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,  BigDataStatMeth::hdf5DatasetInternal* outDataset, bool bfull, long dElementsBlock, Rcpp::Nullable<int> threads );
+extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  BigDataStatMeth::hdf5Dataset* outDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads );
+extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf5Dataset* InOutDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads);
+extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOutDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads);
+
+extern inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset, BigDataStatMeth::hdf5DatasetInternal* outDataset, bool bfull, long dElementsBlock, Rcpp::Nullable<int> threads = R_NilValue )
+{
+    
+    try{
+        
+        int nrows = inDataset->nrows();
+        int ncols = inDataset->ncols();
+        
+        int res = Cholesky_decomposition_hdf5(inDataset, outDataset, nrows, ncols, dElementsBlock, threads);
+        // delete dsA;
+        
+        if(res == 0)
+        {
+            Inverse_of_Cholesky_decomposition_hdf5( outDataset, nrows, ncols, dElementsBlock, threads);
+            Inverse_Matrix_Cholesky_parallel( outDataset, nrows, ncols, dElementsBlock, threads); 
+            
+            if( bfull==true ) {
+                setUpperTriangularMatrix( outDataset, dElementsBlock);
+            }
+        }
+        
+    }catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        Rcpp::Rcout<<"c++ exception Rcpp_InvCholesky_hdf5 (File IException)";
+        return void();
+    } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
+        Rcpp::Rcout << "c++ exception Rcpp_InvCholesky_hdf5 (Group IException)";
+        return void();
+    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        Rcpp::Rcout << "c++ exception Rcpp_InvCholesky_hdf5 (DataSet IException)";
+        return void();
+    } catch(std::exception& ex) {
+        Rcpp::Rcout << "c++ exception Rcpp_InvCholesky_hdf5" << ex.what();
+        return void();
+    }
+    
+    return void();
+    
+}
+
 
 
 //..// void Cholesky_decomposition_hdf5( H5File* file, DataSet* inDataset, DataSet* outDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads )
