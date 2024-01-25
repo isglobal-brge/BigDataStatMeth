@@ -111,8 +111,6 @@ void bdapply_Function_hdf5( std::string filename,
         if(b_group.isNull()) { str_bgroup = group; } 
         else {   str_bgroup = Rcpp::as<std::string>(b_group); }
         
-        
-        
         if( b_datasets.isNotNull() &&  ( oper(oper.findName(func)) == 1 ||  
             oper(oper.findName(func)) == 2 || oper(oper.findName(func)) == 4 || 
             oper(oper.findName(func)) == 5 || oper(oper.findName(func)) == 6) ) {
@@ -318,7 +316,6 @@ void bdapply_Function_hdf5( std::string filename,
                         " \"solve\", \"normalize\", \"sdmean\", \"descChol\" ";
                 return void();
             }
-            
         }
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
@@ -326,9 +323,7 @@ void bdapply_Function_hdf5( std::string filename,
         return void();
     }
     
-    // codi antic // file->close();
-    Rcpp::Rcout<< func <<" function has been computed in all blocks\n";  
+    // Rcpp::Rcout<< func <<" function has been computed in all blocks\n";  
     return void();
-    // return(wrap(0));
 }
 
