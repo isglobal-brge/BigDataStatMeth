@@ -67,10 +67,10 @@ void bdblockmult_hdf5(std::string filename,
                 memory_block = iblock_size/2;
             }
             
-            BigDataStatMeth::multiplication(dsA, dsB, dsC, iblock_size, memory_block, bparal, true, threads);
+            BigDataStatMeth::multiplication(dsA, dsB, dsC, iblock_size, memory_block, bparal, threads);
 
         } else if (bparal == false) { // Not parallel
-            BigDataStatMeth::multiplication(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
+            BigDataStatMeth::multiplication(dsA, dsB, dsC, iblock_size, 0, bparal, threads);
         }
         
         delete dsA;

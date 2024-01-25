@@ -1,7 +1,10 @@
 #include <BigDataStatMeth.hpp>
 #include "memAlgebra/memOptimizedProducts.hpp"
 #include "hdf5Algebra/matrixQR.hpp"
+#include "hdf5Algebra/multiplication.hpp"
 #include "hdf5Algebra/matrixInvCholesky.hpp"
+#include "hdf5Algebra/matrixEquationSolver.hpp"
+#include "hdf5Algebra/matrixSdMean.hpp"
 
 //' Apply function to different datasets inside a group
 //'
@@ -74,7 +77,7 @@ void bdapply_Function_hdf5( std::string filename,
 {
     
     Rcpp::StringVector str_bdatasets;
-    std::string str_bgroup;
+    std::string str_bgroup, outputdataset;
     bool btransdataA, btransdataB, bfullMatrix, bbyrows;
     long dElementsBlock = MAXELEMSINBLOCK; 
     Rcpp::NumericVector oper = {0, 1, 2, 3, 4, 11, 22, 5, 6, 7, 8};
@@ -105,6 +108,10 @@ void bdapply_Function_hdf5( std::string filename,
         if(byrows.isNull()) { bbyrows = false; } 
         else {   bbyrows = Rcpp::as<bool>(byrows); }
         
+        if(b_group.isNull()) { str_bgroup = group; } 
+        else {   str_bgroup = Rcpp::as<std::string>(b_group); }
+        
+        
         
         if( b_datasets.isNotNull() &&  ( oper(oper.findName(func)) == 1 ||  
             oper(oper.findName(func)) == 2 || oper(oper.findName(func)) == 4 || 
@@ -132,8 +139,9 @@ void bdapply_Function_hdf5( std::string filename,
             BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, Rcpp::as<std::string>(datasets(i)), false);
             dsA->openDataset();
 
-            if( oper(oper.findName( func )) == 0)
-            {
+            if( oper(oper.findName( func )) == 0) {
+                // ==> QR Decomposition 
+                
                 BigDataStatMeth::hdf5Dataset* dsQ = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + ".Q", bforce);
                 BigDataStatMeth::hdf5Dataset* dsR = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + ".R", bforce);
                
@@ -144,12 +152,11 @@ void bdapply_Function_hdf5( std::string filename,
                 delete dsR;
                 
             } else if( oper(oper.findName( func )) == 1 || oper(oper.findName( func )) == 2) {
-
-                //
+                // ==> CrossProd and transposed CrossProd
+                
                 //  PREPARAR LA FUNCIÓ PER A QUE TREBALLI EN MEMÒRIA SI DADES PETITES
                 //  I PER BLOCKS DIRECTAMETN DES DE DE FITXER SI DADES GRANS ???!!!!
                 //  TENIR-HO EN TCOMPTE QUAN TOT OK
-                //
                 
                 hsize_t* dims_out = dsA->dim();
                 
@@ -175,7 +182,7 @@ void bdapply_Function_hdf5( std::string filename,
                 delete dsOut;
                 
             } else if( oper(oper.findName( func )) == 3 || oper(oper.findName( func )) == 8) {
-                int ithreads;
+                // ==> Inverse Cholesky and Cholesky decomposition
 
                 int nrows = dsA->nrows();
                 int ncols = dsA->ncols();
@@ -200,152 +207,123 @@ void bdapply_Function_hdf5( std::string filename,
                     return void();
                 }
                 
-/***                           
-            } else if( oper(oper.findName( func )) == 4 || 
-                oper(oper.findName( func )) == 11 || 
-                oper(oper.findName( func )) == 22) {
+
+            } else if( oper(oper.findName( func )) == 4 ||  oper(oper.findName( func )) == 11 ||  oper(oper.findName( func )) == 22) {
+                // ==> blockmult, CrossProd Double, tCrossProd Double"
                 
-                std::string outputdataset;
-                Eigen::MatrixXd originalB;
-                
-                std::string b_strdataset = str_bgroup + "/" + str_bdatasets(i);
-                
-                if( exists_HDF5_element_ptr(file, b_strdataset ) == 0 ) {
-                    
-                    pdataset->close();
-                    file->close();
-                    Rcpp::Rcout<<"Group or dataset does not exists, create the input dataset before proceed";
-                    return void();
-                    // return wrap(false);
-                }
-                
-                pbdataset = new DataSet(file->openDataSet(b_strdataset));
+                BigDataStatMeth::hdf5Dataset* dsB = new BigDataStatMeth::hdf5Dataset(filename, str_bgroup, Rcpp::as<std::string>(str_bdatasets(i)), false);
+                dsB->openDataset();
                 
                 // Real data set dimension
-                IntegerVector dims_outB = get_HDF5_dataset_size(*pbdataset);
+                hsize_t* dims_outB = dsB->dim();
+                hsize_t* dims_out = dsA->dim();
                 
-                originalB = GetCurrentBlock_hdf5_Original( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
+                std::vector<double> vdA( dims_out[0] * dims_out[1] ); 
+                dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
+                
+                std::vector<double> vdB( dims_outB[0] * dims_outB[1] ); 
+                dsB->readDatasetBlock( {0, 0}, {dims_outB[0], dims_outB[1]}, stride, block, vdB.data() );
+                
+                Eigen::MatrixXd original;
+                Eigen::MatrixXd originalB;
                 
                 if( oper(oper.findName( func )) == 4 ) {
-                    
-                    //. Changed Criteria - names too long ---> Not portable .// 
-                    //      outputdataset = outgroup + "/" + datasets(i) + "_x_" + str_bdatasets(i);
-                    outputdataset = outgroup + "/" + datasets(i);
-                    
+                    original = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdA.data(), dims_out[1], dims_out[0] );
+                    originalB = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdB.data(), dims_outB[1], dims_outB[0] );
+                    outputdataset = Rcpp::as<std::string>(datasets(i)) + "_" + str_bdatasets(i);
                 } else if  (oper(oper.findName( func )) == 11) {
-                    outputdataset = outgroup + "/Cross_" + datasets(i) + str_bdatasets(i);
-                    original = GetCurrentBlock_hdf5( file, pdataset, 0, 0, dims_out[0], dims_out[1]);
-                    
+                    original = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdA.data(), dims_out[0], dims_out[1] );
+                    originalB = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdB.data(), dims_outB[1], dims_outB[0] );
+                    outputdataset = "Cross_" + datasets(i) + "_" + str_bdatasets(i);
                 } else if ( oper(oper.findName( func )) == 22) {
-                    outputdataset = outgroup + "/tCross_" + datasets(i) + str_bdatasets(i);
-                    originalB = GetCurrentBlock_hdf5( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
+                    original = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdA.data(), dims_out[1], dims_out[0] );
+                    originalB = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdB.data(), dims_outB[0], dims_outB[1] );
+                    outputdataset =  "tCross_" + datasets(i) + "_" + str_bdatasets(i);
                 }
-                
-                prepare_outGroup(file, outgroup, bforce);
-                prepare_outDataset(file, outputdataset, bforce);
-                
+
                 Eigen::MatrixXd results;
-                
+
                 if (btransdataA == false && btransdataB == false) {
-                    results = Bblock_matrix_mul_parallel(original, originalB, 2048, R_NilValue);
+                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original, originalB, 2048, R_NilValue);
                 } else if (btransdataA == true && btransdataB == false) {
-                    results = Bblock_matrix_mul_parallel(original.transpose(), originalB, 2048, R_NilValue);
+                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original.transpose(), originalB, 2048, R_NilValue);
                 }else if (btransdataA == false && btransdataB == true) {
-                    results = Bblock_matrix_mul_parallel(original, originalB.transpose(), 2048, R_NilValue);
+                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original, originalB.transpose(), 2048, R_NilValue);
                 } else {
-                    results = Bblock_matrix_mul_parallel(original.transpose(), originalB.transpose(), 2048, R_NilValue);
+                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original.transpose(), originalB.transpose(), 2048, R_NilValue);
                 }
                 
-                write_HDF5_matrix_from_R_ptr(file, outputdataset, Rcpp::wrap(results), false);
+                if( results != Eigen::MatrixXd::Zero(original.rows(),originalB.cols()) ) {
+                    BigDataStatMeth::hdf5Dataset* dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce);
+                    dsOut->createDataset(results.rows(), results.rows(), "real");
+                    dsOut->writeDataset(Rcpp::wrap(results));
+                    
+                    delete dsOut;    
+                    
+                } else {
+                    Rcpp::Rcout<<"Multiplication: "<< group<<"/"<< Rcpp::as<std::string>(datasets(i))<< " x "<< str_bgroup<<"/"<< Rcpp::as<std::string>(str_bdatasets(i)) <<" can not be computed \n";
+                }
                 
-                pdataset->close();
-                pbdataset->close();
+                delete dsA;
+                delete dsB;
                 
             } else if( oper(oper.findName( func )) == 5) {
+                // ==> Solve matrix equation Ax = B
+ 
+                BigDataStatMeth::hdf5Dataset* dsB = new BigDataStatMeth::hdf5Dataset(filename, str_bgroup, Rcpp::as<std::string>(str_bdatasets(i)), false);
+                dsB->openDataset();
                 
-                std::string outputdataset;
-                Eigen::MatrixXd originalB;
+                BigDataStatMeth::hdf5DatasetInternal* dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + "_eq_" + Rcpp::as<std::string>(str_bdatasets(i)) , bforce);
+                dsOut->createDataset( dsB->nrows(), dsB->ncols(), "real" );
                 
+                RcppSolveHdf5(dsA, dsB, dsOut );
                 
-                std::string b_strdataset = str_bgroup + "/" + str_bdatasets(i);
-                outputdataset = outgroup + "/solved_" + datasets(i) + "x_eq_" + str_bdatasets(i);
+                delete dsOut;
+                delete dsB;
+                delete dsA;
                 
-                pbdataset = new DataSet(file->openDataSet(b_strdataset));
-                
-                // Real data set dimension
-                IntegerVector dims_outB = get_HDF5_dataset_size(*pbdataset);
-                
-                original = GetCurrentBlock_hdf5( file, pdataset, 0, 0, dims_out[0], dims_out[1]);
-                originalB = GetCurrentBlock_hdf5( file, pbdataset, 0, 0, dims_outB[0], dims_outB[1]);
-                
-                Rcpp::NumericMatrix results = Rcpp::as<Rcpp::NumericMatrix>(bdSolve(wrap(original), wrap(originalB)));
-                
-                write_HDF5_matrix_from_R_ptr(file, outputdataset, results, false);
-                pdataset->close();
-                
+
             } else if( oper(oper.findName( func )) == 7) {
+                // ==> Compute sd and mean by rows or columns
                 
-                int blocksize;
-                
-                // std::string strgroupout = "mean_sd/" + group;
-                // prepare_outGroup(file, outgroup, bforce);
-                
-                IntegerVector dims_out = get_HDF5_dataset_size_ptr(pdataset);
-                Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2,dims_out[0]);
+                Eigen::MatrixXd datanormal;
+                hsize_t* dims_out = dsA->dim();
                 
                 if( bbyrows == false) {
-                    
-                    if(dims_out[1] > maxElemBlock){
-                        blocksize = 1;
-                    } else {
-                        int maxsize = std::max( dims_out[0], dims_out[1]);
-                        blocksize = std::ceil( maxElemBlock / maxsize); }
-                    
-                    datanormal = Eigen::MatrixXd::Zero(2,dims_out[0]);
-                    get_HDF5_mean_sd_by_column_ptr( file, pdataset, datanormal);
+                    datanormal = Eigen::MatrixXd::Zero( 2, (int)dims_out[0]);
+                    get_HDF5_mean_sd_by_column( dsA, datanormal, R_NilValue );
+
                 } else {
-                    
-                    if(dims_out[0] > maxElemBlock) {
-                        blocksize = 1;
-                    } else {
-                        int maxsize = std::max( dims_out[0], dims_out[1]);
-                        blocksize = std::ceil( maxElemBlock / maxsize); }
-                    
-                    datanormal = Eigen::MatrixXd::Zero(2,dims_out[1]);
-                    get_HDF5_mean_sd_by_row_ptr( file, pdataset, datanormal);
+                    datanormal = Eigen::MatrixXd::Zero( 2, (int)dims_out[1]);
+                    get_HDF5_mean_sd_by_row( dsA, datanormal, R_NilValue );
+
                 }
                 
-                // if(exists_HDF5_element_ptr(file, strgroupout) == 0) {
-                //     create_HDF5_groups_ptr( file, strgroupout); }
+                BigDataStatMeth::hdf5Dataset* dsmean = new BigDataStatMeth::hdf5Dataset(filename, outgroup, "mean." + datasets(i) , bforce);
+                dsmean->createDataset(1, datanormal.cols(), "real");
+                dsmean->writeDataset(Rcpp::wrap(datanormal.row(0)));
                 
-                // Store center and scale for each column
-                write_HDF5_matrix_ptr(file, outgroup + "/mean."+ datasets(i), wrap(datanormal.row(0)));
-                write_HDF5_matrix_ptr(file, outgroup + "/sd."+ datasets(i), wrap(datanormal.row(1)));
-                pdataset->close();
-***/
+                BigDataStatMeth::hdf5Dataset* dssd = new BigDataStatMeth::hdf5Dataset(filename, outgroup, "sd." + datasets(i) , bforce);
+                dssd->createDataset(1, datanormal.cols(), "real");
+                dssd->writeDataset(Rcpp::wrap(datanormal.row(1)));
+                
+                delete dssd;
+                delete dsmean;
+                delete dsA;
+            
             } else {
-/*** ENCARA PROGRAMANT .... AQUEST CODI S'HAURÀ DE DEIXAR O ES POT ELIMINAR?? '
-
-                pdataset->close();
-                file->close();
-                Rcpp::Rcout<<"Function does not exists, please use one of the following : 'QR', 'CrossProd', 'tCrossProd', 'invChol', 'blockmult' ";
+                delete dsA;
+                Rcpp::Rcout<< "Function does not exists, please use one of the following : \"QR\", \"CrossProd\","<<
+                        " \"tCrossProd\", \"invChol\", \"blockmult\", \"CrossProd_double\", \"tCrossProd_double\","<<
+                        " \"solve\", \"normalize\", \"sdmean\", \"descChol\" ";
                 return void();
-                // return wrap(false);
- ***/             
             }
             
         }
         
-    }
-    catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        /*** ENCARA PROGRAMANT .... AQUEST CODI S'HAURÀ DE DEIXAR O ES POT ELIMINAR?? '
-        pdataset->close();
-        pbdataset->close();
-        file->close();
-        ::Rf_error( "c++ exception (File IException)" );
+    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        ::Rf_error( "c++ exception bdapply_Function_hdf5 (File IException)" );
         return void();
-        // return(wrap(-1));
-***/
     }
     
     // codi antic // file->close();
@@ -354,39 +332,3 @@ void bdapply_Function_hdf5( std::string filename,
     // return(wrap(0));
 }
 
-
-
-/***R
-
-# 
-# HE DE TESTEJAR EL CODI D'APPLY PER A LES FUNCIONS 0 I 1 
-#       ==> REVISAR QUINES FUNCIONS TENEN AQUESTS CODIS PER PODER-LES TESTEJAR.
-# 
-#       ==> CREAR UN NOU FITXER PER TESTEJAR FUNCIONS - 
-
-library(BigDataStatMeth)
-# devtools::reload(pkgload::inst("BigDataStatMeth"))
-setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth/")
-
-# Prepare data and functions
-set.seed(123)
-Y <- matrix(rnorm(100), 10, 10)
-X <- matrix(rnorm(400), 20, 20)
-filename <- "test.hdf5"
-
-# Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
-bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
-
-
-data <- bdgetDatasetsList_hdf5("test.hdf5", group = "data")
-
-bdapply_Function_hdf5(filename = filename,
-                      group = "data",datasets = data,
-                      outgroup = "KXA",func = "sdmean",
-                      force = TRUE)
-
-
-
-
-*/

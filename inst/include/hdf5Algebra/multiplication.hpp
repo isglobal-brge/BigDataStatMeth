@@ -9,7 +9,7 @@ namespace BigDataStatMeth {
 
 
     extern inline void multiplication( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
-                                       int hdf5_block, int mem_block_size, bool bparal, bool browmajor, Rcpp::Nullable<int> threads);
+                                       int hdf5_block, int mem_block_size, bool bparal, Rcpp::Nullable<int> threads);
 
 
 
@@ -83,7 +83,7 @@ namespace BigDataStatMeth {
     
     
     extern inline void multiplication( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
-                                       int hdf5_block, int mem_block_size, bool bparal, bool browmajor, Rcpp::Nullable<int> threads  = R_NilValue) 
+                                       int hdf5_block, int mem_block_size, bool bparal, Rcpp::Nullable<int> threads  = R_NilValue) 
     {
         
         try {

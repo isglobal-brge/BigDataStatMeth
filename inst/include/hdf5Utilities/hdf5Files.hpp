@@ -3,6 +3,9 @@
 
 #include "BigDataStatMeth.hpp"
 #include "Utilities/Utilities.hpp"
+#include <filesystem>
+
+
 // // #include "hdf5Utilities/hdf5Utilities.hpp"
 
 namespace BigDataStatMeth {
@@ -105,16 +108,18 @@ public:
         {
             H5::Exception::dontPrint();
             
-            //..// if( ResFileExist_filestream(fullPath) ) {
-            if( ResFileExist_filestream() ) {
+            bool bFileExists = ResFileExist_filestream();
+            
+            if( bFileExists ) {
                 if(opentype == "r") {
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
                 } else {
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
                 }
             } else {
-                Rcpp::Rcout<<"\n File does not exits, please create before open it";
+                ::Rf_error("\n File does not exits, please create before open it");
                 pfile = nullptr;
+                return(pfile);
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
@@ -159,15 +164,20 @@ private:
     // Test if file exsits
     bool ResFileExist_filestream() 
     {
-        bool exists = true;
+        
+        bool exists = false;
+        
         std::fstream fileStream;
         fileStream.open(fullPath);
         
-        if (fileStream.fail()) {
+        if (fileStream.good()) {
+            exists = true;
+        } else {
             exists = false;
         }
         return(exists);
     }
+
     
     void close_file() {
         pfile->close();

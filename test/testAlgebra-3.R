@@ -89,6 +89,10 @@ all.equal( round(abs(res.u), 5)[1:nrow(res.u),1:ncol(res.u)], round(abs(resr$u),
 # Matrix - InvCholesky 
 # -----------------------------------
 
+library(BigDataStatMeth)
+library(rhdf5)
+
+# devtools::reload(pkgload::inst("BigDataStatMeth"))
 
 setwd("/Users/mailos/PhD/dummy")
 set.seed(1234)
@@ -111,7 +115,7 @@ file <- "test_temp.hdf5"
 dataset <- "/InvCholesky/invmatrix"
 res <-  h5read(file, dataset)
 resr <- solve(Ycp)
-all.equal(upper.tri(resr), upper.tri(res))
+all.equal(resr[upper.tri(resr)], res[upper.tri(res)])
 
 microbenchmark::microbenchmark( T <- solve(Ycp),
                                 res <- res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = FALSE, force = TRUE),
