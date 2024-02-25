@@ -1,5 +1,5 @@
 #include <BigDataStatMeth.hpp>
-#include "hdf5Algebra/sum.hpp"
+#include "hdf5Algebra/matrixSum.hpp"
 
 
 /**
@@ -74,8 +74,8 @@ void bdblockSum_hdf5(std::string filename,
             iblock_size = Rcpp::as<int> (block_size);
         } else {
             iblock_size = std::min(  std::min(dsA->nrows(),dsA->ncols()),  std::min(dsB->nrows(), dsB->ncols()));
-            if (iblock_size>8192)
-                iblock_size = 8192;
+            if (iblock_size>MAXBLOCKSIZE)
+                iblock_size = MAXBLOCKSIZE;
         }
 
         if( dsA->nrows() != 1 && dsA->ncols()!= 1 && dsB->nrows() != 1 && dsB->ncols()!= 1) {

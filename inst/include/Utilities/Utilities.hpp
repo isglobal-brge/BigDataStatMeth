@@ -2,6 +2,7 @@
 #define BIGDATASTATMETH_UTILITIES_HPP
 
 #include <RcppEigen.h>
+#include <BigDataStatMeth.hpp>
 
 
 namespace BigDataStatMeth {
@@ -74,7 +75,6 @@ namespace BigDataStatMeth {
             } else {
                 strtype = "unknown";
             }
-            Rcpp::Rcout<<"Tipus de dades"<<strtype<<"\n";
         } catch(std::exception& ex) {
             Rcpp::Rcout<< "c++ exception getObjecDataType: "<< ex.what() << "\n";
         }
@@ -165,6 +165,8 @@ namespace BigDataStatMeth {
     }
     
     
+    // Compute the maximum block size tacking in to accout the last column / row to
+    // avoiding single rows or columns and perform an extra step
     extern inline size_t getOptimBlockSize( size_t fullSize, size_t blockSize, size_t iDesp, size_t currentSize ) 
     {
         
@@ -179,10 +181,56 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getObjecDataType: "<<ex.what()<< " \n";
+            Rcpp::Rcout<< "c++ exception getOptimBlockSize: "<<ex.what()<< " \n";
         }
         
         return(currentSize);
+    }
+    
+    // Get the number of rows to read taking in to account the maximum elements per block
+    // util when we have rectangular matrices, especially in omics data where we have
+    // few samples and thousands of variables
+    extern inline std::vector<hsize_t> getBlockSize( int nrows, int ncols ) 
+    {
+        size_t  maxRows = nrows,
+                maxCols = ncols;
+        
+        std::vector<hsize_t> blockSize = {0, 0};
+        
+        try
+        {
+            // Calculem el mínim de files
+            if( nrows < ncols ) {
+                if( maxRows < MAXBLOCKSIZE ){
+                    maxRows = nrows;
+                } else{
+                    maxRows = MAXBLOCKSIZE;
+                }
+                
+                maxCols = std::floor( MAXELEMSINBLOCK / maxRows );
+                if( maxCols> ncols || maxCols + 1 == ncols) {
+                    maxCols = ncols;
+                }
+            } else {
+                if( maxCols < MAXBLOCKSIZE ){
+                    maxCols = ncols;
+                } else{
+                    maxCols = MAXBLOCKSIZE;
+                }
+                maxRows = std::floor( MAXELEMSINBLOCK / maxCols );
+                if( maxRows> nrows || maxRows + 1 == nrows) {
+                    maxRows = nrows;
+                }
+                
+            }    
+            blockSize[0] = maxRows;
+            blockSize[1] = maxCols;
+            
+        } catch(std::exception& ex) {
+            Rcpp::Rcout<< "c++ exception getBlockSize: "<<ex.what()<< " \n";
+        }
+        
+        return(blockSize);
     }
     
     

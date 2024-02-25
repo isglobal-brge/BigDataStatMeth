@@ -78,19 +78,19 @@ extern inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
         
         // Define blocksize atending number of elements in rows and cols
         if( bbyrows == false) {
-            if( dsA->ncols() > maxElemBlock ) {
+            if( dsA->ncols() > MAXELEMSINBLOCK ) {
                 blocksize = 1;
             } else {
                 hsize_t maxsize = std::max<hsize_t>(  dsA->nrows(),  dsA->ncols());
-                blocksize = std::ceil( maxElemBlock / maxsize);
+                blocksize = std::ceil( MAXELEMSINBLOCK / maxsize);
             }
             
         } else {
-            if( dsA->nrows() > maxElemBlock) {
+            if( dsA->nrows() > MAXELEMSINBLOCK) {
                 blocksize = 1;
             } else {
                 hsize_t maxsize = std::max<hsize_t>( dsA->nrows(), dsA->ncols());
-                blocksize = std::ceil( maxElemBlock / maxsize);
+                blocksize = std::ceil( MAXELEMSINBLOCK / maxsize);
             }
         }
         

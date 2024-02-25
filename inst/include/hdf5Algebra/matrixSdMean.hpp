@@ -16,14 +16,14 @@ extern inline hsize_t get_block_size( Rcpp::Nullable<int> wsize, hsize_t referen
     hsize_t bsize = 0;
     
     if( wsize.isNull()) {
-        if( reference_size > maxElemBlock ){
+        if( reference_size > MAXELEMSINBLOCK ){
             bsize = 1;
         } else {
             hsize_t maxsize = std::max( alternative_size, reference_size);
-            bsize = std::ceil( maxElemBlock / maxsize);
+            bsize = std::ceil( MAXELEMSINBLOCK / maxsize);
         }
     } else {
-        if(reference_size > maxElemBlock){
+        if(reference_size > MAXELEMSINBLOCK){
             bsize = 1;
         } else {
             bsize = Rcpp::as<int> (wsize);

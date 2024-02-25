@@ -55,7 +55,14 @@ const int DIM2 = 2;
 const int DIM3 = 3;
 const int MAXSTRING = 20;
 const hsize_t MAXSTRBLOCK = 100000;
-const hsize_t MAXELEMSINBLOCK = 250000;
+
+//. Modificat 2024/02/24.// const hsize_t MAXELEMSINBLOCK = 250000;
+const hsize_t MAXELEMSINBLOCK = 2.25e+08;
+//.NOMES DEBUG.// const hsize_t MAXELEMSINBLOCK = 4;
+//. Modificat 2024/02/24.// const hsize_t MAXBLOCKSIZE = 2500;
+const hsize_t MAXBLOCKSIZE = 15000;
+//.NOMES DEBUG.// const hsize_t MAXBLOCKSIZE = 2;
+
 const int maxElemBlock = 3000000;
 //.Only test.// const int maxElemBlock = 30;
 const int EXEC_OK = 0;
@@ -78,11 +85,6 @@ void avoid_openmp_hang_within_fork();
 #include "hdf5Utilities/hdf5Groups.hpp"
 #include "hdf5Utilities/hdf5Datasets.hpp"
 #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
-// #include "hdf5Utilities/hdf5Utilities.hpp"
-
-// #include "Utilities/Utilities.hpp"
-// #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
-// #include "hdf5Utilities/hdf5Utilities.hpp"
 
 
 // Load function definition from BigDataStatMeth

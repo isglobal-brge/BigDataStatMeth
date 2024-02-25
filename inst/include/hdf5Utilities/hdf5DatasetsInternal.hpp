@@ -220,7 +220,7 @@ public:
                 newdims[0] = rows;
                 newdims[1] = cols;
                 
-                hsize_t size[2];
+                // hsize_t size[2];
                 dimDataset[0] = dimDataset[0] + newdims[0];
                 dimDataset[1] = dimDataset[1] + newdims[1];
 
