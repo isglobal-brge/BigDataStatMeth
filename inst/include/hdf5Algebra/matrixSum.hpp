@@ -49,7 +49,7 @@ extern inline BigDataStatMeth::hdf5Dataset*  hdf5_block_matrix_sum_hdf5_indatase
                         isize = N - ii; }
                     
                     hsize_t sizetoRead = getOptimBlockSize( N, hdf5_block, ii, isize);
-                    Rcpp::Rcout<<"\nEstem llegint la mida de block:"<< sizetoRead<<" volta: "<<volta<<"\n";
+                    // Rcpp::Rcout<<"\nEstem llegint la mida de block:"<< sizetoRead<<" volta: "<<volta<<"\n";
                     volta = volta + 1;
                     
                     std::vector<double> vdA( K * sizetoRead ); 
@@ -60,11 +60,11 @@ extern inline BigDataStatMeth::hdf5Dataset*  hdf5_block_matrix_sum_hdf5_indatase
                     dsB->readDatasetBlock( {0, ii}, {K, sizetoRead}, stride, block, vdB.data() );
                     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), K, sizetoRead );
                     
-                    Rcpp::Rcout<<"\nMatriu A:\n"<< A<<"\n";
-                    Rcpp::Rcout<<"\nMatriu B:\n"<< B<<"\n";
+                    // Rcpp::Rcout<<"\nMatriu A:\n"<< A<<"\n";
+                    // Rcpp::Rcout<<"\nMatriu B:\n"<< B<<"\n";
                         
                     Eigen::MatrixXd C = A + B;
-                    Rcpp::Rcout<<"\nMatriu C:\n"<< C<<"\n";
+                    // Rcpp::Rcout<<"\nMatriu C:\n"<< C<<"\n";
                     
                     std::vector<hsize_t> offset = { 0, ii };
                     std::vector<hsize_t> count = { sizetoRead, K };
@@ -87,7 +87,7 @@ extern inline BigDataStatMeth::hdf5Dataset*  hdf5_block_matrix_sum_hdf5_indatase
                         isize = K - ii;
                     
                     hsize_t sizetoRead = getOptimBlockSize( K, hdf5_block, ii, isize);
-                    Rcpp::Rcout<<"\nEstem llegint la mida de block:"<< sizetoRead<<" volta: "<<volta<<"\n";
+                    // Rcpp::Rcout<<"\nEstem llegint la mida de block:"<< sizetoRead<<" volta: "<<volta<<"\n";
                     volta = volta + 1;
                     
                     std::vector<double> vdA( sizetoRead * N ); 

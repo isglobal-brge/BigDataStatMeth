@@ -777,7 +777,7 @@ public:
             if( Rf_isString(attr_data) )
             {
                 // Prepare string data
-                int strlength = as<std::string>(attr_data).size();
+                int strlength = Rcpp::as<std::string>(attr_data).size();
                 char stringdata[strlength+1];
                 
                 std::string word = Rcpp::as<std::string>(attr_data).c_str();
@@ -797,14 +797,14 @@ public:
             } 
             else if( Rf_isInteger(attr_data) ) 
             {
-                int data[] =  {as<int>(attr_data)};
+                int data[] =  {Rcpp::as<int>(attr_data)};
                 // Create group attribute and write
                 H5::Attribute attribute = pdataset->createAttribute(attrName, H5::PredType::NATIVE_INT,attr_dataspace);
                 attribute.write(H5::PredType::NATIVE_INT, data);
             }
             else if( Rf_isNumeric(attr_data) ) 
             {
-                double data[] = {as<double>(attr_data)};
+                double data[] = {Rcpp::as<double>(attr_data)};
                 // Create group attribute and write
                 H5::Attribute attribute = pdataset->createAttribute(attrName, H5::PredType::NATIVE_DOUBLE,attr_dataspace);
                 attribute.write(H5::PredType::NATIVE_DOUBLE, data);

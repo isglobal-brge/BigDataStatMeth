@@ -68,6 +68,7 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
             chunk = 1,
             rowstoRead,
             minimumBlockSize;
+        bool bcancel = false;
         // i,k;
         double sum = 0;
         unsigned int ithreads;
@@ -150,19 +151,25 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
                     }
                     
 #pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(sum) shared (A,L,j) schedule(static) if (j < readedRows - chunk)
-                    for ( int i = j + 1; i < dimensionSize - offset[0]  ; i++ )
+                    for ( int i = j + 1; i < dimensionSize - offset[0] && bcancel == false  ; i++ )
                     {
                         if( j + offset[0] > 0) {
                             sum = (L.block(i, 0, 1, j + offset[0]).array() * L.block(j, 0, 1, j + offset[0]).array()).array().sum();
                             if( sum != sum ) {
                                 Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition matrix is not positive definite\n";
-                                return(1);
+                                //..// return(1);
+                                bcancel = true;
                             }
                         } else {
                             sum = 0;
                         }
-                        L(i,j + offset[0]) =  (1/L(j,j + offset[0])*(A(i,j + offset[0]) - sum));    
+                        if(!bcancel){
+                            L(i,j + offset[0]) =  (1/L(j,j + offset[0])*(A(i,j + offset[0]) - sum));    
+                        }
                     }
+                }
+                if(bcancel == true) {
+                    return(1);
                 }
                 
                 if( offset[0] != 0) {

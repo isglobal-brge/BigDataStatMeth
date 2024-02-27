@@ -187,10 +187,12 @@ namespace BigDataStatMeth {
         return(currentSize);
     }
     
+    
+    
     // Get the number of rows to read taking in to account the maximum elements per block
     // util when we have rectangular matrices, especially in omics data where we have
     // few samples and thousands of variables
-    extern inline std::vector<hsize_t> getBlockSize( int nrows, int ncols ) 
+    extern inline std::vector<hsize_t> getMatrixBlockSize( int nrows, int ncols ) 
     {
         size_t  maxRows = nrows,
                 maxCols = ncols;
@@ -232,6 +234,32 @@ namespace BigDataStatMeth {
         
         return(blockSize);
     }
+    
+    
+    // Get the number of rows to read taking in to account the maximum elements per block
+    // util when we have rectangular matrices, especially in omics data where we have
+    // few samples and thousands of variables
+    extern inline hsize_t getVectorBlockSize( int maxSize ) 
+    {
+        // size_t  maxSize = nrows * ncols;
+        hsize_t blockSize = 0;
+        
+        try
+        {
+            if( maxSize > MAXELEMSINBLOCK) {
+                blockSize = MAXELEMSINBLOCK;
+            } else {
+                blockSize = maxSize;
+            }
+            
+        } catch(std::exception& ex) {
+            Rcpp::Rcout<< "c++ exception getVectorBlockSize: "<<ex.what()<< " \n";
+        }
+        
+        return(blockSize);
+    }
+    
+    
     
     
     // extern inline Rcpp::IntegerVector getInitialPosition(bool transp, int desp )
