@@ -301,6 +301,7 @@ extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t 
         
         Rcpp::NumericMatrix X = Rcpp::as<Rcpp::NumericMatrix>(A);
         Rcpp::NumericMatrix Y = Rcpp::as<Rcpp::NumericMatrix>(B);
+        unsigned int ithreads;
         
         hsize_t N = X.rows();
         hsize_t M = X.cols();
@@ -318,6 +319,16 @@ extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t 
                 if( N == Y.rows() && M == Y.cols())
                 {
                     hsize_t size = block_size + 1;
+                    
+                    if(threads.isNotNull()) {
+                        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+                            ithreads = Rcpp::as<int> (threads);
+                        } else {
+                            ithreads = getDTthreads(0, true);
+                        }
+                    } else {
+                        ithreads = getDTthreads(0, true);
+                    }
                     
                     #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C)
                     {

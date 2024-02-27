@@ -151,7 +151,7 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
                     }
                     
 #pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(sum) shared (A,L,j) schedule(static) if (j < readedRows - chunk)
-                    for ( int i = j + 1; i < dimensionSize - offset[0] && bcancel == false  ; i++ )
+                    for ( int i = j + 1; i < (dimensionSize - offset[0] && bcancel == false)  ; i++ )
                     {
                         if( j + offset[0] > 0) {
                             sum = (L.block(i, 0, 1, j + offset[0]).array() * L.block(j, 0, 1, j + offset[0]).array()).array().sum();
