@@ -312,7 +312,14 @@ extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t 
         
         try {
             
-            block_size = getVectorBlockSize( N*M); 
+            // block_size = getVectorBlockSize( N*M); 
+            
+            std::vector<hsize_t> blockSize = getMatrixBlockSize( N, M);
+            if(N < M) {
+                block_size = blockSize.at(0);    
+            } else {
+                block_size = blockSize.at(1);
+            }
             
             if(block_size > 0 ) {
                 

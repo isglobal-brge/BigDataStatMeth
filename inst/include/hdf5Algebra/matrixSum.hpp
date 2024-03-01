@@ -54,7 +54,7 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
                 
                 #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(dsA, dsB, dsC)
                 {
-                #pragma omp for schedule (dynamic)
+                #pragma omp for schedule (static)
                     for (hsize_t ii = 0; ii < N; ii += hdf5_block)
                     {
                         
@@ -74,8 +74,10 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
                         
                         std::vector<hsize_t> offset = { 0, ii };
                         std::vector<hsize_t> count = { K, sizetoRead };
-                        
-                        dsC->writeDatasetBlock(vdA, offset, count, stride, block, true);
+                        #pragma omp critical 
+                        {
+                            dsC->writeDatasetBlock(vdA, offset, count, stride, block, true);
+                        }
                         
                         if( ii + hdf5_block > N ) isize = hdf5_block + 1;
                         if( sizetoRead > hdf5_block ) {
@@ -85,31 +87,37 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
                 
             } else {
                 
-                for (hsize_t ii = 0; ii < K; ii += hdf5_block)
+                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(dsA, dsB, dsC)
                 {
-                    
-                    if( ii + hdf5_block > K ) 
-                        isize = K - ii;
-                    
-                    hsize_t sizetoRead = getOptimBlockSize( K, hdf5_block, ii, isize);
-                    
-                    std::vector<double> vdA( sizetoRead * N ); 
-                    dsA->readDatasetBlock( {ii, 0}, { sizetoRead, N}, stride, block, vdA.data() );
-                    
-                    std::vector<double> vdB( sizetoRead * N); 
-                    dsB->readDatasetBlock( {ii, 0}, {sizetoRead, N}, stride, block, vdB.data() );
-                    
-                    std::transform (vdA.begin(), vdA.end(),
-                                    vdB.begin(), vdA.begin(), std::plus<double>());
-                    
-                    std::vector<hsize_t> offset = { ii, 0 };
-                    std::vector<hsize_t> count = { N, sizetoRead };
-
-                    dsC->writeDatasetBlock(vdA, offset, count, stride, block, true);
-                    
-                    if( ii + hdf5_block > K ) isize = hdf5_block + 1;
-                    if( sizetoRead > hdf5_block ) {
-                        ii = ii - hdf5_block + sizetoRead; }
+                #pragma omp for schedule (static)
+                    for (hsize_t ii = 0; ii < K; ii += hdf5_block)
+                    {
+                        
+                        if( ii + hdf5_block > K ) 
+                            isize = K - ii;
+                        
+                        hsize_t sizetoRead = getOptimBlockSize( K, hdf5_block, ii, isize);
+                        
+                        std::vector<double> vdA( sizetoRead * N ); 
+                        dsA->readDatasetBlock( {ii, 0}, { sizetoRead, N}, stride, block, vdA.data() );
+                        
+                        std::vector<double> vdB( sizetoRead * N); 
+                        dsB->readDatasetBlock( {ii, 0}, {sizetoRead, N}, stride, block, vdB.data() );
+                        
+                        std::transform (vdA.begin(), vdA.end(),
+                                        vdB.begin(), vdA.begin(), std::plus<double>());
+                        
+                        std::vector<hsize_t> offset = { ii, 0 };
+                        std::vector<hsize_t> count = { N, sizetoRead };
+                        #pragma omp critical 
+                        {
+                            dsC->writeDatasetBlock(vdA, offset, count, stride, block, true);
+                        }
+                        
+                        if( ii + hdf5_block > K ) isize = hdf5_block + 1;
+                        if( sizetoRead > hdf5_block ) {
+                            ii = ii - hdf5_block + sizetoRead; }
+                    }
                 }
             }
         } else {
