@@ -34,6 +34,12 @@
 #undef sprintf
 #endif
 
+#if __has_include("filesystem.h") && __has_include(<stdint.h>)
+# include <filesystem>
+#else
+#include<experimental/filesystem>
+#endif
+
 // #include <signal.h> // the debugging machinery + breakpoint aidee
 // raise(SIGINT);
 #define IS_TRUE_OR_FALSE(x) (TYPEOF(x)==LGLSXP && LENGTH(x)==1 && LOGICAL(x)[0]!=NA_LOGICAL)
