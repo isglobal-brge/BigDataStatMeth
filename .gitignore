@@ -2,3 +2,8 @@
 .DS_Store
 inst/.DS_Store
 inst/include/.DS_Store
+.Rproj.user
+*.so
+*.o
+.Rbuildignore
+.Rhistory
