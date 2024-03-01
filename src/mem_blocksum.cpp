@@ -1,7 +1,6 @@
 #include <BigDataStatMeth.hpp>
 #include "memAlgebra/memSum.hpp"
 
-
 /**
  *  // // [[Rcpp::export(.blockSum_hdf5)]]
  */

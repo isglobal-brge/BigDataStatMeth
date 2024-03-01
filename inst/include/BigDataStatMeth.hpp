@@ -45,8 +45,8 @@
 // Constants
 
 #define MAX_NAME 1024
-//. ORIGINAL - CORRECTE.//#define MAXSVDBLOCK 1500
-#define MAXSVDBLOCK 10 //..NOMÉS DEBUG..//
+#define MAXSVDBLOCK 1500 //. ORIGINAL - CORRECTE.//
+//..NOMÉS DEBUG..// #define MAXSVDBLOCK 10
 const int RANK1 = 1;
 const int RANK2 = 2;
 const int RANK3 = 3;
@@ -59,7 +59,7 @@ const hsize_t MAXSTRBLOCK = 100000;
 //. Modificat 2024/02/24.// const hsize_t MAXELEMSINBLOCK = 250000;
 const hsize_t MAXELEMSINBLOCK = 2.25e+08;
 //.NOMES DEBUG.// const hsize_t MAXELEMSINBLOCK = 4;
-//. Modificat 2024/02/24.// const hsize_t MAXBLOCKSIZE = 2500;
+//. Modificat 2024/02/24.// const hsize_t MAXBLOCKSIZE = 2;
 const hsize_t MAXBLOCKSIZE = 15000;
 //.NOMES DEBUG.// const hsize_t MAXBLOCKSIZE = 2;
 

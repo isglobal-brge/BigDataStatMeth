@@ -1,5 +1,6 @@
 #include <BigDataStatMeth.hpp>
 #include "hdf5Algebra/matrixSum.hpp"
+#include "Utilities/Utilities.hpp"
 
 
 /**
@@ -70,23 +71,35 @@ void bdblockSum_hdf5(std::string filename,
         dsB->openDataset();
         BigDataStatMeth::hdf5Dataset* dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
         
+        int irowsA = dsA->nrows(),
+            icolsA = dsA->ncols(),
+            irowsB = dsB->nrows(),
+            icolsB = dsB->ncols();
+        
         if (block_size.isNotNull()) {
             iblock_size = Rcpp::as<int> (block_size);
         } else {
-            iblock_size = std::min(  std::min(dsA->nrows(),dsA->ncols()),  std::min(dsB->nrows(), dsB->ncols()));
-            if (iblock_size>MAXBLOCKSIZE)
-                iblock_size = MAXBLOCKSIZE;
-        }
-
-        if( dsA->nrows() != 1 && dsA->ncols()!= 1 && dsB->nrows() != 1 && dsB->ncols()!= 1) {
             
-            hdf5_block_matrix_sum_hdf5_indatasets_transposed(dsA, dsB, dsC, iblock_size, bparal, true, threads);
+            if( irowsA == 1 || icolsA == 1 || irowsB == 1 || icolsB == 1){
+                iblock_size = BigDataStatMeth::getVectorBlockSize( irowsA*icolsA);
+            } else{
+                std::vector<hsize_t> blockSize = BigDataStatMeth::getMatrixBlockSize( irowsA, icolsA);
+                if(irowsA < icolsA) {
+                    iblock_size = blockSize.at(0);    
+                } else {
+                    iblock_size = blockSize.at(1);
+                }
+            }
+        }
+        
+        if( irowsA != 1 && icolsA!= 1 && irowsB != 1 && icolsB!= 1) {
+            Rcpp_block_matrix_sum_hdf5(dsA, dsB, dsC, iblock_size, bparal, threads);
         } else {
 
-            if(dsA->nrows()==1 || dsA->ncols()==1) {
-                hdf5_block_matrix_vector_sum_hdf5_transposed(dsA, dsB, dsC, iblock_size, bparal, true, threads);
+            if( irowsA==1 || icolsA==1 ) {
+                hdf5_block_matrix_vector_sum_hdf5_transposed(dsA, dsB, dsC, iblock_size, bparal, threads);
             } else {
-                hdf5_block_matrix_vector_sum_hdf5_transposed(dsB, dsA, dsC, iblock_size, bparal, true, threads);
+                hdf5_block_matrix_vector_sum_hdf5_transposed(dsB, dsA, dsC, iblock_size, bparal, threads);
             }
         }
         

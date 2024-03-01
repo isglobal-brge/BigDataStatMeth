@@ -670,6 +670,67 @@ public:
         return void();
     }
 
+    
+    
+    virtual void writeDatasetBlock( std::vector<double> DatasetValues, std::vector<hsize_t> vOffset, 
+                                    std::vector<hsize_t> vCount, std::vector<hsize_t> vStride,
+                                    std::vector<hsize_t> vBlock, bool bTranspose)
+    {
+        try
+        {
+            // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
+            H5::Exception::dontPrint();
+            
+            hsize_t hsOffset[2], hsCount[2], hsStride[2], hsBlock[2];
+            
+            // Specify size and shape of subset to write
+            hsOffset[0] = vOffset[0]; hsOffset[1] = vOffset[1];
+            hsStride[0] = vStride[0]; hsStride[1] = vStride[1]; // default 1
+            hsBlock[0] = vBlock[0]; hsBlock[1] = vBlock[1]; // default 1
+                
+            hsCount[0] = vCount[0];
+            hsCount[1] = vCount[1];
+            
+            
+            if(vOffset[0] + hsCount[0] <= dimDataset[0] || vOffset[1] + hsCount[1] <= dimDataset[1]) {
+                H5::DataSpace dataspace(RANK2, hsCount);
+                H5::DataSpace memspace(RANK2, hsCount, NULL);
+                
+                dataspace = pdataset->getSpace();
+                dataspace.selectHyperslab( H5S_SELECT_SET, hsCount, hsOffset, hsStride, hsBlock);
+                
+                pdataset->write(&DatasetValues[0], H5::PredType::NATIVE_DOUBLE, memspace, dataspace);
+                memspace.close();
+                dataspace.close();
+                
+            } else {
+                ::Rf_error( "It is not possible to write block in current position (writeDatasetBlock)" );
+            }
+                
+        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+            close_dataset();
+            close_dataset_file();
+            ::Rf_error( "c++ exception writeDatasetBlock std::vector (File IException)" );
+        } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
+            close_dataset();
+            close_dataset_file();
+            ::Rf_error( "c++ exception writeDatasetBlock std::vector (DataSet IException)" );
+        } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
+            close_dataset();
+            close_dataset_file();
+            ::Rf_error( "c++ exception writeDatasetBlock std::vector (Group IException)" );
+        } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+            close_dataset();
+            close_dataset_file();
+            ::Rf_error( "c++ exception writeDatasetBlock std::vector (DataSpace IException)" );
+        } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
+            close_dataset();
+            close_dataset_file();
+            ::Rf_error( "c++ exception writeDatasetBlock std::vector (Data TypeIException)" );
+        }
+        return void();
+    }
+    
 
     
     // Read rhdf5 data matrix subset, 

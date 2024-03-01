@@ -229,7 +229,7 @@ namespace BigDataStatMeth {
             blockSize[1] = maxCols;
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getBlockSize: "<<ex.what()<< " \n";
+            Rcpp::Rcout<< "c++ exception getMatrixBlockSize: "<<ex.what()<< " \n";
         }
         
         return(blockSize);
