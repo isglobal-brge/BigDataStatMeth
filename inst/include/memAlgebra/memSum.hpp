@@ -14,6 +14,7 @@ namespace BigDataStatMeth {
     template< typename T>  extern inline Rcpp::RObject Rcpp_vector_sum ( T  A, T  B);
     
     template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_blockSum ( T  A, T  B, Rcpp::Nullable<int> threads = R_NilValue);
+    template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_vector_blockSum( T  A, T  B, bool bparal, Rcpp::Nullable<int> threads);
 
 
 
@@ -111,6 +112,26 @@ extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t 
 // 
 // }
 
+    extern inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
+        
+        hsize_t isize = blockSize + 1;
+        
+        for (hsize_t ii = 0; ii < maxPosition; ii += blockSize)
+        {
+            if( ii + blockSize > maxPosition ) {
+                isize = maxPosition - ii; }
+            
+            hsize_t sizetoRead = getOptimBlockSize( maxPosition, blockSize, ii, isize);
+            
+            starts.push_back(ii);
+            sizes.push_back(sizetoRead);
+            
+            if( ii + blockSize > maxPosition ) isize = blockSize + 1;
+            if( sizetoRead > blockSize ) {
+                ii = ii - blockSize + sizetoRead; }
+        }
+        
+    }
 
 
     template< typename T>
@@ -312,6 +333,9 @@ extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t 
         
         try {
             
+            std::vector<hsize_t> vsizetoRead;
+            std::vector<hsize_t> vstart;
+            
             // block_size = getVectorBlockSize( N*M); 
             
             std::vector<hsize_t> blockSize = getMatrixBlockSize( N, M);
@@ -337,29 +361,47 @@ extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t 
                         ithreads = getDTthreads(0, true);
                     }
                     
+                    
+                    getBlockPositionsSizes( N*M, block_size, vstart, vsizetoRead );
+                    
                     #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C)
                     {
                     #pragma omp for schedule (dynamic)
-                        for (hsize_t ii = 0; ii < N*M; ii += block_size)
+                        // for (hsize_t ii = 0; ii < N*M; ii += block_size)
+                        for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                         {
                             
-                            if( ii + block_size > N*M ) {
-                                size = N*M - ii; }
-                            
-                            hsize_t sizetoRead = getOptimBlockSize( N*M, block_size, ii, size);
-                            
-                            if( ii + sizetoRead >= N*M ) {
-                                std::transform (X.begin() + ii, X.end(),
-                                                Y.begin() + ii, C.begin() + ii, std::plus<double>());
+                            if( vstart[ii] + vsizetoRead[ii] >= N*M ) {
+                                std::transform (X.begin() + vstart[ii], X.end(),
+                                                Y.begin() + vstart[ii], C.begin() + vstart[ii], std::plus<double>());
                             } else {
-                                std::transform (X.begin() + ii, X.begin() + ii + sizetoRead,
-                                                Y.begin() + ii, C.begin() + ii, std::plus<double>());   
+                                std::transform (X.begin() + vstart[ii], X.begin() + vstart[ii] + vsizetoRead[ii],
+                                                Y.begin() + vstart[ii], C.begin() + vstart[ii], std::plus<double>());   
                             }
-                            
-                            if( ii + block_size > N*M ) size = block_size + 1;
-                            if( sizetoRead > block_size ) {
-                                ii = ii - block_size + sizetoRead; }
                         }
+                        
+                        
+                        
+                        // for (hsize_t ii = 0; ii < N*M; ii += block_size)
+                        // {
+                        //     
+                        //     if( ii + block_size > N*M ) {
+                        //         size = N*M - ii; }
+                        //     
+                        //     hsize_t sizetoRead = getOptimBlockSize( N*M, block_size, ii, size);
+                        //     
+                        //     if( ii + sizetoRead >= N*M ) {
+                        //         std::transform (X.begin() + ii, X.end(),
+                        //                         Y.begin() + ii, C.begin() + ii, std::plus<double>());
+                        //     } else {
+                        //         std::transform (X.begin() + ii, X.begin() + ii + sizetoRead,
+                        //                         Y.begin() + ii, C.begin() + ii, std::plus<double>());   
+                        //     }
+                        //     
+                        //     if( ii + block_size > N*M ) size = block_size + 1;
+                        //     if( sizetoRead > block_size ) {
+                        //         ii = ii - block_size + sizetoRead; }
+                        // }
                     }
 
                 } else {
@@ -386,81 +428,103 @@ extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t 
     
 
 template< typename T>
-extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t block_size, 
+extern inline Rcpp::RObject Rcpp_matrix_vector_blockSum( T  A, T  B,  
                             bool bparal, Rcpp::Nullable<int> threads)
 {
+    
+    // NOTA: Per defecte, suma per columnes tal i com raja.... 
     
     // static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
     //               std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
     //               std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
     //               "Error - type not allowed");
     
-    Eigen::Map<Eigen::MatrixXd > X = A;
-    Eigen::Map<Eigen::MatrixXd > Y = B;
+    bool btransposed = false;
+    unsigned int ithreads;
+    hsize_t block_size;
     
-    // Vector
-    hsize_t K = A.rows();
-    hsize_t N = A.cols();
+    Rcpp::NumericMatrix X = Rcpp::as<Rcpp::NumericMatrix>(A);
+    Rcpp::NumericVector Y = Rcpp::as<Rcpp::NumericVector>(B);
+    Rcpp::NumericMatrix C;
     
     // Matrix
-    hsize_t M = B.rows();
-    hsize_t L = B.cols();
+    hsize_t K = X.rows(),
+            N = X.cols();
     
-    Eigen::MatrixXd C = Eigen::MatrixXd::Zero(M,L);
+    // Vector
+    hsize_t M = Y.length();
     
     try {
 
-        if(block_size == 1) {
-            block_size = 8192;
-        }
-
-        hsize_t isize = block_size + 1;
-
-        /*
-        if(  K == M )
-        { // Sum vector to every col
-
-            for (hsize_t ii = 0; ii < L; ii += block_size)
-            {
-                if( ii + block_size > L )
-                    isize = L - ii;
-
-                hsize_t sizetoRead = getOptimBlockSize( L, block_size, ii, isize);
-
-                C.block(0, ii, K, sizetoRead) = B.block(0, ii, K, sizetoRead).colwise() + A;
-
-                if( ii + block_size > L ) isize = block_size + 1;
-                if( sizetoRead > block_size ) {
-                    ii = ii - block_size + sizetoRead; }
-
-            }
-
-        } else if(  K == L ) { // Sum vector to every row
-
-            for (hsize_t ii = 0; ii < M; ii += block_size)
-            {
-                if( ii + block_size > M )
-                    isize = M - ii;
-
-                hsize_t sizetoRead = getOptimBlockSize( M, block_size, ii, isize);
-
-                C.block(ii, 0, sizetoRead, K) = B.block(ii, 0, sizetoRead, K).colwise() + A.transpose();
-
-                if( ii + block_size > M ) isize = block_size + 1;
-                if( sizetoRead > block_size ) {
-                    ii = ii - block_size + sizetoRead; }
-            }
-
-        } else {
+        if ( K == N){
+            btransposed = true;
+            
+            X = Rcpp::transpose(X);
+            
+            hsize_t K = X.rows();
+            hsize_t N = X.cols();
+        } 
+        
+        if( K!=N ) {
             Rcpp::Rcout<< "vector sum error: non-conformable arguments\n";
+            return(R_NilValue);
         }
-         */
+        
+        if(threads.isNotNull()) {
+            if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+                ithreads = Rcpp::as<int> (threads);
+            } else {
+                ithreads = getDTthreads(0, true);
+            }
+        } else {
+            ithreads = getDTthreads(0, true);
+        }
+        
+        block_size = std::floor(MAXELEMSINBLOCK/M);
+        block_size = std::min( block_size, N);
+        
+        hsize_t isize = block_size + 1;
+        
+        C = Rcpp::no_init( K, N);
+        
+        // #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C)
+        // {
+        //     #pragma omp for schedule (dynamic)
+            for (hsize_t ii = 0; ii < N; ii += block_size)
+            {
+                if( ii + block_size > N )
+                    isize = N - ii;
+    
+                hsize_t sizetoRead = getOptimBlockSize( N, block_size, ii, isize);
+    
+    
+                if( ii + sizetoRead >= N*K ) {
+                    std::transform (X.begin() + ii, X.end(),
+                                    Y.begin() + ii, C.begin() + ii, std::plus<double>());
+                } else {
+                    std::transform (X.begin() + ii, X.begin() + ii + sizetoRead,
+                                    Y.begin() + ii, C.begin() + ii, std::plus<double>());   
+                }
+    
+                if( ii + block_size > N ) isize = block_size + 1;
+                if( sizetoRead > block_size ) {
+                    ii = ii - block_size + sizetoRead; }
+    
+            }
+        // }
 
     } catch(std::exception& ex) {
         Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
         return(C);
     }
-
+    
+    if(btransposed == true){
+        Rcpp::transpose(C);
+        C.attr("dim") = Rcpp::Dimension( N, K);
+    } else {
+        C.attr("dim") = Rcpp::Dimension( K, N);
+    }
+    
     return(C);
 
 }

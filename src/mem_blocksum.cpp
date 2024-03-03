@@ -74,8 +74,10 @@ Rcpp::RObject bdblockSum(Rcpp::RObject A, Rcpp::RObject B,
                 
             } else if( Rcpp::is<Rcpp::NumericVector>(A) && Rcpp::is<Rcpp::NumericMatrix>(B)) {
                 // return( BigDataStatMeth::Rcpp_matrix_vect_sum( B, A) );
+                 return(BigDataStatMeth::Rcpp_matrix_vector_blockSum(B, A, bparal, threads));
                 
             } else if( Rcpp::is<Rcpp::NumericVector>(B) && Rcpp::is<Rcpp::NumericMatrix>(A)) {
+                return(BigDataStatMeth::Rcpp_matrix_vector_blockSum(A, B, bparal, threads));
                 
                 // return( BigDataStatMeth::Rcpp_matrix_vect_sum( A, B) );
                 
