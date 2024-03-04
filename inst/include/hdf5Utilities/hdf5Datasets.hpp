@@ -674,7 +674,7 @@ public:
     
     virtual void writeDatasetBlock( std::vector<double> DatasetValues, std::vector<hsize_t> vOffset, 
                                     std::vector<hsize_t> vCount, std::vector<hsize_t> vStride,
-                                    std::vector<hsize_t> vBlock, bool bTranspose)
+                                    std::vector<hsize_t> vBlock)
     {
         try
         {
@@ -684,15 +684,28 @@ public:
             hsize_t hsOffset[2], hsCount[2], hsStride[2], hsBlock[2];
             
             // Specify size and shape of subset to write
-            hsOffset[0] = vOffset[0]; hsOffset[1] = vOffset[1];
             hsStride[0] = vStride[0]; hsStride[1] = vStride[1]; // default 1
             hsBlock[0] = vBlock[0]; hsBlock[1] = vBlock[1]; // default 1
                 
-            hsCount[0] = vCount[0];
-            hsCount[1] = vCount[1];
+            hsOffset[0] = vOffset[0]; hsOffset[1] = vOffset[1];    
+            hsCount[0] = vCount[0]; hsCount[1] = vCount[1];
             
+            // if(bTranspose == false) {
+            //     hsOffset[0] = vOffset[0]; hsOffset[1] = vOffset[1];    
+            //     hsCount[0] = vCount[0]; hsCount[1] = vCount[1];
+            // } else {
+            //     hsOffset[0] = vOffset[1]; hsOffset[1] = vOffset[0];    
+            //     hsCount[0] = vCount[1]; hsCount[1] = vCount[0];
+            // }
             
-            if(vOffset[0] + hsCount[0] <= dimDataset[0] || vOffset[1] + hsCount[1] <= dimDataset[1]) {
+            // Rcpp::Rcout<<"\nEscriurem a: "<<vOffset[0]<<" , "<<vOffset[1]<<"\n";
+            // Rcpp::Rcout<<"\nMida: "<<hsCount[0]<<" x "<<hsCount[1]<<"\n";
+            // Rcpp::Rcout<<"\nDimensions extern: "<<dimDataset[0]<<" x "<<dimDataset[1];
+            // Rcpp::Rcout<<"\nDimensions intern: "<<dimDatasetinFile[0]<<" x "<<dimDatasetinFile[1]<<"\n";
+            
+            if(vOffset[0] + hsCount[0] <= dimDataset[0] && vOffset[1] + hsCount[1] <= dimDataset[1] && 
+               DatasetValues.size()<= dimDatasetinFile[0] * dimDatasetinFile[1]) {
+                
                 H5::DataSpace dataspace(RANK2, hsCount);
                 H5::DataSpace memspace(RANK2, hsCount, NULL);
                 
@@ -704,6 +717,9 @@ public:
                 dataspace.close();
                 
             } else {
+                // Rcpp::Rcout<<"\n"<<vOffset[0]<<" + "<<hsCount[0]<<" <= "<<dimDataset[0]<<"\n";
+                // Rcpp::Rcout<<"\n"<<vOffset[1]<<" + "<<hsCount[1]<<" <= "<<dimDataset[1]<<"\n";
+                // Rcpp::Rcout<< "\n"<< DatasetValues.size()<<" <= "<< dimDataset[0] * dimDataset[1]<<"\n";
                 ::Rf_error( "It is not possible to write block in current position (writeDatasetBlock)" );
             }
                 
