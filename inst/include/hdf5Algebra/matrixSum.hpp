@@ -86,7 +86,7 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
                 getBlockPositionsSizes( N, hdf5_block, vstart, vsizetoRead );
                 
                 Rcpp::Rcout<<"\n ==> Using "<<getDTthreads(ithreads, true)<<" threads\n";
-                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(dsA, dsB, dsC)
+                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) private(dsA, dsB, dsC)
                 {
                 #pragma omp for schedule (static)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
@@ -101,7 +101,7 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
                                         vdB.begin(), vdA.begin(), std::plus<double>());
                         
                         std::vector<hsize_t> offset = { 0, vstart[ii] };
-                        std::vector<hsize_t> count = { K, vsizetoRead[ii] };
+                        std::vector<hsize_t> count = { vsizetoRead[ii], K };
                         #pragma omp critical 
                         {
                             dsC->writeDatasetBlock(vdA, offset, count, stride, block, true);

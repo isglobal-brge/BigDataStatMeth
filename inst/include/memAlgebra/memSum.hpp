@@ -370,11 +370,17 @@ extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t 
                         // for (hsize_t ii = 0; ii < N*M; ii += block_size)
                         for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                         {
+                            // Rcpp::Rcout<<"\nInici: "<<vstart[ii];
+                            // Rcpp::Rcout<<"\nMida: "<<vsizetoRead[ii];
+                            // Rcpp::Rcout<<"\nFi: "<<vstart[ii] + vsizetoRead[ii];
+                            // Rcpp::Rcout<<"\nN * M: "<<N*M;
                             
                             if( vstart[ii] + vsizetoRead[ii] >= N*M ) {
+                                // Rcpp::Rcout<<"\nEstem a >";
                                 std::transform (X.begin() + vstart[ii], X.end(),
                                                 Y.begin() + vstart[ii], C.begin() + vstart[ii], std::plus<double>());
                             } else {
+                                // Rcpp::Rcout<<"\nEstem a l'altre";
                                 std::transform (X.begin() + vstart[ii], X.begin() + vstart[ii] + vsizetoRead[ii],
                                                 Y.begin() + vstart[ii], C.begin() + vstart[ii], std::plus<double>());   
                             }
