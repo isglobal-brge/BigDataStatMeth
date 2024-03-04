@@ -172,6 +172,10 @@ namespace BigDataStatMeth {
             
             herr_t status = H5Lcreate_hard(file->getId(), charOriginal, file->getId(), charLink, H5P_DEFAULT, H5P_DEFAULT);
             
+            if(status<0) {
+                ::Rf_error( "c++ exception createHardLink (create_hard IException)" );
+            }
+            
         } catch(H5::FileIException& error) { 
             ::Rf_error( "c++ exception createHardLink (File IException)" );
         } catch(H5::DataSetIException& error) { 
@@ -194,9 +198,13 @@ namespace BigDataStatMeth {
             const char * charOriginal = original.c_str();
             const char * charLink = link.c_str();
             
-            Rcpp::Rcout<<"original: "<< original<<" - Desti: "<<link<<"\n";
+            // Rcpp::Rcout<<"original: "<< original<<" - Desti: "<<link<<"\n";
             
             herr_t status = H5Lmove(file->getId(), charOriginal, file->getId(), charLink, H5P_DEFAULT, H5P_DEFAULT);
+            
+            if(status<0) {
+                ::Rf_error( "c++ exception renameElement (rename_element IException)" );
+            } 
             
             
         } catch(H5::FileIException& error) { 

@@ -196,6 +196,11 @@ public:
             cparms = H5Pcreate(H5P_DATASET_CREATE);
             status = H5Pset_chunk( cparms, RANK2, chunk_dims);
             
+            if(status<0) {
+                ::Rf_error( "c++ exception createUnlimitedDataset (setting chunk IException)" );
+                return void();
+            } 
+            
             if( !exists_HDF5_element(pfile, groupname) ) {
                 create_HDF5_groups(groupname);
             }

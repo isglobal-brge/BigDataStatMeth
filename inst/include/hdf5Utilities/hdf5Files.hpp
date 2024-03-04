@@ -206,23 +206,34 @@ private:
             
             // get dataset names inside group
             err = H5Gget_num_objs(gid, &nobj);
-            for (int i = 0; i < nobj; i++) 
-            {
-                len = H5Gget_objname_by_idx(gid, (hsize_t)i, memb_name, (size_t)MAX_NAME );
-                
-                otype =  H5Gget_objtype_by_idx(gid, (size_t)i );
-                
-                // 202109
-                if( strprefix.compare("")!=0 ){
-                    if(otype == H5G_DATASET && (memb_name[0] == strprefix[0])) {
-                        datasetnames.push_back(memb_name);
+            if(err<0 ) {
+                ::Rf_error( "c++ exception get_dataset_names_from_group (err IException)" );
+                return -1;
+            } else {
+                for (int i = 0; i < nobj; i++) 
+                {
+                    len = H5Gget_objname_by_idx(gid, (hsize_t)i, memb_name, (size_t)MAX_NAME );
+                    
+                    if(len == 0) {
+                        ::Rf_error( "c++ exception get_dataset_names_from_group (len IException)" );
+                        return -1;
                     }
-                } else {
-                    if(otype == H5G_DATASET ) {
-                        datasetnames.push_back(memb_name);
+                    
+                    otype =  H5Gget_objtype_by_idx(gid, (size_t)i );
+                    
+                    // 202109
+                    if( strprefix.compare("")!=0 ){
+                        if(otype == H5G_DATASET && (memb_name[0] == strprefix[0])) {
+                            datasetnames.push_back(memb_name);
+                        }
+                    } else {
+                        if(otype == H5G_DATASET ) {
+                            datasetnames.push_back(memb_name);
+                        }
                     }
-                }
+                }    
             }
+            
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception get_dataset_names_from_group (File IException)" );
             return -1;
