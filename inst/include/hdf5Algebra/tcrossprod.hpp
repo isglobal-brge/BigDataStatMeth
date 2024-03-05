@@ -1,7 +1,7 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_TCROSSPROD_HPP
 #define BIGDATASTATMETH_ALGEBRA_TCROSSPROD_HPP
 
-#include <RcppEigen.h>
+// #include <RcppEigen.h>
 #include "hdf5Algebra/multiplication.hpp"
 #include "Utilities/openme-utils.hpp"
 #include <thread>

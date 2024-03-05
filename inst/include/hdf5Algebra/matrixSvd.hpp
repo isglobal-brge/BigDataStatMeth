@@ -1,8 +1,8 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSVD_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSVD_HPP
 
-#include <RcppEigen.h>
-#include "H5Cpp.h"
+// #include <RcppEigen.h>
+// #include "H5Cpp.h"
 
 #include "hdf5Algebra/matrixNormalization.hpp"
 #include "hdf5Algebra/matrixSvdBlock.hpp"

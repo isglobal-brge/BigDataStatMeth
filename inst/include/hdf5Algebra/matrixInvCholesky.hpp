@@ -1,8 +1,8 @@
 #ifndef BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 #define BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 
-#include <RcppEigen.h>
-#include "H5Cpp.h"
+// #include <RcppEigen.h>
+// #include "H5Cpp.h"
 
 #include "Utilities/openme-utils.hpp"
 #include "hdf5Algebra/matrixDiagonal.hpp"
@@ -220,7 +220,7 @@ extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf
         unsigned int ithreads;
         int dimensionSize = idim0, 
             readedCols = 0,
-            chunk = 1,
+            // chunk = 1,
             colstoRead,
             minimumBlockSize;
         

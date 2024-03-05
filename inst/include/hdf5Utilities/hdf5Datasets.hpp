@@ -1,7 +1,7 @@
 #ifndef BIGDATASTATMETH_HDF5_DATASETS_HPP
 #define BIGDATASTATMETH_HDF5_DATASETS_HPP
 
-#include "BigDataStatMeth.hpp"
+// #include "BigDataStatMeth.hpp"
 #include "Utilities/Utilities.hpp"
 #include <hdf5.h>
 // #include "hdf5Utilities/hdf5Utilities.hpp"
@@ -73,7 +73,7 @@ public:
 
             H5::Exception::dontPrint();
             std::string fullDatasetPath = groupname + "/" + name;
-            bool bRemoved = false;
+            // bool bRemoved = false;
             
             // dataset dimensions
             dimDataset[0] = cols;
@@ -95,7 +95,7 @@ public:
                 
                 if( boverwrite == true && bexists == true) {
                     remove_elements(pfile, getGroupName(), {name}); 
-                    bRemoved = true;
+                    // bRemoved = true;
                 }
                 
                 type = strdatatype;
@@ -255,7 +255,7 @@ public:
                 newdims[0] = cols;
                 newdims[1] = rows;
                 
-                hsize_t size[2];
+                // hsize_t size[2];
                 dimDataset[0] = dimDataset[0] + newdims[0];
                 dimDataset[1] = dimDataset[1] + newdims[1];
                 
@@ -1077,22 +1077,25 @@ protected:
             hsize_t dims_max[2];
             int ndims = dataspace.getSimpleExtentDims( dims_out, dims_max);
             
-            if(dims_max[0] == H5S_UNLIMITED) {
-                unlimited = true;
+            if( ndims>0 ) {
+                
+                if(dims_max[0] == H5S_UNLIMITED) {
+                    unlimited = true;
+                }
+                
+                if( rank == 1) {
+                    // dims = IntegerVector::create( static_cast<int>(dims_out[0]), static_cast<int>(1));
+                    dimDataset[0] = dims_out[0];
+                    dimDataset[1] = 1;
+                } else if( rank == 2 ){
+                    // dims = IntegerVector::create(static_cast<int>(dims_out[0]), static_cast<int>(dims_out[1]));
+                    dimDataset[0] = dims_out[0];
+                    dimDataset[1] = dims_out[1];
+                }
+                
+                dimDatasetinFile[0] = dims_out[0];
+                dimDatasetinFile[1] = dims_out[1];    
             }
-            
-            if( rank == 1) {
-                // dims = IntegerVector::create( static_cast<int>(dims_out[0]), static_cast<int>(1));
-                dimDataset[0] = dims_out[0];
-                dimDataset[1] = 1;
-            } else if( rank == 2 ){
-                // dims = IntegerVector::create(static_cast<int>(dims_out[0]), static_cast<int>(dims_out[1]));
-                dimDataset[0] = dims_out[0];
-                dimDataset[1] = dims_out[1];
-            }
-            
-            dimDatasetinFile[0] = dims_out[0];
-            dimDatasetinFile[1] = dims_out[1];
             
         } catch( H5::FileIException& error) { 
             ::Rf_error( "c++ exception getDimensExistingDataset (File IException)" );

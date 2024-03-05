@@ -1,10 +1,10 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_CROSSPROD_HPP
 #define BIGDATASTATMETH_ALGEBRA_CROSSPROD_HPP
 
-#include <RcppEigen.h>
+// #include <RcppEigen.h>
 #include "hdf5Algebra/multiplication.hpp"
-#include "Utilities/openme-utils.hpp"
-#include <thread>
+// #include "Utilities/openme-utils.hpp"
+// #include <thread>
 
 namespace BigDataStatMeth {
 

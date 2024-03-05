@@ -1,9 +1,9 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_SUM_HPP
 #define BIGDATASTATMETH_ALGEBRA_SUM_HPP
 
-#include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-#include <thread>
+// #include <RcppEigen.h>
+// #include "Utilities/openme-utils.hpp"
+// #include <thread>
 #include "memAlgebra/memSum.hpp"
 
 namespace BigDataStatMeth {
@@ -64,9 +64,6 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
             hsize_t isize = hdf5_block + 1;
             
             dsC->createDataset( N, K, "real"); 
-            // return(dsC);
-
-            // return(dsC);
             
             if(bparal == false) {
                 ithreads = 1;
@@ -87,28 +84,26 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
                 
                 getBlockPositionsSizes( N, hdf5_block, vstart, vsizetoRead );
                 
-                Rcpp::Rcout<<"\n ==> Using "<<getDTthreads(ithreads, true)<<" threads\n";
-                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) private(dsA, dsB, dsC)
+                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(dsA, dsB, dsC)
                 {
                 #pragma omp for schedule (static)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         
-                        // Rcpp::Rcout<<"\nEstem a ii: "<<ii;
-                        // Rcpp::Rcout<<"\nInici: "<<vstart[ii];
-                        // Rcpp::Rcout<<"\nMida: "<<vsizetoRead[ii];
-                        // Rcpp::Rcout<<"\nFi: "<<vstart[ii] + vsizetoRead[ii]-1;
-                        
                         std::vector<double> vdA( K * vsizetoRead[ii] ); 
-                        dsA->readDatasetBlock( {0, vstart[ii]}, { K, vsizetoRead[ii]}, stride, block, vdA.data() );
+                        #pragma omp critical 
+                        {
+                            dsA->readDatasetBlock( {0, vstart[ii]}, { K, vsizetoRead[ii]}, stride, block, vdA.data() );
+                        }
                         
                         std::vector<double> vdB( K * vsizetoRead[ii] ); 
-                        dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
-                        // Rcpp::Rcout<<"\nAbans suma: "<<ii;
+                        #pragma omp critical 
+                        {
+                            dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
+                        }
                         std::transform (vdA.begin(), vdA.end(),
                                         vdB.begin(), vdA.begin(), std::plus<double>());
                         
-                        // Rcpp::Rcout<<"\nAbans suma: "<<ii;
                         std::vector<hsize_t> offset = { 0, vstart[ii] };
                         std::vector<hsize_t> count = { K, vsizetoRead[ii] };
                         #pragma omp critical 
@@ -121,17 +116,22 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
             } else {
                 
                 getBlockPositionsSizes( K, hdf5_block, vstart, vsizetoRead );
-                Rcpp::Rcout<<"\n ==> Using "<<getDTthreads(ithreads, true)<<" threads\n";
-                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) private(dsA, dsB, dsC)
+                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(dsA, dsB, dsC, vstart, vsizetoRead)
                 {
                 #pragma omp for schedule (static)
-                    for (hsize_t ii = 0; ii < K; ii += hdf5_block)
+                    for (hsize_t ii = 0; ii < vstart.size(); ii++)
                     {
                         std::vector<double> vdA( vsizetoRead[ii] * N ); 
-                        dsA->readDatasetBlock( {vstart[ii], 0}, { vsizetoRead[ii], N}, stride, block, vdA.data() );
+                        #pragma omp critical 
+                        {
+                            dsA->readDatasetBlock( {vstart[ii], 0}, { vsizetoRead[ii], N}, stride, block, vdA.data() );
+                        }
                         
                         std::vector<double> vdB( vsizetoRead[ii] * N); 
-                        dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], N}, stride, block, vdB.data() );
+                        #pragma omp critical 
+                        {
+                            dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], N}, stride, block, vdB.data() );
+                        }
                         
                         std::transform (vdA.begin(), vdA.end(),
                                         vdB.begin(), vdA.begin(), std::plus<double>());

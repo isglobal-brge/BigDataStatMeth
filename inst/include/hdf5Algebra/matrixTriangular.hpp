@@ -1,7 +1,7 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXTRIANGULAR_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXTRIANGULAR_HPP
 
-#include <RcppEigen.h>
+// #include <RcppEigen.h>
 #include "H5Cpp.h"
 
 namespace BigDataStatMeth {

@@ -1,9 +1,9 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_OPTIMIZED_PRODS_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_OPTIMIZED_PRODS_HPP
 
-#include <RcppEigen.h>
+// #include <RcppEigen.h>
 #include "Utilities/openme-utils.hpp"
-#include <thread>
+// #include <thread>
 
 namespace BigDataStatMeth {
 

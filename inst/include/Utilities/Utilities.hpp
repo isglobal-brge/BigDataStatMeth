@@ -1,7 +1,7 @@
 #ifndef BIGDATASTATMETH_UTILITIES_HPP
 #define BIGDATASTATMETH_UTILITIES_HPP
 
-#include <RcppEigen.h>
+// #include <RcppEigen.h>
 #include <BigDataStatMeth.hpp>
 
 

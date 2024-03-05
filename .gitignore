@@ -7,3 +7,5 @@ inst/include/.DS_Store
 *.o
 .Rbuildignore
 .Rhistory
+.DS_Store
+.DS_Store

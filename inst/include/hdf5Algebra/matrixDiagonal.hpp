@@ -1,8 +1,8 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXDIAGONAL_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXDIAGONAL_HPP
 
-#include <RcppEigen.h>
-#include "H5Cpp.h"
+// #include <RcppEigen.h>
+// #include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 

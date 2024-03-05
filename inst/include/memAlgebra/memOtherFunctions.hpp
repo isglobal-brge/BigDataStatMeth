@@ -1,9 +1,9 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_OTHER_FUNCTIONS_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_OTHER_FUNCTIONS_HPP
 
-#include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-#include <thread>
+// #include <RcppEigen.h>
+// #include "Utilities/openme-utils.hpp"
+// #include <thread>
 
 namespace BigDataStatMeth {
 

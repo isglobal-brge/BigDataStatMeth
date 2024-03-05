@@ -431,6 +431,22 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// bdblockSubstract
+Rcpp::RObject bdblockSubstract(Rcpp::RObject A, Rcpp::RObject B, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<bool> byBlocks, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_bdblockSubstract(SEXP ASEXP, SEXP BSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP byBlocksSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type B(BSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type byBlocks(byBlocksSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdblockSubstract(A, B, block_size, paral, byBlocks, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdblockSum
 Rcpp::RObject bdblockSum(Rcpp::RObject A, Rcpp::RObject B, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<bool> byBlocks, Rcpp::Nullable<int> threads);
 RcppExport SEXP _BigDataStatMeth_bdblockSum(SEXP ASEXP, SEXP BSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP byBlocksSEXP, SEXP threadsSEXP) {
@@ -490,6 +506,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdpseudoinv_hdf5", (DL_FUNC) &_BigDataStatMeth_bdpseudoinv_hdf5, 7},
     {"_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5, 5},
     {"_BigDataStatMeth_bdcomputeMatrixVector_hdf5", (DL_FUNC) &_BigDataStatMeth_bdcomputeMatrixVector_hdf5, 12},
+    {"_BigDataStatMeth_bdblockSubstract", (DL_FUNC) &_BigDataStatMeth_bdblockSubstract, 6},
     {"_BigDataStatMeth_bdblockSum", (DL_FUNC) &_BigDataStatMeth_bdblockSum, 6},
     {"_BigDataStatMeth_bdCreate_hdf5_matrix", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_matrix, 8},
     {NULL, NULL, 0}

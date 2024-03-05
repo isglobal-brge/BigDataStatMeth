@@ -1,11 +1,11 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
 
-#include <RcppEigen.h>
+// #include <RcppEigen.h>
 #include "Utilities/openme-utils.hpp"
 #include "hdf5Utilities/hdf5Utilities.hpp"
 #include "hdf5Algebra/matrixSdMean.hpp"
-#include "H5Cpp.h"
+// #include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 

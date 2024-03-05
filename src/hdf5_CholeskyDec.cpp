@@ -65,25 +65,25 @@
      std::string strOutgroup, strIndataset, 
      strOutdataset, strOutdataset_tmp;
      
-     int ithreads;
-     bool bforce, bfull;
+     // int ithreads;
+     // bool bforce, bfull;
      int nrows = 0, ncols = 0;
      
      try
      {
          
-         // Get default values for Nullable variables
-         if(force.isNull()) { bforce = false; } 
-         else {  bforce = Rcpp::as<bool>(force); }
+         // // Get default values for Nullable variables
+         // if(force.isNull()) { bforce = false; } 
+         // else {  bforce = Rcpp::as<bool>(force); }
          
-         if(fullMatrix.isNull()) { bfull = false; } 
-         else {  bfull = Rcpp::as<bool>(fullMatrix); }
+         // if(fullMatrix.isNull()) { bfull = false; } 
+         // else {  bfull = Rcpp::as<bool>(fullMatrix); }
          
          if(outgroup.isNull()) { strOutgroup = group; } 
          else {   strOutgroup = Rcpp::as<std::string>(outgroup); }
          
-         if(threads.isNull()) { ithreads = 2; } 
-         else { ithreads = Rcpp::as<int>(threads); }
+         // if(threads.isNull()) { ithreads = 2; } 
+         // else { ithreads = Rcpp::as<int>(threads); }
          
          if(elementsBlock.isNull()) { dElementsBlock = MAXELEMSINBLOCK; } 
          else { dElementsBlock = Rcpp::as<long>(elementsBlock); }
@@ -105,6 +105,11 @@
              dstmp->createDataset(nrows, ncols, "real");
              
              int res = Cholesky_decomposition_hdf5(dsA, dstmp, nrows, ncols, dElementsBlock, threads);
+             
+             if(res == 0) {
+                 Rcpp::Rcout<<"\n Can't get Cholesky decomposition \n";
+             }
+             
              delete dsA;
              delete dstmp;
              
