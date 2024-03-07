@@ -46,7 +46,7 @@ namespace BigDataStatMeth {
                     ithreads = getDTthreads(0, true);
                 }
                 
-    #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C) //..// , chunk) private(tid ) 
+    #pragma omp parallel num_threads(ithreads) shared(A, B, C) //..// , chunk) private(tid ) 
                 {
                     //..// tid = omp_get_thread_num();
                     

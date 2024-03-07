@@ -170,7 +170,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
 
         }
         
-#pragma omp parallel num_threads(getDTthreads(ithreads, false))
+#pragma omp parallel num_threads(ithreads)
         
         /*
          int tid = omp_get_thread_num();

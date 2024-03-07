@@ -285,7 +285,7 @@ namespace BigDataStatMeth {
                 // Mínimum block size: 2 columns
                 getBlockPositionsSizes( M*N, block_size, vstart, vsizetoRead );
                 
-                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C)
+                #pragma omp parallel num_threads(ithreads) shared(A, B, C)
                 {
                 #pragma omp for schedule (dynamic)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
