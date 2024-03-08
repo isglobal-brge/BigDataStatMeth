@@ -84,7 +84,8 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
                 
                 getBlockPositionsSizes( N, hdf5_block, vstart, vsizetoRead );
                 
-                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(dsA, dsB, dsC)
+//                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(dsA, dsB, dsC)
+                #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
                 {
                 #pragma omp for schedule (static)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
@@ -116,7 +117,8 @@ extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5(
             } else {
                 
                 getBlockPositionsSizes( K, hdf5_block, vstart, vsizetoRead );
-                #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(dsA, dsB, dsC, vstart, vsizetoRead)
+                // #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(dsA, dsB, dsC, vstart, vsizetoRead)
+                #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, vstart, vsizetoRead)
                 {
                 #pragma omp for schedule (static)
                     for (hsize_t ii = 0; ii < vstart.size(); ii++)

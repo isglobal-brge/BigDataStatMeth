@@ -1,5 +1,5 @@
 #include <BigDataStatMeth.hpp>
-#include "hdf5Algebra/substract.hpp"
+#include "hdf5Algebra/matrixSubstract.hpp"
 
 
 /**
