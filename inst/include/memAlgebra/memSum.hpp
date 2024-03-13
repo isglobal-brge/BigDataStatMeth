@@ -250,8 +250,6 @@ namespace BigDataStatMeth {
         // Vector
         hsize_t K = Y.length();
         
-        Rcpp::Rcout<<"\nPas 1....\n";
-        
         try {
             
             if( K==N || K==M) {

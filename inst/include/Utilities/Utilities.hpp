@@ -328,6 +328,30 @@ namespace BigDataStatMeth {
         return(vcount);
     }
     
+    
+    
+    // Return the numbers of threads to be used in parallel processes
+    extern inline unsigned int get_threads(bool bparal,  Rcpp::Nullable<int> threads  = R_NilValue) 
+    {
+        unsigned int ithreads;
+        
+        if(bparal == false) {
+            ithreads = 1;
+        } else {
+            if(threads.isNotNull()) {
+                if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+                    ithreads = Rcpp::as<int> (threads);
+                } else {
+                    ithreads = getDTthreads(0, true);
+                }
+            } else {
+                ithreads = getDTthreads(0, true);
+            }    
+        }
+        
+        return(ithreads);
+    }
+    
 }
 
 #endif // BIGDATASTATMETH_UTILITIES_HPP

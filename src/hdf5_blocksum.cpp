@@ -26,11 +26,9 @@ void bdblockSum_hdf5(std::string filename,
                    Rcpp::Nullable<bool> force = R_NilValue)
 {
     
-    int iblock_size,
-        res;
+    int iblock_size;
     bool bparal, 
-         bforce, 
-         bexistgroup;
+         bforce;
     
     std::string strsubgroupOut, 
                 strdatasetOut, 
@@ -97,9 +95,9 @@ void bdblockSum_hdf5(std::string filename,
         } else {
 
             if( irowsA==1 || icolsA==1 ) {
-                hdf5_block_matrix_vector_sum_hdf5_transposed(dsA, dsB, dsC, iblock_size, bparal, threads);
+                Rcpp_block_matrix_vector_sum_hdf5(dsA, dsB, dsC, iblock_size, bparal, threads);
             } else {
-                hdf5_block_matrix_vector_sum_hdf5_transposed(dsB, dsA, dsC, iblock_size, bparal, threads);
+                Rcpp_block_matrix_vector_sum_hdf5(dsB, dsA, dsC, iblock_size, bparal, threads);
             }
         }
         
