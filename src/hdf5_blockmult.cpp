@@ -21,7 +21,8 @@ void bdblockmult_hdf5(std::string filename,
                     Rcpp::Nullable<bool> force = R_NilValue)
 {
     
-    int iblock_size;
+    int iblock_size, 
+        iblockfactor = 2;
     bool bparal, bforce;
     
     std::string strsubgroupOut, 
@@ -56,7 +57,7 @@ void bdblockmult_hdf5(std::string filename,
         dsB->openDataset();
         BigDataStatMeth::hdf5Dataset* dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
         
-        iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), block_size);
+        iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
 
         if(bparal == true) { // parallel
             

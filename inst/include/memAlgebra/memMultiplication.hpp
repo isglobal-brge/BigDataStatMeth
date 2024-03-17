@@ -88,6 +88,9 @@ extern inline Eigen::MatrixXd block_matrix_mul( Eigen::MatrixXd& A, Eigen::Matri
             
             //..// int ii=0, jj=0, kk=0;
             int chunk = 1, tid;
+            
+            std::vector<int> vstartii;
+            
             unsigned int ithreads;
             int M = A.rows();
             int K = A.cols();
@@ -107,27 +110,31 @@ extern inline Eigen::MatrixXd block_matrix_mul( Eigen::MatrixXd& A, Eigen::Matri
                 ithreads = getDTthreads(0, true);
             }
             
-            #pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(A, B, C, chunk) private(tid ) 
+            for (int ii = 0; ii < M; ii += block_size) {
+                vstartii.push_back(ii);
+            }
+            
+            #pragma omp parallel num_threads(ithreads) shared(A, B, C) // , chunk) private(tid ) 
             {
                 
                 tid = omp_get_thread_num();
-                // if (tid == 0)   {
-                //   Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
-                // }
+                if (tid == 0)   {
+                  Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
+                }
                 
-            #pragma omp for schedule (static) 
+                #pragma omp for schedule (auto) 
                 
-                
-                for (int ii = 0; ii < M; ii += block_size)
+                // for (int ii = 0; ii < M; ii += block_size)
+                for (int ii = 0; ii < vstartii.size(); ii++)
                 {
                     // Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
                     for (int jj = 0; jj < N; jj += block_size)
                     {
                         for(int kk = 0; kk < K; kk += block_size)
                         {
-                            C.block(ii, jj, std::min(block_size,M - ii), std::min(block_size,N - jj)) = 
-                                C.block(ii, jj, std::min(block_size,M - ii), std::min(block_size,N - jj)) + 
-                                (A.block(ii, kk, std::min(block_size,M - ii), std::min(block_size,K - kk)) * 
+                            C.block(vstartii[ii], jj, std::min(block_size,M - vstartii[ii]), std::min(block_size,N - jj)) = 
+                                C.block(vstartii[ii], jj, std::min(block_size,M - vstartii[ii]), std::min(block_size,N - jj)) + 
+                                (A.block(vstartii[ii], kk, std::min(block_size,M - vstartii[ii]), std::min(block_size,K - kk)) * 
                                 B.block(kk, jj, std::min(block_size,K - kk), std::min(block_size,N - jj)));
                         }
                     }

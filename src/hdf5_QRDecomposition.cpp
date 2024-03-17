@@ -87,7 +87,7 @@ void bdQR_hdf5( std::string filename, std::string group, std::string dataset,
     
     bool bthin, bforce;
     std::string strOutgroup, strOutdataset_Q, strOutdataset_R;
-    int iblock_size;
+    // int iblock_size;
     
     try {
         

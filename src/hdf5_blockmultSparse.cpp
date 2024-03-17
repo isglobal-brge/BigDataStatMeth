@@ -53,18 +53,16 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-void bdblockmult_sparse_hdf5( std::string filename, 
-                              std::string group, 
-                              std::string A, 
-                              std::string B,
-                              Rcpp::Nullable<std::string> groupB = R_NilValue, 
-                              Rcpp::Nullable<int> block_size = R_NilValue,
-                              Rcpp::Nullable<int> mixblock_size = R_NilValue,
-                              Rcpp::Nullable<bool> paral = R_NilValue,
-                              Rcpp::Nullable<int> threads = R_NilValue,
-                              Rcpp::Nullable<std::string> outgroup = R_NilValue,
-                              Rcpp::Nullable<std::string> outdataset = R_NilValue,
-                              Rcpp::Nullable<bool> force = R_NilValue )
+void bdblockmult_sparse_hdf5( std::string filename, std::string group, 
+                          std::string A, std::string B,
+                          Rcpp::Nullable<std::string> groupB = R_NilValue, 
+                          Rcpp::Nullable<int> block_size = R_NilValue,
+                          Rcpp::Nullable<int> mixblock_size = R_NilValue,
+                          Rcpp::Nullable<bool> paral = R_NilValue,
+                          Rcpp::Nullable<int> threads = R_NilValue,
+                          Rcpp::Nullable<std::string> outgroup = R_NilValue,
+                          Rcpp::Nullable<std::string> outdataset = R_NilValue,
+                          Rcpp::Nullable<bool> force = R_NilValue )
 {
      
     
@@ -81,7 +79,7 @@ void bdblockmult_sparse_hdf5( std::string filename,
     
     bool bexistgroup;
     bool bsparseA, bsparseB;
-    int res;
+    int iblockfactor = 2;
 
     try
     {
@@ -112,7 +110,7 @@ void bdblockmult_sparse_hdf5( std::string filename,
         dsB->openDataset();
         BigDataStatMeth::hdf5Dataset* dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
         
-        iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), block_size);
+        iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
      
      
      // if (block_size.isNotNull()) {

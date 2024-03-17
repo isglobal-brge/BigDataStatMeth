@@ -110,7 +110,8 @@ extern inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
     
     try {
 
-        int irank;
+        int irank,
+            iblockfactor = 1;
         std::vector<hsize_t> offset = {0,0},
             count = {dsA->nrows(), dsA->ncols()},
             stride = {1,1},
@@ -156,7 +157,7 @@ extern inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
             dsQ->writeDataset( Rcpp::wrap(Q) );
         } else {
             Rcpp::Rcout<<"\nA veure on estem.... - 4.2";
-            int iblock_size = BigDataStatMeth::getMaxBlockSize( qr.householderQ().rows() , qr.householderQ().cols(), count[0], count[1], block_size);
+            //.. COMENTAT 17 / 03 / 2024 ..// int iblock_size = BigDataStatMeth::getMaxBlockSize( qr.householderQ().rows() , qr.householderQ().cols(), count[0], count[1], block_size, iblockfactor);
             
             Eigen::MatrixXd Qthin = qr.householderQ() * Eigen::MatrixXd::Identity(count[0], count[1]);
             dsQ->createDataset( Qthin.rows(), Qthin.cols(), "real" );

@@ -22,8 +22,6 @@ extern inline Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::Matrix
 extern inline Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorXd& w);
 extern inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads);
 extern inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads);
-extern inline Eigen::MatrixXd bdScalarwproduct(Rcpp::RObject a, double w, std::string op);
-extern inline Eigen::MatrixXd bdwproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op);
 
 
 // Computes CrossProduct X'X
