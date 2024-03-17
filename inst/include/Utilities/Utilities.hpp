@@ -139,35 +139,28 @@ namespace BigDataStatMeth {
     
     
     // Get maximum block size 
-    extern inline int getMaxBlockSize ( int nRowsA, int nColsA, int nRowsB, int nColsB, int factor, Rcpp::Nullable<int> block_size = R_NilValue) 
+    extern inline int getMaxBlockSize ( int nRowsA, int nColsA, int nRowsB, int nColsB, int ifactor, Rcpp::Nullable<int> block_size = R_NilValue) 
     {
         
-        int iblock_size,
-            ifactor;
+        int iblock_size;
         
         try
         {
             
-            // if(factor.isNull()) {
-            //     ifactor = 1;
-            // } else {
-            //     ifactor = Rcpp::as<int>(factor);
-            // }
-            // 
-            // iblock_size = std::min( std::min( nRowsA, nColsA), std::min( nRowsB, nColsB) );
-            // 
-            // if (block_size.isNotNull()) {
-            //     // if( Rcpp::as<int> (block_size) < iblock_size ) {   
-            //     //     iblock_size = Rcpp::as<int> (block_size); }
-            //     iblock_size = Rcpp::as<int> (block_size); 
-            //     if( iblock_size > (MAXBLOCKSIZE / ifactor) ) {   
-            //         Rcpp::warning("Warning: block size %i is bigger than the maximum recomended %i.", iblock_size, (MAXBLOCKSIZE / ifactor));
-            //     }
-            // } else {
-            //     //..// iblock_size = std::min(  std::min(dsA->nrows(),dsA->ncols()),  std::min(dsB->nrows(), dsB->ncols()));
-            //     if (iblock_size > (MAXBLOCKSIZE / ifactor))
-            //         iblock_size = MAXBLOCKSIZE / ifactor;
-            // }
+            iblock_size = std::min( std::min( nRowsA, nColsA), std::min( nRowsB, nColsB) );
+
+            if (block_size.isNotNull()) {
+                // if( Rcpp::as<int> (block_size) < iblock_size ) {
+                //     iblock_size = Rcpp::as<int> (block_size); }
+                iblock_size = Rcpp::as<int> (block_size);
+                if( iblock_size > (MAXBLOCKSIZE / ifactor) ) {
+                    Rcpp::warning("Warning: block size %i is bigger than the maximum recomended %i.", iblock_size, (MAXBLOCKSIZE / ifactor));
+                }
+            } else {
+                //..// iblock_size = std::min(  std::min(dsA->nrows(),dsA->ncols()),  std::min(dsB->nrows(), dsB->ncols()));
+                if (iblock_size > (MAXBLOCKSIZE / ifactor))
+                    iblock_size = MAXBLOCKSIZE / ifactor;
+            }
                 
         } catch(std::exception& ex) {
             Rcpp::Rcout<< "c++ exception getObjecDataType: "<<ex.what()<< " \n";
