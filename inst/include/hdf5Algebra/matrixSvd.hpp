@@ -194,7 +194,8 @@ extern inline svdeig RcppbdSVD_hdf5_Block( BigDataStatMeth::hdf5Dataset* dsA,
                 
                 delete normalizedData ;
                 
-                v = block_matrix_mul_parallel(A, retsvd.u, 1024, threads); //  PARALLEL ==> NOT PARALLEL
+                //.. 2024/03/27 ..// v = block_matrix_mul_parallel(A, retsvd.u, 1024, threads);//  PARALLEL ==> NOT PARALLEL
+                v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
                 
             } else {
                 
@@ -219,7 +220,8 @@ extern inline svdeig RcppbdSVD_hdf5_Block( BigDataStatMeth::hdf5Dataset* dsA,
             dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
             
             A.transposeInPlace();
-            v = block_matrix_mul_parallel(A, retsvd.u, 1024, threads); //  PARALLEL ==> NOT PARALLEL
+            //.. 2024/03/27 ..// v = block_matrix_mul_parallel(A, retsvd.u, 1024, threads); //  PARALLEL ==> NOT PARALLEL
+            v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
             
         }
             
@@ -256,15 +258,6 @@ extern inline svdeig RcppbdSVD_hdf5_Block( BigDataStatMeth::hdf5Dataset* dsA,
     
     return retsvd;
 }
-
-
-
-
-
-
-
-
-
 
 
 // SVD decomposition with hdf5 file

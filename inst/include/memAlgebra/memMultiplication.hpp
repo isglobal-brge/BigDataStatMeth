@@ -7,73 +7,105 @@
 
 namespace BigDataStatMeth {
 
-extern inline Eigen::MatrixXd block_matrix_mul( Eigen::MatrixXd& A, Eigen::MatrixXd& B, int block_size);
-// extern inline Eigen::MatrixXd block_matrix_mul_parallel( Eigen::MatrixXd& A, Eigen::MatrixXd& B, int block_size, Rcpp::Nullable<int> threads);
+    extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size);
+    // extern inline Eigen::MatrixXd block_matrix_mul_parallel( Eigen::MatrixXd& A, Eigen::MatrixXd& B, int block_size, Rcpp::Nullable<int> threads);
 
-// In-memory execution - Serial version
-extern inline Eigen::MatrixXd block_matrix_mul( Eigen::MatrixXd& A, Eigen::MatrixXd& B, int block_size)
-{
     
-    Eigen::MatrixXd C;
-    
-    try{
+    extern inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
         
-        int M = A.rows();
-        int K = A.cols();
-        int N = B.cols();
+        hsize_t isize = blockSize + 1;
         
-        if( K == B.rows())
+        for (hsize_t ii = 0; ii < maxPosition; ii += blockSize)
         {
-            C = Eigen::MatrixXd::Zero(M,N) ; 
+            if( ii + blockSize > maxPosition ) {
+                isize = maxPosition - ii; }
             
-            int isize = block_size+1;
-            int ksize = block_size+1;
-            int jsize = block_size+1;
+            hsize_t sizetoRead = getOptimBlockSize( maxPosition, blockSize, ii, isize);
             
-            for (int ii = 0; ii < M; ii += block_size)
-            {
-                if( ii + block_size > M ) isize = M - ii;
-                for (int jj = 0; jj < N; jj += block_size)
-                {
-                    if( jj + block_size > N) jsize = N - jj;
-                    for(int kk = 0; kk < K; kk += block_size)
-                    {
-                        if( kk + block_size > K ) ksize = K - kk;
-                        
-                        C.block(ii, jj, std::min(block_size,isize), std::min(block_size,jsize)) = 
-                            C.block(ii, jj, std::min(block_size,isize), std::min(block_size,jsize)) + 
-                            (A.block(ii, kk, std::min(block_size,isize), std::min(block_size,ksize)) * 
-                            B.block(kk, jj, std::min(block_size,ksize), std::min(block_size,jsize)));
-                        
-                        if( kk + block_size > K ) ksize = block_size+1;
-                    }
-                    if( jj + block_size > N ) jsize = block_size+1;
-                }
-                if( ii + block_size > M ) isize = block_size+1;
-            }
+            starts.push_back(ii);
+            sizes.push_back(sizetoRead);
             
-        } else {
-            throw std::range_error("non-conformable arguments");
-        }    
+            if( ii + blockSize > maxPosition ) isize = blockSize + 1;
+            if( sizetoRead > blockSize ) {
+                ii = ii - blockSize + sizetoRead; }
+        }
         
-    } catch(std::exception &ex) {
-        Rcpp::Rcout<<"c++ error : Bblock_matrix_mul : " <<ex.what();
-        return(C);
-        
-    } catch(...) { 
-        ::Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
     }
     
     
-    return(C);
+    // In-memory execution - Serial version by Blocks
+    extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size)
+    {
+        
+        Eigen::MatrixXd C;
+        
+        try{
+            
+            int M = A.rows(),
+                K = A.cols(),
+                N = B.cols(),
+                block_size;
+            
+            if( iblock_size.isNotNull()) {
+                block_size =  Rcpp::as<int>(iblock_size);
+            } else {
+                block_size =  MAXBLOCKSIZE/3;
+            }
+            
+            if( K == B.rows())
+            {
+                C = Eigen::MatrixXd::Zero(M,N) ; 
+                
+                int isize = block_size+1,
+                    ksize = block_size+1,
+                    jsize = block_size+1;
+                
+                for (int ii = 0; ii < M; ii += block_size)
+                {
+                    if( ii + block_size > M ) isize = M - ii;
+                    for (int jj = 0; jj < N; jj += block_size)
+                    {
+                        if( jj + block_size > N) jsize = N - jj;
+                        for(int kk = 0; kk < K; kk += block_size)
+                        {
+                            if( kk + block_size > K ) ksize = K - kk;
+                            
+                            hsize_t minii = std::min(block_size,isize),
+                                    minjj = std::min(block_size,jsize),
+                                    minkk = std::min(block_size,ksize);
+                            
+                            C.block(ii, jj, minii, minjj) =  C.block(ii, jj, minii, minjj) + 
+                                (A.block(ii, kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
+                            
+                            if( kk + block_size > K ) ksize = block_size+1;
+                        }
+                        if( jj + block_size > N ) jsize = block_size+1;
+                    }
+                    if( ii + block_size > M ) isize = block_size+1;
+                }
+                
+            } else {
+                throw std::range_error("non-conformable arguments");
+            }    
+            
+        } catch(std::exception &ex) {
+            Rcpp::Rcout<<"c++ error : Bblock_matrix_mul : " <<ex.what();
+            return(C);
+            
+        } catch(...) { 
+            ::Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
+        }
+        
+        return(C);
+    }
+
     
-}
-
-
-    // In-memory execution - Parallel version
+    
+    // In-memory execution - Parallel version - by Blocks
     template<typename T>
-    extern inline Eigen::MatrixXd block_matrix_mul_parallel( T X, T Y, 
-                                               int block_size, Rcpp::Nullable<int> threads  = R_NilValue)
+    extern inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, T Y, 
+                                    Rcpp::Nullable<int>  iblock_size, 
+                                    Rcpp::Nullable<int> threads  = R_NilValue)
     {
         
         try{
@@ -87,7 +119,7 @@ extern inline Eigen::MatrixXd block_matrix_mul( Eigen::MatrixXd& A, Eigen::Matri
                             B = Y;
             
             //..// int ii=0, jj=0, kk=0;
-            int chunk = 1, tid;
+            int chunks, tid, block_size;
             
             std::vector<int> vstartii;
             
@@ -95,6 +127,13 @@ extern inline Eigen::MatrixXd block_matrix_mul( Eigen::MatrixXd& A, Eigen::Matri
             int M = A.rows();
             int K = A.cols();
             int N = B.cols();
+            
+            if( iblock_size.isNotNull()) {
+                block_size =  Rcpp::as<int>(iblock_size);  
+            } else {
+                block_size =  MAXBLOCKSIZE/3;  
+            }
+            // Rcpp::Rcout<<"\nMida del block: "<<block_size<<"\n";
             
             Eigen::MatrixXd C = Eigen::MatrixXd::Zero(M,N) ;
             if(block_size > std::min( N, std::min(M,K)) )
@@ -114,39 +153,211 @@ extern inline Eigen::MatrixXd block_matrix_mul( Eigen::MatrixXd& A, Eigen::Matri
                 vstartii.push_back(ii);
             }
             
-            #pragma omp parallel num_threads(ithreads) shared(A, B, C) // , chunk) private(tid ) 
+            chunks = vstartii.size()/ithreads;
+            
+            #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks) private(tid ) 
             {
-                
-                tid = omp_get_thread_num();
-                if (tid == 0)   {
-                  Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
-                }
-                
-                #pragma omp for schedule (auto) 
-                
-                // for (int ii = 0; ii < M; ii += block_size)
+
+                #pragma omp for schedule (dynamic, chunks) collapse(3)
                 for (int ii = 0; ii < vstartii.size(); ii++)
                 {
-                    // Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
                     for (int jj = 0; jj < N; jj += block_size)
                     {
                         for(int kk = 0; kk < K; kk += block_size)
                         {
-                            C.block(vstartii[ii], jj, std::min(block_size,M - vstartii[ii]), std::min(block_size,N - jj)) = 
-                                C.block(vstartii[ii], jj, std::min(block_size,M - vstartii[ii]), std::min(block_size,N - jj)) + 
-                                (A.block(vstartii[ii], kk, std::min(block_size,M - vstartii[ii]), std::min(block_size,K - kk)) * 
-                                B.block(kk, jj, std::min(block_size,K - kk), std::min(block_size,N - jj)));
+                            hsize_t minii = std::min( block_size, M - vstartii[ii]),
+                                    minjj = std::min( block_size, N - jj),
+                                    minkk = std::min( block_size, K - kk);
+                            
+                            C.block(vstartii[ii], jj, minii, minjj) =  C.block(vstartii[ii], jj, minii, minjj) + 
+                                (A.block(vstartii[ii], kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
                         }
                     }
                 }
             }
+            
             return(C);
             
         } catch(std::exception& ex) {
             Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
         }
-    
     }
+    
+    
+    template< typename T, typename U>
+    extern inline Rcpp::RObject Rcpp_matrix_vect_mult ( T  A, U  B)
+    {
+        
+        Rcpp::NumericMatrix m = Rcpp::as<Rcpp::NumericMatrix>(A);
+        Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(B);
+        
+        if( v.length() == m.rows()) {
+            
+            Rcpp::NumericMatrix C = Rcpp::no_init( m.rows(), m.cols());
+            
+            for( int i=0; i<m.cols(); i++) {
+                C( Rcpp::_, i) = m( Rcpp::_, i) * v;  
+            }    
+            return(C);
+            
+        } else if( v.length() == m.cols()) {
+            
+            Rcpp::NumericMatrix C = Rcpp::no_init( m.rows(), m.cols());
+            
+            for( int i=0; i<m.rows(); i++) {
+                C( i, Rcpp::_) = m( i, Rcpp::_) * v;  
+            }    
+            return(C);
+            
+        } else {
+            Rcpp::Rcout<<"Error: non-conformable arguments";
+        }
+        
+        return(R_NilValue);
+    }
+    
+    
+    template< typename T>
+    extern inline Rcpp::RObject Rcpp_vector_mult ( T  A, T  B)
+    {
+        
+        Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(A);
+        Rcpp::NumericVector v2 = Rcpp::as<Rcpp::NumericVector>(B);
+        
+        if(v.size() == v2.size()) {
+            Rcpp::NumericVector C = Rcpp::no_init( v.size());
+            
+            std::transform (v.begin(), v.end(), v2.begin(), C.begin(), std::multiplies<double>());
+            
+            C.attr("dim") = Rcpp::Dimension( C.size(), 1); 
+            
+            return(C);
+        }
+        
+        return(R_NilValue);
+        
+    }
+    
+    
+    template< typename T>
+    extern inline Rcpp::RObject Rcpp_matrix_vector_blockMult( T  A, T  B, bool bparal, 
+                            Rcpp::Nullable<int> iblock_size, Rcpp::Nullable<int> threads)
+    {
+        
+        // NOTA: Per defecte, multiplica per columnes tal i com raja.... 
+
+        bool btransposed = false;
+        unsigned int ithreads;
+        hsize_t block_size;
+        int chunks;
+        
+        Rcpp::NumericMatrix X = Rcpp::as<Rcpp::NumericMatrix>(A);
+        Rcpp::NumericVector Y = Rcpp::as<Rcpp::NumericVector>(B);
+        Rcpp::NumericMatrix C;
+        
+        // Matrix
+        hsize_t M = X.rows(),
+                N = X.cols();
+        
+        // Vector
+        hsize_t K = Y.length();
+        
+        try {
+            
+            if( K==N || K==M) {
+                if ( K == N){
+                    // multiplies vector to every col
+                    btransposed = true;
+                    
+                    X = Rcpp::transpose(X);
+                    
+                    hsize_t N = X.rows();
+                    hsize_t M = X.cols();
+                } 
+                
+                std::vector<hsize_t> vsizetoRead;
+                std::vector<hsize_t> vstart;
+                
+                if(threads.isNotNull()) {
+                    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+                        ithreads = Rcpp::as<int> (threads);
+                    } else {
+                        ithreads = getDTthreads(0, true);
+                    }
+                } else {
+                    ithreads = getDTthreads(0, true);
+                }
+                
+                
+                C = Rcpp::no_init( M, N);
+                
+                if( iblock_size.isNotNull()) {
+                    block_size =  Rcpp::as<int>(iblock_size);  
+                } else {
+                    block_size = getMatrixBlockSize( N, M).at(0);
+                }
+                
+                // minimum block size: 2 columns
+                if(block_size <= 0 ) {
+                    block_size = M*2;
+                }
+                
+                // Mínimum block size: 2 columns
+                getBlockPositionsSizes( M*N, block_size, vstart, vsizetoRead );
+                
+                chunks = vstart.size()/ithreads;
+                
+                #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
+                {
+                #pragma omp for schedule (dynamic, chunks)
+                    for (hsize_t ii = 0; ii < vstart.size(); ii ++)
+                    {
+                        // Duplicate vector
+                        std::size_t const no_of_duplicates = vsizetoRead[ii] / Y.length();
+                        
+                        std::vector<double> v = Rcpp::as<std::vector<double> >(Y); 
+                        v.reserve(Y.size() * no_of_duplicates);
+                        auto end = std::end(v);
+                        
+                        for(std::size_t i = 1; i < no_of_duplicates; ++i)
+                            v.insert(std::end(v), std::begin(v), end);
+                        
+                        // Mult vector to matrix by columns / rows
+                        if( vstart[ii] + vsizetoRead[ii] >= M*N ) {
+                            std::transform (X.begin() + vstart[ii], X.end(),
+                                            v.begin(), C.begin() + vstart[ii], std::multiplies<double>());
+                        } else {
+                            std::transform (X.begin() + vstart[ii], X.begin() + vstart[ii] + vsizetoRead[ii],
+                                            v.begin() , C.begin() + vstart[ii], std::multiplies<double>());   
+                        }
+                    }
+                }
+
+
+            } else {
+                
+                Rcpp::Rcout<< "vector sum error: non-conformable arguments\n";
+                return(R_NilValue);
+            }
+            
+            
+        } catch(std::exception& ex) {
+            Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
+            return(R_NilValue);
+        }
+        
+        if(btransposed == true){
+            Rcpp::transpose(C);
+        } 
+        
+        C.attr("dim") = Rcpp::Dimension( M, N);
+        
+        return(C);
+        
+    }
+    
+    
+    
 
 }
 

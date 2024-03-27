@@ -284,7 +284,8 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
     d.diagonal() = (retsvd.d).head(isize);
     
     Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
-    restmp = block_matrix_mul( u, d, 1024);
+    //..2024/03/27 ..// restmp = block_matrix_mul( u, d, 1024);
+    restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);
     
 }
 //    d) Write results to hdf5 file
@@ -458,8 +459,8 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
 
     //..ORIGINAL..//restmp = Bblock_matrix_mul((retsvd.u).block(0, 0, (retsvd.u).rows(), isize), d, 1024);
     Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
-    restmp = block_matrix_mul( u, d, 1024);
-
+    //..2024/03/27 ..// restmp = block_matrix_mul( u, d, 1024);
+    restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);
 }
 
 //    d) Write results to dataset

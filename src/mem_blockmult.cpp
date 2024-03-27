@@ -49,41 +49,43 @@ Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B,
 
         if( bparal==false || Rcpp::as<Rcpp::NumericVector>(A).size() < MAXELEMSINBLOCK || bbyBlocks == false) {
             if( Rcpp::is<Rcpp::NumericMatrix>(A) && Rcpp::is<Rcpp::NumericMatrix>(B) ) {
-                // return( BigDataStatMeth::Rcpp_matrix_mult(A, B) );
+                return( Rcpp::wrap(BigDataStatMeth::Rcpp_block_matrix_mul(Rcpp::as<Eigen::MatrixXd>(A), Rcpp::as<Eigen::MatrixXd>(B), block_size)));
                 
             } else if( Rcpp::is<Rcpp::NumericVector>(A) && Rcpp::is<Rcpp::NumericMatrix>(B)) {
-                // return( BigDataStatMeth::Rcpp_matrix_vect_mult( B, A) );
+                return( BigDataStatMeth::Rcpp_matrix_vect_mult( B, A) );
                 
             } else if( Rcpp::is<Rcpp::NumericVector>(B) && Rcpp::is<Rcpp::NumericMatrix>(A)) {
-                // return( BigDataStatMeth::Rcpp_matrix_vect_mult( A, B) );
+                return( BigDataStatMeth::Rcpp_matrix_vect_mult( A, B) );
                 
             } else if(Rcpp::is<Rcpp::NumericVector>(A) && Rcpp::is<Rcpp::NumericVector>(B)) {
-                // return( BigDataStatMeth::Rcpp_vector_mult(A, B));
+                return( BigDataStatMeth::Rcpp_vector_mult(A, B));
                 
             } else {
                 Rcpp::Rcout<<"\nData type not allowed";
             }    
+            
+            
         } else {
             
             if( Rcpp::is<Rcpp::NumericMatrix>(A) && Rcpp::is<Rcpp::NumericMatrix>(B) ) {
                 // return( BigDataStatMeth::Rcpp_matrix_blockMult(A, B, threads) );
+                return( Rcpp::wrap(BigDataStatMeth::Rcpp_block_matrix_mul_parallel(Rcpp::as<Eigen::MatrixXd>(A), Rcpp::as<Eigen::MatrixXd>(B), block_size, threads)));
                 
             } else if( Rcpp::is<Rcpp::NumericVector>(A) && Rcpp::is<Rcpp::NumericMatrix>(B)) {
-                 // return(BigDataStatMeth::Rcpp_matrix_vector_blockMult(B, A, bparal, threads));
+                return(BigDataStatMeth::Rcpp_matrix_vector_blockMult(B, A, bparal, block_size, threads));
                 
             } else if( Rcpp::is<Rcpp::NumericVector>(B) && Rcpp::is<Rcpp::NumericMatrix>(A)) {
-                // return(BigDataStatMeth::Rcpp_matrix_vector_blockMult(A, B, bparal, threads));
+                return(BigDataStatMeth::Rcpp_matrix_vector_blockMult(A, B, bparal, block_size, threads));
                 
             } else if(Rcpp::is<Rcpp::NumericVector>(A) && Rcpp::is<Rcpp::NumericVector>(B)) {
-                
-                // return( BigDataStatMeth::Rcpp_vector_sum(A, B));
+                return( BigDataStatMeth::Rcpp_vector_mult(A, B));
                 
             } else {
                 Rcpp::Rcout<<"\nData type not allowed";
             }    
+            
         }
         
-        return( Rcpp::wrap(BigDataStatMeth::block_matrix_mul_parallel(Rcpp::as<Eigen::MatrixXd>(A), Rcpp::as<Eigen::MatrixXd>(B), 2048, threads)));
         
     } catch(std::exception &ex) {
         Rcpp::Rcout<< ex.what();
