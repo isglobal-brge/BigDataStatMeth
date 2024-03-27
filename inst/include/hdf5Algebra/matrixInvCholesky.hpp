@@ -150,7 +150,7 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
                         L(j, j + offset[0]) = std::sqrt(A(j,j + offset[0]) - (L.row(j).head(j + offset[0]).array().pow(2).sum() ));    
                     }
                     
-#pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(sum) shared (A,L,j) schedule(static) if (j < readedRows - chunk)
+#pragma omp parallel for num_threads(ithreads) private(sum) shared (A,L,j) schedule(dynamic) if (j < readedRows - chunk)
                     for ( int i = j + 1; i < (dimensionSize - offset[0] && bcancel == false)  ; i++ )
                     {
                         if( j + offset[0] > 0) {
@@ -289,7 +289,7 @@ extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf
                     
                     vR = Eigen::VectorXd::Zero(offset[0] + ar_j.size());
                     
-#pragma omp parallel for num_threads(getDTthreads(ithreads, true)) shared (ar_j, j, verticalData, offset, colstoRead, vR) schedule(static) 
+#pragma omp parallel for num_threads(ithreads) shared (ar_j, j, verticalData, offset, colstoRead, vR) schedule(dynamic) 
                     for (int i = 0; i < offset[0] + ar_j.size() ; i++) {
                         
                         Eigen::ArrayXd ar_i = verticalData.block( 0, i, size_j, 1).array();
@@ -412,7 +412,7 @@ extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Datase
                 verticalData = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vverticalData.data(), count[0], count[1] );
                 
                 
-#pragma omp parallel for num_threads(getDTthreads(ithreads, true)) shared (verticalData, colstoRead, offset) schedule(static)
+#pragma omp parallel for num_threads(ithreads) shared (verticalData, colstoRead, offset) schedule(dynamic)
                 for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columnes
                 {
                     int init;

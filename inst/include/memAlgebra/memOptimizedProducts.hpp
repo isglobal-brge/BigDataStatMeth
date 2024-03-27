@@ -167,7 +167,7 @@ extern inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen
     //.OpenMP.//omp_set_num_threads(ithreads);
     
     //.OpenMP.//#pragma omp parallel shared(X, w, C) 
-#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(X, w, C) 
+#pragma omp parallel num_threads(ithreads) shared(X, w, C) 
 {
 #pragma omp for schedule (dynamic)
     for (int i=0; i<n; i++)
@@ -201,7 +201,7 @@ extern inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen
     //.OpenMP.// omp_set_num_threads(ithreads);
     
     //.OpenMP.//#pragma omp parallel shared(X, w, C) 
-#pragma omp parallel num_threads(getDTthreads(ithreads, true)) shared(X, w, C) 
+#pragma omp parallel num_threads(ithreads) shared(X, w, C) 
 {
 #pragma omp for schedule (dynamic)
     for (int i=0; i<n; i++)

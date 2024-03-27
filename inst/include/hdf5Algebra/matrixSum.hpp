@@ -64,7 +64,7 @@ namespace BigDataStatMeth {
                     
                     #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
                     {
-                    #pragma omp for schedule (static)
+                    #pragma omp for schedule (dynamic)
                         for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                         {
                             
@@ -96,7 +96,7 @@ namespace BigDataStatMeth {
                     getBlockPositionsSizes( K, hdf5_block, vstart, vsizetoRead );
                     #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
                     {
-                    #pragma omp for schedule (static)
+                    #pragma omp for schedule (dynamic)
                         for (hsize_t ii = 0; ii < vstart.size(); ii++)
                         {
                             std::vector<double> vdA( vsizetoRead[ii] * N ); 
@@ -184,7 +184,7 @@ namespace BigDataStatMeth {
                 
                 #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
                 {
-                    #pragma omp for schedule (static)
+                    #pragma omp for schedule (dynamic)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( K * vsizetoRead[ii] );
@@ -222,7 +222,7 @@ namespace BigDataStatMeth {
                 
                 #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
                 {
-                    #pragma omp for schedule (static)
+                    #pragma omp for schedule (dynamic)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( L * vsizetoRead[ii] );

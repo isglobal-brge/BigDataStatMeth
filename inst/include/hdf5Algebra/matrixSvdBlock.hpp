@@ -121,16 +121,30 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         irows = dsA->ncols();
         icols = dsA->nrows();
         
-        // Eigen::MatrixXd datanormal;// = Eigen::MatrixXd::Zero(2,irows);;
         
-        if(threads.isNotNull()) 
-        {
-            if (Rcpp::as<int>(threads) < std::thread::hardware_concurrency())
+        if(threads.isNotNull()) {
+            if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
                 ithreads = Rcpp::as<int> (threads);
-            else 
-                ithreads = std::thread::hardware_concurrency()/2;
+            } else {
+                ithreads = getDTthreads(0, true);
+            }
+        } else {
+            ithreads = getDTthreads(0, true);
         }
-        else    ithreads = std::thread::hardware_concurrency()/2; 
+        
+        // 
+        // // Eigen::MatrixXd datanormal;// = Eigen::MatrixXd::Zero(2,irows);;
+        // // 
+        // // 
+        // 
+        // if(threads.isNotNull()) 
+        // {
+        //     if (Rcpp::as<int>(threads) < std::thread::hardware_concurrency())
+        //         ithreads = Rcpp::as<int> (threads);
+        //     else 
+        //         ithreads = std::thread::hardware_concurrency()/2;
+        // }
+        // else    ithreads = std::thread::hardware_concurrency()/2; 
         
         // Work with transposed matrix
         if( irows >= icols ) {
@@ -182,7 +196,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         
         
         // Get data from M blocks in initial matrix
-#pragma omp for ordered schedule (static) 
+#pragma omp for ordered schedule (dynamic) 
         for( int i = 0; i< M ; i++)  
         {
             
@@ -387,25 +401,35 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
         Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, (std::string)strvmatnames[q-1]);
 
         M = joindata.size();
-
-        if(threads.isNotNull())
-        {
-            if (Rcpp::as<int>(threads) < std::thread::hardware_concurrency()) {
+        
+        if(threads.isNotNull()) {
+            if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
                 ithreads = Rcpp::as<int> (threads);
             } else {
-                ithreads = std::thread::hardware_concurrency()/2;
+                ithreads = getDTthreads(0, true);
             }
-        } else{
-            ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads()
+        } else {
+            ithreads = getDTthreads(0, true);
         }
+
+        // if(threads.isNotNull())
+        // {
+        //     if (Rcpp::as<int>(threads) < std::thread::hardware_concurrency()) {
+        //         ithreads = Rcpp::as<int> (threads);
+        //     } else {
+        //         ithreads = std::thread::hardware_concurrency()/2;
+        //     }
+        // } else{
+        //     ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads()
+        // }
 
 
         //.OpenMP.// omp_set_num_threads(getDTthreads(ithreads, false));
 
-#pragma omp parallel num_threads(getDTthreads(ithreads, false))
+#pragma omp parallel num_threads(ithreads)
 
 
-#pragma omp for ordered schedule (static)
+#pragma omp for ordered schedule (dynamic)
 
         // Get data from M blocks in initial matrix
         for( int i = 0; i< M ; i++)
