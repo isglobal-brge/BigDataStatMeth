@@ -63,9 +63,10 @@ const int MAXSTRING = 20;
 const hsize_t MAXSTRBLOCK = 100000;
 
 //. Modificat 2024/02/24.// const hsize_t MAXELEMSINBLOCK = 250000;
-const hsize_t MAXELEMSINBLOCK = 2^31-1;
+const hsize_t MAXELEMSINBLOCK = ((2 << 29) - 1);
 //.NOMES DEBUG.// const hsize_t MAXELEMSINBLOCK = 100;
 const hsize_t MAXBLOCKSIZE = std::floor(std::sqrt(MAXELEMSINBLOCK));
+const hsize_t MAXMULTBLOCKSIZE = 1 << 13;
 
 const int maxElemBlock = 3000000;
 //.Only test.// const int maxElemBlock = 30;
