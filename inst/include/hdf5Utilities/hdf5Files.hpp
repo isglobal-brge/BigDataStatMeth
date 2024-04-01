@@ -180,7 +180,12 @@ private:
 
     
     void close_file() {
-        pfile->close();
+        try {
+            pfile->close();    
+        } catch(std::exception& ex) {
+            ::Rf_error( "c++ exception close_file (err FileException)" );
+        }
+        
     }
     
     
