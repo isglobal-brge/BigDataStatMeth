@@ -10,3 +10,4 @@ inst/include/.DS_Store
 .DS_Store
 .DS_Store
 src/BigDataStatMeth.dll
+inst/include/hdf5Algebra/matrixSum_20240303.hpp.BACKUP.hpp
