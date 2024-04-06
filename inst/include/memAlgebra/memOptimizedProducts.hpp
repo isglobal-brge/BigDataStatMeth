@@ -152,17 +152,20 @@ extern inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen
     unsigned int ithreads;
     Eigen::MatrixXd C = Eigen::MatrixXd::Zero(n,X.cols()) ; 
     
-    if(threads.isNotNull()) {
-        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-            ithreads = Rcpp::as<int> (threads);
-        } else {
-            ithreads = getDTthreads(0, true);
-            //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
-        }
-    } else {
-        ithreads = getDTthreads(0, true);
-        //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
-    }
+    
+    ithreads = get_number_threads(threads, R_NilValue);
+    
+    // if(threads.isNotNull()) {
+    //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+    //         ithreads = Rcpp::as<int> (threads);
+    //     } else {
+    //         ithreads = getDTthreads(0, true);
+    //         //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+    //     }
+    // } else {
+    //     ithreads = getDTthreads(0, true);
+    //     //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
+    // }
     
     //.OpenMP.//omp_set_num_threads(ithreads);
     
@@ -186,17 +189,19 @@ extern inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen
     unsigned int ithreads;
     Eigen::MatrixXd C = Eigen::MatrixXd::Zero(X.rows(),n);
     
-    if(threads.isNotNull()) {
-        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-            ithreads = Rcpp::as<int> (threads);
-        } else {
-            ithreads = getDTthreads(0, true);
-            //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
-        }
-    } else {
-        ithreads = getDTthreads(0, true);
-        //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
-    }
+    ithreads = get_number_threads(threads, R_NilValue);
+    
+    // if(threads.isNotNull()) {
+    //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+    //         ithreads = Rcpp::as<int> (threads);
+    //     } else {
+    //         ithreads = getDTthreads(0, true);
+    //         //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;}
+    //     }
+    // } else {
+    //     ithreads = getDTthreads(0, true);
+    //     //.11-04-2022.// ithreads = std::thread::hardware_concurrency()/2;
+    // }
     
     //.OpenMP.// omp_set_num_threads(ithreads);
     

@@ -73,7 +73,7 @@ public:
 
             H5::Exception::dontPrint();
             std::string fullDatasetPath = groupname + "/" + name;
-            // bool bRemoved = false;
+            bool bRemoved = false;
             
             // dataset dimensions
             dimDataset[0] = cols;
@@ -95,7 +95,7 @@ public:
                 
                 if( boverwrite == true && bexists == true) {
                     remove_elements(pfile, getGroupName(), {name}); 
-                    // bRemoved = true;
+                    bRemoved = true;
                 }
                 
                 type = strdatatype;
@@ -108,15 +108,15 @@ public:
                 } else if( type == "int" || type == "logic" || type == "factor") {
                     H5::IntType datatype( H5::PredType::NATIVE_INT );
                     pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace ));
-                    // if(bRemoved == true) {
-                    //     writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDataset[0], dimDataset[1]) ));    
-                    // }
+                    if(bRemoved == true) {
+                        writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDatasetinFile[0], dimDatasetinFile[1]) ));
+                    }
                 } else if( type == "numeric" || type == "real") {
                     H5::IntType datatype( H5::PredType::NATIVE_DOUBLE ); 
                     pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace ));
-                    // if(bRemoved == true) {
-                    //     writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDataset[0], dimDataset[1]) ));
-                    // }
+                    if(bRemoved == true) {
+                        writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDatasetinFile[0], dimDatasetinFile[1]) ));
+                    }
                 } else {
                     close_file();
                     ::Rf_error( "Dataset data type not allowed or no matrix defined (createDataset)" );

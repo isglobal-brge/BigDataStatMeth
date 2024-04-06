@@ -40,8 +40,8 @@ Rcpp::RObject bdblockSubstract(Rcpp::RObject A, Rcpp::RObject B,
 
     try{
         
-        if (paral.isNull()) { bparal = false; }
-        else { bparal = Rcpp::as<bool> (paral); }
+        // if (paral.isNull()) { bparal = false; }
+        // else { bparal = Rcpp::as<bool> (paral); }
         
         if (byBlocks.isNull()) { bbyBlocks = false; }
         else { bbyBlocks = Rcpp::as<bool> (byBlocks); }
@@ -68,10 +68,10 @@ Rcpp::RObject bdblockSubstract(Rcpp::RObject A, Rcpp::RObject B,
                 return( BigDataStatMeth::Rcpp_matrix_blockSubstract(A, B, threads) );
                 
             } else if( Rcpp::is<Rcpp::NumericVector>(A) && Rcpp::is<Rcpp::NumericMatrix>(B)) {
-                 return(BigDataStatMeth::Rcpp_matrix_vector_blockSubstract(B, A, bparal, threads));
+                 return(BigDataStatMeth::Rcpp_matrix_vector_blockSubstract(B, A, paral, threads));
                 
             } else if( Rcpp::is<Rcpp::NumericVector>(B) && Rcpp::is<Rcpp::NumericMatrix>(A)) {
-                return(BigDataStatMeth::Rcpp_matrix_vector_blockSubstract(A, B, bparal, threads));
+                return(BigDataStatMeth::Rcpp_matrix_vector_blockSubstract(A, B, paral, threads));
                 
             } else if(Rcpp::is<Rcpp::NumericVector>(A) && Rcpp::is<Rcpp::NumericVector>(B)) {
                 

@@ -78,15 +78,17 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
                              stride = {1,1},
                              block = {1,1};
         
-        if(threads.isNotNull()) {
-            if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                ithreads = Rcpp::as<int> (threads);
-            } else {
-                ithreads = getDTthreads(0, true);
-            }
-        } else {
-            ithreads = getDTthreads(0, true);
-        }
+        ithreads = get_number_threads(threads, R_NilValue);
+        
+        // if(threads.isNotNull()) {
+        //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+        //         ithreads = Rcpp::as<int> (threads);
+        //     } else {
+        //         ithreads = getDTthreads(0, true);
+        //     }
+        // } else {
+        //     ithreads = getDTthreads(0, true);
+        // }
         
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
@@ -228,16 +230,18 @@ extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf
                              count = {1,1},
                              stride = {1,1},
                              block = {1,1};
-        
-        if(threads.isNotNull()) {
-            if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()) {
-                ithreads = Rcpp::as<int> (threads);
-            } else {
-                ithreads = getDTthreads(0, true);
-            }
-        } else {
-            ithreads = getDTthreads(0, true);
-        }
+
+        ithreads = get_number_threads(threads, R_NilValue);
+                
+        // if(threads.isNotNull()) {
+        //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()) {
+        //         ithreads = Rcpp::as<int> (threads);
+        //     } else {
+        //         ithreads = getDTthreads(0, true);
+        //     }
+        // } else {
+        //     ithreads = getDTthreads(0, true);
+        // }
         
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
@@ -369,15 +373,7 @@ extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Datase
                              stride = {1,1},
                              block = {1,1};
         
-        if(threads.isNotNull()) {
-            if (Rcpp::as<unsigned int> (threads) <= std::thread::hardware_concurrency()){
-                ithreads = Rcpp::as<int> (threads);
-            } else {
-                ithreads = getDTthreads(0, true);
-            }
-        } else {
-            ithreads = getDTthreads(0, true);
-        }
+        ithreads = get_number_threads(threads, R_NilValue);
         
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {

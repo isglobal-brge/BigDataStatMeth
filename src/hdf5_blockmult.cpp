@@ -13,7 +13,6 @@ void bdblockmult_hdf5(std::string filename,
                     std::string B,
                     Rcpp::Nullable<std::string> groupB = R_NilValue, 
                     Rcpp::Nullable<int> block_size = R_NilValue,
-                    Rcpp::Nullable<int> mixblock_size = R_NilValue,
                     Rcpp::Nullable<bool> paral = R_NilValue,
                     Rcpp::Nullable<int> threads = R_NilValue,
                     Rcpp::Nullable<std::string> outgroup = R_NilValue,
@@ -23,12 +22,17 @@ void bdblockmult_hdf5(std::string filename,
     
     int iblock_size, 
         iblockfactor = 2;
-    bool bparal, bforce;
+    bool bforce;
+//.. 2024/03/28 ..//    bool bparal, bforce;
     
     std::string strsubgroupOut, 
                 strdatasetOut, 
                 strsubgroupIn,
                 strsubgroupInB;
+    
+    BigDataStatMeth::hdf5Dataset* dsA;
+    BigDataStatMeth::hdf5Dataset* dsB;
+    BigDataStatMeth::hdf5Dataset* dsC;
     
     try {
         
@@ -45,44 +49,47 @@ void bdblockmult_hdf5(std::string filename,
         if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
         else { strdatasetOut =  A + "_x_" + B; }
         
-        if (paral.isNull()) { bparal = false; } 
-        else { bparal = Rcpp::as<bool> (paral); }
+        // if (paral.isNull()) { bparal = false; } 
+        // else { bparal = Rcpp::as<bool> (paral); }
         
         if (force.isNull()) { bforce = false; } 
         else { bforce = Rcpp::as<bool> (force); }
         
-        BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
         dsA->openDataset();
-        BigDataStatMeth::hdf5Dataset* dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
         dsB->openDataset();
-        BigDataStatMeth::hdf5Dataset* dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+        dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
         
-        iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
+        //../ iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
 
-        if(bparal == true) { // parallel
+//.. 2024/03/28 ..//        if(bparal == true) { // parallel
             
-            int memory_block; 
-            if(mixblock_size.isNotNull()) {
-                memory_block = Rcpp::as<int> (mixblock_size);
-            } else {
-                memory_block = iblock_size/2;
-            }
+            // int memory_block; 
+            // if(mixblock_size.isNotNull()) {
+            //     memory_block = Rcpp::as<int> (mixblock_size);
+            // } else {
+            //     memory_block = iblock_size/2;
+            // }
             
-            BigDataStatMeth::multiplication(dsA, dsB, dsC, iblock_size, memory_block, bparal, threads);
+            BigDataStatMeth::multiplication(dsA, dsB, dsC, paral, block_size, threads);
 
-        } else if (bparal == false) { // Not parallel
-            BigDataStatMeth::multiplication(dsA, dsB, dsC, iblock_size, 0, bparal, threads);
-        }
+//.. 2024/03/28 ..//        } else if (bparal == false) { // Not parallel
+//.. 2024/03/28 ..//            BigDataStatMeth::multiplication(dsA, dsB, dsC, paral, block_size, threads);
+//.. 2024/03/28 ..//        }
         
         delete dsA;
         delete dsB;
         delete dsC;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        delete dsA; delete dsB; delete dsC;
         ::Rf_error( "c++ exception blockmult_hdf5 (File IException)" );
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        delete dsA; delete dsB; delete dsC;
         ::Rf_error( "c++ exception blockmult_hdf5 (DataSet IException)" );
     } catch(std::exception &ex) {
+        delete dsA; delete dsB; delete dsC;
     }
     
     // return List::create(Named("filename") = filename,

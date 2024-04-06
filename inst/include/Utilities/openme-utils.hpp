@@ -152,4 +152,28 @@
     #endif
     }
 #endif
-
+    
+    
+#ifndef _GET_FINAL_THREADS
+#define _GET_FINAL_THREADS
+    extern inline unsigned int get_number_threads(Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> bparal) {
+        unsigned int ithreads = 1;
+        
+        if( bparal.isNotNull() ) {
+            if(Rcpp::as<bool>(bparal) == false) {
+                return(ithreads);        
+            }
+        }
+            
+        if(threads.isNotNull()) {
+            if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+                ithreads = Rcpp::as<int> (threads);
+            } else {
+                ithreads = getDTthreads(0, true);
+            }
+        } else {
+            ithreads = getDTthreads(0, true);
+        }
+        return(ithreads);
+    }
+#endif

@@ -8,7 +8,6 @@
 namespace BigDataStatMeth {
 
     extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size);
-    // extern inline Eigen::MatrixXd block_matrix_mul_parallel( Eigen::MatrixXd& A, Eigen::MatrixXd& B, int block_size, Rcpp::Nullable<int> threads);
 
     
     extern inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
@@ -102,8 +101,8 @@ namespace BigDataStatMeth {
     
     
     // In-memory execution - Parallel version - by Blocks
-    template<typename T>
-    extern inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, T Y, 
+    template<typename T, typename U>
+    extern inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, U Y, 
                                     Rcpp::Nullable<int>  iblock_size, 
                                     Rcpp::Nullable<int> threads  = R_NilValue)
     {
@@ -115,10 +114,15 @@ namespace BigDataStatMeth {
                           std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
                           "Error - type not allowed");
             
+            static_assert(std::is_same<U, Eigen::MatrixXd >::value || 
+                          std::is_same<U, Eigen::Map< Eigen::MatrixXd >>::value || 
+                          std::is_same<U, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                          std::is_same<U, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                          "Error - type not allowed");
+            
             Eigen::MatrixXd A = X,
                             B = Y;
-            
-            //..// int ii=0, jj=0, kk=0;
+
             int chunks, tid, block_size;
             
             std::vector<int> vstartii;
@@ -133,21 +137,12 @@ namespace BigDataStatMeth {
             } else {
                 block_size =  MAXBLOCKSIZE/3;  
             }
-            // Rcpp::Rcout<<"\nMida del block: "<<block_size<<"\n";
             
             Eigen::MatrixXd C = Eigen::MatrixXd::Zero(M,N) ;
             if(block_size > std::min( N, std::min(M,K)) )
                 block_size = std::min( N, std::min(M,K)); 
             
-            if(threads.isNotNull()) {
-                if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                    ithreads = Rcpp::as<int> (threads);
-                } else {
-                    ithreads = getDTthreads(0, true);
-                }
-            } else {
-                ithreads = getDTthreads(0, true);
-            }
+            ithreads = get_number_threads(threads, R_NilValue);
             
             for (int ii = 0; ii < M; ii += block_size) {
                 vstartii.push_back(ii);
@@ -240,7 +235,7 @@ namespace BigDataStatMeth {
     
     
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_matrix_vector_blockMult( T  A, T  B, bool bparal, 
+    extern inline Rcpp::RObject Rcpp_matrix_vector_blockMult( T  A, T  B, Rcpp::Nullable<bool> bparal, 
                             Rcpp::Nullable<int> iblock_size, Rcpp::Nullable<int> threads)
     {
         
@@ -256,9 +251,7 @@ namespace BigDataStatMeth {
         Rcpp::NumericMatrix C;
         
         // Matrix
-        hsize_t M = X.rows(),
-                N = X.cols();
-        
+        hsize_t M = X.rows(), N = X.cols();
         // Vector
         hsize_t K = Y.length();
         
@@ -278,16 +271,18 @@ namespace BigDataStatMeth {
                 std::vector<hsize_t> vsizetoRead;
                 std::vector<hsize_t> vstart;
                 
-                if(threads.isNotNull()) {
-                    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                        ithreads = Rcpp::as<int> (threads);
-                    } else {
-                        ithreads = getDTthreads(0, true);
-                    }
-                } else {
-                    ithreads = getDTthreads(0, true);
-                }
+                // if(threads.isNotNull()) {
+                //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+                //         ithreads = Rcpp::as<int> (threads);
+                //     } else {
+                //         ithreads = getDTthreads(0, true);
+                //     }
+                // } else {
+                //     ithreads = getDTthreads(0, true);
+                // }
                 
+                
+                ithreads = get_number_threads(threads, bparal);
                 
                 C = Rcpp::no_init( M, N);
                 
@@ -333,7 +328,6 @@ namespace BigDataStatMeth {
                     }
                 }
 
-
             } else {
                 
                 Rcpp::Rcout<< "vector sum error: non-conformable arguments\n";
@@ -353,7 +347,6 @@ namespace BigDataStatMeth {
         C.attr("dim") = Rcpp::Dimension( M, N);
         
         return(C);
-        
     }
     
     

@@ -38,53 +38,40 @@ namespace BigDataStatMeth {
                 std::vector<hsize_t> vstart, vsizetoRead;
                 std::vector<hsize_t> stride = {1, 1};
                 std::vector<hsize_t> block = {1, 1};
-                hsize_t isize = hdf5_block + 1;
+                // hsize_t isize = hdf5_block + 1;
                 
                 dsC->createDataset( N, K, "real"); 
-                
-                // if(bparal == false) {
-                //     ithreads = 1;
-                // } else {
-                //     if(threads.isNotNull()) {
-                //         if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                //             ithreads = Rcpp::as<int> (threads);
-                //         } else {
-                //             ithreads = getDTthreads(0, true);
-                //         }
-                //     } else {
-                //         ithreads = getDTthreads(0, true);
-                //     }    
-                // }
                 
                 ithreads = get_threads(bparal, threads);
                 
                 if( K<=N ) {
                     
                     getBlockPositionsSizes( N, hdf5_block, vstart, vsizetoRead );
+                    int chunks = vstart.size()/ithreads;
                     
-                    #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
+                    #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
                     {
-                    #pragma omp for schedule (dynamic)
+                    #pragma omp for schedule (dynamic, chunks)
                         for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                         {
                             
                             std::vector<double> vdA( K * vsizetoRead[ii] ); 
-                            // #pragma omp critical 
-                            // {
+                            #pragma omp critical(accessFile)
+                            {
                                 dsA->readDatasetBlock( {0, vstart[ii]}, { K, vsizetoRead[ii]}, stride, block, vdA.data() );
-                            // }
+                            }
                             
                             std::vector<double> vdB( K * vsizetoRead[ii] ); 
-                            // #pragma omp critical 
-                            // {
+                            #pragma omp critical(accessFile)
+                            {
                                 dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
-                            // }
+                            }
                             std::transform (vdA.begin(), vdA.end(),
                                             vdB.begin(), vdA.begin(), std::plus<double>());
                             
                             std::vector<hsize_t> offset = { 0, vstart[ii] };
                             std::vector<hsize_t> count = { K, vsizetoRead[ii] };
-                            #pragma omp critical 
+                            #pragma omp critical(accessFile) 
                             {
                                 dsC->writeDatasetBlock(vdA, offset, count, stride, block);
                             }
@@ -94,22 +81,24 @@ namespace BigDataStatMeth {
                 } else {
                     
                     getBlockPositionsSizes( K, hdf5_block, vstart, vsizetoRead );
-                    #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
+                    int chunks = vstart.size()/ithreads;
+                    
+                    #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
                     {
-                    #pragma omp for schedule (dynamic)
+                    #pragma omp for schedule (dynamic, chunks)
                         for (hsize_t ii = 0; ii < vstart.size(); ii++)
                         {
                             std::vector<double> vdA( vsizetoRead[ii] * N ); 
-                            // #pragma omp critical 
-                            // {
+                            #pragma omp critical(accessFile)
+                            {
                                 dsA->readDatasetBlock( {vstart[ii], 0}, { vsizetoRead[ii], N}, stride, block, vdA.data() );
-                            // }
+                            }
                             
                             std::vector<double> vdB( vsizetoRead[ii] * N); 
-                            // #pragma omp critical 
-                            // {
+                            #pragma omp critical(accessFile)
+                            {
                                 dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], N}, stride, block, vdB.data() );
-                            // }
+                            }
                             
                             std::transform (vdA.begin(), vdA.end(),
                                             vdB.begin(), vdA.begin(), std::plus<double>());
@@ -164,16 +153,14 @@ namespace BigDataStatMeth {
                 hdf5_block = ceil(MAXBLOCKSIZE/(K*N));
             }
     
-            hsize_t isize = hdf5_block + 1;
+            // hsize_t isize = hdf5_block + 1;
             std::vector<hsize_t> stride = {1, 1},
                                  block = {1, 1};
-    
             
             dsC->createDataset( L, M, "real");
             
             std::vector<double> vdA( K * N );
             dsA->readDatasetBlock( {0, 0}, {K, N}, stride, block, vdA.data() );
-            
             
             ithreads = get_threads(bparal, threads);
             
@@ -181,14 +168,18 @@ namespace BigDataStatMeth {
             { // Sum vector to every col
                 
                 getBlockPositionsSizes( L, hdf5_block, vstart, vsizetoRead );
+                int chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
+                #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
                 {
-                    #pragma omp for schedule (dynamic)
+                    #pragma omp for schedule (dynamic, chunks) collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( K * vsizetoRead[ii] );
-                        dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
+                        #pragma omp critical(accessFile)
+                        {
+                            dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
+                        }
                         
                         // Duplicate vector
                         std::size_t const no_of_duplicates = (K * vsizetoRead[ii]) / vdA.size();
@@ -204,11 +195,10 @@ namespace BigDataStatMeth {
                         std::transform (vdB.begin(), vdB.end(),
                                         v.begin(), vdB.begin(), std::plus<double>());
                         
-                        
                         std::vector<hsize_t> offset = { 0, vstart[ii]};
                         std::vector<hsize_t> count = { K, vsizetoRead[ii]};
                         
-                        #pragma omp critical 
+                        #pragma omp critical(accessFile)
                         {
                             dsC->writeDatasetBlock( vdB, offset, count, stride, block);
                         }
@@ -219,14 +209,18 @@ namespace BigDataStatMeth {
             } else if(  K == L ) { // Sum vector to every row
                 
                 getBlockPositionsSizes( M, hdf5_block, vstart, vsizetoRead );
+                int chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
+                #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
                 {
-                    #pragma omp for schedule (dynamic)
+                    #pragma omp for schedule (dynamic, chunks) collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( L * vsizetoRead[ii] );
-                        dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], K}, stride, block, vdB.data() );
+                        #pragma omp critical (accessFile)
+                        {
+                            dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], K}, stride, block, vdB.data() );
+                        }
                         Rcpp::NumericMatrix B (vsizetoRead[ii], K, vdB.begin());
                         
                         Rcpp::transpose(B);
@@ -248,10 +242,11 @@ namespace BigDataStatMeth {
                         std::vector<hsize_t> offset = { vstart[ii], 0};
                         std::vector<hsize_t> count = { vsizetoRead[ii], K};
                         
-                        #pragma omp critical 
+                        #pragma omp critical (accessFile)
                         {
                             // dsC->writeDatasetBlock( Rcpp::transpose(B), offset, count, stride, block, false); 
-                            dsC->writeDatasetBlock( Rcpp::as<std::vector<double> >(B), offset, count, stride, block);
+                            //.. 2024/03/29..//dsC->writeDatasetBlock( Rcpp::as<std::vector<double> >(B), offset, count, stride, block);
+                            dsC->writeDatasetBlock( vdB, offset, count, stride, block);
                         }
                     }
                 }

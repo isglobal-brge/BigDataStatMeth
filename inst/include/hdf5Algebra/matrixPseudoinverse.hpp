@@ -54,15 +54,18 @@ extern inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A,
     Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
     Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
     
-    if(threads.isNotNull()) {
-        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-            ithreads = Rcpp::as<int> (threads);
-        } else {
-            ithreads = getDTthreads(0, true);
-        }
-    } else {
-        ithreads = getDTthreads(0, true);
-    }
+    
+    ithreads = get_number_threads(threads, R_NilValue);
+    
+    // if(threads.isNotNull()) {
+    //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+    //         ithreads = Rcpp::as<int> (threads);
+    //     } else {
+    //         ithreads = getDTthreads(0, true);
+    //     }
+    // } else {
+    //     ithreads = getDTthreads(0, true);
+    // }
     
     // dgesvd_( char JOBU, char JOBVT, int M, int N, double* A, int LDA, double* S, double* U, int LDU, double* VT, int LDVT, double WORK, int LWORK, int INFO  );
     dgesvd_( &Schar, &Schar, &m, &n, A->data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
@@ -120,15 +123,18 @@ extern inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA,
     Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
     Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
     
-    if(threads.isNotNull()) {
-        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-            ithreads = Rcpp::as<int> (threads);
-        } else {
-            ithreads = getDTthreads(0, true);
-        }
-    } else {
-        ithreads = getDTthreads(0, true);
-    }
+    
+    ithreads = get_number_threads(threads, R_NilValue);
+    
+    // if(threads.isNotNull()) {
+    //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+    //         ithreads = Rcpp::as<int> (threads);
+    //     } else {
+    //         ithreads = getDTthreads(0, true);
+    //     }
+    // } else {
+    //     ithreads = getDTthreads(0, true);
+    // }
     
     {
         Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);

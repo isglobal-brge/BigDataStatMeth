@@ -14,7 +14,7 @@ namespace BigDataStatMeth {
     template< typename T>  extern inline Rcpp::RObject Rcpp_vector_substract ( T  A, T  B);
     
     template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_blockSubstract ( T  A, T  B, Rcpp::Nullable<int> threads = R_NilValue);
-    template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_vector_blockSubstract( T  A, T  B, bool bparal, Rcpp::Nullable<int> threads);
+    template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_vector_blockSubstract( T  A, T  B, Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads);
     
     template< typename T>
     extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_substract( T  A, T  B, hsize_t block_size, 
@@ -165,21 +165,14 @@ namespace BigDataStatMeth {
                 {
                     hsize_t size = block_size + 1;
                     
-                    if(threads.isNotNull()) {
-                        if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                            ithreads = Rcpp::as<int> (threads);
-                        } else {
-                            ithreads = getDTthreads(0, true);
-                        }
-                    } else {
-                        ithreads = getDTthreads(0, true);
-                    }
+                    ithreads = get_number_threads(threads, R_NilValue);
                     
                     getBlockPositionsSizes( N*M, block_size, vstart, vsizetoRead );
+                    int chunks = vstart.size()/ithreads;
                     
-                    #pragma omp parallel num_threads(ithreads) shared(A, B, C)
+                    #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
                     {
-                    #pragma omp for schedule (dynamic)
+                    #pragma omp for schedule (dynamic, chunks)
                         for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                         {
                             
@@ -219,7 +212,7 @@ namespace BigDataStatMeth {
     
     template< typename T>
     extern inline Rcpp::RObject Rcpp_matrix_vector_blockSubstract( T  A, T  B,  
-                                                             bool bparal, Rcpp::Nullable<int> threads)
+                                Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads)
     {
         
         // NOTA: Per defecte, suma per columnes tal i com raja.... 
@@ -262,16 +255,7 @@ namespace BigDataStatMeth {
                 std::vector<hsize_t> vsizetoRead;
                 std::vector<hsize_t> vstart;
                 
-                if(threads.isNotNull()) {
-                    if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                        ithreads = Rcpp::as<int> (threads);
-                    } else {
-                        ithreads = getDTthreads(0, true);
-                    }
-                } else {
-                    ithreads = getDTthreads(0, true);
-                }
-                
+                ithreads = get_number_threads(threads, bparal);
                 
                 C = Rcpp::no_init( M, N);
                 
@@ -284,10 +268,11 @@ namespace BigDataStatMeth {
                 
                 // Mínimum block size: 2 columns
                 getBlockPositionsSizes( M*N, block_size, vstart, vsizetoRead );
+                int chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads(ithreads) shared(A, B, C)
+                #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
                 {
-                #pragma omp for schedule (dynamic)
+                #pragma omp for schedule (dynamic, chunks) collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         // Duplicate vector
@@ -325,11 +310,7 @@ namespace BigDataStatMeth {
         
         if(btransposed == true){
             Rcpp::transpose(C);
-            // C.attr("dim") = Rcpp::Dimension( N, K);
         } 
-        // else {
-        //     C.attr("dim") = Rcpp::Dimension( K, N);
-        // }
         
         C.attr("dim") = Rcpp::Dimension( M, N);
         
