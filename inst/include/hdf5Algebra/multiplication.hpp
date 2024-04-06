@@ -38,6 +38,9 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
 
 
     // In-memory execution - Parallel version
+    // 
+    //  IMPORTANT : FUNCIÓ MODIFICADA EL 2024/04/06  I NO TESTEJADA !!!!
+    // 
     extern inline Eigen::MatrixXd Bblock_matrix_mul_parallel( Eigen::MatrixXd A, Eigen::MatrixXd B, 
                                                              int block_size, Rcpp::Nullable<int> threads  = R_NilValue)
     {
@@ -59,33 +62,37 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                 if(block_size > std::min( N, std::min(M,K)) )
                     block_size = std::min( N, std::min(M,K)); 
                 
-                // if(threads.isNotNull()) {
-                //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                //         ithreads = Rcpp::as<int> (threads);
-                //     } else {
-                //         ithreads = getDTthreads(0, true);
-                //     }
-                // } else {
-                //     ithreads = getDTthreads(0, true);
-                // }
+                std::vector<hsize_t> vsizetoRead, vstart;
                 
-                ithreads = get_number_threads(threads, R_NilValue);
+                // ithreads = get_number_threads(threads, R_NilValue);
                 
-    #pragma omp parallel num_threads(ithreads) shared(A, B, C) //..// , chunk) private(tid ) 
+                getBlockPositionsSizes_hdf5( N, block_size, vstart, vsizetoRead );
+                
+                int ithreads = get_number_threads(threads, R_NilValue);
+                int chunks = vstart.size()/ithreads;
+                
+                #pragma omp parallel num_threads(ithreads) shared(A, B, C) //..// , chunk) private(tid ) 
                 {
                     //..// tid = omp_get_thread_num();
                     
-    #pragma omp for schedule (dynamic) 
-                    for (int ii = 0; ii < M; ii += block_size)
+                    // #pragma omp for schedule (dynamic) 
+                    // for (int ii = 0; ii < M; ii += block_size)
+                    #pragma omp for schedule (dynamic, chunks) collapse(3)
+                    for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         // Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
                         for (int jj = 0; jj < N; jj += block_size)
                         {
                             for(int kk = 0; kk < K; kk += block_size)
                             {
-                                C.block(ii, jj, std::min(block_size,M - ii), std::min(block_size,N - jj)) = 
-                                    C.block(ii, jj, std::min(block_size,M - ii), std::min(block_size,N - jj)) + 
-                                    (A.block(ii, kk, std::min(block_size,M - ii), std::min(block_size,K - kk)) * 
+                                // C.block(ii, jj, std::min(block_size,M - ii), std::min(block_size,N - jj)) = 
+                                //     C.block(ii, jj, std::min(block_size,M - ii), std::min(block_size,N - jj)) + 
+                                //     (A.block(ii, kk, std::min(block_size,M - ii), std::min(block_size,K - kk)) * 
+                                //     B.block(kk, jj, std::min(block_size,K - kk), std::min(block_size,N - jj)));
+                                
+                                C.block(vstart[ii], jj, vsizetoRead[ii], std::min(block_size,N - jj)) = 
+                                    C.block(vstart[ii], jj, vsizetoRead[ii], std::min(block_size,N - jj)) + 
+                                    (A.block(vstart[ii], kk, vsizetoRead[ii], std::min(block_size,K - kk)) * 
                                     B.block(kk, jj, std::min(block_size,K - kk), std::min(block_size,N - jj)));
                             }
                         }
