@@ -54,8 +54,8 @@ void bdCreate_hdf5_matrix(std::string filename,
                     strdataset,
                     strdatatype;
         
-        bool transposed, 
-             bforceFile, 
+        // bool transposed, 
+        bool bforceFile, 
              bforceDataset, 
              bunlimited;
         
@@ -70,8 +70,8 @@ void bdCreate_hdf5_matrix(std::string filename,
         if(unlimited.isNull())  bunlimited = false ;
         else    bunlimited = Rcpp::as<bool>(unlimited);
         
-        if(transp.isNull())  transposed = false ;
-        else    transposed = Rcpp::as<bool>(transp);
+        // if(transp.isNull())  transposed = false ;
+        // else    transposed = Rcpp::as<bool>(transp);
         
         if(overwriteDataset.isNull())  bforceDataset = false ;
         else    bforceDataset = Rcpp::as<bool>(overwriteDataset);

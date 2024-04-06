@@ -154,14 +154,30 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #' @param dataset matrix dataset with data to perform SVD
 #' @param k number of local SVDs to concatenate at each level 
 #' @param q number of levels
-#' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.
-#' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.
-#' @param rankthreshold double, threshold used to determine the range of the array. The matrix rank is equal to the number of
-#'  singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
-#'  changed to an approximation of 0.
-#' @param byblocks (optional) by default is TRUE, if FALSE then SVD decomposition it's executed in all the matrix, this can cause memory overflow errors if we are working with big matrices
-#' @param threads (optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.
-#' @return a list of three components with the singular values and left and right singular vectors of the matrix
+#' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering 
+#' is done by subtracting the column means (omitting NAs) of x from their 
+#' corresponding columns, and if center is FALSE, no centering is done.
+#' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is 
+#' done by dividing the (centered) columns of x by their standard deviations if 
+#' center is TRUE, and the root mean square otherwise. If scale is FALSE, no 
+#' scaling is done.
+#' @param rankthreshold double, threshold used to determine the range of the array. 
+#' The matrix rank is equal to the number of singular values different from the 
+#' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
+#' can be changed to an approximation of 0.
+#' @param method (optional, defalut = "auto") possible values are: "auto", 
+#' "blocks", "full":
+#' \itemize{
+#'   \item{"auto"}{ The option method = "auto" chooses the "full" or 
+#'   "blocks" method depending on the size of the matrix to be decomposed }
+#'   \item{"blocks"}{ The SVD decomposition can be carried out by blocks, 
+#'   recommended option for large matrices that do not fit in memory }
+#'   \item{"full"}{ The SVD decomposition is performed directly without partitioning the matrix }
+#' } 
+#' @param threads (optional) only used in some operations inside function. If 
+#' threads is null then threads =  maximum number of threads available - 1.
+#' @return a list of three components with the singular values and left and 
+#' right singular vectors of the matrix
 #' @return A List with : 
 #' \itemize{
 #'   \item{"u"}{ eigenvectors of AA^t, mxn and column orthogonal matrix }
@@ -169,8 +185,8 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #'   \item{"d"}{ singular values, nxn diagonal matrix (non-negative real values) }
 #' }
 #' @export
-bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force = NULL, byblocks = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, rankthreshold, force, byblocks, threads)
+bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force = NULL, method = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, rankthreshold, force, method, threads)
 }
 
 #' Solve matrix equations
@@ -298,7 +314,6 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #' PCA Descomposition
 #' 
 #' Compute PCA
-#' 
 #' @param filename string, file name where dataset is stored 
 #' @param group string group name  where dataset is stored in file
 #' @param dataset string dataset name with data to perform PCA
@@ -316,11 +331,20 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #' If it has been previously calculated. This group must contain the d, u and v datasets.
 #' @param force logical value, if true, the SVD is forced to be computed although 
 #' the SVD exists. 
+#' @param method (optional, defalut = "auto") possible values are: "auto", 
+#' "blocks", "full":
+#' \itemize{
+#'   \item{"auto"}{ The option method = "auto" chooses the "full" or 
+#'   "blocks" method depending on the size of the matrix to be decomposed }
+#'   \item{"blocks"}{ The PCA can be carried out by blocks, 
+#'   recommended option for large matrices that do not fit in memory }
+#'   \item{"full"}{ The PCA is performed directly without partitioning the matrix }
+#' } 
 #' @param threads integer number of threads used to run PCA
 #' @return original file with results in folder PCA/<datasetname>
 #' @export
-bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FALSE, bscale = FALSE, k = 2L, q = 1L, rankthreshold = 0.0, SVDgroup = NULL, overwrite = FALSE, threads = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, SVDgroup, overwrite, threads))
+bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FALSE, bscale = FALSE, k = 2L, q = 1L, rankthreshold = 0.0, SVDgroup = NULL, overwrite = FALSE, method = NULL, threads = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, SVDgroup, overwrite, method, threads))
 }
 
 #' Crossprod with hdf5 matrix

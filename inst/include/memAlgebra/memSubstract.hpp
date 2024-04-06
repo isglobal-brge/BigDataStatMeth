@@ -136,23 +136,22 @@ namespace BigDataStatMeth {
         
         Rcpp::NumericMatrix X = Rcpp::as<Rcpp::NumericMatrix>(A);
         Rcpp::NumericMatrix Y = Rcpp::as<Rcpp::NumericMatrix>(B);
-        unsigned int ithreads;
         
         hsize_t N = X.rows();
         hsize_t M = X.cols();
         
         Rcpp::NumericMatrix C = Rcpp::no_init( N, M);
         
-        hsize_t block_size; 
-        
         try {
+            
+            unsigned int ithreads;
+            hsize_t block_size; 
             
             std::vector<hsize_t> vsizetoRead;
             std::vector<hsize_t> vstart;
             
-            // block_size = getVectorBlockSize( N*M); 
-            
             std::vector<hsize_t> blockSize = getMatrixBlockSize( N, M);
+            
             if(N < M) {
                 block_size = blockSize.at(0);    
             } else {
@@ -163,7 +162,6 @@ namespace BigDataStatMeth {
                 
                 if( N == Y.rows() && M == Y.cols())
                 {
-                    hsize_t size = block_size + 1;
                     
                     ithreads = get_number_threads(threads, R_NilValue);
                     
@@ -223,8 +221,6 @@ namespace BigDataStatMeth {
         //               "Error - type not allowed");
         
         bool btransposed = false;
-        unsigned int ithreads;
-        hsize_t block_size;
         
         Rcpp::NumericMatrix X = Rcpp::as<Rcpp::NumericMatrix>(A);
         Rcpp::NumericVector Y = Rcpp::as<Rcpp::NumericVector>(B);
@@ -232,14 +228,15 @@ namespace BigDataStatMeth {
         
         // Matrix
         hsize_t M = X.rows(),
-            N = X.cols();
+                N = X.cols();
         
         // Vector
         hsize_t K = Y.length();
         
-        Rcpp::Rcout<<"\nPas 1....\n";
-        
         try {
+            
+            unsigned int ithreads;
+            hsize_t block_size;
             
             if( K==N || K==M) {
                 if ( K == N){
@@ -301,7 +298,6 @@ namespace BigDataStatMeth {
                 Rcpp::Rcout<< "vector sum error: non-conformable arguments\n";
                 return(R_NilValue);
             }
-            
             
         } catch(std::exception& ex) {
             Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
