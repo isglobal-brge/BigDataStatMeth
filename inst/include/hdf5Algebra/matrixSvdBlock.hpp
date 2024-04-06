@@ -116,8 +116,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
     
     try{
         
-        Rcpp::Rcout<<"\n========> ESTEM FENT LA DESCOMPOSICIÓ PER BLOCKS <==========\n";
-        
         irows = dsA->ncols();
         icols = dsA->nrows();
         
@@ -221,6 +219,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                     
                 }
         
+        // Rcpp::Rcout<<"\nDebug - 1";
                 // Normalize data
                 if (bcenter==true || bscale==true) 
                 {
@@ -248,6 +247,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                     }
                 
                 }
+                // Rcpp::Rcout<<"\nDebug - 2";
         
                 {
                     //    b) SVD for each block
@@ -263,6 +263,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                             nzeros++;
                         }
                     }
+                    // Rcpp::Rcout<<"\nDebug - 2.1";
                     
                     //    c)  U*d
                     // Create diagonal matrix from svd decomposition d
@@ -275,6 +276,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                     Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
                     d.diagonal() = (retsvd.d).head(isize);
                     
+                    // Rcpp::Rcout<<"\nDebug - 2.2";
                     Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
                     //..2024/03/27 ..// restmp = block_matrix_mul( u, d, 1024);
                     
@@ -293,6 +295,8 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                     }
                     
                 }
+                
+                // Rcpp::Rcout<<"\nDebug - 3";
                 
                 //    d) Write results to hdf5 file
                 offset[0] = 0; offset[1] = 0;
@@ -313,7 +317,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                         delete unlimDataset;
                         cummoffset = 0;
                     }
-                    
+                    // Rcpp::Rcout<<"\nDebug - 3.1";
                     // Get write position
                     offset[1] = cummoffset;
                     cummoffset = cummoffset + restmp.cols();
@@ -331,17 +335,19 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                         unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), offset, count, stride, block, false);
                     }
                     delete unlimDataset;
+                    // Rcpp::Rcout<<"\nDebug - 3.2";
                     
                 }
             }
         }
         
         // Rcpp::Rcout<< "\n ===  FINALITZEM EXECUCIÓ !!  ===\n";
-        
+        // Rcpp::Rcout<<"\nDebug - 4";
         if (bcenter==true || bscale==true) { 
             Rcpp::Rcout<<"\nSuposo que no se m'ha acudit entrar al delete del normalizeData... \n";
             delete normalizedData; 
         }
+        // Rcpp::Rcout<<"\nDebug - 5";
         
     } catch(std::exception& ex) {
         Rcpp::Rcout<< "c++ exception First_level_SvdBlock_decomposition_hdf5: "<<ex.what()<< " \n";

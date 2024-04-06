@@ -10,14 +10,10 @@
 #include "memAlgebra/memOptimizedProducts.hpp"
 #include "memAlgebra/memMultiplication.hpp"
 
-
 #include "hdf5Utilities/hdf5Utilities.hpp"
 #include "hdf5Utilities/hdf5Methods.hpp"
 
 #include "Utilities/Utilities.hpp"
-
-// #include "spectra/SymEigsSolver.h"   // To access symmetric matrix
-// #include "spectra/SymGEigsSolver.h"  // To access symmetric matrix
 #include <spectra/SymEigsSolver.h>
 
 
@@ -50,7 +46,6 @@ namespace BigDataStatMeth {
             Spectra::DenseSymMatProd<double> op(Xtcp);
             Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigs(&op, k, ncv);
             // Spectra::SymEigsSolver< Spectra::DenseSymMatProd<double> > eigs(op, k, ncv);
-            
             
             // Initialize and compute
             eigs.init();
@@ -104,86 +99,63 @@ namespace BigDataStatMeth {
                                         int irows, int icols, double dthreshold, Rcpp::Nullable<int> threads = R_NilValue )
     {
         
-        BigDataStatMeth::hdf5Dataset* dsJoined;
-        
-        std::vector<hsize_t> stride = {1, 1},
-            block = {1, 1};
-        
-        svdeig retsvd;
-        Eigen::MatrixXd nX;
-        bool transp = false;
-        std::string strGroupName  = "tmpgroup"; // Outpu group name for temporal data
-        std::string strPrefix;
-        
-        Rcpp::CharacterVector strvmatnames = {"A","B","C","D","E","F","G","H","I","J","K",
-                                              "L","M","N","O","P","Q","R","S","T","U","V",
-                                              "W","X","Y","Z"};
-        strPrefix = strvmatnames[q-1];
-        
         try{
+            
+            std::vector<hsize_t> stride = {1, 1},
+                block = {1, 1};
+            
+            svdeig retsvd;
+            Eigen::MatrixXd nX;
+            Eigen::MatrixXd matlast;
+            Eigen::MatrixXd v;    
+            bool transp = false;
+            std::string strGroupName  = "tmpgroup",
+                        strPrefix; // Outpu group name for temporal data
+            
+            Rcpp::CharacterVector strvmatnames = {"A","B","C","D","E","F","G","H","I","J","K",
+                                                  "L","M","N","O","P","Q","R","S","T","U","V",
+                                                  "W","X","Y","Z"};
+            strPrefix = strvmatnames[q-1];
             
             typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
             
-            if(irows >= icols)
+            if(irows >= icols) {
                 transp = true;
+            }
             
             First_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, q, nev, bcenter, bscale, irows, icols, dthreshold, threads);
             
-            // Rcpp::Rcout<< "\n ==>Retornem first level";
-            
             for(int j = 1; j < q; j++) { // For each decomposition level :
-                // Rcpp::Rcout<< "\n ==>Entrem a second level - "<<j;
                 Next_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, j, dthreshold, threads);
-                // Rcpp::Rcout<< "\n ==>Finalitzem second level - "<<j;
             }
             
             // Get dataset names
             Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, strPrefix);
-            // Rcpp::Rcout<< "\n ==>Tenim datasetnames";
             
-            // Rcpp::Rcout<< "\n ==>Anem al joint";
             // 1.- Join matrix and remove parts from file
             std::string strnewdataset = std::string((joindata[0])).substr(0,1);
             hdf5Dataset* dsJoined = new hdf5DatasetInternal(dsA->getFileName(), strGroupName, strnewdataset, true);
             join_datasets( dsJoined, strGroupName, joindata, false, true );
             
-            // Rcpp::Rcout<< "\n ==>joint ok";
-            
             // 2.- Get SVD from Blocks full mattrix
             hsize_t* dims_out = dsJoined->dim();
             
-            // Rcpp::Rcout<< "\n ==>llegim block join";
             std::vector<double> vdreaded( dims_out[0] * dims_out[1] ); 
             dsJoined->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, {1, 1}, {1, 1}, vdreaded.data() );
             
-            // Rcpp::Rcout<< "\n ==>llegit block join ok";
             
-            Eigen::MatrixXd matlast;
             matlast = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdreaded.data(), dims_out[0], dims_out[1] );
-            
-            // Rcpp::Rcout<< "\n ==>Tenim matlast";
-            
             delete dsJoined;
             
-            
-            // Rcpp::Rcout<< "\n ==>Calculem SVD lapack";
             retsvd = RcppbdSVD_lapack(matlast, false, false, false);
-            
-            // Rcpp::Rcout<< "\n ==>SVD lapack Calculat";
             
             // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
             dsd->createDataset( 1, retsvd.d.size(), "real");
             dsd->writeDataset( Rcpp::wrap(retsvd.d) );
             
-            // Rcpp::Rcout<< "\n ==>d escrita ok";
-            
-            Eigen::MatrixXd v;    
-            
             // 3.- crossprod initial matrix and svdA$u
             
             if( bcenter == true || bscale == true || (dsA->getGroupName().find("NORMALIZED_T") != std::string::npos) ) {
-                
-                // Rcpp::Rcout<< "\n ==>Entrem a les normalitzacions";
                 
                 if(bcenter == true || bscale == true) {
                     
@@ -197,10 +169,7 @@ namespace BigDataStatMeth {
                     
                     delete normalizedData ;
                     
-                    //.. 2024/03/27 ..// v = block_matrix_mul_parallel(A, retsvd.u, 1024, threads);//  PARALLEL ==> NOT PARALLEL
-                    // Rcpp::Rcout<< "\n ==>Calculem v - opció 1";
                     v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
-                    // Rcpp::Rcout<< "\n ==>Calculem v - opció 1 - OK";
                     
                 } else {
                     
@@ -214,48 +183,24 @@ namespace BigDataStatMeth {
                     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), dims_out[0], dims_out[1]);
                     delete normalizedData ;
                     
-                    //.. 2024/04/01 ..// v = Bblock_matrix_mul_parallel(A, retsvd.u, 1024, threads); //  PARALLEL ==> NOT PARALLEL
-                    // Rcpp::Rcout<< "\n ==>Calculem v - opció 2";
                     v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
-                    // Rcpp::Rcout<< "\n ==>Calculem v - opció 2 - OK";
                 }
-                
-                // Rcpp::Rcout<< "\n ==>normalitzacions acabades";
                 
             } else {
                 
-                // Rcpp::Rcout<< "\n ==>Entrem else normalitzacions";
+                dims_out = dsA->dim();    
                 
-                dims_out = dsA->dim();
-                
-                // Eigen::MatrixXd A = Eigen::MatrixXd::Zero(dims_out[0], dims_out[1]);
-                // dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
-                
-                // Rcpp::Rcout<< "\n ==>Llegim Matriu A...";
-                
-                std::vector<double> vdA( dims_out[0] * dims_out[1] ); 
-                dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
-                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), dims_out[0], dims_out[1] );
-                
-                // Rcpp::Rcout<< "\n ==>Llegida anem a transposar";
+                Eigen::MatrixXd A = Eigen::MatrixXd::Zero(dims_out[0], dims_out[1]);
+                dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
                 
                 A.transposeInPlace();
-                // Rcpp::Rcout<< "\n ==>Transposada";
-                //.. 2024/03/27 ..// v = block_matrix_mul_parallel(A, retsvd.u, 1024, threads); //  PARALLEL ==> NOT PARALLEL
-                // Rcpp::Rcout<< "\n ==>Calculem v - opció 3";
                 v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
-                // Rcpp::Rcout<< "\n ==>Calculem v - opció 3 - OK";
                 
             }
                 
             // 4.- resuls / svdA$d
             v = v.array().rowwise()/(retsvd.d).transpose().array();
             
-            // Rcpp::Rcout<< "\n ==>Calculem v final";
-            
-            // Rcpp::Rcout<<"\nv val: \n"<<v<<"\n";
-            
-            // Rcpp::Rcout<< "\n ==>Anem a escriure al fitxer";
             if (transp == false)  {
                 dsu->createDataset( v.rows(), v.cols(), "real");
                 dsv->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real");
@@ -270,20 +215,7 @@ namespace BigDataStatMeth {
                 dsv->writeDataset(Rcpp::wrap(v));
             }
             
-            // Rcpp::Rcout<< "\n ==>Fitxer escrit OK";
-            
-            // Rcpp::Rcout<<"Anem a eliminar tots els elements temporals... \n";
-            // Clean data
-            //..2024/04/01..//remove_elements(dsA->getFileptr(), strGroupName, {});
-            // remove_elements(dsA->getFileptr(), strGroupName, {"/tmpgroup"});
-            
-            // Rcpp::Rcout<< "\n ==>Eliminem elements";
             remove_elements(dsA->getFileptr(), strGroupName);
-            
-            // Rcpp::Rcout<< "\n ==>Elements eliminats OK";
-            
-            // Rcpp::Rcout<<"\n Realment han estat eliminats????  \n == REVISAR EL FITXER ... \n";
-            
             
         } catch(std::exception &ex) {
             Rcpp::Rcout<< "C++ exception RcppbdSVD_hdf5_Block : "<< ex.what();
@@ -316,7 +248,7 @@ namespace BigDataStatMeth {
     extern inline void RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::string strdataset,  
                                 int k, int q, int nev, bool bcenter, bool bscale, double dthreshold, 
                                 bool bforce, bool asRowMajor, 
-                                Rcpp::Nullable<int> byblocks = R_NilValue,
+                                Rcpp::Nullable<Rcpp::CharacterVector> method = R_NilValue,
                                 Rcpp::Nullable<int> ithreads = R_NilValue)
     {
         
@@ -325,22 +257,27 @@ namespace BigDataStatMeth {
             hdf5Dataset* dsu;
             hdf5Dataset* dsv;
             hdf5Dataset* dsd;
-            // int tmpthreads = 0;
-            bool bbyblocks = true;
+            std::string strMethod;
             
             std::vector<hsize_t> stride = {1, 1},
                                  block = {1, 1},
                                  offset = {0, 0},
                                  count = {0, 0};
             
-            if(byblocks.isNull()) bbyblocks = true ;
-            else bbyblocks = Rcpp::as<int>(byblocks);
+            std::vector<std::string> strMethods = {"auto", "blocks", "full"};
             
-            // if( ithreads.isNotNull()) {
-            //     tmpthreads =  Rcpp::as<int>(ithreads);
-            // } else {
-            //     tmpthreads =  999;
-            // }
+            if(method.isNull())  strMethod = "auto" ;
+            else    strMethod = Rcpp::as<std::string>(method);
+            
+            if (std::find(strMethods.begin(), strMethods.end(), strMethod) != strMethods.end())
+            {
+                std::string strmessage = "SVD decomposition by: " + strMethod + " method";
+                Rcpp::message(Rcpp::wrap(strmessage));
+            } else {
+                std::string strWarning = "Method " + strMethod + " not allowed, computing SVD decomposition by 'auto' method";
+                strMethod = "auto";
+                Rcpp::warning(strWarning);
+            }
             
             hdf5Dataset* dsA = new hdf5Dataset(filename, strsubgroup, strdataset, false);
             dsA->openDataset();
@@ -352,9 +289,7 @@ namespace BigDataStatMeth {
             count = { dims_out[0], dims_out[1]};
             
             // Small matrices ==> Direct SVD (lapack)
-            if( (dims_out[0] * dims_out[1] < (MAXELEMSINBLOCK / 20)) || bbyblocks == false ) {
-                
-                Rcpp::Rcout<<"\n========> ESTEM FENT LA DESCOMPOSICIÓ COMPLETA!!! <==========\n";
+            if( (dims_out[0] * dims_out[1] < (MAXELEMSINBLOCK / 20) && strMethod == "auto") || strMethod == "full" ) {
                 
                 Eigen::MatrixXd X;
                 svdeig retsvd;
@@ -388,18 +323,14 @@ namespace BigDataStatMeth {
                 dsv = new hdf5Dataset(filename, stroutgroup, "v", true);
                 dsd = new hdf5Dataset(filename, stroutgroup, "d", true);
                 
-                //ORIGINAL// retsvd = RcppbdSVD_hdf5_Block( file, dataset, k, q, nev, bcenter, bscale, xdim, ydim, dthreshold, wrap(ithreads));
-                // Rcpp::Rcout<< "\n ========== inici ========== \n";
                 RcppbdSVD_hdf5_Block( dsA, dsu, dsv, dsd, k, q, nev, bcenter, bscale, count[1], count[0], dthreshold, ithreads );
-                // Rcpp::Rcout<< "\n ==========  fi  ========== \n";
+                
             }
             
             delete dsu;
             delete dsv;
             delete dsd;
             delete dsA;
-            
-            // Rcpp::Rcout<< "\n ==========  FINALITZEM PROCESS PRINCIPAL !!  ========== \n";
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception RcppbdSVD_hdf5 (File IException)" );

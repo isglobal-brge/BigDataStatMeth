@@ -16,6 +16,7 @@ bdPCA_hdf5(
   rankthreshold = 0,
   SVDgroup = NULL,
   overwrite = FALSE,
+  method = NULL,
   threads = NULL
 )
 }
@@ -44,6 +45,16 @@ to get the matrix rank , but it can be changed to an approximation of 0.}
 
 \item{SVDgroup}{string. Name of the group where the SVD results are located. 
 If it has been previously calculated. This group must contain the d, u and v datasets.}
+
+\item{method}{(optional, defalut = "auto") possible values are: "auto", 
+"blocks", "full":
+\itemize{
+  \item{"auto"}{ The option method = "auto" chooses the "full" or 
+  "blocks" method depending on the size of the matrix to be decomposed }
+  \item{"blocks"}{ The PCA can be carried out by blocks, 
+  recommended option for large matrices that do not fit in memory }
+  \item{"full"}{ The PCA is performed directly without partitioning the matrix }
+}}
 
 \item{threads}{integer number of threads used to run PCA}
 

@@ -4,11 +4,10 @@
 
 
 
-// 
+
 //' PCA Descomposition
 //' 
 //' Compute PCA
-//' 
 //' @param filename string, file name where dataset is stored 
 //' @param group string group name  where dataset is stored in file
 //' @param dataset string dataset name with data to perform PCA
@@ -26,6 +25,15 @@
 //' If it has been previously calculated. This group must contain the d, u and v datasets.
 //' @param force logical value, if true, the SVD is forced to be computed although 
 //' the SVD exists. 
+//' @param method (optional, defalut = "auto") possible values are: "auto", 
+//' "blocks", "full":
+//' \itemize{
+//'   \item{"auto"}{ The option method = "auto" chooses the "full" or 
+//'   "blocks" method depending on the size of the matrix to be decomposed }
+//'   \item{"blocks"}{ The PCA can be carried out by blocks, 
+//'   recommended option for large matrices that do not fit in memory }
+//'   \item{"full"}{ The PCA is performed directly without partitioning the matrix }
+//' } 
 //' @param threads integer number of threads used to run PCA
 //' @return original file with results in folder PCA/<datasetname>
 //' @export
@@ -36,7 +44,9 @@ void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
                 Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
                 Rcpp::Nullable<double> rankthreshold = 0.0,
                 Rcpp::Nullable<std::string> SVDgroup = R_NilValue,
-                Rcpp::Nullable<bool> overwrite = false, Rcpp::Nullable<int> threads = R_NilValue)
+                Rcpp::Nullable<bool> overwrite = false, 
+                Rcpp::Nullable<Rcpp::CharacterVector> method = R_NilValue,
+                Rcpp::Nullable<int> threads = R_NilValue)
 {
     
 
@@ -88,7 +98,7 @@ void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
             strSVDgroup = strSVDgroup + "/";
         }
         
-        BigDataStatMeth::RcppPCAHdf5(filename, group, dataset, strSVDgroup, ks, qs, incomponents, bcent, bscal, dthreshold, bforce, false, threads);
+        BigDataStatMeth::RcppPCAHdf5(filename, group, dataset, strSVDgroup, ks, qs, incomponents, bcent, bscal, dthreshold, bforce, false, method, threads);
         
     } catch( H5::FileIException& error ) {
         ::Rf_error( "c++ exception bdPCA_hdf5 (File IException)" );

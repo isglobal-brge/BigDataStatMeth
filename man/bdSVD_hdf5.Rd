@@ -14,7 +14,7 @@ bdSVD_hdf5(
   bscale = TRUE,
   rankthreshold = 0,
   force = NULL,
-  byblocks = NULL,
+  method = NULL,
   threads = NULL
 )
 }
@@ -29,20 +29,36 @@ bdSVD_hdf5(
 
 \item{q}{number of levels}
 
-\item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.}
+\item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering 
+is done by subtracting the column means (omitting NAs) of x from their 
+corresponding columns, and if center is FALSE, no centering is done.}
 
-\item{bscale}{(optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.}
+\item{bscale}{(optional, defalut = TRUE) .  If scale is TRUE then scaling is 
+done by dividing the (centered) columns of x by their standard deviations if 
+center is TRUE, and the root mean square otherwise. If scale is FALSE, no 
+scaling is done.}
 
-\item{rankthreshold}{double, threshold used to determine the range of the array. The matrix rank is equal to the number of
-singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
-changed to an approximation of 0.}
+\item{rankthreshold}{double, threshold used to determine the range of the array. 
+The matrix rank is equal to the number of singular values different from the 
+threshold. By default, threshold = 0 is used to get the matrix rank , but it 
+can be changed to an approximation of 0.}
 
-\item{byblocks}{(optional) by default is TRUE, if FALSE then SVD decomposition it's executed in all the matrix, this can cause memory overflow errors if we are working with big matrices}
+\item{method}{(optional, defalut = "auto") possible values are: "auto", 
+"blocks", "full":
+\itemize{
+  \item{"auto"}{ The option method = "auto" chooses the "full" or 
+  "blocks" method depending on the size of the matrix to be decomposed }
+  \item{"blocks"}{ The SVD decomposition can be carried out by blocks, 
+  recommended option for large matrices that do not fit in memory }
+  \item{"full"}{ The SVD decomposition is performed directly without partitioning the matrix }
+}}
 
-\item{threads}{(optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.}
+\item{threads}{(optional) only used in some operations inside function. If 
+threads is null then threads =  maximum number of threads available - 1.}
 }
 \value{
-a list of three components with the singular values and left and right singular vectors of the matrix
+a list of three components with the singular values and left and 
+right singular vectors of the matrix
 
 A List with : 
 \itemize{

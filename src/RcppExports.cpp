@@ -80,8 +80,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdSVD_hdf5
-Rcpp::RObject bdSVD_hdf5(Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVector> group, Rcpp::Nullable<Rcpp::CharacterVector> dataset, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<double> rankthreshold, Rcpp::Nullable<bool> force, Rcpp::Nullable<int> byblocks, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdSVD_hdf5(SEXP fileSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP kSEXP, SEXP qSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP rankthresholdSEXP, SEXP forceSEXP, SEXP byblocksSEXP, SEXP threadsSEXP) {
+Rcpp::RObject bdSVD_hdf5(Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVector> group, Rcpp::Nullable<Rcpp::CharacterVector> dataset, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<double> rankthreshold, Rcpp::Nullable<bool> force, Rcpp::Nullable<Rcpp::CharacterVector> method, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_bdSVD_hdf5(SEXP fileSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP kSEXP, SEXP qSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP rankthresholdSEXP, SEXP forceSEXP, SEXP methodSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -94,9 +94,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type rankthreshold(rankthresholdSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type force(forceSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type byblocks(byblocksSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type method(methodSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSVD_hdf5(file, group, dataset, k, q, bcenter, bscale, rankthreshold, force, byblocks, threads));
+    rcpp_result_gen = Rcpp::wrap(bdSVD_hdf5(file, group, dataset, k, q, bcenter, bscale, rankthreshold, force, method, threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -152,8 +152,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdPCA_hdf5
-void bdPCA_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<int> ncomponents, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<double> rankthreshold, Rcpp::Nullable<std::string> SVDgroup, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdPCA_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP ncomponentsSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP kSEXP, SEXP qSEXP, SEXP rankthresholdSEXP, SEXP SVDgroupSEXP, SEXP overwriteSEXP, SEXP threadsSEXP) {
+void bdPCA_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<int> ncomponents, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<double> rankthreshold, Rcpp::Nullable<std::string> SVDgroup, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<Rcpp::CharacterVector> method, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_bdPCA_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP ncomponentsSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP kSEXP, SEXP qSEXP, SEXP rankthresholdSEXP, SEXP SVDgroupSEXP, SEXP overwriteSEXP, SEXP methodSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
@@ -167,8 +167,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type rankthreshold(rankthresholdSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type SVDgroup(SVDgroupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type method(methodSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    bdPCA_hdf5(filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, SVDgroup, overwrite, threads);
+    bdPCA_hdf5(filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, SVDgroup, overwrite, method, threads);
     return R_NilValue;
 END_RCPP
 }
@@ -506,7 +507,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdSolve", (DL_FUNC) &_BigDataStatMeth_bdSolve, 2},
     {"_BigDataStatMeth_bdSolve_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSolve_hdf5, 8},
     {"_BigDataStatMeth_bdapply_Function_hdf5", (DL_FUNC) &_BigDataStatMeth_bdapply_Function_hdf5, 13},
-    {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 12},
+    {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 13},
     {"_BigDataStatMeth_bdCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_hdf5, 12},
     {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 8},
     {"_BigDataStatMeth_bdblockmult_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockmult_hdf5, 11},

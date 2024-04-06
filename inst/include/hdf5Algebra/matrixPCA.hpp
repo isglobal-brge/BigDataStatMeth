@@ -29,7 +29,7 @@ void RcppGetPCAVariablesHdf5( std::string strPCAgroup,
     {
         H5::Exception::dontPrint();
         
-        int ielements = 0;
+        // int ielements = 0;
         std::vector<hsize_t> stride = {1, 1},
                              block = {1, 1},
                              offset_d = {0, 0},
@@ -60,8 +60,8 @@ void RcppGetPCAVariablesHdf5( std::string strPCAgroup,
             delete dsvar;
             
             // cumulative variance (max 1000 elements (firsts))
-            if(vvar.size()>1000){  ielements = 1000;    }
-            else{ ielements = vvar.size();    }
+            // if(vvar.size()>1000){  ielements = 1000;    }
+            // else{ ielements = vvar.size();    }
             
             BigDataStatMeth::hdf5Dataset* dscumvar = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "cumvar" ,overwrite );
             dscumvar->createDataset( d.rows(), d.cols(), "real");
@@ -235,7 +235,9 @@ void RcppGetPCAIndividualsHdf5( std::string strPCAgroup,
 extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string strdataset,  
                          std::string strSVDgroup, int k, int q, int nev, 
                          bool bcenter, bool bscale, double dthreshold, 
-                         bool bforce, bool asRowMajor, Rcpp::Nullable<int> ithreads = R_NilValue)
+                         bool bforce, bool asRowMajor, 
+                         Rcpp::Nullable<Rcpp::CharacterVector> method = R_NilValue,
+                         Rcpp::Nullable<int> ithreads = R_NilValue)
 {
     
     try{
@@ -251,6 +253,7 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
         
         
         std::string strPCAgroup = "PCA/" + strdataset;
+                    
         
         // Check for svd decomposition (u, v and d matrices) in hdf5 file or if we 
         // need to compute again the SVD ( foce = true )
@@ -262,6 +265,7 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
         
         delete file;
         
+        
         if( !bexistsSVD ||  bforce == true ) {
             
             BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false);
@@ -269,7 +273,7 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
             RcppTypifyNormalizeHdf5( dsA, bcenter, bscale, false); // Normalize and tipify data ( ((x-mu)/(sd)) * 1/sqrt(n-1) )
             delete dsA;
             
-            BigDataStatMeth::RcppbdSVD_hdf5( filename, "NORMALIZED_T/" + strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, ithreads );
+            BigDataStatMeth::RcppbdSVD_hdf5( filename, "NORMALIZED_T/" + strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, method, ithreads );
             
             strSVDgroup = "SVD/" +  strdataset;
             
