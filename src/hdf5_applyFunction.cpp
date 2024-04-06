@@ -240,15 +240,16 @@ void bdapply_Function_hdf5( std::string filename,
                 }
 
                 Eigen::MatrixXd results;
+                int iblock_size = MAXBLOCKSIZE/3;
 
                 if (btransdataA == false && btransdataB == false) {
-                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original, originalB, 2048, R_NilValue);
+                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original, originalB, iblock_size, R_NilValue);
                 } else if (btransdataA == true && btransdataB == false) {
-                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original.transpose(), originalB, 2048, R_NilValue);
+                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original.transpose(), originalB, iblock_size, R_NilValue);
                 }else if (btransdataA == false && btransdataB == true) {
-                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original, originalB.transpose(), 2048, R_NilValue);
+                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original, originalB.transpose(), iblock_size, R_NilValue);
                 } else {
-                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original.transpose(), originalB.transpose(), 2048, R_NilValue);
+                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original.transpose(), originalB.transpose(), iblock_size, R_NilValue);
                 }
                 
                 if( results != Eigen::MatrixXd::Zero(original.rows(),originalB.cols()) ) {
