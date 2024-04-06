@@ -1,19 +1,23 @@
 #ifndef BigDataStatMeth_BigDataStatMeth_H
 #define BigDataStatMeth_BigDataStatMeth_H
 
-// Include the Rcpp Header
-#include <RcppEigen.h>
+#ifndef _COMMON_HEADERS_H
+#define _COMMON_HEADERS_H
+    // Include the Rcpp Header
+    #include <RcppEigen.h>
+    
+    // Common headers
+    #include "H5Cpp.h" //1.8.18
+    #include <iostream>
+    #include <boost/algorithm/string.hpp>
+    #include <fstream>
+    #include <sys/stat.h>
+    #include <string>
+    
+    // Common headers - multi-threading
+    #include <thread>
+#endif
 
-// Common headers
-#include "H5Cpp.h" //1.8.18
-#include <iostream>
-#include <boost/algorithm/string.hpp>
-#include <fstream>
-#include <sys/stat.h>
-#include <string>
-
-// Common headers - multi-threading
-#include <thread>
 
 #include "Utilities/pkg_omp.h" // first for clang-13-omp, #5122
 #include <R.h>
@@ -62,9 +66,7 @@ const int DIM3 = 3;
 const int MAXSTRING = 20;
 const hsize_t MAXSTRBLOCK = 100000;
 
-//. Modificat 2024/02/24.// const hsize_t MAXELEMSINBLOCK = 250000;
 const hsize_t MAXELEMSINBLOCK = ((2 << 29) - 1);
-//.NOMES DEBUG.// const hsize_t MAXELEMSINBLOCK = 100;
 const hsize_t MAXBLOCKSIZE = std::floor(std::sqrt(MAXELEMSINBLOCK));
 const hsize_t MAXMULTBLOCKSIZE = 1 << 13;
 
@@ -79,9 +81,9 @@ void initDTthreads();
 int getDTthreads(const int64_t n, const bool throttle);
 static const char *mygetenv(const char *name, const char *unset);
 SEXP getDTthreads_R(SEXP verbose);
-void when_fork();
-void after_fork();
-void avoid_openmp_hang_within_fork();
+// void when_fork();
+// void after_fork();
+// void avoid_openmp_hang_within_fork();
 
 // Load class headers from BigDataStatMeth
 

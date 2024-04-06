@@ -159,6 +159,7 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #' @param rankthreshold double, threshold used to determine the range of the array. The matrix rank is equal to the number of
 #'  singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
 #'  changed to an approximation of 0.
+#' @param byblocks (optional) by default is TRUE, if FALSE then SVD decomposition it's executed in all the matrix, this can cause memory overflow errors if we are working with big matrices
 #' @param threads (optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.
 #' @return a list of three components with the singular values and left and right singular vectors of the matrix
 #' @return A List with : 
@@ -168,8 +169,8 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #'   \item{"d"}{ singular values, nxn diagonal matrix (non-negative real values) }
 #' }
 #' @export
-bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, rankthreshold, force, threads)
+bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force = NULL, byblocks = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, rankthreshold, force, byblocks, threads)
 }
 
 #' Solve matrix equations
@@ -415,8 +416,8 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' Multiplies two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
 #' 
 #' @export
-bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, force = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdblockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, force))
+bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, force = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdblockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, force))
 }
 
 #' Block matrix multiplication

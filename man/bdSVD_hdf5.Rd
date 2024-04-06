@@ -14,6 +14,7 @@ bdSVD_hdf5(
   bscale = TRUE,
   rankthreshold = 0,
   force = NULL,
+  byblocks = NULL,
   threads = NULL
 )
 }
@@ -35,6 +36,8 @@ bdSVD_hdf5(
 \item{rankthreshold}{double, threshold used to determine the range of the array. The matrix rank is equal to the number of
 singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
 changed to an approximation of 0.}
+
+\item{byblocks}{(optional) by default is TRUE, if FALSE then SVD decomposition it's executed in all the matrix, this can cause memory overflow errors if we are working with big matrices}
 
 \item{threads}{(optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.}
 }

@@ -17,6 +17,7 @@
 //' @param rankthreshold double, threshold used to determine the range of the array. The matrix rank is equal to the number of
 //'  singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
 //'  changed to an approximation of 0.
+//' @param byblocks (optional) by default is TRUE, if FALSE then SVD decomposition it's executed in all the matrix, this can cause memory overflow errors if we are working with big matrices
 //' @param threads (optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.
 //' @return a list of three components with the singular values and left and right singular vectors of the matrix
 //' @return A List with : 
@@ -33,6 +34,7 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
                        Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
                        Rcpp::Nullable<double> rankthreshold = 0.0,
                        Rcpp::Nullable<bool> force = R_NilValue,
+                       Rcpp::Nullable<int> byblocks = R_NilValue,
                        Rcpp::Nullable<int> threads = R_NilValue)
 {
  
@@ -42,7 +44,7 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
      try {
          
          int ks, qs, nvs = 0;
-         bool bcent, bscal, bforce, bRowMajor = false;
+         bool bcent, bscal, bforce, bRowMajor = false, bbyblocks = true;
          Rcpp::CharacterVector strgroup, strdataset;
          
          if(k.isNull())  ks = 2 ;
@@ -89,7 +91,7 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
          }
          
          // retsvd = BigDataStatMeth::RcppbdSVD_hdf5( filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, threads );
-         BigDataStatMeth::RcppbdSVD_hdf5( filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, bforce, bRowMajor, threads );
+         BigDataStatMeth::RcppbdSVD_hdf5( filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, bforce, bRowMajor, byblocks, threads );
          
      } catch(std::exception &ex) {
          Rcpp::Rcout<<"c++ exception bdSVD_hdf5 \n"<< ex.what();

@@ -109,42 +109,19 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
     int  M, p, n;
     int maxsizetoread, 
         ithreads, 
-        cummoffset, 
-        ret;
+        cummoffset;
     bool transp = false;
     
-    // std::string strGroupName = "tmpgroup";
     Rcpp::Nullable<int> wsize = R_NilValue;
     
     try{
         
+        Rcpp::Rcout<<"\n========> ESTEM FENT LA DESCOMPOSICIÓ PER BLOCKS <==========\n";
+        
         irows = dsA->ncols();
         icols = dsA->nrows();
         
-        
-        if(threads.isNotNull()) {
-            if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                ithreads = Rcpp::as<int> (threads);
-            } else {
-                ithreads = getDTthreads(0, true);
-            }
-        } else {
-            ithreads = getDTthreads(0, true);
-        }
-        
-        // 
-        // // Eigen::MatrixXd datanormal;// = Eigen::MatrixXd::Zero(2,irows);;
-        // // 
-        // // 
-        // 
-        // if(threads.isNotNull()) 
-        // {
-        //     if (Rcpp::as<int>(threads) < std::thread::hardware_concurrency())
-        //         ithreads = Rcpp::as<int> (threads);
-        //     else 
-        //         ithreads = std::thread::hardware_concurrency()/2;
-        // }
-        // else    ithreads = std::thread::hardware_concurrency()/2; 
+        ithreads = get_number_threads(threads, R_NilValue);
         
         // Work with transposed matrix
         if( irows >= icols ) {
@@ -184,162 +161,185 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
 
         }
         
-#pragma omp parallel num_threads(ithreads)
-        
-        /*
-         int tid = omp_get_thread_num();
-         if( tid == 0 )   {
-         Rcpp::Rcout << "Number of threads C++ : " << omp_get_num_threads() << "\n";
-         Rcpp::Rcout << "Thread number C++ : " << omp_get_thread_num() << "\n";
-         }
-         */
-        
-        
-        // Get data from M blocks in initial matrix
-#pragma omp for ordered schedule (dynamic) 
-        for( int i = 0; i< M ; i++)  
+        #pragma omp parallel num_threads(ithreads)
         {
             
-            Eigen::MatrixXd restmp;
-            std::string strDatasetName = strGroupName + "/A" + std::to_string(i/(M/k));
+             // int tid = omp_get_thread_num();
+             // if( tid == 0 )   {
+             //     Rcpp::Rcout << "Number of threads C++ : " << omp_get_num_threads() << "\n";
+             //     Rcpp::Rcout << "Thread number C++ : " << omp_get_thread_num() << "\n";
+             // }
             
-            // 1.- Get SVD from all blocks
-            //    a) Get all blocks from initial matrix 
-            std::vector<hsize_t>  offset = getInitialPosition( transp, (unsigned long long)(i*block_size) ); // Initial read position
-            std::vector<hsize_t> count = {0, 0};
+            int chunks = M/ithreads;
             
-            maxsizetoread = block_size;
-            
-            // Get max block size to read - for blocks smaller than default block size 
+            // Get data from M blocks in initial matrix
+            //.. 2024/04/01 ..// #pragma omp for ordered schedule (dynamic, chunks) 
+            #pragma omp for schedule (dynamic, chunks) ordered
+            for( int i = 0; i< M ; i++)  
+            {
                 
-            if( ((i+1)*block_size) > icols)
-                maxsizetoread = icols - (i*block_size);
-            
-            if( i+1 == M && icols - maxsizetoread!=0)
-                realsizeread = icols - (i*block_size);
-            else
-                realsizeread = maxsizetoread;
-            
-            Eigen::MatrixXd X;
-#pragma omp critical(accessFile)
-{
-        count = getSizetoRead(transp, (unsigned long long)(realsizeread), icols, irows );
+                Eigen::MatrixXd restmp;
+                std::string strDatasetName = strGroupName + "/A" + std::to_string(i/(M/k));
+                
+                // 1.- Get SVD from all blocks
+                //    a) Get all blocks from initial matrix 
+                std::vector<hsize_t>  offset = getInitialPosition( transp, (unsigned long long)(i*block_size) ); // Initial read position
+                std::vector<hsize_t> count = {0, 0};
+                
+                maxsizetoread = block_size;
+                
+                // Get max block size to read - for blocks smaller than default block size 
+                
+                if( ((i+1)*block_size) > icols)
+                    maxsizetoread = icols - (i*block_size);
+                
+                if( i+1 == M && icols - maxsizetoread!=0)
+                    realsizeread = icols - (i*block_size);
+                else
+                    realsizeread = maxsizetoread;
+                
+                Eigen::MatrixXd X;
+                
+                count = getSizetoRead(transp, (unsigned long long)(realsizeread), icols, irows );
+                
+                if(transp==false){
+                    std::vector<double> vdX( count[0] * count[1] ); 
+                    #pragma omp critical(accessFile)
+                    {
+                        dsA->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdX.data() );
+                    }
+                    X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdX.data(), count[1], count[0] );
+                    
+                } else {
+                    count[0] = irows; // Mirar de canviar i posar d'integrar dins de la funció getSizetoRead()
+                    std::vector<double> vdX( count[0] * count[1] );
+                    #pragma omp critical(accessFile)
+                    {
+                        dsA->readDatasetBlock( {offset[1], offset[0]}, {count[1], count[0]}, stride, block, vdX.data() );
+                    }
+                    X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdX.data(), count[0], count[1] );
+                    
+                }
         
-         if(transp==false){
-            std::vector<double> vdX( count[0] * count[1] ); 
-            dsA->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdX.data() );
-            X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdX.data(), count[1], count[0] );
-            
-        } else {
-            
-            count[0] = irows; // Mirar de canviar i posar d'integrar dins de la funció getSizetoRead()
-            std::vector<double> vdX( count[0] * count[1] );
-            dsA->readDatasetBlock( {offset[1], offset[0]}, {count[1], count[0]}, stride, block, vdX.data() );
-            X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdX.data(), count[0], count[1] );
-            
-        }
-}
-
-    // Normalize data
-    if (bcenter==true || bscale==true) 
-    {
+                // Normalize data
+                if (bcenter==true || bscale==true) 
+                {
+                    std::vector<hsize_t> offset_tmp = {offset[1],offset[0]};
+                    std::vector<hsize_t> count_tmp = {count[1], count[0]};
+                    
+                    if(transp == true) {
+                        offset_tmp = {offset[0], offset[1]};
+                        count_tmp = {count[0], count[1]};
+                    } 
+                        
+                    if( transp == false) {
+                        X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
+                        #pragma omp critical(accessFile)
+                        {   
+                            normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, stride, block, false);
+                        }
+                    } else {
+                        X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
+                        count_tmp = {(unsigned long long)X.rows(), (unsigned long long)X.cols()};
+                        #pragma omp critical(accessFile)
+                        {   
+                            normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, stride, block, false);
+                        }
+                    }
+                
+                }
         
-        std::vector<hsize_t> offset_tmp = {offset[1],offset[0]};
-        std::vector<hsize_t> count_tmp = {count[1], count[0]};
+                {
+                    //    b) SVD for each block
+                    svdeig retsvd;
+                    retsvd = RcppbdSVD_lapack(X, false, false, false);
+                    
+                    int size_d = (retsvd.d).size();
+                    int nzeros = 0;
+                    
+                    if( (retsvd.d)[size_d - 1] <= dthreshold ){
+                        nzeros = 1;
+                        for( int j = (size_d - 2); ( j>1 && (retsvd.d)[i] <= dthreshold ); j-- ) {
+                            nzeros++;
+                        }
+                    }
+                    
+                    //    c)  U*d
+                    // Create diagonal matrix from svd decomposition d
+                    int isize = (retsvd.d).size() - nzeros;
+                    
+                    if( isize < 2 ) {
+                        isize = 2;
+                    }
+                    
+                    Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
+                    d.diagonal() = (retsvd.d).head(isize);
+                    
+                    Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
+                    //..2024/03/27 ..// restmp = block_matrix_mul( u, d, 1024);
+                    
+                    // 
+                    //          !!!!!!!!!!   REVISAR-HO !!!!!!!!!!!!
+                    // 
+                    //  Quina operació fa en realitat el u*d?? és una multiplicació
+                    //  de matrius o és una multiplicació matriu * vector?
+                    //  
+                    //      MOLT IMPORTANT!!! Confirmar resultats !!!!
+                    // 
+                    if( u.size() < MAXELEMSINBLOCK ) {
+                        restmp = u*d;
+                    } else{
+                        restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);
+                    }
+                    
+                }
+                
+                //    d) Write results to hdf5 file
+                offset[0] = 0; offset[1] = 0;
+                count[0] = restmp.rows();
+                count[1] = restmp.cols();
         
-         if(transp == true) {
-             offset_tmp = {offset[0], offset[1]};
-             count_tmp = {count[0], count[1]};
-         } 
-    
-#pragma omp critical(accessFile)
-{   
-    
-        if( transp == false) {
-            // Rcpp::Rcout<<"\nLes escriurem a : "<<offset_tmp[0]<<" x "<<offset_tmp[1]<< " Mida: "<<count_tmp[0]<<" x "<<count_tmp[1]<<"\n";
-            X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
-            normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, stride, block, false);
-        } else {
-            X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
-            count_tmp = {(unsigned long long)X.rows(), (unsigned long long)X.cols()};
-            normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, stride, block, false);
-        }
-}
-
-    }
-
-
-{
-    
-    //    b) SVD for each block
-    svdeig retsvd;
-    retsvd = RcppbdSVD_lapack(X, false, false, false);
-    
-    int size_d = (retsvd.d).size();
-    int nzeros = 0;
-    
-    if( (retsvd.d)[size_d - 1] <= dthreshold ){
-        nzeros = 1;
-        for( int j = (size_d - 2); ( j>1 && (retsvd.d)[i] <= dthreshold ); j-- ) {
-            nzeros++;
-        }
-    }
-    
-    
-    //    c)  U*d
-    // Create diagonal matrix from svd decomposition d
-    int isize = (retsvd.d).size() - nzeros;
-    
-    if( isize < 2 ) {
-        isize = 2;
-    }
-    
-    Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
-    d.diagonal() = (retsvd.d).head(isize);
-    
-    Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
-    //..2024/03/27 ..// restmp = block_matrix_mul( u, d, 1024);
-    restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);
-    
-}
-//    d) Write results to hdf5 file
-    offset[0] = 0; offset[1] = 0;
-    count[0] = restmp.rows();
-    count[1] = restmp.cols();
-
-#pragma omp ordered
-{
-    
-#pragma omp critical(accessFile)
-{
-        if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !exists_HDF5_element(dsA->getFileptr(),  strDatasetName)) ) ) {
-            // Create unlimited dataset in hdf5 file
-            unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFileName(), strDatasetName, true );
-            unlimDataset->createUnlimitedDataset(count[0], count[1], "real");
-            delete unlimDataset;
-            cummoffset = 0;
-        }
-        unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFileName(), strDatasetName, true );
-        unlimDataset->openDataset();
-        
-        // Get write position
-        offset[1] = cummoffset;
-        cummoffset = cummoffset + restmp.cols();
-    
-        // Extend dataset before put data
-        if((i%(M/k)) != 0 && cummoffset > 0) {
-            unlimDataset->extendUnlimitedDataset(0, count[1] );
+                #pragma omp ordered
+                {
+                    // #pragma omp critical(accessFile)
+                    // {
+                    if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !exists_HDF5_element(dsA->getFileptr(),  strDatasetName)) ) ) {
+                        // Create unlimited dataset in hdf5 file
+                        unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFileName(), strDatasetName, true );
+                        #pragma omp critical(accessFile)
+                        {
+                            unlimDataset->createUnlimitedDataset(count[0], count[1], "real");
+                        }
+                        delete unlimDataset;
+                        cummoffset = 0;
+                    }
+                    
+                    // Get write position
+                    offset[1] = cummoffset;
+                    cummoffset = cummoffset + restmp.cols();
+                    
+                    #pragma omp critical(accessFile)
+                    {
+                        unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFileName(), strDatasetName, true );
+                        unlimDataset->openDataset();
+                        
+                        // Extend dataset before put data
+                        if((i%(M/k)) != 0 && cummoffset > 0) {
+                                unlimDataset->extendUnlimitedDataset(0, count[1] );
+                        }
+                        
+                        unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), offset, count, stride, block, false);
+                    }
+                    delete unlimDataset;
+                    
+                }
+            }
         }
         
-        // Rcpp::Rcout<<"Valors debug: \n\toffset: "<<offset[0]<<" x "<<offset[1]<<"\n\tcount: "<<count[0]<< " x "<< count[1]<<"\nrestmp: "<<restmp<<"\n";
-        unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), offset, count, stride, block, false);
-        delete unlimDataset;
-        
-}
-}
-        }
+        // Rcpp::Rcout<< "\n ===  FINALITZEM EXECUCIÓ !!  ===\n";
         
         if (bcenter==true || bscale==true) { 
+            Rcpp::Rcout<<"\nSuposo que no se m'ha acudit entrar al delete del normalizeData... \n";
             delete normalizedData; 
         }
         
@@ -348,6 +348,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         return void();
     }
     
+    // Rcpp::Rcout<< "\n ======>  POSEM PUNT I FINAL!!!!!! !!  <======\n";
     
     return void();
     
@@ -402,127 +403,113 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
 
         M = joindata.size();
         
-        if(threads.isNotNull()) {
-            if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                ithreads = Rcpp::as<int> (threads);
-            } else {
-                ithreads = getDTthreads(0, true);
-            }
-        } else {
-            ithreads = getDTthreads(0, true);
-        }
+        ithreads = get_number_threads(threads, R_NilValue);
 
-        // if(threads.isNotNull())
-        // {
-        //     if (Rcpp::as<int>(threads) < std::thread::hardware_concurrency()) {
-        //         ithreads = Rcpp::as<int> (threads);
-        //     } else {
-        //         ithreads = std::thread::hardware_concurrency()/2;
-        //     }
-        // } else{
-        //     ithreads = std::thread::hardware_concurrency()/2; //omp_get_max_threads()
-        // }
-
-
-        //.OpenMP.// omp_set_num_threads(getDTthreads(ithreads, false));
-
-#pragma omp parallel num_threads(ithreads)
-
-
-#pragma omp for ordered schedule (dynamic)
+        
+        #pragma omp parallel num_threads(ithreads)
 
         // Get data from M blocks in initial matrix
+        #pragma omp for ordered schedule (dynamic)
         for( int i = 0; i< M ; i++)
         {
-
             std::string strDatasetName = strGroupName + "/" + strvmatnames[q] + std::to_string(i/(M/k));
             
             Eigen::MatrixXd restmp;
             Eigen::MatrixXd X;
 
-#pragma omp critical(accessFile)
-{
-    
-    //    a) Get dataset
-    BigDataStatMeth::hdf5Dataset* dsCur = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strGroupName + "/" + joindata[i], false);
-    dsCur->openDataset();
-    hsize_t* dims_out = dsCur->dim();
-    
-    std::vector<double> vdCurDataset( dims_out[0] * dims_out[1] ); 
-    dsCur->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdCurDataset.data() );
-    // Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> X (vdCurDataset.data(), dims_out[0], dims_out[1] );
-    X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdCurDataset.data(), dims_out[0], dims_out[1] );
-    
-    delete dsCur;
-}
+            #pragma omp critical(accessFile)
+            {
+                //    a) Get dataset
+                BigDataStatMeth::hdf5Dataset* dsCur = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strGroupName + "/" + joindata[i], false);
+                dsCur->openDataset();
+                hsize_t* dims_out = dsCur->dim();
+                
+                std::vector<double> vdCurDataset( dims_out[0] * dims_out[1] ); 
+                dsCur->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdCurDataset.data() );
+                // Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> X (vdCurDataset.data(), dims_out[0], dims_out[1] );
+                X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdCurDataset.data(), dims_out[0], dims_out[1] );
+                
+                delete dsCur;
+            }
 
-{
-    //    b) SVD for each block
-    svdeig retsvd;
-    retsvd = RcppbdSVD_lapack(X, false, false, false);
+            {
+                //    b) SVD for each block
+                svdeig retsvd;
+                retsvd = RcppbdSVD_lapack(X, false, false, false);
+            
+                int size_d = (retsvd.d).size();
+                int nzeros = 0;
+            
+                if( (retsvd.d)[size_d - 1] <= dthreshold ) {
+                    nzeros = 1;
+                    for( int j = (size_d - 2); ( j>1 && (retsvd.d)[i] <= dthreshold ); j-- ) {
+                        nzeros++;
+                    }
+                }
+            
+                //    c)  U*d
+                // Create diagonal matrix from svd decomposition d
+                int isize = (retsvd.d).size() - nzeros;
+                if( isize < 2 ) {
+                    isize = 2;
+                }
+            
+                Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
+                d.diagonal() = (retsvd.d).head(isize);
+            
+                //..ORIGINAL..//restmp = Bblock_matrix_mul((retsvd.u).block(0, 0, (retsvd.u).rows(), isize), d, 1024);
+                Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
+                //..2024/03/27 ..// restmp = block_matrix_mul( u, d, 1024);
+                
+                // 
+                //          !!!!!!!!!!   REVISAR-HO !!!!!!!!!!!!
+                // 
+                //  Quina operació fa en realitat el u*d?? és una multiplicació
+                //  de matrius o és una multiplicació matriu * vector?
+                //  
+                //      MOLT IMPORTANT!!! Confirmar resultats !!!!
+                // 
+                if( u.size() < MAXELEMSINBLOCK ) {
+                    restmp = u*d;
+                } else{
+                    restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);    
+                } 
+                
+            }
+            
+            //    d) Write results to dataset
+            count[0] = restmp.rows();
+            count[1] = restmp.cols();
 
-    int size_d = (retsvd.d).size();
-    int nzeros = 0;
-
-    if( (retsvd.d)[size_d - 1] <= dthreshold ) {
-        nzeros = 1;
-        for( int j = (size_d - 2); ( j>1 && (retsvd.d)[i] <= dthreshold ); j-- ) {
-            nzeros++;
-        }
-    }
-
-    //    c)  U*d
-    // Create diagonal matrix from svd decomposition d
-    int isize = (retsvd.d).size() - nzeros;
-    if( isize < 2 ) {
-        isize = 2;
-    }
-
-    Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
-    d.diagonal() = (retsvd.d).head(isize);
-
-    //..ORIGINAL..//restmp = Bblock_matrix_mul((retsvd.u).block(0, 0, (retsvd.u).rows(), isize), d, 1024);
-    Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
-    //..2024/03/27 ..// restmp = block_matrix_mul( u, d, 1024);
-    restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);
-}
-
-//    d) Write results to dataset
-count[0] = restmp.rows();
-count[1] = restmp.cols();
-
-#pragma omp ordered
-{
-    
-#pragma omp critical(accessFile)
-{
-    
-    if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !BigDataStatMeth::exists_HDF5_element(dsA->getFileptr(),  strDatasetName)) ) ) {
-        // Create unlimited dataset in hdf5 file
-        unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFileName(), strDatasetName, true );
-        unlimDataset->createUnlimitedDataset(count[0], count[1], "real");
-        delete unlimDataset;
-        
-        cummoffset = 0;
-    }
-    
-    unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFileName(), strDatasetName, true );
-    unlimDataset->openDataset();
-    
-    // Get write position
-    offset[1] = cummoffset;
-    cummoffset = cummoffset + restmp.cols();
-    
-    // Extend dataset before put data
-    if((i%(M/k)) != 0 && cummoffset > 0) {
-        unlimDataset->extendUnlimitedDataset(0, count[1] );
-    }
-    unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), offset, count, stride, block, false);
-    delete unlimDataset;
-    
-}
-}
-
+            #pragma omp ordered
+            {
+                #pragma omp critical(accessFile)
+                {
+                    
+                    if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !BigDataStatMeth::exists_HDF5_element(dsA->getFileptr(),  strDatasetName)) ) ) {
+                        // Create unlimited dataset in hdf5 file
+                        unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFileName(), strDatasetName, true );
+                        unlimDataset->createUnlimitedDataset(count[0], count[1], "real");
+                        delete unlimDataset;
+                        
+                        cummoffset = 0;
+                    }
+                    
+                    unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFileName(), strDatasetName, true );
+                    unlimDataset->openDataset();
+                    
+                    // Get write position
+                    offset[1] = cummoffset;
+                    cummoffset = cummoffset + restmp.cols();
+                    
+                    // Extend dataset before put data
+                    if((i%(M/k)) != 0 && cummoffset > 0) {
+                        unlimDataset->extendUnlimitedDataset(0, count[1] );
+                    }
+                    unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), offset, count, stride, block, false);
+                    delete unlimDataset;
+                }
+            }
         }
 
         //..ONLY DEBUG !!!...//remove_HDF5_multiple_elements_ptr(file, strGroupName, joindata);
@@ -548,7 +535,6 @@ count[1] = restmp.cols();
     }
 
     return void();
-    
 
 }
 
