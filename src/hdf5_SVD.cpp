@@ -61,7 +61,7 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
      try {
          
          int ks, qs, nvs = 0;
-         bool bcent, bscal, bforce, bRowMajor = false, bbyblocks = true;
+         bool bcent, bscal, bforce, bRowMajor = false; //, bbyblocks = true;
          Rcpp::CharacterVector strgroup, strdataset;
          
          if(k.isNull())  ks = 2 ;

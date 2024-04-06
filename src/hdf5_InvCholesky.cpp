@@ -64,16 +64,17 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
     //             strOutdataset, strOutdataset_tmp;
     
     std::string strOutgroup, strOutdataset;
-    int ithreads;
-    bool bforce, bfull;
+    // int ithreads;
+    // bool bforce, bfull;
+    bool bfull;
     int nrows = 0, ncols = 0;
     
     try
     {
         
         // Get default values for Nullable variables
-        if(force.isNull()) { bforce = false; } 
-        else {  bforce = Rcpp::as<bool>(force); }
+        // if(force.isNull()) { bforce = false; } 
+        // else {  bforce = Rcpp::as<bool>(force); }
         
         if(fullMatrix.isNull()) { bfull = false; } 
         else {  bfull = Rcpp::as<bool>(fullMatrix); }
@@ -81,8 +82,8 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
         if(outgroup.isNull()) { strOutgroup = group; } 
         else {   strOutgroup = Rcpp::as<std::string>(outgroup); }
         
-        if(threads.isNull()) { ithreads = 2; } 
-        else { ithreads = Rcpp::as<int>(threads); }
+        // if(threads.isNull()) { ithreads = 2; } 
+        // else { ithreads = Rcpp::as<int>(threads); }
         
         if(elementsBlock.isNull()) { dElementsBlock = MAXELEMSINBLOCK; } 
         else { dElementsBlock = Rcpp::as<long>(elementsBlock); }

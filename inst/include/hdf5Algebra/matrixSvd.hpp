@@ -117,7 +117,7 @@ namespace BigDataStatMeth {
                                                   "W","X","Y","Z"};
             strPrefix = strvmatnames[q-1];
             
-            typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
+            // typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
             
             if(irows >= icols) {
                 transp = true;

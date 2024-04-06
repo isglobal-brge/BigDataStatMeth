@@ -107,6 +107,7 @@ namespace BigDataStatMeth {
                                     Rcpp::Nullable<int> threads  = R_NilValue)
     {
         
+        Eigen::MatrixXd C;
         try{
             static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
                           std::is_same<T, Eigen::Map< Eigen::MatrixXd >>::value || 
@@ -138,7 +139,7 @@ namespace BigDataStatMeth {
                 block_size =  MAXBLOCKSIZE/3;  
             }
             
-            Eigen::MatrixXd C = Eigen::MatrixXd::Zero(M,N) ;
+            C = Eigen::MatrixXd::Zero(M,N) ;
             if(block_size > std::min( N, std::min(M,K)) )
                 block_size = std::min( N, std::min(M,K)); 
             
@@ -171,11 +172,11 @@ namespace BigDataStatMeth {
                 }
             }
             
-            return(C);
-            
         } catch(std::exception& ex) {
             Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
         }
+        
+        return(C);
     }
     
     
@@ -264,23 +265,14 @@ namespace BigDataStatMeth {
                     
                     X = Rcpp::transpose(X);
                     
-                    hsize_t N = X.rows();
-                    hsize_t M = X.cols();
+                    //.. MODIFICAT 2024/04/06 ..// hsize_t N = X.rows();
+                    //.. MODIFICAT 2024/04/06 ..// hsize_t M = X.cols();
+                    N = X.rows();
+                    M = X.cols();
                 } 
                 
                 std::vector<hsize_t> vsizetoRead;
                 std::vector<hsize_t> vstart;
-                
-                // if(threads.isNotNull()) {
-                //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-                //         ithreads = Rcpp::as<int> (threads);
-                //     } else {
-                //         ithreads = getDTthreads(0, true);
-                //     }
-                // } else {
-                //     ithreads = getDTthreads(0, true);
-                // }
-                
                 
                 ithreads = get_number_threads(threads, bparal);
                 

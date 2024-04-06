@@ -205,13 +205,15 @@ namespace BigDataStatMeth {
                                  block = {1, 1};
             
             bool bgetTransposed;
-            hsize_t nrows, ncols, nRowsCols, blocksize;
+            hsize_t nrows = dsA->nrows(), 
+                    ncols = dsA->ncols(), 
+                    nRowsCols, blocksize;
             double correction = 1;
             
-            blocksize = BigDataStatMeth::get_block_size(wsize, nrows, ncols);
+            // nrows = dsA->nrows();
+            // ncols = dsA->ncols();
             
-            nrows = dsA->nrows();
-            ncols = dsA->ncols();
+            blocksize = BigDataStatMeth::get_block_size(wsize, nrows, ncols);
             
             if(bbyrows == false ) {
                 nRowsCols = nrows;

@@ -245,8 +245,10 @@ namespace BigDataStatMeth {
                     
                     X = Rcpp::transpose(X);
                     
-                    hsize_t N = X.rows();
-                    hsize_t M = X.cols();
+                    //.. Revisar-ho comentat 2024/04/06 ..// hsize_t N = X.rows();
+                    //.. Revisar-ho comentat 2024/04/06 ..// hsize_t M = X.cols();
+                    N = X.rows();
+                    M = X.cols();
                 } 
                 
                 std::vector<hsize_t> vsizetoRead;
