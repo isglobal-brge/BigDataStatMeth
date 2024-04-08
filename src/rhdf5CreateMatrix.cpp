@@ -54,7 +54,6 @@ void bdCreate_hdf5_matrix(std::string filename,
                     strdataset,
                     strdatatype;
         
-        // bool transposed, 
         bool bforceFile, 
              bforceDataset, 
              bunlimited;
@@ -69,9 +68,6 @@ void bdCreate_hdf5_matrix(std::string filename,
         
         if(unlimited.isNull())  bunlimited = false ;
         else    bunlimited = Rcpp::as<bool>(unlimited);
-        
-        // if(transp.isNull())  transposed = false ;
-        // else    transposed = Rcpp::as<bool>(transp);
         
         if(overwriteDataset.isNull())  bforceDataset = false ;
         else    bforceDataset = Rcpp::as<bool>(overwriteDataset);
@@ -97,10 +93,6 @@ void bdCreate_hdf5_matrix(std::string filename,
             objFile->openFile("rw");
         }
         
-        // Rcpp::IntegerVector offset = {0, 0 };
-        // Rcpp::IntegerVector stride = {1, 1 };
-        // Rcpp::IntegerVector block = {1, 1 };
-        
         BigDataStatMeth::hdf5Dataset* objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforceDataset );
         
         if( bunlimited == false){
@@ -110,99 +102,9 @@ void bdCreate_hdf5_matrix(std::string filename,
         }
         objDataset->writeDataset(object); 
         
-        // /*** 
-        // if ( object.sexp_type()==0   )
-        //     throw std::range_error("Data matrix must exsits and mustn't be null");
-        // 
-        // std::string strdatasetUnlim = strdataset + "_unlimited";
-        // 
-        // Rcpp::Rcout<<"Creem l'objecte\n";
-        // BigDataStatMeth::hdf5File* objFile = new BigDataStatMeth::hdf5File(filename, bforce);
-        // Rcpp::Rcout<<"Objecte creat, anem a crear el fitxer\n";
-        // objFile->createFile();
-        // Rcpp::Rcout<<"Fitxer creat\n";
-        // 
-        // Rcpp::IntegerVector offset = {0, 0 };
-        // Rcpp::IntegerVector stride = {1, 1 };
-        // Rcpp::IntegerVector block = {1, 1 };
-        // 
-        // 
-        // Rcpp::Rcout<<"Anem a crear el dataset\n";
-        // BigDataStatMeth::hdf5Dataset* objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforce );
-        // 
-        // ***/
-        //     
-        //     
-        // //..// objDataset->createDataset(nrows, ncols, "real");
-        // //..// objDataset_unlim->createUnlimitedDataset(nrows, ncols, "int");
-        // 
-        // Rcpp::Rcout<<"Write Dataset\n";
-        // // objDataset->writeDatasetBlock(object, offset, stride, block );
-        // objDataset->writeDataset(object);
-        // // 
-        // // 
-        
-        // 
-        // objDataset->writeDatasetBlock(object, offset, stride, block );
-        // Rcpp::Rcout<<"END Write Dataset Block\n";
-        // 
-        // BigDataStatMeth::hdf5Dataset* objDataset_unlim = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdatasetUnlim, bforce );
-        // objDataset_unlim->createUnlimitedDataset(nrows, ncols, "int");
-        // objDataset_unlim->extendUnlimitedDataset(50, 50);
-        // 
-        // 
-        // // Vectors: 
-        // int nrowsv = 1, 
-        //     ncolsv = 5;
-        // offset[0] = 0;
-        // offset[1] = 0;
-        // 
-        // std::string strdatasetVect = strdataset + "_vector";
-        // BigDataStatMeth::hdf5Dataset* objDataset_vect = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdatasetVect, bforce );
-        // objDataset_vect->createDataset(nrowsv, ncolsv, "int");
-        // Rcpp::Rcout<<"Write Dataset VECTOR\n";
-        // // objDataset_vect->writeDataset(object);
-        // // objDataset_vect->writeDatasetBlock(object, offset, stride, block );
-        // Rcpp::Rcout<<"END Write DatasetVECTOR\n";
-        
-        
-        // BigDataStatMeth::hdf5Dataset* objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforce );
-        // objDataset->createDataset(nrows, ncols, "string");
-        // Rcpp::Rcout<<"Write ALL\n";
-        // objDataset->writeDataset(object);
-        // Rcpp::Rcout<<"Write BLOCK\n";
-        // objDataset->writeDatasetBlock(object, offset, stride, block );
-        
         
         delete objDataset;
         delete objFile;
-        
-        // objDataset_unlim->createUnlimitedDataset(ncols, nrows, "real");
-        // Rcpp::Rcout<<"Anem a extendre l'unlimited\n";
-        // objDataset_unlim->extendUnlimitedDataset(ncols, nrows);
-        
-        
-        // if ( TYPEOF(object) == INTSXP ) {
-        //     write_HDF5_matrix_from_R_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<IntegerMatrix>(object), transposed);
-        // } else{
-        //     write_HDF5_matrix_from_R_ptr(file, strsubgroup + "/" + strdataset, Rcpp::as<NumericMatrix>(object), transposed);
-        // }
-        // 
-        // 
-        // H5::H5File* file = nullptr;
-        // int nrows, ncols;
-        // Rcpp::CharacterVector svrows, svrcols;
-        // Rcpp::List dimnames;
-        // 
-        // nrows = object.attr("dim")(1);
-        // ncols = object.attr("dim")(2);
-        // 
-        // // Create new file
-        // BigDataStatMeth::hdf5File h5file(filename, bforce);
-        // h5file.createFile();
-        // 
-        // BigDataStatMeth::hdf5Dataset h5dataset(h5file.getFileptr(), strsubgroup, strdataset, bforce);
-        // h5dataset.createDataset(nrows, ncols, TYPEOF(object));
         
     }  catch(std::exception& ex) {
         Rcpp::Rcout<< "c++ exception getObjecDataType: "<<ex.what()<< " \n";
@@ -214,15 +116,3 @@ void bdCreate_hdf5_matrix(std::string filename,
     
 }
 
-
-/***R
-
-setwd("/Users/mailos/PhD/dummy")
-
-
-a <- matrix(seq(1:50), nrow = 10, ncol = 5)
-
-bdCreate_hdf5_matrix("testhdf5File.hdf5",a, "grup", "dataset", unlimited = TRUE)
-
-
-*/

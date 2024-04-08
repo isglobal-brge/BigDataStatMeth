@@ -68,7 +68,6 @@ Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B,
         } else {
             
             if( Rcpp::is<Rcpp::NumericMatrix>(A) && Rcpp::is<Rcpp::NumericMatrix>(B) ) {
-                // return( BigDataStatMeth::Rcpp_matrix_blockMult(A, B, threads) );
                 return( Rcpp::wrap(BigDataStatMeth::Rcpp_block_matrix_mul_parallel(Rcpp::as<Eigen::MatrixXd>(A), Rcpp::as<Eigen::MatrixXd>(B), block_size, threads)));
                 
             } else if( Rcpp::is<Rcpp::NumericVector>(A) && Rcpp::is<Rcpp::NumericMatrix>(B)) {
@@ -91,7 +90,6 @@ Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B,
         Rcpp::Rcout<< ex.what();
     }
 
-    // return(Rcpp::wrap(C));
     return(R_NilValue);
 }
 
