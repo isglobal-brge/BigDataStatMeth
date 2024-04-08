@@ -69,7 +69,7 @@ namespace BigDataStatMeth {
     extern inline bool remove_elements(H5::H5File* file, std::string strgroup, Rcpp::StringVector elements)
     {
         
-        bool bremok = false;
+        bool bremok = true;
         
         try
         {
@@ -79,12 +79,11 @@ namespace BigDataStatMeth {
             if(elements.size() == 0) {
                 H5std_string element = strgroup;
                 
-                int result = H5Ldelete(file->getId(), element.data(), H5P_DEFAULT);  
+                int result = H5Ldelete(file->getId(), element.c_str(), H5P_DEFAULT);  
                 if(result<0) {
                     Rcpp::Rcout<<"\n Error removing group: "<<element<<"\n";
-                } else{ 
-                    bremok = true;
-                }
+                    bremok = false;
+                } 
                 
             } else { // Remove datasets
                 for (int i=0; i<elements.size(); i++) 
@@ -94,9 +93,8 @@ namespace BigDataStatMeth {
                     int result = H5Ldelete(file->getId(), element.data(), H5P_DEFAULT);  
                     if(result<0) {
                         Rcpp::Rcout<<"\n Error removing : "<<element<<"\n";
-                    } else{ 
-                        bremok = true;
-                    }
+                        bremok = false;
+                    } 
                 }    
             }
             
@@ -120,24 +118,22 @@ namespace BigDataStatMeth {
 
     // Remove single element, could be a group or dataset, we need to set the full path in element parameter
     //..// extern inline bool remove_elements(H5::H5File* file, std::string strgroup, Rcpp::StringVector elements)
-    extern inline bool remove_elements(H5::H5File* file, std::string element)
+    extern inline bool remove_elements(H5::H5File* file, H5std_string element)
     {
         
-        bool bremok = false;
+        bool bremok = true;
         
         try
         {
             H5::Exception::dontPrint();
             
-            H5std_string elementtoremove = element;
+            // H5std_string elementtoremove = element;
             
-            int result = H5Ldelete(file->getId(), elementtoremove.data(), H5P_DEFAULT);  
+            int result = H5Ldelete(file->getId(), element.data(), H5P_DEFAULT);  
             if(result<0) {
-                Rcpp::Rcout<<"\n Error removing : "<<elementtoremove<<"\n";
-            } else{ 
-                bremok = true;
-            }
-            
+                Rcpp::Rcout<<"\n Error removing : "<<element<<"\n";
+                bremok = false;
+            } 
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (File IException)" );
