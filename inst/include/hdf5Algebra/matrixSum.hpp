@@ -172,7 +172,7 @@ namespace BigDataStatMeth {
                 
                 #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
                 {
-                    #pragma omp for schedule (dynamic, chunks) collapse(2)
+                    #pragma omp for schedule (dynamic, chunks) // collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( K * vsizetoRead[ii] );
@@ -213,7 +213,7 @@ namespace BigDataStatMeth {
                 
                 #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
                 {
-                    #pragma omp for schedule (dynamic, chunks) collapse(2)
+                    #pragma omp for schedule (dynamic, chunks) // collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( L * vsizetoRead[ii] );

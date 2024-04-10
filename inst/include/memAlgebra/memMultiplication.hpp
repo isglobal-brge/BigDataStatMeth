@@ -154,7 +154,7 @@ namespace BigDataStatMeth {
             #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks) private(tid ) 
             {
 
-                #pragma omp for schedule (dynamic, chunks) collapse(3)
+                #pragma omp for schedule (dynamic, chunks) // collapse(3)
                 for (int ii = 0; ii < vstartii.size(); ii++)
                 {
                     for (int jj = 0; jj < N; jj += block_size)
