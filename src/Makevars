@@ -1,11 +1,11 @@
 # Register where the header files for the package can be found
 PKG_CXXFLAGS=-I../inst/include/
 
-PKG_CXXFLAGS +=   -DNOZLIB
-PKG_LIBS =   
+PKG_CXXFLAGS +=  $(SHLIB_OPENMP_CXXFLAGS) -DNOZLIB
+PKG_LIBS =  $(SHLIB_OPENMP_CXXFLAGS) 
 # See WRE $1.2.1.1. But retain user supplied PKG_* too, #4664.
 # WRE states ($1.6) that += isn't portable and that we aren't allowed to use it.
-# Otherwise we could use the much simpler PKG_LIBS +=  -lz.
+# Otherwise we could use the much simpler PKG_LIBS += $(SHLIB_OPENMP_CXXFLAGS) -lz.
 # Can't do PKG_LIBS = $(PKG_LIBS)...  either because that's a 'recursive variable reference' error in make
 # Hence the onerous @...@ substitution. Is it still appropriate in 2020 that we can't use +=?
 # Note that -lz is now escaped via  when zlib is not installed

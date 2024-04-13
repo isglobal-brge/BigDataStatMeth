@@ -1,13 +1,8 @@
-
-.DS_Store
-inst/.DS_Store
-inst/include/.DS_Store
+^.DS_Store
+*.DS_Store
 .Rproj.user
 *.so
 *.o
-.Rbuildignore
+*.dll
 .Rhistory
-.DS_Store
-.DS_Store
-src/BigDataStatMeth.dll
 inst/include/hdf5Algebra/matrixSum_20240303.hpp.BACKUP.hpp
