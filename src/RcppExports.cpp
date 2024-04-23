@@ -326,6 +326,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdImportTextFile_hdf5
+void bdImportTextFile_hdf5(std::string filename, std::string outputfile, std::string outGroup, std::string outDataset, Rcpp::Nullable<std::string> sep, Rcpp::Nullable<bool> header, Rcpp::Nullable<bool> rownames, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_bdImportTextFile_hdf5(SEXP filenameSEXP, SEXP outputfileSEXP, SEXP outGroupSEXP, SEXP outDatasetSEXP, SEXP sepSEXP, SEXP headerSEXP, SEXP rownamesSEXP, SEXP overwriteSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outputfile(outputfileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outGroup(outGroupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outDataset(outDatasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type sep(sepSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type header(headerSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type rownames(rownamesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    bdImportTextFile_hdf5(filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads);
+    return R_NilValue;
+END_RCPP
+}
 // bdgetDiagonal_hdf5
 Rcpp::RObject bdgetDiagonal_hdf5(std::string filename, std::string group, std::string dataset);
 RcppExport SEXP _BigDataStatMeth_bdgetDiagonal_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP) {
@@ -516,6 +535,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdblockSum_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockSum_hdf5, 11},
     {"_BigDataStatMeth_bdtCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_hdf5, 12},
     {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
+    {"_BigDataStatMeth_bdImportTextFile_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImportTextFile_hdf5, 10},
     {"_BigDataStatMeth_bdgetDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDiagonal_hdf5, 3},
     {"_BigDataStatMeth_bdWriteDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteDiagonal_hdf5, 4},
     {"_BigDataStatMeth_bdgetSDandMean_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetSDandMean_hdf5, 8},

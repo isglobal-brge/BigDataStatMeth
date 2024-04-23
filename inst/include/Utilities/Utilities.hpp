@@ -297,23 +297,21 @@ namespace BigDataStatMeth {
     }
     
     
-    // extern inline Rcpp::IntegerVector getSizetoRead(bool transp, int count, int rows, int cols )
-    // {
-    //     Rcpp::IntegerVector vcount(2);
-    //     
-    //     if(transp == true)
-    //     {
-    //         vcount[0] = rows;
-    //         vcount[1] = count;
-    //         
-    //     } else {
-    //         vcount[0] = count;
-    //         vcount[1] = cols;
-    //     }
-    //     
-    //     return(vcount);
-    // }
     
+    extern inline bool Rcpp_FileExist(std::string fullPath) 
+    {
+        bool exists = false;
+        
+        std::fstream fileStream;
+        fileStream.open(fullPath);
+        
+        if (fileStream.good()) {
+            exists = true;
+        } else {
+            exists = false;
+        }
+        return(exists);
+    }
     
     
     extern inline std::vector<hsize_t> getSizetoRead(bool transp, int count, int rows, int cols )

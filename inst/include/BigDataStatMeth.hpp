@@ -13,6 +13,7 @@
     #include <fstream>
     #include <sys/stat.h>
     #include <string>
+    #include <regex>
     
     // Common headers - multi-threading
     #include <thread>
@@ -86,6 +87,7 @@ SEXP getDTthreads_R(SEXP verbose);
 #include "hdf5Utilities/hdf5Groups.hpp"
 #include "hdf5Utilities/hdf5Datasets.hpp"
 #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
+#include "hdf5Utilities/hdf5Dims.hpp"
 
 
 // Load function definition from BigDataStatMeth
