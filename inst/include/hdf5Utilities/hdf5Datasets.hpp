@@ -101,7 +101,6 @@ public:
                 type = strdatatype;
                 
                 if( type == "string") {
-                    // Create the memory datatype.
                     H5::CompType strtype(sizeof(names));
                     strtype.insertMember("chr", HOFFSET(names, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
                     pdataset = new H5::DataSet(pfile->createDataSet(fullDatasetPath, strtype, dataspace));
@@ -695,18 +694,6 @@ public:
             hsOffset[0] = vOffset[0]; hsOffset[1] = vOffset[1];    
             hsCount[0] = vCount[0]; hsCount[1] = vCount[1];
             
-            // if(bTranspose == false) {
-            //     hsOffset[0] = vOffset[0]; hsOffset[1] = vOffset[1];    
-            //     hsCount[0] = vCount[0]; hsCount[1] = vCount[1];
-            // } else {
-            //     hsOffset[0] = vOffset[1]; hsOffset[1] = vOffset[0];    
-            //     hsCount[0] = vCount[1]; hsCount[1] = vCount[0];
-            // }
-            
-            // Rcpp::Rcout<<"\nEscriurem a: "<<vOffset[0]<<" , "<<vOffset[1]<<"\n";
-            // Rcpp::Rcout<<"\nMida: "<<hsCount[0]<<" x "<<hsCount[1]<<"\n";
-            // Rcpp::Rcout<<"\nDimensions extern: "<<dimDataset[0]<<" x "<<dimDataset[1];
-            // Rcpp::Rcout<<"\nDimensions intern: "<<dimDatasetinFile[0]<<" x "<<dimDatasetinFile[1]<<"\n";
             
             if(vOffset[0] + hsCount[0] <= dimDataset[0] && vOffset[1] + hsCount[1] <= dimDataset[1] && 
                DatasetValues.size()<= dimDatasetinFile[0] * dimDatasetinFile[1]) {
@@ -722,9 +709,7 @@ public:
                 dataspace.close();
                 
             } else {
-                // Rcpp::Rcout<<"\n"<<vOffset[0]<<" + "<<hsCount[0]<<" <= "<<dimDataset[0]<<"\n";
-                // Rcpp::Rcout<<"\n"<<vOffset[1]<<" + "<<hsCount[1]<<" <= "<<dimDataset[1]<<"\n";
-                // Rcpp::Rcout<< "\n"<< DatasetValues.size()<<" <= "<< dimDataset[0] * dimDataset[1]<<"\n";
+                
                 ::Rf_error( "It is not possible to write block in current position (writeDatasetBlock)" );
             }
                 
@@ -966,6 +951,136 @@ public:
     }
     
     
+    
+    // // Write dimnames from Matrix RObjects to hdf5 data file 
+    // template< typename T>
+    // void writeDimnames( T rownames, T colnames )
+    // {
+    //     
+    //     try {
+    //         
+    //         Exception::dontPrint();
+    //         
+    //         static_assert(std::is_same<T, Rcpp::CharacterVector >::value || 
+    //                       std::is_same<T, std::vector<string> >::value ,
+    //                       fv"Error - type not allowed writing rownames and/or colnames");
+    //         
+    //         std::string strGroup = group + "/." + name + "_dimnames";
+    //         
+    //         Rcp::CharacterVector rnames = rownames;
+    //         Rcp::CharacterVector cnames = colnames;
+    //         
+    //         
+    //         if( rnames.length()<1 && cnames.length()<1) {
+    //             Rcpp::warning("Data not provided to write dimensions")
+    //         } else {
+    //             
+    //             if( !exists_HDF5_element(pfile, strGroup) ) {
+    //                 create_HDF5_groups(strGroup);
+    //             }
+    //             
+    //             H5::DataSpace dataspace( RANK1, dimDataset );
+    //             
+    //             if(rnames.length() == dimDatasetinFile[1]){
+    //                 
+    //                 bool bexists = exists_HDF5_element(pfile, fullDatasetPath);
+    //                 if( bexists == true ) {
+    //                     Rcpp::warning ("Rownames already exits and will be overwritten");
+    //                 } else {
+    //                     
+    //                     H5::CompType strtype(sizeof(rownames));
+    //                     strtype.insertMember("chr", HOFFSET(names, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
+    //                     pdimdataset = new H5::DataSet(pfile->createDataSet( strGroup + name  , strtype, dataspace));
+    //                     
+    //                     
+    //                 }
+    //                 
+    //                     writeDataset( Rcpp::wrap(rnames) )
+    //             }
+    //             
+    //             if(cnames.length() == dimDatasetinFile[2]){
+    //                 createDataset(cnames.length(), 1, "string") 
+    //                 writeDataset( Rcpp::wrap(cnames) )
+    //             }
+    //             
+    //         }
+    //         
+    //         
+    //         
+    //         
+    //         
+    //         
+    //         
+    //         
+    //         bool bexists = exists_HDF5_element(pfile, fullDatasetPath);
+    //         if( bexists == true ) {
+    //             Rcpp::warning ("Dimnames already exits and will be overwritten");
+    //         }
+    //         
+    //         } else {
+    //             
+    //             if( boverwrite == true && bexists == true) {
+    //                 remove_elements(pfile, getGroupName(), {name}); 
+    //                 bRemoved = true;
+    //             }
+    //             
+    //             type = strdatatype;
+    //             
+    //             if( type == "string") {
+    //                 // Create the memory datatype.
+    //                 H5::CompType strtype(sizeof(names));
+    //                 strtype.insertMember("chr", HOFFSET(names, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
+    //                 pdataset = new H5::DataSet(pfile->createDataSet(fullDatasetPath, strtype, dataspace));
+    //             } else if( type == "int" || type == "logic" || type == "factor") {
+    //                 H5::IntType datatype( H5::PredType::NATIVE_INT );
+    //                 pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace ));
+    //                 if(bRemoved == true) {
+    //                     writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDatasetinFile[0], dimDatasetinFile[1]) ));
+    //                 }
+    //             } else if( type == "numeric" || type == "real") {
+    //                 H5::IntType datatype( H5::PredType::NATIVE_DOUBLE ); 
+    //                 pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace ));
+    //                 if(bRemoved == true) {
+    //                     writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDatasetinFile[0], dimDatasetinFile[1]) ));
+    //                 }
+    //             } else {
+    //                 close_file();
+    //                 ::Rf_error( "Dataset data type not allowed or no matrix defined (createDataset)" );
+    //             }
+    //         }
+    //         
+    //         dataspace.close();
+    //         
+    //         
+    //         
+    //         // ------------------------------------------------------
+    //         // ------------------------------------------------------
+    //         
+    //         
+    //         
+    //         
+    //         
+    //     } catch(FileIException& error) { // catch failure caused by the H5File operations
+    //         ::Rf_error( "c++ exception writeDimnames (File IException)" );
+    //         return void();
+    //     } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+    //         ::Rf_error( "c++ exception writeDimnames (DataSet IException)" );
+    //         return void();
+    //     } catch(GroupIException& error) { // catch failure caused by the Group operations
+    //         ::Rf_error( "c++ exception writeDimnames (Group IException)" );
+    //         return void();
+    //     } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+    //         ::Rf_error( "c++ exception writeDimnames (DataSpace IException)" );
+    //         return void();
+    //     } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+    //         ::Rf_error( "c++ exception writeDimnames (Data TypeIException)" );
+    //         return void();
+    //     }
+    //     
+    //     return(0);
+    // }
+    
+    
     H5::DataSet* getDatasetptr() { return(pdataset); }  // Return dataset pointer
     std::string getDatasetName() { return(name); }  // Return dataset name
     std::string getGroup() { return(getGroupName()); }  // Return group name
@@ -991,7 +1106,7 @@ protected:
     
     // ------------------------
     //   Struct declaration
-    // ------------------------
+    // -----------------------
     
     typedef struct names {
         char chr[MAXSTRING];
@@ -1004,6 +1119,8 @@ protected:
     
     std::string name;
     std::string type;
+    std::string colnamesDataset;
+    std::string rownamesDataset;
     bool boverwrite;
     H5::DataSet* pdataset = nullptr;
     hsize_t dimDataset[2];
