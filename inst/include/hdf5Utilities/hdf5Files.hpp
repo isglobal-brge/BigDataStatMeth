@@ -164,7 +164,6 @@ private:
     // Test if file exsits
     bool ResFileExist_filestream() 
     {
-        
         bool exists = false;
         
         std::fstream fileStream;

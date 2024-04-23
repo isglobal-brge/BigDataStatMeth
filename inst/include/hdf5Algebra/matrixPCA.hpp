@@ -122,7 +122,7 @@ void RcppGetPCAIndividualsHdf5( std::string strPCAgroup,
     {
         H5::Exception::dontPrint();
         
-        int ielements = 0;
+        // int ielements = 0;
         std::vector<hsize_t> stride = {1, 1},
             block = {1, 1},
             offset = {0, 0},
