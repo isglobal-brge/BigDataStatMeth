@@ -736,6 +736,79 @@ bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdatas
     invisible(.Call('_BigDataStatMeth_bdpseudoinv_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, overwrite, threads))
 }
 
+#' Sort existing dataset 
+#'
+#' Sort an existing dataset taking in to account a list with sorted positions
+#' 
+#' @param filename, character array indicating the name of the file to be sorted
+#' @param group, character array indicating the input group where the data set 
+#' to be sorted is stored.
+#' @param dataset, character array indicating the input dataset to be sorted
+#' @param outdataset, character array indicating the name for the new sorted 
+#' dataset
+#' @param blockedSortlist, a list with blocks with sorted positions, see example
+#' $`1`
+#'                       chr order newOrder Diagonal
+#' TCGA-OR-A5J1 TCGA-OR-A5J1     1        1        1
+#' TCGA-OR-A5J2 TCGA-OR-A5J2     2        2        1
+#' TCGA-OR-A5J3 TCGA-OR-A5J3     3        3        1
+#' TCGA-OR-A5J4 TCGA-OR-A5J4     4        4        1
+#' 
+#' $`2`
+#'                       chr order newOrder
+#' TCGA-OR-A5J5 TCGA-OR-A5JA    10        5        1
+#' TCGA-OR-A5J6 TCGA-OR-A5JB    11        6        1
+#' TCGA-OR-A5J7 TCGA-OR-A5JC    12        7        0
+#' TCGA-OR-A5J8 TCGA-OR-A5JD    13        8        1
+#' 
+#' $`3`
+#'                       chr order newOrder
+#' TCGA-OR-A5J9 TCGA-OR-A5J5     5        9        1
+#' TCGA-OR-A5JA TCGA-OR-A5J6     6       10        1
+#' TCGA-OR-A5JB TCGA-OR-A5J7     7       11        1
+#' TCGA-OR-A5JC TCGA-OR-A5J8     8       12        1
+#' TCGA-OR-A5JD TCGA-OR-A5J9     9       13        0
+#' 
+#' where rowname is the current rowname, chr is the new rowname, order is the
+#' current position and newOrder is the new position
+#' @param func, character array function to be applyed
+#' \describe{
+#'     \item{sortRows}{sort datasets rows}
+#'     \item{sortCols}{sort datasets columns}
+#' }
+#' @param outgroup, optional, character array indicating group where the data 
+#' set will be saved after imputation if `outgroup` is NULL, output dataset is 
+#' stored in the same input group. 
+#' @param overwrite, boolean if true, previous results in same location inside hdf5
+#' will be overwritten.
+#' @return Original hdf5 data file with sorted dataset
+#' @examples
+#' 
+#' print("See vignette")
+#' @export
+bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSortlist, func, outgroup = NULL, overwrite = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdSort_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, blockedSortlist, func, outgroup, overwrite))
+}
+
+#' Split hdf5 dataset
+#'
+#' Split hdf5 dataset in small datasets by rows or columns and store splitted submatrices inside an hdf5 file.
+#' 
+#' @param filename, character array indicating the name of the file where dataset to split is stored
+#' @param group, character array indicating the input group where the data set to be splitted is. 
+#' @param dataset, character array indicating the input dataset to be splitted
+#' @param outgroup, optional character array indicating group where the data set will be saved after split process if `outgroup` is NULL, output dataset is stored in the same input group. 
+#' @param outdataset, optional character array indicating basename for the splitted dataset if `outdataset` is NULL, input dataset name is used adding .x, where x is the splitted block number. 
+#' @param nblocks, integer number of blocks in which we want to split the data
+#' @param blocksize, integer, number of elements in each block
+#' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
+#' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @return Splitted datasets inside an hdf5 data file
+#' @export
+bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, nblocks = NULL, blocksize = NULL, bycols = TRUE, force = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, force))
+}
+
 #' Write Upper/Lower triangular matrix
 #'
 #' Write diagonal matrix to an existing dataset inside hdf5

@@ -38,14 +38,9 @@ void bdImportTextFile_hdf5( std::string filename,
         if( overwrite.isNull()) { boverwrite = false; 
         } else { boverwrite = Rcpp::as<bool> (overwrite); }
         
-        // bool boverwrite;
-        Rcpp::Rcout<<"\nEl fitxer que volem obrir és: "<<filename;
-        
         // Check if exists file to import
         if( BigDataStatMeth::Rcpp_FileExist(filename) ) {
 
-            Rcpp::Rcout<<"\nCreem el nou fitxer ";
-            
             // Create file if does not exists
             objFile = new BigDataStatMeth::hdf5File(outputfile, false);
             int iRes = objFile->createFile();
@@ -55,11 +50,9 @@ void bdImportTextFile_hdf5( std::string filename,
             }
             
             // Create dataset
-            Rcpp::Rcout<<"\nCreem dataset";
             datasetOut = new BigDataStatMeth::hdf5Dataset(objFile, outGroup, outDataset, boverwrite);
             // datasetOut->openDataset();
 
-            Rcpp::Rcout<<"\nFinalment anem a l'import del fitxer ";
             Rcpp_Import_File_to_hdf5( filename, datasetOut, sep, header, rownames, paral, threads) ;
 
         } else {
@@ -83,6 +76,8 @@ void bdImportTextFile_hdf5( std::string filename,
         Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Unknown failure occurred. Possible memory corruption" << std::endl;
         return void();
     }
+    
+    Rcpp::message(Rcpp::wrap("The file has been imported"));
     
     delete datasetOut;
     delete objFile;

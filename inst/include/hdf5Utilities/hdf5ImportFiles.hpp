@@ -38,8 +38,8 @@ namespace BigDataStatMeth {
         // write all the words to strValues
         std::copy(begin, end, std::back_inserter(strValues));
         
-        for (auto i: strValues)
-            std::cout << i << ' ';
+        // for (auto i: strValues)
+        //     std::cout << i << ' ';
 
         return(strValues);
     }
@@ -59,10 +59,9 @@ namespace BigDataStatMeth {
 
     extern inline std::vector<double> get_data_as_Matrix(std::vector<std::string> strBlockValues)
     {
-
+        
         std::vector<double> doubleVector(strBlockValues.size());
-
-        std::transform(strBlockValues.begin(), strBlockValues.end(), doubleVector.begin(), [](const std::string& s)
+        std::transform(strBlockValues.begin(), strBlockValues.end(), doubleVector.begin(), [](const std::string& s) mutable
         {
             if( is_number(s) ==1 ){
                 return (std::stod(s));
@@ -71,8 +70,7 @@ namespace BigDataStatMeth {
                 if( is_number(s.substr(0,s.length()-1) ) ==1 ){
                     return (std::stod(s));
                 } else {
-                    Rcpp::Rcout<<"\nValue : "<<s<<"\n";
-                    Rcpp::stop("Error: Column is not numeric. Only numeric data is allowed");
+                    Rcpp::stop("Error: Column is not numeric. Only numeric data is allowed. Maybe there is a blank row at the end of the file or any field is empty");
                 }
             }
         });
@@ -117,8 +115,6 @@ namespace BigDataStatMeth {
             std::regex reg_expres(delim);
 
 
-            Rcpp::Rcout<<"\nControl 1";
-            
             std::string line;
 
             std::ifstream inFile(path.c_str()); //Opens the file. c_str is mandatory here so that ifstream accepts the string path
@@ -131,36 +127,27 @@ namespace BigDataStatMeth {
 
             hsize_t incols = icols;
 
-            Rcpp::Rcout<<"\nControl 2\n\tRownames val: "<<Rcpp::as<bool>(rownames)<<"\n";
-            
             if(Rcpp::as<bool>(rownames) == true) {
                 // Read next line and count number of columns again depending on how file is created we can have
                 // one empty space for rownames or not, then colnames will be different (-1 difference)
-                std::getline(inFile,line,'\n'); //skip the first line (col names in our case). Remove those lines if note necessary
+                std::getline(inFile,line,'\n'); //skip the first line (col names in our case). Remove those lines if not necessary
 
                 // Number of columns
                 std::ptrdiff_t const icols2(std::distance(
                         std::sregex_iterator(line.begin(), line.end(), reg_expres),
                         std::sregex_iterator()));
 
-                Rcpp::Rcout<<"\nNombre columnes1: "<<icols;
-                Rcpp::Rcout<<"\nNombre columnes2: "<<icols2;
                 if(icols2 == icols){
                     incols = icols-1; // Reduce in one the number of columns
                 } else if ( icols == icols2 -1){
                     incols = icols;
                 } else {
-                    Rcpp::warning("Number of columns and headers are different, review data");
+                    Rcpp::stop("Number of columns and headers are different, please review data, note that fields without values are not allowed");
+                    // Rcpp::warning("Number of columns and headers are different, review data");
+                    
                 }
-                
-                Rcpp::Rcout<<"\nNombre columnes final: "<<incols;
             }
             
-            Rcpp::Rcout<<"\n incols val: "<<incols<<"\n";
-            Rcpp::Rcout<<"\n icols val: "<<icols<<"\n";
-            
-            Rcpp::Rcout<<"\nControl 3";
-
             // Re-adjust block size
             if(incols < 100 ){
                 blockCounter = 10000;
@@ -175,8 +162,6 @@ namespace BigDataStatMeth {
                 irows = irows + 1;
             }
 
-            Rcpp::Rcout<<"\nControl 4";
-            Rcpp::Rcout<<"\nCuantes files tenim?? "<< irows;
             Rcpp::CharacterVector svrownames(irows);
 
             // Reset iterator to beginning
@@ -190,12 +175,17 @@ namespace BigDataStatMeth {
             if(Rcpp::as<bool>(header) == true) {
                 std::getline(inFile,line,'\n');
                 svrcolnames = Rcpp::wrap( get_SplitData_in_vectorString(line, reg_expres));
+                // If rownames then remove first column from header (belonging to the rownames)
+                if(Rcpp::as<bool>(rownames) == true) {
+                    if( incols ==  svrcolnames.size() || incols ==  (svrcolnames.size()-1)){
+                        svrcolnames.erase(0);}
+                }
                 // Read next line
                 line.clear();
                 std::getline(inFile,line,'\n');
             }
 
-            dsOut->createDataset( (hsize_t)irows, (hsize_t)icols, "real");
+            dsOut->createDataset( (hsize_t)irows, (hsize_t)incols, "real");
             
             std::vector<std::string> strBlockValues;
             std::vector<hsize_t> stride = {1,1},
@@ -205,8 +195,6 @@ namespace BigDataStatMeth {
 
             bool btowrite;
             std::vector<std::string> strValues;
-
-            Rcpp::Rcout<<"\nControl 6";
             
             while( !inFile.eof()  )
             {
@@ -220,7 +208,6 @@ namespace BigDataStatMeth {
                 
                 if( Rcpp::as<bool>(rownames) == true ) {
                     
-                    Rcpp::Rcout<<"\nQue val el valor? "<< strValues.front();
                     svrownames[counter] =  strValues.front();
                     strValues.erase(strValues.begin());
                 }
@@ -259,8 +246,6 @@ namespace BigDataStatMeth {
                 counter++;
 
             }
-
-            Rcpp::Rcout<<"\nControl 7";
             
             count[1] = strBlockValues.size() / incols;
 
@@ -275,13 +260,6 @@ namespace BigDataStatMeth {
                     
             }
 
-            ////!!!!!!!!!!!!!!!!!!!!! AQUÍ !!!!!
-            //
-            // !!!! M'HE QUEDAT AQUÍ REPASSANT !!!!!
-            //
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-            Rcpp::Rcout<<"\nControl 8";
             
             BigDataStatMeth::hdf5Dims* dsdims;
             dsdims = new BigDataStatMeth::hdf5Dims(dsOut);
@@ -289,35 +267,17 @@ namespace BigDataStatMeth {
             if( Rcpp::as<bool>(rownames) == true || Rcpp::as<bool>(header) == true ) {
                 if( Rcpp::as<bool>(rownames) == false){
                     Rcpp::StringVector svrownames(1);
-                    Rcpp::Rcout<<"\nControl 8.1.1";
-                    
-                    Rcpp::Rcout<<"\n Les columnes valen: \n";
-                    for (auto i: svrcolnames)
-                        std::cout << i << ' ';
-                    Rcpp::Rcout<<"\n";
-                    
-                    // Rcpp::Rcout<<"\n Les columnes valen: \n"<<Rcpp::wrap(svrcolnames)<<"\n";
                     dsdims->writeDimnames( Rcpp::wrap(svrownames), Rcpp::wrap(svrcolnames));
-
-                    //..// write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );
-
                 } else if(Rcpp::as<bool>(header) == false){
                     Rcpp::StringVector svrcolnames(1);
-                    Rcpp::Rcout<<"\nControl 8.1.2";
                     dsdims->writeDimnames( svrownames, svrcolnames);
-                    //..// write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );
                 } else {
-                    Rcpp::Rcout<<"\nControl 8.1.3";
                     // Write rownames and colnames
                     dsdims->writeDimnames( svrownames, svrcolnames);
-                    
-                    Rcpp::Rcout<<"\nControl 8.1.4";
-                    //..// write_hdf5_matrix_dimnames(file, outGroup, outDataset, svrownames, svrcolnames );
                 }
             }
             
             delete dsdims;
-            Rcpp::Rcout<<"\nControl 10";
 
         } catch( H5::FileIException& error ) {
             ::Rf_error( "c++ exception Convert_text_to_HDF5 (File IException)" );
