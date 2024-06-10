@@ -8,7 +8,7 @@ library(rhdf5)
 # setwd("~/PhD/TREBALLANT/BigDataStatMethAPIsV3")
 setwd("/Users/mailos/PhD/dummy")
 
-N = 200
+N = 5000
 M = 300
 
 set.seed(555)

@@ -5,7 +5,8 @@ A REVISAR:
     ==> Realment transpose la matriu o fa alguna altra cosa???
     ==> Fent proves amb el tcrossprod(a,b), intentant crear la matriu t transposada 
         amb la opció transpose no ha funcionat bé, en canvi creant-la amb t(b) ha funcionat perfectament... 
-
+- Revisar mida blocks, correcte 15k x 15k o augmentar-ho? si decideixo augmentar-ho he de modificar el fitxer 
+  de configuració per adaptar tant la mida del block com el nombre màxim d'elements.
 
 ---------------------------------------------
 Funcions a implementar a la llibreria HDF5: 
