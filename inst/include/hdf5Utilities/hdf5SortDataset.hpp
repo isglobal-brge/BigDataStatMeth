@@ -1,12 +1,6 @@
 #ifndef BIGDATASTATMETH_UTIL_SORT_DATASETS_HPP
 #define BIGDATASTATMETH_UTIL_SORT_DATASETS_HPP
 
-// #include <RcppEigen.h>
-// #include "Utilities/openme-utils.hpp"
-// #include "memAlgebra/memMultiplication.hpp"
-// #include <thread>
-
-
 namespace BigDataStatMeth {
 
 
@@ -45,14 +39,7 @@ namespace BigDataStatMeth {
                                  offset = {0, 0},
                                  count = {0, 0};
             
-            // // Real data set dimension
-            // IntegerVector dims_out = get_HDF5_dataset_size_ptr(pdataset);
-            // int nrows = dims_out[0];
-            // int ncols = dims_out[1];
-            
-            
             hsize_t* dims_out = dsIn->dim();
-            
             
             for( int i = 0; i < blockedSortlist.length(); i++) {
                 
@@ -65,9 +52,9 @@ namespace BigDataStatMeth {
                 
                 if( indices_0.size() > 0) {
                     
-                    for(int t=0; t<indices_0.size(); t++){
-                        Rcpp::Rcout<<"Indices val : " <<&indices_0[t]<<"\n";    
-                    }
+                    // for(int t=0; t<indices_0.size(); t++){
+                    //     Rcpp::Rcout<<"Indices val : " <<&indices_0[t]<<"\n";    
+                    // }
                     
                 } else {
                     
@@ -82,10 +69,8 @@ namespace BigDataStatMeth {
                         count[0] = order[order.size() - order[0]];
                     } 
                     
-                    //..// Eigen::MatrixXd A = GetCurrentBlock_hdf5(file, pdataset, offset[0], offset[1], count[0], count[1]);
                     std::vector<double> vdIn( count[0] * count[1] ); 
                     dsIn->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdIn.data() );
-                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdIn.data(), count[0], count[1] );
                     
                     if( oper.findName( func ) == 0 ) {
                         offset[0] = neworder[0]-1;
@@ -93,12 +78,10 @@ namespace BigDataStatMeth {
                         offset[1] = neworder[0]-1;
                     }
                     
-                    //..// write_HDF5_matrix_subset_v2( file, poutdataset, offset, count, stride, block, Rcpp::wrap( A ) );
-                    dsOut->writeDatasetBlock(Rcpp::wrap(A), offset, count, stride, block, true);
+                    dsOut->writeDatasetBlock(vdIn, offset, count, stride, block);
                     
                 }
             }
-            
             
         } catch( H5::FileIException& error ) {
             ::Rf_error( "c++ exception RcppSort_dataset_hdf5 (File IException )" );

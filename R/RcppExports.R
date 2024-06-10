@@ -745,7 +745,7 @@ bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdatas
 #' to be sorted is stored.
 #' @param dataset, character array indicating the input dataset to be sorted
 #' @param outdataset, character array indicating the name for the new sorted 
-#' dataset
+#' dataset. This dataset 
 #' @param blockedSortlist, a list with blocks with sorted positions, see example
 #' $`1`
 #'                       chr order newOrder Diagonal

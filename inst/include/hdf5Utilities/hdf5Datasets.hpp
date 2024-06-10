@@ -282,7 +282,7 @@ public:
         {
             H5::Exception::dontPrint();
             std::string fullPath = groupname + "/" + name;
-           
+            
             // Check if file pointer != nullptr
             if( !pfile)  {
                 ::Rf_error( "c++ exception Please create file before proceed" );
@@ -302,14 +302,15 @@ public:
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_file();
-            ::Rf_error( "c++ exception hdf5File (File IException) " );
+            ::Rf_error( "c++ exception openDataset (File IException) " );
         } catch(H5::GroupIException error) { // catch failure caused by the H5File operations
             close_file();
-            ::Rf_error( "c++ exception hdf5Dataset (File GroupIException) " );
+            ::Rf_error( "c++ exception openDataset (File GroupIException) " );
         } catch(H5::DataSetIException error) { // catch failure caused by the H5File operations
             close_file();
-            ::Rf_error( "c++ exception hdf5Dataset (File DataSetIException) " );
+            ::Rf_error( "c++ exception openDataset (File DataSetIException) " );
         } 
+        
         return(pdataset);
     }
     
@@ -906,30 +907,36 @@ public:
             // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
             H5::Exception::dontPrint();
             
-            H5::Attribute *attr = new H5::Attribute(pdataset->openAttribute(strAtribute));
-            H5::DataType  *type = new H5::DataType(attr->getDataType());
-            H5::StrType stype = attr->getStrType();
-            
-            if( type->getClass() == H5T_INTEGER) {
-                Rcpp::Rcout<<"\nInteger\n";
-            } else if (type->getClass() == H5T_FLOAT) {
-                Rcpp::Rcout<<"\nDouble\n";
-            } else if (type->getClass() == H5T_STRING) {
-                
-                std::string strAttrVal;
-                attr->read(stype, strAttrVal);
-                
-                if( strAtribute == "internal" ) {
-                    if( strAttrVal == "0" ) {
-                        internalDataset = false;
-                    } else {
-                        internalDataset = true; }
-                }
+            if(  strAtribute == "internal" && !exists_HDF5_element(pfile, strAtribute)) {
+                internalDataset = false;
             } else {
-                Rcpp::Rcout<<"\nPos No SEP"<<type->getClass()<<"\n";
+                
+                H5::Attribute *attr = new H5::Attribute(pdataset->openAttribute(strAtribute));
+                H5::DataType  *type = new H5::DataType(attr->getDataType());
+                H5::StrType stype = attr->getStrType();
+                
+                if( type->getClass() == H5T_INTEGER) {
+                    Rcpp::Rcout<<"\nInteger\n";
+                } else if (type->getClass() == H5T_FLOAT) {
+                    Rcpp::Rcout<<"\nDouble\n";
+                } else if (type->getClass() == H5T_STRING) {
+                    
+                    std::string strAttrVal;
+                    attr->read(stype, strAttrVal);
+                    
+                    if( strAtribute == "internal" ) {
+                        if( strAttrVal == "0" ) {
+                            internalDataset = false;
+                        } else {
+                            internalDataset = true; }
+                    }
+                } else {
+                    Rcpp::Rcout<<"\nPos No SEP"<<type->getClass()<<"\n";
+                }
+                
+                attr->close();
+                
             }
-            
-            attr->close();
             
         } catch( H5::FileIException& error) { 
             close_dataset_file();
