@@ -416,6 +416,22 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// bdReduce_hdf5_dataset
+void bdReduce_hdf5_dataset(std::string filename, std::string group, std::string reducefunction, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<bool> remove);
+RcppExport SEXP _BigDataStatMeth_bdReduce_hdf5_dataset(SEXP filenameSEXP, SEXP groupSEXP, SEXP reducefunctionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP, SEXP removeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type reducefunction(reducefunctionSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type remove(removeSEXP);
+    bdReduce_hdf5_dataset(filename, group, reducefunction, outgroup, outdataset, overwrite, remove);
+    return R_NilValue;
+END_RCPP
+}
 // bdSort_hdf5_dataset
 void bdSort_hdf5_dataset(std::string filename, std::string group, std::string dataset, std::string outdataset, Rcpp::List blockedSortlist, std::string func, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> overwrite);
 RcppExport SEXP _BigDataStatMeth_bdSort_hdf5_dataset(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outdatasetSEXP, SEXP blockedSortlistSEXP, SEXP funcSEXP, SEXP outgroupSEXP, SEXP overwriteSEXP) {
@@ -576,6 +592,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdgetSDandMean_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetSDandMean_hdf5, 8},
     {"_BigDataStatMeth_bdpseudoinv", (DL_FUNC) &_BigDataStatMeth_bdpseudoinv, 2},
     {"_BigDataStatMeth_bdpseudoinv_hdf5", (DL_FUNC) &_BigDataStatMeth_bdpseudoinv_hdf5, 7},
+    {"_BigDataStatMeth_bdReduce_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdReduce_hdf5_dataset, 7},
     {"_BigDataStatMeth_bdSort_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdSort_hdf5_dataset, 8},
     {"_BigDataStatMeth_bdSplit_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSplit_matrix_hdf5, 9},
     {"_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5, 5},

@@ -59,6 +59,9 @@ public:
     }
     
     
+    virtual void remove() {
+        remove_elements(pfile, getGroupName(), {name}); 
+    }
     
     
     // Create empty hdf5 DataSet, strdatatype can be: 
@@ -1091,7 +1094,7 @@ public:
     H5::DataSet* getDatasetptr() { return(pdataset); }  // Return dataset pointer
     std::string getDatasetName() { return(name); }  // Return dataset name
     std::string getGroup() { return(getGroupName()); }  // Return group name
-    std::string getFileName() { return(getFilename()); }  // Return group name
+    std::string getFileName() { return(getFilename()); }  // Return file name
     hsize_t nrows() { return(dimDataset[0]); }  // Return number of rows
     hsize_t ncols() { return(dimDataset[1]); }  // Return number of columns
     hsize_t* dim() { return(dimDataset); }  // Return dataset dimension (rows x columns)

@@ -5,8 +5,8 @@
 //' Gets a list of all dataset names inside a group or all the datasets names 
 //' starting with a prefix under a group
 //' 
-//' @param filename, character array indicating the name of the file to create
-//' @param group, character array indicating the input group where the data sets are stored 
+//' @param filename, character array with the name of the file to be accessed
+//' @param group, character array with the input group name where the data sets are stored 
 //' @param prefix, character array optional, indicates the prefix with which the dataset
 //' names begin, if null, then the function returns all datasets inside the group
 //' @return character array with the name of all datasets inside the group

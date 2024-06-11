@@ -24,7 +24,7 @@ to be sorted is stored.}
 \item{dataset, }{character array indicating the input dataset to be sorted}
 
 \item{outdataset, }{character array indicating the name for the new sorted 
-dataset}
+dataset. This dataset}
 
 \item{blockedSortlist, }{a list with blocks with sorted positions, see example
 $`1`

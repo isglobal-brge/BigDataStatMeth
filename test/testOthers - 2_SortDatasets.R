@@ -26,6 +26,3 @@ BigDataStatMeth:::bdSort_hdf5_dataset( filename = "gettables.hdf5",
                                        func = "sortRows",
                                        overwrite = TRUE)
 
-
-
-

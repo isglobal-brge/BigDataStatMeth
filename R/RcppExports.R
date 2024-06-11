@@ -582,8 +582,8 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
 #' Gets a list of all dataset names inside a group or all the datasets names 
 #' starting with a prefix under a group
 #' 
-#' @param filename, character array indicating the name of the file to create
-#' @param group, character array indicating the input group where the data sets are stored 
+#' @param filename, character array with the name of the file to be accessed
+#' @param group, character array with the input group name where the data sets are stored 
 #' @param prefix, character array optional, indicates the prefix with which the dataset
 #' names begin, if null, then the function returns all datasets inside the group
 #' @return character array with the name of all datasets inside the group
@@ -734,6 +734,23 @@ bdpseudoinv <- function(X, threads = NULL) {
 #' @export
 bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, overwrite = NULL, threads = NULL) {
     invisible(.Call('_BigDataStatMeth_bdpseudoinv_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, overwrite, threads))
+}
+
+#' Reduce hdf5 dataset
+#'
+#' Reduce hdf5 datasets inside a group by rows or columns and store complete matrix inside the hdf5 data file.
+#' 
+#' @param filename, character array with the name of the file where datasets are stored
+#' @param group, character array with the input group name where the data sets are stored 
+#' @param reducefunction, single character with function to apply, can be '+' or  '-'
+#' @param outgroup, optional character array with the group name where the dataset will be stored after reduction. If `outgroup` is NULL, the resulting dataset is stored in the same input group. 
+#' @param outdataset, optional character with the dataset name for the resulting dataset after reduction if `outdataset` is NULL, then the input group name is used as outdataset name 
+#' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @param remove, boolean if true, removes original matrices, by default bremove = false.
+#' @return Full matrix with results from reduction
+#' @export
+bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NULL, outdataset = NULL, overwrite = FALSE, remove = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdReduce_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, group, reducefunction, outgroup, outdataset, overwrite, remove))
 }
 
 #' Sort existing dataset 

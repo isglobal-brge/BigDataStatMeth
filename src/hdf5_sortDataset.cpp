@@ -62,39 +62,29 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
     try
     {
         
-        std::string strOutgroup;
-        
-        
-        
-        
         BigDataStatMeth::hdf5Dataset* dsIn;
         BigDataStatMeth::hdf5Dataset* dsOut;
         
-        
+        std::string strOutgroup;
         bool boverwrite;
+        hsize_t ncols = 0,
+                nrows = 0;
         
         if( blockedSortlist.length()<=0 ) {
             Rcpp::Rcout<<"\nList is empty, please create a list with the new sort";
             return void();
         }
         
-        
         if( overwrite.isNull() ) { boverwrite = false; } 
         else { boverwrite = Rcpp::as<bool>(overwrite); }
         
-        
-        if( outgroup.isNull() ) { 
-            strOutgroup = group; 
-        } else { 
-            strOutgroup = Rcpp::as<std::string>(outgroup);
-        }
+        if( outgroup.isNull() ) {  strOutgroup = group;  } 
+        else {  strOutgroup = Rcpp::as<std::string>(outgroup); }
         
         dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsIn->openDataset();
         
-        // hsize_t nrows = dsIn->nrows(),
-        hsize_t ncols = dsIn->ncols(),
-                nrows = 0;
+        ncols = dsIn->ncols();
 
         // Get the nomber of rows in dataframes inside the list
         for(int i=0; i<blockedSortlist.size(); i++) {     
@@ -120,7 +110,6 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
         Rcpp::Rcout << "c++ exception bdSort_hdf5_dataset (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
-        Rcpp::Rcout<<"\nPerquè se suposa que surt aquest error????";
         Rcpp::Rcout << "c++ exception bdSort_hdf5_dataset" << ex.what();
         return void();
     }
@@ -129,9 +118,3 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
     return void();
     
 }
-
-
-
-/***R
-
-*/
