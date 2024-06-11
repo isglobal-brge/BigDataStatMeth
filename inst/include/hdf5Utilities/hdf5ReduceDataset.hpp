@@ -21,20 +21,16 @@ namespace BigDataStatMeth {
                                    bool binternal)
     {
         
-        
-        // BigDataStatMeth::hdf5File* file = new BigDataStatMeth::hdf5File(filename, false);
-        
-        hsize_t* dims_out;
-        std::vector<hsize_t> stride = {1, 1},
-                             block = {1, 1},
-                             offset = {0, 0};
-        
-        // DataSet* ploaddataset = nullptr;
-        Eigen::MatrixXd fullReduced;
-        Eigen::MatrixXd newRead;
-        int ndatasets;
-        
         try {
+            
+            hsize_t* dims_out;
+            std::vector<hsize_t> stride = {1, 1},
+                block = {1, 1},
+                offset = {0, 0};
+            
+            Eigen::MatrixXd fullReduced;
+            Eigen::MatrixXd newRead;
+            int ndatasets;
             
             BigDataStatMeth::hdf5File* objFile = new BigDataStatMeth::hdf5File(filename, false);
             objFile->openFile("r");
@@ -57,7 +53,7 @@ namespace BigDataStatMeth {
                 dsIn->readDatasetBlock( {offset[0], offset[1]}, {dims_out[0], dims_out[1]}, stride, block, vdIn.data() );
                 
                 if( i == 0 ) {
-                    // fullReduced = GetCurrentBlock_hdf5_Original( file, ploaddataset, 0, 0, dims_out[0],dims_out[1]);
+                    
                     if(binternal == true)
                         fullReduced = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdIn.data(), dims_out[0], dims_out[1] );
                     else
@@ -103,7 +99,6 @@ namespace BigDataStatMeth {
                 }
                 
                 delete dsIn;
-                
             }
             
             BigDataStatMeth::hdf5Dataset* dsOut = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, stroutdataset, boverwrite);
@@ -117,7 +112,6 @@ namespace BigDataStatMeth {
             }
             
             delete dsOut;
-            // delete file;
             
         }catch( H5::FileIException& error ) {
             ::Rf_error( "c++ exception RcppReduce_dataset_hdf5 (File IException )" );
@@ -129,95 +123,8 @@ namespace BigDataStatMeth {
             ::Rf_error( "c++ exception RcppReduce_dataset_hdf5 (DataSpace IException )" );
             return void();
         } 
-        
         return void();
-        
-        
-        
-        
-        
-        // DataSet* ploaddataset = nullptr;
-        // Eigen::MatrixXd fullReduced;
-        // IntegerVector dims_out;
-        // int ndatasets;
-        // std::string strdatasetout = stroutgroup + "/" + stroutdataset;
-        // 
-        // try {
-        //     
-        //     // Get dataset names without prefix, all datasets inside the group
-        //     StringVector joindata =  get_dataset_names_from_group(file, strgroup, "");
-        //     
-        //     ndatasets = joindata.size();
-        //     
-        //     for ( int i=0; i< ndatasets; i++)
-        //     {
-        //         ploaddataset = new DataSet(file->openDataSet(strgroup + "/" + joindata[i]));
-        //         dims_out = get_HDF5_dataset_size(*ploaddataset);
-        //         
-        //         if( i == 0 ) {
-        //             fullReduced = GetCurrentBlock_hdf5_Original( file, ploaddataset, 0, 0, dims_out[0],dims_out[1]);
-        //             
-        //         } else {
-        //             
-        //             // If readed block is smaller than full matrix adds rows or columns
-        //             Eigen::MatrixXd newRead = GetCurrentBlock_hdf5_Original( file, ploaddataset, 0, 0, dims_out[0],dims_out[1]);
-        //             if( newRead.rows() != fullReduced.rows()){
-        //                 int difference = fullReduced.rows() - newRead.rows();
-        //                 newRead.conservativeResize(newRead.rows() + difference, newRead.cols()); 
-        //             }
-        //             
-        //             if( newRead.cols() != fullReduced.cols()){
-        //                 int difference = fullReduced.cols() - newRead.cols();
-        //                 newRead.conservativeResize(newRead.rows(), newRead.cols() + di
-        //                 fference); 
-        //             }
-        //             
-        //             // Reduce matrix
-        //             if( strreducefunction.compare("+")==0) {
-        //                 fullReduced = fullReduced + newRead;
-        //             } else if (strreducefunction.compare("-")==0) {
-        //                 fullReduced = fullReduced - newRead;
-        //             } 
-        //         }
-        //         
-        //         ploaddataset->close();
-        //         
-        //         if( bremove == true){
-        //             // Remove used dataset
-        //             remove_HDF5_element_ptr(file, strgroup + "/" + joindata[i]);
-        //         }
-        //         
-        //     }
-        //     
-        //     // Transform to rowmajor
-        //     Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mapBlock(fullReduced.data(), 
-        //                                                                                               fullReduced.cols() , fullReduced.rows());
-        //     
-        //     write_HDF5_matrix_from_R_ptr(file, strdatasetout, Rcpp::wrap(mapBlock.transpose()), false);
-        //     
-        // }catch( FileIException& error ) {
-        //     ploaddataset->close();
-        //     file->close();
-        //     ::Rf_error( "c++ exception (File IException )" );
-        //     return -1;
-        // } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-        //     ploaddataset->close();
-        //     file->close();
-        //     ::Rf_error( "c++ exception (DataSet IException )" );
-        //     return -1;
-        // } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-        //     ploaddataset->close();
-        //     file->close();
-        //     ::Rf_error( "c++ exception (DataSpace IException )" );
-        //     return -1;
-        // } 
-        // 
-        // return(0);
-        
-        
     }
-
-
 
 
 }
