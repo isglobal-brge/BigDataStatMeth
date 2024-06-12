@@ -347,6 +347,29 @@ bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FAL
     invisible(.Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, SVDgroup, overwrite, method, threads))
 }
 
+#' Bind matrices by rows or columns
+#'
+#' Merge existing matrices inside hdf5 data file by rows or by columns
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, character array indicating the input group where the data set to be imputed is. 
+#' @param datasets, character array indicating the input dataset to be imputed
+#' @param outgroup, character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
+#' @param outdataset, character array indicating the name for the new merged dataset
+#' @param func, character array function to be applyed
+#' \describe{
+#'     \item{bindRows}{merge datasets by rows}
+#'     \item{bindCols}{merge datasets by columns}
+NULL
+
+#' }
+#' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @return Original hdf5 data file with results after input datasets
+#' @export
+bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset, func, overwrite = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdBind_hdf5_datasets', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, outdataset, func, overwrite))
+}
+
 #' Crossprod with hdf5 matrix
 #' 
 #' This function performs the crossprod from a matrix inside and hdf5 data file

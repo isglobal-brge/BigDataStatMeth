@@ -54,7 +54,7 @@ void bdReduce_hdf5_dataset( std::string filename, std::string group,
         
         BigDataStatMeth::RcppReduce_dataset_hdf5( filename, group, strOutgroup, strOutdatset, reducefunction, boverwrite, bremove, false);
         
-    }catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         Rcpp::Rcout<<"c++ exception bdReduce_hdf5_dataset (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations

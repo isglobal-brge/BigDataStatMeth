@@ -105,7 +105,7 @@ namespace BigDataStatMeth {
             
             if(binternal == true) {
                 dsOut->createDataset( fullReduced.rows() , fullReduced.cols(), "real");
-                dsOut->writeDataset(fullReduced.data());    
+                dsOut->writeDataset(fullReduced.data());
             } else {
                 dsOut->createDataset( fullReduced.cols() , fullReduced.rows(), "real");
                 dsOut->writeDataset(fullReduced.transpose().data());
