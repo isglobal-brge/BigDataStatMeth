@@ -16,7 +16,6 @@
 //' \describe{
 //'     \item{bindRows}{merge datasets by rows}
 //'     \item{bindCols}{merge datasets by columns}
-// //'     \item{bindRowsbyIndex}{merge datasets by rows taking in to accoutn an index}
 //' }
 //' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
 //' @return Original hdf5 data file with results after input datasets
@@ -43,14 +42,9 @@ void bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::String
             return void();
         }
         
-        std::string stroutDatasetName = outgroup + "/" + outdataset;
-        
-        
         int bindFunction = oper.findName( func );
         
-        
         BigDataStatMeth::hdf5Dataset* dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outdataset, boverwrite);
-        // dsOut->createUnlimitedDataset(count[0], count[1], "real");
         
         RcppBind_datasets_hdf5( filename, group, datasets, dsOut, bindFunction, false);
         
@@ -75,133 +69,10 @@ void bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::String
     Rcpp::Rcout<< outdataset <<" dataset has been recomposed from blocks\n";
     return void();
     
-    
-    
-    
-    // H5File* file = nullptr;
-    // DataSet* pdataset = nullptr;
-    // DataSet* unlimDataset = nullptr;
-    // Rcpp::NumericVector oper = {0, 1, 2};
-    // oper.names() = Rcpp::CharacterVector({ "bindCols", "bindRows", "bindRowsbyIndex"});
-    // 
-    // try
-    // {
-    //     
-    //     IntegerVector count = IntegerVector::create(0, 0);
-    //     IntegerVector offset = IntegerVector::create(0, 0);
-    //     IntegerVector stride = IntegerVector::create(1, 1);
-    //     IntegerVector block = IntegerVector::create(1, 1);
-    //     
-    //     bool bforce;
-    //     
-    //     if(force.isNull()) { bforce = false; } 
-    //     else {   bforce = Rcpp::as<bool>(force); }
-    //     
-    //     
-    //     // Test file
-    //     if( ResFileExist_filestream(filename) ) {
-    //         file = new H5File( filename, H5F_ACC_RDWR ); 
-    //     } else {
-    //         Rcpp::Rcout<<"\nFile not exits, create file before bind matrices";
-    //         return void();
-    //     }
-    //     
-    //     // Seek all datasets to perform calculus
-    //     for( int i=0; i < datasets.size(); i++ ) 
-    //     {
-    //         std::string strdataset = group +"/" + datasets(i);
-    //         std::string stroutDatasetName = outgroup + "/" + outdataset;
-    //         
-    //         if( exists_HDF5_element_ptr(file, strdataset ) == 0 ) {
-    //             file->close();
-    //             Rcpp::Rcout<<"Group or dataset does not exists, please create the input dataset before proceed";
-    //             return void();
-    //         }
-    //         
-    //         pdataset = new DataSet(file->openDataSet(strdataset));
-    //         
-    //         // Real data set dimension
-    //         IntegerVector dims_out = get_HDF5_dataset_size(*pdataset);
-    //         
-    //         // Get block from complete matrix
-    //         Eigen::MatrixXd original = GetCurrentBlock_hdf5( file, pdataset, 0, 0, dims_out[0], dims_out[1]);
-    //         
-    //         // Remove dataset if exists ( only if force = TRUE )
-    //         if(i==0) {
-    //             prepare_outGroup(file, outgroup, bforce);
-    //             prepare_outDataset(file, outgroup + "/" + outdataset, bforce);
-    //         }
-    //         
-    //         if( oper.findName( func ) == 0 || oper.findName( func ) == 1) {
-    //             
-    //             if(oper.findName( func ) == 0 ){
-    //                 
-    //                 // Test if dimmensions are correct
-    //                 if( original.cols() != count[1] && i!=0) {
-    //                     // Append needed cols to merge by cols
-    //                     int iappend = count[1] - original.cols();
-    //                     original.conservativeResize(original.rows(), original.cols() + iappend);
-    //                 }
-    //                 offset[0] = offset[0] + count[0];
-    //             } else {
-    //                 
-    //                 // Test if dimmensions are correct
-    //                 if( original.rows() != count[0]  && i!=0) {
-    //                     // Append needed rows to merge by rows
-    //                     int iappend = count[0] - original.rows();
-    //                     original.conservativeResize(original.rows() + iappend, original.cols());
-    //                 }
-    //                 offset[1] = offset[1] + count[1];
-    //             }
-    //             
-    //             count[0] = original.rows();
-    //             count[1] = original.cols();
-    //             
-    //             if(i == 0) {
-    //                 // If dataset exists --> remove dataset
-    //                 if( exists_HDF5_element_ptr(file,stroutDatasetName))
-    //                     remove_HDF5_element_ptr(file,stroutDatasetName);
-    //                 // Create unlimited dataset in hdf5 file
-    //                 create_HDF5_unlimited_matrix_dataset_ptr(file, stroutDatasetName, count[0], count[1], "numeric");
-    //             }
-    //             
-    //             unlimDataset = new DataSet(file->openDataSet(stroutDatasetName));
-    //             
-    //             
-    //             if(oper.findName( func ) == 0 && i!=0) {
-    //                 extend_HDF5_matrix_subset_ptr(file, unlimDataset, count[0], 0);
-    //                 
-    //             } else if (oper.findName( func ) == 1 && i!=0) {
-    //                 extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, count[1]);
-    //                 
-    //             }
-    //             
-    //             write_HDF5_matrix_subset_v2(file, unlimDataset, offset, count, stride, block, Rcpp::wrap(original)  );  
-    //             unlimDataset->close();
-    //             pdataset->close();
-    //             
-    //         } else {
-    //             pdataset->close();
-    //             file->close();
-    //             Rcpp::Rcout<<"Group not exists, create the input dataset before proceed";
-    //             return void();
-    //         }
-    //     }
-    // }
-    // catch( FileIException& error ) { // catch failure caused by the H5File operations
-    //     unlimDataset->close();
-    //     pdataset->close();
-    //     file->close();
-    //     Rcpp::Rcout<<"c++ exception (File IException)";
-    //     return void();
-    // }
-    // 
-    // file->close();
-    // Rcpp::Rcout<<outdataset<<" dataset has been recomposed from blocks\n";
-    // return void();
-    
 }
 
+
+/*// //'     \item{bindRowsbyIndex}{merge datasets by rows taking in to accoutn an index}*/
 
 
 /***R

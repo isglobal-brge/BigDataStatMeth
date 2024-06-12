@@ -360,8 +360,6 @@ bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FAL
 #' \describe{
 #'     \item{bindRows}{merge datasets by rows}
 #'     \item{bindCols}{merge datasets by columns}
-NULL
-
 #' }
 #' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
 #' @return Original hdf5 data file with results after input datasets
@@ -774,6 +772,38 @@ bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdatas
 #' @export
 bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NULL, outdataset = NULL, overwrite = FALSE, remove = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdReduce_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, group, reducefunction, outgroup, outdataset, overwrite, remove))
+}
+
+#' Remove element group or dataset from  hdf5 file
+#'
+#' Remove group or dataset from  hdf5 file
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param element string vector with one or multiple elements to be removed, 
+#' each element in the string vectur must be a complete route to the element to be removed.
+#' @return none
+#' @export
+#' 
+#' @examples
+#' 
+#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+#' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
+#'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
+#'                    
+#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#' bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#' 
+#' bdRemove_hdf5_element("BasicMatVect.hdf5", c("INPUT/matA", "INPUT/matB"))
+#' 
+#' 
+#' # Remove file (used as example)
+#'   if (file.exists("BasicMatVect.hdf5")) {
+#'     # Delete file if it exist
+#'     file.remove("BasicMatVect.hdf5")
+#'   }
+#' 
+bdRemove_hdf5_element <- function(filename, elements) {
+    invisible(.Call('_BigDataStatMeth_bdRemove_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, elements))
 }
 
 #' Sort existing dataset 

@@ -29,7 +29,6 @@ bdBind_hdf5_datasets(
 \describe{
     \item{bindRows}{merge datasets by rows}
     \item{bindCols}{merge datasets by columns}
-    \item{bindRowsbyIndex}{merge datasets by rows taking in to accoutn an index}
 }}
 
 \item{overwrite, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
