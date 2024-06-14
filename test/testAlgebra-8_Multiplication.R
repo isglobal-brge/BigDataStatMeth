@@ -2,7 +2,8 @@ library("BigDataStatMeth")
 library("rhdf5")
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
 
-setwd("/Users/mailos/PhD/dummy")
+# setwd("/Users/mailos/PhD/dummy")
+setwd("/scratch/dpelegri/BigDataStatMeth/Benchmark/hdf5_files")
 
 N = 1500
 M = 1500
