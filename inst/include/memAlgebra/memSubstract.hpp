@@ -170,7 +170,7 @@ namespace BigDataStatMeth {
                     
                     #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
                     {
-                    #pragma omp for schedule (dynamic, chunks)
+                    #pragma omp for schedule (dynamic)
                         for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                         {
                             
@@ -271,7 +271,7 @@ namespace BigDataStatMeth {
                 
                 #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
                 {
-                #pragma omp for schedule (dynamic, chunks) // collapse(2)
+                #pragma omp for schedule (dynamic) // collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         // Duplicate vector

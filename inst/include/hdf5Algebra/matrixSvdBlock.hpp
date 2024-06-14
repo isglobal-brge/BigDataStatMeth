@@ -172,7 +172,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
             
             // Get data from M blocks in initial matrix
             //.. 2024/04/01 ..// #pragma omp for ordered schedule (dynamic, chunks) 
-            #pragma omp for schedule (dynamic, chunks) ordered
+            #pragma omp for schedule (dynamic) ordered
             for( int i = 0; i< M ; i++)  
             {
                 
