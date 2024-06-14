@@ -24,7 +24,7 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
                      unlimited = FALSE)
 
 bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-                     object = t(b), 
+                     object = b, 
                      group = "pepet", 
                      dataset = "B",
                      transp = FALSE,
