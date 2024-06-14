@@ -148,6 +148,9 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                 
                 int ithreads = get_number_threads(threads, R_NilValue);
                 int chunks = vstart.size()/ithreads;
+                if(chunks<1) {
+                    ithreads = chunks;
+                }
 
                 #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks, vstart, vsizetoRead)
                 {
