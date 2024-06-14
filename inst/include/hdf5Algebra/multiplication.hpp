@@ -195,7 +195,13 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                 }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C (vdC.data(), iRowsB, iColsA );
                                 
+                                Rcpp::Rcout<<"\nMatriu A:\n"<<A;
+                                Rcpp::Rcout<<"\nMatriu B:\n"<<B;
+                                Rcpp::Rcout<<"\nMatriu C:\n"<<C;
+                                
                                 C = C + B * A;
+                                
+                                Rcpp::Rcout<<"\nMatriu C-Resultant:"<<C;
                                 
                                 std::vector<hsize_t> offset = {jj,vstart[ii]};
                                 std::vector<hsize_t> count = {iRowsB, iColsA};
