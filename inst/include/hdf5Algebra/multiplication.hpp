@@ -150,14 +150,16 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                 int chunks = vstart.size()/ithreads;
                 
                 Rcpp::Rcout<<"\nCHUNKS: "<<chunks;
+                Rcpp::Rcout<<"\nNum threads is: "<<ithreads;
                 if(chunks<1) {
-                    ithreads = chunks;
+                    ithreads = vstart.size();
+                    Rcpp::Rcout<<"\nNow, num threads is: "<<ithreads;
                 }
 
                 #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks, vstart, vsizetoRead)
                 {
                     
-                    #pragma omp for schedule (dynamic, chunks)
+                    #pragma omp for schedule (dynamic)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                         // for (hsize_t ii = 0; ii < N; ii += ihdf5_block)
                     {
