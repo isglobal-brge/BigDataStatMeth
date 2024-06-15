@@ -29,7 +29,8 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
             starts.push_back(ii);
             sizes.push_back(sizetoRead);
 
-            if( ii + blockSize > maxPosition ) isize = blockSize + 1;
+            // if( ii + blockSize > maxPosition ) {
+            //     isize = blockSize + 1; }
             if( sizetoRead > blockSize ) {
                 ii = ii - blockSize + sizetoRead; }
         }
@@ -62,11 +63,15 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                 if(block_size > std::min( N, std::min(M,K)) )
                     block_size = std::min( N, std::min(M,K)); 
                 
-                std::vector<hsize_t> vsizetoRead, vstart;
+                std::vector<hsize_t> vsizetoRead, vstart,
+                                     vsizetoReadM, vstartM,
+                                     vsizetoReadK, vstartK;
                 
                 // ithreads = get_number_threads(threads, R_NilValue);
                 
                 getBlockPositionsSizes_hdf5( N, block_size, vstart, vsizetoRead );
+                getBlockPositionsSizes_hdf5( M, block_size, vstartM, vsizetoReadM );
+                getBlockPositionsSizes_hdf5( K, block_size, vstartK, vsizetoReadK );
                 
                 int ithreads = get_number_threads(threads, R_NilValue);
                 int chunks = vstart.size()/ithreads;
@@ -81,19 +86,22 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         // Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
-                        for (int jj = 0; jj < N; jj += block_size)
+                        // for (int jj = 0; jj < N; jj += block_size)
+                        for (hsize_t jj = 0; jj < vstartM.size(); jj++)
                         {
-                            for(int kk = 0; kk < K; kk += block_size)
+                            // for(int kk = 0; kk < K; kk += block_size)
+                            for (hsize_t kk = 0; kk < vstartK.size(); kk++)
                             {
-                                // C.block(ii, jj, std::min(block_size,M - ii), std::min(block_size,N - jj)) = 
-                                //     C.block(ii, jj, std::min(block_size,M - ii), std::min(block_size,N - jj)) + 
-                                //     (A.block(ii, kk, std::min(block_size,M - ii), std::min(block_size,K - kk)) * 
+                                
+                                // C.block(vstart[ii], jj, vsizetoRead[ii], std::min(block_size,N - jj)) = 
+                                //     C.block(vstart[ii], jj, vsizetoRead[ii], std::min(block_size,N - jj)) + 
+                                //     (A.block(vstart[ii], kk, vsizetoRead[ii], std::min(block_size,K - kk)) * 
                                 //     B.block(kk, jj, std::min(block_size,K - kk), std::min(block_size,N - jj)));
                                 
-                                C.block(vstart[ii], jj, vsizetoRead[ii], std::min(block_size,N - jj)) = 
-                                    C.block(vstart[ii], jj, vsizetoRead[ii], std::min(block_size,N - jj)) + 
-                                    (A.block(vstart[ii], kk, vsizetoRead[ii], std::min(block_size,K - kk)) * 
-                                    B.block(kk, jj, std::min(block_size,K - kk), std::min(block_size,N - jj)));
+                                C.block(vstart[ii], vstartM[jj], vsizetoRead[ii], vsizetoReadM[jj]) = 
+                                    C.block(vstart[ii], vstartM[jj], vsizetoRead[ii], vsizetoReadM[jj]) + 
+                                    ( A.block(vstart[ii], vstartK[kk], vsizetoRead[ii], vsizetoReadK[kk]) * 
+                                      B.block(vstartK[kk], vstartM[jj], vsizetoReadK[kk], vsizetoReadM[jj]) );
                             }
                         }
                     }
@@ -135,16 +143,20 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
             if( dsA->nrows() == dsB->ncols())
             {
 
-                hsize_t ksize = ihdf5_block + 1,
-                        jsize = ihdf5_block + 1;
+                // hsize_t ksize = ihdf5_block + 1,
+                //         jsize = ihdf5_block + 1;
 
                 std::vector<hsize_t> stride = {1, 1},
                                      block = {1, 1},
-                                     vsizetoRead, vstart;
+                                     vsizetoRead, vstart,
+                                     vsizetoReadM, vstartM,
+                                     vsizetoReadK, vstartK;
                 
                 dsC->createDataset( M, N, "real");
                 
                 getBlockPositionsSizes_hdf5( N, ihdf5_block, vstart, vsizetoRead );
+                getBlockPositionsSizes_hdf5( M, ihdf5_block, vstartM, vsizetoReadM );
+                getBlockPositionsSizes_hdf5( K, ihdf5_block, vstartK, vsizetoReadK );
                 
                 int ithreads = get_number_threads(threads, R_NilValue);
                 int chunks = vstart.size()/ithreads;
@@ -153,72 +165,56 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                 {
                     
                     #pragma omp for schedule (dynamic)
-                    for (hsize_t ii = 0; ii < vstart.size(); ii ++)
-                        // for (hsize_t ii = 0; ii < N; ii += ihdf5_block)
+                    for (hsize_t ii = 0; ii < vstart.size(); ii++)
                     {
-                        // if( ii + ihdf5_block > N ) isize = N - ii;
                         
-                        for (hsize_t jj = 0; jj < M; jj += ihdf5_block)
+                        for (hsize_t jj = 0; jj < vstartM.size(); jj++)
                         {
-                            if( jj + ihdf5_block > M) jsize = M - jj;
                             
-                            for(hsize_t kk = 0; kk < K; kk += ihdf5_block)
+                            for (hsize_t kk = 0; kk < vstartK.size(); kk++)
                             {
-                                if( kk + ihdf5_block > K ) ksize = K - kk;
                                 
-                                hsize_t iRowsA = std::min<hsize_t>(ihdf5_block, ksize),
-                                    iColsA = std::min<hsize_t>(ihdf5_block, vsizetoRead[ii]),
-                                    iRowsB = std::min<hsize_t>(ihdf5_block, jsize),
-                                    iColsB = std::min<hsize_t>(ihdf5_block, ksize);
+                                hsize_t iRowsA = vsizetoRead[kk],
+                                        iColsA = vsizetoRead[ii],
+                                        iRowsB = vsizetoRead[jj],
+                                        iColsB = vsizetoRead[kk];
                                 
                                 std::vector<double> vdA( iRowsA * iColsA );
                                 #pragma omp critical(accessFile) 
                                 {
-                                    Rcpp::Rcout<<"\nLlegint dsA (inici - Fi) + (files - columnes): ( "<< kk << " - "<<vstart[ii]<<" ) + ("<<iRowsA<<" - "<<iColsA<<" )";
-                                    dsA->readDatasetBlock( {kk, vstart[ii]}, {iRowsA, iColsA}, stride, block, vdA.data() );
+                                    // Rcpp::Rcout<<"\nLlegint dsA (inici - Fi) + (files - columnes): ( "<< kk << " - "<<vstart[ii]<<" ) + ("<<iRowsA<<" - "<<iColsA<<" )";
+                                    dsA->readDatasetBlock( {vstartK[kk], vstart[ii]}, {iRowsA, iColsA}, stride, block, vdA.data() );
                                 }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), iRowsA, iColsA );
                                 
                                 std::vector<double> vdB( iRowsB * iColsB );
                                 #pragma omp critical(accessFile) 
                                 {
-                                    Rcpp::Rcout<<"\nLlegint dsB (inici - Fi) + (files - columnes): ( "<< jj << " - "<<kk<<" ) + ("<<iRowsB<<" - "<<iColsB<<" )";
-                                    dsB->readDatasetBlock( {jj, kk}, {iRowsB, iColsB}, stride, block, vdB.data() );
+                                    // Rcpp::Rcout<<"\nLlegint dsB (inici - Fi) + (files - columnes): ( "<< vstartM[jj] << " - "<<vstartK[kk]<<" ) + ("<<iRowsB<<" - "<<iColsB<<" )";
+                                    dsB->readDatasetBlock( {vstartM[jj], vstartK[kk]}, {iRowsB, iColsB}, stride, block, vdB.data() );
                                 }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), iRowsB, iColsB );
                                 
                                 std::vector<double> vdC( iRowsB * iColsA );
                                 #pragma omp critical(accessFile) 
                                 {
-                                    Rcpp::Rcout<<"\nLlegint dsC (inici - Fi) + (files - columnes): ( "<< jj << " - "<<vstart[ii]<<" ) + ("<<iRowsB<<" - "<<iColsA<<" )";
-                                    dsC->readDatasetBlock( {jj, vstart[ii]}, {iRowsB, iColsA}, stride, block, vdC.data() );
+                                    // Rcpp::Rcout<<"\nLlegint dsC (inici - Fi) + (files - columnes): ( "<< vstartM[jj] << " - "<<vstart[ii]<<" ) + ("<<iRowsB<<" - "<<iColsA<<" )";
+                                    dsC->readDatasetBlock( {vstartM[jj], vstart[ii]}, {iRowsB, iColsA}, stride, block, vdC.data() );
                                 }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C (vdC.data(), iRowsB, iColsA );
                                 
-                                // Rcpp::Rcout<<"\nMatriu A:\n"<<A;
-                                // Rcpp::Rcout<<"\nMatriu B:\n"<<B;
-                                // Rcpp::Rcout<<"\nMatriu C:\n"<<C;
-                                
                                 C = C + B * A;
                                 
-                                // Rcpp::Rcout<<"\nMatriu C-Resultant:"<<C;
-                                
-                                std::vector<hsize_t> offset = {jj,vstart[ii]};
+                                std::vector<hsize_t> offset = {vstartM[jj], vstart[ii]};
                                 std::vector<hsize_t> count = {iRowsB, iColsA};
                                 
                                 #pragma omp critical(accessFile) 
                                 {
                                     dsC->writeDatasetBlock(vdC, offset, count, stride, block);
                                 }
-                                
-                                if( kk + ihdf5_block > K ) ksize = ihdf5_block + 1;
                             }
-                            
-                            if( jj + ihdf5_block > M ) jsize = ihdf5_block + 1;
                         }
-                        
                     }
-                    
                 }
 
             } else {

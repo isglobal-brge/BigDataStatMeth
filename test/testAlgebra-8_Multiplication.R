@@ -2,11 +2,10 @@ library("BigDataStatMeth")
 library("rhdf5")
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
 
-# setwd("/Users/mailos/PhD/dummy")
-setwd("/scratch/dpelegri/BigDataStatMeth/Benchmark/hdf5_files")
+setwd("/Users/mailos/PhD/dummy")
 
-N = 1500
-M = 1500
+N = 2500
+M = 2500
 
 set.seed(555)
 a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
@@ -32,7 +31,7 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
                      overwriteDataset = TRUE, 
                      unlimited = FALSE)
 
-
+# devtools::reload(pkgload::inst("BigDataStatMeth"))
 bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "A", B = "B", 
                  outgroup = "results", outdataset = "res", 
                  force = TRUE, paral = TRUE, threads = 4 ,block_size = 1024)
