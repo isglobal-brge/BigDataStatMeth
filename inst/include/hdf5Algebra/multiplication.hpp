@@ -180,27 +180,27 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                         iColsB = vsizetoRead[kk];
                                 
                                 std::vector<double> vdA( iRowsA * iColsA );
-                                // #pragma omp critical(accessFile) 
-                                // {
+                                #pragma omp critical(accessFile) 
+                                {
                                     // Rcpp::Rcout<<"\nLlegint dsA (inici - Fi) + (files - columnes): ( "<< kk << " - "<<vstart[ii]<<" ) + ("<<iRowsA<<" - "<<iColsA<<" )";
                                     dsA->readDatasetBlock( {vstartK[kk], vstart[ii]}, {iRowsA, iColsA}, stride, block, vdA.data() );
-                                // }
+                                }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), iRowsA, iColsA );
                                 
                                 std::vector<double> vdB( iRowsB * iColsB );
-                                // #pragma omp critical(accessFile) 
-                                // {
+                                #pragma omp critical(accessFile) 
+                                {
                                     // Rcpp::Rcout<<"\nLlegint dsB (inici - Fi) + (files - columnes): ( "<< vstartM[jj] << " - "<<vstartK[kk]<<" ) + ("<<iRowsB<<" - "<<iColsB<<" )";
                                     dsB->readDatasetBlock( {vstartM[jj], vstartK[kk]}, {iRowsB, iColsB}, stride, block, vdB.data() );
-                                // }
+                                }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), iRowsB, iColsB );
                                 
                                 std::vector<double> vdC( iRowsB * iColsA );
-                                // #pragma omp critical(accessFile) 
-                                // {
+                                #pragma omp critical(accessFile) 
+                                {
                                     // Rcpp::Rcout<<"\nLlegint dsC (inici - Fi) + (files - columnes): ( "<< vstartM[jj] << " - "<<vstart[ii]<<" ) + ("<<iRowsB<<" - "<<iColsA<<" )";
                                     dsC->readDatasetBlock( {vstartM[jj], vstart[ii]}, {iRowsB, iColsA}, stride, block, vdC.data() );
-                                // }
+                                }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C (vdC.data(), iRowsB, iColsA );
                                 
                                 C = C + B * A;
