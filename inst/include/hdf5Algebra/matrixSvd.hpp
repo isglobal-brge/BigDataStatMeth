@@ -268,8 +268,9 @@ namespace BigDataStatMeth {
             
             if(method.isNull())  strMethod = "auto" ;
             else    strMethod = Rcpp::as<std::string>(method);
-            
-            if (std::find(strMethods.begin(), strMethods.end(), strMethod) != strMethods.end())
+
+            /*
+            if (!std::find(strMethods.begin(), strMethods.end(), strMethod) != strMethods.end())
             {
                 std::string strmessage = "SVD decomposition by: " + strMethod + " method";
                 Rcpp::message(Rcpp::wrap(strmessage));
@@ -278,6 +279,7 @@ namespace BigDataStatMeth {
                 strMethod = "auto";
                 Rcpp::warning(strWarning);
             }
+            */
             
             hdf5Dataset* dsA = new hdf5Dataset(filename, strsubgroup, strdataset, false);
             dsA->openDataset();
