@@ -366,10 +366,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
 // results are saved in hdf5 datasets under temporal group to be processed if necessary
 // int Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupName, int k, int q,
 //                                            bool bcenter, bool bscale, Rcpp::Nullable<int> threads = R_NilValue)
-
-//..ORIGINAL..// void Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupName, int k, int q,
-//..ORIGINAL..//                                             bool bcenter, bool bscale, double dthreshold,
-//..ORIGINAL..//                                             Rcpp::Nullable<int> threads = R_NilValue)
 template <class T>
 extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroupName, int k, int q, 
                                                            double dthreshold, Rcpp::Nullable<int> threads = R_NilValue)
@@ -466,15 +462,7 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
                 //..ORIGINAL..//restmp = Bblock_matrix_mul((retsvd.u).block(0, 0, (retsvd.u).rows(), isize), d, 1024);
                 Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
                 //..2024/03/27 ..// restmp = block_matrix_mul( u, d, 1024);
-                
-                // 
-                //          !!!!!!!!!!   REVISAR-HO !!!!!!!!!!!!
-                // 
-                //  Quina operació fa en realitat el u*d?? és una multiplicació
-                //  de matrius o és una multiplicació matriu * vector?
-                //  
-                //      MOLT IMPORTANT!!! Confirmar resultats !!!!
-                // 
+            
                 if( u.size() < MAXELEMSINBLOCK ) {
                     restmp = u*d;
                 } else{

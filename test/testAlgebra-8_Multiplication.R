@@ -35,10 +35,12 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
 bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "A", B = "B", 
                  outgroup = "results", outdataset = "res", 
                  force = TRUE, paral = TRUE, threads = 4 ,block_size = 1024)
-
+R2 = a%*%b
+memB = bdblockMult(a, b, paral = TRUE, threads = 4, block_size = 500)
 
 times <- microbenchmark::microbenchmark(
-    R = a%*%b,
+    R = a%*%a,
+    R2 = a%*%b,
     hdf5 =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "A", B = "B", 
                              outgroup = "results", outdataset = "res", 
                              force = TRUE, paral = TRUE, threads = 4),
@@ -46,7 +48,14 @@ times <- microbenchmark::microbenchmark(
                              outgroup = "results", outdataset = "res", 
                              force = TRUE, paral = TRUE, threads = 4 ,block_size = 1024),
     mem = bdblockMult(a, b, paral = FALSE), # Runs with blocks nthreads: 4
-    memB = bdblockMult(a, b, paral = TRUE, threads = 4, block_size = 1024), # Runs with blocks nthreads: 4
+    memB_2_500 = bdblockMult(a, b, paral = TRUE, threads = 2, block_size = 500), # Runs with blocks nthreads: 4
+    memB_4_500 = bdblockMult(a, b, paral = TRUE, threads = 4, block_size = 500),
+    memB_5_500 = bdblockMult(a, b, paral = TRUE, threads = 5, block_size = 500),
+    memB_1_1024 = bdblockMult(a, b, paral = TRUE, threads = 1, block_size = 1024), # Runs with blocks nthreads: 4
+    memB_2_1024 = bdblockMult(a, b, paral = TRUE, threads = 2, block_size = 1024), # Runs with blocks nthreads: 4
+    memB_3_1024 = bdblockMult(a, b, paral = TRUE, threads = 3, block_size = 1024), # Runs with blocks nthreads: 4
+    memB_4_1024 = bdblockMult(a, b, paral = TRUE, threads = 4, block_size = 1024),
+    memB_5_1024 = bdblockMult(a, b, paral = TRUE, threads = 5, block_size = 1024),
     times = 3, unit = "s")
 times
 

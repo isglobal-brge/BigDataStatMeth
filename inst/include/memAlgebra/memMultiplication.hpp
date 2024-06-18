@@ -32,6 +32,27 @@ namespace BigDataStatMeth {
     }
     
     
+    extern inline void getBlockPositionsSizes_mat( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
+        
+        hsize_t isize = blockSize + 1;
+        
+        for (hsize_t ii = 0; ii < maxPosition; ii += blockSize)
+        {
+            if( ii + blockSize > maxPosition ) {
+                isize = maxPosition - ii; }
+            
+            hsize_t sizetoRead = getOptimBlockSize( maxPosition, blockSize, ii, isize);
+            
+            starts.push_back(ii);
+            sizes.push_back(sizetoRead);
+            
+            if( sizetoRead > blockSize ) {
+                ii = ii - blockSize + sizetoRead; }
+        }
+        
+    }
+    
+    
     // In-memory execution - Serial version by Blocks
     extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size)
     {
@@ -100,11 +121,92 @@ namespace BigDataStatMeth {
 
     
     
+    // // In-memory execution - Parallel version - by Blocks
+    // template<typename T, typename U>
+    // extern inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, U Y, 
+    //                                 Rcpp::Nullable<int>  iblock_size, 
+    //                                 Rcpp::Nullable<int> threads  = R_NilValue)
+    // {
+    //     
+    //     Eigen::MatrixXd C;
+    //     try{
+    //         static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
+    //                       std::is_same<T, Eigen::Map< Eigen::MatrixXd >>::value || 
+    //                       std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+    //                       std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+    //                       "Error - type not allowed");
+    //         
+    //         static_assert(std::is_same<U, Eigen::MatrixXd >::value || 
+    //                       std::is_same<U, Eigen::Map< Eigen::MatrixXd >>::value || 
+    //                       std::is_same<U, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+    //                       std::is_same<U, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+    //                       "Error - type not allowed");
+    //         
+    //         Eigen::MatrixXd A = X,
+    //                         B = Y;
+    // 
+    //         int chunks, tid, block_size;
+    //         
+    //         std::vector<int> vstartii;
+    //         
+    //         unsigned int ithreads;
+    //         int M = A.rows();
+    //         int K = A.cols();
+    //         int N = B.cols();
+    //         
+    //         if( iblock_size.isNotNull()) {
+    //             block_size =  Rcpp::as<int>(iblock_size);  
+    //         } else {
+    //             block_size =  MAXBLOCKSIZE/3;  
+    //         }
+    //         
+    //         C = Eigen::MatrixXd::Zero(M,N) ;
+    //         if(block_size > std::min( N, std::min(M,K)) )
+    //             block_size = std::min( N, std::min(M,K)); 
+    //         
+    //         ithreads = get_number_threads(threads, R_NilValue);
+    //         
+    //         for (int ii = 0; ii < M; ii += block_size) {
+    //             vstartii.push_back(ii);
+    //         }
+    //         
+    //         chunks = vstartii.size()/ithreads;
+    //         
+    //         #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks) private(tid ) 
+    //         {
+    // 
+    //             #pragma omp for schedule (dynamic) // collapse(3)
+    //             for (int ii = 0; ii < vstartii.size(); ii++)
+    //             {
+    //                 for (int jj = 0; jj < N; jj += block_size)
+    //                 {
+    //                     for(int kk = 0; kk < K; kk += block_size)
+    //                     {
+    //                         hsize_t minii = std::min( block_size, M - vstartii[ii]),
+    //                                 minjj = std::min( block_size, N - jj),
+    //                                 minkk = std::min( block_size, K - kk);
+    //                         
+    //                         C.block(vstartii[ii], jj, minii, minjj) =  C.block(vstartii[ii], jj, minii, minjj) + 
+    //                             (A.block(vstartii[ii], kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         
+    //     } catch(std::exception& ex) {
+    //         Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
+    //     }
+    //     
+    //     return(C);
+    // }
+    
+    
+    
     // In-memory execution - Parallel version - by Blocks
     template<typename T, typename U>
     extern inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, U Y, 
-                                    Rcpp::Nullable<int>  iblock_size, 
-                                    Rcpp::Nullable<int> threads  = R_NilValue)
+                                                                  Rcpp::Nullable<int>  iblock_size, 
+                                                                  Rcpp::Nullable<int> threads  = R_NilValue)
     {
         
         Eigen::MatrixXd C;
@@ -123,15 +225,18 @@ namespace BigDataStatMeth {
             
             Eigen::MatrixXd A = X,
                             B = Y;
-
-            int chunks, tid, block_size;
             
-            std::vector<int> vstartii;
+            int chunks;//, tid;
+            hsize_t block_size;
+            
+            std::vector<hsize_t> vsizetoReadN, vstartN,
+                                 vsizetoReadM, vstartM,
+                                 vsizetoReadK, vstartK;
             
             unsigned int ithreads;
-            int M = A.rows();
-            int K = A.cols();
-            int N = B.cols();
+            hsize_t M = A.rows();
+            hsize_t K = A.cols();
+            hsize_t N = B.cols();
             
             if( iblock_size.isNotNull()) {
                 block_size =  Rcpp::as<int>(iblock_size);  
@@ -145,40 +250,44 @@ namespace BigDataStatMeth {
             
             ithreads = get_number_threads(threads, R_NilValue);
             
-            for (int ii = 0; ii < M; ii += block_size) {
-                vstartii.push_back(ii);
-            }
+            // for (int ii = 0; ii < M; ii += block_size) {
+            //     vstartii.push_back(ii);
+            // }
             
-            chunks = vstartii.size()/ithreads;
+            getBlockPositionsSizes_mat( N, block_size, vstartN, vsizetoReadN );
+            getBlockPositionsSizes_mat( M, block_size, vstartM, vsizetoReadM );
+            getBlockPositionsSizes_mat( K, block_size, vstartK, vsizetoReadK );
             
-            #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks) private(tid ) 
+            
+            chunks = vstartM.size()/ithreads;
+            
+            #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks) // private(tid ) 
             {
-
-                #pragma omp for schedule (dynamic) // collapse(3)
-                for (int ii = 0; ii < vstartii.size(); ii++)
+                
+            #pragma omp for schedule (dynamic) // collapse(3)
+                for (int ii = 0; ii < vstartM.size(); ii++)
                 {
-                    for (int jj = 0; jj < N; jj += block_size)
+                    for (int jj = 0; jj < vstartN.size(); jj++)
                     {
-                        for(int kk = 0; kk < K; kk += block_size)
+                        for(int kk = 0; kk < vstartK.size(); kk++)
                         {
-                            hsize_t minii = std::min( block_size, M - vstartii[ii]),
-                                    minjj = std::min( block_size, N - jj),
-                                    minkk = std::min( block_size, K - kk);
+                            // hsize_t minii = std::min( block_size, M - vstartM[ii]),
+                            //     minjj = std::min( block_size, N - jj),
+                            //     minkk = std::min( block_size, K - kk);
                             
-                            C.block(vstartii[ii], jj, minii, minjj) =  C.block(vstartii[ii], jj, minii, minjj) + 
-                                (A.block(vstartii[ii], kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
+                            C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) =  C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) + 
+                                (A.block(vstartM[ii], vstartK[kk], vsizetoReadM[ii], vsizetoReadK[kk]) * B.block(vstartK[kk], vstartN[jj], vsizetoReadK[kk], vsizetoReadN[jj]));
                         }
                     }
                 }
             }
-            
+
         } catch(std::exception& ex) {
             Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
         }
         
         return(C);
     }
-    
     
     template< typename T, typename U>
     extern inline Rcpp::RObject Rcpp_matrix_vect_mult ( T  A, U  B)

@@ -336,19 +336,21 @@ namespace BigDataStatMeth {
     // Return the numbers of threads to be used in parallel processes
     extern inline unsigned int get_threads(bool bparal,  Rcpp::Nullable<int> threads  = R_NilValue) 
     {
-        unsigned int ithreads;
+        unsigned int ithreads = std::thread::hardware_concurrency();
         
         if(bparal == false) {
             ithreads = 1;
         } else {
             if(threads.isNotNull()) {
-                if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
+                // ithreads
+                if (Rcpp::as<int> (threads) <= ithreads){
                     ithreads = Rcpp::as<int> (threads);
-                } else {
-                    ithreads = getDTthreads(0, true);
-                }
+                } // else {
+                //     ithreads = std::thread::hardware_concurrency();
+                // }
             } else {
-                ithreads = getDTthreads(0, true);
+                unsigned int maxithreads = ithreads;
+                ithreads =  getDTthreads(maxithreads, false);
             }    
         }
         
