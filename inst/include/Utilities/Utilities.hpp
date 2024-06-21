@@ -342,15 +342,22 @@ namespace BigDataStatMeth {
             ithreads = 1;
         } else {
             if(threads.isNotNull()) {
+                
+                Rcpp::Rcout<<"\n Threads solicitats: "<<Rcpp::as<int> (threads);
+                
                 // ithreads
                 if (Rcpp::as<int> (threads) <= ithreads){
                     ithreads = Rcpp::as<int> (threads);
+                    
                 } // else {
                 //     ithreads = std::thread::hardware_concurrency();
                 // }
+            
+                Rcpp::Rcout<<"\n assignats: "<<ithreads;
+                
             } else {
-                unsigned int maxithreads = ithreads;
-                ithreads =  getDTthreads(maxithreads, false);
+                // unsigned int maxithreads = ithreads;
+                ithreads =  getDTthreads(ithreads, false);
             }    
         }
         

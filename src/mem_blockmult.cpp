@@ -47,7 +47,8 @@ Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B,
         if (byBlocks.isNull()) { bbyBlocks = false; }
         else { bbyBlocks = Rcpp::as<bool> (byBlocks); }
 
-        if( bparal==false || Rcpp::as<Rcpp::NumericVector>(A).size() < MAXELEMSINBLOCK || bbyBlocks == false) {
+        //..// if( bparal==false || Rcpp::as<Rcpp::NumericVector>(A).size() < MAXELEMSINBLOCK || bbyBlocks == false) {
+        if( bparal==false || bbyBlocks == false) {
             if( Rcpp::is<Rcpp::NumericMatrix>(A) && Rcpp::is<Rcpp::NumericMatrix>(B) ) {
                 return( Rcpp::wrap(BigDataStatMeth::Rcpp_block_matrix_mul(Rcpp::as<Eigen::MatrixXd>(A), Rcpp::as<Eigen::MatrixXd>(B), block_size)));
                 

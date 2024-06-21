@@ -4,8 +4,8 @@ library("rhdf5")
 
 setwd("/Users/mailos/PhD/dummy")
 
-N = 2500
-M = 2500
+N = 10000
+M = 10000
 
 set.seed(555)
 a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
@@ -38,24 +38,18 @@ bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "A", B = "B",
 R2 = a%*%b
 memB = bdblockMult(a, b, paral = TRUE, threads = 4, block_size = 500)
 
+# devtools::reload(pkgload::inst("BigDataStatMeth"))
 times <- microbenchmark::microbenchmark(
-    R = a%*%a,
-    R2 = a%*%b,
-    hdf5 =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "A", B = "B", 
-                             outgroup = "results", outdataset = "res", 
-                             force = TRUE, paral = TRUE, threads = 4),
-    hdf5B =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "A", B = "B", 
-                             outgroup = "results", outdataset = "res", 
-                             force = TRUE, paral = TRUE, threads = 4 ,block_size = 1024),
+    # R = a%*%a,
+    # R2 = a%*%b,
+    # hdf5 =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "A", B = "B", outgroup = "results", outdataset = "res",  force = TRUE, paral = TRUE, threads = 4),
+    # hdf5B =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "A", B = "B",  outgroup = "results", outdataset = "res",  force = TRUE, paral = TRUE, threads = 4 ,block_size = 1024),
     mem = bdblockMult(a, b, paral = FALSE), # Runs with blocks nthreads: 4
-    memB_2_500 = bdblockMult(a, b, paral = TRUE, threads = 2, block_size = 500), # Runs with blocks nthreads: 4
-    memB_4_500 = bdblockMult(a, b, paral = TRUE, threads = 4, block_size = 500),
-    memB_5_500 = bdblockMult(a, b, paral = TRUE, threads = 5, block_size = 500),
-    memB_1_1024 = bdblockMult(a, b, paral = TRUE, threads = 1, block_size = 1024), # Runs with blocks nthreads: 4
-    memB_2_1024 = bdblockMult(a, b, paral = TRUE, threads = 2, block_size = 1024), # Runs with blocks nthreads: 4
-    memB_3_1024 = bdblockMult(a, b, paral = TRUE, threads = 3, block_size = 1024), # Runs with blocks nthreads: 4
-    memB_4_1024 = bdblockMult(a, b, paral = TRUE, threads = 4, block_size = 1024),
-    memB_5_1024 = bdblockMult(a, b, paral = TRUE, threads = 5, block_size = 1024),
+    memB_1_1000 = bdblockMult(a, b, paral = TRUE, threads = 1, block_size = 1000), # Runs with blocks nthreads: 4
+    memB_2_1000 = bdblockMult(a, b, paral = TRUE, threads = 2, block_size = 1000), # Runs with blocks nthreads: 4
+    memB_3_1000 = bdblockMult(a, b, paral = TRUE, threads = 3, block_size = 1000), # Runs with blocks nthreads: 4
+    memB_4_1000 = bdblockMult(a, b, paral = TRUE, threads = 4, block_size = 1000),
+    memB_5_1000 = bdblockMult(a, b, paral = TRUE, threads = 5, block_size = 1000),
     times = 3, unit = "s")
 times
 

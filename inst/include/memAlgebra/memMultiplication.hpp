@@ -250,6 +250,8 @@ namespace BigDataStatMeth {
             
             ithreads = get_number_threads(threads, R_NilValue);
             
+            Rcpp::Rcout<<"\nEl nombre de threads a utilitzar es: "<<ithreads;
+            
             // for (int ii = 0; ii < M; ii += block_size) {
             //     vstartii.push_back(ii);
             // }
@@ -264,7 +266,7 @@ namespace BigDataStatMeth {
             #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks) // private(tid ) 
             {
                 
-            #pragma omp for schedule (dynamic) // collapse(3)
+            #pragma omp for schedule (static) // collapse(3)
                 for (int ii = 0; ii < vstartM.size(); ii++)
                 {
                     for (int jj = 0; jj < vstartN.size(); jj++)
@@ -405,7 +407,7 @@ namespace BigDataStatMeth {
                 
                 #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
                 {
-                #pragma omp for schedule (dynamic)
+                #pragma omp for schedule (static)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         // Duplicate vector

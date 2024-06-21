@@ -83,7 +83,7 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                     
                     // #pragma omp for schedule (dynamic) 
                     // for (int ii = 0; ii < M; ii += block_size)
-                    #pragma omp for schedule (dynamic) // collapse(3)
+                    #pragma omp for schedule (static) // collapse(3)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         // Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
@@ -165,7 +165,7 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                 #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks, vstart, vsizetoRead)
                 {
                     
-                    #pragma omp for schedule (dynamic)
+                    #pragma omp for schedule (static)
                     for (hsize_t ii = 0; ii < vstart.size(); ii++)
                     {
                         
