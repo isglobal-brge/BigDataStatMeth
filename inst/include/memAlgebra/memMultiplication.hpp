@@ -120,87 +120,7 @@ namespace BigDataStatMeth {
     }
 
     
-    
-    // // In-memory execution - Parallel version - by Blocks
-    // template<typename T, typename U>
-    // extern inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, U Y, 
-    //                                 Rcpp::Nullable<int>  iblock_size, 
-    //                                 Rcpp::Nullable<int> threads  = R_NilValue)
-    // {
-    //     
-    //     Eigen::MatrixXd C;
-    //     try{
-    //         static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
-    //                       std::is_same<T, Eigen::Map< Eigen::MatrixXd >>::value || 
-    //                       std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
-    //                       std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
-    //                       "Error - type not allowed");
-    //         
-    //         static_assert(std::is_same<U, Eigen::MatrixXd >::value || 
-    //                       std::is_same<U, Eigen::Map< Eigen::MatrixXd >>::value || 
-    //                       std::is_same<U, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
-    //                       std::is_same<U, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
-    //                       "Error - type not allowed");
-    //         
-    //         Eigen::MatrixXd A = X,
-    //                         B = Y;
-    // 
-    //         int chunks, tid, block_size;
-    //         
-    //         std::vector<int> vstartii;
-    //         
-    //         unsigned int ithreads;
-    //         int M = A.rows();
-    //         int K = A.cols();
-    //         int N = B.cols();
-    //         
-    //         if( iblock_size.isNotNull()) {
-    //             block_size =  Rcpp::as<int>(iblock_size);  
-    //         } else {
-    //             block_size =  MAXBLOCKSIZE/3;  
-    //         }
-    //         
-    //         C = Eigen::MatrixXd::Zero(M,N) ;
-    //         if(block_size > std::min( N, std::min(M,K)) )
-    //             block_size = std::min( N, std::min(M,K)); 
-    //         
-    //         ithreads = get_number_threads(threads, R_NilValue);
-    //         
-    //         for (int ii = 0; ii < M; ii += block_size) {
-    //             vstartii.push_back(ii);
-    //         }
-    //         
-    //         chunks = vstartii.size()/ithreads;
-    //         
-    //         #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks) private(tid ) 
-    //         {
-    // 
-    //             #pragma omp for schedule (dynamic) // collapse(3)
-    //             for (int ii = 0; ii < vstartii.size(); ii++)
-    //             {
-    //                 for (int jj = 0; jj < N; jj += block_size)
-    //                 {
-    //                     for(int kk = 0; kk < K; kk += block_size)
-    //                     {
-    //                         hsize_t minii = std::min( block_size, M - vstartii[ii]),
-    //                                 minjj = std::min( block_size, N - jj),
-    //                                 minkk = std::min( block_size, K - kk);
-    //                         
-    //                         C.block(vstartii[ii], jj, minii, minjj) =  C.block(vstartii[ii], jj, minii, minjj) + 
-    //                             (A.block(vstartii[ii], kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         
-    //     } catch(std::exception& ex) {
-    //         Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
-    //     }
-    //     
-    //     return(C);
-    // }
-    
-    
+   
     
     // In-memory execution - Parallel version - by Blocks
     template<typename T, typename U>
@@ -250,12 +170,6 @@ namespace BigDataStatMeth {
             
             ithreads = get_number_threads(threads, R_NilValue);
             
-            Rcpp::Rcout<<"\nEl nombre de threads a utilitzar es: "<<ithreads;
-            
-            // for (int ii = 0; ii < M; ii += block_size) {
-            //     vstartii.push_back(ii);
-            // }
-            
             getBlockPositionsSizes_mat( N, block_size, vstartN, vsizetoReadN );
             getBlockPositionsSizes_mat( M, block_size, vstartM, vsizetoReadM );
             getBlockPositionsSizes_mat( K, block_size, vstartK, vsizetoReadK );
@@ -273,10 +187,6 @@ namespace BigDataStatMeth {
                     {
                         for(int kk = 0; kk < vstartK.size(); kk++)
                         {
-                            // hsize_t minii = std::min( block_size, M - vstartM[ii]),
-                            //     minjj = std::min( block_size, N - jj),
-                            //     minkk = std::min( block_size, K - kk);
-                            
                             C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) =  C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) + 
                                 (A.block(vstartM[ii], vstartK[kk], vsizetoReadM[ii], vsizetoReadK[kk]) * B.block(vstartK[kk], vstartN[jj], vsizetoReadK[kk], vsizetoReadN[jj]));
                         }
@@ -376,8 +286,6 @@ namespace BigDataStatMeth {
                     
                     X = Rcpp::transpose(X);
                     
-                    //.. MODIFICAT 2024/04/06 ..// hsize_t N = X.rows();
-                    //.. MODIFICAT 2024/04/06 ..// hsize_t M = X.cols();
                     N = X.rows();
                     M = X.cols();
                 } 
@@ -437,7 +345,6 @@ namespace BigDataStatMeth {
                 return(R_NilValue);
             }
             
-            
         } catch(std::exception& ex) {
             Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
             return(R_NilValue);
@@ -451,8 +358,6 @@ namespace BigDataStatMeth {
         
         return(C);
     }
-    
-    
     
 
 }

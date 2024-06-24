@@ -195,7 +195,7 @@
         }    
         
         
-        Rcpp::Rcout<<"\nAssigned threads: "<<ithreads;
+        // Rcpp::Rcout<<"\nAssigned threads: "<<ithreads;
         return(ithreads);
     }
 #endif

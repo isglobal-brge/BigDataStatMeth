@@ -46,7 +46,7 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                                              int block_size, Rcpp::Nullable<int> threads  = R_NilValue)
     {
         
-        unsigned int ithreads;
+        // unsigned int ithreads;
         Eigen::MatrixXd C;
         
         try {
@@ -81,24 +81,13 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                 {
                     //..// tid = omp_get_thread_num();
                     
-                    // #pragma omp for schedule (dynamic) 
-                    // for (int ii = 0; ii < M; ii += block_size)
                     #pragma omp for schedule (static) // collapse(3)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
-                        // Rcpp::Rcout << "Number of threads: " << omp_get_num_threads() << "\n";
-                        // for (int jj = 0; jj < N; jj += block_size)
                         for (hsize_t jj = 0; jj < vstartM.size(); jj++)
                         {
-                            // for(int kk = 0; kk < K; kk += block_size)
                             for (hsize_t kk = 0; kk < vstartK.size(); kk++)
                             {
-                                
-                                // C.block(vstart[ii], jj, vsizetoRead[ii], std::min(block_size,N - jj)) = 
-                                //     C.block(vstart[ii], jj, vsizetoRead[ii], std::min(block_size,N - jj)) + 
-                                //     (A.block(vstart[ii], kk, vsizetoRead[ii], std::min(block_size,K - kk)) * 
-                                //     B.block(kk, jj, std::min(block_size,K - kk), std::min(block_size,N - jj)));
-                                
                                 C.block(vstart[ii], vstartM[jj], vsizetoRead[ii], vsizetoReadM[jj]) = 
                                     C.block(vstart[ii], vstartM[jj], vsizetoRead[ii], vsizetoReadM[jj]) + 
                                     ( A.block(vstart[ii], vstartK[kk], vsizetoRead[ii], vsizetoReadK[kk]) * 

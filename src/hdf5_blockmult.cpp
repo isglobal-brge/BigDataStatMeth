@@ -20,8 +20,8 @@ void bdblockmult_hdf5(std::string filename,
                     Rcpp::Nullable<bool> force = R_NilValue)
 {
     
-    int iblock_size, 
-        iblockfactor = 2;
+    int iblock_size;
+        // iblockfactor = 2;
     bool bforce;
 //.. 2024/03/28 ..//    bool bparal, bforce;
     
