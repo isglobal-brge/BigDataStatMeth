@@ -577,6 +577,38 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdCrossprod
+Eigen::MatrixXd bdCrossprod(Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B, Rcpp::Nullable<bool> transposed, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_bdCrossprod(SEXP ASEXP, SEXP BSEXP, SEXP transposedSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::RObject> >::type B(BSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type transposed(transposedSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdCrossprod(A, B, transposed, block_size, paral, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bdtCrossprod
+Eigen::MatrixXd bdtCrossprod(Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B, Rcpp::Nullable<bool> transposed, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_bdtCrossprod(SEXP ASEXP, SEXP BSEXP, SEXP transposedSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::RObject> >::type B(BSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type transposed(transposedSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdtCrossprod(A, B, transposed, block_size, paral, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdCreate_hdf5_matrix
 void bdCreate_hdf5_matrix(std::string filename, Rcpp::RObject object, Rcpp::Nullable<std::string> group, Rcpp::Nullable<std::string> dataset, Rcpp::Nullable<bool> transp, Rcpp::Nullable<bool> overwriteFile, Rcpp::Nullable<bool> overwriteDataset, Rcpp::Nullable<bool> unlimited);
 RcppExport SEXP _BigDataStatMeth_bdCreate_hdf5_matrix(SEXP filenameSEXP, SEXP objectSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP transpSEXP, SEXP overwriteFileSEXP, SEXP overwriteDatasetSEXP, SEXP unlimitedSEXP) {
@@ -629,6 +661,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdblockMult", (DL_FUNC) &_BigDataStatMeth_bdblockMult, 6},
     {"_BigDataStatMeth_bdblockSubstract", (DL_FUNC) &_BigDataStatMeth_bdblockSubstract, 6},
     {"_BigDataStatMeth_bdblockSum", (DL_FUNC) &_BigDataStatMeth_bdblockSum, 6},
+    {"_BigDataStatMeth_bdCrossprod", (DL_FUNC) &_BigDataStatMeth_bdCrossprod, 6},
+    {"_BigDataStatMeth_bdtCrossprod", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod, 6},
     {"_BigDataStatMeth_bdCreate_hdf5_matrix", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_matrix, 8},
     {NULL, NULL, 0}
 };

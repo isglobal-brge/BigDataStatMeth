@@ -1073,6 +1073,88 @@ bdblockSum <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, t
     .Call('_BigDataStatMeth_bdblockSum', PACKAGE = 'BigDataStatMeth', A, B, block_size, paral, byBlocks, threads)
 }
 
+#' Crossproduct 
+#' 
+#' This function performs a crossproduct of a numerical matrix.
+#' 
+#' @export
+#' 
+#' @param A numerical matrix
+#' @param B optional, numerical matrix
+#' @param block_size (optional, defalut = NULL) block size to make matrix 
+#' multiplication, if `block_size = 1` no block size is applied 
+#' (size 1 = 1 element per block) if `block_size = NULL` (default) optimum 
+#' block size is computed
+#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel 
+#' computation else if paral = FALSE performs serial computation
+#' @param threads (optional) only if bparal = true, number of concurrent threads
+#' in parallelization if threads is null then threads =  maximum number of 
+#' threads available
+#' @return numerical matrix with crossproduct
+#' @examples
+#' 
+#' n <- 100
+#' p <- 60
+#' 
+#' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+#' res <- bdCrossprod(X)
+#' 
+#' all.equal(crossprod(X), res)
+#' 
+#' n <- 100
+#' p <- 100
+#' 
+#' Y <- matrix(rnorm(n*p), nrow=n)
+#' 
+#' # With two matrices
+#' res <- bdCrossprod(X,Y)
+#' 
+#' @export
+bdCrossprod <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdCrossprod', PACKAGE = 'BigDataStatMeth', A, B, transposed, block_size, paral, threads)
+}
+
+#' Transpodsed Crossproduct 
+#' 
+#' This function performs a transposed crossproduct of a numerical matrix.
+#' 
+#' @export
+#' 
+#' @param A numerical matrix
+#' @param B optional, numerical matrix
+#' @param block_size (optional, defalut = NULL) block size to make matrix 
+#' multiplication, if `block_size = 1` no block size is applied 
+#' (size 1 = 1 element per block) if `block_size = NULL` (default) optimum 
+#' block size is computed
+#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel 
+#' computation else if paral = FALSE performs serial computation
+#' @param threads (optional) only if bparal = true, number of concurrent threads
+#' in parallelization if threads is null then threads =  maximum number of 
+#' threads available
+#' @return numerical matrix with transposed crossproduct
+#' @examples
+#' 
+#' n <- 100
+#' p <- 60
+#' 
+#' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
+#' res <- bdtCrossprod(X)
+#' 
+#' all.equal(tcrossprod(X), res)
+#' 
+#' n <- 100
+#' p <- 100
+#' 
+#' Y <- matrix(rnorm(n*p), nrow=n)
+#' 
+#' # With two matrices
+#' res <- bdtCrossprod(X,Y)
+#' 
+#' @export
+bdtCrossprod <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdtCrossprod', PACKAGE = 'BigDataStatMeth', A, B, transposed, block_size, paral, threads)
+}
+
 #' Create hdf5 data file and write data to it
 #'
 #' Creates a hdf5 file with numerical data matrix,
