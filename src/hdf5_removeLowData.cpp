@@ -20,7 +20,9 @@
 //' cols, if SNPincols = false indicates that SNPs are in rows.
 //' @param overwrite, optional boolean if true, previous results in same location 
 //' inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
-//' @return Original hdf5 data file with imputed data
+//' @return Original hdf5 data file without cols/rows with low represented snps
+//' @examples
+//' print('see vignette')
 //' @export
 // [[Rcpp::export]]
 void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, 
@@ -73,7 +75,7 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
         delete dsIn;
         delete dsOut;
         
-    }catch( H5::FileIException& error ){ // catch failure caused by the H5File operations
+    } catch( H5::FileIException& error ){ // catch failure caused by the H5File operations
         ::Rf_error( "c++ exception bdRemovelowdata (File IException)" );
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
@@ -85,7 +87,7 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
     } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
         ::Rf_error( "c++ exception bdRemovelowdata (DataType IException)" );
         return void();
-    }catch(std::exception &ex) {
+    } catch(std::exception &ex) {
         Rcpp::Rcout<< ex.what();
         return void();
     }

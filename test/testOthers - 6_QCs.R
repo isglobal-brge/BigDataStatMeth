@@ -10,7 +10,28 @@ set.seed(108432)
 geno.sim <- matrix(sample(0:3, 10000, replace = TRUE), byrow = TRUE, ncol = 20)
 bdCreate_hdf5_matrix(filename = "delayed.hdf5", object = geno.sim, group = "OMICS", dataset = "geno", overwriteFile = TRUE)
 
-## QC - Remove low data
+file <- "delayed.hdf5"
+dataset <- "OMICS/geno"
+geno <-  h5read(file,dataset)
+
+geno[1:5,1:10]
+
+
+# QC - IMPUTE DATA
+
+bdImpute_snps_hdf5(filename = "delayed.hdf5", group="OMICS", dataset="geno",
+                   outgroup="OMICS", outdataset="imputedgeno", overwrite = TRUE)
+
+# Get imputed data and show the first 5 rows
+file <- "delayed.hdf5"
+dataset <- "OMICS/imputedgeno"
+imputedgeno <- h5read(file,dataset)
+
+imputedgeno[1:5,1:10]
+
+
+## QC - REMOVE LOW DATA
+
 
 ### by Cols
 bdRemovelowdata_hdf5("delayed.hdf5", group="OMICS", dataset="geno",
@@ -58,17 +79,6 @@ dim(geno)
 
 
 
-# IMPUTE DATA
-
-bdImpute_snps_hdf5("delayed.hdf5", group="OMICS", dataset="geno",
-                   outgroup="OMICS", outdataset="imputedgeno")
-
-# Get imputed data and show the first 5 rows
-h5fsvd = H5Fopen("delayed.hdf5")
-imputedgeno <- h5fsvd$OMICS$imputedgeno
-h5closeAll()
-
-imputedgeno[1:5,1:10]
 
 
 ## NORMALIZE DATA

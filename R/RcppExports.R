@@ -632,6 +632,26 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
     invisible(.Call('_BigDataStatMeth_bdImportTextFile_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads))
 }
 
+#' Impute SNPs in hdf5 omic dataset 
+#'
+#' Impute SNPs in hdf5 omic dataset 
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, character array indicating the input group where the data set to be imputed is. 
+#' @param dataset, character array indicating the input dataset to be imputed
+#' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
+#' @param outgroup, optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
+#' @param outdataset, optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
+#' @param overwrite, optional boolean if true, previous results in same location 
+#' inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
+#' @return Original hdf5 data file with imputed data
+#' @examples
+#' print('see vignette')
+#' @export
+bdImpute_snps_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE, overwrite = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdImpute_snps_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols, overwrite))
+}
+
 #' Get diagonal matrix
 #'
 #' Gry diagonal matrix from an existing dataset inside hdf5
@@ -824,7 +844,9 @@ bdRemove_hdf5_element <- function(filename, elements) {
 #' cols, if SNPincols = false indicates that SNPs are in rows.
 #' @param overwrite, optional boolean if true, previous results in same location 
 #' inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
-#' @return Original hdf5 data file with imputed data
+#' @return Original hdf5 data file without cols/rows with low represented snps
+#' @examples
+#' print('see vignette')
 #' @export
 bdRemovelowdata_hdf5 <- function(filename, group, dataset, outgroup, outdataset, pcent, bycols, overwrite = NULL) {
     invisible(.Call('_BigDataStatMeth_bdRemovelowdata_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, bycols, overwrite))
