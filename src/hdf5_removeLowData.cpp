@@ -1,6 +1,5 @@
 #include <BigDataStatMeth.hpp>
-#include "hdf5Utilities/hdf5QCBasics.hpp"
-
+#include "hdf5Utilities/hdf5RemoveLowData.hpp"
 
 
 //' Remove SNPs in hdf5 omic dataset with low data
@@ -28,10 +27,6 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
                                Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
     
-    
-    
-    int iremoved = 0;
-    
     try
     {
         
@@ -40,6 +35,7 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
         
         bool bcols, bforce;
         double dpcent;
+        int iremoved = 0;
         
         std::string stroutdata = outgroup +"/" + outdataset;
         std::string strdataset = group +"/" + dataset;
@@ -94,107 +90,5 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
         return void();
     }
     
-    
-    
     return void();
-    
-    
-    
-    
-    // H5File* file = nullptr;
-    // int iremoved = 0;
-    // 
-    // try
-    // {
-    //     bool bcols;
-    //     double dpcent;
-    //     
-    //     
-    //     std::string stroutdata = outgroup +"/" + outdataset;
-    //     std::string strdataset = group +"/" + dataset;
-    //     
-    //     if(bycols.isNull()){  
-    //         bcols = true ;
-    //     }else{    
-    //         bcols = Rcpp::as<bool>(bycols);
-    //     }
-    //     
-    //     if(pcent.isNull()){  
-    //         dpcent = 0.5 ;
-    //     }else{    
-    //         dpcent = Rcpp::as<double>(pcent);
-    //     }
-    //     
-    //     
-    //     if(!ResFileExist_filestream(filename)){
-    //         throw std::range_error("File not exits, create file before access to dataset");
-    //     }
-    //     
-    //     
-    //     file = new H5File( filename, H5F_ACC_RDWR );
-    //     
-    //     if(exists_HDF5_element_ptr(file, strdataset)) 
-    //     {
-    //         
-    //         DataSet* pdataset; //.moved from declaration variables 20201120 - warning check().//
-    //         
-    //         pdataset = new DataSet(file->openDataSet(strdataset));
-    //         
-    //         if( strdataset.compare(stroutdata)!= 0)
-    //         {
-    //             
-    //             // If output is different from imput --> Remve possible existing dataset and create new
-    //             if(exists_HDF5_element_ptr(file, stroutdata))
-    //                 remove_HDF5_element_ptr(file, stroutdata);
-    //             
-    //             // Create group if not exists
-    //             if(!exists_HDF5_element_ptr(file, outgroup))
-    //                 file->createGroup(outgroup);
-    //             
-    //         } else {
-    //             throw std::range_error("Input and output dataset must be different");  
-    //         }
-    //         
-    //         iremoved = Remove_snp_low_data_HDF5( file, pdataset, bcols, stroutdata, dpcent);
-    //         
-    //         Function warning("warning");
-    //         if (bycols )
-    //             warning( std::to_string(iremoved) + " Columns have been removed");
-    //         else
-    //             warning( std::to_string(iremoved) + " Rows have been removed");
-    //         
-    //         pdataset->close();
-    //         
-    //     } else{
-    //         //.commented 20201120 - warning check().// pdataset->close();
-    //         file->close();
-    //         throw std::range_error("Dataset does not exits");  
-    //     }
-    //     
-    //     
-    // }catch( FileIException& error ){ // catch failure caused by the H5File operations
-    //     file->close();
-    //     ::Rf_error( "c++ exception bdRemovelowdata (File IException)" );
-    //     return(wrap(-1));
-    // } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-    //     file->close();
-    //     ::Rf_error( "c++ exception bdRemovelowdata (DataSet IException)" );
-    //     return(wrap(-1));
-    // } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-    //     file->close();
-    //     ::Rf_error( "c++ exception bdRemovelowdata (DataSpace IException)" );
-    //     return(wrap(-1));
-    // } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-    //     file->close();
-    //     ::Rf_error( "c++ exception bdRemovelowdata (DataType IException)" );
-    //     return(wrap(-1));
-    // }catch(std::exception &ex) {
-    //     file->close();
-    //     Rcpp::Rcout<< ex.what();
-    //     return(wrap(-1));
-    // }
-    // 
-    // file->close();
-    // return(wrap(iremoved));
-    
 }

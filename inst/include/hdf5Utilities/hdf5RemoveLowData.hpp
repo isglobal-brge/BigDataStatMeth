@@ -33,10 +33,7 @@ namespace BigDataStatMeth {
     int Rcpp_Remove_Low_Data_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5Dataset* dsOut, bool bycols, double pcent)
     {
         
-        
         int itotrem = 0;
-        
-        
         
         try{
         
@@ -51,14 +48,7 @@ namespace BigDataStatMeth {
                                  block = {1,1},
                                  newoffset = {0,0};
             
-            // Real data set dimension
-            // IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
-            
             hsize_t* dims_out = dsIn->dim();
-            hsize_t* dimsfiles = dsIn->dimFile();
-            
-            Rcpp::Rcout<<"\nQuines dimensions estem llegint? - by default: "<<dims_out[0]<<" x "<<dims_out[1];
-            Rcpp::Rcout<<"\nQuines dimensions estem llegint? - files: "<<dimsfiles[0]<<" x "<<dimsfiles[1];
             
             // id bycols == true : read all rows by group of columns ; else : all columns by group of rows
             if (bycols == true) {
@@ -88,20 +78,15 @@ namespace BigDataStatMeth {
                 }
                 
                 // read block
-                // Eigen::MatrixXd data = GetCurrentBlock_hdf5(file, dataset, offset[0], offset[1], count[0], count[1]);
-                
                 std::vector<double> vdCurDataset( dims_out[0] * dims_out[1] ); 
                 dsIn->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdCurDataset.data() );
-                // Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> X (vdCurDataset.data(), dims_out[0], dims_out[1] );
                 Eigen::MatrixXd data = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdCurDataset.data(), dims_out[0], dims_out[1] );
                 
                 
                 if(bycols == true) // We have to do it by rows
                 {
-                    //.commented 20201120 - warning check().// int actualrow = 0;
                     int readedrows = data.rows();
                     
-                    //..// for( int row = 0; row<readedrows; row++)  // COMPLETE EXECUTION
                     for( int row = readedrows-1 ; row>=0; row--)  // COMPLETE EXECUTION
                     {
                         if((data.row(row).array() == 3).count()/(double)count[1]>= pcent )
@@ -113,33 +98,24 @@ namespace BigDataStatMeth {
                     
                 } else {
                     
-                    //.commented 20201120 - warning check().// int actualcol = 0;
                     int readedcols = data.cols();
                     
-                    //..//for( int col = 0; col<data.cols(); col++) 
                     for( int col = readedcols-1 ; col>=0; col--)  // COMPLETE EXECUTION
                     { 
-                        
                         if((data.col(col).array() == 3).count()/(double)count[0]>=pcent )
                         {
-                            //..//Rcpp::Rcout<<"Removed row : "<<col<<"\n";
                             removeColumn(data, col);
                             iblockrem = iblockrem + 1;
                         } 
-                        
                     }
                 }
-                
                 
                 int extendcols = data.cols();
                 int extendrows = data.rows();
                 
                 if( bcreated == false) {
-                    // create_HDF5_unlimited_matrix_dataset_ptr(file, stroutdata, extendrows, extendcols, "numeric");
-                    // unlimDataset = new DataSet(file->openDataSet(stroutdata));
                     
                     if( extendcols > 0 && extendrows > 0){
-                        Rcpp::Rcout<<"\nCrearem un dataset de mida: "<< extendrows<<" - "<<extendcols<<"\n";
                         dsOut->createUnlimitedDataset(extendrows, extendcols, "real");
                         dsOut->openDataset();
                         bcreated = true;
@@ -148,21 +124,12 @@ namespace BigDataStatMeth {
                 } else {
                     if(bycols == true){
                         dsOut->extendUnlimitedDataset(extendrows, 0);
-                        // extend_HDF5_matrix_subset_ptr(file, unlimDataset, extendrows, 0);
                     }else{
                         dsOut->extendUnlimitedDataset( 0, extendcols);
-                        // extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, extendcols);
                     }
                 }
-                
-                
-                // Rcpp::IntegerVector countblock = Rcpp::IntegerVector::create(extendrows, extendcols);
-                // write_HDF5_matrix_subset_v2(file, unlimDataset, newoffset, countblock, stride, block, wrap(data) );
 
                 if( bcreated == true) {
-                    Rcpp::Rcout<<"\nEscriu a la posició: "<< offset[0]<<" - "<<offset[1]<<"\n";
-                    Rcpp::Rcout<<"\nEl block de mida: "<< extendrows<<" - "<<extendcols<<"\n";
-                    
                     std::vector<hsize_t> countblock = {(unsigned long long)extendrows, (unsigned long long)extendcols};
                     dsOut->writeDatasetBlock( Rcpp::wrap(data), offset, countblock, stride, block, false);
                     
@@ -206,7 +173,6 @@ namespace BigDataStatMeth {
             ::Rf_error( "c++ exception Rcpp_Remove_Low_Data_hdf5 (Data TypeIException)" );
             return -1;
         }
-        
         
         return(itotrem);
     }
