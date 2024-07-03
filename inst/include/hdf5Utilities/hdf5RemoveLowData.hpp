@@ -78,9 +78,9 @@ namespace BigDataStatMeth {
                 }
                 
                 // read block
-                std::vector<double> vdCurDataset( dims_out[0] * dims_out[1] ); 
-                dsIn->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdCurDataset.data() );
-                Eigen::MatrixXd data = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdCurDataset.data(), dims_out[0], dims_out[1] );
+                std::vector<double> vdCurDataset( count[0] * count[1] ); 
+                dsIn->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdCurDataset.data() );
+                Eigen::MatrixXd data = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdCurDataset.data(), count[0], count[1] );
                 
                 
                 if(bycols == true) // We have to do it by rows

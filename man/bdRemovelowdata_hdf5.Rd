@@ -39,8 +39,11 @@ cols, if SNPincols = false indicates that SNPs are in rows.}
 inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
 }
 \value{
-Original hdf5 data file with imputed data
+Original hdf5 data file without cols/rows with low represented snps
 }
 \description{
 Remove SNPs in hdf5 omic dataset with low data
+}
+\examples{
+print('see vignette')
 }
