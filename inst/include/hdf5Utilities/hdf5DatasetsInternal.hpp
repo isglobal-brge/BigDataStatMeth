@@ -335,7 +335,6 @@ public:
             hsStride[0] = vStride[0]; hsStride[1] = vStride[1]; // default 1
             hsBlock[0] = vBlock[0]; hsBlock[1] = vBlock[1]; // default 1
             
-            
             if(Rcpp::is<Rcpp::NumericMatrix>(DatasetValues) || Rcpp::is<Rcpp::IntegerMatrix>(DatasetValues) ||
                Rcpp::is<Rcpp::NumericVector>(DatasetValues) || Rcpp::is<Rcpp::IntegerVector>(DatasetValues) ) {
 
@@ -356,10 +355,13 @@ public:
                 if(vOffset[0] + hsCount[0] <= dimDataset[0] || vOffset[1] + hsCount[1] <= dimDataset[1]) {
                     H5::DataSpace dataspace(RANK2, hsCount);
                     H5::DataSpace memspace(RANK2, hsCount, NULL);
+                    
                     dataspace = pdataset->getSpace();
                     dataspace.selectHyperslab( H5S_SELECT_SET, hsCount, hsOffset, hsStride, hsBlock);
+                    
                     if(Rcpp::is<Rcpp::NumericMatrix>(DatasetValues) || Rcpp::is<Rcpp::IntegerMatrix>(DatasetValues)) {
                         std::vector<double> matdata(hsCount[0]*hsCount[1]);
+                        
                         if (bTranspose == false) {
                             matdata = Rcpp::as<std::vector<double> >(transpose(Rcpp::as<Rcpp::NumericMatrix>(DatasetValues)));
                         } else {

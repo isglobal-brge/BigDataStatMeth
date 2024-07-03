@@ -806,6 +806,30 @@ bdRemove_hdf5_element <- function(filename, elements) {
     invisible(.Call('_BigDataStatMeth_bdRemove_hdf5_element', PACKAGE = 'BigDataStatMeth', filename, elements))
 }
 
+#' Remove SNPs in hdf5 omic dataset with low data
+#'
+#' Remove SNPs in hdf5 omic dataset with low data
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, character array indicating the input group where the data set to be imputed is. 
+#' @param dataset, character array indicating the input dataset to be imputed
+#' @param outgroup, character array indicating group where the data set will be 
+#' saved after remove data with if `outgroup` is NULL, output dataset is stored 
+#' in the same input group. 
+#' @param outdataset, character array indicating dataset to store the resulting 
+#' data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
+#' @param pcent, by default pcent = 0.5. Numeric indicating the percentage to be 
+#' considered to remove SNPs, SNPS with percentage equal or higest will be removed from data
+#' @param bycols, boolean by default = true, if true, indicates that SNPs are in 
+#' cols, if SNPincols = false indicates that SNPs are in rows.
+#' @param overwrite, optional boolean if true, previous results in same location 
+#' inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
+#' @return Original hdf5 data file with imputed data
+#' @export
+bdRemovelowdata_hdf5 <- function(filename, group, dataset, outgroup, outdataset, pcent, bycols, overwrite = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdRemovelowdata_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, bycols, overwrite))
+}
+
 #' Sort existing dataset 
 #'
 #' Sort an existing dataset taking in to account a list with sorted positions
