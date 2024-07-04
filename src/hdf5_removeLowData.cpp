@@ -76,16 +76,16 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
         delete dsOut;
         
     } catch( H5::FileIException& error ){ // catch failure caused by the H5File operations
-        ::Rf_error( "c++ exception bdRemovelowdata (File IException)" );
+        ::Rf_error( "c++ exception bdRemovelowdata_hdf5 (File IException)" );
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        ::Rf_error( "c++ exception bdRemovelowdata (DataSet IException)" );
+        ::Rf_error( "c++ exception bdRemovelowdata_hdf5 (DataSet IException)" );
         return void();
     } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception bdRemovelowdata (DataSpace IException)" );
+        ::Rf_error( "c++ exception bdRemovelowdata_hdf5 (DataSpace IException)" );
         return void();
     } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception bdRemovelowdata (DataType IException)" );
+        ::Rf_error( "c++ exception bdRemovelowdata_hdf5 (DataType IException)" );
         return void();
     } catch(std::exception &ex) {
         Rcpp::Rcout<< ex.what();

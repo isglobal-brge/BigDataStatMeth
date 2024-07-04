@@ -19,7 +19,7 @@
 //' print('see vignette')
 //' @export
 // [[Rcpp::export]]
-void bdImpute_snps_hdf5(std::string filename, std::string group, std::string dataset, 
+void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, 
                         Rcpp::Nullable<std::string> outgroup = R_NilValue, Rcpp::Nullable<std::string> outdataset = R_NilValue, 
                         Rcpp::Nullable<bool> bycols = true, Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
@@ -53,7 +53,7 @@ void bdImpute_snps_hdf5(std::string filename, std::string group, std::string dat
         if(overwrite.isNull()) { bforce = false ; }
         else { bforce = Rcpp::as<bool>(overwrite); }
         
-        stroutdata = stroutgroup +"/" + stroutdataset;
+        stroutdata = stroutgroup + "/" + stroutdataset;
         
         dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsIn->openDataset();
@@ -67,17 +67,17 @@ void bdImpute_snps_hdf5(std::string filename, std::string group, std::string dat
         delete dsIn;
         delete dsOut;
         
-    }catch( H5::FileIException& error ){ // catch failure caused by the H5File operations
-        ::Rf_error( "c++ exception bdRemovelowdata (File IException)" );
+    } catch( H5::FileIException& error ){ // catch failure caused by the H5File operations
+        ::Rf_error( "c++ exception bdImputeSNPs_hdf5 (File IException)" );
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        ::Rf_error( "c++ exception bdRemovelowdata (DataSet IException)" );
+        ::Rf_error( "c++ exception bdImputeSNPs_hdf5 (DataSet IException)" );
         return void();
     } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception bdRemovelowdata (DataSpace IException)" );
+        ::Rf_error( "c++ exception bdImputeSNPs_hdf5 (DataSpace IException)" );
         return void();
     } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception bdRemovelowdata (DataType IException)" );
+        ::Rf_error( "c++ exception bdImputeSNPs_hdf5 (DataType IException)" );
         return void();
     } catch(std::exception &ex) {
         Rcpp::Rcout<< ex.what();

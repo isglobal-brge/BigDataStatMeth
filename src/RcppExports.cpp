@@ -361,9 +361,9 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// bdImpute_snps_hdf5
-void bdImpute_snps_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdImpute_snps_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP bycolsSEXP, SEXP overwriteSEXP) {
+// bdImputeSNPs_hdf5
+void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> overwrite);
+RcppExport SEXP _BigDataStatMeth_bdImputeSNPs_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP bycolsSEXP, SEXP overwriteSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
@@ -373,7 +373,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    bdImpute_snps_hdf5(filename, group, dataset, outgroup, outdataset, bycols, overwrite);
+    bdImputeSNPs_hdf5(filename, group, dataset, outgroup, outdataset, bycols, overwrite);
     return R_NilValue;
 END_RCPP
 }
@@ -489,6 +489,24 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
     bdRemovelowdata_hdf5(filename, group, dataset, outgroup, outdataset, pcent, bycols, overwrite);
+    return R_NilValue;
+END_RCPP
+}
+// bdRemoveMAF_hdf5
+void bdRemoveMAF_hdf5(std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<int> blocksize, Rcpp::Nullable<bool> overwrite);
+RcppExport SEXP _BigDataStatMeth_bdRemoveMAF_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP mafSEXP, SEXP bycolsSEXP, SEXP blocksizeSEXP, SEXP overwriteSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type maf(mafSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type blocksize(blocksizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
+    bdRemoveMAF_hdf5(filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize, overwrite);
     return R_NilValue;
 END_RCPP
 }
@@ -680,7 +698,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdtCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_hdf5, 12},
     {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
     {"_BigDataStatMeth_bdImportTextFile_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImportTextFile_hdf5, 10},
-    {"_BigDataStatMeth_bdImpute_snps_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImpute_snps_hdf5, 7},
+    {"_BigDataStatMeth_bdImputeSNPs_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImputeSNPs_hdf5, 7},
     {"_BigDataStatMeth_bdgetDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDiagonal_hdf5, 3},
     {"_BigDataStatMeth_bdWriteDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteDiagonal_hdf5, 4},
     {"_BigDataStatMeth_bdgetSDandMean_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetSDandMean_hdf5, 8},
@@ -689,6 +707,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdReduce_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdReduce_hdf5_dataset, 7},
     {"_BigDataStatMeth_bdRemove_hdf5_element", (DL_FUNC) &_BigDataStatMeth_bdRemove_hdf5_element, 2},
     {"_BigDataStatMeth_bdRemovelowdata_hdf5", (DL_FUNC) &_BigDataStatMeth_bdRemovelowdata_hdf5, 8},
+    {"_BigDataStatMeth_bdRemoveMAF_hdf5", (DL_FUNC) &_BigDataStatMeth_bdRemoveMAF_hdf5, 9},
     {"_BigDataStatMeth_bdSort_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdSort_hdf5_dataset, 8},
     {"_BigDataStatMeth_bdSplit_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSplit_matrix_hdf5, 9},
     {"_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5, 5},

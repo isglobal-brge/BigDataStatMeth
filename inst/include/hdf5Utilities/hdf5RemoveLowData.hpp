@@ -1,32 +1,9 @@
 #ifndef BIGDATASTATMETH_UTIL_QC_BASICS_HPP
 #define BIGDATASTATMETH_UTIL_QC_BASICS_HPP
 
-
+#include "hdf5Utilities.hpp"
 
 namespace BigDataStatMeth {
-
-
-    void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
-    {
-        unsigned int numRows = matrix.rows()-1;
-        unsigned int numCols = matrix.cols();
-        
-        if( rowToRemove < numRows )
-            matrix.block(rowToRemove,0,numRows-rowToRemove,numCols) = matrix.bottomRows(numRows-rowToRemove).eval();
-        
-        matrix.conservativeResize(numRows,numCols);
-    }
-    
-    void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
-    {
-        unsigned int numRows = matrix.rows();
-        unsigned int numCols = matrix.cols()-1;
-        
-        if( colToRemove < numCols )
-            matrix.block(0,colToRemove,numRows,numCols-colToRemove) = matrix.rightCols(numCols-colToRemove).eval();
-        
-        matrix.conservativeResize(numRows,numCols);
-    }
 
 
     // Removes row or column with high missing data percentage
@@ -131,7 +108,7 @@ namespace BigDataStatMeth {
 
                 if( bcreated == true) {
                     std::vector<hsize_t> countblock = {(unsigned long long)extendrows, (unsigned long long)extendcols};
-                    dsOut->writeDatasetBlock( Rcpp::wrap(data), offset, countblock, stride, block, false);
+                    dsOut->writeDatasetBlock( Rcpp::wrap(data), newoffset, countblock, stride, block, false);
                     
                     if(bycols == true)
                         newoffset[0] =  newoffset[0] + extendrows;

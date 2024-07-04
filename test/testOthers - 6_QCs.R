@@ -68,6 +68,28 @@ dim(geno)
 
 
 
+## QC - REMOVE MAF
+
+# devtools::reload(pkgload::inst("BigDataStatMeth"))
+bdRemoveMAF_hdf5( filename = "delayed.hdf5",
+                  group = "OMICS", 
+                  dataset = "geno", 
+                  outgroup = "OMICS", 
+                  outdataset = "genofilter_maf", 
+                  blocksize = 100,
+                  bycols = FALSE,
+                  maf = 0.05, 
+                  overwrite = TRUE)
+
+# Get data and show the first 5 rows
+file <- "delayed.hdf5"
+dataset <- "OMICS/genofilter_maf"
+geno <-  h5read(file,dataset)
+
+geno[1:5,]
+
+dim(geno.sim)
+dim(geno)
 
 ########### CHECKEJAT FINS AQUÍ !!!!!!!!!!
 
