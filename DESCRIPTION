@@ -1,7 +1,7 @@
 Package: BigDataStatMeth
 Type: Package
 Title: Statistical Methods and Algorithms for Big Data
-Version: 0.60.23
+Version: 0.60.24
 Authors@R: 
     c(
         person( given = "Dolors", 
@@ -31,7 +31,6 @@ Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 7.2.1
 NeedsCompilation: yes
-Packaged: 2022-02-21 18:36:52 UTC; mailos
 Author: Dolors Pelegri-Siso [aut, cre] (<https://orcid.org/0000-0002-5993-3003>),
         Juan R. Gonzalez [aut] (<https://orcid.org/0000-0003-3267-2146>)
 Maintainer: Dolors Pelegri-Siso <dolors.pelegri@isglobal.org>
