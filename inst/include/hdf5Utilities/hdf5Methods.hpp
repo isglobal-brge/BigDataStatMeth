@@ -29,7 +29,7 @@ namespace BigDataStatMeth {
             
             
             
-            BigDataStatMeth::hdf5Dataset* dstoJoin = new hdf5Dataset(dsJoined->getFileName(), strsubgroup, Rcpp::as<std::string>(strinput[0]), false);
+            BigDataStatMeth::hdf5Dataset* dstoJoin = new hdf5Dataset(dsJoined->getFullPath(), strsubgroup, Rcpp::as<std::string>(strinput[0]), false);
             dstoJoin->openDataset();
             
             hsize_t* dims_out = dstoJoin->dim();
@@ -57,7 +57,7 @@ namespace BigDataStatMeth {
             for( int i=1; i<strinput.size(); i++)
             {
                 
-                dstoJoin = new hdf5Dataset(dsJoined->getFileName(), strsubgroup, Rcpp::as<std::string>(strinput[i]), false);
+                dstoJoin = new hdf5Dataset(dsJoined->getFullPath(), strsubgroup, Rcpp::as<std::string>(strinput[i]), false);
                 dstoJoin->openDataset();
                 dims_out = dstoJoin->dim();
                 

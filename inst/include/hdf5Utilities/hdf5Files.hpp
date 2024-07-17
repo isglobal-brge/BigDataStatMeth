@@ -117,7 +117,7 @@ public:
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
                 }
             } else {
-                ::Rf_error("\n File does not exits, please create before open it");
+                ::Rf_error("\n File does not exists, please create it before open it");
                 pfile = nullptr;
                 return(pfile);
             }

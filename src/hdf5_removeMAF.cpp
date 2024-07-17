@@ -107,7 +107,7 @@ void bdRemoveMAF_hdf5( std::string filename, std::string group, std::string data
             iremoved = Rcpp_Remove_MAF_hdf5( dsIn, dsOut, bcols, dpcent, iblocksize);
             
             Rcpp::Function warning("warning");
-            if (!bycols )
+            if (!bcols )
                 warning( std::to_string(iremoved) + " Rows have been removed");
             else
                 warning( std::to_string(iremoved) + " Columns have been removed");

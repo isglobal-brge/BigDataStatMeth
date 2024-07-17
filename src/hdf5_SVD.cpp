@@ -57,7 +57,6 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
      std::string filename;
      double dthreshold;
      
-     
      try {
          
          int ks, qs, nvs = 0;
@@ -85,14 +84,12 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
          if(dataset.isNull())  strdataset = "";
          else    strdataset = Rcpp::as<std::string>(dataset);
          
-         
          if(Rcpp::is<Rcpp::CharacterVector>(file)) {
              filename = Rcpp::as<std::string>(file);
          } else {
              Rcpp::Rcout<< "File name must be character string";
              return Rcpp::List::create(Rcpp::Named("file") = "");
          }
-         
          
          if(rankthreshold.isNull()) {  
              dthreshold = 0 ;

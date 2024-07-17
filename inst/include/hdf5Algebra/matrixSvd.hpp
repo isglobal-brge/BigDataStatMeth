@@ -45,13 +45,11 @@ namespace BigDataStatMeth {
             
             Spectra::DenseSymMatProd<double> op(Xtcp);
             Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigs(&op, k, ncv);
-            // Spectra::SymEigsSolver< Spectra::DenseSymMatProd<double> > eigs(op, k, ncv);
             
             // Initialize and compute
             eigs.init();
             nconv = eigs.compute();
             
-            // if(eigs.info() == Spectra::CompInfo::Successful) {
             if(eigs.info() == Spectra::SUCCESSFUL) {
                 retsvd.d = eigs.eigenvalues().cwiseSqrt();
                 retsvd.u = eigs.eigenvectors();
@@ -71,14 +69,12 @@ namespace BigDataStatMeth {
             
             Spectra::DenseSymMatProd<double> opv(Xcp);
             Spectra::SymEigsSolver< double, Spectra::LARGEST_ALGE, Spectra::DenseSymMatProd<double> > eigsv(&opv, k, ncv);
-            // Spectra::SymEigsSolver< Spectra::DenseSymMatProd<double> > eigsv(opv, k, ncv);
             
             // Initialize and compute
             eigsv.init();
             nconv = eigsv.compute();
             
             // Retrieve results
-            // if(eigsv.info() == Spectra::CompInfo::Successful) {
             if(eigsv.info() == Spectra::SUCCESSFUL) {
                 retsvd.v = eigsv.eigenvectors();
             } else {
@@ -123,7 +119,7 @@ namespace BigDataStatMeth {
                 transp = true;
             }
             
-            First_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, q, nev, bcenter, bscale, irows, icols, dthreshold, threads);
+            First_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, q, nev, bcenter, bscale, dthreshold, threads);
             
             for(int j = 1; j < q; j++) { // For each decomposition level :
                 Next_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, j, dthreshold, threads);
@@ -134,7 +130,8 @@ namespace BigDataStatMeth {
             
             // 1.- Join matrix and remove parts from file
             std::string strnewdataset = std::string((joindata[0])).substr(0,1);
-            hdf5Dataset* dsJoined = new hdf5DatasetInternal(dsA->getFileName(), strGroupName, strnewdataset, true);
+            hdf5Dataset* dsJoined = new hdf5DatasetInternal(dsA->getFullPath(), strGroupName, strnewdataset, true);
+            
             join_datasets( dsJoined, strGroupName, joindata, false, true );
             
             // 2.- Get SVD from Blocks full mattrix
@@ -159,7 +156,7 @@ namespace BigDataStatMeth {
                 
                 if(bcenter == true || bscale == true) {
                     
-                    BigDataStatMeth::hdf5Dataset* normalizedData = new BigDataStatMeth::hdf5Dataset( dsA->getFileName(), strGroupName, "normalmatrix", false);
+                    BigDataStatMeth::hdf5Dataset* normalizedData = new BigDataStatMeth::hdf5Dataset( dsA->getFullPath(), strGroupName, "normalmatrix", false);
                     normalizedData->openDataset();
                     
                     dims_out = normalizedData->dim();
@@ -173,7 +170,7 @@ namespace BigDataStatMeth {
                     
                 } else {
                     
-                    BigDataStatMeth::hdf5DatasetInternal* normalizedData = new BigDataStatMeth::hdf5DatasetInternal( dsA->getFileName(), dsA->getGroupName(), dsA->getDatasetName(), false);
+                    BigDataStatMeth::hdf5DatasetInternal* normalizedData = new BigDataStatMeth::hdf5DatasetInternal( dsA->getFullPath(), dsA->getGroupName(), dsA->getDatasetName(), false);
                     normalizedData->openDataset();
                     
                     dims_out = normalizedData->dim();
@@ -268,18 +265,6 @@ namespace BigDataStatMeth {
             
             if(method.isNull())  strMethod = "auto" ;
             else    strMethod = Rcpp::as<std::string>(method);
-            
-            /*
-            if (std::find(strMethods.begin(), strMethods.end(), strMethod) != strMethods.end())
-            {
-                std::string strmessage = "SVD decomposition by: " + strMethod + " method";
-                Rcpp::message(Rcpp::wrap(strmessage));
-            } else {
-                std::string strWarning = "Method " + strMethod + " not allowed, computing SVD decomposition by 'auto' method";
-                strMethod = "auto";
-                Rcpp::warning(strWarning);
-            }
-             */
             
             hdf5Dataset* dsA = new hdf5Dataset(filename, strsubgroup, strdataset, false);
             dsA->openDataset();
