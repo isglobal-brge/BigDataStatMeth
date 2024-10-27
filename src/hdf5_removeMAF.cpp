@@ -60,65 +60,26 @@ void bdRemoveMAF_hdf5( std::string filename, std::string group, std::string data
         if(overwrite.isNull()) { bforce = false ; }
         else { bforce = Rcpp::as<bool>(overwrite); }
         
+            
+        if( strdataset.compare(stroutdata)!= 0)
+        {
+            dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+            dsIn->openDataset();
+            
+            dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, outdataset, bforce);
+            
+        } else {
+            throw std::range_error("Input and output dataset must be different");  
+            return void();
+        }
         
-        // if(!ResFileExist_filestream(filename)){
-        //     throw std::range_error("File not exits, create file before access to dataset");
-        // }
-        // 
-        // 
-        // file = new H5File( filename, H5F_ACC_RDWR );
-        // 
-        // if(exists_HDF5_element_ptr(file, strdataset)) 
-        // {
-        //     
-        //     DataSet* pdataset = nullptr;
-        //     
-        //     pdataset = new DataSet(file->openDataSet(strdataset));
-            
-            
-            if( strdataset.compare(stroutdata)!= 0)
-            {
-                dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
-                dsIn->openDataset();
-                
-                dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, outdataset, bforce);
-                
-            } else {
-                throw std::range_error("Input and output dataset must be different");  
-                return void();
-            }
-            
-            
-            // if( strdataset.compare(stroutdata)!= 0)
-            // {
-            //     
-            //     // If output is different from imput --> Remve possible existing dataset and create new
-            //     if(exists_HDF5_element_ptr(file, stroutdata))
-            //         remove_HDF5_element_ptr(file, stroutdata);
-            //     
-            //     // Create group if not exists
-            //     if(!exists_HDF5_element_ptr(file, outgroup))
-            //         file->createGroup(outgroup);
-            //     
-            // } else {
-            //     throw std::range_error("Input and output dataset must be different");  
-            // }
-            
-            iremoved = Rcpp_Remove_MAF_hdf5( dsIn, dsOut, bcols, dpcent, iblocksize);
-            
-            Rcpp::Function warning("warning");
-            if (!bcols )
-                warning( std::to_string(iremoved) + " Rows have been removed");
-            else
-                warning( std::to_string(iremoved) + " Columns have been removed");
-            
-            // pdataset->close();
-            
-        // } else{
-        //     //.commented 20201120 - warning check().// pdataset->close();
-        //     file->close();
-        //     throw std::range_error("Dataset does not exits");  
-        // }
+        iremoved = Rcpp_Remove_MAF_hdf5( dsIn, dsOut, bcols, dpcent, iblocksize);
+        
+        Rcpp::Function warning("warning");
+        if (!bcols )
+            warning( std::to_string(iremoved) + " Rows have been removed");
+        else
+            warning( std::to_string(iremoved) + " Columns have been removed");
         
         delete dsIn;
         delete dsOut;
@@ -140,110 +101,7 @@ void bdRemoveMAF_hdf5( std::string filename, std::string group, std::string data
         return void();
     }
     
-    // file->close();
     return void();
-    
-    
-    // H5File* file = nullptr;
-    // int iremoved = 0;
-    // int iblocksize = 100;
-    // 
-    // try
-    // {
-    //     bool bcols;
-    //     double dpcent;
-    //     
-    //     std::string stroutdata = outgroup +"/" + outdataset;
-    //     std::string strdataset = group +"/" + dataset;
-    //     
-    //     if(bycols.isNull()){  
-    //         bcols = false ;
-    //     }else{    
-    //         bcols = Rcpp::as<bool>(bycols);
-    //     }
-    //     
-    //     if(maf.isNull()){  
-    //         dpcent = 0.05 ;
-    //     }else{    
-    //         dpcent = Rcpp::as<double>(maf);
-    //     }
-    //     
-    //     if(!blocksize.isNull()){  
-    //         iblocksize = Rcpp::as<int>(blocksize);
-    //     }
-    //     
-    //     
-    //     
-    //     if(!ResFileExist_filestream(filename)){
-    //         throw std::range_error("File not exits, create file before access to dataset");
-    //     }
-    //     
-    //     
-    //     file = new H5File( filename, H5F_ACC_RDWR );
-    //     
-    //     if(exists_HDF5_element_ptr(file, strdataset)) 
-    //     {
-    //         
-    //         DataSet* pdataset = nullptr;
-    //         
-    //         pdataset = new DataSet(file->openDataSet(strdataset));
-    //         
-    //         if( strdataset.compare(stroutdata)!= 0)
-    //         {
-    //             
-    //             // If output is different from imput --> Remve possible existing dataset and create new
-    //             if(exists_HDF5_element_ptr(file, stroutdata))
-    //                 remove_HDF5_element_ptr(file, stroutdata);
-    //             
-    //             // Create group if not exists
-    //             if(!exists_HDF5_element_ptr(file, outgroup))
-    //                 file->createGroup(outgroup);
-    //             
-    //         } else {
-    //             throw std::range_error("Input and output dataset must be different");  
-    //         }
-    //         
-    //         iremoved = Remove_MAF_HDF5( file, pdataset, bcols, stroutdata, dpcent, iblocksize);
-    //         
-    //         Function warning("warning");
-    //         if (!bycols )
-    //             warning( std::to_string(iremoved) + " Rows have been removed");
-    //         else
-    //             warning( std::to_string(iremoved) + " Columns have been removed");
-    //         
-    //         pdataset->close();
-    //         
-    //     } else{
-    //         //.commented 20201120 - warning check().// pdataset->close();
-    //         file->close();
-    //         throw std::range_error("Dataset does not exits");  
-    //     }
-    //     
-    //     
-    // }catch( FileIException& error ){ // catch failure caused by the H5File operations
-    //     file->close();
-    //     ::Rf_error( "c++ exception bdremove_maf_hdf5 (File IException)" );
-    //     return(wrap(-1));
-    // } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-    //     file->close();
-    //     ::Rf_error( "c++ exception bdremove_maf_hdf5 (DataSet IException)" );
-    //     return(wrap(-1));
-    // } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-    //     file->close();
-    //     ::Rf_error( "c++ exception bdremove_maf_hdf5 (DataSpace IException)" );
-    //     return(wrap(-1));
-    // } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-    //     file->close();
-    //     ::Rf_error( "c++ exception bdremove_maf_hdf5 (DataType IException)" );
-    //     return(wrap(-1));
-    // }catch(std::exception &ex) {
-    //     file->close();
-    //     Rcpp::Rcout<< ex.what();
-    //     return(wrap(-1));
-    // }
-    // 
-    // file->close();
-    // return(wrap(iremoved));
     
 }
 

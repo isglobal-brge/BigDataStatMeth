@@ -20,11 +20,11 @@
 //' 
 //' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
 //' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-//'                     object = a, group = "datasets", 
+//'                     object = matA, group = "datasets", 
 //'                     dataset = "datasetA", transp = FALSE, 
 //'                     overwriteFile = TRUE, 
 //'                     overwriteDataset = TRUE,
-//'                     unlimited = FALSE,)
+//'                     unlimited = FALSE)
 //' 
 //' # Remove file (used as example)
 //'   if (file.exists("test_temp.hdf5")) {

@@ -33,11 +33,14 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
                     Rcpp::Nullable<int> wsize  = R_NilValue, Rcpp::Nullable<bool> force  = false)
 {
  
-     bool bc, bs, bforce, bbyrows, bgetTransposed, corrected = false;
-     hsize_t blocksize, nrows, ncols, nRowsCols;
-     std::string strgroupout;
-     std::vector<hsize_t> stride = {1, 1},
-                          block = {1, 1};
+     // bool bc, bs, bforce, bbyrows, bgetTransposed, corrected = false;
+    // hsize_t blocksize, nrows, ncols, nRowsCols;
+    bool bc, bs, bforce, bbyrows, corrected = false;
+    // hsize_t blocksize, nrows, ncols;
+    hsize_t nrows, ncols;
+    std::string strgroupout;
+    std::vector<hsize_t> stride = {1, 1},
+                         block = {1, 1};
      
      Eigen::MatrixXd datanormal;
      

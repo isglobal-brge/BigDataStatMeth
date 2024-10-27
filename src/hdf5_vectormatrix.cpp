@@ -45,8 +45,8 @@
 //'X <- matrix(rnorm(10), 10, 1)
 //'        
 //'# Create hdf5 data file with  data (Y)
-//'bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
-//'bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
+//'bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", force = TRUE)
+//'bdCreate_hdf5_matrix("test.hdf5",  X, "data", "X", force = TRUE)
 //'            
 //'bdcomputeMatrixVector_hdf5("test.hdf5", 
 //'                           group = "data", dataset = "Y",
@@ -140,7 +140,6 @@
              } else {
                  
                  dsC = hdf5_matrixVector_calculus( dsA, dsB, dsC, oper(oper.findName(func)), bbyrows, bparal, threads);
-                 // Rcpp::Rcout<<"\nCalculus has been computed\n";
              }
              
              delete dsC;
