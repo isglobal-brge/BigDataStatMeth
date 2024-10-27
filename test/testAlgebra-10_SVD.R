@@ -9,7 +9,7 @@ library(rhdf5)
 setwd("/Users/mailos/PhD/dummy")
 
 N = 5000
-M = 300
+M = 2300
 
 set.seed(555)
 Y <- matrix(rnorm(N*M), N, M)
@@ -43,6 +43,20 @@ bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", method = "bloc
 bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", method = "blocks", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
 
 
+# devtools::reload(pkgload::inst("BigDataStatMeth"))
+times <- microbenchmark::microbenchmark( # SVD_R = svd(scale(Y, center = TRUE, scale = TRUE)),
+                                         # SVD_full = bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         # SVD_block_q1k4 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         # SVD_block_q1k2 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         # SVD_block_q2k2 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         # SVD_block_q2k4 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         SVD_block_q3k2 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 3, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         SVD_block_q4k2 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 4, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         times = 1 )
+times
+
+
+
 # Matrix - SVD - by Blocks
 # -----------------------------------
 
@@ -57,6 +71,18 @@ bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, 
 bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
 bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
 bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+
+
+times <- microbenchmark::microbenchmark( SVD_R = svd(scale(Y, center = TRUE, scale = TRUE)),
+                                         SVD_full = bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         SVD_block_q1k4 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         SVD_block_q2k2 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL),
+                                         times = 3 )
+
+times
+
+
+
 
 
 # M bigger than N (Horizontal Matrix)
