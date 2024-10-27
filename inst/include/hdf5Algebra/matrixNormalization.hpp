@@ -73,8 +73,6 @@ namespace BigDataStatMeth {
         }  else if ( bc == false && bs == true)   {
             
             rX = X.array().rowwise() / std.array();
-            // Rcpp::Rcout<<"Normalització 1: \n"<< X.array().rowwise() / normdata.row(1).array();
-            // Rcpp::Rcout<<"\n RX VAL:  \n"<< rX;
         }
         
         return(rX);
@@ -209,9 +207,6 @@ namespace BigDataStatMeth {
                     ncols = dsA->ncols(), 
                     nRowsCols, blocksize;
             double correction = 1;
-            
-            // nrows = dsA->nrows();
-            // ncols = dsA->ncols();
             
             blocksize = BigDataStatMeth::get_block_size(wsize, nrows, ncols);
             

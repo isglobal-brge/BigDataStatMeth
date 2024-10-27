@@ -18,6 +18,9 @@ bdCrossprod(
 
 \item{B}{optional, numerical matrix}
 
+\item{transposed}{optional parameter. Boolean if true we use the 
+transposed dataframe to perform calculus. By default transp_dataset = false.}
+
 \item{block_size}{(optional, defalut = NULL) block size to make matrix 
 multiplication, if `block_size = 1` no block size is applied 
 (size 1 = 1 element per block) if `block_size = NULL` (default) optimum 

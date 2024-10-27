@@ -82,7 +82,7 @@ namespace BigDataStatMeth {
                 } else {
                     
                     getBlockPositionsSizes( K, hdf5_block, vstart, vsizetoRead );
-                    int chunks = vstart.size()/ithreads;
+                    // int chunks = vstart.size()/ithreads;
                     
                     #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC)
                     {

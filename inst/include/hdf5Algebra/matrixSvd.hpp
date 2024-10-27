@@ -101,7 +101,7 @@ namespace BigDataStatMeth {
                 block = {1, 1};
             
             svdeig retsvd;
-            Eigen::MatrixXd nX;
+            // Eigen::MatrixXd nX;
             Eigen::MatrixXd matlast;
             Eigen::MatrixXd v;    
             bool transp = false;
@@ -222,7 +222,6 @@ namespace BigDataStatMeth {
             return void();
         }
         
-        // Rcpp::Rcout<< "\n ==>Retornem";
         
         return void();
     }

@@ -110,8 +110,8 @@ extern inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
     
     try {
 
-        int irank,
-            iblockfactor = 1;
+        int irank; //,
+            // iblockfactor = 1;
         std::vector<hsize_t> offset = {0,0},
             count = {dsA->nrows(), dsA->ncols()},
             stride = {1,1},
@@ -131,41 +131,31 @@ extern inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         qr.compute(A);
         irank = lu_decomp.rank();
         
-        Rcpp::Rcout<<"\nA veure on estem.... - 1";
         
         if (irank == count[0] + 1 || irank == count[1] + 1 )
         {
-            Rcpp::Rcout<<"\nA veure on estem.... - 2.1";
             Eigen::MatrixXd R = qr.matrixQR().template triangularView<Eigen::Upper>();
             dsR->createDataset( R.rows(), R.cols(), "real" );
             dsR->writeDataset(Rcpp::wrap(R));
         } else {
-            Rcpp::Rcout<<"\nA veure on estem.... - 2.2";
             Eigen::MatrixXd R = qr.matrixQR().topLeftCorner(irank, irank).template triangularView<Eigen::Upper>();
             dsR->createDataset( R.rows(), R.cols(), "real" );
             dsR->writeDataset(Rcpp::wrap(R));
         }
         
-        Rcpp::Rcout<<"\nA veure on estem.... - 3";
         
         if (bthin == false)
         {
-            Rcpp::Rcout<<"\nA veure on estem.... - 4.1";
-            //..// vQR.Q =  qr.householderQ();       // Full decomposition
             Eigen::MatrixXd Q = qr.householderQ();
             dsQ->createDataset( Q.rows(), Q.cols(), "real" );
             dsQ->writeDataset( Rcpp::wrap(Q) );
         } else {
-            Rcpp::Rcout<<"\nA veure on estem.... - 4.2";
-            //.. COMENTAT 17 / 03 / 2024 ..// int iblock_size = BigDataStatMeth::getMaxBlockSize( qr.householderQ().rows() , qr.householderQ().cols(), count[0], count[1], block_size, iblockfactor);
             
             Eigen::MatrixXd Qthin = qr.householderQ() * Eigen::MatrixXd::Identity(count[0], count[1]);
             dsQ->createDataset( Qthin.rows(), Qthin.cols(), "real" );
             dsQ->writeDataset( Rcpp::wrap(Qthin));
             
         }
-        
-        Rcpp::Rcout<<"\nA veure on estem.... - 5";
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         Rcpp::Rcout<<"c++ exception RcppQRHdf5 (File IException)";
@@ -181,7 +171,6 @@ extern inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         return void();
     }
     
-    Rcpp::Rcout<<"\nA veure on estem.... - 6";
     return void();
     
 }

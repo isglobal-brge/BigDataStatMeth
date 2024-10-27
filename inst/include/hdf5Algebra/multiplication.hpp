@@ -74,7 +74,7 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                 getBlockPositionsSizes_hdf5( K, block_size, vstartK, vsizetoReadK );
                 
                 int ithreads = get_number_threads(threads, R_NilValue);
-                Rcpp::Rcout<<"\n Utilitzarem "<<ithreads<<" threads";
+                // Rcpp::Rcout<<"\n Utilitzarem "<<ithreads<<" threads";
                 int chunks = vstart.size()/ithreads;
                 
                 #pragma omp parallel num_threads(ithreads) shared(A, B, C) //..// , chunk) private(tid ) 
@@ -172,7 +172,6 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                 std::vector<double> vdA( iRowsA * iColsA );
                                 #pragma omp critical(accessFile)
                                 {
-                                    // Rcpp::Rcout<<"\nLlegint dsA (inici - Fi) + (files - columnes): ( "<< kk << " - "<<vstart[ii]<<" ) + ("<<iRowsA<<" - "<<iColsA<<" )";
                                     dsA->readDatasetBlock( {vstartK[kk], vstart[ii]}, {iRowsA, iColsA}, stride, block, vdA.data() );
                                 }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), iRowsA, iColsA );
@@ -180,7 +179,6 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                 std::vector<double> vdB( iRowsB * iColsB );
                                 #pragma omp critical(accessFile)
                                 {
-                                    // Rcpp::Rcout<<"\nLlegint dsB (inici - Fi) + (files - columnes): ( "<< vstartM[jj] << " - "<<vstartK[kk]<<" ) + ("<<iRowsB<<" - "<<iColsB<<" )";
                                     dsB->readDatasetBlock( {vstartM[jj], vstartK[kk]}, {iRowsB, iColsB}, stride, block, vdB.data() );
                                 }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), iRowsB, iColsB );
@@ -188,7 +186,6 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                 std::vector<double> vdC( iRowsB * iColsA );
                                 #pragma omp critical(accessFile)
                                 {
-                                    // Rcpp::Rcout<<"\nLlegint dsC (inici - Fi) + (files - columnes): ( "<< vstartM[jj] << " - "<<vstart[ii]<<" ) + ("<<iRowsB<<" - "<<iColsA<<" )";
                                     dsC->readDatasetBlock( {vstartM[jj], vstart[ii]}, {iRowsB, iColsA}, stride, block, vdC.data() );
                                 }
                                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C (vdC.data(), iRowsB, iColsA );

@@ -1,13 +1,10 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSVDBLOCK_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSVDBLOCK_HPP
 
-// #include <RcppEigen.h>
 #include "hdf5Utilities/hdf5Utilities.hpp"
 #include "hdf5Algebra/matrixSdMean.hpp"
 #include "hdf5Algebra/matrixNormalization.hpp"
-// #include "hdf5Algebra/matrixSvd.hpp"
 #include "memAlgebra/memMultiplication.hpp"
-// #include "H5Cpp.h"
 
 
 namespace BigDataStatMeth {
@@ -145,7 +142,6 @@ std::vector<svdPositions> prepareForParallelization( T* dsA, int M, int k, bool 
             
             if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !exists_HDF5_element(dsA->getFileptr(),  pos[i].strDatasetName)) ) ) 
             {
-                // Rcpp::Rcout<<"\n ==> Creem el dataset "<<pos[i].strDatasetName;
                 // Create unlimited dataset in hdf5 file
                 unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), pos[i].strDatasetName, true );
                 unlimDataset->createUnlimitedDataset(pos[i].count[0], pos[i].count[1], "real");
@@ -174,8 +170,6 @@ std::vector<svdPositions> prepareForParallelization( T* dsA, int M, int k, bool 
 // Reads big matrix from hdf5 file in blocks and perform a svd descomposition from
 // each block,results are saved in hdf5 datasets under temporal group to be processed
 // if necessary
-// int First_level_SvdBlock_decomposition_hdf5(H5File* file, DataSet* dataset, int k, int q, int nev, bool bcenter, bool bscale, 
-//                                             int irows, int icols, Rcpp::Nullable<int> threads = R_NilValue)
 template <class T>
 extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroupName, int k, int q, int nev, bool bcenter, bool bscale, 
                                              double dthreshold, Rcpp::Nullable<int> threads = R_NilValue)
@@ -193,8 +187,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         BigDataStatMeth::hdf5Dataset* unlimDataset;
         
         int  M, p, n, irows, icols;
-        int ithreads;
-        //..// int maxsizetoread, ithreads, cummoffset;
+        int maxsizetoread, ithreads, cummoffset;
         bool transp = false;
         Rcpp::Nullable<int> wsize = R_NilValue;
         
@@ -226,7 +219,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
             throw std::runtime_error("k^q must not be greater than the number of columns in the matrix");
         
         double block_size = std::floor((double)icols/(double)M); 
-        int realsizeread;
+        // int realsizeread;
         
         if (bcenter==true || bscale==true) { // Create dataset to store normalized data
             normalizedData = new BigDataStatMeth::hdf5DatasetInternal (dsA->getFullPath(), strGroupName, "normalmatrix", true);
@@ -341,10 +334,8 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                 
                 #pragma omp ordered
                 {
-                    
                     #pragma omp critical(accessFile)
                     {
-                        
                         unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true );
                         unlimDataset->openDataset();
                         
@@ -377,13 +368,9 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
 
 // Reads small datasets from hdf5 and perform a svd descomposition from each block,
 // results are saved in hdf5 datasets under temporal group to be processed if necessary
-// int Next_level_SvdBlock_decomposition_hdf5(H5File* file, std::string strGroupName, int k, int q,
-//                                            bool bcenter, bool bscale, Rcpp::Nullable<int> threads = R_NilValue)
 template <class T>
 extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroupName, int k, int q, 
                                                            double dthreshold, Rcpp::Nullable<int> threads = R_NilValue)
-// extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroupName, int k, int q, bool bcenter, bool bscale, 
-//                                                     int irows, int icols, double dthreshold, Rcpp::Nullable<int> threads = R_NilValue)
     {
     
     
@@ -392,13 +379,10 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
                   "Error - type not allowed");
 
 
-    
-    Rcpp::Rcout<<"\n Doncs vinga, anem a per el Next Level !!! ... ";
-    
     try {
         
         BigDataStatMeth::hdf5Dataset* unlimDataset;    
-        std::vector<svdPositions> paralPos;
+        // std::vector<svdPositions> paralPos;
         
         int cummoffset = 0,
             ithreads,  M;
@@ -416,7 +400,6 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
         M = joindata.size();
         
         ithreads = get_number_threads(threads, R_NilValue);
-        
         
         #pragma omp parallel num_threads(ithreads)
 
@@ -481,7 +464,6 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
             //    d) Write results to dataset
             count[0] = restmp.rows();
             count[1] = restmp.cols();
-            
 
             #pragma omp ordered
             {
@@ -512,10 +494,7 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
                     delete unlimDataset;
                 }
             }
-            
         }
-
-        //..ONLY DEBUG !!!...//remove_HDF5_multiple_elements_ptr(file, strGroupName, joindata);
 
     } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
         ::Rf_error( "c++ exception Next_level_SvdBlock_decomposition_hdf5 (File IException)" );
@@ -537,8 +516,6 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
         return void();
     }
 
-    Rcpp::Rcout<<"\n Final NEXT level !!! ... ";
-    
     return void();
 
 }

@@ -392,8 +392,8 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #'   matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
 #'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
 #'   
-#'   bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-#'   bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#'   bdCreate_hdf5_matrix("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#'   bdCreate_hdf5_matrix("BasicMatVect.hdf5", matB, "INPUT", "matB")
 #'   
 #'   res <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
 #'   res2 <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
@@ -503,8 +503,8 @@ bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = 
 #' if( isTRUE(file.exists('BasicMatVect.hdf5'))) {
 #'      file.remove('BasicMatVect.hdf5')
 #' }
-#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
-#' bdAdd_hdf5_matrix(as.matrix(y_sparse), "BasicMatVect.hdf5", "SPARSE", "y_sparse")
+#' bdCreate_hdf5_matrix("BasicMatVect.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
+#' bdCreate_hdf5_matrix("BasicMatVect.hdf5", as.matrix(y_sparse), "SPARSE", "y_sparse")
 #' 
 #' d <- bdblockmult_sparse_hdf5("BasicMatVect.hdf5", "SPARSE", "x_sparse", "y_sparse")
 #' 
@@ -561,8 +561,8 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #'   matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
 #'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
 #'   
-#'   bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-#'   bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#'   bdCreate_hdf5_matrix("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#'   bdCreate_hdf5_matrix("BasicMatVect.hdf5", matB, "INPUT", "matB")
 #'   
 #'   res <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
 #'   res2 <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
@@ -668,7 +668,7 @@ bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdata
 #' X <- matrix(rnorm(100), 10, 10)
 #' diag(X) <- 0.5
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix_file("test_file2.hdf5", X, "data", "X", force = TRUE)
+#' bdCreate_hdf5_matrix("test_file2.hdf5", X, "data", "X", force = TRUE)
 #' # Update diagonal
 #' diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
 #' 
@@ -695,7 +695,7 @@ bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
 #' diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
 #' 
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = TRUE)
+#' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", force = TRUE)
 #' 
 #' # Update diagonal
 #' bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
@@ -735,8 +735,8 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' X <- matrix(rnorm(10), 10, 1)
 #'     
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
-#' bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
+#' bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", force = TRUE)
+#' bdCreate_hdf5_matrix( "test.hdf5", X, "data", "X", force = TRUE)
 #' 
 #' # Get mean and sd        
 #' bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
@@ -810,8 +810,8 @@ bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NU
 #' matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
 #'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
 #'                    
-#' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-#' bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+#' bdCreate_hdf5_matrix("BasicMatVect.hdf5", matA, "INPUT", "matA")
+#' bdCreate_hdf5_matrix("BasicMatVect.hdf5", matB, "INPUT", "matB")
 #' 
 #' bdRemove_hdf5_element("BasicMatVect.hdf5", c("INPUT/matA", "INPUT/matB"))
 #' 
@@ -967,7 +967,7 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' X.1 <- X
 #' X[lower.tri(X)] <- 0
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix_file("test_file.hdf5", X, "data", "X", force = TRUE)
+#' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", force = TRUE)
 #' # Update Lower triangular matrix in hdf5
 #' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
 #'         group = "data", dataset = "X", copytolower = TRUE, elementsBlock = 10)
@@ -975,7 +975,7 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' X <- X.1
 #' X[upper.tri(X)] <- 0
 #' # CAdd matrix data to a file
-#' bdAdd_hdf5_matrix(X, "test_file.hdf5", "data", "Y", force = TRUE)
+#' bdCreate_hdf5_matrix( "test_file.hdf5", X, "data", "Y", force = TRUE)
 #' # Update Upper triangular matrix in hdf5
 #' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
 #'         group = "data", dataset = "Y", copytolower = FALSE, elementsBlock = 10)
@@ -1027,8 +1027,8 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'X <- matrix(rnorm(10), 10, 1)
 #'        
 #'# Create hdf5 data file with  data (Y)
-#'bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
-#'bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
+#'bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", force = TRUE)
+#'bdCreate_hdf5_matrix("test.hdf5",  X, "data", "X", force = TRUE)
 #'            
 #'bdcomputeMatrixVector_hdf5("test.hdf5", 
 #'                           group = "data", dataset = "Y",
@@ -1147,6 +1147,8 @@ bdblockSum <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, t
 #' 
 #' @param A numerical matrix
 #' @param B optional, numerical matrix
+#' @param transposed optional parameter. Boolean if true we use the 
+#' transposed dataframe to perform calculus. By default transp_dataset = false. 
 #' @param block_size (optional, defalut = NULL) block size to make matrix 
 #' multiplication, if `block_size = 1` no block size is applied 
 #' (size 1 = 1 element per block) if `block_size = NULL` (default) optimum 
@@ -1239,11 +1241,11 @@ bdtCrossprod <- function(A, B = NULL, transposed = NULL, block_size = NULL, para
 #' 
 #' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
 #' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-#'                     object = a, group = "datasets", 
+#'                     object = matA, group = "datasets", 
 #'                     dataset = "datasetA", transp = FALSE, 
 #'                     overwriteFile = TRUE, 
 #'                     overwriteDataset = TRUE,
-#'                     unlimited = FALSE,)
+#'                     unlimited = FALSE)
 #' 
 #' # Remove file (used as example)
 #'   if (file.exists("test_temp.hdf5")) {

@@ -43,8 +43,6 @@ public:
         fullpath datasetroute = SplitElementName(dataset);
         name = datasetroute.filename;
         boverwrite = overwrite;
-        // pdataset = openDataset();
-        // getDimensExistingDataset();
         
     }
     
@@ -54,8 +52,6 @@ public:
     {
         name = datasetname;
         boverwrite = overwrite;
-        // pdataset = openDataset();
-        // getDimensExistingDataset();
     }
     
     
@@ -959,136 +955,6 @@ public:
         }
         return void();
     }
-    
-    
-    
-    // // Write dimnames from Matrix RObjects to hdf5 data file 
-    // template< typename T>
-    // void writeDimnames( T rownames, T colnames )
-    // {
-    //     
-    //     try {
-    //         
-    //         Exception::dontPrint();
-    //         
-    //         static_assert(std::is_same<T, Rcpp::CharacterVector >::value || 
-    //                       std::is_same<T, std::vector<string> >::value ,
-    //                       fv"Error - type not allowed writing rownames and/or colnames");
-    //         
-    //         std::string strGroup = group + "/." + name + "_dimnames";
-    //         
-    //         Rcp::CharacterVector rnames = rownames;
-    //         Rcp::CharacterVector cnames = colnames;
-    //         
-    //         
-    //         if( rnames.length()<1 && cnames.length()<1) {
-    //             Rcpp::warning("Data not provided to write dimensions")
-    //         } else {
-    //             
-    //             if( !exists_HDF5_element(pfile, strGroup) ) {
-    //                 create_HDF5_groups(strGroup);
-    //             }
-    //             
-    //             H5::DataSpace dataspace( RANK1, dimDataset );
-    //             
-    //             if(rnames.length() == dimDatasetinFile[1]){
-    //                 
-    //                 bool bexists = exists_HDF5_element(pfile, fullDatasetPath);
-    //                 if( bexists == true ) {
-    //                     Rcpp::warning ("Rownames already exits and will be overwritten");
-    //                 } else {
-    //                     
-    //                     H5::CompType strtype(sizeof(rownames));
-    //                     strtype.insertMember("chr", HOFFSET(names, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
-    //                     pdimdataset = new H5::DataSet(pfile->createDataSet( strGroup + name  , strtype, dataspace));
-    //                     
-    //                     
-    //                 }
-    //                 
-    //                     writeDataset( Rcpp::wrap(rnames) )
-    //             }
-    //             
-    //             if(cnames.length() == dimDatasetinFile[2]){
-    //                 createDataset(cnames.length(), 1, "string") 
-    //                 writeDataset( Rcpp::wrap(cnames) )
-    //             }
-    //             
-    //         }
-    //         
-    //         
-    //         
-    //         
-    //         
-    //         
-    //         
-    //         
-    //         bool bexists = exists_HDF5_element(pfile, fullDatasetPath);
-    //         if( bexists == true ) {
-    //             Rcpp::warning ("Dimnames already exits and will be overwritten");
-    //         }
-    //         
-    //         } else {
-    //             
-    //             if( boverwrite == true && bexists == true) {
-    //                 remove_elements(pfile, getGroupName(), {name}); 
-    //                 bRemoved = true;
-    //             }
-    //             
-    //             type = strdatatype;
-    //             
-    //             if( type == "string") {
-    //                 // Create the memory datatype.
-    //                 H5::CompType strtype(sizeof(names));
-    //                 strtype.insertMember("chr", HOFFSET(names, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
-    //                 pdataset = new H5::DataSet(pfile->createDataSet(fullDatasetPath, strtype, dataspace));
-    //             } else if( type == "int" || type == "logic" || type == "factor") {
-    //                 H5::IntType datatype( H5::PredType::NATIVE_INT );
-    //                 pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace ));
-    //                 if(bRemoved == true) {
-    //                     writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDatasetinFile[0], dimDatasetinFile[1]) ));
-    //                 }
-    //             } else if( type == "numeric" || type == "real") {
-    //                 H5::IntType datatype( H5::PredType::NATIVE_DOUBLE ); 
-    //                 pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace ));
-    //                 if(bRemoved == true) {
-    //                     writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDatasetinFile[0], dimDatasetinFile[1]) ));
-    //                 }
-    //             } else {
-    //                 close_file();
-    //                 ::Rf_error( "Dataset data type not allowed or no matrix defined (createDataset)" );
-    //             }
-    //         }
-    //         
-    //         dataspace.close();
-    //         
-    //         
-    //         
-    //         // ------------------------------------------------------
-    //         // ------------------------------------------------------
-    //         
-    //         
-    //         
-    //         
-    //         
-    //     } catch(FileIException& error) { // catch failure caused by the H5File operations
-    //         ::Rf_error( "c++ exception writeDimnames (File IException)" );
-    //         return void();
-    //     } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
-    //         ::Rf_error( "c++ exception writeDimnames (DataSet IException)" );
-    //         return void();
-    //     } catch(GroupIException& error) { // catch failure caused by the Group operations
-    //         ::Rf_error( "c++ exception writeDimnames (Group IException)" );
-    //         return void();
-    //     } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-    //         ::Rf_error( "c++ exception writeDimnames (DataSpace IException)" );
-    //         return void();
-    //     } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
-    //         ::Rf_error( "c++ exception writeDimnames (Data TypeIException)" );
-    //         return void();
-    //     }
-    //     
-    //     return(0);
-    // }
     
     
     H5::DataSet* getDatasetptr() { return(pdataset); }  // Return dataset pointer

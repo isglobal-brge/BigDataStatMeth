@@ -42,7 +42,6 @@ void RcppGetPCAVariablesHdf5( std::string strPCAgroup,
             dsd->readDatasetBlock( {offset_d[0], offset_d[1]}, {count_d[0], count_d[1]}, stride, block, vdd.data() );
             Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> d (vdd.data(), count_d[0], count_d[1]);
             
-            // Rcpp::Rcout<<"\n d: "<<d.rows()<<" x "<<d.cols()<<"\n";
             
         {    
             // lambda

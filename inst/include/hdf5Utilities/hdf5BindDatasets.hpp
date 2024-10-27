@@ -111,7 +111,6 @@ namespace BigDataStatMeth {
                     
                 } else {
                     
-                    Rcpp::Rcout<<"\nDebug else";
                     
                     delete dsIn;
                     // pdataset->close();
