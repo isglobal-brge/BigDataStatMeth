@@ -3,11 +3,10 @@
 #include "Utilities/Utilities.hpp"
 
 
-
-
 //' PCA Descomposition
 //' 
 //' Compute PCA
+//' 
 //' @param filename string, file name where dataset is stored 
 //' @param group string group name  where dataset is stored in file
 //' @param dataset string dataset name with data to perform PCA
@@ -27,13 +26,16 @@
 //' the SVD exists. 
 //' @param method (optional, defalut = "auto") possible values are: "auto", 
 //' "blocks", "full":
-//' \itemize{
-//'   \item{"auto"}{ The option method = "auto" chooses the "full" or 
-//'   "blocks" method depending on the size of the matrix to be decomposed }
-//'   \item{"blocks"}{ The PCA can be carried out by blocks, 
-//'   recommended option for large matrices that do not fit in memory }
-//'   \item{"full"}{ The PCA is performed directly without partitioning the matrix }
-//' } 
+//' 
+//'   * `"auto"`:
+//'     The option method = "auto" chooses the "full" or "blocks" method depending on 
+//'     the size of the matrix to be decomposed }
+//'   * `"blocks"`:
+//'     The PCA can be carried out by blocks, recommended option for large matrices 
+//'     that do not fit in memory
+//'   * `"full"`:
+//'     The PCA is performed directly without partitioning the matrix 
+//' 
 //' @param threads integer number of threads used to run PCA
 //' @return original file with results in folder PCA/<datasetname>
 //' @export

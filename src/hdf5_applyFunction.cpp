@@ -25,8 +25,8 @@
 //' blockmult to apply matrix multiplication, in that case, we need the datasets 
 //' to be used defined in b_datasets variable, datasets and b_datasets must be 
 //' of the same lenght, in that case, the operation is performed according to 
-//' index, for example, if we have datasets = {"A1", "A2", "A3} and 
-//' b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, 
+//' index, for example, if we have `datasets = \{"A1", "A2", "A3\}` and 
+//' `b_datasets = \{"B1", "B2", "B3\}`, the functions performs : A1%*%B1, 
 //' A2%*%B2 and A3%*%B3 
 //' CrossProd_double to  performs crossprod using two matrices, see blockmult 
 //' tCrossProd_double to  performs transposed crossprod using two matrices, 

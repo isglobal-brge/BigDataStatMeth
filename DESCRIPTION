@@ -26,9 +26,10 @@ LinkingTo: Rcpp, RcppEigen, RcppParallel, beachmat, Rhdf5lib, RSpectra,
         BH
 Suggests: HDF5Array, Matrix, BiocStyle, knitr, rmarkdown,
         ggplot2, microbenchmark
-SystemRequirements: GNU make, C++11
+SystemRequirements: GNU make
 Encoding: UTF-8
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 NeedsCompilation: yes
 Author: Dolors Pelegri-Siso [aut, cre] (<https://orcid.org/0000-0002-5993-3003>),

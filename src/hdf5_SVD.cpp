@@ -25,23 +25,29 @@
 //' can be changed to an approximation of 0.
 //' @param method (optional, defalut = "auto") possible values are: "auto", 
 //' "blocks", "full":
-//' \itemize{
-//'   \item{"auto"}{ The option method = "auto" chooses the "full" or 
-//'   "blocks" method depending on the size of the matrix to be decomposed }
-//'   \item{"blocks"}{ The SVD decomposition can be carried out by blocks, 
-//'   recommended option for large matrices that do not fit in memory }
-//'   \item{"full"}{ The SVD decomposition is performed directly without partitioning the matrix }
-//' } 
+//' 
+//'     * `"auto"`:
+//'       The option method = "auto" chooses the "full" or 
+//'       "blocks" method depending on the size of the matrix to be decomposed 
+//'     * `"blocks"`:
+//'       The SVD decomposition can be carried out by blocks, recommended option 
+//'       for large matrices that do not fit in memory }
+//'     * `"full"`:
+//'       The SVD decomposition is performed directly without partitioning the matrix
+//' 
 //' @param threads (optional) only used in some operations inside function. If 
 //' threads is null then threads =  maximum number of threads available - 1.
 //' @return a list of three components with the singular values and left and 
 //' right singular vectors of the matrix
 //' @return A List with : 
-//' \itemize{
-//'   \item{"u"}{ eigenvectors of AA^t, mxn and column orthogonal matrix }
-//'   \item{"v"}{ eigenvectors of A^tA, nxn orthogonal matrix }
-//'   \item{"d"}{ singular values, nxn diagonal matrix (non-negative real values) }
-//' }
+//' 
+//'   * `"u"`:
+//'     eigenvectors of AA^t, mxn and column orthogonal matrix 
+//'   * `"v`:
+//'     eigenvectors of A^tA, nxn orthogonal matrix
+//'   * `"d"`:
+//'     singular values, nxn diagonal matrix (non-negative real values) 
+//' 
 //' @export
 // [[Rcpp::export]]
 Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue, 
