@@ -128,10 +128,10 @@ public:
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception createDataset (File IException) " );
-        } catch(H5::GroupIException error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception createDataset (Group IException)");
-        } catch(H5::DataSetIException error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception createDataset (DataSet IException)");
         } 
@@ -148,10 +148,10 @@ public:
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception createDataset (File IException) " );
-        } catch(H5::GroupIException error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception createDataset (Group IException)");
-        } catch(H5::DataSetIException error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception createDataset (DataSet IException)");
         } 
@@ -228,10 +228,10 @@ public:
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception createUnlimitedDataset (File IException) " );
-        } catch(H5::GroupIException error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception createUnlimitedDataset (File IException) " );
-        } catch(H5::DataSetIException error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception createUnlimitedDataset (File IException) " );
         } 
@@ -302,10 +302,10 @@ public:
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception openDataset (File IException) " );
-        } catch(H5::GroupIException error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception openDataset (File GroupIException) " );
-        } catch(H5::DataSetIException error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
             close_file();
             ::Rf_error( "c++ exception openDataset (File DataSetIException) " );
         } 
@@ -371,19 +371,19 @@ public:
                 ::Rf_error( "Matrix data type not allowed (writeDataset)" );
             }
             
-        } catch(H5::FileIException error) { // catch failure caused by the H5File operations
+        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (File IException)" );
-        } catch(H5::DataSetIException error) { // catch failure caused by the DataSet operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (DataSet IException)" );
-        } catch(H5::GroupIException error) { // catch failure caused by the Group operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (Group IException)" );
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (DataSpace IException)" );
-        } catch(H5::DataTypeIException error) { // catch failure caused by the DataSpace operations
+        } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (Data TypeIException)" );
         }
@@ -417,19 +417,19 @@ public:
                 
             }
             
-        } catch(H5::FileIException error) { // catch failure caused by the H5File operations
+        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (File IException)" );
-        } catch(H5::DataSetIException error) { // catch failure caused by the DataSet operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (DataSet IException)" );
-        } catch(H5::GroupIException error) { // catch failure caused by the Group operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (Group IException)" );
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (DataSpace IException)" );
-        } catch(H5::DataTypeIException error) { // catch failure caused by the DataSpace operations
+        } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             close_dataset_file();
             ::Rf_error( "c++ exception writeDataset (Data TypeIException)" );
         }
@@ -849,8 +849,8 @@ public:
                 
                 std::string word = Rcpp::as<std::string>(attr_data).c_str();
                 
-                int j=0;
-                for( j=0; j < word.size() && j < (strlength); j++ )
+                int j = 0;
+                for( j=0; (unsigned)j < word.size() && j < (strlength); j++ )
                     stringdata[j] = word[j];
                 
                 stringdata[j] = '\0'; // insert hdf5 end of string
@@ -880,16 +880,16 @@ public:
             attr_dataspace.close();
         }  // end of try block
         
-        catch( H5::DataSpaceIException error ) {
+        catch( H5::DataSpaceIException& error ) {
             error.printErrorStack();
             return -1;
-        } catch( H5::AttributeIException error ) { // catch failure caused by the H5File operations
+        } catch( H5::AttributeIException& error ) { // catch failure caused by the H5File operations
             error.printErrorStack();
             return -1;
-        } catch( H5::DataSetIException error ) { // catch failure caused by the DataSet operations
+        } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
             error.printErrorStack();
             return -1;
-        } catch( H5::FileIException error ) { // catch failure caused by the H5File operations
+        } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             error.printErrorStack();
             return -1;
         }
@@ -1044,7 +1044,7 @@ protected:
                 Rcpp::String wchrom = Rcpp::as<Rcpp::StringVector>(DatasetValues)(i);
                 std::string word = wchrom.get_cstring();
                 
-                for( j = 0; j < word.size() && j < (MAXSTRING-1); j++ ) {
+                for( j = 0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ) {
                     names_list[i].chr[j] = word[j]; 
                 }
             }

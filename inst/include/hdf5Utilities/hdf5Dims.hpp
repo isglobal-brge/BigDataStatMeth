@@ -49,7 +49,7 @@ public:
                 } else {
 
                     // Write rownames
-                    if( nrows == pmaindataset->nrows_file()) {
+                    if( (unsigned)nrows == pmaindataset->nrows_file()) {
                         
                         std::string fullDatasetPath = groupname + "/" + strrows;
 
@@ -65,7 +65,7 @@ public:
                     }
 
                     // Write colnames
-                    if( ncols == pmaindataset->ncols_file()) {
+                    if( (unsigned)ncols == pmaindataset->ncols_file()) {
                         
                         std::string fullDatasetPath = groupname + "/" + strcols;
 
@@ -83,19 +83,19 @@ public:
                     }
                 }
 
-            } catch(H5::FileIException error) { // catch failure caused by the H5File operations
+            } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
                 close_datasets();
                 ::Rf_error( "c++ exception writeDimnames (File IException)" );
-            } catch(H5::DataSetIException error) { // catch failure caused by the DataSet operations
+            } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
                 close_datasets();
                 ::Rf_error( "c++ exception writeDimnames (DataSet IException)" );
-            } catch(H5::GroupIException error) { // catch failure caused by the Group operations
+            } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
                 close_datasets();
                 ::Rf_error( "c++ exception writeDimnames (Group IException)" );
             } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
                 close_datasets();
                 ::Rf_error( "c++ exception writeDimnames (DataSpace IException)" );
-            } catch(H5::DataTypeIException error) { // catch failure caused by the DataSpace operations
+            } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
                 close_datasets();
                 ::Rf_error( "c++ exception writeDimnames (Data TypeIException)" );
             }
@@ -170,7 +170,7 @@ protected:
                     Rcpp::String wchrom = Rcpp::as<Rcpp::StringVector>(DatasetValues)(i);
                     std::string word = wchrom.get_cstring();
 
-                    for( j = 0; j < word.size() && j < (MAXSTRING-1); j++ ) {
+                    for( j = 0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ) {
                         names_list[i].chr[j] = word[j];
                     }
                 }
@@ -233,7 +233,7 @@ protected:
                             // Convert Dataframe to range list
                             name *names_list = new name[ilength];
                             
-                            for(int row=0; row< ilength; row++ )
+                            for(int row=0; (unsigned)row< ilength; row++ )
                             {
                                 Rcpp::String wchrom = Rcpp::as<Rcpp::StringVector>(DatasetValues)((i*MAXSTRBLOCK) + row);
                                 std::string word = wchrom.get_cstring();
@@ -241,7 +241,7 @@ protected:
                                 boost::erase_all(word, "\"");
                                 
                                 int j=0;
-                                for( j = 0; j < word.size() && j < (MAXSTRING-1); j++ ){
+                                for( j = 0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ){
                                     names_list[row].chr[j] = word[j]; }
                                 
                                 names_list[row].chr[j] = '\0'; // insert hdf5 end of string
@@ -279,7 +279,7 @@ protected:
                             boost::erase_all(word, "\"");
                             
                             int j=0;
-                            for( j=0; j < word.size() && j < (MAXSTRING-1); j++ ) {
+                            for( j=0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ) {
                                         names_list[i].chr[j] = word[j];
                             }
                             

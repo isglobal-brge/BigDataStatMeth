@@ -110,9 +110,9 @@ public:
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception createDataset_int (File IException) " );
-        } catch(H5::GroupIException error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception createDataset_int (Group IException)");
-        } catch(H5::DataSetIException error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception createDataset_int (DataSet IException)");
         } 
         return void();
@@ -127,9 +127,9 @@ public:
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception createDataset (File IException) " );
-        } catch(H5::GroupIException error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception createDataset (Group IException)");
-        } catch(H5::DataSetIException error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception createDataset (DataSet IException)");
         } 
         
@@ -204,9 +204,9 @@ public:
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception createUnlimitedDataset_internal (File IException) " );
-        } catch(H5::GroupIException error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception createUnlimitedDataset_internal (Group IException) " );
-        } catch(H5::DataSetIException error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception createUnlimitedDataset_internal (Dataset IException) " );
         } 
         return void();
@@ -299,15 +299,15 @@ public:
                 ::Rf_error( "Matrix data type not allowed (writeDataset)" );
             }
             
-        } catch(H5::FileIException error) { // catch failure caused by the H5File operations
+        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception writeDataset_Internal (File IException)" );
-        } catch(H5::DataSetIException error) { // catch failure caused by the DataSet operations
+        } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             ::Rf_error( "c++ exception writeDataset_Internal (DataSet IException)" );
-        } catch(H5::GroupIException error) { // catch failure caused by the Group operations
+        } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             ::Rf_error( "c++ exception writeDataset_Internal (Group IException)" );
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             ::Rf_error( "c++ exception writeDataset_Internal (DataSpace IException)" );
-        } catch(H5::DataTypeIException error) { // catch failure caused by the DataSpace operations
+        } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             ::Rf_error( "c++ exception writeDataset_Internal (Data TypeIException)" );
         }
         return void();
@@ -574,7 +574,7 @@ private:
                 Rcpp::String wchrom = Rcpp::as<Rcpp::StringVector>(DatasetValues)(i);
                 std::string word = wchrom.get_cstring();
                 
-                for( j = 0; j < word.size() && j < (MAXSTRING-1); j++ ) {
+                for( j = 0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ) {
                     names_list[i].chr[j] = word[j]; 
                 }
             }
