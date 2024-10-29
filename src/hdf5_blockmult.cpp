@@ -20,7 +20,7 @@ void bdblockmult_hdf5(std::string filename,
                     Rcpp::Nullable<bool> force = R_NilValue)
 {
     
-    int iblock_size;
+    // int iblock_size;
         // iblockfactor = 2;
     bool bforce;
 //.. 2024/03/28 ..//    bool bparal, bforce;
@@ -97,42 +97,3 @@ void bdblockmult_hdf5(std::string filename,
     return void();
 }
 
-
-
-/***R
-
-library("BigDataStatMeth")
-# devtools::reload(pkgload::inst("BigDataStatMeth"))
-
-setwd("/Users/mailos/PhD/dummy")
-
-N = 200
-M = 10
-
-set.seed(555)
-a <- matrix( rnorm(N*M,mean=0,sd=1), N, M) 
-b <- matrix( rnorm(N*M,mean=0,sd=1), M, N) 
-
-# devtools::reload(pkgload::inst("BigDataStatMeth"))
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-                     object = a, 
-                     group = "pepet", 
-                     dataset = "datasetpepet",
-                     transp = FALSE,
-                     overwriteFile = TRUE, 
-                     overwriteDataset = FALSE, 
-                     unlimited = FALSE)
-
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-                     object = b, 
-                     group = "pepet", 
-                     dataset = "tdatasetpepet",
-                     transp = FALSE,
-                     overwriteFile = FALSE, 
-                     overwriteDataset = FALSE, 
-                     unlimited = FALSE)
-# blockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", force = TRUE )
-blockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", block_size = 5, force = TRUE )
-
-
-*/

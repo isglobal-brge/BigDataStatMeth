@@ -165,7 +165,7 @@ namespace BigDataStatMeth {
                 
                 if( N == Y.rows() && M == Y.cols())
                 {
-                    hsize_t size = block_size + 1;
+                    // hsize_t size = block_size + 1;
                     
                     ithreads = get_number_threads(threads, R_NilValue);
                     
@@ -247,8 +247,10 @@ namespace BigDataStatMeth {
                     
                     X = Rcpp::transpose(X);
                     
-                    hsize_t N = X.rows();
-                    hsize_t M = X.cols();
+                    //.Comentat 2024-10-29.// hsize_t N = X.rows();
+                    //.Comentat 2024-10-29.// hsize_t M = X.cols();
+                    N = X.rows();
+                    M = X.cols();
                 } 
                 
                 std::vector<hsize_t> vsizetoRead;

@@ -77,8 +77,6 @@ void bdblockmult_sparse_hdf5( std::string filename, std::string group,
                 strsubgroupIn,
                 strsubgroupInB;
     
-    bool bexistgroup;
-    bool bsparseA, bsparseB;
     int iblockfactor = 2;
 
     try

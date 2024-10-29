@@ -26,7 +26,7 @@ void bdReduce_hdf5_dataset( std::string filename, std::string group,
     
     try
     {
-        BigDataStatMeth::hdf5Dataset* dsOut;
+        // BigDataStatMeth::hdf5Dataset* dsOut;
         
         std::string strOutgroup,
                     strOutdatset,

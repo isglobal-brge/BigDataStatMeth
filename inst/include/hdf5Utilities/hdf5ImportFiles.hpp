@@ -95,7 +95,6 @@ namespace BigDataStatMeth {
 
             std::string path = Rcpp::as<std::string>(filename);
             std::string stdsep;
-            int res;
 
             // Colnames and rownames
             Rcpp::CharacterVector svrcolnames;

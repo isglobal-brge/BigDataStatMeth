@@ -35,7 +35,6 @@
 void bdRemove_hdf5_element(std::string filename, std::vector<std::string> elements)
 {
     
-    bool allOk;
     try
     {
         
@@ -60,10 +59,6 @@ void bdRemove_hdf5_element(std::string filename, std::vector<std::string> elemen
         return void();
     }
     
-    // if(allOk == false)
-    //     std::string strmessage = "Not all elements had been removed";
-    // 
-    // Rcpp::message(Rcpp::wrap(strmessage));    
     return void();
     
 }

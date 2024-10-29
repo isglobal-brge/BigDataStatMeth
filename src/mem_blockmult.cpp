@@ -34,7 +34,6 @@ Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B,
                          Rcpp::Nullable<int> threads = R_NilValue)
 {
     
-    hsize_t iblock_size;
     bool bparal, bbyBlocks;
     
     Rcpp::NumericMatrix C;

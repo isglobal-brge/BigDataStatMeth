@@ -187,7 +187,8 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         BigDataStatMeth::hdf5Dataset* unlimDataset;
         
         int  M, p, n, irows, icols;
-        int maxsizetoread, ithreads, cummoffset;
+        //int maxsizetoread, ithreads, cummoffset;
+        int ithreads;
         bool transp = false;
         Rcpp::Nullable<int> wsize = R_NilValue;
         
