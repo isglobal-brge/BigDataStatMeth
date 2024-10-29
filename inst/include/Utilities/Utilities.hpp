@@ -153,12 +153,12 @@ namespace BigDataStatMeth {
                 // if( Rcpp::as<int> (block_size) < iblock_size ) {
                 //     iblock_size = Rcpp::as<int> (block_size); }
                 iblock_size = Rcpp::as<int> (block_size);
-                if( iblock_size > (MAXBLOCKSIZE / ifactor) ) {
+                if( (unsigned)iblock_size > (MAXBLOCKSIZE / ifactor) ) {
                     Rcpp::warning("Warning: block size %i is bigger than the maximum recomended %i.", iblock_size, (MAXBLOCKSIZE / ifactor));
                 }
             } else {
                 //..// iblock_size = std::min(  std::min(dsA->nrows(),dsA->ncols()),  std::min(dsB->nrows(), dsB->ncols()));
-                if (iblock_size > (MAXBLOCKSIZE / ifactor))
+                if ((unsigned)iblock_size > (MAXBLOCKSIZE / ifactor))
                     iblock_size = MAXBLOCKSIZE / ifactor;
             }
                 
@@ -215,7 +215,7 @@ namespace BigDataStatMeth {
                 }
                 
                 maxCols = std::floor( MAXELEMSINBLOCK / maxRows );
-                if( maxCols> ncols || maxCols + 1 == ncols) {
+                if( maxCols> (unsigned)ncols || maxCols + 1 == (unsigned)ncols) {
                     maxCols = ncols;
                 }
             } else {
@@ -225,7 +225,7 @@ namespace BigDataStatMeth {
                     maxCols = MAXBLOCKSIZE;
                 }
                 maxRows = std::floor( MAXELEMSINBLOCK / maxCols );
-                if( maxRows> nrows || maxRows + 1 == nrows) {
+                if( maxRows> (unsigned)nrows || maxRows + 1 == (unsigned)nrows) {
                     maxRows = nrows;
                 }
                 
@@ -251,7 +251,7 @@ namespace BigDataStatMeth {
         
         try
         {
-            if( maxSize > MAXELEMSINBLOCK) {
+            if( (unsigned)maxSize > MAXELEMSINBLOCK) {
                 blockSize = MAXELEMSINBLOCK;
             } else {
                 blockSize = maxSize;
@@ -343,7 +343,7 @@ namespace BigDataStatMeth {
         } else {
             if(threads.isNotNull()) {
                 
-                if (Rcpp::as<int> (threads) <= ithreads){
+                if ((unsigned)Rcpp::as<int> (threads) <= ithreads){
                     ithreads = Rcpp::as<int> (threads);
                 } 
             

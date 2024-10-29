@@ -46,7 +46,7 @@ extern inline void setDiagonalMatrix( BigDataStatMeth::hdf5Dataset* dsMat, Rcpp:
                              stride = {1, 1},
                              block = {1, 1};
         
-        for( hsize_t i=0; i < intNewDiagonal.size(); i++) {
+        for( hsize_t i=0; i < (unsigned)intNewDiagonal.size(); i++) {
             std::vector<hsize_t> offset = {i, i};
             dsMat->writeDatasetBlock(Rcpp::wrap(intNewDiagonal(i)), offset, count, stride, block, true);
         }

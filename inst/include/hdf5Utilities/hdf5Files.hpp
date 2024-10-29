@@ -214,7 +214,7 @@ private:
                 ::Rf_error( "c++ exception get_dataset_names_from_group (err IException)" );
                 return -1;
             } else {
-                for (int i = 0; i < nobj; i++) 
+                for (unsigned int i = 0; i < nobj; i++) 
                 {
                     len = H5Gget_objname_by_idx(gid, (hsize_t)i, memb_name, (size_t)MAX_NAME );
                     
