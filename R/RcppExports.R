@@ -120,7 +120,7 @@ bdQR <- function(X, thin = NULL, block_size = NULL, threads = NULL) {
 
 #' QR Decomposition hdf5
 #' 
-#' This function compute QR decomposition (also called a QR factorization) 
+#' This function compute QR decomposition \(also called a QR factorization\) 
 #' of a matrix \code{A} into a product \code{A = QR} of an 
 #' orthogonal matrix Q and an upper triangular matrix R.
 #' @param filename, character array with the name of an existin hdf5 data file 
@@ -132,12 +132,12 @@ bdQR <- function(X, thin = NULL, block_size = NULL, threads = NULL) {
 #' store results if not provided then results are stored in the same group as 
 #' original dataset
 #' @param outdataset character array with output dataset name where we want to 
-#' store results, results are stored as Q.<outdataset> and R.<outdataset>
+#' store results, results are stored as Q.\<outdataset\> and R.\<outdataset\>
 #' @param thin boolean, if thin = true returns Q thin decomposition else 
 #' returns Q full decomposition, default is thin = false
-#' @param block_size (optional) block size to perform computation
-#' @param overwrite boolean(optional) if overwrite = TRUE, if exis 
-#' @param threads (optional) number of concurrent threads in parallelization if 
+#' @param block_size \(optional\) block size to perform computation
+#' @param overwrite boolean\(optional\) if overwrite = TRUE, if exis 
+#' @param threads \(optional\) number of concurrent threads in parallelization if 
 #' threads is null then threads =  maximum number of threads available
 #' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
 #' @export
@@ -165,25 +165,30 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #' The matrix rank is equal to the number of singular values different from the 
 #' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
 #' can be changed to an approximation of 0.
-#' @param method (optional, defalut = "auto") possible values are: "auto", 
+#' @param method optional, defalut is "auto" possible values are: "auto", 
 #' "blocks", "full":
-#' \itemize{
-#'   \item{"auto"}{ The option method = "auto" chooses the "full" or 
-#'   "blocks" method depending on the size of the matrix to be decomposed }
-#'   \item{"blocks"}{ The SVD decomposition can be carried out by blocks, 
-#'   recommended option for large matrices that do not fit in memory }
-#'   \item{"full"}{ The SVD decomposition is performed directly without partitioning the matrix }
-#' } 
+#'     * `"auto"`:
+#'       The option method = "auto" chooses the "full" or 
+#'       "blocks" method depending on the size of the matrix to be decomposed 
+#'     * `"blocks"`:
+#'       The SVD decomposition can be carried out by blocks, recommended option 
+#'       for large matrices that do not fit in memory
+#'     * `"full"`:
+#'       The SVD decomposition is performed directly without partitioning the matrix
+#' 
 #' @param threads (optional) only used in some operations inside function. If 
 #' threads is null then threads =  maximum number of threads available - 1.
 #' @return a list of three components with the singular values and left and 
 #' right singular vectors of the matrix
 #' @return A List with : 
-#' \itemize{
-#'   \item{"u"}{ eigenvectors of AA^t, mxn and column orthogonal matrix }
-#'   \item{"v"}{ eigenvectors of A^tA, nxn orthogonal matrix }
-#'   \item{"d"}{ singular values, nxn diagonal matrix (non-negative real values) }
-#' }
+#' 
+#'   * `"u"`:
+#'     eigenvectors of AA^t, mxn and column orthogonal matrix 
+#'   * `"v`:
+#'     eigenvectors of A^tA, nxn orthogonal matrix
+#'   * `"d"`:
+#'     singular values, nxn diagonal matrix (non-negative real values) 
+#' 
 #' @export
 bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force = NULL, method = NULL, threads = NULL) {
     .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, rankthreshold, force, method, threads)
@@ -272,8 +277,8 @@ bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup 
 #' blockmult to apply matrix multiplication, in that case, we need the datasets 
 #' to be used defined in b_datasets variable, datasets and b_datasets must be 
 #' of the same lenght, in that case, the operation is performed according to 
-#' index, for example, if we have datasets = {"A1", "A2", "A3} and 
-#' b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, 
+#' index, for example, if we have `datasets = \{"A1", "A2", "A3\}` and 
+#' `b_datasets = \{"B1", "B2", "B3\}`, the functions performs : A1%*%B1, 
 #' A2%*%B2 and A3%*%B3 
 #' CrossProd_double to  performs crossprod using two matrices, see blockmult 
 #' tCrossProd_double to  performs transposed crossprod using two matrices, 
@@ -314,6 +319,7 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #' PCA Descomposition
 #' 
 #' Compute PCA
+#' 
 #' @param filename string, file name where dataset is stored 
 #' @param group string group name  where dataset is stored in file
 #' @param dataset string dataset name with data to perform PCA
@@ -331,17 +337,20 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #' If it has been previously calculated. This group must contain the d, u and v datasets.
 #' @param force logical value, if true, the SVD is forced to be computed although 
 #' the SVD exists. 
-#' @param method (optional, defalut = "auto") possible values are: "auto", 
+#' @param method optional, defalut = "auto" possible values are: "auto", 
 #' "blocks", "full":
-#' \itemize{
-#'   \item{"auto"}{ The option method = "auto" chooses the "full" or 
-#'   "blocks" method depending on the size of the matrix to be decomposed }
-#'   \item{"blocks"}{ The PCA can be carried out by blocks, 
-#'   recommended option for large matrices that do not fit in memory }
-#'   \item{"full"}{ The PCA is performed directly without partitioning the matrix }
-#' } 
+#' 
+#'   * `"auto"`:
+#'     The option method = "auto" chooses the "full" or "blocks" method depending on 
+#'     the size of the matrix to be decomposed
+#'   * `"blocks"`:
+#'     The PCA can be carried out by blocks, recommended option for large matrices 
+#'     that do not fit in memory
+#'   * `"full"`:
+#'     The PCA is performed directly without partitioning the matrix 
+#' 
 #' @param threads integer number of threads used to run PCA
-#' @return original file with results in folder PCA/<datasetname>
+#' @return original file with results in folder PCA/\<datasetname\>
 #' @export
 bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FALSE, bscale = FALSE, k = 2L, q = 1L, rankthreshold = 0.0, SVDgroup = NULL, overwrite = FALSE, method = NULL, threads = NULL) {
     invisible(.Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, SVDgroup, overwrite, method, threads))
@@ -387,41 +396,47 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #'   
 #'   library(BigDataStatMeth)
 #'   library(rhdf5)
-#'      
-#'   matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-#'   matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
-#'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
 #'   
-#'   bdCreate_hdf5_matrix("BasicMatVect.hdf5", matA, "INPUT", "matA")
-#'   bdCreate_hdf5_matrix("BasicMatVect.hdf5", matB, "INPUT", "matB")
+#'   N = 1000
+#'   M = 1000
 #'   
-#'   res <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
-#'   res2 <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
-#'                            "matA", "INPUT","matB", block_size = 3)
+#'   set.seed(555)
+#'   a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
 #'   
-#'   # Examine hierarchy before open file
-#'   h5ls("BasicMatVect.hdf5")
+#'   bdCreate_hdf5_matrix( filename = "test_temp.hdf5", 
+#'                         object = a, group = "INPUT", 
+#'                         dataset = "datasetA",
+#'                         transp = FALSE,
+#'                         overwriteFile = TRUE, 
+#'                         overwriteDataset = FALSE, 
+#'                         unlimited = FALSE)
+#'                         
+#'     file <- "test_temp.hdf5"
+#'     dataset <- "results/res"
+#'     
+#'     bdCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
+#'                        A = "datasetA", outgroup = "results", 
+#'                        outdataset = "res", force = TRUE ) # 
+#'                        
+#'     # Check results
+#'     resr <- tcrossprod(a)
+#'     res <-  h5read(file,dataset)
+#'     all.equal( resr, res)
+#'     
+#'     bdCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
+#'                        A = "datasetA", outgroup = "results", 
+#'                        outdataset = "res", block_size = 1024, 
+#'                        force = TRUE ) # 
+#'     
+#'     # Check results
+#'     resr <- tcrossprod(a)
+#'     res <-  h5read(file,dataset)
+#'     all.equal( resr, res)
 #'   
-#'   # Open file
-#'   h5fdelay = H5Fopen("BasicMatVect.hdf5")
-#'   
-#'   # Show hdf5 hierarchy (groups)
-#'   h5fdelay
-#'   
-#'   res <- h5fdelay$OUTPUT$CrossProd_matAxmatA
-#'   res2 <- h5fdelay$OUTPUT$CrossProd_matAxmatB
-#'   
-#'   all.equal(crossprod(matA), res)
-#'   all.equal(crossprod(matA,matB), res2)
-#'   
-#'   # Close hdf5 data file
-#'   H5Fclose(h5fdelay)
-#'   
-#'   # Remove file (used as example)
-#'   if (file.exists("BasicMatVect.hdf5")) {
-#'     # Delete file if it exist
-#'     file.remove("BasicMatVect.hdf5")
-#'   }
+#'     # Remove file (used as example)
+#'     if (file.exists("test_temp.hdf5")) {
+#'       file.remove("test_temp.hdf5")
+#'     }
 #'   
 #' 
 #' @export
@@ -556,41 +571,47 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #'   
 #'   library(BigDataStatMeth)
 #'   library(rhdf5)
-#'      
-#'   matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-#'   matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
-#'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
 #'   
-#'   bdCreate_hdf5_matrix("BasicMatVect.hdf5", matA, "INPUT", "matA")
-#'   bdCreate_hdf5_matrix("BasicMatVect.hdf5", matB, "INPUT", "matB")
+#'   N = 1000
+#'   M = 1000
 #'   
-#'   res <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
-#'   res2 <- bdtCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
-#'                            "matA", "INPUT","matB", block_size = 3)
+#'   set.seed(555)
+#'   a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
 #'   
-#'   # Examine hierarchy before open file
-#'   h5ls("BasicMatVect.hdf5")
+#'   bdCreate_hdf5_matrix( filename = "test_temp.hdf5", 
+#'                         object = a, group = "INPUT", 
+#'                         dataset = "datasetA",
+#'                         transp = FALSE,
+#'                         overwriteFile = TRUE, 
+#'                         overwriteDataset = FALSE, 
+#'                         unlimited = FALSE)
+#'                         
+#'     file <- "test_temp.hdf5"
+#'     dataset <- "results/res"
+#'     
+#'     bdtCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
+#'                        A = "datasetA", outgroup = "results", 
+#'                        outdataset = "res", force = TRUE ) # 
+#'                        
+#'     # Check results
+#'     resr <- tcrossprod(a)
+#'     res <-  h5read(file,dataset)
+#'     all.equal( resr, res)
+#'     
+#'     bdtCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
+#'                        A = "datasetA", outgroup = "results", 
+#'                        outdataset = "res", block_size = 1024, 
+#'                        force = TRUE ) # 
+#'     
+#'     # Check results
+#'     resr <- tcrossprod(a)
+#'     res <-  h5read(file,dataset)
+#'     all.equal( resr, res)
 #'   
-#'   # Open file
-#'   h5fdelay = H5Fopen("BasicMatVect.hdf5")
-#'   
-#'   # Show hdf5 hierarchy (groups)
-#'   h5fdelay
-#'   
-#'   res <- h5fdelay$OUTPUT$tCrossProd_matAxmatA
-#'   res2 <- h5fdelay$OUTPUT$tCrossProd_matAxmatB
-#'   
-#'   all.equal(tcrossprod(matA), res)
-#'   all.equal(tcrossprod(matA,matB), res2)
-#'   
-#'   # Close hdf5 data file
-#'   H5Fclose(h5fdelay)
-#'   
-#'   # Remove file (used as example)
-#'   if (file.exists("BasicMatVect.hdf5")) {
-#'     # Delete file if it exist
-#'     file.remove("BasicMatVect.hdf5")
-#'   }
+#'     # Remove file (used as example)
+#'     if (file.exists("test_temp.hdf5")) {
+#'       file.remove("test_temp.hdf5")
+#'     }
 #'   
 #' 
 #' @export
@@ -668,7 +689,10 @@ bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdata
 #' X <- matrix(rnorm(100), 10, 10)
 #' diag(X) <- 0.5
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix("test_file2.hdf5", X, "data", "X", force = TRUE)
+#' bdCreate_hdf5_matrix("test_file2.hdf5", X, "data", "X", 
+#'                        overwriteFile = TRUE, 
+#'                        overwriteDataset = FALSE, 
+#'                        unlimited = FALSE)
 #' # Update diagonal
 #' diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
 #' 
@@ -695,7 +719,10 @@ bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
 #' diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
 #' 
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", force = TRUE)
+#' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
+#'                       overwriteFile = TRUE, 
+#'                       overwriteDataset = FALSE, 
+#'                       unlimited = FALSE)
 #' 
 #' # Update diagonal
 #' bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
@@ -724,7 +751,7 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' @return hdf5 data file containing two new datasets, one for sd (if sd is 
 #' requested) and another for the mean (if mean is requested). Results are
 #' stored inside a folder mean_sd inside hdf5 data file with names: 
-#' sd.<dataset>, mean.<dataset> respectively
+#' sd.\<dataset\>, mean.\<dataset\> respectively
 #' @examples
 #' 
 #' library(BigDataStatMeth)
@@ -735,8 +762,14 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' X <- matrix(rnorm(10), 10, 1)
 #'     
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", force = TRUE)
-#' bdCreate_hdf5_matrix( "test.hdf5", X, "data", "X", force = TRUE)
+#' bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", 
+#'                         overwriteFile = TRUE, 
+#'                         overwriteDataset = FALSE, 
+#'                         unlimited = FALSE)
+#' bdCreate_hdf5_matrix( "test.hdf5", X, "data", "X", 
+#'                        overwriteFile = FALSE, 
+#'                        overwriteDataset = FALSE, 
+#'                        unlimited = FALSE)
 #' 
 #' # Get mean and sd        
 #' bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
@@ -967,7 +1000,10 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' X.1 <- X
 #' X[lower.tri(X)] <- 0
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", force = TRUE)
+#' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
+#'                       overwriteFile = TRUE, 
+#'                       overwriteDataset = FALSE, 
+#'                       unlimited = FALSE)
 #' # Update Lower triangular matrix in hdf5
 #' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
 #'         group = "data", dataset = "X", copytolower = TRUE, elementsBlock = 10)
@@ -975,7 +1011,10 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' X <- X.1
 #' X[upper.tri(X)] <- 0
 #' # CAdd matrix data to a file
-#' bdCreate_hdf5_matrix( "test_file.hdf5", X, "data", "Y", force = TRUE)
+#' bdCreate_hdf5_matrix( "test_file.hdf5", X, "data", "Y", 
+#'                         overwriteFile = FALSE, 
+#'                         overwriteDataset = FALSE, 
+#'                         unlimited = FALSE)
 #' # Update Upper triangular matrix in hdf5
 #' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
 #'         group = "data", dataset = "Y", copytolower = FALSE, elementsBlock = 10)
@@ -1027,8 +1066,12 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'X <- matrix(rnorm(10), 10, 1)
 #'        
 #'# Create hdf5 data file with  data (Y)
-#'bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", force = TRUE)
-#'bdCreate_hdf5_matrix("test.hdf5",  X, "data", "X", force = TRUE)
+#'bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", overwriteFile = TRUE, 
+#'                         overwriteDataset = FALSE, 
+#'                         unlimited = FALSE)
+#'bdCreate_hdf5_matrix("test.hdf5",  X, "data", "X", overwriteFile = FALSE, 
+#'                         overwriteDataset = FALSE, 
+#'                         unlimited = FALSE)
 #'            
 #'bdcomputeMatrixVector_hdf5("test.hdf5", 
 #'                           group = "data", dataset = "Y",

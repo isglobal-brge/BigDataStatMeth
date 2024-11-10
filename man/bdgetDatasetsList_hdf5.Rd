@@ -18,6 +18,6 @@ names begin, if null, then the function returns all datasets inside the group}
 character array with the name of all datasets inside the group
 }
 \description{
-Gets a list of all dataset names inside a group or all the datasets names 
+Gets a list of all dataset names inside a group or all the datasets names
 starting with a prefix under a group
 }

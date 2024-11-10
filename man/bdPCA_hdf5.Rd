@@ -27,7 +27,7 @@ bdPCA_hdf5(
 
 \item{dataset}{string dataset name with data to perform PCA}
 
-\item{ncomponents}{integer, number of components to be computed, by default 
+\item{ncomponents}{integer, number of components to be computed, by default
 ncomponents = 0, all components are computed}
 
 \item{bcenter}{logical value if true data is centered to zero}
@@ -38,31 +38,34 @@ ncomponents = 0, all components are computed}
 
 \item{q}{number of levels to compute SVD for PCA, performance parameter}
 
-\item{rankthreshold}{double, threshold used to determine the range of the array. 
+\item{rankthreshold}{double, threshold used to determine the range of the array.
 The matrix rank is equal to the number of
-singular values different from the threshold. By default, threshold = 0 is used 
+singular values different from the threshold. By default, threshold = 0 is used
 to get the matrix rank , but it can be changed to an approximation of 0.}
 
-\item{SVDgroup}{string. Name of the group where the SVD results are located. 
+\item{SVDgroup}{string. Name of the group where the SVD results are located.
 If it has been previously calculated. This group must contain the d, u and v datasets.}
 
-\item{method}{(optional, defalut = "auto") possible values are: "auto", 
+\item{method}{optional, defalut = "auto" possible values are: "auto",
 "blocks", "full":
 \itemize{
-  \item{"auto"}{ The option method = "auto" chooses the "full" or 
-  "blocks" method depending on the size of the matrix to be decomposed }
-  \item{"blocks"}{ The PCA can be carried out by blocks, 
-  recommended option for large matrices that do not fit in memory }
-  \item{"full"}{ The PCA is performed directly without partitioning the matrix }
+\item \code{"auto"}:
+The option method = "auto" chooses the "full" or "blocks" method depending on
+the size of the matrix to be decomposed
+\item \code{"blocks"}:
+The PCA can be carried out by blocks, recommended option for large matrices
+that do not fit in memory
+\item \code{"full"}:
+The PCA is performed directly without partitioning the matrix
 }}
 
 \item{threads}{integer number of threads used to run PCA}
 
-\item{force}{logical value, if true, the SVD is forced to be computed although 
+\item{force}{logical value, if true, the SVD is forced to be computed although
 the SVD exists.}
 }
 \value{
-original file with results in folder PCA/<datasetname>
+original file with results in folder PCA/\<datasetname\>
 }
 \description{
 Compute PCA

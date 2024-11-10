@@ -18,31 +18,31 @@ bdSort_hdf5_dataset(
 \arguments{
 \item{filename, }{character array indicating the name of the file to be sorted}
 
-\item{group, }{character array indicating the input group where the data set 
+\item{group, }{character array indicating the input group where the data set
 to be sorted is stored.}
 
 \item{dataset, }{character array indicating the input dataset to be sorted}
 
-\item{outdataset, }{character array indicating the name for the new sorted 
+\item{outdataset, }{character array indicating the name for the new sorted
 dataset. This dataset}
 
 \item{blockedSortlist, }{a list with blocks with sorted positions, see example
-$`1`
-                      chr order newOrder Diagonal
+$\code{1}
+chr order newOrder Diagonal
 TCGA-OR-A5J1 TCGA-OR-A5J1     1        1        1
 TCGA-OR-A5J2 TCGA-OR-A5J2     2        2        1
 TCGA-OR-A5J3 TCGA-OR-A5J3     3        3        1
 TCGA-OR-A5J4 TCGA-OR-A5J4     4        4        1
 
-$`2`
-                      chr order newOrder
+$\code{2}
+chr order newOrder
 TCGA-OR-A5J5 TCGA-OR-A5JA    10        5        1
 TCGA-OR-A5J6 TCGA-OR-A5JB    11        6        1
 TCGA-OR-A5J7 TCGA-OR-A5JC    12        7        0
 TCGA-OR-A5J8 TCGA-OR-A5JD    13        8        1
 
-$`3`
-                      chr order newOrder
+$\code{3}
+chr order newOrder
 TCGA-OR-A5J9 TCGA-OR-A5J5     5        9        1
 TCGA-OR-A5JA TCGA-OR-A5J6     6       10        1
 TCGA-OR-A5JB TCGA-OR-A5J7     7       11        1
@@ -54,12 +54,12 @@ current position and newOrder is the new position}
 
 \item{func, }{character array function to be applyed
 \describe{
-    \item{sortRows}{sort datasets rows}
-    \item{sortCols}{sort datasets columns}
+\item{sortRows}{sort datasets rows}
+\item{sortCols}{sort datasets columns}
 }}
 
-\item{outgroup, }{optional, character array indicating group where the data 
-set will be saved after imputation if `outgroup` is NULL, output dataset is 
+\item{outgroup, }{optional, character array indicating group where the data
+set will be saved after imputation if \code{outgroup} is NULL, output dataset is
 stored in the same input group.}
 
 \item{overwrite, }{boolean if true, previous results in same location inside hdf5

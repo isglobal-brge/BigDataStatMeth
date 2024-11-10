@@ -21,9 +21,9 @@ bdReduce_hdf5_dataset(
 
 \item{reducefunction, }{single character with function to apply, can be '+' or  '-'}
 
-\item{outgroup, }{optional character array with the group name where the dataset will be stored after reduction. If `outgroup` is NULL, the resulting dataset is stored in the same input group.}
+\item{outgroup, }{optional character array with the group name where the dataset will be stored after reduction. If \code{outgroup} is NULL, the resulting dataset is stored in the same input group.}
 
-\item{outdataset, }{optional character with the dataset name for the resulting dataset after reduction if `outdataset` is NULL, then the input group name is used as outdataset name}
+\item{outdataset, }{optional character with the dataset name for the resulting dataset after reduction if \code{outdataset} is NULL, then the input group name is used as outdataset name}
 
 \item{overwrite, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
 

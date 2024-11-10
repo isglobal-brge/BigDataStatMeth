@@ -30,7 +30,7 @@ bdCrossprod_hdf5(
 
 \item{groupB, }{string, group name where dataset b is stored}
 
-\item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)}
+\item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if \code{block_size = 1} no block size is applied (size 1 = 1 element per block)}
 
 \item{mixblock_size}{(optional) only for debug pourpose}
 
@@ -50,41 +50,47 @@ This function performs the crossprod from a matrix inside and hdf5 data file
   
   library(BigDataStatMeth)
   library(rhdf5)
-     
-  matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-  matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
-                   42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
   
-  bdCreate_hdf5_matrix("BasicMatVect.hdf5", matA, "INPUT", "matA")
-  bdCreate_hdf5_matrix("BasicMatVect.hdf5", matB, "INPUT", "matB")
+  N = 1000
+  M = 1000
   
-  res <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
-  res2 <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
-                           "matA", "INPUT","matB", block_size = 3)
+  set.seed(555)
+  a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
   
-  # Examine hierarchy before open file
-  h5ls("BasicMatVect.hdf5")
+  bdCreate_hdf5_matrix( filename = "test_temp.hdf5", 
+                        object = a, group = "INPUT", 
+                        dataset = "datasetA",
+                        transp = FALSE,
+                        overwriteFile = TRUE, 
+                        overwriteDataset = FALSE, 
+                        unlimited = FALSE)
+                        
+    file <- "test_temp.hdf5"
+    dataset <- "results/res"
+    
+    bdCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
+                       A = "datasetA", outgroup = "results", 
+                       outdataset = "res", force = TRUE ) # 
+                       
+    # Check results
+    resr <- tcrossprod(a)
+    res <-  h5read(file,dataset)
+    all.equal( resr, res)
+    
+    bdCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
+                       A = "datasetA", outgroup = "results", 
+                       outdataset = "res", block_size = 1024, 
+                       force = TRUE ) # 
+    
+    # Check results
+    resr <- tcrossprod(a)
+    res <-  h5read(file,dataset)
+    all.equal( resr, res)
   
-  # Open file
-  h5fdelay = H5Fopen("BasicMatVect.hdf5")
-  
-  # Show hdf5 hierarchy (groups)
-  h5fdelay
-  
-  res <- h5fdelay$OUTPUT$CrossProd_matAxmatA
-  res2 <- h5fdelay$OUTPUT$CrossProd_matAxmatB
-  
-  all.equal(crossprod(matA), res)
-  all.equal(crossprod(matA,matB), res2)
-  
-  # Close hdf5 data file
-  H5Fclose(h5fdelay)
-  
-  # Remove file (used as example)
-  if (file.exists("BasicMatVect.hdf5")) {
-    # Delete file if it exist
-    file.remove("BasicMatVect.hdf5")
-  }
+    # Remove file (used as example)
+    if (file.exists("test_temp.hdf5")) {
+      file.remove("test_temp.hdf5")
+    }
   
 
 }

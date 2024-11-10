@@ -29,45 +29,49 @@ bdSVD_hdf5(
 
 \item{q}{number of levels}
 
-\item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering 
-is done by subtracting the column means (omitting NAs) of x from their 
+\item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering
+is done by subtracting the column means (omitting NAs) of x from their
 corresponding columns, and if center is FALSE, no centering is done.}
 
-\item{bscale}{(optional, defalut = TRUE) .  If scale is TRUE then scaling is 
-done by dividing the (centered) columns of x by their standard deviations if 
-center is TRUE, and the root mean square otherwise. If scale is FALSE, no 
+\item{bscale}{(optional, defalut = TRUE) .  If scale is TRUE then scaling is
+done by dividing the (centered) columns of x by their standard deviations if
+center is TRUE, and the root mean square otherwise. If scale is FALSE, no
 scaling is done.}
 
-\item{rankthreshold}{double, threshold used to determine the range of the array. 
-The matrix rank is equal to the number of singular values different from the 
-threshold. By default, threshold = 0 is used to get the matrix rank , but it 
+\item{rankthreshold}{double, threshold used to determine the range of the array.
+The matrix rank is equal to the number of singular values different from the
+threshold. By default, threshold = 0 is used to get the matrix rank , but it
 can be changed to an approximation of 0.}
 
-\item{method}{(optional, defalut = "auto") possible values are: "auto", 
+\item{method}{optional, defalut is "auto" possible values are: "auto",
 "blocks", "full":
-\itemize{
-  \item{"auto"}{ The option method = "auto" chooses the "full" or 
-  "blocks" method depending on the size of the matrix to be decomposed }
-  \item{"blocks"}{ The SVD decomposition can be carried out by blocks, 
-  recommended option for large matrices that do not fit in memory }
-  \item{"full"}{ The SVD decomposition is performed directly without partitioning the matrix }
-}}
+* \code{"auto"}:
+The option method = "auto" chooses the "full" or
+"blocks" method depending on the size of the matrix to be decomposed
+* \code{"blocks"}:
+The SVD decomposition can be carried out by blocks, recommended option
+for large matrices that do not fit in memory
+* \code{"full"}:
+The SVD decomposition is performed directly without partitioning the matrix}
 
-\item{threads}{(optional) only used in some operations inside function. If 
+\item{threads}{(optional) only used in some operations inside function. If
 threads is null then threads =  maximum number of threads available - 1.}
 }
 \value{
-a list of three components with the singular values and left and 
+a list of three components with the singular values and left and
 right singular vectors of the matrix
 
-A List with : 
+A List with :
 \itemize{
-  \item{"u"}{ eigenvectors of AA^t, mxn and column orthogonal matrix }
-  \item{"v"}{ eigenvectors of A^tA, nxn orthogonal matrix }
-  \item{"d"}{ singular values, nxn diagonal matrix (non-negative real values) }
+\item \code{"u"}:
+eigenvectors of AA^t, mxn and column orthogonal matrix
+\item \verb{"v}:
+eigenvectors of A^tA, nxn orthogonal matrix
+\item \code{"d"}:
+singular values, nxn diagonal matrix (non-negative real values)
 }
 }
 \description{
-Singular values and left singular vectors of a real nxp matrix 
+Singular values and left singular vectors of a real nxp matrix
 Block SVD decomposition using an incremental algorithm.
 }

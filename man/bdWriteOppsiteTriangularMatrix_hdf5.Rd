@@ -19,13 +19,13 @@ bdWriteOppsiteTriangularMatrix_hdf5(
 
 \item{dataset, }{character array indicating the input dataset to be modified}
 
-\item{copytolower, }{boolean with default value = false. If true, sets lower 
-triangular matrix using upper triangular matrix, if lower=false (default 
+\item{copytolower, }{boolean with default value = false. If true, sets lower
+triangular matrix using upper triangular matrix, if lower=false (default
 value) sets upper triangular matrix using lower triangular matrix.}
 
-\item{elementsBlock, }{optional integer defines de maximum number of elements 
-to read from hdf5 data file in each block. By default this value is set 
-to 10000. If matrix is bigger thant 5000x5000 then block is set to number 
+\item{elementsBlock, }{optional integer defines de maximum number of elements
+to read from hdf5 data file in each block. By default this value is set
+to 10000. If matrix is bigger thant 5000x5000 then block is set to number
 of rows or columns x 2}
 }
 \description{
@@ -39,7 +39,10 @@ X <- matrix(rnorm(100), 10, 10)
 X.1 <- X
 X[lower.tri(X)] <- 0
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", force = TRUE)
+bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
+                      overwriteFile = TRUE, 
+                      overwriteDataset = FALSE, 
+                      unlimited = FALSE)
 # Update Lower triangular matrix in hdf5
 bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
         group = "data", dataset = "X", copytolower = TRUE, elementsBlock = 10)
@@ -47,7 +50,10 @@ bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5",
 X <- X.1
 X[upper.tri(X)] <- 0
 # CAdd matrix data to a file
-bdCreate_hdf5_matrix( "test_file.hdf5", X, "data", "Y", force = TRUE)
+bdCreate_hdf5_matrix( "test_file.hdf5", X, "data", "Y", 
+                        overwriteFile = FALSE, 
+                        overwriteDataset = FALSE, 
+                        unlimited = FALSE)
 # Update Upper triangular matrix in hdf5
 bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
         group = "data", dataset = "Y", copytolower = FALSE, elementsBlock = 10)

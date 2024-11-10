@@ -15,8 +15,8 @@ bdSolve(A, B)
 X numerical matrix.
 }
 \description{
-This function solve matrix equations 
- \code{A * X = B } 
+This function solve matrix equations
+\code{A * X = B }
 where A is an N-by-N matrix and X and B are N-by-NRHS matrices.
 }
 \examples{

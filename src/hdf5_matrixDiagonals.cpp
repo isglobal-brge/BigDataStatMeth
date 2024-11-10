@@ -20,7 +20,10 @@
 //' X <- matrix(rnorm(100), 10, 10)
 //' diag(X) <- 0.5
 //' # Create hdf5 data file with  data (Y)
-//' bdCreate_hdf5_matrix("test_file2.hdf5", X, "data", "X", force = TRUE)
+//' bdCreate_hdf5_matrix("test_file2.hdf5", X, "data", "X", 
+//'                        overwriteFile = TRUE, 
+//'                        overwriteDataset = FALSE, 
+//'                        unlimited = FALSE)
 //' # Update diagonal
 //' diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
 //' 
@@ -75,7 +78,10 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
 //' diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
 //' 
 //' # Create hdf5 data file with  data (Y)
-//' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", force = TRUE)
+//' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
+//'                       overwriteFile = TRUE, 
+//'                       overwriteDataset = FALSE, 
+//'                       unlimited = FALSE)
 //' 
 //' # Update diagonal
 //' bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")

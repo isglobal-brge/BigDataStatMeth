@@ -22,20 +22,20 @@ bdRemovelowdata_hdf5(
 
 \item{dataset, }{character array indicating the input dataset to be imputed}
 
-\item{outgroup, }{character array indicating group where the data set will be 
-saved after remove data with if `outgroup` is NULL, output dataset is stored 
+\item{outgroup, }{character array indicating group where the data set will be
+saved after remove data with if \code{outgroup} is NULL, output dataset is stored
 in the same input group.}
 
-\item{outdataset, }{character array indicating dataset to store the resulting 
-data after imputation if `outdataset` is NULL, input dataset will be overwritten.}
+\item{outdataset, }{character array indicating dataset to store the resulting
+data after imputation if \code{outdataset} is NULL, input dataset will be overwritten.}
 
-\item{pcent, }{by default pcent = 0.5. Numeric indicating the percentage to be 
+\item{pcent, }{by default pcent = 0.5. Numeric indicating the percentage to be
 considered to remove SNPs, SNPS with percentage equal or higest will be removed from data}
 
-\item{bycols, }{boolean by default = true, if true, indicates that SNPs are in 
+\item{bycols, }{boolean by default = true, if true, indicates that SNPs are in
 cols, if SNPincols = false indicates that SNPs are in rows.}
 
-\item{overwrite, }{optional boolean if true, previous results in same location 
+\item{overwrite, }{optional boolean if true, previous results in same location
 inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
 }
 \value{

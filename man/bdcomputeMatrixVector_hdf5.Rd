@@ -22,48 +22,48 @@ bdcomputeMatrixVector_hdf5(
 \arguments{
 \item{filename}{string file name where dataset to apply weights is located}
 
-\item{group}{string with the path inside the hdf5 data file where matrix 
+\item{group}{string with the path inside the hdf5 data file where matrix
 is located}
 
 \item{dataset}{string with the matrix name}
 
-\item{vectorgroup}{string with the path inside the hdf5 data file where 
+\item{vectorgroup}{string with the path inside the hdf5 data file where
 vector is located}
 
 \item{vectordataset}{string with the vector name}
 
-\item{outdataset}{character array with output dataset name where we want to 
+\item{outdataset}{character array with output dataset name where we want to
 store results}
 
-\item{func, }{Character array, function to be applyed : 
+\item{func, }{Character array, function to be applyed :
 "+" : to sum a vector to a matrix dataset by columns or rows
 "-" : to substract a vector to a matrix dataset by columns or rows
 "*" : to multiply a vector to a matrix dataset by columns or rows
 "/" : to divide a vector to a matrix dataset by columns or rows}
 
-\item{outgroup}{optional, character array with output group name where we 
-want to store results if not provided then results are stored in the same 
+\item{outgroup}{optional, character array with output group name where we
+want to store results if not provided then results are stored in the same
 group as original dataset}
 
-\item{byrows}{logical (default = FALSE). By default weights are applied by 
+\item{byrows}{logical (default = FALSE). By default weights are applied by
 columns but if byrows=TRUE then weights are applied by rows}
 
-\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel 
+\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel
 computation else performs seria computation}
 
-\item{threads}{(optional) only if bparal = true, number of concurrent 
-threads in parallelization if threads is null then threads =  maximum 
+\item{threads}{(optional) only if bparal = true, number of concurrent
+threads in parallelization if threads is null then threads =  maximum
 number of threads available}
 
-\item{force, }{boolean if true, previous results in same location inside 
+\item{force, }{boolean if true, previous results in same location inside
 hdf5 will be overwritten.}
 }
 \value{
 file with weighted dataset
 }
 \description{
-This function applies a calculus with a vector to a matrix. Multiplies, 
-sums, substract or divide each matrix row/column from a hdf5 dataset 
+This function applies a calculus with a vector to a matrix. Multiplies,
+sums, substract or divide each matrix row/column from a hdf5 dataset
 using a vector
 }
 \examples{
@@ -75,8 +75,12 @@ Y <- matrix(rnorm(100), 10, 10)
 X <- matrix(rnorm(10), 10, 1)
        
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", force = TRUE)
-bdCreate_hdf5_matrix("test.hdf5",  X, "data", "X", force = TRUE)
+bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", overwriteFile = TRUE, 
+                        overwriteDataset = FALSE, 
+                        unlimited = FALSE)
+bdCreate_hdf5_matrix("test.hdf5",  X, "data", "X", overwriteFile = FALSE, 
+                        overwriteDataset = FALSE, 
+                        unlimited = FALSE)
            
 bdcomputeMatrixVector_hdf5("test.hdf5", 
                           group = "data", dataset = "Y",

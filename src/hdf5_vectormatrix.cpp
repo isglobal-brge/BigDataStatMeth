@@ -45,8 +45,12 @@
 //'X <- matrix(rnorm(10), 10, 1)
 //'        
 //'# Create hdf5 data file with  data (Y)
-//'bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", force = TRUE)
-//'bdCreate_hdf5_matrix("test.hdf5",  X, "data", "X", force = TRUE)
+//'bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", overwriteFile = TRUE, 
+//'                         overwriteDataset = FALSE, 
+//'                         unlimited = FALSE)
+//'bdCreate_hdf5_matrix("test.hdf5",  X, "data", "X", overwriteFile = FALSE, 
+//'                         overwriteDataset = FALSE, 
+//'                         unlimited = FALSE)
 //'            
 //'bdcomputeMatrixVector_hdf5("test.hdf5", 
 //'                           group = "data", dataset = "Y",

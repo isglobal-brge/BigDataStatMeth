@@ -9,7 +9,7 @@ bdQR(X, thin = NULL, block_size = NULL, threads = NULL)
 \arguments{
 \item{X}{a real square matrix}
 
-\item{thin}{boolean, (optional) if thin = true returns Q thin decomposition else 
+\item{thin}{boolean, (optional) if thin = true returns Q thin decomposition else
 returns Q full decomposition, default is thin = false}
 
 \item{block_size}{(optional) block size to perform computation}
@@ -20,7 +20,7 @@ returns Q full decomposition, default is thin = false}
 List with orthogonal matrix \code{Q} and upper triangular matrix \code{R}
 }
 \description{
-This function compute QR decomposition (also called a QR factorization) 
-of a matrix \code{A} into a product \code{A = QR} of an 
+This function compute QR decomposition (also called a QR factorization)
+of a matrix \code{A} into a product \code{A = QR} of an
 orthogonal matrix Q and an upper triangular matrix R.
 }

@@ -18,16 +18,16 @@ bdtCrossprod(
 
 \item{B}{optional, numerical matrix}
 
-\item{block_size}{(optional, defalut = NULL) block size to make matrix 
-multiplication, if `block_size = 1` no block size is applied 
-(size 1 = 1 element per block) if `block_size = NULL` (default) optimum 
+\item{block_size}{(optional, defalut = NULL) block size to make matrix
+multiplication, if \code{block_size = 1} no block size is applied
+(size 1 = 1 element per block) if \code{block_size = NULL} (default) optimum
 block size is computed}
 
-\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel 
+\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel
 computation else if paral = FALSE performs serial computation}
 
 \item{threads}{(optional) only if bparal = true, number of concurrent threads
-in parallelization if threads is null then threads =  maximum number of 
+in parallelization if threads is null then threads =  maximum number of
 threads available}
 }
 \value{

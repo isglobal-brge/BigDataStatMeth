@@ -25,7 +25,10 @@
 //' X.1 <- X
 //' X[lower.tri(X)] <- 0
 //' # Create hdf5 data file with  data (Y)
-//' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", force = TRUE)
+//' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
+//'                       overwriteFile = TRUE, 
+//'                       overwriteDataset = FALSE, 
+//'                       unlimited = FALSE)
 //' # Update Lower triangular matrix in hdf5
 //' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
 //'         group = "data", dataset = "X", copytolower = TRUE, elementsBlock = 10)
@@ -33,7 +36,10 @@
 //' X <- X.1
 //' X[upper.tri(X)] <- 0
 //' # CAdd matrix data to a file
-//' bdCreate_hdf5_matrix( "test_file.hdf5", X, "data", "Y", force = TRUE)
+//' bdCreate_hdf5_matrix( "test_file.hdf5", X, "data", "Y", 
+//'                         overwriteFile = FALSE, 
+//'                         overwriteDataset = FALSE, 
+//'                         unlimited = FALSE)
 //' # Update Upper triangular matrix in hdf5
 //' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
 //'         group = "data", dataset = "Y", copytolower = FALSE, elementsBlock = 10)

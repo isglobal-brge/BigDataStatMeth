@@ -24,12 +24,12 @@
 //' If it has been previously calculated. This group must contain the d, u and v datasets.
 //' @param force logical value, if true, the SVD is forced to be computed although 
 //' the SVD exists. 
-//' @param method (optional, defalut = "auto") possible values are: "auto", 
+//' @param method optional, defalut = "auto" possible values are: "auto", 
 //' "blocks", "full":
 //' 
 //'   * `"auto"`:
 //'     The option method = "auto" chooses the "full" or "blocks" method depending on 
-//'     the size of the matrix to be decomposed }
+//'     the size of the matrix to be decomposed
 //'   * `"blocks"`:
 //'     The PCA can be carried out by blocks, recommended option for large matrices 
 //'     that do not fit in memory
@@ -37,7 +37,7 @@
 //'     The PCA is performed directly without partitioning the matrix 
 //' 
 //' @param threads integer number of threads used to run PCA
-//' @return original file with results in folder PCA/<datasetname>
+//' @return original file with results in folder PCA/\<datasetname\>
 //' @export
 // [[Rcpp::export]]
 void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,

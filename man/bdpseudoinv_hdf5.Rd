@@ -21,12 +21,12 @@ bdpseudoinv_hdf5(
 
 \item{dataset, }{character array indicating the input dataset that contains an m x n singular matrix}
 
-\item{outgroup}{optional, character array with output group name where we want to 
+\item{outgroup}{optional, character array with output group name where we want to
 store results if not provided then results are stored in the same group as original dataset}
 
 \item{outdataset}{character array with output dataset name where we want to store results}
 
-\item{overwrite, }{optional boolean if true, previous results in same location inside 
+\item{overwrite, }{optional boolean if true, previous results in same location inside
 hdf5 will be overwritten, by default force = false, data was not overwritten.}
 
 \item{threads}{optional parameter. Integer with numbers of threads to be used}

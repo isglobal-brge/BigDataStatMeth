@@ -53,7 +53,7 @@ Rcpp::RObject bdQR( const Rcpp::RObject & X,
 
 //' QR Decomposition hdf5
 //' 
-//' This function compute QR decomposition (also called a QR factorization) 
+//' This function compute QR decomposition \(also called a QR factorization\) 
 //' of a matrix \code{A} into a product \code{A = QR} of an 
 //' orthogonal matrix Q and an upper triangular matrix R.
 //' @param filename, character array with the name of an existin hdf5 data file 
@@ -65,12 +65,12 @@ Rcpp::RObject bdQR( const Rcpp::RObject & X,
 //' store results if not provided then results are stored in the same group as 
 //' original dataset
 //' @param outdataset character array with output dataset name where we want to 
-//' store results, results are stored as Q.<outdataset> and R.<outdataset>
+//' store results, results are stored as Q.\<outdataset\> and R.\<outdataset\>
 //' @param thin boolean, if thin = true returns Q thin decomposition else 
 //' returns Q full decomposition, default is thin = false
-//' @param block_size (optional) block size to perform computation
-//' @param overwrite boolean(optional) if overwrite = TRUE, if exis 
-//' @param threads (optional) number of concurrent threads in parallelization if 
+//' @param block_size \(optional\) block size to perform computation
+//' @param overwrite boolean\(optional\) if overwrite = TRUE, if exis 
+//' @param threads \(optional\) number of concurrent threads in parallelization if 
 //' threads is null then threads =  maximum number of threads available
 //' @return List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
 //' @export

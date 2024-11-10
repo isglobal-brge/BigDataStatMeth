@@ -17,36 +17,36 @@ bdQR_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array with the name of an existin hdf5 data file 
+\item{filename, }{character array with the name of an existin hdf5 data file
 containing the dataset to be modified}
 
-\item{group, }{character array indicating the input group where the data set 
+\item{group, }{character array indicating the input group where the data set
 to be modified.}
 
 \item{dataset, }{character array indicating the input dataset to be modified}
 
-\item{outgroup}{optional, character array with output group name where we want to 
-store results if not provided then results are stored in the same group as 
+\item{outgroup}{optional, character array with output group name where we want to
+store results if not provided then results are stored in the same group as
 original dataset}
 
-\item{outdataset}{character array with output dataset name where we want to 
-store results, results are stored as Q.<outdataset> and R.<outdataset>}
+\item{outdataset}{character array with output dataset name where we want to
+store results, results are stored as Q.\<outdataset\> and R.\<outdataset\>}
 
-\item{thin}{boolean, if thin = true returns Q thin decomposition else 
+\item{thin}{boolean, if thin = true returns Q thin decomposition else
 returns Q full decomposition, default is thin = false}
 
-\item{block_size}{(optional) block size to perform computation}
+\item{block_size}{\(optional\) block size to perform computation}
 
-\item{overwrite}{boolean(optional) if overwrite = TRUE, if exis}
+\item{overwrite}{boolean\(optional\) if overwrite = TRUE, if exis}
 
-\item{threads}{(optional) number of concurrent threads in parallelization if 
+\item{threads}{\(optional\) number of concurrent threads in parallelization if
 threads is null then threads =  maximum number of threads available}
 }
 \value{
 List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
 }
 \description{
-This function compute QR decomposition (also called a QR factorization) 
-of a matrix \code{A} into a product \code{A = QR} of an 
+This function compute QR decomposition \(also called a QR factorization\)
+of a matrix \code{A} into a product \code{A = QR} of an
 orthogonal matrix Q and an upper triangular matrix R.
 }

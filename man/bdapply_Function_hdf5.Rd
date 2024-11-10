@@ -28,61 +28,61 @@ to be imputed is.}
 
 \item{datasets, }{Character array, indicating the input datasets to be used}
 
-\item{outgroup, }{Character, array, indicating group where the data set will 
-be saved after imputation if `outgroup` is NULL, output dataset is stored 
+\item{outgroup, }{Character, array, indicating group where the data set will
+be saved after imputation if \code{outgroup} is NULL, output dataset is stored
 in the same input group.}
 
-\item{func, }{Character array, function to be applyed : 
+\item{func, }{Character array, function to be applyed :
 QR to apply bdQR() function to datasets
 CrossProd to apply bdCrossprod() function to datasets
 tCrossProd to apply bdtCrossprod() function to datasets
 invChol to apply bdInvCholesky() function to datasets
-blockmult to apply matrix multiplication, in that case, we need the datasets 
-to be used defined in b_datasets variable, datasets and b_datasets must be 
-of the same lenght, in that case, the operation is performed according to 
-index, for example, if we have datasets = {"A1", "A2", "A3} and 
-b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, 
-A2%*%B2 and A3%*%B3 
-CrossProd_double to  performs crossprod using two matrices, see blockmult 
-tCrossProd_double to  performs transposed crossprod using two matrices, 
-see blockmult 
-solve to solve matrix equation system, see blockmult for parametrization 
+blockmult to apply matrix multiplication, in that case, we need the datasets
+to be used defined in b_datasets variable, datasets and b_datasets must be
+of the same lenght, in that case, the operation is performed according to
+index, for example, if we have \verb{datasets = \\\{"A1", "A2", "A3\\\}} and
+\verb{b_datasets = \\\{"B1", "B2", "B3\\\}}, the functions performs : A1\%\emph{\%B1,
+A2\%}\%B2 and A3\%*\%B3
+CrossProd_double to  performs crossprod using two matrices, see blockmult
+tCrossProd_double to  performs transposed crossprod using two matrices,
+see blockmult
+solve to solve matrix equation system, see blockmult for parametrization
 sdmean to get sd and mean from de datasets by cols or rows}
 
-\item{b_group, }{optional Character array indicating the input group where 
-data are stored when we need a second dataset to operate, for example in 
+\item{b_group, }{optional Character array indicating the input group where
+data are stored when we need a second dataset to operate, for example in
 functions like matrix multiplication}
 
-\item{b_datasets, }{optional Character array indicating the input datasets 
-to be used when we need a second dataset in functions like matrix 
+\item{b_datasets, }{optional Character array indicating the input datasets
+to be used when we need a second dataset in functions like matrix
 multiplication}
 
-\item{force, }{optional Boolean if true, previous results in same location 
-inside hdf5 will be overwritten, by default force = false, data was not 
+\item{force, }{optional Boolean if true, previous results in same location
+inside hdf5 will be overwritten, by default force = false, data was not
 overwritten.}
 
-\item{transp_dataset}{optional parameter. Boolean if true we use the 
-transposed dataframe to perform calculus. By default transp_dataset = false, 
-we use the original dataset stored in hdf5 data file. Currently this option 
+\item{transp_dataset}{optional parameter. Boolean if true we use the
+transposed dataframe to perform calculus. By default transp_dataset = false,
+we use the original dataset stored in hdf5 data file. Currently this option
 is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"}
 
-\item{transp_bdataset}{optional parameter. Boolean if true we use the 
-transposed dataframe to perform calculus.By default transp_bdataset = false, 
-we use the original dataset stored in hdf5 data file. Currently this option 
+\item{transp_bdataset}{optional parameter. Boolean if true we use the
+transposed dataframe to perform calculus.By default transp_bdataset = false,
+we use the original dataset stored in hdf5 data file. Currently this option
 is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"}
 
-\item{fullMatrix}{boolean, optional parameter used in Inverse Cholesky, by 
-default false. If fullMatrix = true, in the hdf5 file the complete matrix 
-is stored. If false, only the lower triangular matrix is saved}
+\item{fullMatrix}{boolean, optional parameter used in Inverse Cholesky, by
+default false. If fullMatrix = true, in the hdf5 file the complete matrix
+is stored. If false, only the lower triangular matrix is stored}
 
-\item{byrows}{boolean, optional parameter used in sd and mean calculus, by 
-default false. If byrows = true, the sd and mean is computed by columns. 
+\item{byrows}{boolean, optional parameter used in sd and mean calculus, by
+default false. If byrows = true, the sd and mean is computed by columns.
 If false, sd and mean is computed by rows.}
 
 \item{threads}{optional parameter. Integer with numbers of threads to be used}
 }
 \value{
-Original hdf5 data file with results after apply function to 
+Original hdf5 data file with results after apply function to
 different datasets
 }
 \description{

@@ -21,13 +21,13 @@ bdImputeSNPs_hdf5(
 
 \item{dataset, }{character array indicating the input dataset to be imputed}
 
-\item{outgroup, }{optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group.}
+\item{outgroup, }{optional character array indicating group where the data set will be saved after imputation if \code{outgroup} is NULL, output dataset is stored in the same input group.}
 
-\item{outdataset, }{optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten.}
+\item{outdataset, }{optional character array indicating dataset to store the resulting data after imputation if \code{outdataset} is NULL, input dataset will be overwritten.}
 
 \item{bycols, }{boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows}
 
-\item{overwrite, }{optional boolean if true, previous results in same location 
+\item{overwrite, }{optional boolean if true, previous results in same location
 inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
 }
 \value{

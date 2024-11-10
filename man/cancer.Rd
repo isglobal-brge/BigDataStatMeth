@@ -7,7 +7,7 @@
 \format{
 factor level with three levels
 \describe{
-  \item{cancer}{factor with cancer type}
+\item{cancer}{factor with cancer type}
 }
 }
 \usage{

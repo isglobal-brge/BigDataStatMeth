@@ -23,15 +23,14 @@
 //' The matrix rank is equal to the number of singular values different from the 
 //' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
 //' can be changed to an approximation of 0.
-//' @param method (optional, defalut = "auto") possible values are: "auto", 
+//' @param method optional, defalut is "auto" possible values are: "auto", 
 //' "blocks", "full":
-//' 
 //'     * `"auto"`:
 //'       The option method = "auto" chooses the "full" or 
 //'       "blocks" method depending on the size of the matrix to be decomposed 
 //'     * `"blocks"`:
 //'       The SVD decomposition can be carried out by blocks, recommended option 
-//'       for large matrices that do not fit in memory }
+//'       for large matrices that do not fit in memory
 //'     * `"full"`:
 //'       The SVD decomposition is performed directly without partitioning the matrix
 //' 

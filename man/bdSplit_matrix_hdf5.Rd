@@ -23,9 +23,9 @@ bdSplit_matrix_hdf5(
 
 \item{dataset, }{character array indicating the input dataset to be splitted}
 
-\item{outgroup, }{optional character array indicating group where the data set will be saved after split process if `outgroup` is NULL, output dataset is stored in the same input group.}
+\item{outgroup, }{optional character array indicating group where the data set will be saved after split process if \code{outgroup} is NULL, output dataset is stored in the same input group.}
 
-\item{outdataset, }{optional character array indicating basename for the splitted dataset if `outdataset` is NULL, input dataset name is used adding .x, where x is the splitted block number.}
+\item{outdataset, }{optional character array indicating basename for the splitted dataset if \code{outdataset} is NULL, input dataset name is used adding .x, where x is the splitted block number.}
 
 \item{nblocks, }{integer number of blocks in which we want to split the data}
 

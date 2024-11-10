@@ -21,14 +21,14 @@ bdBind_hdf5_datasets(
 
 \item{datasets, }{character array indicating the input dataset to be imputed}
 
-\item{outgroup, }{character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group.}
+\item{outgroup, }{character array indicating group where the data set will be saved after imputation if \code{outgroup} is NULL, output dataset is stored in the same input group.}
 
 \item{outdataset, }{character array indicating the name for the new merged dataset}
 
 \item{func, }{character array function to be applyed
 \describe{
-    \item{bindRows}{merge datasets by rows}
-    \item{bindCols}{merge datasets by columns}
+\item{bindRows}{merge datasets by rows}
+\item{bindCols}{merge datasets by columns}
 }}
 
 \item{overwrite, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}

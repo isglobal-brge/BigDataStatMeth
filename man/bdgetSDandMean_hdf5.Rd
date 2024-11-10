@@ -29,17 +29,17 @@ bdgetSDandMean_hdf5(
 \item{byrows}{logical (default = FALSE) if TRUE, sd and mean are computed
 by columns, if byrows=TRUE then sd and mean are computed by Rows.}
 
-\item{wsize}{integer (default = 1000), file block size to read to 
+\item{wsize}{integer (default = 1000), file block size to read to
 perform calculus exitexit}
 
-\item{force, }{boolean if true, previous results in same location inside 
+\item{force, }{boolean if true, previous results in same location inside
 hdf5 will be overwritten.}
 }
 \value{
-hdf5 data file containing two new datasets, one for sd (if sd is 
+hdf5 data file containing two new datasets, one for sd (if sd is
 requested) and another for the mean (if mean is requested). Results are
-stored inside a folder mean_sd inside hdf5 data file with names: 
-sd.<dataset>, mean.<dataset> respectively
+stored inside a folder mean_sd inside hdf5 data file with names:
+sd.\<dataset\>, mean.\<dataset\> respectively
 }
 \description{
 This functions gets Standard Deviation (sd) or Mean by Rows or Columns and
@@ -55,8 +55,14 @@ Y <- matrix(rnorm(100), 10, 10)
 X <- matrix(rnorm(10), 10, 1)
     
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", force = TRUE)
-bdCreate_hdf5_matrix( "test.hdf5", X, "data", "X", force = TRUE)
+bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", 
+                        overwriteFile = TRUE, 
+                        overwriteDataset = FALSE, 
+                        unlimited = FALSE)
+bdCreate_hdf5_matrix( "test.hdf5", X, "data", "X", 
+                       overwriteFile = FALSE, 
+                       overwriteDataset = FALSE, 
+                       unlimited = FALSE)
 
 # Get mean and sd        
 bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
