@@ -14,6 +14,8 @@
 //' @param header (optional) either a logical value indicating whether the column names of x are to be written along with x, or a character vector of column names to be written. See the section on ‘CSV files’ for the meaning of col.names = NA.
 //' @param rownames (optional) either a logical value indicating whether the row names of x are to be written along with x, or a character vector of row names to be written.
 //' @param overwrite (optional) either a logical value indicating whether the output file can be overwritten or not.
+//' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
+//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 //'
 //' @return none value returned, data are stored in a dataset inside an hdf5 data file.
 //' @export

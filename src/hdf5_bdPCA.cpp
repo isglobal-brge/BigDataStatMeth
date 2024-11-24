@@ -22,7 +22,7 @@
 //' to get the matrix rank , but it can be changed to an approximation of 0.
 //' @param SVDgroup string. Name of the group where the SVD results are located. 
 //' If it has been previously calculated. This group must contain the d, u and v datasets.
-//' @param force logical value, if true, the SVD is forced to be computed although 
+//' @param overwrite logical value, if true, the SVD is forced to be computed although 
 //' the SVD exists. 
 //' @param method optional, defalut = "auto" possible values are: "auto", 
 //' "blocks", "full":

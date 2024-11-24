@@ -13,7 +13,7 @@ bdSVD_hdf5(
   bcenter = TRUE,
   bscale = TRUE,
   rankthreshold = 0,
-  force = NULL,
+  overwrite = NULL,
   method = NULL,
   threads = NULL
 )
@@ -42,6 +42,9 @@ scaling is done.}
 The matrix rank is equal to the number of singular values different from the
 threshold. By default, threshold = 0 is used to get the matrix rank , but it
 can be changed to an approximation of 0.}
+
+\item{overwrite}{logical value, if true, the PCA is forced to be computed although
+the PCA exists.}
 
 \item{method}{optional, defalut is "auto" possible values are: "auto",
 "blocks", "full":

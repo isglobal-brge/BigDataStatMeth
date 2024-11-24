@@ -23,6 +23,8 @@
 //' The matrix rank is equal to the number of singular values different from the 
 //' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
 //' can be changed to an approximation of 0.
+//' @param overwrite logical value, if true, the PCA is forced to be computed although 
+//' the PCA exists. 
 //' @param method optional, defalut is "auto" possible values are: "auto", 
 //' "blocks", "full":
 //'     * `"auto"`:
@@ -54,7 +56,7 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
                        Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
                        Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
                        Rcpp::Nullable<double> rankthreshold = 0.0,
-                       Rcpp::Nullable<bool> force = R_NilValue,
+                       Rcpp::Nullable<bool> overwrite = R_NilValue,
                        Rcpp::Nullable<Rcpp::CharacterVector> method = R_NilValue,
                        Rcpp::Nullable<int> threads = R_NilValue)
 {
@@ -80,8 +82,8 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
          if(bscale.isNull())  bscal = true ;
          else    bscal = Rcpp::as<bool>(bscale);
          
-         if(force.isNull())  bforce = false ;
-         else    bforce = Rcpp::as<bool>(force);
+         if(overwrite.isNull())  bforce = false ;
+         else    bforce = Rcpp::as<bool>(overwrite);
          
          if(group.isNull())  strgroup = "" ;
          else    strgroup = Rcpp::as<std::string>(group);

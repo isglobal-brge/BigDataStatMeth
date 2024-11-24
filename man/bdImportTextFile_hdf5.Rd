@@ -33,6 +33,10 @@ bdImportTextFile_hdf5(
 \item{rownames}{(optional) either a logical value indicating whether the row names of x are to be written along with x, or a character vector of row names to be written.}
 
 \item{overwrite}{(optional) either a logical value indicating whether the output file can be overwritten or not.}
+
+\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation}
+
+\item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
 }
 \value{
 none value returned, data are stored in a dataset inside an hdf5 data file.

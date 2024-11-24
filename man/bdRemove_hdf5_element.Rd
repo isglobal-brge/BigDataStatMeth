@@ -10,7 +10,7 @@ bdRemove_hdf5_element(filename, elements)
 \item{filename, }{character array indicating the name of the file to create}
 
 \item{element}{string vector with one or multiple elements to be removed,
-each element in the string vectur must be a complete route to the element to be removed.}
+each elements in the string vectur must be a complete route to the element to be removed.}
 }
 \value{
 none

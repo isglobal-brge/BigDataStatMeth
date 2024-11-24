@@ -46,6 +46,9 @@ to get the matrix rank , but it can be changed to an approximation of 0.}
 \item{SVDgroup}{string. Name of the group where the SVD results are located.
 If it has been previously calculated. This group must contain the d, u and v datasets.}
 
+\item{overwrite}{logical value, if true, the SVD is forced to be computed although
+the SVD exists.}
+
 \item{method}{optional, defalut = "auto" possible values are: "auto",
 "blocks", "full":
 \itemize{
@@ -60,9 +63,6 @@ The PCA is performed directly without partitioning the matrix
 }}
 
 \item{threads}{integer number of threads used to run PCA}
-
-\item{force}{logical value, if true, the SVD is forced to be computed although
-the SVD exists.}
 }
 \value{
 original file with results in folder PCA/\<datasetname\>

@@ -16,7 +16,7 @@ bdCrossprod_hdf5(
   threads = NULL,
   outgroup = NULL,
   outdataset = NULL,
-  force = NULL
+  overwrite = NULL
 )
 }
 \arguments{
@@ -38,7 +38,12 @@ bdCrossprod_hdf5(
 
 \item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
 
-\item{outgroup}{(optional) group name to store results from Crossprod inside hdf5 data file}
+\item{outgroup}{(optional) group name to store Crossprod results inside hdf5 data file}
+
+\item{outdataset}{(optional) dataset name to store Crossprod results inside hdf5 data file}
+
+\item{overwrite, }{boolean if true, previous results in same location inside
+hdf5 will be overwritten.}
 }
 \value{
 no value
@@ -70,7 +75,7 @@ This function performs the crossprod from a matrix inside and hdf5 data file
     
     bdCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
                        A = "datasetA", outgroup = "results", 
-                       outdataset = "res", force = TRUE ) # 
+                       outdataset = "res", overwrite = TRUE ) # 
                        
     # Check results
     resr <- tcrossprod(a)
@@ -80,7 +85,7 @@ This function performs the crossprod from a matrix inside and hdf5 data file
     bdCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
                        A = "datasetA", outgroup = "results", 
                        outdataset = "res", block_size = 1024, 
-                       force = TRUE ) # 
+                       overwrite = TRUE ) # 
     
     # Check results
     resr <- tcrossprod(a)

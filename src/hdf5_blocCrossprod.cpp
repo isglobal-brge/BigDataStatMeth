@@ -16,7 +16,10 @@
 //' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
 //' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 //' @param mixblock_size (optional) only for debug pourpose
-//' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
+//' @param outgroup (optional) group name to store Crossprod results inside hdf5 data file
+//' @param outdataset (optional) dataset name to store Crossprod results inside hdf5 data file
+//' @param overwrite, boolean if true, previous results in same location inside 
+//' hdf5 will be overwritten.
 //' @return no value
 //' @examples
 //'   
@@ -42,7 +45,7 @@
 //'     
 //'     bdCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
 //'                        A = "datasetA", outgroup = "results", 
-//'                        outdataset = "res", force = TRUE ) # 
+//'                        outdataset = "res", overwrite = TRUE ) # 
 //'                        
 //'     # Check results
 //'     resr <- tcrossprod(a)
@@ -52,7 +55,7 @@
 //'     bdCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
 //'                        A = "datasetA", outgroup = "results", 
 //'                        outdataset = "res", block_size = 1024, 
-//'                        force = TRUE ) # 
+//'                        overwrite = TRUE ) # 
 //'     
 //'     # Check results
 //'     resr <- tcrossprod(a)
@@ -78,7 +81,7 @@ void bdCrossprod_hdf5( std::string filename,
                        Rcpp::Nullable<int> threads = R_NilValue,
                        Rcpp::Nullable<std::string> outgroup = R_NilValue,
                        Rcpp::Nullable<std::string> outdataset = R_NilValue,
-                       Rcpp::Nullable<bool> force = R_NilValue )                                
+                       Rcpp::Nullable<bool> overwrite = R_NilValue )                                
 {
     
     int iblock_size,
@@ -109,8 +112,8 @@ void bdCrossprod_hdf5( std::string filename,
         if (paral.isNull()) { bparal = false; } 
         else { bparal = Rcpp::as<bool> (paral); }
         
-        if (force.isNull()) { bforce = false; } 
-        else { bforce = Rcpp::as<bool> (force); }
+        if (overwrite.isNull()) { bforce = false; } 
+        else { bforce = Rcpp::as<bool> (overwrite); }
         
         if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
         else { strdatasetOut = "CrossProd_" + A + "_x_" + matB; }

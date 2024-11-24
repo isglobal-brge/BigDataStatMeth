@@ -165,6 +165,8 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #' The matrix rank is equal to the number of singular values different from the 
 #' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
 #' can be changed to an approximation of 0.
+#' @param overwrite logical value, if true, the PCA is forced to be computed although 
+#' the PCA exists. 
 #' @param method optional, defalut is "auto" possible values are: "auto", 
 #' "blocks", "full":
 #'     * `"auto"`:
@@ -190,8 +192,8 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #'     singular values, nxn diagonal matrix (non-negative real values) 
 #' 
 #' @export
-bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force = NULL, method = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, rankthreshold, force, method, threads)
+bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite = NULL, method = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, rankthreshold, overwrite, method, threads)
 }
 
 #' Solve matrix equations
@@ -335,7 +337,7 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #' to get the matrix rank , but it can be changed to an approximation of 0.
 #' @param SVDgroup string. Name of the group where the SVD results are located. 
 #' If it has been previously calculated. This group must contain the d, u and v datasets.
-#' @param force logical value, if true, the SVD is forced to be computed although 
+#' @param overwrite logical value, if true, the SVD is forced to be computed although 
 #' the SVD exists. 
 #' @param method optional, defalut = "auto" possible values are: "auto", 
 #' "blocks", "full":
@@ -390,7 +392,10 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
 #' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 #' @param mixblock_size (optional) only for debug pourpose
-#' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
+#' @param outgroup (optional) group name to store Crossprod results inside hdf5 data file
+#' @param outdataset (optional) dataset name to store Crossprod results inside hdf5 data file
+#' @param overwrite, boolean if true, previous results in same location inside 
+#' hdf5 will be overwritten.
 #' @return no value
 #' @examples
 #'   
@@ -416,7 +421,7 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #'     
 #'     bdCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
 #'                        A = "datasetA", outgroup = "results", 
-#'                        outdataset = "res", force = TRUE ) # 
+#'                        outdataset = "res", overwrite = TRUE ) # 
 #'                        
 #'     # Check results
 #'     resr <- tcrossprod(a)
@@ -426,7 +431,7 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #'     bdCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
 #'                        A = "datasetA", outgroup = "results", 
 #'                        outdataset = "res", block_size = 1024, 
-#'                        force = TRUE ) # 
+#'                        overwrite = TRUE ) # 
 #'     
 #'     # Check results
 #'     resr <- tcrossprod(a)
@@ -440,8 +445,8 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #'   
 #' 
 #' @export
-bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, force = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, force))
+bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
 #' Normalize dataset in hdf5 file
@@ -646,6 +651,8 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #' @param header (optional) either a logical value indicating whether the column names of x are to be written along with x, or a character vector of column names to be written. See the section on ‘CSV files’ for the meaning of col.names = NA.
 #' @param rownames (optional) either a logical value indicating whether the row names of x are to be written along with x, or a character vector of row names to be written.
 #' @param overwrite (optional) either a logical value indicating whether the output file can be overwritten or not.
+#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
+#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 #'
 #' @return none value returned, data are stored in a dataset inside an hdf5 data file.
 #' @export
@@ -833,7 +840,7 @@ bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NU
 #' 
 #' @param filename, character array indicating the name of the file to create
 #' @param element string vector with one or multiple elements to be removed, 
-#' each element in the string vectur must be a complete route to the element to be removed.
+#' each elements in the string vectur must be a complete route to the element to be removed.
 #' @return none
 #' @export
 #' 
