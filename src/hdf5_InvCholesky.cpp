@@ -17,8 +17,8 @@
 //' @param fullMatrix boolean, optional parameter, by default false. 
 //' If fullMatrix = true, in the hdf5 file the complete matrix is stored. 
 //' If false, only the lower triangular matrix is saved
-//' @param force, optional boolean if true, previous results in same location inside 
-//' hdf5 will be overwritten, by default force = false, data was not overwritten.
+//' @param overwrite, optional boolean if true, previous results in same location inside 
+//' hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
 //' @param threads optional parameter. Integer with numbers of threads to be used
 //' @param elementsBlock, optional integer defines de maximum number of elements 
 //' to read from hdf5 data file in each block. By default this value is set 
@@ -46,7 +46,7 @@
 //' # Get Inverse Cholesky
 //'        res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", 
 //'        dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", 
-//'        fullMatrix = FALSE, force = TRUE)
+//'        fullMatrix = FALSE, overwrite = TRUE)
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -54,7 +54,7 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
                          std::string  outdataset,
                          Rcpp::Nullable<std::string> outgroup = R_NilValue, 
                          Rcpp::Nullable<bool> fullMatrix = R_NilValue, 
-                         Rcpp::Nullable<bool> force = R_NilValue,
+                         Rcpp::Nullable<bool> overwrite = R_NilValue,
                          Rcpp::Nullable<int> threads = 2,
                          Rcpp::Nullable<long> elementsBlock = 1000000)
 {

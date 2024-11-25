@@ -12,7 +12,7 @@ bdgetSDandMean_hdf5(
   mean = NULL,
   byrows = NULL,
   wsize = NULL,
-  force = FALSE
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -32,7 +32,7 @@ by columns, if byrows=TRUE then sd and mean are computed by Rows.}
 \item{wsize}{integer (default = 1000), file block size to read to
 perform calculus exitexit}
 
-\item{force, }{boolean if true, previous results in same location inside
+\item{overwrite, }{boolean if true, previous results in same location inside
 hdf5 will be overwritten.}
 }
 \value{

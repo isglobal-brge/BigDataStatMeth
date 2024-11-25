@@ -12,7 +12,7 @@ bdapply_Function_hdf5(
   func,
   b_group = NULL,
   b_datasets = NULL,
-  force = FALSE,
+  overwrite = FALSE,
   transp_dataset = FALSE,
   transp_bdataset = FALSE,
   fullMatrix = FALSE,
@@ -57,8 +57,8 @@ functions like matrix multiplication}
 to be used when we need a second dataset in functions like matrix
 multiplication}
 
-\item{force, }{optional Boolean if true, previous results in same location
-inside hdf5 will be overwritten, by default force = false, data was not
+\item{overwrite, }{optional Boolean if true, previous results in same location
+inside hdf5 will be overwritten, by default overwrite = false, data was not
 overwritten.}
 
 \item{transp_dataset}{optional parameter. Boolean if true we use the

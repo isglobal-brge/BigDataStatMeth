@@ -33,7 +33,7 @@
 //' @param threads (optional) only if bparal = true, number of concurrent 
 //' threads in parallelization if threads is null then threads =  maximum 
 //' number of threads available
-//' @param force, boolean if true, previous results in same location inside 
+//' @param overwrite, boolean if true, previous results in same location inside 
 //' hdf5 will be overwritten.
 //' @return file with weighted dataset
 //' @examples
@@ -57,21 +57,21 @@
 //'                           vectorgroup = "data", vectordataset = "X", 
 //'                           outdataset = "ProdComputed", 
 //'                           func = "*",
-//'                           byrows = TRUE, force = TRUE)
+//'                           byrows = TRUE, overwrite = TRUE)
 //'    
 //'bdcomputeMatrixVector_hdf5("test.hdf5", 
 //'                           group = "data", dataset = "Y",
 //'                           vectorgroup = "data", vectordataset = "X", 
 //'                           outdataset = "SumComputed", 
 //'                           func = "-",
-//'                           byrows = TRUE, force = TRUE)
+//'                           byrows = TRUE, overwrite = TRUE)
 //'    
 //'bdcomputeMatrixVector_hdf5("test.hdf5", 
 //'                           group = "data", dataset = "Y",
 //'                           vectorgroup = "data", vectordataset = "X", 
 //'                           outdataset = "SubsComputed", 
 //'                           func = "-",
-//'                           byrows = FALSE, force = TRUE)
+//'                           byrows = FALSE, overwrite = TRUE)
 //' @export
 // [[Rcpp::export]]
  void bdcomputeMatrixVector_hdf5( std::string filename, std::string group, 
@@ -83,7 +83,7 @@
                                   Rcpp::Nullable<bool> byrows = R_NilValue,
                                   Rcpp::Nullable<bool> paral = R_NilValue,
                                   Rcpp::Nullable<int> threads = R_NilValue,
-                                  Rcpp::Nullable<int> force  = false)
+                                  Rcpp::Nullable<int> overwrite  = false)
  {
      
      bool bbyrows, bparal, bforce;
@@ -99,8 +99,8 @@
          if( byrows.isNull()) { bbyrows = false; } 
          else { bbyrows = Rcpp::as<bool> (byrows); }
          
-         if( force.isNull()) { bforce = true; } 
-         else { bforce = Rcpp::as<bool> (force); }
+         if( overwrite.isNull()) { bforce = true; } 
+         else { bforce = Rcpp::as<bool> (overwrite); }
          
          if( outgroup.isNull()) { strgroupout = group; } 
          else { strgroupout = Rcpp::as<std::string> (outgroup); }

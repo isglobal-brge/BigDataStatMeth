@@ -13,7 +13,7 @@ bdSplit_matrix_hdf5(
   nblocks = NULL,
   blocksize = NULL,
   bycols = TRUE,
-  force = FALSE
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -33,7 +33,7 @@ bdSplit_matrix_hdf5(
 
 \item{bycols, }{boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows}
 
-\item{force, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
+\item{overwrite, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
 }
 \value{
 Splitted datasets inside an hdf5 data file

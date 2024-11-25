@@ -17,7 +17,7 @@
 //' by columns, if byrows=TRUE then sd and mean are computed by Rows.
 //' @param wsize integer (default = 1000), file block size to read to 
 //' perform calculus exitexit
-//' @param force, boolean if true, previous results in same location inside 
+//' @param overwrite, boolean if true, previous results in same location inside 
 //' hdf5 will be overwritten.
 //' @return hdf5 data file containing two new datasets, one for sd (if sd is 
 //' requested) and another for the mean (if mean is requested). Results are
@@ -54,7 +54,7 @@ void bdgetSDandMean_hdf5( std::string filename,
                           Rcpp::Nullable<bool> mean  = R_NilValue,
                           Rcpp::Nullable<bool> byrows = R_NilValue,
                           Rcpp::Nullable<int> wsize  = R_NilValue, 
-                          Rcpp::Nullable<bool> force  = false)
+                          Rcpp::Nullable<bool> overwrite  = false)
 {
  
  // bool bsd, bmean, bforce, bbyrows;
@@ -77,8 +77,8 @@ void bdgetSDandMean_hdf5( std::string filename,
          if( byrows.isNull()) {   bbyrows = false;   } 
          else {   bbyrows = Rcpp::as<bool> (byrows);   }
          
-         if( force.isNull()) { bforce = false; } 
-         else { bforce = Rcpp::as<bool> (force);  }
+         if( overwrite.isNull()) { bforce = false; } 
+         else { bforce = Rcpp::as<bool> (overwrite);  }
          
          BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
          dsA->openDataset();

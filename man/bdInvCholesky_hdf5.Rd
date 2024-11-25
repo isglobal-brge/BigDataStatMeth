@@ -11,7 +11,7 @@ bdInvCholesky_hdf5(
   outdataset,
   outgroup = NULL,
   fullMatrix = NULL,
-  force = NULL,
+  overwrite = NULL,
   threads = 2L,
   elementsBlock = 1000000L
 )
@@ -32,8 +32,8 @@ store results if not provided then results are stored in the same group as origi
 If fullMatrix = true, in the hdf5 file the complete matrix is stored.
 If false, only the lower triangular matrix is saved}
 
-\item{force, }{optional boolean if true, previous results in same location inside
-hdf5 will be overwritten, by default force = false, data was not overwritten.}
+\item{overwrite, }{optional boolean if true, previous results in same location inside
+hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
 
 \item{threads}{optional parameter. Integer with numbers of threads to be used}
 
@@ -69,6 +69,6 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
 # Get Inverse Cholesky
        res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", 
        dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", 
-       fullMatrix = FALSE, force = TRUE)
+       fullMatrix = FALSE, overwrite = TRUE)
 
 }

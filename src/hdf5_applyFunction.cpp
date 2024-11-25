@@ -39,8 +39,8 @@
 //' @param b_datasets, optional Character array indicating the input datasets 
 //' to be used when we need a second dataset in functions like matrix 
 //' multiplication
-//' @param force, optional Boolean if true, previous results in same location 
-//' inside hdf5 will be overwritten, by default force = false, data was not 
+//' @param overwrite, optional Boolean if true, previous results in same location 
+//' inside hdf5 will be overwritten, by default overwrite = false, data was not 
 //' overwritten.
 //' @param transp_dataset optional parameter. Boolean if true we use the 
 //' transposed dataframe to perform calculus. By default transp_dataset = false, 
@@ -68,7 +68,7 @@ void bdapply_Function_hdf5( std::string filename,
                             std::string func, 
                             Rcpp::Nullable<std::string> b_group = R_NilValue, 
                             Rcpp::Nullable<Rcpp::StringVector> b_datasets = R_NilValue,
-                            Rcpp::Nullable<bool> force = false,
+                            Rcpp::Nullable<bool> overwrite = false,
                             Rcpp::Nullable<bool> transp_dataset = false,
                             Rcpp::Nullable<bool> transp_bdataset = false,
                             Rcpp::Nullable<bool> fullMatrix = false,
@@ -93,8 +93,8 @@ void bdapply_Function_hdf5( std::string filename,
         std::vector<hsize_t> stride = {1, 1},
                              block = {1, 1};
         
-        if(force.isNull()) { bforce = false; } 
-        else {   bforce = Rcpp::as<bool>(force); }
+        if(overwrite.isNull()) { bforce = false; } 
+        else {   bforce = Rcpp::as<bool>(overwrite); }
         
         if(transp_dataset.isNull()) { btransdataA = false; } 
         else {   btransdataA = Rcpp::as<bool>(transp_dataset); }

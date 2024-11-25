@@ -13,14 +13,14 @@
 //' @param nblocks, integer number of blocks in which we want to split the data
 //' @param blocksize, integer, number of elements in each block
 //' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
-//' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
+//' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
 //' @return Splitted datasets inside an hdf5 data file
 //' @export
 // [[Rcpp::export]]
 void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string dataset, 
                           Rcpp::Nullable<std::string> outgroup = R_NilValue, Rcpp::Nullable<std::string> outdataset = R_NilValue, 
                           Rcpp::Nullable<int> nblocks = R_NilValue,  Rcpp::Nullable<int> blocksize = R_NilValue,
-                          Rcpp::Nullable<bool> bycols = true, Rcpp::Nullable<bool> force = false  )
+                          Rcpp::Nullable<bool> bycols = true, Rcpp::Nullable<bool> overwrite = false  )
 {
     
     // H5File* file = nullptr;
@@ -40,8 +40,8 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         if(bycols.isNull()) { bcols = true ;
         } else {   bcols = Rcpp::as<bool>(bycols);}
         
-        if(force.isNull()) { bforce = false ;
-        } else {   bforce = Rcpp::as<bool>(force);}
+        if(overwrite.isNull()) { bforce = false ;
+        } else {   bforce = Rcpp::as<bool>(overwrite);}
         
         if(outgroup.isNull()) {  stroutgroup = group ;
         } else {   stroutgroup = Rcpp::as<std::string>(outgroup);}

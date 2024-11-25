@@ -65,8 +65,8 @@ bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NUL
 #' @param fullMatrix boolean, optional parameter, by default false. 
 #' If fullMatrix = true, in the hdf5 file the complete matrix is stored. 
 #' If false, only the lower triangular matrix is saved
-#' @param force, optional boolean if true, previous results in same location inside 
-#' hdf5 will be overwritten, by default force = false, data was not overwritten.
+#' @param overwrite, optional boolean if true, previous results in same location inside 
+#' hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
 #' @param threads optional parameter. Integer with numbers of threads to be used
 #' @param elementsBlock, optional integer defines de maximum number of elements 
 #' to read from hdf5 data file in each block. By default this value is set 
@@ -94,11 +94,11 @@ bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NUL
 #' # Get Inverse Cholesky
 #'        res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", 
 #'        dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", 
-#'        fullMatrix = FALSE, force = TRUE)
+#'        fullMatrix = FALSE, overwrite = TRUE)
 #' 
 #' @export
-bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, force = NULL, threads = 2L, elementsBlock = 1000000L) {
-    invisible(.Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, force, threads, elementsBlock))
+bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
+    invisible(.Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock))
 }
 
 #' QR Decomposition 
@@ -313,8 +313,8 @@ bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup 
 #' @param b_datasets, optional Character array indicating the input datasets 
 #' to be used when we need a second dataset in functions like matrix 
 #' multiplication
-#' @param force, optional Boolean if true, previous results in same location 
-#' inside hdf5 will be overwritten, by default force = false, data was not 
+#' @param overwrite, optional Boolean if true, previous results in same location 
+#' inside hdf5 will be overwritten, by default overwrite = false, data was not 
 #' overwritten.
 #' @param transp_dataset optional parameter. Boolean if true we use the 
 #' transposed dataframe to perform calculus. By default transp_dataset = false, 
@@ -334,8 +334,8 @@ bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup 
 #' @return Original hdf5 data file with results after apply function to 
 #' different datasets
 #' @export
-bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, force = FALSE, transp_dataset = FALSE, transp_bdataset = FALSE, fullMatrix = FALSE, byrows = FALSE, threads = 2L) {
-    invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, force, transp_dataset, transp_bdataset, fullMatrix, byrows, threads))
+bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, overwrite = FALSE, transp_dataset = FALSE, transp_bdataset = FALSE, fullMatrix = FALSE, byrows = FALSE, threads = 2L) {
+    invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, overwrite, transp_dataset, transp_bdataset, fullMatrix, byrows, threads))
 }
 
 #' PCA Descomposition
@@ -486,14 +486,14 @@ bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_
 #' in Row Major format.
 #' @param wsize integer (default = 1000), file block size to read to 
 #' perform normalization
-#' @param force, boolean if true, previous results in same location inside 
+#' @param overwrite, boolean if true, previous results in same location inside 
 #' hdf5 will be overwritten.
 #' @return file with scaled, centered or scaled and centered dataset
 #' @examples
 #'   a = "See vignette"
 #' @export
-bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, byrows = NULL, wsize = NULL, force = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, byrows, wsize, force))
+bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, byrows = NULL, wsize = NULL, overwrite = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, byrows, wsize, overwrite))
 }
 
 #' Hdf5 datasets multiplication
@@ -905,7 +905,7 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' by columns, if byrows=TRUE then sd and mean are computed by Rows.
 #' @param wsize integer (default = 1000), file block size to read to 
 #' perform calculus exitexit
-#' @param force, boolean if true, previous results in same location inside 
+#' @param overwrite, boolean if true, previous results in same location inside 
 #' hdf5 will be overwritten.
 #' @return hdf5 data file containing two new datasets, one for sd (if sd is 
 #' requested) and another for the mean (if mean is requested). Results are
@@ -935,8 +935,8 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #'                     sd = TRUE, mean = TRUE,byrows = TRUE)
 #'         
 #' @export
-bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL, byrows = NULL, wsize = NULL, force = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdgetSDandMean_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, sd, mean, byrows, wsize, force))
+bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL, byrows = NULL, wsize = NULL, overwrite = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdgetSDandMean_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, sd, mean, byrows, wsize, overwrite))
 }
 
 #' Pseudo-Inverse
@@ -963,7 +963,7 @@ bdpseudoinv <- function(X, threads = NULL) {
 #' store results if not provided then results are stored in the same group as original dataset
 #' @param outdataset character array with output dataset name where we want to store results
 #' @param overwrite, optional boolean if true, previous results in same location inside 
-#' hdf5 will be overwritten, by default force = false, data was not overwritten.
+#' hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
 #' @param threads optional parameter. Integer with numbers of threads to be used
 #' @return Pseudo-inverse matrix of A
 #' @export
@@ -1132,11 +1132,11 @@ bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSor
 #' @param nblocks, integer number of blocks in which we want to split the data
 #' @param blocksize, integer, number of elements in each block
 #' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
-#' @param force, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
 #' @return Splitted datasets inside an hdf5 data file
 #' @export
-bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, nblocks = NULL, blocksize = NULL, bycols = TRUE, force = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, force))
+bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, nblocks = NULL, blocksize = NULL, bycols = TRUE, overwrite = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, overwrite))
 }
 
 #' Write Upper/Lower triangular matrix
@@ -1215,7 +1215,7 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #' @param threads (optional) only if bparal = true, number of concurrent 
 #' threads in parallelization if threads is null then threads =  maximum 
 #' number of threads available
-#' @param force, boolean if true, previous results in same location inside 
+#' @param overwrite, boolean if true, previous results in same location inside 
 #' hdf5 will be overwritten.
 #' @return file with weighted dataset
 #' @examples
@@ -1239,24 +1239,24 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'                           vectorgroup = "data", vectordataset = "X", 
 #'                           outdataset = "ProdComputed", 
 #'                           func = "*",
-#'                           byrows = TRUE, force = TRUE)
+#'                           byrows = TRUE, overwrite = TRUE)
 #'    
 #'bdcomputeMatrixVector_hdf5("test.hdf5", 
 #'                           group = "data", dataset = "Y",
 #'                           vectorgroup = "data", vectordataset = "X", 
 #'                           outdataset = "SumComputed", 
 #'                           func = "-",
-#'                           byrows = TRUE, force = TRUE)
+#'                           byrows = TRUE, overwrite = TRUE)
 #'    
 #'bdcomputeMatrixVector_hdf5("test.hdf5", 
 #'                           group = "data", dataset = "Y",
 #'                           vectorgroup = "data", vectordataset = "X", 
 #'                           outdataset = "SubsComputed", 
 #'                           func = "-",
-#'                           byrows = FALSE, force = TRUE)
+#'                           byrows = FALSE, overwrite = TRUE)
 #' @export
-bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup = NULL, byrows = NULL, paral = NULL, threads = NULL, force = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, paral, threads, force))
+bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup = NULL, byrows = NULL, paral = NULL, threads = NULL, overwrite = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, paral, threads, overwrite))
 }
 
 #' @title Matrix multiplication

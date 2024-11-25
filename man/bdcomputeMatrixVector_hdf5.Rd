@@ -16,7 +16,7 @@ bdcomputeMatrixVector_hdf5(
   byrows = NULL,
   paral = NULL,
   threads = NULL,
-  force = FALSE
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -55,7 +55,7 @@ computation else performs seria computation}
 threads in parallelization if threads is null then threads =  maximum
 number of threads available}
 
-\item{force, }{boolean if true, previous results in same location inside
+\item{overwrite, }{boolean if true, previous results in same location inside
 hdf5 will be overwritten.}
 }
 \value{
@@ -87,19 +87,19 @@ bdcomputeMatrixVector_hdf5("test.hdf5",
                           vectorgroup = "data", vectordataset = "X", 
                           outdataset = "ProdComputed", 
                           func = "*",
-                          byrows = TRUE, force = TRUE)
+                          byrows = TRUE, overwrite = TRUE)
    
 bdcomputeMatrixVector_hdf5("test.hdf5", 
                           group = "data", dataset = "Y",
                           vectorgroup = "data", vectordataset = "X", 
                           outdataset = "SumComputed", 
                           func = "-",
-                          byrows = TRUE, force = TRUE)
+                          byrows = TRUE, overwrite = TRUE)
    
 bdcomputeMatrixVector_hdf5("test.hdf5", 
                           group = "data", dataset = "Y",
                           vectorgroup = "data", vectordataset = "X", 
                           outdataset = "SubsComputed", 
                           func = "-",
-                          byrows = FALSE, force = TRUE)
+                          byrows = FALSE, overwrite = TRUE)
 }

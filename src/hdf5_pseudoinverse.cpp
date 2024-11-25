@@ -54,7 +54,7 @@ Rcpp::RObject bdpseudoinv( Rcpp::RObject X,
 //' store results if not provided then results are stored in the same group as original dataset
 //' @param outdataset character array with output dataset name where we want to store results
 //' @param overwrite, optional boolean if true, previous results in same location inside 
-//' hdf5 will be overwritten, by default force = false, data was not overwritten.
+//' hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
 //' @param threads optional parameter. Integer with numbers of threads to be used
 //' @return Pseudo-inverse matrix of A
 //' @export

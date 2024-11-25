@@ -20,7 +20,7 @@
 //' in Row Major format.
 //' @param wsize integer (default = 1000), file block size to read to 
 //' perform normalization
-//' @param force, boolean if true, previous results in same location inside 
+//' @param overwrite, boolean if true, previous results in same location inside 
 //' hdf5 will be overwritten.
 //' @return file with scaled, centered or scaled and centered dataset
 //' @examples
@@ -30,7 +30,7 @@
 void bdNormalize_hdf5( std::string filename, std::string group, std::string dataset,
                     Rcpp::Nullable<bool> bcenter = R_NilValue, Rcpp::Nullable<bool> bscale  = R_NilValue,
                     Rcpp::Nullable<bool> byrows = R_NilValue,
-                    Rcpp::Nullable<int> wsize  = R_NilValue, Rcpp::Nullable<bool> force  = false)
+                    Rcpp::Nullable<int> wsize  = R_NilValue, Rcpp::Nullable<bool> overwrite  = false)
 {
  
      // bool bc, bs, bforce, bbyrows, bgetTransposed, corrected = false;
@@ -55,8 +55,8 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
          if( byrows.isNull()) {  bbyrows = false;   }
          else {   bbyrows = Rcpp::as<bool> (byrows);   }
          
-         if( force.isNull()) {   bforce = false;   }
-         else {   bforce = Rcpp::as<bool> (force);   }
+         if( overwrite.isNull()) {   bforce = false;   }
+         else {   bforce = Rcpp::as<bool> (overwrite);   }
          
          BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
          dsA->openDataset();
