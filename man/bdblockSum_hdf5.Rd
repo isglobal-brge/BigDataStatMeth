@@ -15,9 +15,66 @@ bdblockSum_hdf5(
   threads = NULL,
   outgroup = NULL,
   outdataset = NULL,
-  force = NULL
+  overwrite = NULL
 )
+}
+\arguments{
+\item{filename}{string file name where dataset to normalize is stored}
+
+\item{group}{string with the group name where matrix is stored inside HDF5 file}
+
+\item{A}{string, datasetname with matrix to be multiplied}
+
+\item{B}{string, datasetname with matrix to be multiplied}
+
+\item{groupB, }{string, (optional) group name where dataset B is stored, if empty group folder is used}
+
+\item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if \code{block_size = 1} no block size is applied (size 1 = 1 element per block)}
+
+\item{paral, }{boolean (optional, default = FALSE) set paral = true to force parallel execution}
+
+\item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
+
+\item{outgroup}{(optional) string with group name where we want to store the result matrix, by default out group = "OUTGROUP"}
+
+\item{outdataset}{(optional) string with dataset name where we want to store the results}
+
+\item{overwrite}{(optional) either a logical value indicating whether the results must be overwritten or not.}
+}
+\value{
+a dataset inside the hdf5 data file with A+B
 }
 \description{
 Sum two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
+}
+\examples{
+library("BigDataStatMeth")
+
+N = 1500;  M = 1500
+
+set.seed(555)
+a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
+b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+
+bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+                     object = a, group = "groupA", 
+                     dataset = "datasetA",
+                     transp = FALSE,
+                     overwriteFile = TRUE, 
+                     overwriteDataset = FALSE, 
+                     unlimited = FALSE)
+                     
+bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+                     object = t(b), 
+                     group = "groupA", 
+                     dataset = "datasetB",
+                     transp = FALSE,
+                     overwriteFile = FALSE, 
+                     overwriteDataset = TRUE, 
+                     unlimited = FALSE)
+                     
+# Multiply two matrix
+bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
+bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE )  
+
 }

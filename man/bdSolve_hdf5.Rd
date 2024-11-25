@@ -16,12 +16,24 @@ bdSolve_hdf5(
 )
 }
 \arguments{
-\item{A}{numerical matrix.}
+\item{filename}{string file name where dataset to normalize is stored}
 
-\item{B}{numerical matrix.}
+\item{groupA}{string with the group name where matrix A is stored inside HDF5 file}
+
+\item{datasetA}{datasetname with matrix to be solved (A)}
+
+\item{groupB}{string with the group name where matrix B is stored inside HDF5 file}
+
+\item{datasetB}{a double vector (B).}
+
+\item{outgroup}{(optional) string with group name where we want to store the result matrix}
+
+\item{outdataset}{(optional) string with dataset name where we want to store the results}
+
+\item{overwrite}{(optional) either a logical value indicating whether the results must be overwritten or not.}
 }
 \value{
-X numerical matrix.
+void
 }
 \description{
 This function solve matrix equations
@@ -32,18 +44,32 @@ where A is an N-by-N matrix and X and B are N-by-NRHS matrices.
 
 library(BigDataStatMeth)
 
-n <- 500
-m <- 500
+N = 1800
+M = 1800
 
-# R Object
+set.seed(555)
+    Y <- matrix(rnorm(N*M), N, M)
+    X <- matrix(rnorm(N), N, 1)
+    Ycp <- crossprod(Y)
+    
+# On-memory execution
+resm <- bdSolve(Ycp, X)
+resr <- solve(Ycp, X)
+        
+all.equal( resm, resr)
+        
+bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+                     object = Ycp, group = "data", dataset = "A",
+                     transp = FALSE,
+                     overwriteFile = TRUE, overwriteDataset = TRUE, 
+                     unlimited = FALSE)
+            
+bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+                     object = X,  group = "data",  dataset = "B",
+                     transp = FALSE,
+                     overwriteFile = FALSE, overwriteDataset = TRUE, 
+                     unlimited = FALSE)
+            
+bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", datasetA = "A", groupB = "data", datasetB = "B", outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
 
-A <- matrix(runif(n*m), nrow = n, ncol = m)
-B <- matrix(runif(n), nrow = n)
-AS <- A\%*\%t(A)
-      
-X <- bdSolve(A, B)
-XR <- solve(A,B)
-      
-all.equal(X, XR, check.attributes=FALSE)
-  
 }

@@ -78,44 +78,53 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
 }
 
 
-
-/********************+
- * 
- * ESTIC AQUÍ !!! 
- * 
- * HE DE PROGRAMAR EL CÀLCUL UTILITZANT FITXERS HDF5!!!!!
- * FALTA TESTEJAR LA SOLUCIÓ EN MEMÒRIA
- * 
- * ******************/
-
-
 //' Solve matrix equations
 //' 
 //' This function solve matrix equations 
 //'  \code{A * X = B } 
 //' where A is an N-by-N matrix and X and B are N-by-NRHS matrices.
 //' 
-//' @param A numerical matrix. 
-//' @param B numerical matrix.
-//' @return X numerical matrix. 
+//' @param filename string file name where dataset to normalize is stored
+//' @param groupA string with the group name where matrix A is stored inside HDF5 file
+//' @param datasetA datasetname with matrix to be solved (A)
+//' @param groupB string with the group name where matrix B is stored inside HDF5 file
+//' @param datasetB a double vector (B).
+//' @param outgroup (optional) string with group name where we want to store the result matrix
+//' @param outdataset (optional) string with dataset name where we want to store the results
+//' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+//' @return void
 //' @examples
 //' 
 //' library(BigDataStatMeth)
 //' 
-//' n <- 500
-//' m <- 500
+//' N = 1800
+//' M = 1800
 //' 
-//' # R Object
+//' set.seed(555)
+//'     Y <- matrix(rnorm(N*M), N, M)
+//'     X <- matrix(rnorm(N), N, 1)
+//'     Ycp <- crossprod(Y)
+//'     
+//' # On-memory execution
+//' resm <- bdSolve(Ycp, X)
+//' resr <- solve(Ycp, X)
+//'         
+//' all.equal( resm, resr)
+//'         
+//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+//'                      object = Ycp, group = "data", dataset = "A",
+//'                      transp = FALSE,
+//'                      overwriteFile = TRUE, overwriteDataset = TRUE, 
+//'                      unlimited = FALSE)
+//'             
+//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+//'                      object = X,  group = "data",  dataset = "B",
+//'                      transp = FALSE,
+//'                      overwriteFile = FALSE, overwriteDataset = TRUE, 
+//'                      unlimited = FALSE)
+//'             
+//' bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", datasetA = "A", groupB = "data", datasetB = "B", outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
 //' 
-//' A <- matrix(runif(n*m), nrow = n, ncol = m)
-//' B <- matrix(runif(n), nrow = n)
-//' AS <- A%*%t(A)
-//'       
-//' X <- bdSolve(A, B)
-//' XR <- solve(A,B)
-//'       
-//' all.equal(X, XR, check.attributes=FALSE)
-//'   
 //' @export
 // [[Rcpp::export]]
 void bdSolve_hdf5(std::string filename, std::string groupA, std::string datasetA,

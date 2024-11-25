@@ -234,27 +234,47 @@ bdSolve <- function(A, B) {
 #'  \code{A * X = B } 
 #' where A is an N-by-N matrix and X and B are N-by-NRHS matrices.
 #' 
-#' @param A numerical matrix. 
-#' @param B numerical matrix.
-#' @return X numerical matrix. 
+#' @param filename string file name where dataset to normalize is stored
+#' @param groupA string with the group name where matrix A is stored inside HDF5 file
+#' @param datasetA datasetname with matrix to be solved (A)
+#' @param groupB string with the group name where matrix B is stored inside HDF5 file
+#' @param datasetB a double vector (B).
+#' @param outgroup (optional) string with group name where we want to store the result matrix
+#' @param outdataset (optional) string with dataset name where we want to store the results
+#' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+#' @return void
 #' @examples
 #' 
 #' library(BigDataStatMeth)
 #' 
-#' n <- 500
-#' m <- 500
+#' N = 1800
+#' M = 1800
 #' 
-#' # R Object
+#' set.seed(555)
+#'     Y <- matrix(rnorm(N*M), N, M)
+#'     X <- matrix(rnorm(N), N, 1)
+#'     Ycp <- crossprod(Y)
+#'     
+#' # On-memory execution
+#' resm <- bdSolve(Ycp, X)
+#' resr <- solve(Ycp, X)
+#'         
+#' all.equal( resm, resr)
+#'         
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                      object = Ycp, group = "data", dataset = "A",
+#'                      transp = FALSE,
+#'                      overwriteFile = TRUE, overwriteDataset = TRUE, 
+#'                      unlimited = FALSE)
+#'             
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                      object = X,  group = "data",  dataset = "B",
+#'                      transp = FALSE,
+#'                      overwriteFile = FALSE, overwriteDataset = TRUE, 
+#'                      unlimited = FALSE)
+#'             
+#' bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", datasetA = "A", groupB = "data", datasetB = "B", outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
 #' 
-#' A <- matrix(runif(n*m), nrow = n, ncol = m)
-#' B <- matrix(runif(n), nrow = n)
-#' AS <- A%*%t(A)
-#'       
-#' X <- bdSolve(A, B)
-#' XR <- solve(A,B)
-#'       
-#' all.equal(X, XR, check.attributes=FALSE)
-#'   
 #' @export
 bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
     invisible(.Call('_BigDataStatMeth_bdSolve_hdf5', PACKAGE = 'BigDataStatMeth', filename, groupA, datasetA, groupB, datasetB, outgroup, outdataset, overwrite))
@@ -480,9 +500,49 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #'
 #' Multiplies two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
 #' 
+#' @param filename string file name where dataset to normalize is stored
+#' @param group string with the group name where matrix is stored inside HDF5 file
+#' @param A string, datasetname with matrix to be multiplied
+#' @param B string, datasetname with matrix to be multiplied
+#' @param groupB, string, (optional) group name where dataset B is stored, if empty group folder is used
+#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
+#' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
+#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+#' @param outgroup (optional) string with group name where we want to store the result matrix
+#' @param outdataset (optional) string with dataset name where we want to store the results
+#' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+#' @return a dataset inside the hdf5 data file with A*B 
+#' @examples
+#' library("BigDataStatMeth")
+#' 
+#' N = 1500
+#' M = 1500
+#' set.seed(555)
+#' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
+#' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                      object = a, group = "groupA", 
+#'                      dataset = "datasetA",
+#'                      transp = FALSE,
+#'                      overwriteFile = TRUE, 
+#'                      overwriteDataset = FALSE, 
+#'                      unlimited = FALSE)
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                      object = t(b), 
+#'                      group = "groupA", 
+#'                      dataset = "datasetB",
+#'                      transp = FALSE,
+#'                      overwriteFile = FALSE, 
+#'                      overwriteDataset = TRUE, 
+#'                      unlimited = FALSE)
+#'                      
+#' # Multiply two matrix
+#' bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
+#' bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE ) 
+#' 
 #' @export
-bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, force = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdblockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, force))
+bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdblockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
 #' Block matrix multiplication
@@ -496,11 +556,14 @@ bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = 
 #' @param groupB string path inside hdf5 data file where matrix B is stored
 #' @param block_size integer, block size used to perform calculus
 #' @param mixblock_size integer
+#' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
+#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 #' @param outgroup string with the group name under the matrix will be stored
 #' @param outdataset string with the dataset name to store results
-#' @param force, boolean
+#' @param overwrite, boolean
 #' 
-#' @return list with filename and the group and dataset name under the results are stored
+#' @return a dataset inside the hdf5 data file with A+B 
+#' 
 #' @examples
 #' 
 #' library(Matrix)
@@ -535,26 +598,113 @@ bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = 
 #' }
 #' 
 #' @export
-bdblockmult_sparse_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, force = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdblockmult_sparse_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, force))
+bdblockmult_sparse_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdblockmult_sparse_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
 #' Hdf5 datasets substract
 #'
 #' Substracts two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
 #' 
+#' @param filename string file name where dataset to normalize is stored
+#' @param group string with the group name where matrix is stored inside HDF5 file
+#' @param A string, datasetname with matrix to be multiplied
+#' @param B string, datasetname with matrix to be multiplied
+#' @param groupB, string, (optional) group name where dataset B is stored, if empty group folder is used
+#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
+#' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
+#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+#' @param outgroup (optional) string with group name where we want to store the result matrix, by default out group = "OUTGROUP"
+#' @param outdataset (optional) string with dataset name where we want to store the results
+#' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+#' @return a dataset inside the hdf5 data file with A-B
+#' 
+#' @examples
+#' library("BigDataStatMeth")
+#' 
+#' N = 1500;  M = 1500
+#' 
+#' set.seed(555)
+#' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
+#' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+#' 
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                      object = a, group = "groupA", 
+#'                      dataset = "datasetA",
+#'                      transp = FALSE,
+#'                      overwriteFile = TRUE, 
+#'                      overwriteDataset = FALSE, 
+#'                      unlimited = FALSE)
+#'                      
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                      object = t(b), 
+#'                      group = "groupA", 
+#'                      dataset = "datasetB",
+#'                      transp = FALSE,
+#'                      overwriteFile = FALSE, 
+#'                      overwriteDataset = TRUE, 
+#'                      unlimited = FALSE)
+#'                      
+#' # Multiply two matrix
+#' bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
+#' bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE )  
+#' 
 #' @export
-bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, force = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdblockSubstract_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, force))
+bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdblockSubstract_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
 #' Hdf5 datasets sum
 #'
 #' Sum two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
 #' 
+#' @param filename string file name where dataset to normalize is stored
+#' @param group string with the group name where matrix is stored inside HDF5 file
+#' @param A string, datasetname with matrix to be multiplied
+#' @param B string, datasetname with matrix to be multiplied
+#' @param groupB, string, (optional) group name where dataset B is stored, if empty group folder is used
+#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
+#' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
+#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+#' @param outgroup (optional) string with group name where we want to store the result matrix, by default out group = "OUTGROUP"
+#' @param outdataset (optional) string with dataset name where we want to store the results
+#' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+#' 
+#' @return a dataset inside the hdf5 data file with A+B 
+#' 
+#' @examples
+#' library("BigDataStatMeth")
+#' 
+#' N = 1500;  M = 1500
+#' 
+#' set.seed(555)
+#' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
+#' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+#' 
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                      object = a, group = "groupA", 
+#'                      dataset = "datasetA",
+#'                      transp = FALSE,
+#'                      overwriteFile = TRUE, 
+#'                      overwriteDataset = FALSE, 
+#'                      unlimited = FALSE)
+#'                      
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                      object = t(b), 
+#'                      group = "groupA", 
+#'                      dataset = "datasetB",
+#'                      transp = FALSE,
+#'                      overwriteFile = FALSE, 
+#'                      overwriteDataset = TRUE, 
+#'                      unlimited = FALSE)
+#'                      
+#' # Multiply two matrix
+#' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
+#' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE )  
+#' 
 #' @export
-bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, force = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdblockSum_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, force))
+bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdblockSum_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
 #' tCrossprod with hdf5 matrix
@@ -571,6 +721,8 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 #' @param mixblock_size (optional) only for debug pourpose
 #' @param outgroup (optional) group name to store results from tCrossprod inside hdf5 data file
+#' @param outdataset (optional) string with dataset name where we want to store the results
+#' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
 #' @return no value
 #' @examples
 #'   
@@ -596,7 +748,7 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #'     
 #'     bdtCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
 #'                        A = "datasetA", outgroup = "results", 
-#'                        outdataset = "res", force = TRUE ) # 
+#'                        outdataset = "res", overwrite = TRUE ) # 
 #'                        
 #'     # Check results
 #'     resr <- tcrossprod(a)
@@ -606,7 +758,7 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #'     bdtCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
 #'                        A = "datasetA", outgroup = "results", 
 #'                        outdataset = "res", block_size = 1024, 
-#'                        force = TRUE ) # 
+#'                        overwrite = TRUE ) # 
 #'     
 #'     # Check results
 #'     resr <- tcrossprod(a)
@@ -620,8 +772,8 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #'   
 #' 
 #' @export
-bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, force = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, force))
+bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
 #' Gets all dataset names inside a group
@@ -792,6 +944,8 @@ bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL
 #' Compute the pseudo-inverse of a singular matrix
 #' 
 #' @param X Singular matrix (m x n)
+#' @param threads (optional) only if bparal = true, number of concurrent 
+#' threads in parallelization if threads is null then threads =  maximum number of threads available
 #' @return Pseudo-inverse matrix of A
 #' @export
 bdpseudoinv <- function(X, threads = NULL) {
@@ -1240,6 +1394,8 @@ bdCrossprod <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral
 #' 
 #' @param A numerical matrix
 #' @param B optional, numerical matrix
+#' @param transposed optional parameter. Boolean if true we use the 
+#' transposed dataframe to perform calculus. By default transposed = false. 
 #' @param block_size (optional, defalut = NULL) block size to make matrix 
 #' multiplication, if `block_size = 1` no block size is applied 
 #' (size 1 = 1 element per block) if `block_size = NULL` (default) optimum 

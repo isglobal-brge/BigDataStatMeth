@@ -16,7 +16,7 @@ bdblockmult_sparse_hdf5(
   threads = NULL,
   outgroup = NULL,
   outdataset = NULL,
-  force = NULL
+  overwrite = NULL
 )
 }
 \arguments{
@@ -34,14 +34,18 @@ bdblockmult_sparse_hdf5(
 
 \item{mixblock_size}{integer}
 
+\item{paral, }{boolean (optional, default = FALSE) set paral = true to force parallel execution}
+
+\item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
+
 \item{outgroup}{string with the group name under the matrix will be stored}
 
 \item{outdataset}{string with the dataset name to store results}
 
-\item{force, }{boolean}
+\item{overwrite, }{boolean}
 }
 \value{
-list with filename and the group and dataset name under the results are stored
+a dataset inside the hdf5 data file with A+B
 }
 \description{
 This function performs a block matrix-matrix multiplication with numeric matrix

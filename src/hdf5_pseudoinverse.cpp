@@ -10,6 +10,8 @@
 //' Compute the pseudo-inverse of a singular matrix
 //' 
 //' @param X Singular matrix (m x n)
+//' @param threads (optional) only if bparal = true, number of concurrent 
+//' threads in parallelization if threads is null then threads =  maximum number of threads available
 //' @return Pseudo-inverse matrix of A
 //' @export
 // [[Rcpp::export]]

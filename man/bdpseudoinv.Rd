@@ -8,6 +8,9 @@ bdpseudoinv(X, threads = NULL)
 }
 \arguments{
 \item{X}{Singular matrix (m x n)}
+
+\item{threads}{(optional) only if bparal = true, number of concurrent
+threads in parallelization if threads is null then threads =  maximum number of threads available}
 }
 \value{
 Pseudo-inverse matrix of A

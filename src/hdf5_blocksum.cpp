@@ -3,13 +3,53 @@
 #include "Utilities/Utilities.hpp"
 
 
-/**
- *  // // [[Rcpp::export(.blockSum_hdf5)]]
- */
-
 //' Hdf5 datasets sum
 //'
 //' Sum two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
+//' 
+//' @param filename string file name where dataset to normalize is stored
+//' @param group string with the group name where matrix is stored inside HDF5 file
+//' @param A string, datasetname with matrix to be multiplied
+//' @param B string, datasetname with matrix to be multiplied
+//' @param groupB, string, (optional) group name where dataset B is stored, if empty group folder is used
+//' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
+//' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
+//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+//' @param outgroup (optional) string with group name where we want to store the result matrix, by default out group = "OUTGROUP"
+//' @param outdataset (optional) string with dataset name where we want to store the results
+//' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+//' 
+//' @return a dataset inside the hdf5 data file with A+B 
+//' 
+//' @examples
+//' library("BigDataStatMeth")
+//' 
+//' N = 1500;  M = 1500
+//' 
+//' set.seed(555)
+//' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
+//' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+//' 
+//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+//'                      object = a, group = "groupA", 
+//'                      dataset = "datasetA",
+//'                      transp = FALSE,
+//'                      overwriteFile = TRUE, 
+//'                      overwriteDataset = FALSE, 
+//'                      unlimited = FALSE)
+//'                      
+//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+//'                      object = t(b), 
+//'                      group = "groupA", 
+//'                      dataset = "datasetB",
+//'                      transp = FALSE,
+//'                      overwriteFile = FALSE, 
+//'                      overwriteDataset = TRUE, 
+//'                      unlimited = FALSE)
+//'                      
+//' # Multiply two matrix
+//' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
+//' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE )  
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -23,7 +63,7 @@ void bdblockSum_hdf5(std::string filename,
                    Rcpp::Nullable<int> threads = R_NilValue,
                    Rcpp::Nullable<std::string> outgroup = R_NilValue,
                    Rcpp::Nullable<std::string> outdataset = R_NilValue,
-                   Rcpp::Nullable<bool> force = R_NilValue)
+                   Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
     
     int iblock_size;
@@ -56,8 +96,8 @@ void bdblockSum_hdf5(std::string filename,
         if (paral.isNull()) { bparal = false; } 
         else { bparal = Rcpp::as<bool> (paral); }
         
-        if (force.isNull()) { bforce = false; } 
-        else { bforce = Rcpp::as<bool> (force); }
+        if (overwrite.isNull()) { bforce = false; } 
+        else { bforce = Rcpp::as<bool> (overwrite); }
         
         if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
         else { strdatasetOut =  A + "_+_" + B; }

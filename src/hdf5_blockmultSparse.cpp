@@ -13,11 +13,14 @@
 //' @param groupB string path inside hdf5 data file where matrix B is stored
 //' @param block_size integer, block size used to perform calculus
 //' @param mixblock_size integer
+//' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
+//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 //' @param outgroup string with the group name under the matrix will be stored
 //' @param outdataset string with the dataset name to store results
-//' @param force, boolean
+//' @param overwrite, boolean
 //' 
-//' @return list with filename and the group and dataset name under the results are stored
+//' @return a dataset inside the hdf5 data file with A+B 
+//' 
 //' @examples
 //' 
 //' library(Matrix)
@@ -62,7 +65,7 @@ void bdblockmult_sparse_hdf5( std::string filename, std::string group,
                           Rcpp::Nullable<int> threads = R_NilValue,
                           Rcpp::Nullable<std::string> outgroup = R_NilValue,
                           Rcpp::Nullable<std::string> outdataset = R_NilValue,
-                          Rcpp::Nullable<bool> force = R_NilValue )
+                          Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
      
     
@@ -98,8 +101,8 @@ void bdblockmult_sparse_hdf5( std::string filename, std::string group,
         if (paral.isNull()) { bparal = false; } 
         else { bparal = Rcpp::as<bool> (paral); }
         
-        if (force.isNull()) { bforce = false; } 
-        else { bforce = Rcpp::as<bool> (force); }
+        if (overwrite.isNull()) { bforce = false; } 
+        else { bforce = Rcpp::as<bool> (overwrite); }
         
         
         BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);

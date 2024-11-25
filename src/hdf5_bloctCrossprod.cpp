@@ -17,6 +17,8 @@
 //' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
 //' @param mixblock_size (optional) only for debug pourpose
 //' @param outgroup (optional) group name to store results from tCrossprod inside hdf5 data file
+//' @param outdataset (optional) string with dataset name where we want to store the results
+//' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
 //' @return no value
 //' @examples
 //'   
@@ -42,7 +44,7 @@
 //'     
 //'     bdtCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
 //'                        A = "datasetA", outgroup = "results", 
-//'                        outdataset = "res", force = TRUE ) # 
+//'                        outdataset = "res", overwrite = TRUE ) # 
 //'                        
 //'     # Check results
 //'     resr <- tcrossprod(a)
@@ -52,7 +54,7 @@
 //'     bdtCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
 //'                        A = "datasetA", outgroup = "results", 
 //'                        outdataset = "res", block_size = 1024, 
-//'                        force = TRUE ) # 
+//'                        overwrite = TRUE ) # 
 //'     
 //'     # Check results
 //'     resr <- tcrossprod(a)
@@ -78,7 +80,7 @@
                         Rcpp::Nullable<int> threads = R_NilValue,
                         Rcpp::Nullable<std::string> outgroup = R_NilValue,
                         Rcpp::Nullable<std::string> outdataset = R_NilValue,
-                        Rcpp::Nullable<bool> force = R_NilValue )                                
+                        Rcpp::Nullable<bool> overwrite = R_NilValue )                                
  {
      
      int iblock_size,
@@ -109,8 +111,8 @@
          if (paral.isNull()) { bparal = false; } 
          else { bparal = Rcpp::as<bool> (paral); }
          
-         if (force.isNull()) { bforce = false; } 
-         else { bforce = Rcpp::as<bool> (force); }
+         if (overwrite.isNull()) { bforce = false; } 
+         else { bforce = Rcpp::as<bool> (overwrite); }
          
          if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
          else { strdatasetOut = "tCrossProd_" + A + "_x_" + matB; }
