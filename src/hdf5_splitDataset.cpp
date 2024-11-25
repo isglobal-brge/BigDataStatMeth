@@ -3,24 +3,36 @@
 
 //' Split hdf5 dataset
 //'
-//' Split hdf5 dataset in small datasets by rows or columns and store splitted submatrices inside an hdf5 file.
+//' Split hdf5 dataset in small datasets by rows or columns and store splitted 
+//' submatrices inside an hdf5 file.
 //' 
-//' @param filename, character array indicating the name of the file where dataset to split is stored
-//' @param group, character array indicating the input group where the data set to be splitted is. 
+//' @param filename, character array indicating the name of the file where 
+//' dataset to split is stored
+//' @param group, character array indicating the input group where the data set 
+//' to be splitted is. 
 //' @param dataset, character array indicating the input dataset to be splitted
-//' @param outgroup, optional character array indicating group where the data set will be saved after split process if `outgroup` is NULL, output dataset is stored in the same input group. 
-//' @param outdataset, optional character array indicating basename for the splitted dataset if `outdataset` is NULL, input dataset name is used adding .x, where x is the splitted block number. 
+//' @param outgroup, optional character array indicating group where the data set 
+//' will be saved after split process if `outgroup` is NULL, output dataset is 
+//' stored in the same input group. 
+//' @param outdataset, optional character array indicating basename for the 
+//' splitted dataset if `outdataset` is NULL, input dataset name is used adding .x, 
+//' where x is the splitted block number. 
 //' @param nblocks, integer number of blocks in which we want to split the data
 //' @param blocksize, integer, number of elements in each block
-//' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
-//' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
+//' @param bycols, boolean by default = true, true indicates that the imputation 
+//' will be done by columns, otherwise, the imputation will be done by rows
+//' @param overwrite, boolean if true, previous results in same location inside 
+//' hdf5 will be overwritten.
 //' @return Splitted datasets inside an hdf5 data file
 //' @export
 // [[Rcpp::export]]
 void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string dataset, 
-                          Rcpp::Nullable<std::string> outgroup = R_NilValue, Rcpp::Nullable<std::string> outdataset = R_NilValue, 
-                          Rcpp::Nullable<int> nblocks = R_NilValue,  Rcpp::Nullable<int> blocksize = R_NilValue,
-                          Rcpp::Nullable<bool> bycols = true, Rcpp::Nullable<bool> overwrite = false  )
+                          Rcpp::Nullable<std::string> outgroup = R_NilValue, 
+                          Rcpp::Nullable<std::string> outdataset = R_NilValue, 
+                          Rcpp::Nullable<int> nblocks = R_NilValue,  
+                          Rcpp::Nullable<int> blocksize = R_NilValue,
+                          Rcpp::Nullable<bool> bycols = true, 
+                          Rcpp::Nullable<bool> overwrite = false  )
 {
     
     // H5File* file = nullptr;

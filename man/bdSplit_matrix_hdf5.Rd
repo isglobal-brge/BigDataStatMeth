@@ -17,27 +17,36 @@ bdSplit_matrix_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file where dataset to split is stored}
+\item{filename, }{character array indicating the name of the file where
+dataset to split is stored}
 
-\item{group, }{character array indicating the input group where the data set to be splitted is.}
+\item{group, }{character array indicating the input group where the data set
+to be splitted is.}
 
 \item{dataset, }{character array indicating the input dataset to be splitted}
 
-\item{outgroup, }{optional character array indicating group where the data set will be saved after split process if \code{outgroup} is NULL, output dataset is stored in the same input group.}
+\item{outgroup, }{optional character array indicating group where the data set
+will be saved after split process if \code{outgroup} is NULL, output dataset is
+stored in the same input group.}
 
-\item{outdataset, }{optional character array indicating basename for the splitted dataset if \code{outdataset} is NULL, input dataset name is used adding .x, where x is the splitted block number.}
+\item{outdataset, }{optional character array indicating basename for the
+splitted dataset if \code{outdataset} is NULL, input dataset name is used adding .x,
+where x is the splitted block number.}
 
 \item{nblocks, }{integer number of blocks in which we want to split the data}
 
 \item{blocksize, }{integer, number of elements in each block}
 
-\item{bycols, }{boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows}
+\item{bycols, }{boolean by default = true, true indicates that the imputation
+will be done by columns, otherwise, the imputation will be done by rows}
 
-\item{overwrite, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
+\item{overwrite, }{boolean if true, previous results in same location inside
+hdf5 will be overwritten.}
 }
 \value{
 Splitted datasets inside an hdf5 data file
 }
 \description{
-Split hdf5 dataset in small datasets by rows or columns and store splitted submatrices inside an hdf5 file.
+Split hdf5 dataset in small datasets by rows or columns and store splitted
+submatrices inside an hdf5 file.
 }

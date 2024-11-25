@@ -123,7 +123,9 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
 //'                      overwriteFile = FALSE, overwriteDataset = TRUE, 
 //'                      unlimited = FALSE)
 //'             
-//' bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", datasetA = "A", groupB = "data", datasetB = "B", outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
+//' bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", 
+//'     datasetA = "A", groupB = "data", datasetB = "B", 
+//'     outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
 //' 
 //' @export
 // [[Rcpp::export]]

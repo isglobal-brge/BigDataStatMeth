@@ -273,7 +273,9 @@ bdSolve <- function(A, B) {
 #'                      overwriteFile = FALSE, overwriteDataset = TRUE, 
 #'                      unlimited = FALSE)
 #'             
-#' bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", datasetA = "A", groupB = "data", datasetB = "B", outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
+#' bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", 
+#'     datasetA = "A", groupB = "data", datasetB = "B", 
+#'     outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
 #' 
 #' @export
 bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
@@ -515,11 +517,12 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' @examples
 #' library("BigDataStatMeth")
 #' 
-#' N = 1500
-#' M = 1500
+#' N = 1500; M = 1500
+#' 
 #' set.seed(555)
 #' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
 #' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+#' 
 #' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
 #'                      object = a, group = "groupA", 
 #'                      dataset = "datasetA",
@@ -527,6 +530,7 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #'                      overwriteFile = TRUE, 
 #'                      overwriteDataset = FALSE, 
 #'                      unlimited = FALSE)
+#'                      
 #' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
 #'                      object = t(b), 
 #'                      group = "groupA", 
@@ -537,8 +541,13 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #'                      unlimited = FALSE)
 #'                      
 #' # Multiply two matrix
-#' bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
-#' bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE ) 
+#' bdblockmult_hdf5(filename = "test_temp.hdf5", group = "groupA", 
+#'     A = "datasetA", B = "datasetB", outgroup = "results", 
+#'     outdataset = "res", overwrite = TRUE ) 
+#'     
+#' bdblockmult_hdf5(filename = "test_temp.hdf5", group = "groupA", 
+#'     A = "datasetA", B = "datasetB", outgroup = "results", 
+#'     outdataset = "res", block_size = 1024, overwrite = TRUE ) 
 #' 
 #' @export
 bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
@@ -646,8 +655,12 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, groupB = NULL, block_
 #'                      unlimited = FALSE)
 #'                      
 #' # Multiply two matrix
-#' bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
-#' bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE )  
+#' bdblockSubstract_hdf5(filename = "test_temp.hdf5", group = "groupA", 
+#'     A = "datasetA", B = "datasetB", outgroup = "results", 
+#'     outdataset = "res", overwrite = TRUE ) 
+#' bdblockSubstract_hdf5(filename = "test_temp.hdf5", group = "groupA", 
+#'     A = "datasetA", B = "datasetB", outgroup = "results", outdataset = "res", 
+#'     block_size = 1024, overwrite = TRUE )  
 #' 
 #' @export
 bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
@@ -699,8 +712,13 @@ bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_si
 #'                      unlimited = FALSE)
 #'                      
 #' # Multiply two matrix
-#' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
-#' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE )  
+#' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
+#'     A = "datasetA", B = "datasetB", outgroup = "results", 
+#'     outdataset = "res", overwrite = TRUE ) 
+#'     
+#' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
+#'     A = "datasetA", B = "datasetB", outgroup = "results", 
+#'     outdataset = "res", block_size = 1024, overwrite = TRUE )  
 #' 
 #' @export
 bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
@@ -993,7 +1011,7 @@ bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NU
 #' Remove group or dataset from  hdf5 file
 #' 
 #' @param filename, character array indicating the name of the file to create
-#' @param element string vector with one or multiple elements to be removed, 
+#' @param elements string vector with one or multiple elements to be removed, 
 #' each elements in the string vectur must be a complete route to the element to be removed.
 #' @return none
 #' @export
@@ -1122,17 +1140,26 @@ bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSor
 
 #' Split hdf5 dataset
 #'
-#' Split hdf5 dataset in small datasets by rows or columns and store splitted submatrices inside an hdf5 file.
+#' Split hdf5 dataset in small datasets by rows or columns and store splitted 
+#' submatrices inside an hdf5 file.
 #' 
-#' @param filename, character array indicating the name of the file where dataset to split is stored
-#' @param group, character array indicating the input group where the data set to be splitted is. 
+#' @param filename, character array indicating the name of the file where 
+#' dataset to split is stored
+#' @param group, character array indicating the input group where the data set 
+#' to be splitted is. 
 #' @param dataset, character array indicating the input dataset to be splitted
-#' @param outgroup, optional character array indicating group where the data set will be saved after split process if `outgroup` is NULL, output dataset is stored in the same input group. 
-#' @param outdataset, optional character array indicating basename for the splitted dataset if `outdataset` is NULL, input dataset name is used adding .x, where x is the splitted block number. 
+#' @param outgroup, optional character array indicating group where the data set 
+#' will be saved after split process if `outgroup` is NULL, output dataset is 
+#' stored in the same input group. 
+#' @param outdataset, optional character array indicating basename for the 
+#' splitted dataset if `outdataset` is NULL, input dataset name is used adding .x, 
+#' where x is the splitted block number. 
 #' @param nblocks, integer number of blocks in which we want to split the data
 #' @param blocksize, integer, number of elements in each block
-#' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
-#' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
+#' @param bycols, boolean by default = true, true indicates that the imputation 
+#' will be done by columns, otherwise, the imputation will be done by rows
+#' @param overwrite, boolean if true, previous results in same location inside 
+#' hdf5 will be overwritten.
 #' @return Splitted datasets inside an hdf5 data file
 #' @export
 bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, nblocks = NULL, blocksize = NULL, bycols = TRUE, overwrite = FALSE) {

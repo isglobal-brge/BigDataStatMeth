@@ -48,8 +48,13 @@
 //'                      unlimited = FALSE)
 //'                      
 //' # Multiply two matrix
-//' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
-//' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE )  
+//' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
+//'     A = "datasetA", B = "datasetB", outgroup = "results", 
+//'     outdataset = "res", overwrite = TRUE ) 
+//'     
+//' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
+//'     A = "datasetA", B = "datasetB", outgroup = "results", 
+//'     outdataset = "res", block_size = 1024, overwrite = TRUE )  
 //' 
 //' @export
 // [[Rcpp::export]]

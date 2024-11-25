@@ -20,11 +20,12 @@
 //' @examples
 //' library("BigDataStatMeth")
 //' 
-//' N = 1500
-//' M = 1500
+//' N = 1500; M = 1500
+//' 
 //' set.seed(555)
 //' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
 //' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+//' 
 //' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
 //'                      object = a, group = "groupA", 
 //'                      dataset = "datasetA",
@@ -32,6 +33,7 @@
 //'                      overwriteFile = TRUE, 
 //'                      overwriteDataset = FALSE, 
 //'                      unlimited = FALSE)
+//'                      
 //' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
 //'                      object = t(b), 
 //'                      group = "groupA", 
@@ -42,8 +44,13 @@
 //'                      unlimited = FALSE)
 //'                      
 //' # Multiply two matrix
-//' bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
-//' bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE ) 
+//' bdblockmult_hdf5(filename = "test_temp.hdf5", group = "groupA", 
+//'     A = "datasetA", B = "datasetB", outgroup = "results", 
+//'     outdataset = "res", overwrite = TRUE ) 
+//'     
+//' bdblockmult_hdf5(filename = "test_temp.hdf5", group = "groupA", 
+//'     A = "datasetA", B = "datasetB", outgroup = "results", 
+//'     outdataset = "res", block_size = 1024, overwrite = TRUE ) 
 //' 
 //' @export
 // [[Rcpp::export]]

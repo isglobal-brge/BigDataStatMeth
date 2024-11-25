@@ -70,6 +70,8 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
                      overwriteFile = FALSE, overwriteDataset = TRUE, 
                      unlimited = FALSE)
             
-bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", datasetA = "A", groupB = "data", datasetB = "B", outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
+bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", 
+    datasetA = "A", groupB = "data", datasetB = "B", 
+    outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
 
 }
