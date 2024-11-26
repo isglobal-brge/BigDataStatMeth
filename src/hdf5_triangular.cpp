@@ -43,6 +43,11 @@
 //' # Update Upper triangular matrix in hdf5
 //' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
 //'         group = "data", dataset = "Y", copytolower = FALSE, elementsBlock = 10)
+//'         
+//' # Remove file (used as example)
+//' if (file.exists("test_file.hdf5")) {
+//'     file.remove("test_file.hdf5")
+//' }
 //' 
 //' @export
 // [[Rcpp::export]]

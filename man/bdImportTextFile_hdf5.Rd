@@ -26,17 +26,27 @@ bdImportTextFile_hdf5(
 
 \item{outDataset}{dataset name to store the input file in hdf5}
 
-\item{sep}{(optional), by default = "\\t". The field separator string. Values within each row of x are separated by this string.}
+\item{sep}{(optional), by default = "\\t". The field separator string.
+Values within each row of x are separated by this string.}
 
-\item{header}{(optional) either a logical value indicating whether the column names of x are to be written along with x, or a character vector of column names to be written. See the section on ‘CSV files’ for the meaning of col.names = NA.}
+\item{header}{(optional) either a logical value indicating whether the
+column names of x are to be written along with x, or a character vector of
+column names to be written. See the section on ‘CSV files’ for the meaning
+of col.names = NA.}
 
-\item{rownames}{(optional) either a logical value indicating whether the row names of x are to be written along with x, or a character vector of row names to be written.}
+\item{rownames}{(optional) either a logical value indicating whether the
+row names of x are to be written along with x, or a character vector of
+row names to be written.}
 
-\item{overwrite}{(optional) either a logical value indicating whether the output file can be overwritten or not.}
+\item{overwrite}{(optional) either a logical value indicating whether the
+output file can be overwritten or not.}
 
-\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation}
+\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel
+computation else performs seria computation}
 
-\item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
+\item{threads}{(optional) only if bparal = true, number of concurrent
+threads in parallelization if threads is null then threads =  maximum
+number of threads available}
 }
 \value{
 none value returned, data are stored in a dataset inside an hdf5 data file.

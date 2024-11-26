@@ -22,16 +22,22 @@ Gry diagonal matrix from an existing dataset inside hdf5
 \examples{
 
 library(BigDataStatMeth)
-library(rhdf5)
 
 X <- matrix(rnorm(100), 10, 10)
 diag(X) <- 0.5
+
 # Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix("test_file2.hdf5", X, "data", "X", 
+bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
                        overwriteFile = TRUE, 
                        overwriteDataset = FALSE, 
                        unlimited = FALSE)
+                       
 # Update diagonal
 diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
+
+# Remove file (used as example)
+if (file.exists("test_file.hdf5")) {
+    file.remove("test_file.hdf5")
+}
 
 }

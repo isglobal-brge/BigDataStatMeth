@@ -247,8 +247,8 @@ bdSolve <- function(A, B) {
 #' 
 #' library(BigDataStatMeth)
 #' 
-#' N = 1800
-#' M = 1800
+#' N = 1800; M = 1800
+#' fn = "test_temp.hdf5"
 #' 
 #' set.seed(555)
 #'     Y <- matrix(rnorm(N*M), N, M)
@@ -261,21 +261,25 @@ bdSolve <- function(A, B) {
 #'         
 #' all.equal( resm, resr)
 #'         
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#' bdCreate_hdf5_matrix(filename = fn, 
 #'                      object = Ycp, group = "data", dataset = "A",
 #'                      transp = FALSE,
 #'                      overwriteFile = TRUE, overwriteDataset = TRUE, 
 #'                      unlimited = FALSE)
 #'             
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#' bdCreate_hdf5_matrix(filename = fn, 
 #'                      object = X,  group = "data",  dataset = "B",
 #'                      transp = FALSE,
 #'                      overwriteFile = FALSE, overwriteDataset = TRUE, 
 #'                      unlimited = FALSE)
 #'             
-#' bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", 
+#' bdSolve_hdf5( filename = fn, groupA = "data", 
 #'     datasetA = "A", groupB = "data", datasetB = "B", 
 #'     outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
+#'     
+#' if (file.exists(fn)) {
+#'     file.remove(fn)
+#' }
 #' 
 #' @export
 bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
@@ -817,12 +821,22 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #' @param outputfile file name and path to store imported data
 #' @param outGroup group name to store the dataset
 #' @param outDataset dataset name to store the input file in hdf5
-#' @param sep (optional), by default = "\\t". The field separator string. Values within each row of x are separated by this string.
-#' @param header (optional) either a logical value indicating whether the column names of x are to be written along with x, or a character vector of column names to be written. See the section on ‘CSV files’ for the meaning of col.names = NA.
-#' @param rownames (optional) either a logical value indicating whether the row names of x are to be written along with x, or a character vector of row names to be written.
-#' @param overwrite (optional) either a logical value indicating whether the output file can be overwritten or not.
-#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
-#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+#' @param sep (optional), by default = "\\t". The field separator string. 
+#' Values within each row of x are separated by this string.
+#' @param header (optional) either a logical value indicating whether the 
+#' column names of x are to be written along with x, or a character vector of 
+#' column names to be written. See the section on ‘CSV files’ for the meaning 
+#' of col.names = NA.
+#' @param rownames (optional) either a logical value indicating whether the 
+#' row names of x are to be written along with x, or a character vector of 
+#' row names to be written.
+#' @param overwrite (optional) either a logical value indicating whether the 
+#' output file can be overwritten or not.
+#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel 
+#' computation else performs seria computation
+#' @param threads (optional) only if bparal = true, number of concurrent 
+#' threads in parallelization if threads is null then threads =  maximum 
+#' number of threads available
 #'
 #' @return none value returned, data are stored in a dataset inside an hdf5 data file.
 #' @export
@@ -861,17 +875,23 @@ bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdata
 #' @examples
 #' 
 #' library(BigDataStatMeth)
-#' library(rhdf5)
 #' 
 #' X <- matrix(rnorm(100), 10, 10)
 #' diag(X) <- 0.5
+#' 
 #' # Create hdf5 data file with  data (Y)
-#' bdCreate_hdf5_matrix("test_file2.hdf5", X, "data", "X", 
+#' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
 #'                        overwriteFile = TRUE, 
 #'                        overwriteDataset = FALSE, 
 #'                        unlimited = FALSE)
+#'                        
 #' # Update diagonal
 #' diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
+#' 
+#' # Remove file (used as example)
+#' if (file.exists("test_file.hdf5")) {
+#'     file.remove("test_file.hdf5")
+#' }
 #' 
 #' @export
 bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
@@ -903,6 +923,11 @@ bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
 #' 
 #' # Update diagonal
 #' bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
+#' 
+#' # Remove file (used as example)
+#' if (file.exists("test_file.hdf5")) {
+#'     file.remove("test_file.hdf5")
+#' }
 #' 
 #' @export
 bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
@@ -951,6 +976,11 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' # Get mean and sd        
 #' bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
 #'                     sd = TRUE, mean = TRUE,byrows = TRUE)
+#'                     
+#' # Remove file (used as example)
+#' if (file.exists("test.hdf5")) {
+#'   file.remove("test.hdf5")
+#' }
 #'         
 #' @export
 bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL, byrows = NULL, wsize = NULL, overwrite = FALSE) {
@@ -1206,6 +1236,11 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' # Update Upper triangular matrix in hdf5
 #' bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
 #'         group = "data", dataset = "Y", copytolower = FALSE, elementsBlock = 10)
+#'         
+#' # Remove file (used as example)
+#' if (file.exists("test_file.hdf5")) {
+#'     file.remove("test_file.hdf5")
+#' }
 #' 
 #' @export
 bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copytolower = NULL, elementsBlock = 1000000L) {
@@ -1281,6 +1316,12 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'                           outdataset = "SubsComputed", 
 #'                           func = "-",
 #'                           byrows = FALSE, overwrite = TRUE)
+#'                           
+#' # Remove file (used as example)
+#' if (file.exists("test.hdf5")) {
+#'   file.remove("test.hdf5")
+#' }
+#' 
 #' @export
 bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup = NULL, byrows = NULL, paral = NULL, threads = NULL, overwrite = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, paral, threads, overwrite))

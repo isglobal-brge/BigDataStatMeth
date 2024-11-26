@@ -1,7 +1,7 @@
 Package: BigDataStatMeth
 Type: Package
 Title: Statistical Methods and Algorithms for Big Data
-Version: 0.61.00
+Version: 0.61.01
 Authors@R: 
     c(
         person( given = "Dolors", 
@@ -26,7 +26,7 @@ LinkingTo: Rcpp, RcppEigen, RcppParallel, beachmat, Rhdf5lib, RSpectra,
         BH
 Suggests: HDF5Array, Matrix, BiocStyle, knitr, rmarkdown,
         ggplot2, microbenchmark
-SystemRequirements: GNU make, C++11
+SystemRequirements: GNU make, C++17
 Encoding: UTF-8
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

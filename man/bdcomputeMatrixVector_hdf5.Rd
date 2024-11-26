@@ -102,4 +102,10 @@ bdcomputeMatrixVector_hdf5("test.hdf5",
                           outdataset = "SubsComputed", 
                           func = "-",
                           byrows = FALSE, overwrite = TRUE)
+                          
+# Remove file (used as example)
+if (file.exists("test.hdf5")) {
+  file.remove("test.hdf5")
+}
+
 }

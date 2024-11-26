@@ -4,3 +4,4 @@
 ^Analyses\.*
 ^pkg\.*
 ^.*\.hdf5$
+^\.github$

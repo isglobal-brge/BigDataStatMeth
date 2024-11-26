@@ -67,5 +67,10 @@ bdCreate_hdf5_matrix( "test.hdf5", X, "data", "X",
 # Get mean and sd        
 bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
                     sd = TRUE, mean = TRUE,byrows = TRUE)
+                    
+# Remove file (used as example)
+if (file.exists("test.hdf5")) {
+  file.remove("test.hdf5")
+}
         
 }

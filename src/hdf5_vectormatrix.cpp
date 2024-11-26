@@ -72,6 +72,12 @@
 //'                           outdataset = "SubsComputed", 
 //'                           func = "-",
 //'                           byrows = FALSE, overwrite = TRUE)
+//'                           
+//' # Remove file (used as example)
+//' if (file.exists("test.hdf5")) {
+//'   file.remove("test.hdf5")
+//' }
+//' 
 //' @export
 // [[Rcpp::export]]
  void bdcomputeMatrixVector_hdf5( std::string filename, std::string group, 

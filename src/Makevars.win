@@ -13,7 +13,7 @@ PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppParallel::R
 
 # OpenMP
 PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) 
-PKG_CXXFLAGS += -fopenmp -g3 -O3 -Wall
+PKG_CXXFLAGS += -fopenmp -g3 # -O2 -Wall
 PKG_LIBS += $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) 
 PKG_LIBS += -fopenmp
 
@@ -28,6 +28,8 @@ PKG_LIBS += $(RHDF5_LIBS)
 ## With R 3.1.0 or later, you can uncomment the following line to tell R to 
 ## enable compilation with C++11 (or even C++14) where available
 #..# CXXFLAGS = -g3 -O3 -Wall
-CXXFLAGS += -g3 -O3 -std=c++17 -Wall
+#..# CXX_STD = $(CCACHE) CXX17
+#..# CXXFLAGS += -g3 -O2 -std=c++17 -Wall
+#..# PKG_CXXFLAGS += -g3 -O3 -Wall
 CCACHE=ccache
-CXX_STD = $(CCACHE) CXX17
+CXX_STD = $(CCACHE) CXX

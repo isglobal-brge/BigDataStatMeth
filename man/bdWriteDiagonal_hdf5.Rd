@@ -38,4 +38,9 @@ bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X",
 # Update diagonal
 bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
 
+# Remove file (used as example)
+if (file.exists("test_file.hdf5")) {
+    file.remove("test_file.hdf5")
+}
+
 }

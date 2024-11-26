@@ -44,8 +44,8 @@ where A is an N-by-N matrix and X and B are N-by-NRHS matrices.
 
 library(BigDataStatMeth)
 
-N = 1800
-M = 1800
+N = 1800; M = 1800
+fn = "test_temp.hdf5"
 
 set.seed(555)
     Y <- matrix(rnorm(N*M), N, M)
@@ -58,20 +58,24 @@ resr <- solve(Ycp, X)
         
 all.equal( resm, resr)
         
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+bdCreate_hdf5_matrix(filename = fn, 
                      object = Ycp, group = "data", dataset = "A",
                      transp = FALSE,
                      overwriteFile = TRUE, overwriteDataset = TRUE, 
                      unlimited = FALSE)
             
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+bdCreate_hdf5_matrix(filename = fn, 
                      object = X,  group = "data",  dataset = "B",
                      transp = FALSE,
                      overwriteFile = FALSE, overwriteDataset = TRUE, 
                      unlimited = FALSE)
             
-bdSolve_hdf5( filename = "test_temp.hdf5", groupA = "data", 
+bdSolve_hdf5( filename = fn, groupA = "data", 
     datasetA = "A", groupB = "data", datasetB = "B", 
     outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
+    
+if (file.exists(fn)) {
+    file.remove(fn)
+}
 
 }
