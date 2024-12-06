@@ -20,10 +20,9 @@ Description: Basic Algebra methods using parallel
     The functions will consider as input an HDF5 data file or an R object.
 License: MIT + file LICENSE
 Depends: R (>= 3.6.0)
-Imports: data.table, Rcpp (>= 1.0.6), RcppParallel (>= 5.0.2), RCurl,
+Imports: data.table, Rcpp (>= 1.0.6), RCurl,
         rhdf5, utils
-LinkingTo: Rcpp, RcppEigen, RcppParallel, beachmat, Rhdf5lib, RSpectra,
-        BH
+LinkingTo: Rcpp, RcppEigen, Rhdf5lib, RSpectra, BH
 Suggests: HDF5Array, Matrix, BiocStyle, knitr, rmarkdown,
         ggplot2, microbenchmark
 SystemRequirements: GNU make, C++17

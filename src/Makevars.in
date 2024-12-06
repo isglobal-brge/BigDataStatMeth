@@ -15,8 +15,8 @@ PKG_LIBS = @PKG_LIBS@ @openmp_cflags@ @zlib_libs@
 ## no user-facing library. The include path to headers is already set by R.
 #PKG_LIBS = 
 
-# RcppParallel
-PKG_LIBS = $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
+# ..# # RcppParallel
+# ..# PKG_LIBS = $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
 
 # OpenMP
 PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) -g3 # -O2 -Wall
