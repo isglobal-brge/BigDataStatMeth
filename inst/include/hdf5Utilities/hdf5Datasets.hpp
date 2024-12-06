@@ -845,7 +845,8 @@ public:
             {
                 // Prepare string data
                 int strlength = Rcpp::as<std::string>(attr_data).size();
-                char stringdata[strlength+1];
+                int stringdatalenght = strlength + 1;
+                char stringdata[stringdatalenght];
                 
                 std::string word = Rcpp::as<std::string>(attr_data).c_str();
                 
