@@ -845,23 +845,23 @@ public:
             {
                 // Prepare string data
                 int strlength = Rcpp::as<std::string>(attr_data).size();
-                int stringdatalenght = strlength + 1;
-                char stringdata[stringdatalenght];
-                
-                std::string word = Rcpp::as<std::string>(attr_data).c_str();
-                
-                int j = 0;
-                for( j=0; (unsigned)j < word.size() && j < (strlength); j++ )
-                    stringdata[j] = word[j];
-                
-                stringdata[j] = '\0'; // insert hdf5 end of string
+                //..// char stringdata[strlength+1];
+                //..// 
+                //..// std::string word = Rcpp::as<std::string>(attr_data).c_str();
+                //..// 
+                //..// int j = 0;
+                //..// for( j=0; (unsigned)j < word.size() && j < (strlength); j++ )
+                //..//     stringdata[j] = word[j];
+                //..// 
+                //..// stringdata[j] = '\0'; // insert hdf5 end of string
                 
                 // Create group attribute and write
                 H5::Attribute attribute =  pdataset->createAttribute(attrName, 
                                                             H5::StrType(H5::PredType::C_S1, strlength ), 
                                                             attr_dataspace);
                 
-                attribute.write(H5::StrType(H5::PredType::C_S1, strlength), stringdata);
+                //..// attribute.write(H5::StrType(H5::PredType::C_S1, strlength), stringdata);
+                attribute.write(H5::StrType(H5::PredType::C_S1, strlength), Rcpp::as<std::string>(attr_data).data());
             } 
             else if( Rf_isInteger(attr_data) ) 
             {

@@ -35,12 +35,12 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
 # Matrix - SVD 
 # -----------------------------------
 
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = FALSE, bscale = FALSE, rankthreshold = 0.0, force  = TRUE, threads = NULL); resr <- svd(Y)
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = FALSE, rankthreshold = 0.0, force  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = TRUE, scale = FALSE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = FALSE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = FALSE, scale = TRUE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", method = "blocks", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", method = "blocks", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = FALSE, bscale = FALSE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL); resr <- svd(Y)
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = FALSE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = TRUE, scale = FALSE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = FALSE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = FALSE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", method = "blocks", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", method = "blocks", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
 
 
 # Matrix - SVD - by Blocks
@@ -51,12 +51,12 @@ N = 5220 ; M = 22 ; set.seed(555)
 Y <- matrix(rnorm(N*M), N, M)
 bdCreate_hdf5_matrix(filename = "test_temp.hdf5", object = Y, group = "data", dataset = "matrix", transp = FALSE, overwriteFile = TRUE, overwriteDataset = TRUE, unlimited = FALSE)
 
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = FALSE, bscale = FALSE, rankthreshold = 0.0, force  = TRUE, threads = NULL); resr <- svd(scale(Y, center = FALSE, scale = FALSE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = FALSE, rankthreshold = 0.0, force  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = TRUE, scale = FALSE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = FALSE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = FALSE, scale = TRUE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = FALSE, bscale = FALSE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL); resr <- svd(scale(Y, center = FALSE, scale = FALSE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = FALSE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = TRUE, scale = FALSE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = FALSE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = FALSE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
 
 
 # M bigger than N (Horizontal Matrix)
@@ -64,12 +64,12 @@ N = 220 ; M = 5220 ; set.seed(555)
 Y <- matrix(rnorm(N*M), N, M)
 bdCreate_hdf5_matrix(filename = "test_temp.hdf5", object = Y, group = "data", dataset = "matrix", transp = FALSE, overwriteFile = TRUE, overwriteDataset = TRUE, unlimited = FALSE)
 
-bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 1, bcenter = FALSE, bscale = FALSE, rankthreshold = 0.0, force  = TRUE, threads = NULL);  resr <- svd(Y)
-bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 2, bcenter = TRUE, bscale = FALSE, rankthreshold = 0.0, force  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = TRUE, scale = FALSE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 3, bcenter = FALSE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = FALSE, scale = TRUE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
-bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, force  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 1, bcenter = FALSE, bscale = FALSE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);  resr <- svd(Y)
+bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 2, bcenter = TRUE, bscale = FALSE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = TRUE, scale = FALSE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 3, bcenter = FALSE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);  resr <- svd(scale(Y, center = FALSE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 1, q = 4, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
+bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 2, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL);   resr <- svd(scale(Y, center = TRUE, scale = TRUE))
 
 # Check
 file <- "test_temp.hdf5"
@@ -106,9 +106,9 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
                      unlimited = FALSE)
 
 # Get Inverse Cholesky
-res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = FALSE, force = TRUE)
-res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = TRUE, force = TRUE)
-res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = TRUE, force = TRUE, elementsBlock = 50)
+res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = FALSE, overwrite = TRUE)
+res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = TRUE, overwrite = TRUE)
+res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = TRUE, overwrite = TRUE, elementsBlock = 50)
 
 # Check
 file <- "test_temp.hdf5"
@@ -118,7 +118,7 @@ resr <- solve(Ycp)
 all.equal(resr[upper.tri(resr)], res[upper.tri(res)])
 
 microbenchmark::microbenchmark( T <- solve(Ycp),
-                                res <- res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = FALSE, force = TRUE),
+                                res <- res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = FALSE, overwrite = TRUE),
                                 times = 5 )
 
 
@@ -136,8 +136,8 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
                      overwriteFile = TRUE, overwriteDataset = TRUE, 
                      unlimited = FALSE)
 
-bdCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "matrixDec", outgroup = "Cholesky_Dec", fullMatrix = FALSE, force = TRUE)
-bdCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "matrixDec", outgroup = "Cholesky_Dec", fullMatrix = FALSE, force = TRUE, elementsBlock = 50)
+bdCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "matrixDec", outgroup = "Cholesky_Dec", fullMatrix = FALSE, overwrite = TRUE)
+bdCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "matrixDec", outgroup = "Cholesky_Dec", fullMatrix = FALSE, overwrite = TRUE, elementsBlock = 50)
 
 res <-  h5read("test_temp.hdf5", "Cholesky_Dec/matrixDec")
 all.equal(res, chol(Ycp))

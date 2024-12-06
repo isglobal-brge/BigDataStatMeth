@@ -14,8 +14,8 @@
 #' @param fullMatrix boolean, optional parameter, by default false. 
 #' If fullMatrix = true, in the hdf5 file the complete matrix is stored. 
 #' If false, only the lower triangular matrix is saved
-#' @param force, optional boolean if true, previous results in same location inside 
-#' hdf5 will be overwritten, by default force = false, data was not overwritten.
+#' @param overwrite, optional boolean if true, previous results in same location inside 
+#' hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
 #' @param threads optional parameter. Integer with numbers of threads to be used
 #' @param elementsBlock, optional integer defines de maximum number of elements 
 #' to read from hdf5 data file in each block. By default this value is set 
@@ -43,13 +43,13 @@
 #' # Get Inverse Cholesky
 #' bdCholesky_hdf5(filename = "test_temp.hdf5", group = "data", 
 #'    dataset = "matrix", outdataset = "matrixDec", outgroup = "Cholesky_Dec", 
-#'    fullMatrix = FALSE, force = TRUE)
+#'    fullMatrix = FALSE, overwrite = TRUE)
 #'        
 #' res <-  h5read("test_temp.hdf5", "Cholesky_Dec/matrixDec")
 #' 
 #' @export
-bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, force = NULL, threads = NULL, elementsBlock = 1000000L) {
-    invisible(.Call('_BigDataStatMeth_bdCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, force, threads, elementsBlock))
+bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = NULL, elementsBlock = 1000000L) {
+    invisible(.Call('_BigDataStatMeth_bdCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock))
 }
 
 #' Compute inverse cholesky with hdf5 data files
