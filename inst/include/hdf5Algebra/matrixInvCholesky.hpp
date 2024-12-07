@@ -69,7 +69,6 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
             rowstoRead,
             minimumBlockSize;
         bool bcancel = false;
-        // i,k;
         double sum = 0;
         unsigned int ithreads;
         
@@ -79,16 +78,6 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
                              block = {1,1};
         
         ithreads = get_number_threads(threads, R_NilValue);
-        
-        // if(threads.isNotNull()) {
-        //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
-        //         ithreads = Rcpp::as<int> (threads);
-        //     } else {
-        //         ithreads = getDTthreads(0, true);
-        //     }
-        // } else {
-        //     ithreads = getDTthreads(0, true);
-        // }
         
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
@@ -100,16 +89,6 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
         // Poso el codi per llegir els blocks aquí i desprès a dins hauria d'anar-hi la j
         if( idim0 == idim1)
         {
-            // llegir files : minimumBlockSize <=
-            //      - nfiles ??
-            //      - columnes : mínim j, máxim ??
-            //
-            //  Primer block :
-            //      - nfiles^2 = maxelements   =>   nfiles = sqrt(maxelements)
-            //  Blocs successius :
-            //      - nfiles = maxelements (nfiles anterior +  )
-            //      ((nfiles + (nfiles + x)) /2) * (x + 1)
-            
             while ( readedRows < dimensionSize ) {
                 
                 rowstoRead = ( -2 * readedRows - 1 + std::sqrt( pow(2*readedRows, 2) - 4 * readedRows + 8 * minimumBlockSize + 1) ) / 2;
@@ -152,21 +131,24 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
                         L(j, j + offset[0]) = std::sqrt(A(j,j + offset[0]) - (L.row(j).head(j + offset[0]).array().pow(2).sum() ));    
                     }
                     
+                    
 #pragma omp parallel for num_threads(ithreads) private(sum) shared (A,L,j) schedule(dynamic) if (j < readedRows - chunk)
-                    for ( int i = j + 1; i < (dimensionSize - offset[0] && bcancel == false)  ; i++ )
+                    for ( int i = j + 1; i < dimensionSize - offset[0]  ; i++ )
                     {
-                        if( j + offset[0] > 0) {
-                            sum = (L.block(i, 0, 1, j + offset[0]).array() * L.block(j, 0, 1, j + offset[0]).array()).array().sum();
-                            if( sum != sum ) {
-                                Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition matrix is not positive definite\n";
-                                //..// return(1);
-                                bcancel = true;
+                        if(bcancel == false) {
+                            if( j + offset[0] > 0) {
+                                sum = (L.block(i, 0, 1, j + offset[0]).array() * L.block(j, 0, 1, j + offset[0]).array()).array().sum();
+                                if( sum != sum ) {
+                                    Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition matrix is not positive definite\n";
+                                    //..// return(1);
+                                    bcancel = true;
+                                }
+                            } else {
+                                sum = 0;
                             }
-                        } else {
-                            sum = 0;
-                        }
-                        if(!bcancel){
-                            L(i,j + offset[0]) =  (1/L(j,j + offset[0])*(A(i,j + offset[0]) - sum));    
+                            if(!bcancel){
+                                L(i,j + offset[0]) =  (1/L(j,j + offset[0])*(A(i,j + offset[0]) - sum));    
+                            }    
                         }
                     }
                 }
@@ -326,6 +308,7 @@ extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf
                     
                 }
                 
+                Rcpp::Rcout<<"\nWrite Inverse_of_Cholesky_decomposition_hdf5 : \n"<<verticalData<<"\n";
                 InOutDataset->writeDatasetBlock( Rcpp::wrap(verticalData), offset, count, stride, block, false);
                 
                 readedCols = readedCols + colstoRead; // Ho preparem perquè desprès necessitarem llegir a partir de la línea anterior
@@ -437,6 +420,7 @@ extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Datase
                     }
                 }
                 
+                Rcpp::Rcout<<"\nWrite Inverse_Matrix_Cholesky_parallel : \n"<<verticalData<<"\n";
                 InOutDataset->writeDatasetBlock( Rcpp::wrap(verticalData), offset, count, stride, block, false);
                 
                 readedCols = readedCols + colstoRead; // Ho preparem perquè desprès necessitarem llegir a partir de la línea anterior

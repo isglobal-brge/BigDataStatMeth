@@ -106,7 +106,7 @@
              
              int res = Cholesky_decomposition_hdf5(dsA, dstmp, nrows, ncols, dElementsBlock, threads);
              
-             if(res == 0) {
+             if(res != 0) {
                  Rcpp::Rcout<<"\n Can't get Cholesky decomposition \n";
              }
              

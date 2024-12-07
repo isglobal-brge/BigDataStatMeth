@@ -108,7 +108,7 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
 # Get Inverse Cholesky
 res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = FALSE, overwrite = TRUE)
 res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = TRUE, overwrite = TRUE)
-res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = TRUE, overwrite = TRUE, elementsBlock = 50)
+res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix2", outgroup = "InvCholesky", fullMatrix = TRUE, overwrite = TRUE, elementsBlock = 50)
 
 # Check
 file <- "test_temp.hdf5"
@@ -126,8 +126,13 @@ microbenchmark::microbenchmark( T <- solve(Ycp),
 # -----------------------------------
 
 setwd("/Users/mailos/PhD/dummy")
+# set.seed(1234)
+# Y <- matrix(sample.int(10, 10000, replace = TRUE), ncol = 100)
+# Ycp <- crossprod(Y)
+
+# devtools::reload(pkgload::inst("BigDataStatMeth"))
 set.seed(1234)
-Y <- matrix(sample.int(10, 10000, replace = TRUE), ncol = 100)
+Y <- matrix(sample.int(10, 100, replace = TRUE), ncol = 10)
 Ycp <- crossprod(Y)
 
 bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
