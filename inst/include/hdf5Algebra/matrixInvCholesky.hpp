@@ -214,16 +214,6 @@ extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf
                              block = {1,1};
 
         ithreads = get_number_threads(threads, R_NilValue);
-                
-        // if(threads.isNotNull()) {
-        //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()) {
-        //         ithreads = Rcpp::as<int> (threads);
-        //     } else {
-        //         ithreads = getDTthreads(0, true);
-        //     }
-        // } else {
-        //     ithreads = getDTthreads(0, true);
-        // }
         
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
@@ -308,7 +298,6 @@ extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf
                     
                 }
                 
-                Rcpp::Rcout<<"\nWrite Inverse_of_Cholesky_decomposition_hdf5 : \n"<<verticalData<<"\n";
                 InOutDataset->writeDatasetBlock( Rcpp::wrap(verticalData), offset, count, stride, block, false);
                 
                 readedCols = readedCols + colstoRead; // Ho preparem perquè desprès necessitarem llegir a partir de la línea anterior
@@ -420,7 +409,6 @@ extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Datase
                     }
                 }
                 
-                Rcpp::Rcout<<"\nWrite Inverse_Matrix_Cholesky_parallel : \n"<<verticalData<<"\n";
                 InOutDataset->writeDatasetBlock( Rcpp::wrap(verticalData), offset, count, stride, block, false);
                 
                 readedCols = readedCols + colstoRead; // Ho preparem perquè desprès necessitarem llegir a partir de la línea anterior
