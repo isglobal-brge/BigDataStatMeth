@@ -346,27 +346,28 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 
 #' PCA Descomposition
 #' 
-#' Compute PCA
+#' Calculates the Principal Component Analysis (PCA) for datasets stored in HDF5 format.
 #' 
-#' @param filename string, file name where dataset is stored 
-#' @param group string group name  where dataset is stored in file
-#' @param dataset string dataset name with data to perform PCA
-#' @param ncomponents integer, number of components to be computed, by default 
-#' ncomponents = 0, all components are computed
-#' @param bcenter logical value if true data is centered to zero
-#' @param bscale logical value, if true data is scaled
-#' @param k number of local SVDs to concatenate at each level, performance parameter 
-#' @param q number of levels to compute SVD for PCA, performance parameter
+#' @inheritParams bdNormalize_hdf5
+#' @param ncomponents integer, An optional integer specifying the number of 
+#' principal components to calculate. Defaults to 0, which computes all components.
+#' @param k number of local SVDs to concatenate at each level. Defaults to 2.
+#' This parameter helps optimize the performance and memory usage during PCA 
+#' calculations. 
+#' @param q number of levels to compute SVD for PCA.
+#' This parameter helps optimize the performance and memory usage during PCA 
+#' calculations. 
 #' @param rankthreshold double, threshold used to determine the range of the array. 
 #' The matrix rank is equal to the number of
 #' singular values different from the threshold. By default, threshold = 0 is used 
 #' to get the matrix rank , but it can be changed to an approximation of 0.
-#' @param SVDgroup string. Name of the group where the SVD results are located. 
-#' If it has been previously calculated. This group must contain the d, u and v datasets.
-#' @param overwrite logical value, if true, the SVD is forced to be computed although 
-#' the SVD exists. 
-#' @param method optional, defalut = "auto" possible values are: "auto", 
-#' "blocks", "full":
+#' @param SVDgroup string. Name of the group where the intermediate SVD results 
+#' will be stored or located (If it has been previously calculated). 
+#' If falready calculated, this group must contain the d, u and v datasets.
+#' @param overwrite logical value, if true, the SVD is forced to be computed 
+#' although the SVD results exists. 
+#' @param method optional, The method argument can specify different PCA algorithms, 
+#' defalut = "auto" possible values are: "auto", "blocks", "full":
 #' 
 #'   * `"auto"`:
 #'     The option method = "auto" chooses the "full" or "blocks" method depending on 
@@ -480,12 +481,14 @@ bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_
 #' in a dataset stored in hdf5 file
 #' 
 #' @param filename string file name where dataset to normalize is stored
-#' @param group string Matrix
-#' @param dataset string Matrix
-#' @param bcenter logical (default = TRUE) if TRUE, centering is done by 
-#' subtracting the column means
-#' @param bscale logical (default = TRUE) if TRUE, centering is done by 
-#' subtracting the column means
+#' @param group string specifying the group within the HDF5 file containing
+#' matrix dataset.
+#' @param dataset string, a string specifying the name of the dataset to 
+#' perform calculus.
+#' @param bcenter logical, An optional logical indicating whether to center 
+#' the data by subtracting the column means. Defaults to FALSE.
+#' @param bscale logica, An optional logical indicating whether to scale the 
+#' data. Defaults to FALSE.
 #' @param byrows logical (default = FALSE) if TRUE, centering is done by 
 #' subtracting the rows means, util when working with hdf5 datasets stored 
 #' in Row Major format.

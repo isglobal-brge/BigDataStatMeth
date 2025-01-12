@@ -18,15 +18,17 @@ bdNormalize_hdf5(
 \arguments{
 \item{filename}{string file name where dataset to normalize is stored}
 
-\item{group}{string Matrix}
+\item{group}{string specifying the group within the HDF5 file containing
+matrix dataset.}
 
-\item{dataset}{string Matrix}
+\item{dataset}{string, a string specifying the name of the dataset to
+perform calculus.}
 
-\item{bcenter}{logical (default = TRUE) if TRUE, centering is done by
-subtracting the column means}
+\item{bcenter}{logical, An optional logical indicating whether to center
+the data by subtracting the column means. Defaults to FALSE.}
 
-\item{bscale}{logical (default = TRUE) if TRUE, centering is done by
-subtracting the column means}
+\item{bscale}{logica, An optional logical indicating whether to scale the
+data. Defaults to FALSE.}
 
 \item{byrows}{logical (default = FALSE) if TRUE, centering is done by
 subtracting the rows means, util when working with hdf5 datasets stored

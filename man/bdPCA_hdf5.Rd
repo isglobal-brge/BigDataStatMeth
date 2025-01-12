@@ -21,36 +21,45 @@ bdPCA_hdf5(
 )
 }
 \arguments{
-\item{filename}{string, file name where dataset is stored}
+\item{filename}{string file name where dataset to normalize is stored}
 
-\item{group}{string group name  where dataset is stored in file}
+\item{group}{string specifying the group within the HDF5 file containing
+matrix dataset.}
 
-\item{dataset}{string dataset name with data to perform PCA}
+\item{dataset}{string, a string specifying the name of the dataset to
+perform calculus.}
 
-\item{ncomponents}{integer, number of components to be computed, by default
-ncomponents = 0, all components are computed}
+\item{ncomponents}{integer, An optional integer specifying the number of
+principal components to calculate. Defaults to 0, which computes all components.}
 
-\item{bcenter}{logical value if true data is centered to zero}
+\item{bcenter}{logical, An optional logical indicating whether to center
+the data by subtracting the column means. Defaults to FALSE.}
 
-\item{bscale}{logical value, if true data is scaled}
+\item{bscale}{logica, An optional logical indicating whether to scale the
+data. Defaults to FALSE.}
 
-\item{k}{number of local SVDs to concatenate at each level, performance parameter}
+\item{k}{number of local SVDs to concatenate at each level. Defaults to 2.
+This parameter helps optimize the performance and memory usage during PCA
+calculations.}
 
-\item{q}{number of levels to compute SVD for PCA, performance parameter}
+\item{q}{number of levels to compute SVD for PCA.
+This parameter helps optimize the performance and memory usage during PCA
+calculations.}
 
 \item{rankthreshold}{double, threshold used to determine the range of the array.
 The matrix rank is equal to the number of
 singular values different from the threshold. By default, threshold = 0 is used
 to get the matrix rank , but it can be changed to an approximation of 0.}
 
-\item{SVDgroup}{string. Name of the group where the SVD results are located.
-If it has been previously calculated. This group must contain the d, u and v datasets.}
+\item{SVDgroup}{string. Name of the group where the intermediate SVD results
+will be stored or located (If it has been previously calculated).
+If falready calculated, this group must contain the d, u and v datasets.}
 
-\item{overwrite}{logical value, if true, the SVD is forced to be computed although
-the SVD exists.}
+\item{overwrite}{logical value, if true, the SVD is forced to be computed
+although the SVD results exists.}
 
-\item{method}{optional, defalut = "auto" possible values are: "auto",
-"blocks", "full":
+\item{method}{optional, The method argument can specify different PCA algorithms,
+defalut = "auto" possible values are: "auto", "blocks", "full":
 \itemize{
 \item \code{"auto"}:
 The option method = "auto" chooses the "full" or "blocks" method depending on
@@ -68,5 +77,5 @@ The PCA is performed directly without partitioning the matrix
 original file with results in folder PCA/\<datasetname\>
 }
 \description{
-Compute PCA
+Calculates the Principal Component Analysis (PCA) for datasets stored in HDF5 format.
 }

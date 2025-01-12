@@ -9,12 +9,14 @@
 //' in a dataset stored in hdf5 file
 //' 
 //' @param filename string file name where dataset to normalize is stored
-//' @param group string Matrix
-//' @param dataset string Matrix
-//' @param bcenter logical (default = TRUE) if TRUE, centering is done by 
-//' subtracting the column means
-//' @param bscale logical (default = TRUE) if TRUE, centering is done by 
-//' subtracting the column means
+//' @param group string specifying the group within the HDF5 file containing
+//' matrix dataset.
+//' @param dataset string, a string specifying the name of the dataset to 
+//' perform calculus.
+//' @param bcenter logical, An optional logical indicating whether to center 
+//' the data by subtracting the column means. Defaults to FALSE.
+//' @param bscale logica, An optional logical indicating whether to scale the 
+//' data. Defaults to FALSE.
 //' @param byrows logical (default = FALSE) if TRUE, centering is done by 
 //' subtracting the rows means, util when working with hdf5 datasets stored 
 //' in Row Major format.
@@ -112,3 +114,10 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
      return void();
 }
 
+
+/***
+ //' @param bcenter logical (default = TRUE) if TRUE, centering is done by 
+ //' subtracting the column means
+ //' @param bscale logical (default = TRUE) if TRUE, centering is done by 
+ //' subtracting the column means
+ */
