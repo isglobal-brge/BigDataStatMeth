@@ -21,8 +21,6 @@ bdPCA_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
-
 \item{group}{string specifying the group within the HDF5 file containing
 matrix dataset.}
 
@@ -41,12 +39,27 @@ the (centered) columns of \code{x} by their standard deviations if \code{bcenter
 is TRUE, or by the root mean square otherwise. If FALSE (default), no
 scaling is performed.}
 
+\item{k}{numerical, number of local SVDs to concatenate at each level.
+Defaults is set to 2.
+This parameter helps optimize the performance and memory usage during PCA
+calculations.}
+
+\item{q}{numerical, number of levels to compute SVD for PCA.
+This parameter helps optimize the performance and memory usage during PCA
+calculations.}
+
+\item{rankthreshold}{\code{double}. Threshold used to determine the range of
+the matrix. The matrix rank is defined as the number of singular values that
+differ from the threshold. By default, \code{threshold = 0} is used to compute
+the matrix rank, but it can be adjusted to a value close to zero for
+approximations.}
+
 \item{SVDgroup}{string. Name of the group where the intermediate SVD results
 will be stored or located (If it has been previously calculated).
 If falready calculated, this group must contain the d, u and v datasets.}
 
-\item{overwrite}{boolean if true, previous results in same location inside
-hdf5 will be overwritten.}
+\item{overwrite}{logical value, If TRUE, forces the recalculation of results
+even if they already exist.}
 
 \item{method}{optional, The method argument can specify different PCA algorithms,
 defalut = "auto" possible values are: "auto", "blocks", "full":
@@ -60,6 +73,9 @@ that do not fit in memory
 \item \code{"full"}:
 The PCA is performed directly without partitioning the matrix
 }}
+
+\item{threads}{integer (optional), an optional parameter specifying the
+number of threads to use.}
 }
 \value{
 original file with results in folder PCA/\<datasetname\>

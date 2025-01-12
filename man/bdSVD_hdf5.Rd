@@ -25,11 +25,12 @@ matrix dataset.}
 \item{dataset}{string, a string specifying the name of the dataset to
 perform calculus.}
 
-\item{k}{number of local SVDs to concatenate at each level. Defaults to 2.
+\item{k}{numerical, number of local SVDs to concatenate at each level.
+Defaults is set to 2.
 This parameter helps optimize the performance and memory usage during PCA
 calculations.}
 
-\item{q}{number of levels to compute SVD for PCA.
+\item{q}{numerical, number of levels to compute SVD for PCA.
 This parameter helps optimize the performance and memory usage during PCA
 calculations.}
 

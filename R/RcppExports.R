@@ -153,10 +153,11 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #' same file.
 #' 
 #' @inheritParams bdNormalize_hdf5
-#' @param k number of local SVDs to concatenate at each level. Defaults to 2.
+#' @param k numerical, number of local SVDs to concatenate at each level. 
+#' Defaults is set to 2.
 #' This parameter helps optimize the performance and memory usage during PCA 
 #' calculations. 
-#' @param q number of levels to compute SVD for PCA.
+#' @param q numerical, number of levels to compute SVD for PCA.
 #' This parameter helps optimize the performance and memory usage during PCA 
 #' calculations. 
 #' @param bcenter logical (optional). If TRUE (default), the data is centered 
@@ -352,7 +353,7 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #' 
 #' Calculates the Principal Component Analysis (PCA) for datasets stored in HDF5 format.
 #' 
-#' @inheritParams bdNormalize_hdf5
+#' @inheritParams bdSVD_hdf5
 #' @param ncomponents integer, An optional integer specifying the number of 
 #' principal components to calculate. Defaults to 0, which computes all components.
 #' @param bcenter logical (optional). If TRUE, the data is centered by 

@@ -11,10 +11,11 @@
 //' same file.
 //' 
 //' @inheritParams bdNormalize_hdf5
-//' @param k number of local SVDs to concatenate at each level. Defaults to 2.
+//' @param k numerical, number of local SVDs to concatenate at each level. 
+//' Defaults is set to 2.
 //' This parameter helps optimize the performance and memory usage during PCA 
 //' calculations. 
-//' @param q number of levels to compute SVD for PCA.
+//' @param q numerical, number of levels to compute SVD for PCA.
 //' This parameter helps optimize the performance and memory usage during PCA 
 //' calculations. 
 //' @param bcenter logical (optional). If TRUE (default), the data is centered 

@@ -7,7 +7,7 @@
 //' 
 //' Calculates the Principal Component Analysis (PCA) for datasets stored in HDF5 format.
 //' 
-//' @inheritParams bdNormalize_hdf5
+//' @inheritParams bdSVD_hdf5
 //' @param ncomponents integer, An optional integer specifying the number of 
 //' principal components to calculate. Defaults to 0, which computes all components.
 //' @param bcenter logical (optional). If TRUE, the data is centered by 
