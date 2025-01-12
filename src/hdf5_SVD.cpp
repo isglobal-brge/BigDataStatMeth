@@ -3,28 +3,34 @@
 
 
 
-//' Block SVD decomposition for hdf5 files using an incremental algorithm.
+//' Block SVD decomposition with HDF5 files
 //'
-//' Singular values and left singular vectors of a real nxp matrix 
-//' Block SVD decomposition using an incremental algorithm.
-//' @param file a real nxp matrix in hdf5 file
-//' @param group group in hdf5 data file where dataset is located
-//' @param dataset matrix dataset with data to perform SVD
-//' @param k number of local SVDs to concatenate at each level 
-//' @param q number of levels
-//' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering 
-//' is done by subtracting the column means (omitting NAs) of x from their 
-//' corresponding columns, and if center is FALSE, no centering is done.
-//' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is 
-//' done by dividing the (centered) columns of x by their standard deviations if 
-//' center is TRUE, and the root mean square otherwise. If scale is FALSE, no 
-//' scaling is done.
-//' @param rankthreshold double, threshold used to determine the range of the array. 
-//' The matrix rank is equal to the number of singular values different from the 
-//' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
-//' can be changed to an approximation of 0.
-//' @param overwrite logical value, if true, the PCA is forced to be computed although 
-//' the PCA exists. 
+//' This function computes the singular values and left singular vectors of a 
+//' real nxp matrix using Block SVD decomposition with an incremental algorithm. 
+//' The input matrix is read from an HDF5 file, and the results are saved in the 
+//' same file.
+//' 
+//' @inheritParams bdNormalize_hdf5
+//' @param k number of local SVDs to concatenate at each level. Defaults to 2.
+//' This parameter helps optimize the performance and memory usage during PCA 
+//' calculations. 
+//' @param q number of levels to compute SVD for PCA.
+//' This parameter helps optimize the performance and memory usage during PCA 
+//' calculations. 
+//' @param bcenter logical (optional). If TRUE (default), the data is centered 
+//' by subtracting the column means (ignoring NAs) of the `dataset` from their 
+//' corresponding columns. If FALSE, no centering is performed.
+//' @param bscale (optional). If TRUE (default), the data is scaled by dividing 
+//' the (centered) columns of `x` by their standard deviations if `bcenter` 
+//' is TRUE, or by the root mean square otherwise. If FALSE, no scaling is 
+//' performed.
+//' @param rankthreshold `double`. Threshold used to determine the range of 
+//' the matrix. The matrix rank is defined as the number of singular values that 
+//' differ from the threshold. By default, `threshold = 0` is used to compute 
+//' the matrix rank, but it can be adjusted to a value close to zero for 
+//' approximations.
+//' @param overwrite logical value, If TRUE, forces the recalculation of results 
+//' even if they already exist.
 //' @param method optional, defalut is "auto" possible values are: "auto", 
 //' "blocks", "full":
 //'     * `"auto"`:
@@ -35,12 +41,10 @@
 //'       for large matrices that do not fit in memory
 //'     * `"full"`:
 //'       The SVD decomposition is performed directly without partitioning the matrix
-//' 
-//' @param threads (optional) only used in some operations inside function. If 
-//' threads is null then threads =  maximum number of threads available - 1.
-//' @return a list of three components with the singular values and left and 
-//' right singular vectors of the matrix
-//' @return A List with : 
+//' @param threads integer (optional), an optional parameter specifying the 
+//' number of threads to use.
+//' @return three dataset inside HDF5 data files with the singular values and 
+//' left and right singular vectors of the dataset:
 //' 
 //'   * `"u"`:
 //'     eigenvectors of AA^t, mxn and column orthogonal matrix 
@@ -124,3 +128,14 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
  
 }
 
+/**
+ //' @param file a real nxp matrix in hdf5 file
+ //' @param group group in hdf5 data file where dataset is located
+ //' @param dataset matrix dataset with data to perform SVD
+ //' @param k number of local SVDs to concatenate at each level 
+ //' @param q number of levels
+ //' @param rankthreshold double, threshold used to determine the range of the array. 
+ //' The matrix rank is equal to the number of singular values different from the 
+ //' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
+ //' can be changed to an approximation of 0.
+ */

@@ -13,10 +13,12 @@
 //' matrix dataset.
 //' @param dataset string, a string specifying the name of the dataset to 
 //' perform calculus.
-//' @param bcenter logical, An optional logical indicating whether to center 
-//' the data by subtracting the column means. Defaults to FALSE.
-//' @param bscale logica, An optional logical indicating whether to scale the 
-//' data. Defaults to FALSE.
+//' @param bcenter logical (optional). If TRUE (default), the data is centered by 
+//' subtracting the column means (ignoring NAs) of `x` from their corresponding columns. 
+//' If FALSE, no centering is performed.
+//' @param bscale (optional). If TRUE (default), the data is scaled by dividing 
+//' the (centered) columns of `x` by their standard deviations if `bcenter` is TRUE, 
+//' or by the root mean square otherwise. If FALSE, no scaling is performed.
 //' @param byrows logical (default = FALSE) if TRUE, centering is done by 
 //' subtracting the rows means, util when working with hdf5 datasets stored 
 //' in Row Major format.
@@ -35,10 +37,7 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
                     Rcpp::Nullable<int> wsize  = R_NilValue, Rcpp::Nullable<bool> overwrite  = false)
 {
  
-     // bool bc, bs, bforce, bbyrows, bgetTransposed, corrected = false;
-    // hsize_t blocksize, nrows, ncols, nRowsCols;
     bool bc, bs, bforce, bbyrows, corrected = false;
-    // hsize_t blocksize, nrows, ncols;
     hsize_t nrows, ncols;
     std::string strgroupout;
     std::vector<hsize_t> stride = {1, 1},

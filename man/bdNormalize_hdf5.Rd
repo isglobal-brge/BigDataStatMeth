@@ -24,11 +24,13 @@ matrix dataset.}
 \item{dataset}{string, a string specifying the name of the dataset to
 perform calculus.}
 
-\item{bcenter}{logical, An optional logical indicating whether to center
-the data by subtracting the column means. Defaults to FALSE.}
+\item{bcenter}{logical (optional). If TRUE (default), the data is centered by
+subtracting the column means (ignoring NAs) of \code{x} from their corresponding columns.
+If FALSE, no centering is performed.}
 
-\item{bscale}{logica, An optional logical indicating whether to scale the
-data. Defaults to FALSE.}
+\item{bscale}{(optional). If TRUE (default), the data is scaled by dividing
+the (centered) columns of \code{x} by their standard deviations if \code{bcenter} is TRUE,
+or by the root mean square otherwise. If FALSE, no scaling is performed.}
 
 \item{byrows}{logical (default = FALSE) if TRUE, centering is done by
 subtracting the rows means, util when working with hdf5 datasets stored

@@ -22,7 +22,8 @@ bdtCrossprod_hdf5(
 \arguments{
 \item{filename}{string specifying the path to the HDF5 file}
 
-\item{group}{string specifying the group within the HDF5 file containing matrix A.}
+\item{group}{string specifying the group within the HDF5 file containing
+matrix A.}
 
 \item{A}{string specifying the dataset name for matrix A.
 the data matrix to be used in calculus}
@@ -42,8 +43,8 @@ and the size of the matrices}
 \item{paral}{boolean (optional), an optional parameter to enable parallel
 computation. Defaults to FALSE. Set \code{paral = true} to force parallel execution}
 
-\item{threads}{integer (optional), an optional parameter specifying the number of threads
-to use if paral = TRUE. Ignored if paral = FALSE.}
+\item{threads}{integer (optional), an optional parameter specifying the
+number of threads to use if paral = TRUE. Ignored if paral = FALSE.}
 
 \item{outgroup}{string (optional), An optional parameger specifying the group
 where the output matrix will be stored. If NULL, the output will be stored

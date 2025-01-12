@@ -145,28 +145,34 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
     invisible(.Call('_BigDataStatMeth_bdQR_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, thin, block_size, overwrite, threads))
 }
 
-#' Block SVD decomposition for hdf5 files using an incremental algorithm.
+#' Block SVD decomposition with HDF5 files
 #'
-#' Singular values and left singular vectors of a real nxp matrix 
-#' Block SVD decomposition using an incremental algorithm.
-#' @param file a real nxp matrix in hdf5 file
-#' @param group group in hdf5 data file where dataset is located
-#' @param dataset matrix dataset with data to perform SVD
-#' @param k number of local SVDs to concatenate at each level 
-#' @param q number of levels
-#' @param bcenter (optional, defalut = TRUE) . If center is TRUE then centering 
-#' is done by subtracting the column means (omitting NAs) of x from their 
-#' corresponding columns, and if center is FALSE, no centering is done.
-#' @param bscale (optional, defalut = TRUE) .  If scale is TRUE then scaling is 
-#' done by dividing the (centered) columns of x by their standard deviations if 
-#' center is TRUE, and the root mean square otherwise. If scale is FALSE, no 
-#' scaling is done.
-#' @param rankthreshold double, threshold used to determine the range of the array. 
-#' The matrix rank is equal to the number of singular values different from the 
-#' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
-#' can be changed to an approximation of 0.
-#' @param overwrite logical value, if true, the PCA is forced to be computed although 
-#' the PCA exists. 
+#' This function computes the singular values and left singular vectors of a 
+#' real nxp matrix using Block SVD decomposition with an incremental algorithm. 
+#' The input matrix is read from an HDF5 file, and the results are saved in the 
+#' same file.
+#' 
+#' @inheritParams bdNormalize_hdf5
+#' @param k number of local SVDs to concatenate at each level. Defaults to 2.
+#' This parameter helps optimize the performance and memory usage during PCA 
+#' calculations. 
+#' @param q number of levels to compute SVD for PCA.
+#' This parameter helps optimize the performance and memory usage during PCA 
+#' calculations. 
+#' @param bcenter logical (optional). If TRUE (default), the data is centered 
+#' by subtracting the column means (ignoring NAs) of the `dataset` from their 
+#' corresponding columns. If FALSE, no centering is performed.
+#' @param bscale (optional). If TRUE (default), the data is scaled by dividing 
+#' the (centered) columns of `x` by their standard deviations if `bcenter` 
+#' is TRUE, or by the root mean square otherwise. If FALSE, no scaling is 
+#' performed.
+#' @param rankthreshold `double`. Threshold used to determine the range of 
+#' the matrix. The matrix rank is defined as the number of singular values that 
+#' differ from the threshold. By default, `threshold = 0` is used to compute 
+#' the matrix rank, but it can be adjusted to a value close to zero for 
+#' approximations.
+#' @param overwrite logical value, If TRUE, forces the recalculation of results 
+#' even if they already exist.
 #' @param method optional, defalut is "auto" possible values are: "auto", 
 #' "blocks", "full":
 #'     * `"auto"`:
@@ -177,12 +183,10 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #'       for large matrices that do not fit in memory
 #'     * `"full"`:
 #'       The SVD decomposition is performed directly without partitioning the matrix
-#' 
-#' @param threads (optional) only used in some operations inside function. If 
-#' threads is null then threads =  maximum number of threads available - 1.
-#' @return a list of three components with the singular values and left and 
-#' right singular vectors of the matrix
-#' @return A List with : 
+#' @param threads integer (optional), an optional parameter specifying the 
+#' number of threads to use.
+#' @return three dataset inside HDF5 data files with the singular values and 
+#' left and right singular vectors of the dataset:
 #' 
 #'   * `"u"`:
 #'     eigenvectors of AA^t, mxn and column orthogonal matrix 
@@ -344,28 +348,23 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
     invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, overwrite, transp_dataset, transp_bdataset, fullMatrix, byrows, threads))
 }
 
-#' PCA Descomposition
+#' PCA Descomposition with HDF5 files
 #' 
 #' Calculates the Principal Component Analysis (PCA) for datasets stored in HDF5 format.
 #' 
 #' @inheritParams bdNormalize_hdf5
 #' @param ncomponents integer, An optional integer specifying the number of 
 #' principal components to calculate. Defaults to 0, which computes all components.
-#' @param k number of local SVDs to concatenate at each level. Defaults to 2.
-#' This parameter helps optimize the performance and memory usage during PCA 
-#' calculations. 
-#' @param q number of levels to compute SVD for PCA.
-#' This parameter helps optimize the performance and memory usage during PCA 
-#' calculations. 
-#' @param rankthreshold double, threshold used to determine the range of the array. 
-#' The matrix rank is equal to the number of
-#' singular values different from the threshold. By default, threshold = 0 is used 
-#' to get the matrix rank , but it can be changed to an approximation of 0.
+#' @param bcenter logical (optional). If TRUE, the data is centered by 
+#' subtracting the column means (ignoring NAs) of `x` from their corresponding columns. 
+#' If FALSE (default), no centering is performed.
+#' @param bscale (optional). If TRUE, the data is scaled by dividing 
+#' the (centered) columns of `x` by their standard deviations if `bcenter` 
+#' is TRUE, or by the root mean square otherwise. If FALSE (default), no 
+#' scaling is performed.
 #' @param SVDgroup string. Name of the group where the intermediate SVD results 
 #' will be stored or located (If it has been previously calculated). 
 #' If falready calculated, this group must contain the d, u and v datasets.
-#' @param overwrite logical value, if true, the SVD is forced to be computed 
-#' although the SVD results exists. 
 #' @param method optional, The method argument can specify different PCA algorithms, 
 #' defalut = "auto" possible values are: "auto", "blocks", "full":
 #' 
@@ -378,7 +377,6 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #'   * `"full"`:
 #'     The PCA is performed directly without partitioning the matrix 
 #' 
-#' @param threads integer number of threads used to run PCA
 #' @return original file with results in folder PCA/\<datasetname\>
 #' @export
 bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FALSE, bscale = FALSE, k = 2L, q = 1L, rankthreshold = 0.0, SVDgroup = NULL, overwrite = FALSE, method = NULL, threads = NULL) {
@@ -485,10 +483,12 @@ bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_
 #' matrix dataset.
 #' @param dataset string, a string specifying the name of the dataset to 
 #' perform calculus.
-#' @param bcenter logical, An optional logical indicating whether to center 
-#' the data by subtracting the column means. Defaults to FALSE.
-#' @param bscale logica, An optional logical indicating whether to scale the 
-#' data. Defaults to FALSE.
+#' @param bcenter logical (optional). If TRUE (default), the data is centered by 
+#' subtracting the column means (ignoring NAs) of `x` from their corresponding columns. 
+#' If FALSE, no centering is performed.
+#' @param bscale (optional). If TRUE (default), the data is scaled by dividing 
+#' the (centered) columns of `x` by their standard deviations if `bcenter` is TRUE, 
+#' or by the root mean square otherwise. If FALSE, no scaling is performed.
 #' @param byrows logical (default = FALSE) if TRUE, centering is done by 
 #' subtracting the rows means, util when working with hdf5 datasets stored 
 #' in Row Major format.
@@ -511,7 +511,8 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' for large matrices that cannot be fully loaded into memory.
 #' 
 #' @param filename string specifying the path to the HDF5 file
-#' @param group string specifying the group within the HDF5 file containing matrix A.
+#' @param group string specifying the group within the HDF5 file containing 
+#' matrix A.
 #' @param A string specifying the dataset name for matrix A.
 #' the data matrix to be used in calculus
 #' @param B string specifying the dataset name for matrix B.
@@ -523,8 +524,8 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' and the size of the matrices
 #' @param paral boolean (optional), an optional parameter to enable parallel 
 #' computation. Defaults to FALSE. Set `paral = true` to force parallel execution
-#' @param threads integer (optional), an optional parameter specifying the number of threads 
-#' to use if paral = TRUE. Ignored if paral = FALSE.
+#' @param threads integer (optional), an optional parameter specifying the 
+#' number of threads to use if paral = TRUE. Ignored if paral = FALSE.
 #' @param outgroup string (optional), An optional parameger specifying the group 
 #' where the output matrix will be stored. If NULL, the output will be stored 
 #' in the default group "OUTPUT".
@@ -541,8 +542,10 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' * The function `bdblockmult_hdf5()` is efficient for both matrices that cannot 
 #' fit into memory (by processing in blocks) and matrices that can be fully 
 #' loaded into memory, as it optimizes computations based on available resources.
-#' * Ensure that the dimensions of `A` and `B` matrices are compatible for matrix multiplication.
-#' * The `block size` should be chosen based on the available memory and the size of the matrices.
+#' * Ensure that the dimensions of `A` and `B` matrices are compatible for 
+#' matrix multiplication.
+#' * The `block size` should be chosen based on the available memory and 
+#' the size of the matrices.
 #' * If `bparal = true`, number of concurrent threads in parallelization. If 
 #' `paral = TRUE` and `threads = NULL` then `threads` is set to a half of a 
 #' maximum number of available threads 

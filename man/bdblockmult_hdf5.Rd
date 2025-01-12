@@ -21,7 +21,8 @@ bdblockmult_hdf5(
 \arguments{
 \item{filename}{string specifying the path to the HDF5 file}
 
-\item{group}{string specifying the group within the HDF5 file containing matrix A.}
+\item{group}{string specifying the group within the HDF5 file containing
+matrix A.}
 
 \item{A}{string specifying the dataset name for matrix A.
 the data matrix to be used in calculus}
@@ -39,8 +40,8 @@ and the size of the matrices}
 \item{paral}{boolean (optional), an optional parameter to enable parallel
 computation. Defaults to FALSE. Set \code{paral = true} to force parallel execution}
 
-\item{threads}{integer (optional), an optional parameter specifying the number of threads
-to use if paral = TRUE. Ignored if paral = FALSE.}
+\item{threads}{integer (optional), an optional parameter specifying the
+number of threads to use if paral = TRUE. Ignored if paral = FALSE.}
 
 \item{outgroup}{string (optional), An optional parameger specifying the group
 where the output matrix will be stored. If NULL, the output will be stored
@@ -70,8 +71,10 @@ for large matrices that cannot be fully loaded into memory.
 \item The function \code{bdblockmult_hdf5()} is efficient for both matrices that cannot
 fit into memory (by processing in blocks) and matrices that can be fully
 loaded into memory, as it optimizes computations based on available resources.
-\item Ensure that the dimensions of \code{A} and \code{B} matrices are compatible for matrix multiplication.
-\item The \verb{block size} should be chosen based on the available memory and the size of the matrices.
+\item Ensure that the dimensions of \code{A} and \code{B} matrices are compatible for
+matrix multiplication.
+\item The \verb{block size} should be chosen based on the available memory and
+the size of the matrices.
 \item If \code{bparal = true}, number of concurrent threads in parallelization. If
 \code{paral = TRUE} and \code{threads = NULL} then \code{threads} is set to a half of a
 maximum number of available threads

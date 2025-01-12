@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdPCA_hdf5}
 \alias{bdPCA_hdf5}
-\title{PCA Descomposition}
+\title{PCA Descomposition with HDF5 files}
 \usage{
 bdPCA_hdf5(
   filename,
@@ -32,31 +32,21 @@ perform calculus.}
 \item{ncomponents}{integer, An optional integer specifying the number of
 principal components to calculate. Defaults to 0, which computes all components.}
 
-\item{bcenter}{logical, An optional logical indicating whether to center
-the data by subtracting the column means. Defaults to FALSE.}
+\item{bcenter}{logical (optional). If TRUE, the data is centered by
+subtracting the column means (ignoring NAs) of \code{x} from their corresponding columns.
+If FALSE (default), no centering is performed.}
 
-\item{bscale}{logica, An optional logical indicating whether to scale the
-data. Defaults to FALSE.}
-
-\item{k}{number of local SVDs to concatenate at each level. Defaults to 2.
-This parameter helps optimize the performance and memory usage during PCA
-calculations.}
-
-\item{q}{number of levels to compute SVD for PCA.
-This parameter helps optimize the performance and memory usage during PCA
-calculations.}
-
-\item{rankthreshold}{double, threshold used to determine the range of the array.
-The matrix rank is equal to the number of
-singular values different from the threshold. By default, threshold = 0 is used
-to get the matrix rank , but it can be changed to an approximation of 0.}
+\item{bscale}{(optional). If TRUE, the data is scaled by dividing
+the (centered) columns of \code{x} by their standard deviations if \code{bcenter}
+is TRUE, or by the root mean square otherwise. If FALSE (default), no
+scaling is performed.}
 
 \item{SVDgroup}{string. Name of the group where the intermediate SVD results
 will be stored or located (If it has been previously calculated).
 If falready calculated, this group must contain the d, u and v datasets.}
 
-\item{overwrite}{logical value, if true, the SVD is forced to be computed
-although the SVD results exists.}
+\item{overwrite}{boolean if true, previous results in same location inside
+hdf5 will be overwritten.}
 
 \item{method}{optional, The method argument can specify different PCA algorithms,
 defalut = "auto" possible values are: "auto", "blocks", "full":
@@ -70,8 +60,6 @@ that do not fit in memory
 \item \code{"full"}:
 The PCA is performed directly without partitioning the matrix
 }}
-
-\item{threads}{integer number of threads used to run PCA}
 }
 \value{
 original file with results in folder PCA/\<datasetname\>

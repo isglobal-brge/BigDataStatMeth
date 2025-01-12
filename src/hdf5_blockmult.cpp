@@ -8,7 +8,8 @@
 //' for large matrices that cannot be fully loaded into memory.
 //' 
 //' @param filename string specifying the path to the HDF5 file
-//' @param group string specifying the group within the HDF5 file containing matrix A.
+//' @param group string specifying the group within the HDF5 file containing 
+//' matrix A.
 //' @param A string specifying the dataset name for matrix A.
 //' the data matrix to be used in calculus
 //' @param B string specifying the dataset name for matrix B.
@@ -20,8 +21,8 @@
 //' and the size of the matrices
 //' @param paral boolean (optional), an optional parameter to enable parallel 
 //' computation. Defaults to FALSE. Set `paral = true` to force parallel execution
-//' @param threads integer (optional), an optional parameter specifying the number of threads 
-//' to use if paral = TRUE. Ignored if paral = FALSE.
+//' @param threads integer (optional), an optional parameter specifying the 
+//' number of threads to use if paral = TRUE. Ignored if paral = FALSE.
 //' @param outgroup string (optional), An optional parameger specifying the group 
 //' where the output matrix will be stored. If NULL, the output will be stored 
 //' in the default group "OUTPUT".
@@ -38,8 +39,10 @@
 //' * The function `bdblockmult_hdf5()` is efficient for both matrices that cannot 
 //' fit into memory (by processing in blocks) and matrices that can be fully 
 //' loaded into memory, as it optimizes computations based on available resources.
-//' * Ensure that the dimensions of `A` and `B` matrices are compatible for matrix multiplication.
-//' * The `block size` should be chosen based on the available memory and the size of the matrices.
+//' * Ensure that the dimensions of `A` and `B` matrices are compatible for 
+//' matrix multiplication.
+//' * The `block size` should be chosen based on the available memory and 
+//' the size of the matrices.
 //' * If `bparal = true`, number of concurrent threads in parallelization. If 
 //' `paral = TRUE` and `threads = NULL` then `threads` is set to a half of a 
 //' maximum number of available threads 
@@ -94,10 +97,7 @@ void bdblockmult_hdf5(std::string filename,
                     Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
     
-    // int iblock_size;
-        // iblockfactor = 2;
     bool bforce;
-//.. 2024/03/28 ..//    bool bparal, bforce;
     
     std::string strsubgroupOut, 
                 strdatasetOut, 
