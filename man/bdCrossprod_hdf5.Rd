@@ -20,36 +20,58 @@ bdCrossprod_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{string specifying the path to the HDF5 file}
 
-\item{group, }{string, group name where dataset A is stored}
+\item{group}{string specifying the group within the HDF5 file containing matrix A.}
 
-\item{A}{string name inside HDF5 file}
+\item{A}{string specifying the dataset name for matrix A.
+the data matrix to be used in calculus}
 
-\item{B}{string, dataset name for matrix B inside HDF5 file}
+\item{B}{string specifying the dataset name for matrix B.}
 
-\item{groupB, }{string, group name where dataset b is stored}
+\item{groupB}{string, (optional), An optional string specifying the group
+for matrix B. Defaults to the value of \code{group} if not provided.}
 
-\item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if \code{block_size = 1} no block size is applied (size 1 = 1 element per block)}
+\item{block_size}{integer (optional), an optional parameter specifying the
+block size for processing the matrices. If not provided, a default block
+size is used. The block size should be chosen based on the available memory
+and the size of the matrices}
 
-\item{mixblock_size}{(optional) only for debug pourpose}
+\item{mixblock_size}{only for debug pourpose}
 
-\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation}
+\item{paral}{boolean (optional), an optional parameter to enable parallel
+computation. Defaults to FALSE. Set \code{paral = true} to force parallel execution}
 
-\item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
+\item{threads}{integer (optional), an optional parameter specifying the number of threads
+to use if paral = TRUE. Ignored if paral = FALSE.}
 
-\item{outgroup}{(optional) group name to store Crossprod results inside hdf5 data file}
+\item{outgroup}{string (optional), An optional parameger specifying the group
+where the output matrix will be stored. If NULL, the output will be stored
+in the default group "OUTPUT".}
 
-\item{outdataset}{(optional) dataset name to store Crossprod results inside hdf5 data file}
+\item{outdataset}{string (optional), An optional parameter specifying the
+dataset name for the output matrix. If NULL, the default name will be
+constructed as "CrossProd_" concatenated with the name of dataset A
+"\emph{x}" and the name of dataset B.}
 
-\item{overwrite, }{boolean if true, previous results in same location inside
-hdf5 will be overwritten.}
+\item{overwrite}{logical (optional), An optional parameter to indicate whether
+existing results in the HDF5 file should be overwritten. Defaults to FALSE.
+If FALSE and the dataset already exists, an error will be displayed, and
+no calculations will be performed. If TRUE and a dataset with the same
+name as specified in outdataset already exists, it will be overwritten.}
 }
 \value{
 no value
 }
 \description{
-This function performs the crossprod from a matrix inside and hdf5 data file
+This function performs the cross product of one or two matrices inside
+and hdf5 data file
+}
+\details{
+For a single matrix \eqn{A}, the cross product is defined as \eqn{A^t A},
+where \eqn{A^t} is the transpose of \eqn{A}. For two matrices \eqn{A} and
+\eqn{B}, the cross product is \eqn{A^5 B}. This operation is often used in
+linear algebra for projections and other computations.
 }
 \examples{
   

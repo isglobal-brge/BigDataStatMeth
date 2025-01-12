@@ -19,33 +19,63 @@ bdblockmult_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{string specifying the path to the HDF5 file}
 
-\item{group}{string with the group name where matrix is stored inside HDF5 file}
+\item{group}{string specifying the group within the HDF5 file containing matrix A.}
 
-\item{A}{string, datasetname with matrix to be multiplied}
+\item{A}{string specifying the dataset name for matrix A.
+the data matrix to be used in calculus}
 
-\item{B}{string, datasetname with matrix to be multiplied}
+\item{B}{string specifying the dataset name for matrix B.}
 
-\item{groupB, }{string, (optional) group name where dataset B is stored, if empty group folder is used}
+\item{groupB}{string, (optional), An optional string specifying the group
+for matrix B. Defaults to the value of \code{group} if not provided.}
 
-\item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if \code{block_size = 1} no block size is applied (size 1 = 1 element per block)}
+\item{block_size}{integer (optional), an optional parameter specifying the
+block size for processing the matrices. If not provided, a default block
+size is used. The block size should be chosen based on the available memory
+and the size of the matrices}
 
-\item{paral, }{boolean (optional, default = FALSE) set paral = true to force parallel execution}
+\item{paral}{boolean (optional), an optional parameter to enable parallel
+computation. Defaults to FALSE. Set \code{paral = true} to force parallel execution}
 
-\item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
+\item{threads}{integer (optional), an optional parameter specifying the number of threads
+to use if paral = TRUE. Ignored if paral = FALSE.}
 
-\item{outgroup}{(optional) string with group name where we want to store the result matrix}
+\item{outgroup}{string (optional), An optional parameger specifying the group
+where the output matrix will be stored. If NULL, the output will be stored
+in the default group "OUTPUT".}
 
-\item{outdataset}{(optional) string with dataset name where we want to store the results}
+\item{outdataset}{string (optional), An optional parameter specifying the
+dataset name for the output matrix. If NULL, the default name will be
+constructed as the name of dataset A concatenated with \emph{x} and the
+name of dataset B.}
 
-\item{overwrite}{(optional) either a logical value indicating whether the results must be overwritten or not.}
+\item{overwrite}{logical (optional), An optional parameter to indicate whether
+existing results in the HDF5 file should be overwritten. Defaults to FALSE.
+If FALSE and the dataset already exists, an error will be displayed, and
+no calculations will be performed. If TRUE and a dataset with the same
+name as specified in outdataset already exists, it will be overwritten.}
 }
 \value{
 a dataset inside the hdf5 data file with A*B
 }
 \description{
-Multiplies two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
+The bdblockmult_hdf5 function performs block-wise matrix multiplication
+between two matrices stored in an HDF5 file. This approach is also efficient
+for large matrices that cannot be fully loaded into memory.
+}
+\details{
+\itemize{
+\item The function \code{bdblockmult_hdf5()} is efficient for both matrices that cannot
+fit into memory (by processing in blocks) and matrices that can be fully
+loaded into memory, as it optimizes computations based on available resources.
+\item Ensure that the dimensions of \code{A} and \code{B} matrices are compatible for matrix multiplication.
+\item The \verb{block size} should be chosen based on the available memory and the size of the matrices.
+\item If \code{bparal = true}, number of concurrent threads in parallelization. If
+\code{paral = TRUE} and \code{threads = NULL} then \code{threads} is set to a half of a
+maximum number of available threads
+}
 }
 \examples{
 library("BigDataStatMeth")

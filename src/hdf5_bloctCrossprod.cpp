@@ -5,20 +5,19 @@
 
 //' tCrossprod with hdf5 matrix
 //' 
-//' This function performs the tcrossprod from a matrix inside and hdf5 data file
+//' This function performs the transposed cross product of one or two matrices
 //' 
-//' @param filename string file name where dataset to normalize is stored
-//' @param group, string, group name where dataset A is stored
-//' @param A string name inside HDF5 file
-//' @param groupB, string, group name where dataset b is stored
-//' @param B string, dataset name for matrix B inside HDF5 file
-//' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-//' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
-//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-//' @param mixblock_size (optional) only for debug pourpose
-//' @param outgroup (optional) group name to store results from tCrossprod inside hdf5 data file
-//' @param outdataset (optional) string with dataset name where we want to store the results
-//' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+//' @inheritParams bdblockmult_hdf5
+//' @param outdataset string (optional), An optional parameter specifying the 
+//' dataset name for the output matrix. If NULL, the default name will be 
+//' constructed as "tCrossProd_" concatenated with the name of dataset A 
+//' "_x_" and the name of dataset B.
+//' @param mixblock_size only for debug pourpose
+//' @details
+//' For a single matrix \eqn{A}, the cross product is defined as \eqn{A A^t}, 
+//' where \eqn{A^t} is the transpose of \eqn{A}. For two matrices \eqn{A} and 
+//' \eqn{B}, the cross product is \eqn{A B^t}. This operation is often used in 
+//' linear algebra for projections and other computations.
 //' @return no value
 //' @examples
 //'   

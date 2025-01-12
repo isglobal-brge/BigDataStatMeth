@@ -5,21 +5,20 @@
 
 //' Crossprod with hdf5 matrix
 //' 
-//' This function performs the crossprod from a matrix inside and hdf5 data file
+//' This function performs the cross product of one or two matrices inside 
+//' and hdf5 data file
 //' 
-//' @param filename string file name where dataset to normalize is stored
-//' @param group, string, group name where dataset A is stored
-//' @param A string name inside HDF5 file
-//' @param groupB, string, group name where dataset b is stored
-//' @param B string, dataset name for matrix B inside HDF5 file
-//' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-//' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
-//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-//' @param mixblock_size (optional) only for debug pourpose
-//' @param outgroup (optional) group name to store Crossprod results inside hdf5 data file
-//' @param outdataset (optional) dataset name to store Crossprod results inside hdf5 data file
-//' @param overwrite, boolean if true, previous results in same location inside 
-//' hdf5 will be overwritten.
+//' @inheritParams bdblockmult_hdf5
+//' @param outdataset string (optional), An optional parameter specifying the 
+//' dataset name for the output matrix. If NULL, the default name will be 
+//' constructed as "CrossProd_" concatenated with the name of dataset A 
+//' "_x_" and the name of dataset B.
+//' @param mixblock_size only for debug pourpose
+//' @details
+//' For a single matrix \eqn{A}, the cross product is defined as \eqn{A^t A}, 
+//' where \eqn{A^t} is the transpose of \eqn{A}. For two matrices \eqn{A} and 
+//' \eqn{B}, the cross product is \eqn{A^5 B}. This operation is often used in 
+//' linear algebra for projections and other computations.
 //' @return no value
 //' @examples
 //'   
@@ -158,3 +157,19 @@ void bdCrossprod_hdf5( std::string filename,
     return void();
     
 }
+
+
+/*** 
+//' @param filename string file name where dataset to normalize is stored
+//' @param group, string, group name where dataset A is stored
+//' @param A string name inside HDF5 file
+//' @param groupB, string, group name where dataset b is stored
+//' @param B string, dataset name for matrix B inside HDF5 file
+//' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
+//' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
+//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
+//' @param outgroup (optional) group name to store Crossprod results inside hdf5 data file
+//' @param outdataset (optional) dataset name to store Crossprod results inside hdf5 data file
+//' @param overwrite, boolean if true, previous results in same location inside 
+//' hdf5 will be overwritten.
+**/

@@ -407,21 +407,20 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 
 #' Crossprod with hdf5 matrix
 #' 
-#' This function performs the crossprod from a matrix inside and hdf5 data file
+#' This function performs the cross product of one or two matrices inside 
+#' and hdf5 data file
 #' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param group, string, group name where dataset A is stored
-#' @param A string name inside HDF5 file
-#' @param groupB, string, group name where dataset b is stored
-#' @param B string, dataset name for matrix B inside HDF5 file
-#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
-#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @param mixblock_size (optional) only for debug pourpose
-#' @param outgroup (optional) group name to store Crossprod results inside hdf5 data file
-#' @param outdataset (optional) dataset name to store Crossprod results inside hdf5 data file
-#' @param overwrite, boolean if true, previous results in same location inside 
-#' hdf5 will be overwritten.
+#' @inheritParams bdblockmult_hdf5
+#' @param outdataset string (optional), An optional parameter specifying the 
+#' dataset name for the output matrix. If NULL, the default name will be 
+#' constructed as "CrossProd_" concatenated with the name of dataset A 
+#' "_x_" and the name of dataset B.
+#' @param mixblock_size only for debug pourpose
+#' @details
+#' For a single matrix \eqn{A}, the cross product is defined as \eqn{A^t A}, 
+#' where \eqn{A^t} is the transpose of \eqn{A}. For two matrices \eqn{A} and 
+#' \eqn{B}, the cross product is \eqn{A^5 B}. This operation is often used in 
+#' linear algebra for projections and other computations.
 #' @return no value
 #' @examples
 #'   
@@ -504,19 +503,46 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 
 #' Hdf5 datasets multiplication
 #'
-#' Multiplies two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
+#' The bdblockmult_hdf5 function performs block-wise matrix multiplication 
+#' between two matrices stored in an HDF5 file. This approach is also efficient 
+#' for large matrices that cannot be fully loaded into memory.
 #' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param group string with the group name where matrix is stored inside HDF5 file
-#' @param A string, datasetname with matrix to be multiplied
-#' @param B string, datasetname with matrix to be multiplied
-#' @param groupB, string, (optional) group name where dataset B is stored, if empty group folder is used
-#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-#' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
-#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @param outgroup (optional) string with group name where we want to store the result matrix
-#' @param outdataset (optional) string with dataset name where we want to store the results
-#' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+#' @param filename string specifying the path to the HDF5 file
+#' @param group string specifying the group within the HDF5 file containing matrix A.
+#' @param A string specifying the dataset name for matrix A.
+#' the data matrix to be used in calculus
+#' @param B string specifying the dataset name for matrix B.
+#' @param groupB string, (optional), An optional string specifying the group 
+#' for matrix B. Defaults to the value of `group` if not provided.
+#' @param block_size integer (optional), an optional parameter specifying the 
+#' block size for processing the matrices. If not provided, a default block 
+#' size is used. The block size should be chosen based on the available memory 
+#' and the size of the matrices
+#' @param paral boolean (optional), an optional parameter to enable parallel 
+#' computation. Defaults to FALSE. Set `paral = true` to force parallel execution
+#' @param threads integer (optional), an optional parameter specifying the number of threads 
+#' to use if paral = TRUE. Ignored if paral = FALSE.
+#' @param outgroup string (optional), An optional parameger specifying the group 
+#' where the output matrix will be stored. If NULL, the output will be stored 
+#' in the default group "OUTPUT".
+#' @param outdataset string (optional), An optional parameter specifying the 
+#' dataset name for the output matrix. If NULL, the default name will be 
+#' constructed as the name of dataset A concatenated with _x_ and the 
+#' name of dataset B.
+#' @param overwrite logical (optional), An optional parameter to indicate whether 
+#' existing results in the HDF5 file should be overwritten. Defaults to FALSE. 
+#' If FALSE and the dataset already exists, an error will be displayed, and 
+#' no calculations will be performed. If TRUE and a dataset with the same 
+#' name as specified in outdataset already exists, it will be overwritten.
+#' @details
+#' * The function `bdblockmult_hdf5()` is efficient for both matrices that cannot 
+#' fit into memory (by processing in blocks) and matrices that can be fully 
+#' loaded into memory, as it optimizes computations based on available resources.
+#' * Ensure that the dimensions of `A` and `B` matrices are compatible for matrix multiplication.
+#' * The `block size` should be chosen based on the available memory and the size of the matrices.
+#' * If `bparal = true`, number of concurrent threads in parallelization. If 
+#' `paral = TRUE` and `threads = NULL` then `threads` is set to a half of a 
+#' maximum number of available threads 
 #' @return a dataset inside the hdf5 data file with A*B 
 #' @examples
 #' library("BigDataStatMeth")
@@ -731,20 +757,19 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 
 #' tCrossprod with hdf5 matrix
 #' 
-#' This function performs the tcrossprod from a matrix inside and hdf5 data file
+#' This function performs the transposed cross product of one or two matrices
 #' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param group, string, group name where dataset A is stored
-#' @param A string name inside HDF5 file
-#' @param groupB, string, group name where dataset b is stored
-#' @param B string, dataset name for matrix B inside HDF5 file
-#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-#' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
-#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @param mixblock_size (optional) only for debug pourpose
-#' @param outgroup (optional) group name to store results from tCrossprod inside hdf5 data file
-#' @param outdataset (optional) string with dataset name where we want to store the results
-#' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+#' @inheritParams bdblockmult_hdf5
+#' @param outdataset string (optional), An optional parameter specifying the 
+#' dataset name for the output matrix. If NULL, the default name will be 
+#' constructed as "tCrossProd_" concatenated with the name of dataset A 
+#' "_x_" and the name of dataset B.
+#' @param mixblock_size only for debug pourpose
+#' @details
+#' For a single matrix \eqn{A}, the cross product is defined as \eqn{A A^t}, 
+#' where \eqn{A^t} is the transpose of \eqn{A}. For two matrices \eqn{A} and 
+#' \eqn{B}, the cross product is \eqn{A B^t}. This operation is often used in 
+#' linear algebra for projections and other computations.
 #' @return no value
 #' @examples
 #'   
