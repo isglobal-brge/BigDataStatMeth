@@ -56,7 +56,7 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue, 
+Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue, 
                        Rcpp::Nullable<Rcpp::CharacterVector> dataset = R_NilValue,
                        Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
                        Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
@@ -66,7 +66,7 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
                        Rcpp::Nullable<int> threads = R_NilValue)
 {
  
-     std::string filename;
+     std::string str_filename;
      double dthreshold;
      
      try {
@@ -96,8 +96,8 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
          if(dataset.isNull())  strdataset = "";
          else    strdataset = Rcpp::as<std::string>(dataset);
          
-         if(Rcpp::is<Rcpp::CharacterVector>(file)) {
-             filename = Rcpp::as<std::string>(file);
+         if(Rcpp::is<Rcpp::CharacterVector>(filename)) {
+             str_filename = Rcpp::as<std::string>(filename);
          } else {
              Rcpp::Rcout<< "File name must be character string";
              return Rcpp::List::create(Rcpp::Named("file") = "");
@@ -108,24 +108,24 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject file, Rcpp::Nullable<Rcpp::CharacterVec
          } else {
              if( Rcpp::as<double>(rankthreshold) > 0.1 ) {
                  Rcpp::Rcout<< "Threshold to big, please set threshold with value lower than 0.1";
-                 return Rcpp::List::create(Rcpp::Named("file") = filename);
+                 return Rcpp::List::create(Rcpp::Named("file") = str_filename);
              } else if( Rcpp::as<double>(rankthreshold) < 0 ) {
                  Rcpp::Rcout<< "Threshold must be a positive value near zero";
-                 return Rcpp::List::create(Rcpp::Named("file") = filename);
+                 return Rcpp::List::create(Rcpp::Named("file") = str_filename);
              } else {
                  dthreshold = Rcpp::as<double>(rankthreshold);
              }
          }
          
          // retsvd = BigDataStatMeth::RcppbdSVD_hdf5( filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, threads );
-         BigDataStatMeth::RcppbdSVD_hdf5( filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, bforce, bRowMajor, method, threads );
+         BigDataStatMeth::RcppbdSVD_hdf5( str_filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, bforce, bRowMajor, method, threads );
          
      } catch(std::exception &ex) {
          Rcpp::Rcout<<"c++ exception bdSVD_hdf5 \n"<< ex.what();
          return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
      }
      
-     return Rcpp::List::create(Rcpp::Named("file") = filename);
+     return Rcpp::List::create(Rcpp::Named("file") = str_filename);
  
 }
 

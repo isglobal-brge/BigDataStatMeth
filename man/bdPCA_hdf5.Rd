@@ -21,6 +21,8 @@ bdPCA_hdf5(
 )
 }
 \arguments{
+\item{filename}{string file name where dataset to normalize is stored}
+
 \item{group}{string specifying the group within the HDF5 file containing
 matrix dataset.}
 

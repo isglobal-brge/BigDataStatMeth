@@ -5,7 +5,7 @@
 \title{Block SVD decomposition with HDF5 files}
 \usage{
 bdSVD_hdf5(
-  file,
+  filename,
   group = NULL,
   dataset = NULL,
   k = 2L,
@@ -19,6 +19,8 @@ bdSVD_hdf5(
 )
 }
 \arguments{
+\item{filename}{string file name where dataset to normalize is stored}
+
 \item{group}{string specifying the group within the HDF5 file containing
 matrix dataset.}
 

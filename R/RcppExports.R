@@ -197,8 +197,8 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #'     singular values, nxn diagonal matrix (non-negative real values) 
 #' 
 #' @export
-bdSVD_hdf5 <- function(file, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite = NULL, method = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', file, group, dataset, k, q, bcenter, bscale, rankthreshold, overwrite, method, threads)
+bdSVD_hdf5 <- function(filename, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite = NULL, method = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, k, q, bcenter, bscale, rankthreshold, overwrite, method, threads)
 }
 
 #' Solve matrix equations
