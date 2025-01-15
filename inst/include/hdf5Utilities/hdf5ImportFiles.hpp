@@ -45,6 +45,18 @@ namespace BigDataStatMeth {
     }
 
 
+    // Check if file ends with newline "\n"
+    bool get_NewLineEnding(const char *filename) {
+        const int LINE_FEED = '\x0A';
+        FILE *f = fopen(filename, "rb");  /* binary mode */
+        if (f == NULL) return false;
+        const bool empty_file = fseek(f, 0, SEEK_END) == 0 && ftell(f) == 0;
+        const bool result = !empty_file ||
+            (fseek(f, -1, SEEK_END) == 0 && fgetc(f) == LINE_FEED);
+        fclose(f);
+        return result;
+    }
+    
     // Test if read data is numeric or not
     bool is_number(const std::string& s)
     {
@@ -152,9 +164,19 @@ namespace BigDataStatMeth {
                 blockCounter = 10000;
             }
 
-            // Get number of rows (+1 to take in to account the last line without \n)
+            //. 2025/01/15.// // Get number of rows (+1 to take in to account the last line without \n)
+            //. 2025/01/15.// int irows = std::count(std::istreambuf_iterator<char>(inFile),
+            //. 2025/01/15.//                        std::istreambuf_iterator<char>(), '\n') + 1 ;
+            
+            
+            // Get number of rows 
             int irows = std::count(std::istreambuf_iterator<char>(inFile),
-                                   std::istreambuf_iterator<char>(), '\n') + 1 ;
+                                   std::istreambuf_iterator<char>(), '\n') ;
+            
+            // +1 to take in to account the last line without \n
+            if( get_NewLineEnding(path.c_str()) == false ) {
+                irows = irows + 1;
+            }
 
             // Restore counter after read first line to get number of cols
             if( Rcpp::as<bool>(header)==false ){

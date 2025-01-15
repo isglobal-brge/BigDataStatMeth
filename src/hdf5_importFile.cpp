@@ -21,6 +21,9 @@
 //' row names to be written.
 //' @param overwrite (optional) either a logical value indicating whether the 
 //' output file can be overwritten or not.
+//' @param fileoverwrite logical (optional), CAUTION, if TRUE, file will be 
+//' overwritten with imported dataset, by default `fileoverwrite = FALSE` to avoid
+//' file overwritting.
 //' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel 
 //' computation else performs seria computation
 //' @param threads (optional) only if bparal = true, number of concurrent 
@@ -37,7 +40,8 @@ void bdImportTextFile_hdf5( std::string filename,
                             Rcpp::Nullable<bool> rownames = false,
                             Rcpp::Nullable<bool> overwrite = false,
                             Rcpp::Nullable<bool> paral = R_NilValue,
-                            Rcpp::Nullable<int> threads = R_NilValue)
+                            Rcpp::Nullable<int> threads = R_NilValue,
+                            Rcpp::Nullable<bool> overwriteFile = R_NilValue)
 {
 
     BigDataStatMeth::hdf5File* objFile;
@@ -45,21 +49,25 @@ void bdImportTextFile_hdf5( std::string filename,
 
     try{
         
-        bool boverwrite;
+        bool boverwrite, bforceFile;
         
         if( overwrite.isNull()) { boverwrite = false; 
         } else { boverwrite = Rcpp::as<bool> (overwrite); }
+        
+        if(overwriteFile.isNull())  bforceFile = false ;
+        else    bforceFile = Rcpp::as<bool>(overwriteFile);
         
         // Check if exists file to import
         if( BigDataStatMeth::Rcpp_FileExist(filename) ) {
 
             // Create file if does not exists
-            objFile = new BigDataStatMeth::hdf5File(outputfile, false);
+            objFile = new BigDataStatMeth::hdf5File(outputfile, bforceFile);
             int iRes = objFile->createFile();
 
             if(iRes == EXEC_WARNING) {
+                Rcpp::Rcout<<"\n Ara estem obrint el fitxer... per tant no entenc on deu estar el problema...";
                 objFile->openFile("rw");
-            }
+            } 
             
             // Create dataset
             datasetOut = new BigDataStatMeth::hdf5Dataset(objFile, outGroup, outDataset, boverwrite);

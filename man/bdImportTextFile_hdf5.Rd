@@ -14,7 +14,8 @@ bdImportTextFile_hdf5(
   rownames = FALSE,
   overwrite = FALSE,
   paral = NULL,
-  threads = NULL
+  threads = NULL,
+  overwriteFile = NULL
 )
 }
 \arguments{
@@ -47,6 +48,10 @@ computation else performs seria computation}
 \item{threads}{(optional) only if bparal = true, number of concurrent
 threads in parallelization if threads is null then threads =  maximum
 number of threads available}
+
+\item{fileoverwrite}{logical (optional), CAUTION, if TRUE, file will be
+overwritten with imported dataset, by default \code{fileoverwrite = FALSE} to avoid
+file overwritting.}
 }
 \value{
 none value returned, data are stored in a dataset inside an hdf5 data file.
