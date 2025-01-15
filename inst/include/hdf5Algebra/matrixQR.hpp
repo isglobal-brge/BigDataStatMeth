@@ -151,7 +151,11 @@ extern inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
             dsQ->writeDataset( Rcpp::wrap(Q) );
         } else {
             
-            Eigen::MatrixXd Qthin = qr.householderQ() * Eigen::MatrixXd::Identity(count[0], count[1]);
+            //. 2025/01/15 error with thin calculus.// Eigen::MatrixXd Qthin = qr.householderQ() * Eigen::MatrixXd::Identity(count[0], count[1]);
+            //. 2025/01/15 .// dsQ->createDataset( Qthin.rows(), Qthin.cols(), "real" );
+            //. 2025/01/15 .// dsQ->writeDataset( Rcpp::wrap(Qthin));
+            
+            Eigen::MatrixXd Qthin = qr.householderQ() * Eigen::MatrixXd::Identity(count[1], count[0]);
             dsQ->createDataset( Qthin.rows(), Qthin.cols(), "real" );
             dsQ->writeDataset( Rcpp::wrap(Qthin));
             
