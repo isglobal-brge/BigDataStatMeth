@@ -17,36 +17,63 @@ bdCholesky_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array with the name of an existin hdf5 data file containing the dataset to be modified}
+\item{filename}{string specifying the path to the HDF5 file}
 
-\item{group, }{character array indicating the input group where the data set to be modified.}
+\item{group}{string specifying the group within the HDF5 file containing
+matrix A.}
 
-\item{dataset, }{character array indicating the input dataset to be modified}
+\item{dataset}{string, a string specifying the name of the dataset to
+perform calculus.}
 
-\item{outdataset}{character array with output dataset name where we want to store results}
+\item{outdataset}{string (optional), An optional parameter specifying the
+dataset name for the output matrix. If NULL, the default name will be
+constructed as the name of dataset A concatenated with \emph{x} and the
+name of dataset B.}
 
-\item{outgroup}{optional, character array with output group name where we want to
-store results if not provided then results are stored in the same group as original dataset}
+\item{outgroup}{string (optional), An optional parameger specifying the group
+where the output matrix will be stored. If NULL, the output will be stored
+in the default group "OUTPUT".}
 
 \item{fullMatrix}{boolean, optional parameter, by default false.
 If fullMatrix = true, in the hdf5 file the complete matrix is stored.
 If false, only the lower triangular matrix is saved}
 
-\item{overwrite, }{optional boolean if true, previous results in same location inside
-hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
+\item{overwrite}{logical (optional), An optional parameter to indicate whether
+existing results in the HDF5 file should be overwritten. Defaults to FALSE.
+If FALSE and the dataset already exists, an error will be displayed, and
+no calculations will be performed. If TRUE and a dataset with the same
+name as specified in outdataset already exists, it will be overwritten.}
 
-\item{threads}{optional parameter. Integer with numbers of threads to be used}
+\item{threads}{integer (optional), an optional parameter specifying the
+number of threads to use if paral = TRUE. Ignored if paral = FALSE.}
 
-\item{elementsBlock, }{optional integer defines de maximum number of elements
-to read from hdf5 data file in each block. By default this value is set
-to 10000. If matrix is bigger thant 5000x5000 then block is set to number
-of rows or columns x 2}
+\item{elementsBlock}{integer (optional), an integer that specifies the
+maximum number of elements to read from the HDF5 data file in each block.
+By default, this value is set to 100,000. If the matrix size exceeds 5000x5000,
+the block size is automatically adjusted to number of rows or columns * 2}
 }
 \value{
 Original hdf5 data file with Cholesky decomposition
 }
 \description{
 Compute cholesky decomposition with datasets stored in hdf5 data files. Function returns the upper triangular matrix.
+}
+\details{
+The \strong{Cholesky decomposition} is a factorization of a \strong{symmetric positive-definite matrix} \eqn{A}
+into the product of a \strong{lower triangular matrix} \eqn{L} and its transpose.
+\deqn{A = L L^\top}
+where:
+\itemize{
+\item \eqn{A} is a symmetric positive-definite matrix of size \eqn{n \times n},
+\item \eqn{L} is a lower triangular matrix of size \eqn{n \times n},
+\item \eqn{L^\top} is the transpose of \eqn{L}.
+}
+\subsection{Key Properties}{
+\enumerate{
+\item \strong{Positive-Definiteness}: The matrix \eqn{A} must be positive-definite
+\item \strong{Positive Diagonal}: The diagonal elements of \eqn{L}, \eqn{l_{ii}}, are strictly positive.
+}
+}
 }
 \examples{
 

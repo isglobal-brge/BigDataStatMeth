@@ -26,7 +26,10 @@
 //' perform normalization
 //' @param overwrite, boolean if true, previous results in same location inside 
 //' hdf5 will be overwritten.
-//' @return file with scaled, centered or scaled and centered dataset
+//' @return the original HDF5 file with normalized data stored under the group 
+//' "NORMALIZED", where:
+//'     * the dataset for the mean is named "mean." + original_dataset_name
+//'     * the dataset for the scaling is named "sd." + original_dataset_name
 //' @examples
 //'   a = "See vignette"
 //' @export

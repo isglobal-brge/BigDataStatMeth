@@ -5,23 +5,30 @@
 #'
 #' Compute cholesky decomposition with datasets stored in hdf5 data files. Function returns the upper triangular matrix.
 #'
-#' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
-#' @param group, character array indicating the input group where the data set to be modified. 
-#' @param dataset, character array indicating the input dataset to be modified
-#' @param outdataset character array with output dataset name where we want to store results
-#' @param outgroup optional, character array with output group name where we want to 
-#' store results if not provided then results are stored in the same group as original dataset
+#' @inheritParams bdblockmult_hdf5
+#' @inheritParams bdNormalize_hdf5
 #' @param fullMatrix boolean, optional parameter, by default false. 
 #' If fullMatrix = true, in the hdf5 file the complete matrix is stored. 
 #' If false, only the lower triangular matrix is saved
-#' @param overwrite, optional boolean if true, previous results in same location inside 
-#' hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
-#' @param threads optional parameter. Integer with numbers of threads to be used
-#' @param elementsBlock, optional integer defines de maximum number of elements 
-#' to read from hdf5 data file in each block. By default this value is set 
-#' to 10000. If matrix is bigger thant 5000x5000 then block is set to number 
-#' of rows or columns x 2
+#' @param elementsBlock integer (optional), an integer that specifies the 
+#' maximum number of elements to read from the HDF5 data file in each block. 
+#' By default, this value is set to 100,000. If the matrix size exceeds 5000x5000, 
+#' the block size is automatically adjusted to number of rows or columns * 2
 #' @return Original hdf5 data file with Cholesky decomposition
+#' 
+#' @details 
+#' The **Cholesky decomposition** is a factorization of a **symmetric positive-definite matrix** \eqn{A} 
+#' into the product of a **lower triangular matrix** \eqn{L} and its transpose.
+#' \deqn{A = L L^\top}
+#' where:
+#'   * \eqn{A} is a symmetric positive-definite matrix of size \eqn{n \times n},
+#'   * \eqn{L} is a lower triangular matrix of size \eqn{n \times n},
+#'   * \eqn{L^\top} is the transpose of \eqn{L}.
+#'   
+#' ### Key Properties
+#' 1. **Positive-Definiteness**: The matrix \eqn{A} must be positive-definite
+#' 2. **Positive Diagonal**: The diagonal elements of \eqn{L}, \eqn{l_{ii}}, are strictly positive.
+#' 
 #' @examples
 #' 
 #' library(BigDataStatMeth)
@@ -497,7 +504,10 @@ bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_
 #' perform normalization
 #' @param overwrite, boolean if true, previous results in same location inside 
 #' hdf5 will be overwritten.
-#' @return file with scaled, centered or scaled and centered dataset
+#' @return the original HDF5 file with normalized data stored under the group 
+#' "NORMALIZED", where:
+#'     * the dataset for the mean is named "mean." + original_dataset_name
+#'     * the dataset for the scaling is named "sd." + original_dataset_name
 #' @examples
 #'   a = "See vignette"
 #' @export
@@ -864,6 +874,9 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #' row names to be written.
 #' @param overwrite (optional) either a logical value indicating whether the 
 #' output file can be overwritten or not.
+#' @param fileoverwrite logical (optional), CAUTION, if TRUE, file will be 
+#' overwritten with imported dataset, by default `fileoverwrite = FALSE` to avoid
+#' file overwritting.
 #' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel 
 #' computation else performs seria computation
 #' @param threads (optional) only if bparal = true, number of concurrent 
@@ -872,8 +885,8 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #'
 #' @return none value returned, data are stored in a dataset inside an hdf5 data file.
 #' @export
-bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE, paral = NULL, threads = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdImportTextFile_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads))
+bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE, paral = NULL, threads = NULL, overwriteFile = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdImportTextFile_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads, overwriteFile))
 }
 
 #' Impute SNPs in hdf5 omic dataset 

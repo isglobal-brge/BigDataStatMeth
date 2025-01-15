@@ -43,7 +43,10 @@ perform normalization}
 hdf5 will be overwritten.}
 }
 \value{
-file with scaled, centered or scaled and centered dataset
+the original HDF5 file with normalized data stored under the group
+"NORMALIZED", where:
+* the dataset for the mean is named "mean." + original_dataset_name
+* the dataset for the scaling is named "sd." + original_dataset_name
 }
 \description{
 This function normalize data scaling, centering or scaling and centering

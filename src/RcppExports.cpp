@@ -343,8 +343,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdImportTextFile_hdf5
-void bdImportTextFile_hdf5(std::string filename, std::string outputfile, std::string outGroup, std::string outDataset, Rcpp::Nullable<std::string> sep, Rcpp::Nullable<bool> header, Rcpp::Nullable<bool> rownames, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdImportTextFile_hdf5(SEXP filenameSEXP, SEXP outputfileSEXP, SEXP outGroupSEXP, SEXP outDatasetSEXP, SEXP sepSEXP, SEXP headerSEXP, SEXP rownamesSEXP, SEXP overwriteSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
+void bdImportTextFile_hdf5(std::string filename, std::string outputfile, std::string outGroup, std::string outDataset, Rcpp::Nullable<std::string> sep, Rcpp::Nullable<bool> header, Rcpp::Nullable<bool> rownames, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> overwriteFile);
+RcppExport SEXP _BigDataStatMeth_bdImportTextFile_hdf5(SEXP filenameSEXP, SEXP outputfileSEXP, SEXP outGroupSEXP, SEXP outDatasetSEXP, SEXP sepSEXP, SEXP headerSEXP, SEXP rownamesSEXP, SEXP overwriteSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP overwriteFileSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
@@ -357,7 +357,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    bdImportTextFile_hdf5(filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwriteFile(overwriteFileSEXP);
+    bdImportTextFile_hdf5(filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads, overwriteFile);
     return R_NilValue;
 END_RCPP
 }
@@ -697,7 +698,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdblockSum_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockSum_hdf5, 11},
     {"_BigDataStatMeth_bdtCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_hdf5, 12},
     {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
-    {"_BigDataStatMeth_bdImportTextFile_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImportTextFile_hdf5, 10},
+    {"_BigDataStatMeth_bdImportTextFile_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImportTextFile_hdf5, 11},
     {"_BigDataStatMeth_bdImputeSNPs_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImputeSNPs_hdf5, 7},
     {"_BigDataStatMeth_bdgetDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDiagonal_hdf5, 3},
     {"_BigDataStatMeth_bdWriteDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteDiagonal_hdf5, 4},
