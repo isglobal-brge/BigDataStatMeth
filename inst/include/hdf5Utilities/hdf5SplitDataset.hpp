@@ -15,6 +15,7 @@ void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, bool bycol
                             int blocksize, int irows, int icols )
 {
     
+    
     try {
         
         int blocks;
@@ -38,7 +39,6 @@ void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, bool bycol
         
         for ( int i=0; i<blocks; i++)
         {
-            // newDatasetName = stroutgroup + "/" + stroutdataset + "." + std::to_string(i), incols;
             newDatasetName = stroutgroup + "/" + stroutdataset + "." + std::to_string(i);
             
             if( bycols == true) { 
@@ -50,31 +50,38 @@ void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, bool bycol
                 if( ii + blocksize > irows) { inrows = irows - ii; }
             }
             
-            // Get block from complete matrix
-            // Eigen::MatrixXd Block = GetCurrentBlock_hdf5( file, dstosplit, kk, ii, incols, inrows);
-            // Transform to rowmajor
-            // Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mapBlock(Block.transpose().data(), inrows, incols);
-            
             std::vector<double> vdts( inrows * incols );
             dstosplit->readDatasetBlock( {kk, ii}, {incols, inrows}, stride, block, vdts.data() );
-            //.. REALMENT HO NECESSITEM ?? .. // Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdts.data(), inrows, incols );
 
+            //. ORIGINAL A 2025/01/15.// BigDataStatMeth::hdf5Dataset* dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), stroutgroup, stroutdataset, false);
             
-            // ESTIC AQUÍ !!!
-            // HE DE CREAR ELS RESULTATS AMB ELS SPLITS
-            // FALTARIA ESCRIURE EL BLOCK AL FITXER + REVISAR ELS CATCH
-            // I PODRIA SER QUE REVISAR-HO ABSOLUTAMENT TOT PERQUÈ DE 
-            // SEGUR QUE ESTÀ PROGRAMAT AMB EL CUL !!!
+            BigDataStatMeth::hdf5Dataset* dsOut;
             
-            BigDataStatMeth::hdf5Dataset* dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), stroutgroup, stroutdataset, false);
-            dsOut->createDataset( inrows, incols, "real"); 
-            dsOut->writeDataset(vdts.data());
+            try {
+                
+                dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, false);
+                dsOut->createDataset( inrows, incols, "real"); 
+                dsOut->writeDataset(vdts.data());
+                
+            } catch( H5::FileIException& error ) {
+                delete dsOut;
+                ::Rf_error( "c++ exception (File IException )" );
+                return void();
+            } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
+                delete dsOut;
+                ::Rf_error( "c++ exception (dstosplit IException )" );
+                return void();
+            } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
+                delete dsOut;
+                ::Rf_error( "c++ exception (DataSpace IException )" );
+                return void();
+            } 
             
-            // write_HDF5_matrix_from_R_ptr(file, newDatasetName, Rcpp::wrap(mapBlock), false);
+            delete dsOut;
             
         }
         
-    }catch( H5::FileIException& error ) {
+    } catch( H5::FileIException& error ) {
         ::Rf_error( "c++ exception (File IException )" );
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
