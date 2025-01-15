@@ -241,8 +241,6 @@ public:
     {
         try
         {
-            Rcpp::Rcout<<"\nDataset - unlimited val: "<<unlimited<<"\n";
-            
             if(unlimited == true) {
                 H5::Exception::dontPrint();
                 
