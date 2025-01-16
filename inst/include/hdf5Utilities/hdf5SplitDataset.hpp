@@ -59,7 +59,7 @@ void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, bool bycol
             
             try {
                 
-                dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, false);
+                dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, true);
                 dsOut->createDataset( inrows, incols, "real"); 
                 dsOut->writeDataset(vdts.data());
                 
