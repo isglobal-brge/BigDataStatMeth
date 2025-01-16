@@ -240,21 +240,11 @@ void bdapply_Function_hdf5( std::string filename,
                 }
 
                 Eigen::MatrixXd results;
-                int iblock_size = MAXBLOCKSIZE/3;
-
-                if (btransdataA == false && btransdataB == false) {
-                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original, originalB, iblock_size, R_NilValue);
-                } else if (btransdataA == true && btransdataB == false) {
-                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original.transpose(), originalB, iblock_size, R_NilValue);
-                }else if (btransdataA == false && btransdataB == true) {
-                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original, originalB.transpose(), iblock_size, R_NilValue);
-                } else {
-                    results = BigDataStatMeth::Bblock_matrix_mul_parallel(original.transpose(), originalB.transpose(), iblock_size, R_NilValue);
-                }
+                results = BigDataStatMeth::Rcpp_block_matrix_mul_parallel(original, originalB, btransdataA, btransdataB, R_NilValue, R_NilValue);
                 
                 if( results != Eigen::MatrixXd::Zero(original.rows(),originalB.cols()) ) {
                     BigDataStatMeth::hdf5Dataset* dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce);
-                    dsOut->createDataset(results.rows(), results.rows(), "real");
+                    dsOut->createDataset(results.rows(), results.cols(), "real");
                     dsOut->writeDataset(Rcpp::wrap(results));
                     
                     delete dsOut;    
