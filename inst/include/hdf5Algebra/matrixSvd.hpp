@@ -166,7 +166,7 @@ namespace BigDataStatMeth {
                     
                     delete normalizedData ;
                     
-                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
+                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
                     
                 } else {
                     
@@ -180,7 +180,7 @@ namespace BigDataStatMeth {
                     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), dims_out[0], dims_out[1]);
                     delete normalizedData ;
                     
-                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
+                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
                 }
                 
             } else {
@@ -191,7 +191,7 @@ namespace BigDataStatMeth {
                 dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
                 
                 A.transposeInPlace();
-                v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
+                v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
                 
             }
                 

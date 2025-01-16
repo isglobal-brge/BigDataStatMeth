@@ -94,7 +94,7 @@ Eigen::MatrixXd bdCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B = 
             Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mTrans(mA.data(), mA.cols(), mA.rows());
             
             if(bparal == true) {
-                C = BigDataStatMeth::Rcpp_block_matrix_mul_parallel(mTrans, mB, block_size, threads);
+                C = BigDataStatMeth::Rcpp_block_matrix_mul_parallel(mTrans, mB, false, false, block_size, threads);
                 // C = Bblock_matrix_mul_parallel(mTrans, mB, iblock_size, threads);
                 
             } else if (bparal == false)  {

@@ -125,6 +125,8 @@ namespace BigDataStatMeth {
     // In-memory execution - Parallel version - by Blocks
     template<typename T, typename U>
     extern inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, U Y, 
+                                                                  bool transpX,
+                                                                  bool transpY,
                                                                   Rcpp::Nullable<int>  iblock_size, 
                                                                   Rcpp::Nullable<int> threads  = R_NilValue)
     {
@@ -145,6 +147,9 @@ namespace BigDataStatMeth {
             
             Eigen::MatrixXd A = X,
                             B = Y;
+            
+            if(transpX == true){ A = X.transpose(); }
+            if(transpY == true){ B = Y.transpose(); }
             
             int chunks;//, tid;
             hsize_t block_size;
