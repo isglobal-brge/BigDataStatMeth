@@ -48,7 +48,7 @@ dsets
 bdapply_Function_hdf5(filename = filename,
                       group = "data",datasets = dsets,
                       outgroup = "QR",func = "QR",
-                      force = TRUE)
+                      overwrite = TRUE)
 
 QX <-  h5read("/Users/mailos/PhD/dummy/test_temp.hdf5", "/QR/X.Q")
 RX <-  h5read("/Users/mailos/PhD/dummy/test_temp.hdf5", "/QR/X.R")
@@ -67,6 +67,20 @@ all.equal(RX, qr.R(qr(X)))
 
 all.equal(QZ, qr.Q(qr(Z)))
 all.equal(RZ, qr.R(qr(Z)))
+
+
+bdQR_hdf5(filename = filename,
+          group = "data",dataset = "Z", outgroup = "testQRhdf5")
+
+QZ2 <-  h5read("/Users/mailos/PhD/dummy/test_temp.hdf5", "/testQRhdf5/Q.Z")
+RZ2 <-  h5read("/Users/mailos/PhD/dummy/test_temp.hdf5", "/testQRhdf5/R.Z")
+
+
+all.equal(QZ2, qr.Q(qr(Z)))
+all.equal(RZ2, qr.R(qr(Z)))
+
+QX2
+QR2
 
 
 # ---------------------------
@@ -178,13 +192,22 @@ all.equal(resr, descYP)
 # Apply function : Matrix multiplication (2 matrices)
 # ---------------------------------------------------
 
+library("BigDataStatMeth")
+library(rhdf5)
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
-N = 50
-M = 30
+
+# setwd("~/PhD/TREBALLANT/BigDataStatMethAPIsV3")
+setwd("/Users/mailos/PhD/dummy")
+
+# devtools::reload(pkgload::inst("BigDataStatMeth"))
+N = 25
+M = 6
+P = 6
 
 set.seed(555)
 a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
-b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+b <- matrix( rnorm( M*M, mean=0, sd=1), M, M) 
+filename <- "test_temp.hdf5"
 
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
 bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
@@ -218,23 +241,22 @@ dsetsb <- bdgetDatasetsList_hdf5("test_temp.hdf5", group = "groupB")
 
 
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
-bdapply_Function_hdf5(filename = filename, group = "groupA", datasets = dsets, outgroup = "blockmult", func = "blockmult",  b_group = "groupB",  b_datasets = dsetsb, force = TRUE) 
-
+bdapply_Function_hdf5(filename = filename, group = "groupA", datasets = dsets, outgroup = "blockmult", func = "blockmult",  b_group = "groupB",  b_datasets = dsetsb, overwrite = TRUE) 
 #       No results - no es poden computar
 
-bdapply_Function_hdf5(filename = filename, group = "groupA", datasets = dsets, outgroup = "blockmult", func = "blockmult",  b_group = "groupB",  transp_dataset = FALSE, transp_bdataset = TRUE, b_datasets = dsetsb, force = TRUE) 
+bdapply_Function_hdf5(filename = filename, group = "groupA", datasets = dsets, outgroup = "blockmult", func = "blockmult",  b_group = "groupB",  transp_dataset = FALSE, transp_bdataset = TRUE, b_datasets = dsetsb, overwrite = TRUE) 
 
 res1 <-  h5read("/Users/mailos/PhD/dummy/test_temp.hdf5", "/blockmult/aa_ba")
 res2 <-  h5read("/Users/mailos/PhD/dummy/test_temp.hdf5", "/blockmult/ab_bb")
 all.equal(a%*%t(a), res1)
 all.equal(b%*%t(b), res2)
 
-bdapply_Function_hdf5(filename = filename, group = "groupA", datasets = c("aa"), outgroup = "blockmult", func = "blockmult",  b_group = "groupB",  transp_dataset = FALSE, transp_bdataset = FALSE, b_datasets = c("bb"), force = TRUE) 
+bdapply_Function_hdf5(filename = filename, group = "groupA", datasets = c("aa"), outgroup = "blockmult", func = "blockmult",  b_group = "groupB",  transp_dataset = FALSE, transp_bdataset = FALSE, b_datasets = c("bb"), overwrite = TRUE) 
 
 res <-  h5read("/Users/mailos/PhD/dummy/test_temp.hdf5", "/blockmult/aa_bb")
 all.equal(a%*%b, res)
 
-bdapply_Function_hdf5(filename = filename, group = "groupA", datasets = c("aa"), outgroup = "blockmult", func = "blockmult",  b_group = "groupB",  transp_dataset = TRUE, transp_bdataset = FALSE, b_datasets = c("ba"), force = TRUE) 
+bdapply_Function_hdf5(filename = filename, group = "groupA", datasets = c("aa"), outgroup = "blockmult", func = "blockmult",  b_group = "groupB",  transp_dataset = TRUE, transp_bdataset = FALSE, b_datasets = c("ba"), overwrite = TRUE) 
 
 res <-  h5read("/Users/mailos/PhD/dummy/test_temp.hdf5", "/blockmult/aa_ba")
 all.equal( t(a)%*%a, res)
