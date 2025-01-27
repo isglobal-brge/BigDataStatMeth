@@ -127,31 +127,32 @@ void bdCrossprod_hdf5( std::string filename,
         dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, matB, false);
         dsB->openDataset();
         
-        if( dsA->getDatasetptr() == nullptr || dsB->getDatasetptr() == nullptr)
-            return void();
-        
-        dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
-        
-        iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
-
-        if(bparal == true) { // parallel
+        if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
             
-            int memory_block; 
-            if(mixblock_size.isNotNull()) {
-                memory_block = Rcpp::as<int> (mixblock_size);
-            } else {
-                memory_block = iblock_size/2;
-            }
+            dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
             
-            dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, iblock_size, memory_block, bparal, true, threads);
+            iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
             
-        } else if (bparal == false) { // Not parallel
-            dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
+            if(bparal == true) { // parallel
+                
+                int memory_block; 
+                if(mixblock_size.isNotNull()) {
+                    memory_block = Rcpp::as<int> (mixblock_size);
+                } else {
+                    memory_block = iblock_size/2;
+                }
+                
+                dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, iblock_size, memory_block, bparal, true, threads);
+                
+            } else if (bparal == false) { // Not parallel
+                dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
+            }    
+            
+            delete dsC;
         }
         
         delete dsA;
         delete dsB;
-        delete dsC;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         if( dsA->isOpen()) dsA->close_file();
