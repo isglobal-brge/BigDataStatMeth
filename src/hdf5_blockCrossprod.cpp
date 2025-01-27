@@ -87,6 +87,10 @@ void bdCrossprod_hdf5( std::string filename,
         iblockfactor = 2;
     bool bparal, bforce;
     
+    BigDataStatMeth::hdf5Dataset* dsA;
+    BigDataStatMeth::hdf5Dataset* dsB;
+    BigDataStatMeth::hdf5Dataset* dsC;
+    
     std::string strsubgroupOut, 
     strdatasetOut, 
     strsubgroupIn,
@@ -118,11 +122,15 @@ void bdCrossprod_hdf5( std::string filename,
         else { strdatasetOut = "CrossProd_" + A + "_x_" + matB; }
         
         
-        BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
         dsA->openDataset();
-        BigDataStatMeth::hdf5Dataset* dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, matB, false);
+        dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, matB, false);
         dsB->openDataset();
-        BigDataStatMeth::hdf5Dataset* dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+        
+        if( dsA->getDatasetptr() == nullptr || dsB->getDatasetptr() == nullptr)
+            return void();
+        
+        dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
         
         iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
 
@@ -146,10 +154,17 @@ void bdCrossprod_hdf5( std::string filename,
         delete dsC;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        ::Rf_error( "c++ exception bdCrossprod_hdf5 (File IException)" );
+        if( dsA->isOpen()) dsA->close_file();
+        Rcpp::Rcerr<<"\nc++ c++ exception bdCrossprod_hdf5 (File IException)\n";
+        return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        ::Rf_error( "c++ exception bdCrossprod_hdf5 (DataSet IException)" );
+        if( dsA->isOpen()) dsA->close_file();
+        Rcpp::Rcerr<<"\nc++ exception bdCrossprod_hdf5 (DataSet IException)\n";
+        return void();
     } catch(std::exception &ex) {
+        if( dsA->isOpen()) dsA->close_file();
+        Rcpp::Rcerr<<"\nc++ exception bdCrossprod_hdf5\n";
+        return void();
     }
     
     // return List::create(Named("filename") = filename,
