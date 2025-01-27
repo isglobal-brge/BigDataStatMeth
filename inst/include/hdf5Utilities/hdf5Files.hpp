@@ -140,9 +140,44 @@ public:
     } // Return a dataset name list with all the datasets inside
     
     
+    // Close file and all the opened objects (emergency)
+    void close_file() {
+        try {
+            
+            // Obtener el número de objetos abiertos
+            ssize_t sObjects = H5Fget_obj_count( pfile->getId(), H5F_OBJ_ALL);
+            
+            // if (sObjects < 0) {
+            //     Rcpp::Rcerr << "Error getting number of open objects\n";
+            // } else 
+            if (sObjects > 0) {
+                // Get the Ids of opened objects 
+                std::vector<hid_t> vIds(sObjects);
+                ssize_t sOpenIds = H5Fget_obj_ids(pfile->getId(), H5F_OBJ_ALL, sObjects, vIds.data());
+                
+                if (sOpenIds > 0) {
+                    for (hid_t OpenId : vIds) {
+                        if (H5Iis_valid(OpenId)) {
+                            H5Oclose(OpenId); // Cierra el objeto genérico (puede ser dataset, grupo, etc.)
+                        }
+                    }
+                } 
+            }
+            
+            pfile->close();
+        } catch(std::exception& ex) {
+            Rcpp::Rcerr<< "c++ exception close_file (err FileException)";
+        }
+        
+        return void();
+    }
+    
+    
+    
     // Destructor
     ~hdf5File(){
-        pfile->close();
+        close_file();
+        // pfile->close();
     }
     
 protected:
@@ -177,16 +212,6 @@ private:
         return(exists);
     }
 
-    
-    void close_file() {
-        try {
-            pfile->close();    
-        } catch(std::exception& ex) {
-            ::Rf_error( "c++ exception close_file (err FileException)" );
-        }
-        
-    }
-    
     
     // Get dataset names inside the strgroup
     Rcpp::StringVector get_dataset_names_from_group(std::string strgroup, std::string strprefix)
