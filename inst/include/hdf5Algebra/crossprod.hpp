@@ -19,7 +19,7 @@ extern inline BigDataStatMeth::hdf5Dataset* crossprod(
         hsize_t K = dsA->ncols();
         hsize_t M = dsB->nrows();
         hsize_t L = dsB->ncols();
-
+        
         if( K == L)
         {
             hsize_t isize = hdf5_block + 1,
@@ -29,7 +29,7 @@ extern inline BigDataStatMeth::hdf5Dataset* crossprod(
             std::vector<hsize_t> stride = {1, 1};
             std::vector<hsize_t> block = {1, 1};
 
-            dsC->createDataset( M, N, "real");
+            dsC->createDataset( N, M, "real");
 
             for (hsize_t ii = 0; ii < N; ii += hdf5_block)
             {
@@ -70,13 +70,9 @@ extern inline BigDataStatMeth::hdf5Dataset* crossprod(
                             Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> tmp_C (vdC.data(), iRowsB, iRowsA);
                             C = tmp_C.transpose();
                         }
-
-                        if( bparal == false) {
-                            C = C + (A * B);
-                        } else{
-                            C = C + BigDataStatMeth::Bblock_matrix_mul_parallel(A, B, mem_block_size, threads);
-                        }
-
+                           
+                        C = C + (A * B);
+                        
                         std::vector<hsize_t> offset = {jj,ii};
                         std::vector<hsize_t> count = {iRowsB, iRowsA};
                         

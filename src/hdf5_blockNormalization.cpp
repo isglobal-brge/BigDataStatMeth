@@ -98,7 +98,6 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
          
          BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal, datanormal, wsize, bc, bs, bbyrows, corrected);
 
-         
          delete dsNormal;
          delete dsA;
 
