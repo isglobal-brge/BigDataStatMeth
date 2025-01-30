@@ -248,6 +248,8 @@ namespace BigDataStatMeth {
                                 Rcpp::Nullable<int> ithreads = R_NilValue)
     {
         
+        hdf5Dataset* dsA;
+        
         try {
             
             hdf5Dataset* dsu;
@@ -265,66 +267,72 @@ namespace BigDataStatMeth {
             if(method.isNull())  strMethod = "auto" ;
             else    strMethod = Rcpp::as<std::string>(method);
             
-            hdf5Dataset* dsA = new hdf5Dataset(filename, strsubgroup, strdataset, false);
+            dsA = new hdf5Dataset(filename, strsubgroup, strdataset, false);
             dsA->openDataset();
             
-            // Create results folder
-            std::string stroutgroup = "SVD/"+ strdataset;
-            
-            std::vector<hsize_t> dims_out = {dsA->nrows(), dsA->ncols()};;
-            count = { dims_out[0], dims_out[1]};
-            
-            // Small matrices ==> Direct SVD (lapack)
-            if( (dims_out[0] * dims_out[1] < (MAXELEMSINBLOCK / 20) && strMethod == "auto") || strMethod == "full" ) {
+            if( dsA->getDatasetptr() != nullptr ) { 
+                // Create results folder
+                std::string stroutgroup = "SVD/"+ strdataset;
                 
-                Eigen::MatrixXd X;
-                svdeig retsvd;
+                std::vector<hsize_t> dims_out = {dsA->nrows(), dsA->ncols()};;
+                count = { dims_out[0], dims_out[1]};
                 
-                std::vector<double> vdA( count[0] * count[1] ); 
-                dsA->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
-                
-                if(asRowMajor == true) {
-                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdA.data(), count[0], count[1] );    
-                    retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
+                // Small matrices ==> Direct SVD (lapack)
+                if( (dims_out[0] * dims_out[1] < (MAXELEMSINBLOCK / 20) && strMethod == "auto") || strMethod == "full" ) {
+                    
+                    Eigen::MatrixXd X;
+                    svdeig retsvd;
+                    
+                    std::vector<double> vdA( count[0] * count[1] ); 
+                    dsA->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
+                    
+                    if(asRowMajor == true) {
+                        Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdA.data(), count[0], count[1] );    
+                        retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
+                    } else {
+                        Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> X (vdA.data(), count[1], count[0] );
+                        retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
+                    }
+                    
+                    dsu = new hdf5Dataset(filename, stroutgroup, "u", bforce);
+                    dsu->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real");
+                    dsu->writeDataset( Rcpp::wrap(retsvd.u) );
+                    
+                    dsv = new hdf5Dataset(filename, stroutgroup, "v", bforce);
+                    dsv->createDataset( retsvd.v.rows(), retsvd.v.cols(), "real");
+                    dsv->writeDataset( Rcpp::wrap(retsvd.v) );
+                    
+                    dsd = new hdf5Dataset(filename, stroutgroup, "d", bforce);
+                    dsd->createDataset( retsvd.d.size(), 1, "real");
+                    dsd->writeDataset( Rcpp::wrap(retsvd.d) );
+                    
                 } else {
-                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> X (vdA.data(), count[1], count[0] );
-                    retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
-                }
+                    
+                    dsu = new hdf5Dataset(filename, stroutgroup, "u", true);
+                    dsv = new hdf5Dataset(filename, stroutgroup, "v", true);
+                    dsd = new hdf5Dataset(filename, stroutgroup, "d", true);
+                    
+                    RcppbdSVD_hdf5_Block( dsA, dsu, dsv, dsd, k, q, nev, bcenter, bscale, count[1], count[0], dthreshold, ithreads );
+                    
+                }    
                 
-                dsu = new hdf5Dataset(filename, stroutgroup, "u", bforce);
-                dsu->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real");
-                dsu->writeDataset( Rcpp::wrap(retsvd.u) );
-                
-                dsv = new hdf5Dataset(filename, stroutgroup, "v", bforce);
-                dsv->createDataset( retsvd.v.rows(), retsvd.v.cols(), "real");
-                dsv->writeDataset( Rcpp::wrap(retsvd.v) );
-                
-                dsd = new hdf5Dataset(filename, stroutgroup, "d", bforce);
-                dsd->createDataset( retsvd.d.size(), 1, "real");
-                dsd->writeDataset( Rcpp::wrap(retsvd.d) );
-                
-            } else {
-                
-                dsu = new hdf5Dataset(filename, stroutgroup, "u", true);
-                dsv = new hdf5Dataset(filename, stroutgroup, "v", true);
-                dsd = new hdf5Dataset(filename, stroutgroup, "d", true);
-                
-                RcppbdSVD_hdf5_Block( dsA, dsu, dsv, dsd, k, q, nev, bcenter, bscale, count[1], count[0], dthreshold, ithreads );
-                
-            }
+                delete dsu;
+                delete dsv;
+                delete dsd;
+            } 
             
-            delete dsu;
-            delete dsv;
-            delete dsd;
             delete dsA;
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception RcppbdSVD_hdf5 (File IException)" );
+            if( dsA->isOpen()) dsA->close_file();
+            Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5 (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            ::Rf_error( "c++ exception RcppbdSVD_hdf5 (DataSet IException)" );
+            if( dsA->isOpen()) dsA->close_file();
+            Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5 (DataSet IException)\n";
             return void();
         } catch(std::exception &ex) {
+            if( dsA->isOpen()) dsA->close_file();
             Rcpp::Rcout<<"c++ exception RcppbdSVD_hdf5 \n"<< ex.what();
             return void();
         }
