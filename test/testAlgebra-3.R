@@ -118,7 +118,8 @@ resr <- solve(Ycp)
 all.equal(resr[upper.tri(resr)], res[upper.tri(res)])
 
 microbenchmark::microbenchmark( T <- solve(Ycp),
-                                res <- res <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = FALSE, overwrite = TRUE),
+                                resP <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = FALSE, overwrite = TRUE),
+                                resF <- bdInvCholesky_hdf5(filename = "test_temp.hdf5", group = "data", dataset = "matrix", outdataset = "invmatrix", outgroup = "InvCholesky", fullMatrix = TRUE, overwrite = TRUE),
                                 times = 5 )
 
 

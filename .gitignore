@@ -11,3 +11,4 @@ src/Makevars
 inst/cc
 inst/cc
 *.html
+*.tmp

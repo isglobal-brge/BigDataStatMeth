@@ -88,63 +88,63 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
 # ----------------------
 
 # Sum two matrix
-bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", force = TRUE ) 
-bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 5, force = TRUE ) 
+bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
+bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 5, overwrite = TRUE ) 
 
 # Sum matrix + Vector
-bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "vdatasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", force = TRUE,block_size = 4 ) 
-bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "vdatasetpepet", outgroup = "results", outdataset = "res", force = TRUE ) 
+bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "vdatasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE,block_size = 4 ) 
+bdblockSum_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "vdatasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
 
 
 # Matrix-Vector Substract
 # ----------------------
 
 # Sum two matrix
-bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", force = TRUE ) 
-bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 5, force = TRUE ) 
+bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
+bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 5, overwrite = TRUE ) 
 
 # Sum matrix + Vector
-bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "vdatasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", force = TRUE,block_size = 4 ) 
-bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "vdatasetpepet", outgroup = "results", outdataset = "res", force = TRUE ) 
+bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "vdatasetpepet", B = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE,block_size = 4 ) 
+bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "vdatasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) 
 
 
 
 # Matrix Multiplication
 # ----------------------
 
-bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", force = TRUE )
+bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", overwrite = TRUE )
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
-bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", force = TRUE, paral = TRUE, threads = 4 )
-bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", force = TRUE, paral = TRUE, threads = 4 ,block_size = 1024)
+bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", overwrite = TRUE, paral = TRUE, threads = 4 )
+bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", overwrite = TRUE, paral = TRUE, threads = 4 ,block_size = 1024)
 
 
 # Matrix Multiplication - Sparse
 # -----------------------------
 
-bdbdblockmult_sparse_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", force = TRUE )
-bdbdblockmult_sparse_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", force = TRUE, block_size = 10  )
+bdbdblockmult_sparse_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", overwrite = TRUE )
+bdbdblockmult_sparse_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", overwrite = TRUE, block_size = 10  )
 
 ## Parallel not working (at the moment --> need to be reviewed)
-# .. TO BE REVIEWED .. # BigDataStatMeth::bdbdblockmult_sparse_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outdataset = "prod_sparse_parall", force = TRUE, paral = TRUE, threads = 4 )
+# .. TO BE REVIEWED .. # BigDataStatMeth::bdbdblockmult_sparse_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outdataset = "prod_sparse_parall", overwrite = TRUE, paral = TRUE, threads = 4 )
 
 # Matrix Crossprodduct
 # ---------------------
 
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
-bdCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", force = TRUE ) # Crossprod A %*% t(A)
-bdCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", block_size = 1024, force = TRUE ) # Crossprod A %*% t(A)
-bdCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", block_size = 4, force = TRUE ) # Crossprod A %*% t(A)
-bdCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", force = TRUE ) # Crossprod A %*% t(B)
+bdCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", overwrite = TRUE ) # Crossprod A %*% t(A)
+bdCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", block_size = 1024, overwrite = TRUE ) # Crossprod A %*% t(A)
+bdCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", block_size = 4, overwrite = TRUE ) # Crossprod A %*% t(A)
+bdCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", overwrite = TRUE ) # Crossprod A %*% t(B)
 
 
 # Matrix tCrossprodduct
 # ---------------------
 
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
-bdtCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", outgroup = "results", outdataset = "res", force = TRUE ) # tCrossprod t(A) %*% A
-bdtCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, force = TRUE ) # tCrossprod t(A) %*% A
-bdtCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 4, force = TRUE ) # tCrossprod t(A) %*% A
-bdtCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "res", force = TRUE ) # tCrossprod t(A) %*% B
+bdtCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) # tCrossprod t(A) %*% A
+bdtCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 1024, overwrite = TRUE ) # tCrossprod t(A) %*% A
+bdtCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", outgroup = "results", outdataset = "res", block_size = 4, overwrite = TRUE ) # tCrossprod t(A) %*% A
+bdtCrossprod_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "res", overwrite = TRUE ) # tCrossprod t(A) %*% B
 
 
 # Matrix Diagonals - Get and Set
@@ -164,7 +164,7 @@ bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_temp.hdf5", group = "pepet"
 # -----------------------------------
 
 bdcomputeMatrixVector_hdf5("test_temp.hdf5", group = "data", dataset = "matrix", vectorgroup = "data", vectordataset = "vector",  
-                           outgroup = "results", outdataset = "res",  func = "*", byrows = TRUE,  paral=FALSE, threads = 1, force = TRUE)
+                           outgroup = "results", outdataset = "res",  func = "*", byrows = TRUE,  paral=FALSE, threads = 1, overwrite = TRUE)
 
 
 
@@ -202,9 +202,9 @@ all.equal( round( diag(res), 5), ound( diagonal2, 5) )
 library(rbenchmark)
 
 res <- rbenchmark::benchmark( "R" = (a%*%b),
-                              "BDSM" =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", force = TRUE ),
-                              "BDSM_par2" =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", force = TRUE, paral = TRUE, threads = 2 ),
-                              "BDSM_par4" =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", force = TRUE, paral = TRUE, threads = 4 ),
+                              "BDSM" =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", overwrite = TRUE ),
+                              "BDSM_par2" =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", overwrite = TRUE, paral = TRUE, threads = 2 ),
+                              "BDSM_par4" =  bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", overwrite = TRUE, paral = TRUE, threads = 4 ),
                               replications = 5,
                               columns = c("test", "replications", "elapsed",
                                           "relative", "user.self", "sys.self"))
