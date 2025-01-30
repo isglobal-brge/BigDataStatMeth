@@ -176,8 +176,8 @@ public:
     
     // Destructor
     ~hdf5File(){
-        close_file();
-        // pfile->close();
+        // close_file();
+        pfile->close();
     }
     
 protected:
