@@ -32,7 +32,7 @@ extern inline BigDataStatMeth::hdf5Dataset* tcrossprod(
             std::vector<hsize_t> stride = {1, 1};
             std::vector<hsize_t> block = {1, 1};
 
-            dsC->createDataset( M, N, "real");
+            dsC->createDataset( N, M, "real");
 
             for (hsize_t ii = 0; ii < N; ii += hdf5_block)
             {
@@ -73,11 +73,11 @@ extern inline BigDataStatMeth::hdf5Dataset* tcrossprod(
                             C = tmp_C.transpose();
                         }
 
-                        if( bparal == false) {
+                        // if( bparal == false) {
                             C = C + (A * B);
-                        } else{
-                            C = C + BigDataStatMeth::Bblock_matrix_mul_parallel(A, B, mem_block_size, threads);
-                        }
+                        // } else{
+                        //     C = C + BigDataStatMeth::Bblock_matrix_mul_parallel(A, B, mem_block_size, threads);
+                        // }
 
                         std::vector<hsize_t> offset = {jj, ii};
                         std::vector<hsize_t> count = {Mjj, Nii};
