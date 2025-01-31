@@ -302,7 +302,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
+            Rcpp::Rcout<< "c++ exception Rcpp_matrix_vector_blockSubstract: "<<ex.what()<< " \n";
             return(R_NilValue);
         }
         
