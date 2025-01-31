@@ -200,7 +200,7 @@ namespace BigDataStatMeth {
             }
 
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
+            Rcpp::Rcout<< "c++ exception Rcpp_block_matrix_mul_parallel: "<<ex.what()<< " \n";
         }
         
         return(C);
@@ -351,7 +351,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
+            Rcpp::Rcout<< "c++ exception Rcpp_matrix_vector_blockMult: "<<ex.what()<< " \n";
             return(R_NilValue);
         }
         

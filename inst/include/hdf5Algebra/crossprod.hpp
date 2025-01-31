@@ -99,7 +99,7 @@ extern inline BigDataStatMeth::hdf5Dataset* crossprod(
         }
 
     } catch(std::exception& ex) {
-        Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
+        Rcpp::Rcout<< "c++ exception crossprod: "<<ex.what()<< " \n";
         return(dsC);
     }
 
