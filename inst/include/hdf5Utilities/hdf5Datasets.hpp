@@ -88,6 +88,7 @@ public:
             bool bexists = exists_HDF5_element(pfile, fullDatasetPath);
             if( bexists == true && boverwrite == false) {
                 Rcpp::Rcerr<<"\nDataset exits, please set overwrite = true to overwrite the existing dataset (DataSet IException)";
+                return void();
             } else {
                 
                 if( boverwrite == true && bexists == true) {
@@ -962,6 +963,8 @@ public:
     std::string getFileName() { return(getFilename()); }  // Return file name
     hsize_t nrows() { return(dimDataset[0]); }  // Return number of rows
     hsize_t ncols() { return(dimDataset[1]); }  // Return number of columns
+    hsize_t nrows_r() { return(dimDatasetinFile[1]); }  // Return number of rows in R (transposed values)
+    hsize_t ncols_r() { return(dimDatasetinFile[0]); }  // Return number of columns in R (transposed values)
     hsize_t* dim() { return(dimDataset); }  // Return dataset dimension (rows x columns)
     hsize_t* dimFile() { return(dimDatasetinFile); } // Return dataset file dimensions (rows x columns)
     hsize_t nrows_file() { return(dimDatasetinFile[0]); }  // Return number of rows

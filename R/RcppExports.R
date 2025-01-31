@@ -840,6 +840,19 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
     invisible(.Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
+#' Get hdf5 dataset dimensions
+#'
+#' Get hdf5 dataset dimensions
+#' 
+#' @param filename, character array with the name of the file where datasets are stored
+#' @param dataset, character array with the input dataset name, with complete route inside the hdf5 file
+#' @return Dataset dimensions
+#' 
+#' @export
+bdgetDim_hdf5 <- function(filename, dataset) {
+    .Call('_BigDataStatMeth_bdgetDim_hdf5', PACKAGE = 'BigDataStatMeth', filename, dataset)
+}
+
 #' Gets all dataset names inside a group
 #'
 #' Gets a list of all dataset names inside a group or all the datasets names 

@@ -329,6 +329,18 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// bdgetDim_hdf5
+Rcpp::RObject bdgetDim_hdf5(std::string filename, std::string dataset);
+RcppExport SEXP _BigDataStatMeth_bdgetDim_hdf5(SEXP filenameSEXP, SEXP datasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdgetDim_hdf5(filename, dataset));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdgetDatasetsList_hdf5
 Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix);
 RcppExport SEXP _BigDataStatMeth_bdgetDatasetsList_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP prefixSEXP) {
@@ -697,6 +709,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdblockSubstract_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockSubstract_hdf5, 11},
     {"_BigDataStatMeth_bdblockSum_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockSum_hdf5, 11},
     {"_BigDataStatMeth_bdtCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_hdf5, 12},
+    {"_BigDataStatMeth_bdgetDim_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDim_hdf5, 2},
     {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
     {"_BigDataStatMeth_bdImportTextFile_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImportTextFile_hdf5, 11},
     {"_BigDataStatMeth_bdImputeSNPs_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImputeSNPs_hdf5, 7},
