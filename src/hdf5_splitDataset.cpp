@@ -62,89 +62,79 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         } else {   stroutdataset = Rcpp::as<std::string>(outdataset);}
         
         
-        
-        // if (exist_FileGroupDataset (filename, group, dataset) != 0 ) {
-        //     
-        //     //..// strdataset = group +"/" + dataset;
-        //     
-        //     file = new H5File( filename, H5F_ACC_RDWR );
-        //     pdataset = new DataSet(file->openDataSet(strdataset));
-        //     
-        // }
-        // 
-        // prepare_outGroup(file, stroutgroup, bforce);
-        
+
         dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsIn->openDataset();
         
         
-        // Real data set dimension
-        // IntegerVector dims_out = get_HDF5_dataset_size(*pdataset);
-        hsize_t nrows = dsIn->nrows(),
+        if( dsIn->getDatasetptr() != nullptr ) { 
+            
+            hsize_t nrows = dsIn->nrows(),
                 ncols = dsIn->ncols();
-        
-        
-        if( nblocks.isNull() && blocksize.isNull()){
-            delete dsIn;
-            Rcpp::Rcerr<<"\n Block size or number of blocks are needed to proceed with matrix split. Please, review parameters";
-            return void();
             
-        } else if (!nblocks.isNull() && !blocksize.isNull()) {
-            delete dsIn;
-            Rcpp::Rcerr<<"\nBlock size and number of blocks are defined, please define only one option, split by number of blocks or by block size";
-            return void();
             
-        } else if(!nblocks.isNull()) {
-            
-            if ( Rcpp::as<int>(nblocks) == 1) {
+            if( nblocks.isNull() && blocksize.isNull()){
                 delete dsIn;
-                Rcpp::Rcerr<<"\nNumbers of blocks = 1, no data to split";
+                Rcpp::Rcerr<<"\n Block size or number of blocks are needed to proceed with matrix split. Please, review parameters";
                 return void();
                 
-            } else {
+            } else if (!nblocks.isNull() && !blocksize.isNull()) {
+                delete dsIn;
+                Rcpp::Rcerr<<"\nBlock size and number of blocks are defined, please define only one option, split by number of blocks or by block size";
+                return void();
                 
-                double module;
+            } else if(!nblocks.isNull()) {
                 
-                if(bcols == true) {
-                    iblocksize = nrows / Rcpp::as<int>(nblocks);
-                    module = nrows % iblocksize;
+                if ( Rcpp::as<int>(nblocks) == 1) {
+                    delete dsIn;
+                    Rcpp::Rcerr<<"\nNumbers of blocks = 1, no data to split";
+                    return void();
+                    
                 } else {
-                    iblocksize = ncols / Rcpp::as<int>(nblocks);
-                    module = ncols % iblocksize;
+                    
+                    double module;
+                    
+                    if(bcols == true) {
+                        iblocksize = nrows / Rcpp::as<int>(nblocks);
+                        module = nrows % iblocksize;
+                    } else {
+                        iblocksize = ncols / Rcpp::as<int>(nblocks);
+                        module = ncols % iblocksize;
+                    }
+                    if (module > 0) { iblocksize = iblocksize + 1; }
                 }
-                if (module > 0) { iblocksize = iblocksize + 1; }
-            }
-            
-        } else {
-            iblocksize = Rcpp::as<int>(blocksize);
-            
-            if( bcols == true ) {
-                if( iblocksize == nrows) {  
-                    delete dsIn;
-                    throw std::range_error( "c++ exception in bdSplit_matrix_hdf5 ( No data to split)" ); 
-                }
+                
             } else {
-                if( iblocksize == ncols) {  
-                    delete dsIn;
-                    throw std::range_error( "c++ exception in bdSplit_matrix_hdf5 ( No data to split)" ); 
+                iblocksize = Rcpp::as<int>(blocksize);
+                
+                if( bcols == true ) {
+                    if( iblocksize == nrows) {  
+                        delete dsIn;
+                        throw std::range_error( "c++ exception in bdSplit_matrix_hdf5 ( No data to split)" ); 
+                    }
+                } else {
+                    if( iblocksize == ncols) {  
+                        delete dsIn;
+                        throw std::range_error( "c++ exception in bdSplit_matrix_hdf5 ( No data to split)" ); 
+                    }
                 }
             }
+            
+            RcppSplit_matrix_hdf5 ( dsIn, bcols, stroutgroup, stroutdataset, iblocksize, ncols, nrows );    
+            
         }
+    
+        delete dsIn;    
+        Rcpp::Rcout<<"Dataset has been splitted, results can be found in "<< stroutgroup + "/" + stroutdataset <<"\n";
         
         
-        RcppSplit_matrix_hdf5 ( dsIn, bcols, stroutgroup, stroutdataset, iblocksize, ncols, nrows );
-        
-    }
-    catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        delete dsIn;
-        ::Rf_error( "c++ exception (File IException)" );
+    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        if( dsIn->isOpen()) dsIn->close_file();
+        Rcpp::Rcerr<<"\nc++ exception bdSplit_matrix_hdf5 (File IException)\n";
         return void();
-        // return(wrap(-1));
     }
     
-    delete dsIn;
     
-    Rcpp::Rcout<<"Dataset has been splitted, results can be found in "<< stroutgroup + "/" + stroutdataset <<"\n";
     return void();
 }
 
