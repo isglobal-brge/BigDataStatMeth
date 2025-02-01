@@ -69,7 +69,7 @@ public:
         pfile = file;
     }
 
-        
+
     // Create empty hdf5 data file
     int createFile() 
     {
@@ -77,18 +77,31 @@ public:
         
         try
         {
-            
             H5::Exception::dontPrint();
-            
+            bool bFileOpened = false;
             bool bFileExists = ResFileExist_filestream();
             
+            if(bFileExists) {
+                bFileOpened = isHDF5FileOpen();
+            }
+            
+            // if(!bFileOpened) {
             if( !bFileExists || ( bFileExists && boverwrite) ) {
-                pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC ); 
+                if(!bFileOpened) {
+                    pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC ); 
+                } else {
+                    Rcpp::Rcerr<<"\nThe file is being used, close it before proceed.\n";
+                    iExec = EXEC_ERROR;
+                }
             } else if ( bFileExists && !boverwrite){
                 iExec = EXEC_WARNING;
             } else {
                 Rcpp::Rcout<<"\n File exits, please set force = TRUE";
-            }
+            }    
+            // } else {
+            //     Rcpp::Rcerr<<"\nThe file is being used, close it before proceed.\n";
+            //     iExec = EXEC_ERROR;
+            // }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             ::Rf_error( "c++ exception hdf5File (File IException) " );
@@ -212,6 +225,31 @@ private:
         return(exists);
     }
 
+
+    bool isHDF5FileOpen() {
+        
+        bool bCorrupt = false;
+        
+        hid_t file_id = H5Fopen(fullPath.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+        
+        if (file_id < 0) {
+            bCorrupt = true; 
+        } else {
+            // opend objects
+            int num_open_objects = H5Fget_obj_count(file_id, H5F_OBJ_ALL);
+            
+            if(num_open_objects > 1 ) 
+                bCorrupt = true; 
+            
+            H5Fclose(file_id);
+        }
+        
+        return bCorrupt;
+        
+    }
+    
+    
+    
     
     // Get dataset names inside the strgroup
     Rcpp::StringVector get_dataset_names_from_group(std::string strgroup, std::string strprefix)

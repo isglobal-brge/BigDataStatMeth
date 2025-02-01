@@ -65,7 +65,6 @@ void bdImportTextFile_hdf5( std::string filename,
             int iRes = objFile->createFile();
 
             if(iRes == EXEC_WARNING) {
-                Rcpp::Rcout<<"\n Ara estem obrint el fitxer... per tant no entenc on deu estar el problema...";
                 objFile->openFile("rw");
             } 
             

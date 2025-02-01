@@ -89,28 +89,39 @@ void bdCreate_hdf5_matrix(std::string filename,
         BigDataStatMeth::hdf5File* objFile = new BigDataStatMeth::hdf5File(filename, bforceFile);
         iRes = objFile->createFile();
         
-        if(iRes == EXEC_WARNING) {
-            objFile->openFile("rw");
-        }
+        if( iRes == EXEC_OK | iRes == EXEC_WARNING) {
+            
+            if(iRes == EXEC_WARNING) {
+                objFile->openFile("rw");
+            }
+            
+            BigDataStatMeth::hdf5Dataset* objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforceDataset );
+            
+            if( bunlimited == false){
+                objDataset->createDataset(dims[0], dims[1], strdatatype);
+            } else{
+                objDataset->createUnlimitedDataset(dims[0], dims[1], strdatatype);
+            }
+            objDataset->writeDataset(object); 
+            
+            delete objDataset;
+            delete objFile;
+            
+        } 
         
-        BigDataStatMeth::hdf5Dataset* objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforceDataset );
-        
-        if( bunlimited == false){
-            objDataset->createDataset(dims[0], dims[1], strdatatype);
-        } else{
-            objDataset->createUnlimitedDataset(dims[0], dims[1], strdatatype);
-        }
-        objDataset->writeDataset(object); 
-        
-        
-        delete objDataset;
-        delete objFile;
-        
-    }  catch(std::exception& ex) {
-        Rcpp::Rcout<< "c++ exception getObjecDataType: "<<ex.what()<< " \n";
+    }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        Rcpp::Rcout<<"\nSembla que aquí hi ha pogut accedir... 6";
+        Rcpp::Rcerr<<"\nc++ c++ exception bdCreate_hdf5_matrix (File IException)\n";
+        return void();
+    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        Rcpp::Rcerr<<"\nc++ exception bdCreate_hdf5_matrix (DataSet IException)\n";
+        return void();
+    } catch(std::exception &ex) {
+        Rcpp::Rcerr<<"\nc++ exception bdCreate_hdf5_matrix"<<ex.what()<< " \n";
+        return void();
+    }catch(std::exception& ex) {
+        Rcpp::Rcout<< "c++ exception bdCreate_hdf5_matrix: "<<ex.what()<< " \n";
     }
-        
-        
 
     return void();
     
