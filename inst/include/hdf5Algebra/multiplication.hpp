@@ -67,19 +67,15 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                      vsizetoReadM, vstartM,
                                      vsizetoReadK, vstartK;
                 
-                // ithreads = get_number_threads(threads, R_NilValue);
-                
                 getBlockPositionsSizes_hdf5( N, block_size, vstart, vsizetoRead );
                 getBlockPositionsSizes_hdf5( M, block_size, vstartM, vsizetoReadM );
                 getBlockPositionsSizes_hdf5( K, block_size, vstartK, vsizetoReadK );
                 
                 int ithreads = get_number_threads(threads, R_NilValue);
-                // Rcpp::Rcout<<"\n Utilitzarem "<<ithreads<<" threads";
                 int chunks = vstart.size()/ithreads;
                 
                 #pragma omp parallel num_threads(ithreads) shared(A, B, C) //..// , chunk) private(tid ) 
                 {
-                    //..// tid = omp_get_thread_num();
                     
                     #pragma omp for schedule (static) // collapse(3)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
@@ -119,9 +115,9 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
             int ihdf5_block;
             hsize_t K = dsA->nrows();
             hsize_t N = dsA->ncols();
-
+            hsize_t L = dsB->ncols();
             hsize_t M = dsB->nrows();
-            // hsize_t L = dsB->ncols();
+            
              
              if( hdf5_block.isNotNull()) {
                  ihdf5_block =  Rcpp::as<int>(hdf5_block);
@@ -129,11 +125,8 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                  ihdf5_block =  MAXBLOCKSIZE/3;
              }
 
-            if( dsA->nrows() == dsB->ncols())
+            if( K == L )
             {
-
-                // hsize_t ksize = ihdf5_block + 1,
-                //         jsize = ihdf5_block + 1;
 
                 std::vector<hsize_t> stride = {1, 1},
                                      block = {1, 1},
@@ -141,68 +134,75 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                      vsizetoReadM, vstartM,
                                      vsizetoReadK, vstartK;
                 
-                dsC->createDataset( M, N, "real");
+                dsC->createDataset( N, M, "real");
                 
-                getBlockPositionsSizes_hdf5( N, ihdf5_block, vstart, vsizetoRead );
-                getBlockPositionsSizes_hdf5( M, ihdf5_block, vstartM, vsizetoReadM );
-                getBlockPositionsSizes_hdf5( K, ihdf5_block, vstartK, vsizetoReadK );
-                
-                int ithreads = get_number_threads(threads, R_NilValue);
-                int chunks = vstart.size()/ithreads;
-                
-                #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks, vstart, vsizetoRead)
-                {
+                if( dsC->getDatasetptr() != nullptr) {
                     
-                    #pragma omp for schedule (static)
-                    for (hsize_t ii = 0; ii < vstart.size(); ii++)
+                    getBlockPositionsSizes_hdf5( N, ihdf5_block, vstart, vsizetoRead );
+                    getBlockPositionsSizes_hdf5( M, ihdf5_block, vstartM, vsizetoReadM );
+                    getBlockPositionsSizes_hdf5( K, ihdf5_block, vstartK, vsizetoReadK );
+                    
+                    
+                    int ithreads = get_number_threads(threads, R_NilValue);
+                    int chunks = vstart.size()/ithreads;
+                    
+                    #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks, vstart, vsizetoRead)
                     {
                         
-                        for (hsize_t jj = 0; jj < vstartM.size(); jj++)
+                    #pragma omp for ordered 
+                        for (hsize_t ii = 0; ii < vstart.size(); ii++)
                         {
                             
-                            for (hsize_t kk = 0; kk < vstartK.size(); kk++)
+                            for (hsize_t jj = 0; jj < vstartM.size(); jj++)
                             {
                                 
-                                hsize_t iRowsA = vsizetoRead[kk],
-                                        iColsA = vsizetoRead[ii],
-                                        iRowsB = vsizetoRead[jj],
-                                        iColsB = vsizetoRead[kk];
-                                
-                                std::vector<double> vdA( iRowsA * iColsA );
-                                #pragma omp critical(accessFile)
+                                for (hsize_t kk = 0; kk < vstartK.size(); kk++)
                                 {
-                                    dsA->readDatasetBlock( {vstartK[kk], vstart[ii]}, {iRowsA, iColsA}, stride, block, vdA.data() );
-                                }
-                                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), iRowsA, iColsA );
-                                
-                                std::vector<double> vdB( iRowsB * iColsB );
-                                #pragma omp critical(accessFile)
-                                {
-                                    dsB->readDatasetBlock( {vstartM[jj], vstartK[kk]}, {iRowsB, iColsB}, stride, block, vdB.data() );
-                                }
-                                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), iRowsB, iColsB );
-                                
-                                std::vector<double> vdC( iRowsB * iColsA );
-                                #pragma omp critical(accessFile)
-                                {
-                                    dsC->readDatasetBlock( {vstartM[jj], vstart[ii]}, {iRowsB, iColsA}, stride, block, vdC.data() );
-                                }
-                                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C (vdC.data(), iRowsB, iColsA );
-                                
-                                C = C + B * A;
-                                
-                                std::vector<hsize_t> offset = {vstartM[jj], vstart[ii]};
-                                std::vector<hsize_t> count = {iRowsB, iColsA};
-                                
-                                #pragma omp critical(accessFile) 
-                                {
-                                    dsC->writeDatasetBlock(vdC, offset, count, stride, block);
+                                    
+                                    hsize_t iColsA = vsizetoReadK[kk],
+                                            iRowsA = vsizetoRead[ii],
+                                            iColsB = vsizetoReadM[jj],
+                                            iRowsB = vsizetoReadK[kk];
+                                    
+                                    std::vector<double> vdA( iRowsA * iColsA );
+                                    #pragma omp critical(accessFile)
+                                    {
+                                        dsA->readDatasetBlock( {vstartK[kk], vstart[ii]}, {vsizetoReadK[kk], vsizetoRead[ii]}, stride, block, vdA.data() );
+                                    }
+                                    
+                                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), vsizetoReadK[kk], vsizetoRead[ii] );
+                                    
+                                    std::vector<double> vdB( iRowsB * iColsB );
+                                    #pragma omp critical(accessFile)
+                                    {
+                                        dsB->readDatasetBlock( {vstartM[jj], vstartK[kk]}, {vsizetoReadM[jj], vsizetoReadK[kk]}, stride, block, vdB.data() );
+                                    }
+                                    
+                                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), vsizetoReadM[jj], vsizetoReadK[kk] );
+                                    
+                                    std::vector<double> vdC( vsizetoReadM[jj] * vsizetoRead[ii] );
+                                    #pragma omp critical(accessFile)
+                                    {
+                                        dsC->readDatasetBlock( {vstartM[jj], vstart[ii]}, {vsizetoReadM[jj],  vsizetoRead[ii]}, stride, block, vdC.data() );
+                                    }
+
+                                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C (vdC.data(), B.rows(), A.cols() );
+
+                                    C = C + B * A;
+
+                                    std::vector<hsize_t> offset = {vstartM[jj], vstart[ii]};
+                                    std::vector<hsize_t> count = {vsizetoReadM[jj], vsizetoRead[ii] };
+                                    
+                                    #pragma omp critical(accessFile)
+                                    {
+                                        dsC->writeDatasetBlock(vdC, offset, count, stride, block);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-
+                } 
+                
             } else {
                 throw std::range_error("multiplication error: non-conformable arguments");
             }

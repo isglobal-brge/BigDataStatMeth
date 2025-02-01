@@ -106,7 +106,6 @@ void bdblockmult_hdf5(std::string filename,
     
     BigDataStatMeth::hdf5Dataset* dsA;
     BigDataStatMeth::hdf5Dataset* dsB;
-    BigDataStatMeth::hdf5Dataset* dsC;
     
     try {
         
@@ -126,26 +125,45 @@ void bdblockmult_hdf5(std::string filename,
         if (overwrite.isNull()) { bforce = false; } 
         else { bforce = Rcpp::as<bool> (overwrite); }
         
+        Rcpp::Rcout<<"\nSembla que aquí hi ha pogut accedir... 1";
+        
         dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
         dsA->openDataset();
+        
+        Rcpp::Rcout<<"\nSembla que aquí hi ha pogut accedir... 2";
+        
         dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
         dsB->openDataset();
-        dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
         
-        BigDataStatMeth::multiplication(dsA, dsB, dsC, paral, block_size, threads);
-
+        Rcpp::Rcout<<"\nSembla que aquí hi ha pogut accedir... 3";
+        
+        if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
+            BigDataStatMeth::hdf5Dataset* dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+            Rcpp::Rcout<<"\nSembla que aquí hi ha pogut accedir... 4";
+            BigDataStatMeth::multiplication(dsA, dsB, dsC, paral, block_size, threads);    
+            
+            delete dsC;
+        }
+        
+        Rcpp::Rcout<<"\nSembla que aquí hi ha pogut accedir... 5";
+        
         delete dsA;
         delete dsB;
-        delete dsC;
         
-    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        delete dsA; delete dsB; delete dsC;
-        ::Rf_error( "c++ exception blockmult_hdf5 (File IException)" );
+        
+    }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        Rcpp::Rcout<<"\nSembla que aquí hi ha pogut accedir... 6";
+        if( dsA->isOpen()) dsA->close_file();
+        Rcpp::Rcerr<<"\nc++ c++ exception blockmult_hdf5 (File IException)\n";
+        return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        delete dsA; delete dsB; delete dsC;
-        ::Rf_error( "c++ exception blockmult_hdf5 (DataSet IException)" );
+        if( dsA->isOpen()) dsA->close_file();
+        Rcpp::Rcerr<<"\nc++ exception blockmult_hdf5 (DataSet IException)\n";
+        return void();
     } catch(std::exception &ex) {
-        delete dsA; delete dsB; delete dsC;
+        if( dsA->isOpen()) dsA->close_file();
+        Rcpp::Rcerr<<"\nc++ exception blockmult_hdf5\n";
+        return void();
     }
     
     // return List::create(Named("filename") = filename,
