@@ -918,8 +918,8 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #' @examples
 #' print('see vignette')
 #' @export
-bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE, overwrite = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdImputeSNPs_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols, overwrite))
+bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE, paral = NULL, threads = NULL, overwrite = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdImputeSNPs_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols, paral, threads, overwrite))
 }
 
 #' Get diagonal matrix

@@ -375,8 +375,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdImputeSNPs_hdf5
-void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdImputeSNPs_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP bycolsSEXP, SEXP overwriteSEXP) {
+void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> overwrite);
+RcppExport SEXP _BigDataStatMeth_bdImputeSNPs_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP bycolsSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP overwriteSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
@@ -385,8 +385,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    bdImputeSNPs_hdf5(filename, group, dataset, outgroup, outdataset, bycols, overwrite);
+    bdImputeSNPs_hdf5(filename, group, dataset, outgroup, outdataset, bycols, paral, threads, overwrite);
     return R_NilValue;
 END_RCPP
 }
@@ -712,7 +714,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdgetDim_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDim_hdf5, 2},
     {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
     {"_BigDataStatMeth_bdImportTextFile_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImportTextFile_hdf5, 11},
-    {"_BigDataStatMeth_bdImputeSNPs_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImputeSNPs_hdf5, 7},
+    {"_BigDataStatMeth_bdImputeSNPs_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImputeSNPs_hdf5, 9},
     {"_BigDataStatMeth_bdgetDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDiagonal_hdf5, 3},
     {"_BigDataStatMeth_bdWriteDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteDiagonal_hdf5, 4},
     {"_BigDataStatMeth_bdgetSDandMean_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetSDandMean_hdf5, 8},

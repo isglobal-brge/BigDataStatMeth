@@ -1,6 +1,7 @@
 #ifndef BIGDATASTATMETH_UTIL_IMPUTE_DATA_HPP
 #define BIGDATASTATMETH_UTIL_IMPUTE_DATA_HPP
 
+#include "Utilities/openme-utils.hpp"
 #include<random>
 
 
@@ -70,7 +71,7 @@ namespace BigDataStatMeth {
     // TODO : 
     //    - perform better imputation
     void Rcpp_Impute_snps_hdf5(BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5DatasetInternal* dsOut,
-                         bool bycols, std::string stroutdataset)
+                         bool bycols, std::string stroutdataset, Rcpp::Nullable<int> threads  = R_NilValue)
     {
         
         // DataSet* outdataset = nullptr;
@@ -85,8 +86,6 @@ namespace BigDataStatMeth {
             int ilimit,
                 blocksize = 1000;
             
-            // Real data set dimension
-            //..// IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
             hsize_t* dims_out = dsIn->dim();
             
             // id bycols == true : read all rows by group of columns ; else : all columns by group of rows
@@ -101,103 +100,94 @@ namespace BigDataStatMeth {
             };
             
             
-            if( stroutdataset.compare("")!=0)
-            {
-                // hsize_t     dimsf[2];              // dataset dimensions
-                // dimsf[0] = dims_out[0];
-                // dimsf[1] = dims_out[1];
-                
+            if( stroutdataset.compare("")!=0) {
                 dsOut->createDataset(dims_out[0], dims_out[1], "real");
-                // DataSpace dataspace( RANK2, dimsf );
-                // outdataset = new DataSet(file->createDataSet(stroutdataset, PredType::NATIVE_DOUBLE, dataspace));
-                
-            } // else  {
-            //     outdataset = dataset;
-            // }
-            
+            } 
             
             dsOut->openDataset();
             
             
-            for( int i=0; i<=(ilimit/blocksize); i++) 
+            int ithreads = get_number_threads(threads, R_NilValue);
+            int chunks = (ilimit/blocksize)/ithreads;
+            
+            #pragma omp parallel num_threads(ithreads) shared(dsIn, dsOut, chunks)
             {
-                int iread;
-                
-                if( (i+1)*blocksize < ilimit) iread = blocksize;
-                else iread = ilimit - (i*blocksize);
-                
-                if(bycols == true) {
-                    count[0] = iread; 
-                    offset[0] = i*blocksize;
-                } else {
-                    count[1] = iread; 
-                    offset[1] = i*blocksize;
-                }
-                
-                // // read block
-                // Eigen::MatrixXd data = GetCurrentBlock_hdf5(file, dataset, offset[0], offset[1], count[0], count[1]);
-                
-                // read block
-                std::vector<double> vdIn( count[0] * count[1] ); 
-                dsIn->readDatasetBlock( { offset[0], offset[1]}, { count[0], count[1]}, stride, block, vdIn.data() );
-                Eigen::MatrixXd data = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdIn.data(), count[0], count[1] );
-                
-                
-                if(bycols == true) // We have to do it by rows
+                #pragma omp for schleude
+                for( int i=0; i<=(ilimit/blocksize); i++) 
                 {
-                    for( int row = 0; row<data.rows(); row++)  // COMPLETE EXECUTION
-                    {
-                        std::map<double, double> myMap;
-                        myMap = VectortoOrderedMap_SNP_counts(data.row(row));
-                        
-                        /*** ORIGINAL FUNCIONA PERFECTAMENT PERÒ ASSIGNA UN MATEIX VALOR A TOS... !!!
-                         data.row(row) = (data.row(row).array() == 3).select( get_value_to_impute_discrete(myMap), data.row(row)); 
-                         ***/
-                        
-                        //..// data.row(row) = (data.row(row).array() == 0).select( -5, data.row(row)); 
-                        //..// data.row(row) = (data.row(row).array() == 1).select( 0, data.row(row)); 
-                        //..// data.row(row) = (data.row(row).array() == 2).select( 5, data.row(row)); 
-                        //..// data.row(row) = (data.row(row).array() == 3).select( 99, data.row(row)); 
-                        
-                        Eigen::VectorXd ev = data.row(row);
-                        std::vector<double> v(ev.data(), ev.data() + ev.size());
-                        
-                        auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
-                        while (it != std::end(v)) {
-                            //..// results.emplace_back(std::distance(std::begin(v), it));
-                            if(*it==3) *it = get_value_to_impute_discrete(myMap);
-                            it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
-                        }
-                        
-                        Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
-                        data.row(row) = X;
-                        
+                    int iread;
+                    
+                    if( (i+1)*blocksize < ilimit) iread = blocksize;
+                    else iread = ilimit - (i*blocksize);
+                    
+                    if(bycols == true) {
+                        count[0] = iread; 
+                        offset[0] = i*blocksize;
+                    } else {
+                        count[1] = iread; 
+                        offset[1] = i*blocksize;
                     }
                     
-                } else {
-                    for( int col = 0; col<data.cols(); col++) 
+                    // read block
+                    std::vector<double> vdIn( count[0] * count[1] ); 
+                    #pragma omp critical(accessFile)
                     {
-                        std::map<double, double> myMap;
-                        myMap = VectortoOrderedMap_SNP_counts(data.col(col));
-                        //..// data.col(col) = (data.col(col).array() == 3).select( get_value_to_impute_discrete(myMap), data.col(col));
-                        Eigen::VectorXd ev = data.col(col);
-                        std::vector<double> v(ev.data(), ev.data() + ev.size());
-                        
-                        auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
-                        while (it != std::end(v)) {
-                            //..// results.emplace_back(std::distance(std::begin(v), it));
-                            if(*it==3) *it = get_value_to_impute_discrete(myMap);
-                            it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
+                        dsIn->readDatasetBlock( { offset[0], offset[1]}, { count[0], count[1]}, stride, block, vdIn.data() );
+                    }
+                    Eigen::MatrixXd data = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdIn.data(), count[0], count[1] );
+                    
+                    if(bycols == true) // We have to do it by rows
+                    {
+                        for( int row = 0; row<data.rows(); row++)  // COMPLETE EXECUTION
+                        {
+                            std::map<double, double> myMap;
+                            myMap = VectortoOrderedMap_SNP_counts(data.row(row));
+                            
+                            Eigen::VectorXd ev = data.row(row);
+                            std::vector<double> v(ev.data(), ev.data() + ev.size());
+                            
+                            auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
+                            while (it != std::end(v)) {
+                                
+                                if(*it==3) *it = get_value_to_impute_discrete(myMap);
+                                it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
+                            }
+                            
+                            Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
+                            data.row(row) = X;
+                            
                         }
                         
-                        Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
-                        data.col(col) = X;
+                    } else {
+                        for( int col = 0; col<data.cols(); col++) 
+                        {
+                            std::map<double, double> myMap;
+                            myMap = VectortoOrderedMap_SNP_counts(data.col(col));
+                            
+                            Eigen::VectorXd ev = data.col(col);
+                            std::vector<double> v(ev.data(), ev.data() + ev.size());
+                            
+                            auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
+                            while (it != std::end(v)) {
+                                
+                                if(*it==3) *it = get_value_to_impute_discrete(myMap);
+                                it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
+                            }
+                            
+                            Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
+                            data.col(col) = X;
+                        }
+                    }
+                    
+                    #pragma omp critical(accessFile)
+                    {
+                        dsOut->writeDatasetBlock( Rcpp::wrap(data), offset, count, stride, block, false);
                     }
                 }
-                //..// write_HDF5_matrix_subset_v2(file, dataset, offset, count, stride, block, wrap(data) );
-                //..// write_HDF5_matrix_subset_v2(file, outdataset, offset, count, stride, block, wrap(data) );
-                dsOut->writeDatasetBlock( Rcpp::wrap(data), offset, count, stride, block, false);
+                
             }
+            
+            
             
             // outdataset->close();
             

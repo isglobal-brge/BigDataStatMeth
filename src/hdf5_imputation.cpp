@@ -20,24 +20,23 @@
 //' @export
 // [[Rcpp::export]]
 void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, 
-                        Rcpp::Nullable<std::string> outgroup = R_NilValue, Rcpp::Nullable<std::string> outdataset = R_NilValue, 
-                        Rcpp::Nullable<bool> bycols = true, Rcpp::Nullable<bool> overwrite = R_NilValue )
+                        Rcpp::Nullable<std::string> outgroup = R_NilValue, 
+                        Rcpp::Nullable<std::string> outdataset = R_NilValue, 
+                        Rcpp::Nullable<bool> bycols = true, 
+                        Rcpp::Nullable<bool> paral = R_NilValue,
+                        Rcpp::Nullable<int> threads = R_NilValue, 
+                        Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
     
-    
-    // H5File* file = nullptr;
-    // DataSet* pdataset = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsIn;
     
     try
     {
-        BigDataStatMeth::hdf5Dataset* dsIn;
         BigDataStatMeth::hdf5DatasetInternal* dsOut;
         
         std::string strdataset = group +"/" + dataset;
         std::string stroutgroup, stroutdataset, stroutdata;
-        // std::string strdatasetout;
         
-        //.commented 20201120 - warning check().// int res;
         bool bcols, bforce;
         
         
@@ -58,33 +57,43 @@ void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string data
         dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsIn->openDataset();
         
-        dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, stroutgroup, stroutdataset, bforce);
-
-                
-        Rcpp_Impute_snps_hdf5( dsIn, dsOut, bcols, stroutdataset);
+        if( dsIn->getDatasetptr() != nullptr ) {
+            
+            dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, stroutgroup, stroutdataset, bforce);
+            Rcpp_Impute_snps_hdf5( dsIn, dsOut, bcols, stroutdataset, threads);
+            delete dsOut;        
+            
+        }
         
-                
         delete dsIn;
-        delete dsOut;
         
-    } catch( H5::FileIException& error ){ // catch failure caused by the H5File operations
-        ::Rf_error( "c++ exception bdImputeSNPs_hdf5 (File IException)" );
+    } catch( H5::FileIException& error ){
+        if( dsIn->isOpen()) dsIn->close_file();
+        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (File IException)\n";
         return void();
-    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        ::Rf_error( "c++ exception bdImputeSNPs_hdf5 (DataSet IException)" );
+        
+    } catch( H5::DataSetIException& error ) { 
+        if( dsIn->isOpen()) dsIn->close_file();
+        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataSet IException)\n";
         return void();
-    } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception bdImputeSNPs_hdf5 (DataSpace IException)" );
+        
+    } catch( H5::DataSpaceIException& error ) { 
+        if( dsIn->isOpen()) dsIn->close_file();
+        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataSpace IException)\n";
         return void();
-    } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception bdImputeSNPs_hdf5 (DataType IException)" );
+        
+    } catch( H5::DataTypeIException& error ) { 
+        if( dsIn->isOpen()) dsIn->close_file();
+        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataType IException)\n";
         return void();
+        
     } catch(std::exception &ex) {
-        Rcpp::Rcout<< ex.what();
+        if( dsIn->isOpen()) dsIn->close_file();
+        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5: "<< ex.what()<<"\n";
         return void();
     }
     
-    Rcpp::Rcout<<"SNPs with missing values has been imputed\n";
+    // Rcpp::Rcout<<"SNPs with missing values has been imputed\n";
     return void();
     
 }
