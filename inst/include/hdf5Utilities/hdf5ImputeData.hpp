@@ -74,14 +74,12 @@ namespace BigDataStatMeth {
                          bool bycols, std::string stroutdataset, Rcpp::Nullable<int> threads  = R_NilValue)
     {
         
-        // DataSet* outdataset = nullptr;
-        
         try{
             
             std::vector<hsize_t> offset = {0,0},
-                count = {0,0},
-                stride = {1,1},
-                block = {1,1};
+                                 count = {0,0},
+                                 stride = {1,1},
+                                 block = {1,1};
             
             int ilimit,
                 blocksize = 1000;
@@ -108,12 +106,13 @@ namespace BigDataStatMeth {
             
             
             int ithreads = get_number_threads(threads, R_NilValue);
-            int chunks = (ilimit/blocksize)/ithreads;
+            int chunks = (ilimit + (blocksize - 1)) / blocksize; //(ilimit/blocksize);
+            
             
             #pragma omp parallel num_threads(ithreads) shared(dsIn, dsOut, chunks)
             {
-                #pragma omp for schleude
-                for( int i=0; i<=(ilimit/blocksize); i++) 
+                #pragma omp for schedule(auto)
+                for( int i=0; i < chunks; i++) 
                 {
                     int iread;
                     
