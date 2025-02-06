@@ -11,6 +11,8 @@ bdImputeSNPs_hdf5(
   outgroup = NULL,
   outdataset = NULL,
   bycols = TRUE,
+  paral = NULL,
+  threads = NULL,
   overwrite = NULL
 )
 }
