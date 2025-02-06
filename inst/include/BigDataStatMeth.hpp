@@ -89,6 +89,8 @@ SEXP getDTthreads_R(SEXP verbose);
 #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
 #include "hdf5Utilities/hdf5Dims.hpp"
 
+#include "hdf5Utilities/hdf5CheckClose.hpp"
+
 
 // Load function definition from BigDataStatMeth
 
