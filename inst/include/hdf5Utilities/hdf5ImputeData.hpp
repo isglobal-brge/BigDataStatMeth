@@ -58,9 +58,9 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception &ex) {	
-            forward_exception_to_r(ex);
+            Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Impute_snps_hdf5: "<< ex.what()<<"\n";
         } catch(...) { 
-            ::Rf_error("c++ exception (unknown reason)"); 
+            Rcpp::Rcerr<<"\nc++ exception (unknown reason)"; 
         }
         
         return mapv;
@@ -186,30 +186,34 @@ namespace BigDataStatMeth {
                 
             }
             
-            
-            
-            // outdataset->close();
-            
         } catch( H5::FileIException& error) { // catch failure caused by the H5File operations
-            delete dsIn;
-            delete dsOut;
-            ::Rf_error( "c++ exception Rcpp_Impute_snps_hdf5 (File IException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_Impute_snps_hdf5 (File IException)";
+            return void();
         } catch( H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            delete dsIn;
-            delete dsOut;;
-            ::Rf_error( "c++ exception Rcpp_Impute_snps_hdf5 (DataSet IException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_Impute_snps_hdf5 (DataSet IException)";
+            return void();
         } catch( H5::GroupIException& error) { // catch failure caused by the Group operations
-            delete dsIn;
-            delete dsOut;
-            ::Rf_error( "c++ exception Rcpp_Impute_snps_hdf5 (Group IException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_Impute_snps_hdf5 (Group IException)";
+            return void();
         } catch( H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            delete dsIn;
-            delete dsOut;
-            ::Rf_error( "c++ exception Rcpp_Impute_snps_hdf5 (DataSpace IException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_Impute_snps_hdf5 (DataSpace IException)";
+            return void();
         } catch( H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
-            delete dsIn;
-            delete dsOut;
-            ::Rf_error( "c++ exception Rcpp_Impute_snps_hdf5 (Data TypeIException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_Impute_snps_hdf5 (Data TypeIException)";
+            return void();
+        } catch(std::exception &ex) {
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Impute_snps_hdf5: "<< ex.what()<<"\n";
+            return void();
+        } catch (...) {
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"\nC++ exception Rcpp_Impute_snps_hdf5 (unknown reason)";
+            return void();
         }
         
         return void();

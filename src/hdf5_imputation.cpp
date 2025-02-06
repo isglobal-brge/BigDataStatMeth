@@ -28,17 +28,16 @@ void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string data
                         Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
     
-    BigDataStatMeth::hdf5Dataset* dsIn;
+    BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+    BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
     
     try
     {
-        BigDataStatMeth::hdf5DatasetInternal* dsOut;
         
         std::string strdataset = group +"/" + dataset;
         std::string stroutgroup, stroutdataset, stroutdata;
         
         bool bcols, bforce;
-        
         
         if(bycols.isNull()){  bcols = true ; }
         else{  bcols = Rcpp::as<bool>(bycols); }
@@ -58,38 +57,36 @@ void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string data
         dsIn->openDataset();
         
         if( dsIn->getDatasetptr() != nullptr ) {
-            
             dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, stroutgroup, stroutdataset, bforce);
             Rcpp_Impute_snps_hdf5( dsIn, dsOut, bcols, stroutdataset, threads);
-            delete dsOut;        
-            
+            delete dsOut; dsOut = nullptr;
         }
         
-        delete dsIn;
+        delete dsIn; dsIn = nullptr;
         
     } catch( H5::FileIException& error ){
-        if( dsIn->isOpen()) dsIn->close_file();
+        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (File IException)\n";
         return void();
-        
     } catch( H5::DataSetIException& error ) { 
-        if( dsIn->isOpen()) dsIn->close_file();
+        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataSet IException)\n";
         return void();
-        
     } catch( H5::DataSpaceIException& error ) { 
-        if( dsIn->isOpen()) dsIn->close_file();
+        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataSpace IException)\n";
         return void();
-        
     } catch( H5::DataTypeIException& error ) { 
-        if( dsIn->isOpen()) dsIn->close_file();
+        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataType IException)\n";
         return void();
-        
     } catch(std::exception &ex) {
-        if( dsIn->isOpen()) dsIn->close_file();
+        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5: "<< ex.what()<<"\n";
+        return void();
+    }  catch (...) {
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr<<"\nC++ exception bdImputeSNPs_hdf5 (unknown reason)";
         return void();
     }
     
