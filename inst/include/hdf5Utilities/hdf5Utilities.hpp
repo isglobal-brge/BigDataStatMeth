@@ -6,28 +6,6 @@
 
 namespace BigDataStatMeth {
 
-// // Constants
-// 
-//     #define MAX_NAME 1024
-//     //. ORIGINAL - CORRECTE.//#define MAXSVDBLOCK 1500
-//     #define MAXSVDBLOCK 10 //..NOMÉS DEBUG..//
-//     const int RANK1 = 1;
-//     const int RANK2 = 2;
-//     const int RANK3 = 3;
-//     const int DIM1 = 1;
-//     const int DIM2 = 2;
-//     const int DIM3 = 3;
-//     const int MAXSTRING = 20;
-//     const hsize_t MAXSTRBLOCK = 100000;
-//     const hsize_t MAXELEMSINBLOCK = 250000;
-//     const int maxElemBlock = 3000000;
-//     //.Only test.// const int maxElemBlock = 30;
-//     const int EXEC_OK = 0;
-//     const int EXEC_ERROR = 1;
-//     const int EXEC_WARNING = 2;
-
-
-
 // Functions
 
     extern inline bool pathExists(hid_t id, const std::string& path)

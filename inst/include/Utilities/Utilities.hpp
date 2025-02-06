@@ -314,6 +314,7 @@ namespace BigDataStatMeth {
     }
     
     
+    //..//
     extern inline std::vector<hsize_t> getSizetoRead(bool transp, int count, int rows, int cols )
     {
         std::vector<hsize_t> vcount = {0, 0};
@@ -330,6 +331,7 @@ namespace BigDataStatMeth {
         
         return(vcount);
     }
+    
     
     
     
