@@ -25,6 +25,12 @@ void RcppGetPCAVariablesHdf5( std::string strPCAgroup,
                               bool overwrite )
 {
     
+    BigDataStatMeth::hdf5Dataset* dslambda = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsvar = nullptr;
+    BigDataStatMeth::hdf5Dataset* dscumvar = nullptr;
+    BigDataStatMeth::hdf5Dataset* dscoord = nullptr;
+    BigDataStatMeth::hdf5Dataset* dscos2 = nullptr;
+    
     try
     {
         H5::Exception::dontPrint();
@@ -37,35 +43,33 @@ void RcppGetPCAVariablesHdf5( std::string strPCAgroup,
                              offset_v = {0, 0},
                              count_v = {dsv->nrows(), dsv->ncols()};
         
+        std::vector<double> vdd( count_d[0] * count_d[1] );
+        dsd->readDatasetBlock( {offset_d[0], offset_d[1]}, {count_d[0], count_d[1]}, stride, block, vdd.data() );
+        Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> d (vdd.data(), count_d[0], count_d[1]);
         
-            std::vector<double> vdd( count_d[0] * count_d[1] );
-            dsd->readDatasetBlock( {offset_d[0], offset_d[1]}, {count_d[0], count_d[1]}, stride, block, vdd.data() );
-            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> d (vdd.data(), count_d[0], count_d[1]);
-            
-            
         {    
             // lambda
             Eigen::VectorXd vvar = d.array().pow(2);
-            BigDataStatMeth::hdf5Dataset* dslambda = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "lambda" ,overwrite );
+            dslambda = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "lambda" ,overwrite );
             dslambda->createDataset( d.rows(), d.cols(), "real");
             dslambda->writeDataset( vvar.data() );
-            delete dslambda;
+            delete dslambda; dslambda = nullptr;
             
             // Variance
             vvar = (vvar/vvar.array().sum()) * 100;
-            BigDataStatMeth::hdf5Dataset* dsvar = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "variance" ,overwrite );
+            dsvar = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "variance" ,overwrite );
             dsvar->createDataset( d.rows(), d.cols(), "real");
             dsvar->writeDataset( vvar.data() );
-            delete dsvar;
+            delete dsvar; dsvar = nullptr;
             
             // cumulative variance (max 1000 elements (firsts))
             // if(vvar.size()>1000){  ielements = 1000;    }
             // else{ ielements = vvar.size();    }
             
-            BigDataStatMeth::hdf5Dataset* dscumvar = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "cumvar" ,overwrite );
+            dscumvar = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "cumvar" ,overwrite );
             dscumvar->createDataset( d.rows(), d.cols(), "real");
             dscumvar->writeDataset( (cumsum(vvar)).data());
-            delete dscumvar;
+            delete dscumvar; dscumvar = nullptr;
         }
         
         {
@@ -79,30 +83,42 @@ void RcppGetPCAVariablesHdf5( std::string strPCAgroup,
                 var_coord = Rcpp_matrixVectorMultiplication_byRow(v, d);
             }
             
-            BigDataStatMeth::hdf5Dataset* dscoord = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "var.coord" ,overwrite );
+            dscoord = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "var.coord" ,overwrite );
             dscoord->createDataset( var_coord.rows(), var_coord.cols(), "real");
             dscoord->writeDataset( var_coord.transpose().data() );
-            delete dscoord;
+            delete dscoord; dscoord = nullptr;
 
             // Cos2
             Eigen::MatrixXd var_cos2 = var_coord.unaryExpr([](double d) {return std::pow(d, 2);});
-            BigDataStatMeth::hdf5Dataset* dscos2 = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "var.cos2" ,overwrite );
+            dscos2 = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "var.cos2" ,overwrite );
             dscos2->createDataset( var_cos2.rows(), var_cos2.cols(), "real");
             dscos2->writeDataset( var_cos2.transpose().data() );
-            delete dscos2;
-             
+            delete dscos2; dscos2 = nullptr;
+            
         }
         
-    }catch( H5::FileIException& error ) {
-        ::Rf_error( "c++ RcppGetPCAVariablesHdf5 exception (File IException )" );
+    } catch( H5::FileIException& error ) { 
+        checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
+        Rcpp::Rcerr<<"\nc++ exception RcppGetPCAVariablesHdf5 (File IException)\n";
         return void();
-    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        ::Rf_error( "c++ RcppGetPCAVariablesHdf5 exception (DataSet IException )" );
+    } catch( H5::DataSetIException& error ) { 
+        checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
+        Rcpp::Rcerr<<"\nc++ exception RcppGetPCAVariablesHdf5 (DataSet IException)\n";
         return void();
-    } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ RcppGetPCAVariablesHdf5 exception (DataSpace IException )" );
+    } catch( H5::DataSpaceIException& error ) { 
+        checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
+        Rcpp::Rcerr<<"\nc++ exception RcppGetPCAVariablesHdf5 (DataSpace IException)\n";
         return void();
-    } 
+    } catch(std::exception &ex) {
+        checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
+        Rcpp::Rcout<<"c++ exception RcppGetPCAVariablesHdf5 \n"<< ex.what();
+        return void();
+    } catch (...) {
+        checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
+        Rcpp::Rcout<<"\nC++ exception RcppGetPCAVariablesHdf5 (unknown reason)";
+        return void();
+    }
+    
     
     return void();
 }
@@ -116,6 +132,14 @@ void RcppGetPCAIndividualsHdf5( std::string strPCAgroup,
                                 BigDataStatMeth::hdf5Dataset* dsu, 
                                 bool overwrite )
 {
+    
+    
+    BigDataStatMeth::hdf5Dataset* dsdist2 = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsComp = nullptr;
+    BigDataStatMeth::hdf5Dataset* dscoord = nullptr;
+    BigDataStatMeth::hdf5Dataset* dscos2 = nullptr;
+    BigDataStatMeth::hdf5Dataset* dscontrib = nullptr;
+    
     
     try
     {
@@ -139,7 +163,6 @@ void RcppGetPCAIndividualsHdf5( std::string strPCAgroup,
             Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdX.data(), count_x[0], count_x[1]);
 
             X = RcppNormalizeRowwise(X, true, false);
-            
             adjust = Eigen::MatrixXd::Constant(1, X.cols(), weights);
             
             Eigen::RowVectorXd ecart =  adjust / adjust.sum() ;
@@ -151,10 +174,10 @@ void RcppGetPCAIndividualsHdf5( std::string strPCAgroup,
             dist2 =  (X.unaryExpr([](double d) {return std::pow(d, 2);})).colwise().sum();
             Eigen::VectorXd dist = dist2.array().sqrt();
             
-            BigDataStatMeth::hdf5Dataset* dsdist2 = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "ind.dist" ,overwrite );
+            dsdist2 = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "ind.dist" ,overwrite );
             dsdist2->createDataset( dist2.rows(), dist2.cols(), "real");
             dsdist2->writeDataset( dist.data() );
-            delete dsdist2;
+            delete dsdist2; dsdist2 = nullptr;
         }
 
         // Load d
@@ -165,26 +188,26 @@ void RcppGetPCAIndividualsHdf5( std::string strPCAgroup,
         Eigen::MatrixXd var_coord;
         {
             // Load u
-            std::vector<double> vdu( count_x[0] * count_x[1] );
-            dsu->readDatasetBlock( {0, 0}, count_x, stride, block, vdu.data() );
-            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> u (vdu.data(), count_x[0], count_x[1]);
+            std::vector<double> vdu( count_u[0] * count_u[1] );
+            dsu->readDatasetBlock( {0, 0}, count_u, stride, block, vdu.data() );
+            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> u (vdu.data(), count_u[0], count_u[1]);
             
             u = u * sqrt(1/weights); 
         
             // Components
-            BigDataStatMeth::hdf5Dataset* dsComp = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "components" ,overwrite );
+            dsComp = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "components" ,overwrite );
             dsComp->createDataset( u.cols(), u.rows(), "real");
             dsComp->writeDataset( u.data() );
-            delete dsComp;    
+            delete dsComp; dsComp = nullptr;
             
             var_coord = Rcpp_matrixVectorMultiplication_byRow(u, d);
         }
         
         // Coord inds
-        BigDataStatMeth::hdf5Dataset* dscoord = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "ind.coord" ,overwrite );
+        dscoord = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "ind.coord" ,overwrite );
         dscoord->createDataset( var_coord.cols(), var_coord.rows(), "real");
         dscoord->writeDataset( Rcpp::wrap(var_coord.transpose()));
-        delete dscoord;
+        delete dscoord; dscoord = nullptr;
         
         // Cos2 inds
         Eigen::MatrixXd coord2 = var_coord.unaryExpr([](double d) {return std::pow(d, 2);});
@@ -192,10 +215,10 @@ void RcppGetPCAIndividualsHdf5( std::string strPCAgroup,
         {
             Eigen::MatrixXd ind_cos2 = coord2.array().rowwise() / dist2.transpose().array();
             
-            BigDataStatMeth::hdf5Dataset* dscos2 = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "ind.cos2" ,overwrite );
+            dscos2 = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "ind.cos2" ,overwrite );
             dscos2->createDataset( ind_cos2.cols(), ind_cos2.rows(), "real");
             dscos2->writeDataset( Rcpp::wrap(ind_cos2.transpose()) );
-            delete dscos2;
+            delete dscos2; dscos2 = nullptr;
         }
         
         Eigen::MatrixXd ind_contrib = coord2.array().rowwise() * adjust.row(0).array();
@@ -205,30 +228,38 @@ void RcppGetPCAIndividualsHdf5( std::string strPCAgroup,
         ind_contrib = ind_contrib.array().colwise() / d.col(0).array();
         ind_contrib = ind_contrib.unaryExpr([](double d) {return d*100;});
         
-        BigDataStatMeth::hdf5Dataset* dscontrib = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "ind.contrib" ,overwrite );
+        dscontrib = new BigDataStatMeth::hdf5Dataset(dsd->getFileName(), strPCAgroup, "ind.contrib" ,overwrite );
         dscontrib->createDataset( ind_contrib.cols(), ind_contrib.rows(), "real");
         dscontrib->writeDataset( Rcpp::wrap(ind_contrib.transpose()) );
-        delete dscontrib;
+        delete dscontrib; dscontrib = nullptr;
             
         // Components
         // createHardLink(dsu->getFileptr(), dsu->getGroupName() + "/" + dsu->getDatasetName(), strPCAgroup + "/components");
         
-    }catch( H5::FileIException& error ) {
-        ::Rf_error( "c++ RcppGetPCAIndividualsHdf5 exception (File IException )" );
+    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
+        Rcpp::Rcerr<<"\nc++ exception RcppGetPCAIndividualsHdf5 (File IException)\n";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        ::Rf_error( "c++ RcppGetPCAIndividualsHdf5 exception (DataSet IException )" );
+        checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
+        Rcpp::Rcerr<<"\nc++ exception RcppGetPCAIndividualsHdf5 (DataSet IException)\n";
         return void();
     } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ RcppGetPCAIndividualsHdf5 exception (DataSpace IException )" );
+        checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
+        Rcpp::Rcerr<<"\nc++ exception RcppGetPCAIndividualsHdf5 (DataSpace IException)\n";
         return void();
-    } 
+    } catch(std::exception &ex) {
+        checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
+        Rcpp::Rcout<<"\nc++ exception RcppGetPCAIndividualsHdf5 \n"<< ex.what();
+        return void();
+    } catch (...) {
+        checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
+        Rcpp::Rcout<<"\nC++ exception RcppGetPCAIndividualsHdf5 (unknown reason)";
+        return void();
+    }
     
     return void();
 }
-
-
-
 
 
 extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string strdataset,  
@@ -239,38 +270,34 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
                          Rcpp::Nullable<int> ithreads = R_NilValue)
 {
     
+    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsd = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsu = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsv = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsX = nullptr;
+    
     try{
         
-        // 
-        //  Que he de fer?
-        //      1. Mirar si el SVD està calculat (Falta testejar existencia datasets)
-        //      2. Depenent SVD
-        //          2.1 No està calculat-> Calcular-lo
-        //          2.2 Està calculat -> (3)
-        //      3. Calcular resta PCA amb resultats SVD
-        //
-        
-        
+
         std::string strPCAgroup = "PCA/" + strdataset;
                     
-        
         // Check for svd decomposition (u, v and d matrices) in hdf5 file or if we 
         // need to compute again the SVD ( foce = true )
         BigDataStatMeth::hdf5File* file = new BigDataStatMeth::hdf5File(filename, false);
         file->openFile("r");
         
-            bool bexistsSVD = exists_HDF5_element(file->getFileptr(), strSVDgroup);
-            bool bexistsPCA = exists_HDF5_element(file->getFileptr(), strPCAgroup);
+        bool bexistsSVD = exists_HDF5_element(file->getFileptr(), strSVDgroup);
+        bool bexistsPCA = exists_HDF5_element(file->getFileptr(), strPCAgroup);
         
-        delete file;
+        delete file; file = nullptr;
         
         
-        if( !bexistsSVD ||  bforce == true ) {
+        if( bexistsSVD == 0 ||  bforce == true ) {
             
-            BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false);
+            dsA = new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false);
             dsA->openDataset();
             RcppTypifyNormalizeHdf5( dsA, bcenter, bscale, false); // Normalize and tipify data ( ((x-mu)/(sd)) * 1/sqrt(n-1) )
-            delete dsA;
+            delete dsA; dsA = nullptr;
             
             BigDataStatMeth::RcppbdSVD_hdf5( filename, "NORMALIZED_T/" + strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, method, ithreads );
             
@@ -279,61 +306,62 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
         }
         
         // Check if PCA decomposition exists
-        if( bexistsPCA && bforce == false) {
+        if( bexistsPCA != 0  && bforce == false) {
             Rcpp::Rcout<<"PCA decomposition exits, please set overwrite = true to overwrite the existing results";
             return void();
         }
         
-        
-        
-        BigDataStatMeth::hdf5Dataset* dsd = new BigDataStatMeth::hdf5Dataset(filename, strSVDgroup, "d", false );
-        dsd->openDataset();
-        
         // ------------ Variables ----------------
         
-        BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, "NORMALIZED_T/" + strgroup, strdataset, false );
-        dsA->openDataset();
+        dsd = new BigDataStatMeth::hdf5Dataset(filename, strSVDgroup, "d", false );
+        dsd->openDataset();
         
-        BigDataStatMeth::hdf5Dataset* dsv = new BigDataStatMeth::hdf5Dataset(filename, strSVDgroup, "v", false );
+        dsv = new BigDataStatMeth::hdf5Dataset(filename, strSVDgroup, "v", false );
         dsv->openDataset();
         
-        RcppGetPCAVariablesHdf5( strPCAgroup, dsd, dsv, bforce );
+        if( dsd->getDatasetptr() != nullptr && dsv->getDatasetptr() != nullptr) {
+            RcppGetPCAVariablesHdf5( strPCAgroup, dsd, dsv, bforce );
+        }
         
-        delete dsv;
-        delete dsA;
+        delete dsv; dsv = nullptr;
+        // delete dsA;
         
         // ------------ Individuals ----------------
         
-        BigDataStatMeth::hdf5Dataset* dsX = new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false);
+        dsX = new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false);
         dsX->openDataset();
         
-        BigDataStatMeth::hdf5Dataset* dsu = new BigDataStatMeth::hdf5Dataset(filename, strSVDgroup, "u", false );
+        dsu = new BigDataStatMeth::hdf5Dataset(filename, strSVDgroup, "u", false );
         dsu->openDataset();
         
-        Rcpp::Rcout<<"\nnComputing PCA";
-        RcppGetPCAIndividualsHdf5( strPCAgroup, dsX, dsd, dsu, bforce );
-        Rcpp::Rcout<<"\nPCA Computed";
+        if( dsX->getDatasetptr() != nullptr && dsd->getDatasetptr() != nullptr && dsu->getDatasetptr() != nullptr) {
+            RcppGetPCAIndividualsHdf5( strPCAgroup, dsX, dsd, dsu, bforce );
+        }
         
-        delete dsd;
-        delete dsu;
-        delete dsX;
+        delete dsd; dsd = nullptr;
+        delete dsu; dsu = nullptr;
+        delete dsX; dsX = nullptr;
+        // delete dsA;
         
-    }catch( H5::FileIException& error ) {
-        ::Rf_error( "c++ exception RcppPCAHdf5 (File IException)" );
+    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        checkClose_file(dsA, dsd, dsu, dsv, dsX);
+        Rcpp::Rcerr<<"\nc++ exception RcppPCAHdf5 (File IException)\n";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        ::Rf_error( "c++ exception RcppPCAHdf5 (DataSet IException)" );
+        checkClose_file(dsA, dsd, dsu, dsv, dsX);
+        Rcpp::Rcerr<<"\nc++ exception RcppPCAHdf5 (DataSet IException)\n";
         return void();
     } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception RcppPCAHdf5 (DataSpace IException)" );
-        return void();
-    } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception RcppPCAHdf5 (DataType IException)" );
+        checkClose_file(dsA, dsd, dsu, dsv, dsX);
+        Rcpp::Rcerr<<"\nc++ exception RcppPCAHdf5 (DataSpace IException)\n";
         return void();
     } catch(std::exception &ex) {
-        Rcpp::Rcout<< "C++ exception RcppPCAHdf5 : "<< ex.what();
+        checkClose_file(dsA, dsd, dsu, dsv, dsX);
+        Rcpp::Rcerr<<"\nc++ exception RcppPCAHdf5 \n"<< ex.what();
+        return void();
     } catch (...) {
-        ::Rf_error("C++ exception RcppPCAHdf5 (unknown reason)");
+        checkClose_file(dsA, dsd, dsu, dsv, dsX);
+        Rcpp::Rcerr<<"\nC++ exception RcppPCAHdf5 (unknown reason)";
         return void();
     }
     

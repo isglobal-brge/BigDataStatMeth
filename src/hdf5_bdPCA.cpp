@@ -97,22 +97,22 @@ void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
         BigDataStatMeth::RcppPCAHdf5(filename, group, dataset, strSVDgroup, ks, qs, incomponents, bcent, bscal, dthreshold, bforce, false, method, threads);
         
     } catch( H5::FileIException& error ) {
-        ::Rf_error( "c++ exception bdPCA_hdf5 (File IException)" );
+        Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (File IException)";
         return void();
     } catch( H5::DataSetIException& error ) { 
-        ::Rf_error( "c++ exception bdPCA_hdf5 (DataSet IException)" );
+        Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (DataSet IException)";
         return void();
     } catch( H5::DataSpaceIException& error ) { 
-        ::Rf_error( "c++ exception bdPCA_hdf5 (DataSpace IException)" );
+        Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (DataSpace IException)";
         return void();
     } catch( H5::DataTypeIException& error ) {
-        ::Rf_error( "c++ exception bdPCA_hdf5 (DataType IException)" );
+        Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (DataType IException)";
         return void();
     } catch(std::exception &ex) {
-        Rcpp::Rcout<< "C++ exception bdPCA_hdf5 : "<< ex.what();
+        Rcpp::Rcerr<<"\nC++ exception bdPCA_hdf5 : "<< ex.what();
         return void();
     } catch (...) {
-        ::Rf_error("C++ exception bdPCA_hdf5 (unknown reason)");
+        Rcpp::Rcerr<<"\nC++ exception bdPCA_hdf5 (unknown reason)";
         return void();
     }
     

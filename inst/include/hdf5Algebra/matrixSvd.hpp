@@ -95,6 +95,10 @@ namespace BigDataStatMeth {
                                         int irows, int icols, double dthreshold, Rcpp::Nullable<int> threads = R_NilValue )
     {
         
+        BigDataStatMeth::hdf5Dataset* dsnormalizedData = nullptr;
+        BigDataStatMeth::hdf5Dataset* dsJoined = nullptr;
+        BigDataStatMeth::hdf5DatasetInternal* dsnormalizedData_i = nullptr;
+        
         try{
             
             std::vector<hsize_t> stride = {1, 1},
@@ -120,6 +124,7 @@ namespace BigDataStatMeth {
             }
             
             First_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, q, nev, bcenter, bscale, dthreshold, threads);
+            // return void();
             
             for(int j = 1; j < q; j++) { // For each decomposition level :
                 Next_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, j, dthreshold, threads);
@@ -130,7 +135,7 @@ namespace BigDataStatMeth {
             
             // 1.- Join matrix and remove parts from file
             std::string strnewdataset = std::string((joindata[0])).substr(0,1);
-            hdf5Dataset* dsJoined = new hdf5DatasetInternal(dsA->getFullPath(), strGroupName, strnewdataset, true);
+            dsJoined = new hdf5DatasetInternal(dsA->getFullPath(), strGroupName, strnewdataset, true);
             
             join_datasets( dsJoined, strGroupName, joindata, false, true );
             
@@ -140,9 +145,8 @@ namespace BigDataStatMeth {
             std::vector<double> vdreaded( dims_out[0] * dims_out[1] ); 
             dsJoined->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, {1, 1}, {1, 1}, vdreaded.data() );
             
-            
             matlast = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdreaded.data(), dims_out[0], dims_out[1] );
-            delete dsJoined;
+            delete dsJoined; dsJoined = nullptr;
             
             retsvd = RcppbdSVD_lapack(matlast, false, false, false);
             
@@ -156,31 +160,32 @@ namespace BigDataStatMeth {
                 
                 if(bcenter == true || bscale == true) {
                     
-                    BigDataStatMeth::hdf5Dataset* normalizedData = new BigDataStatMeth::hdf5Dataset( dsA->getFullPath(), strGroupName, "normalmatrix", false);
-                    normalizedData->openDataset();
+                    dsnormalizedData = new BigDataStatMeth::hdf5Dataset( dsA->getFullPath(), strGroupName, "normalmatrix", false);
+                    dsnormalizedData->openDataset();
                     
-                    dims_out = normalizedData->dim();
+                    dims_out = dsnormalizedData->dim();
                     
                     Eigen::MatrixXd A = Eigen::MatrixXd::Zero(dims_out[1], dims_out[0]);
-                    normalizedData->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
+                    dsnormalizedData->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
                     
-                    delete normalizedData ;
+                    delete dsnormalizedData; dsnormalizedData = nullptr;
                     
                     v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
                     
                 } else {
                     
-                    BigDataStatMeth::hdf5DatasetInternal* normalizedData = new BigDataStatMeth::hdf5DatasetInternal( dsA->getFullPath(), dsA->getGroupName(), dsA->getDatasetName(), false);
-                    normalizedData->openDataset();
+                    dsnormalizedData_i = new BigDataStatMeth::hdf5DatasetInternal( dsA->getFullPath(), dsA->getGroupName(), dsA->getDatasetName(), false);
+                    dsnormalizedData_i->openDataset();
                     
-                    dims_out = normalizedData->dim();
+                    dims_out = dsnormalizedData_i->dim();
                     
                     std::vector<double> vdA( dims_out[0] * dims_out[1] );
-                    normalizedData->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
+                    dsnormalizedData_i->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
                     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), dims_out[0], dims_out[1]);
-                    delete normalizedData ;
+                    delete dsnormalizedData_i; dsnormalizedData_i= nullptr;
                     
                     v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
+                    
                 }
                 
             } else {
@@ -212,13 +217,23 @@ namespace BigDataStatMeth {
                 dsv->writeDataset(Rcpp::wrap(v));
             }
             
-            remove_elements(dsA->getFileptr(), strGroupName);
+            //.2025-02-05 Only for debugging purpose.// remove_elements(dsA->getFileptr(), strGroupName);
             
+        }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+            checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
+            Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5_Block (File IException)\n";
+            return void();
+        } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+            checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
+            Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5_Block (DataSet IException)\n";
+            return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<< "C++ exception RcppbdSVD_hdf5_Block : "<< ex.what();
+            checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
+            Rcpp::Rcerr<< "C++ exception RcppbdSVD_hdf5_Block : "<< ex.what();
             return void();
         } catch (...) {
-            ::Rf_error("C++ exception RcppbdSVD_hdf5_Block (unknown reason)");
+            checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
+            Rcpp::Rcerr<<"\nC++ exception RcppbdSVD_hdf5_Block (unknown reason)";
             return void();
         }
         
@@ -248,13 +263,13 @@ namespace BigDataStatMeth {
                                 Rcpp::Nullable<int> ithreads = R_NilValue)
     {
         
-        hdf5Dataset* dsA;
+        BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        BigDataStatMeth::hdf5Dataset* dsu = nullptr;
+        BigDataStatMeth::hdf5Dataset* dsv = nullptr;
+        BigDataStatMeth::hdf5Dataset* dsd = nullptr;
         
         try {
             
-            hdf5Dataset* dsu;
-            hdf5Dataset* dsv;
-            hdf5Dataset* dsd;
             std::string strMethod;
             
             std::vector<hsize_t> stride = {1, 1},
@@ -267,10 +282,11 @@ namespace BigDataStatMeth {
             if(method.isNull())  strMethod = "auto" ;
             else    strMethod = Rcpp::as<std::string>(method);
             
-            dsA = new hdf5Dataset(filename, strsubgroup, strdataset, false);
+            dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroup, strdataset, false);
             dsA->openDataset();
             
             if( dsA->getDatasetptr() != nullptr ) { 
+                
                 // Create results folder
                 std::string stroutgroup = "SVD/"+ strdataset;
                 
@@ -285,7 +301,7 @@ namespace BigDataStatMeth {
                     
                     std::vector<double> vdA( count[0] * count[1] ); 
                     dsA->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
-                    
+                
                     if(asRowMajor == true) {
                         Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdA.data(), count[0], count[1] );    
                         retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
@@ -303,39 +319,45 @@ namespace BigDataStatMeth {
                     dsv->writeDataset( Rcpp::wrap(retsvd.v) );
                     
                     dsd = new hdf5Dataset(filename, stroutgroup, "d", bforce);
-                    dsd->createDataset( retsvd.d.size(), 1, "real");
+                    //.. COMENTAT 2025-02-06 ..// dsd->createDataset( retsvd.d.size(), 1, "real");
+                    dsd->createDataset( 1, retsvd.d.size(), "real");
                     dsd->writeDataset( Rcpp::wrap(retsvd.d) );
                     
                 } else {
+                    dsu = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "u", true);
+                    dsv = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "v", true);
+                    dsd = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "d", true);
                     
-                    dsu = new hdf5Dataset(filename, stroutgroup, "u", true);
-                    dsv = new hdf5Dataset(filename, stroutgroup, "v", true);
-                    dsd = new hdf5Dataset(filename, stroutgroup, "d", true);
+                    if( dsA->getDatasetptr() != nullptr) {
+                        RcppbdSVD_hdf5_Block( dsA, dsu, dsv, dsd, k, q, nev, bcenter, bscale, count[1], count[0], dthreshold, ithreads );
+                    }
                     
-                    RcppbdSVD_hdf5_Block( dsA, dsu, dsv, dsd, k, q, nev, bcenter, bscale, count[1], count[0], dthreshold, ithreads );
-                    
-                }    
-                
-                delete dsu;
-                delete dsv;
-                delete dsd;
+                } 
             } 
             
-            delete dsA;
+            delete dsu; dsu = nullptr;
+            delete dsv; dsv = nullptr;
+            delete dsd; dsd = nullptr;
+            delete dsA; dsA = nullptr;
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            if( dsA->isOpen()) dsA->close_file();
+            checkClose_file(dsA, dsd, dsu, dsv);
             Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5 (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            if( dsA->isOpen()) dsA->close_file();
+            checkClose_file(dsA, dsd, dsu, dsv);
             Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5 (DataSet IException)\n";
             return void();
         } catch(std::exception &ex) {
-            if( dsA->isOpen()) dsA->close_file();
-            Rcpp::Rcout<<"c++ exception RcppbdSVD_hdf5 \n"<< ex.what();
+            checkClose_file(dsA, dsd, dsu, dsv);
+            Rcpp::Rcerr<<"c++ exception RcppbdSVD_hdf5 \n"<< ex.what();
+            return void();
+        } catch (...) {
+            checkClose_file(dsA, dsd, dsu, dsv);
+            Rcpp::Rcerr<<"\nC++ exception RcppbdSVD_hdf5 (unknown reason)";
             return void();
         }
+        
         return void();
     }
 

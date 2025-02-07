@@ -120,6 +120,8 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::Characte
          // retsvd = BigDataStatMeth::RcppbdSVD_hdf5( filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, threads );
          BigDataStatMeth::RcppbdSVD_hdf5( str_filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, bforce, bRowMajor, method, threads );
          
+         Rcpp::Rcout<<"\nAquí ha tornat???";
+         
      } catch(std::exception &ex) {
          Rcpp::Rcout<<"c++ exception bdSVD_hdf5 \n"<< ex.what();
          return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
