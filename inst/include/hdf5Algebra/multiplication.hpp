@@ -67,12 +67,14 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                      vsizetoReadM, vstartM,
                                      vsizetoReadK, vstartK;
                 
+                Rcpp::Rcout<<"\nBlock Size val: "<<block_size;
+                
                 getBlockPositionsSizes_hdf5( N, block_size, vstart, vsizetoRead );
                 getBlockPositionsSizes_hdf5( M, block_size, vstartM, vsizetoReadM );
                 getBlockPositionsSizes_hdf5( K, block_size, vstartK, vsizetoReadK );
                 
                 int ithreads = get_number_threads(threads, R_NilValue);
-                int chunks = vstart.size()/ithreads;
+                // int chunks = vstart.size()/ithreads;
                 
                 #pragma omp parallel num_threads(ithreads) shared(A, B, C) //..// , chunk) private(tid ) 
                 {
@@ -98,7 +100,7 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
+            Rcpp::Rcerr<< "c++ exception Bblock_matrix_mul_parallel: "<<ex.what()<< " \n";
         }
         
         return(C);
@@ -207,8 +209,21 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                 throw std::range_error("multiplication error: non-conformable arguments");
             }
 
-        } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception multiplication: "<<ex.what()<< " \n";
+        }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ c++ exception multiplication (File IException)\n";
+            return void();
+        } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception multiplication (DataSet IException)\n";
+            return void();
+        } catch(std::exception &ex) {
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception multiplication\n";
+            return void();
+        }  catch (...) {
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nC++ exception multiplication (unknown reason)";
             return void();
         }
 
