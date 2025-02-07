@@ -67,8 +67,6 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                                      vsizetoReadM, vstartM,
                                      vsizetoReadK, vstartK;
                 
-                Rcpp::Rcout<<"\nBlock Size val: "<<block_size;
-                
                 getBlockPositionsSizes_hdf5( N, block_size, vstart, vsizetoRead );
                 getBlockPositionsSizes_hdf5( M, block_size, vstartM, vsizetoReadM );
                 getBlockPositionsSizes_hdf5( K, block_size, vstartK, vsizetoReadK );

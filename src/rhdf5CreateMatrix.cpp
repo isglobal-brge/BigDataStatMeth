@@ -45,10 +45,15 @@ void bdCreate_hdf5_matrix(std::string filename,
 {
     
     
+    BigDataStatMeth::hdf5Dataset* objDataset = nullptr;
+    BigDataStatMeth::hdf5File* objFile = nullptr;
+    BigDataStatMeth::hdf5Dims* dsdims = nullptr;
+    
     try
     {
         
         Rcpp::IntegerVector dims(2);
+        Rcpp::CharacterVector svrows, svrcols;
         
         std::string strsubgroup, 
                     strdataset,
@@ -86,7 +91,7 @@ void bdCreate_hdf5_matrix(std::string filename,
         
         dims = BigDataStatMeth::getObjectDims(object, strdatatype);
         
-        BigDataStatMeth::hdf5File* objFile = new BigDataStatMeth::hdf5File(filename, bforceFile);
+        objFile = new BigDataStatMeth::hdf5File(filename, bforceFile);
         iRes = objFile->createFile();
         
         if( iRes == EXEC_OK | iRes == EXEC_WARNING) {
@@ -95,7 +100,7 @@ void bdCreate_hdf5_matrix(std::string filename,
                 objFile->openFile("rw");
             }
             
-            BigDataStatMeth::hdf5Dataset* objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforceDataset );
+            objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforceDataset );
             
             if( bunlimited == false){
                 objDataset->createDataset(dims[0], dims[1], strdatatype);
@@ -104,24 +109,51 @@ void bdCreate_hdf5_matrix(std::string filename,
             }
             objDataset->writeDataset(object); 
             
-            delete objDataset;
-            delete objFile;
+            Rcpp::List dimnames = object.attr( "dimnames" );
+            
+            dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
+            
+            if(dimnames.size()>0 ) {
+                svrows = dimnames[0];
+                svrcols = dimnames[1];
+                
+                if( svrows.size() < dims[0]){
+                    Rcpp::StringVector svrownames(1);
+                    dsdims->writeDimnames( Rcpp::wrap(svrownames), Rcpp::wrap(svrcols));
+                } else if(svrcols.size() < dims[1]){
+                    Rcpp::StringVector svrcolnames(1);
+                    dsdims->writeDimnames( svrows, svrcolnames);
+                } else {
+                    // Write rownames and colnames
+                    dsdims->writeDimnames( svrows, svrcols);
+                }
+            }
+            
+            delete dsdims; dsdims = nullptr;
+            delete objDataset; objDataset = nullptr;
+            delete objFile; objFile = nullptr;
             
         } 
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcout<<"\nSembla que aquí hi ha pogut accedir... 6";
+        if(objFile != nullptr) delete objFile;
+        if(dsdims != nullptr) delete dsdims;
+        checkClose_file(objDataset);
         Rcpp::Rcerr<<"\nc++ c++ exception bdCreate_hdf5_matrix (File IException)\n";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        if(objFile != nullptr) delete objFile;
+        if(dsdims != nullptr) delete dsdims;
+        checkClose_file(objDataset);
         Rcpp::Rcerr<<"\nc++ exception bdCreate_hdf5_matrix (DataSet IException)\n";
         return void();
     } catch(std::exception &ex) {
+        if(objFile != nullptr) delete objFile;
+        if(dsdims != nullptr) delete dsdims;
+        checkClose_file(objDataset);
         Rcpp::Rcerr<<"\nc++ exception bdCreate_hdf5_matrix"<<ex.what()<< " \n";
         return void();
-    }catch(std::exception& ex) {
-        Rcpp::Rcout<< "c++ exception bdCreate_hdf5_matrix: "<<ex.what()<< " \n";
-    }
+    } 
 
     return void();
     

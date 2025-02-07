@@ -226,7 +226,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         irows = dsA->ncols();
         icols = dsA->nrows();
         
-        // Rcpp::Rcout<<"\nCalculem els threads \n";
         
         ithreads = get_number_threads(threads, R_NilValue);
         
@@ -240,7 +239,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
             p = icols;
         }
         
-        // Rcpp::Rcout<<"\n Anem a calcular datanormal \n";
         Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2, n);
         
         if(!transp) {
@@ -249,7 +247,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
             get_HDF5_mean_sd_by_column(dsA, datanormal, wsize);    
         }
         
-        // Rcpp::Rcout<<"\n Adatanormal calculat\n";
         
         M = pow(k, q);
         if(M>p)
@@ -267,8 +264,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         // Get all the offsets and counts inside the file to write and read
         paralPos = prepareForParallelization( dsA, M, k, transp, block_size, strGroupName + "/A");
         // return void();
-        
-        // Rcpp::Rcout<<"\n Anem a per la paralització\n";
         
         #pragma omp parallel num_threads(ithreads) shared (normalizedData)
         {
@@ -290,8 +285,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                 
                 if(transp==false){
                     
-                    // Rcpp::Rcout<<"\n Dins for i = "<< i<<" transp = FALSE";
-                    
                     std::vector<double> vdX( paralPos[i].count[0] * paralPos[i].count[1] ); 
                     #pragma omp critical(accessFile)
                     {
@@ -300,8 +293,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                     X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdX.data(), paralPos[i].count[1], paralPos[i].count[0] );
                     
                 } else {
-                    
-                    // Rcpp::Rcout<<"\n Dins for i = "<< i<<" transp = TRUE";
                     
                     std::vector<double> vdX( paralPos[i].count[0] * paralPos[i].count[1] );
                     #pragma omp critical(accessFile)
@@ -316,8 +307,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                 // Normalize data
                 if (bcenter==true || bscale==true) 
                 {
-                    
-                    // Rcpp::Rcout<<"\n Dins for i = "<<i<<" scalem o centrem\n";
                     
                     std::vector<hsize_t> offset_tmp = {paralPos[i].totOffset[1], paralPos[i].totOffset[0]};
                     std::vector<hsize_t> count_tmp = {paralPos[i].count[1], paralPos[i].count[0]};
@@ -345,13 +334,10 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         
                 {
                     
-                    // Rcpp::Rcout<<"\n Dins for i = "<<i<<" anem a per el svd_lapack";
-                    
                     //    b) SVD for each block
                     svdeig retsvd;
                     retsvd = RcppbdSVD_lapack(X, false, false, false);
                     
-                    // Rcpp::Rcout<<"\n Dins for i = "<<i<<" svd_lapack Fet";
                     
                     int size_d = (retsvd.d).size();
                     int nzeros = 0;
@@ -362,8 +348,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                             nzeros++;
                         }
                     }
-                    
-                    // Rcpp::Rcout<<"\n Dins for i = "<<i<<" anem a per el calcul de u";
                     
                     //    c)  U*d
                     // Create diagonal matrix from svd decomposition d
@@ -378,16 +362,11 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                     
                     Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
                     
-                    // Rcpp::Rcout<<"\n Dins for i = "<<i<<" u Calculat";
-                    
-                    // Rcpp::Rcout<<"\n Dins for i = "<<i<<" anem a calcular restmp";
                     if( u.size() < MAXELEMSINBLOCK ) {
                         restmp = u*d;
                     } else{
                         restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);
                     }
-                    
-                    // Rcpp::Rcout<<"\n Dins for i = "<<i<<" restmp calculat";
                     
                 }
                 
@@ -397,7 +376,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                 {
                     #pragma omp critical(accessFile)
                     {
-                        // Rcpp::Rcout<<"\n Dins for i = "<<i<<" Anem a extendre el dataset";
                         
                         unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true );
                         unlimDataset->openDataset();
@@ -408,22 +386,8 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                                 unlimDataset->extendUnlimitedDataset(0, restmp.cols() );
                         }
                     
-                        // Rcpp::Rcout<<"\n Dins for i = "<<i<<" fet, anem a escriure \n";
-                        // Rcpp::Rcout<<"\n Psicions: "<<paralPos[i].partOffset[0]<<"  "<<paralPos[i].partOffset[1]<<"\n";
-                        // Rcpp::Rcout<<"\n Mida: "<<paralPos[i].count[0]<<"  "<<paralPos[i].count[1]<<"\n";
-                        // Rcpp::Rcout<<"\n Mida matriu: "<<restmp.rows()<<"  "<<restmp.cols()<<"\n";
-                        // Rcpp::Rcout<<"\n Mida unlimdataset: "<<unlimDataset->nrows()<<"  "<<unlimDataset->ncols()<<"\n";
-                        // Rcpp::Rcout<<"\n Hauriem d'escriure a: "<<0<<"  "<<paralPos[i].cummoffset<<"\n";
-                    
                         unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), {0, paralPos[i].cummoffset}, {(unsigned long long)restmp.rows(), (unsigned long long)restmp.cols()}, paralPos[i].stride, paralPos[i].block, false);
                         delete unlimDataset; unlimDataset = nullptr;
-                
-                // Rcpp::Rcout<<"\n La matriu val: \n"<<restmp.block(0,0,5,5)<<"\n";
-                
-                // if(i==2)
-                //     return void();
-                    
-                // Rcpp::Rcout<<"\n Dins for i = "<<i<<" escrit i acabem de tancar el unlimdataset \n";
                     }
                 }
             }
