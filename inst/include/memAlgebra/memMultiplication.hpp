@@ -151,7 +151,7 @@ namespace BigDataStatMeth {
             if(transpX == true){ A = X.transpose(); }
             if(transpY == true){ B = Y.transpose(); }
             
-            int chunks;//, tid;
+            // int chunks;//, tid;
             hsize_t block_size;
             
             std::vector<hsize_t> vsizetoReadN, vstartN,
@@ -175,14 +175,31 @@ namespace BigDataStatMeth {
             
             ithreads = get_number_threads(threads, R_NilValue);
             
-            getBlockPositionsSizes_mat( N, block_size, vstartN, vsizetoReadN );
-            getBlockPositionsSizes_mat( M, block_size, vstartM, vsizetoReadM );
-            getBlockPositionsSizes_mat( K, block_size, vstartK, vsizetoReadK );
+            getBlockPositionsSizes( N, block_size, vstartN, vsizetoReadN );
+            getBlockPositionsSizes( M, block_size, vstartM, vsizetoReadM );
+            getBlockPositionsSizes( K, block_size, vstartK, vsizetoReadK );
             
+            // 
+            // 
+            // Rcpp::Rcout<<"\nInicis i posicions de M: ";
+            // for (hsize_t ii = 0; ii <vstartM.size(); ii ++) {
+            //     Rcpp::Rcout<<"\n\t"<<vstartM[ii]<<" - "<<vsizetoReadM[ii];
+            // }
+            // 
+            // Rcpp::Rcout<<"\nInicis i posicions de N: ";
+            // for (hsize_t ii = 0; ii <vstartN.size(); ii ++) {
+            //     Rcpp::Rcout<<"\n\t"<<vstartN[ii]<<" - "<<vsizetoReadN[ii];
+            // }
+            // 
+            // Rcpp::Rcout<<"\nInicis i posicions de K: ";
+            // for (hsize_t ii = 0; ii <vstartK.size(); ii ++) {
+            //     Rcpp::Rcout<<"\n\t"<<vstartK[ii]<<" - "<<vsizetoReadK[ii];
+            // }
+            // 
             
-            chunks = vstartM.size()/ithreads;
+            // chunks = vstartM.size()/ithreads;
             
-            #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks) // private(tid ) 
+            #pragma omp parallel num_threads(ithreads) shared(A, B, C)// chunks) // private(tid ) 
             {
                 
             #pragma omp for schedule (static) // collapse(3)
