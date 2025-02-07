@@ -130,19 +130,21 @@ extern inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA
         else
             count[0] = dims_out[0];
         
+        Rcpp::Rcout<<"\n--------- Estem a les modificacions??  -------------\n";
+        
         // Read data in blocks of 500 columns
         for(hsize_t i=0; (i <= floor(dims_out[0]/block_size)) || i==0; i++)
         {
 
-            if(i>0) {
-                offset[0] = offset[0] + block_size;
+            // if(i>0) {
+                // offset[0] = offset[0] + block_size;
 
                 if( offset[0] + block_size <= dims_out[0] ) {
                     count[0] = block_size;
                 }else {
                     count[0] = dims_out[0] - offset[0];
                 }
-            }
+            // }
             
             std::vector<double> vdA( count[0] * count[1] ); 
             dsA->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
@@ -153,6 +155,8 @@ extern inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA
 
             normalize.block( 0, offset[0], 1, mean.size()) = mean.transpose();
             normalize.block( 1, offset[0], 1, sd.size()) = sd.transpose();
+            
+            offset[0] = offset[0] + block_size;
 
         }
         
