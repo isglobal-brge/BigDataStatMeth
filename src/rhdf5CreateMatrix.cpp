@@ -132,7 +132,6 @@ void bdCreate_hdf5_matrix(std::string filename,
             delete dsdims; dsdims = nullptr;
             delete objDataset; objDataset = nullptr;
             delete objFile; objFile = nullptr;
-            
         } 
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
