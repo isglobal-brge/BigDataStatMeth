@@ -7,7 +7,8 @@
 
 namespace BigDataStatMeth {
 
-    extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size);
+    // extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size);
+    template<typename T, typename U> extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( T X, U Y, Rcpp::Nullable<int>  iblock_size);
 
     
     extern inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
@@ -53,74 +54,210 @@ namespace BigDataStatMeth {
     }
     
     
-    // In-memory execution - Serial version by Blocks
-    extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size)
-    {
-        
-        Eigen::MatrixXd C;
-        
-        try{
-            
-            int M = A.rows(),
-                K = A.cols(),
-                N = B.cols(),
-                block_size;
-            
-            if( iblock_size.isNotNull()) {
-                block_size =  Rcpp::as<int>(iblock_size);
-            } else {
-                block_size =  MAXBLOCKSIZE/3;
-            }
-            
-            if( K == B.rows())
-            {
-                C = Eigen::MatrixXd::Zero(M,N) ; 
-                
-                int isize = block_size+1,
-                    ksize = block_size+1,
-                    jsize = block_size+1;
-                
-                for (int ii = 0; ii < M; ii += block_size)
-                {
-                    if( ii + block_size > M ) isize = M - ii;
-                    for (int jj = 0; jj < N; jj += block_size)
-                    {
-                        if( jj + block_size > N) jsize = N - jj;
-                        for(int kk = 0; kk < K; kk += block_size)
-                        {
-                            if( kk + block_size > K ) ksize = K - kk;
-                            
-                            hsize_t minii = std::min(block_size,isize),
-                                    minjj = std::min(block_size,jsize),
-                                    minkk = std::min(block_size,ksize);
-                            
-                            C.block(ii, jj, minii, minjj) =  C.block(ii, jj, minii, minjj) + 
-                                (A.block(ii, kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
-                            
-                            if( kk + block_size > K ) ksize = block_size+1;
-                        }
-                        if( jj + block_size > N ) jsize = block_size+1;
-                    }
-                    if( ii + block_size > M ) isize = block_size+1;
-                }
-                
-            } else {
-                throw std::range_error("non-conformable arguments");
-            }    
-            
-        } catch(std::exception &ex) {
-            Rcpp::Rcout<<"c++ error : Bblock_matrix_mul : " <<ex.what();
-            return(C);
-            
-        } catch(...) { 
-            ::Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
-        }
-        
-        return(C);
-    }
-
-    
+    // // In-memory execution - Serial version by Blocks
+    // extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size)
+    // {
+    //     
+    //     Eigen::MatrixXd C;
+    //     
+    //     try{
+    //         
+    //         int M = A.rows(),
+    //             K = A.cols(),
+    //             N = B.cols(),
+    //             block_size;
+    //         
+    //         if( iblock_size.isNotNull()) {
+    //             block_size =  Rcpp::as<int>(iblock_size);
+    //         } else {
+    //             block_size =  MAXBLOCKSIZE/3;
+    //         }
+    //         
+    //         if( K == B.rows())
+    //         {
+    //             C = Eigen::MatrixXd::Zero(M,N) ; 
+    //             
+    //             int isize = block_size+1,
+    //                 ksize = block_size+1,
+    //                 jsize = block_size+1;
+    //             
+    //             for (int ii = 0; ii < M; ii += block_size)
+    //             {
+    //                 if( ii + block_size > M ) isize = M - ii;
+    //                 for (int jj = 0; jj < N; jj += block_size)
+    //                 {
+    //                     if( jj + block_size > N) jsize = N - jj;
+    //                     for(int kk = 0; kk < K; kk += block_size)
+    //                     {
+    //                         if( kk + block_size > K ) ksize = K - kk;
+    //                         
+    //                         hsize_t minii = std::min(block_size,isize),
+    //                                 minjj = std::min(block_size,jsize),
+    //                                 minkk = std::min(block_size,ksize);
+    //                         
+    //                         C.block(ii, jj, minii, minjj) =  C.block(ii, jj, minii, minjj) + 
+    //                             (A.block(ii, kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
+    //                         
+    //                         if( kk + block_size > K ) ksize = block_size+1;
+    //                     }
+    //                     if( jj + block_size > N ) jsize = block_size+1;
+    //                 }
+    //                 if( ii + block_size > M ) isize = block_size+1;
+    //             }
+    //             
+    //         } else {
+    //             throw std::range_error("non-conformable arguments");
+    //         }    
+    //         
+    //     } catch(std::exception &ex) {
+    //         Rcpp::Rcout<<"c++ error : Bblock_matrix_mul : " <<ex.what();
+    //         return(C);
+    //         
+    //     } catch(...) { 
+    //         ::Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
+    //     }
+    //     
+    //     return(C);
+    // }
+    // 
+    // 
    
+   // In-memory execution - Serial version by Blocks
+   template<typename T, typename U>
+   extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( T X, U Y, Rcpp::Nullable<int>  iblock_size)
+   {
+       
+       Eigen::MatrixXd C;
+       
+       try{
+           
+           // int M = A.rows(),
+           //     K = A.cols(),
+           //     N = B.cols(),
+           //     block_size;
+           // 
+           // if( iblock_size.isNotNull()) {
+           //     block_size =  Rcpp::as<int>(iblock_size);
+           // } else {
+           //     block_size =  MAXBLOCKSIZE/3;
+           // }
+           // 
+           // if( K == B.rows())
+           // {
+           //     C = Eigen::MatrixXd::Zero(M,N) ; 
+           //     
+           //     int isize = block_size+1,
+           //         ksize = block_size+1,
+           //         jsize = block_size+1;
+           //     
+           //     for (int ii = 0; ii < M; ii += block_size)
+           //     {
+           //         if( ii + block_size > M ) isize = M - ii;
+           //         for (int jj = 0; jj < N; jj += block_size)
+           //         {
+           //             if( jj + block_size > N) jsize = N - jj;
+           //             for(int kk = 0; kk < K; kk += block_size)
+           //             {
+           //                 if( kk + block_size > K ) ksize = K - kk;
+           //                 
+           //                 hsize_t minii = std::min(block_size,isize),
+           //                     minjj = std::min(block_size,jsize),
+           //                     minkk = std::min(block_size,ksize);
+           //                 
+           //                 C.block(ii, jj, minii, minjj) =  C.block(ii, jj, minii, minjj) + 
+           //                     (A.block(ii, kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
+           //                 
+           //                 if( kk + block_size > K ) ksize = block_size+1;
+           //             }
+           //             if( jj + block_size > N ) jsize = block_size+1;
+           //         }
+           //         if( ii + block_size > M ) isize = block_size+1;
+           //     }
+           //     
+           // } else {
+           //     throw std::range_error("non-conformable arguments");
+           // }    
+           
+           
+           static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
+                         std::is_same<T, Eigen::Map< Eigen::MatrixXd >>::value || 
+                         std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                         std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                         "Error - type not allowed");
+           
+           static_assert(std::is_same<U, Eigen::MatrixXd >::value || 
+                         std::is_same<U, Eigen::Map< Eigen::MatrixXd >>::value || 
+                         std::is_same<U, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
+                         std::is_same<U, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                         "Error - type not allowed");
+           
+           Eigen::MatrixXd A = X,
+                           B = Y;
+           
+           // if(transpX == true){ A = X.transpose(); }
+           // if(transpY == true){ B = Y.transpose(); }
+           
+           // int chunks;//, tid;
+           hsize_t block_size;
+           
+           std::vector<hsize_t> vsizetoReadN, vstartN,
+                                vsizetoReadM, vstartM,
+                                vsizetoReadK, vstartK;
+           
+           unsigned int ithreads;
+           hsize_t M = A.rows();
+           hsize_t K = A.cols();
+           hsize_t N = B.cols();
+           
+           if( K == B.rows()) {
+               
+               if( iblock_size.isNotNull()) {
+                   block_size =  Rcpp::as<int>(iblock_size);  
+               } else {
+                   block_size =  MAXBLOCKSIZE/3;  
+               }
+               
+               C = Eigen::MatrixXd::Zero(M,N) ;
+               if(block_size > std::min( N, std::min(M,K)) )
+                   block_size = std::min( N, std::min(M,K)); 
+               
+               getBlockPositionsSizes( N, block_size, vstartN, vsizetoReadN );
+               getBlockPositionsSizes( M, block_size, vstartM, vsizetoReadM );
+               getBlockPositionsSizes( K, block_size, vstartK, vsizetoReadK );
+               
+               for (int ii = 0; ii < vstartM.size(); ii++)
+               {
+                   for (int jj = 0; jj < vstartN.size(); jj++)
+                   {
+                       for(int kk = 0; kk < vstartK.size(); kk++)
+                       {
+                           C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) =  C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) + 
+                               (A.block(vstartM[ii], vstartK[kk], vsizetoReadM[ii], vsizetoReadK[kk]) * B.block(vstartK[kk], vstartN[jj], vsizetoReadK[kk], vsizetoReadN[jj]));
+                       }
+                   }
+               }
+               
+           } else {
+               throw std::range_error("non-conformable arguments");
+               }
+           
+           
+       } catch(std::exception &ex) {
+           Rcpp::Rcout<<"c++ error : Bblock_matrix_mul : " <<ex.what();
+           return(C);
+           
+       } catch(...) { 
+           ::Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
+       }
+       
+       return(C);
+   }
+    
+    
+    
+    
+    
+    
     
     // In-memory execution - Parallel version - by Blocks
     template<typename T, typename U>
