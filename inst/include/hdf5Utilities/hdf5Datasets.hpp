@@ -572,7 +572,7 @@ public:
             
             if(Rcpp::is<Rcpp::NumericMatrix>(DatasetValues) || Rcpp::is<Rcpp::IntegerMatrix>(DatasetValues) ||
                Rcpp::is<Rcpp::NumericVector>(DatasetValues) || Rcpp::is<Rcpp::IntegerVector>(DatasetValues) ) {
-
+                
                 if(Rcpp::is<Rcpp::NumericMatrix>(DatasetValues) || Rcpp::is<Rcpp::IntegerMatrix>(DatasetValues)) {
                     if(bTranspose == false) {
                         hsCount[0] = vCount[0];
@@ -617,7 +617,6 @@ public:
                 }
 
             } else if(Rcpp::is<Rcpp::StringMatrix>(DatasetValues) || Rcpp::is<Rcpp::StringVector>(DatasetValues) ) {
-
                 if(Rcpp::is<Rcpp::StringMatrix>(DatasetValues)) {
                     hsCount[0] = Rcpp::as<Rcpp::StringMatrix>(DatasetValues).rows();
                     hsCount[1] = Rcpp::as<Rcpp::StringMatrix>(DatasetValues).cols();

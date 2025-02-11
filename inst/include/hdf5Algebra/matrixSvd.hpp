@@ -124,7 +124,6 @@ namespace BigDataStatMeth {
             }
             
             First_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, q, nev, bcenter, bscale, dthreshold, threads);
-            // return void();
             
             for(int j = 1; j < q; j++) { // For each decomposition level :
                 Next_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, j, dthreshold, threads);
@@ -135,6 +134,7 @@ namespace BigDataStatMeth {
             
             // 1.- Join matrix and remove parts from file
             std::string strnewdataset = std::string((joindata[0])).substr(0,1);
+            
             dsJoined = new hdf5DatasetInternal(dsA->getFullPath(), strGroupName, strnewdataset, true);
             
             join_datasets( dsJoined, strGroupName, joindata, false, true );
@@ -191,19 +191,24 @@ namespace BigDataStatMeth {
             } else {
                 
                 dims_out = dsA->dim();    
+                Eigen::MatrixXd A;
+                std::vector<double> vdA( dims_out[0] * dims_out[1] );
+                dsA->readDatasetBlock( {0,0}, {dims_out[0], dims_out[1] }, stride, block, vdA.data() );
                 
-                Eigen::MatrixXd A = Eigen::MatrixXd::Zero(dims_out[0], dims_out[1]);
-                dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
+                A = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdA.data(), dims_out[1], dims_out[0] );
                 
-                A.transposeInPlace();
-                v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads); //  PARALLEL ==> NOT PARALLEL
-                
+                Rcpp::Rcout<<"\nMatriu A val (hauria d'estar tal qual està al fitxer..: \n"<<A.block(0,0,5,5);
+                if(transp == false) {
+                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, true, false, R_NilValue, threads); // crossprod
+                } else {
+                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads); // multiplication
+                }
             }
                 
             // 4.- resuls / svdA$d
             v = v.array().rowwise()/(retsvd.d).transpose().array();
             
-            if (transp == false)  {
+            if (transp == true)  {
                 dsu->createDataset( v.rows(), v.cols(), "real");
                 dsv->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real");
                 
@@ -218,7 +223,7 @@ namespace BigDataStatMeth {
             }
             
             //.2025-02-05 Only for debugging purpose.// remove_elements(dsA->getFileptr(), strGroupName);
-            
+            remove_elements(dsA->getFileptr(), strGroupName);
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
             Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5_Block (File IException)\n";
@@ -296,6 +301,7 @@ namespace BigDataStatMeth {
                 // Small matrices ==> Direct SVD (lapack)
                 if( (dims_out[0] * dims_out[1] < (MAXELEMSINBLOCK / 20) && strMethod == "auto") || strMethod == "full" ) {
                     
+                    // Rcpp::Rcout<<"\nEste, aquí - 1";
                     Eigen::MatrixXd X;
                     svdeig retsvd;
                     
@@ -324,6 +330,7 @@ namespace BigDataStatMeth {
                     dsd->writeDataset( Rcpp::wrap(retsvd.d) );
                     
                 } else {
+                    // Rcpp::Rcout<<"\nEste, aquí - 2";
                     dsu = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "u", true);
                     dsv = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "v", true);
                     dsd = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "d", true);
