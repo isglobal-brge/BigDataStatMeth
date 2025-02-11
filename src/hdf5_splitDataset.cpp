@@ -35,9 +35,6 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
                           Rcpp::Nullable<bool> overwrite = false  )
 {
     
-    // H5File* file = nullptr;
-    // DataSet* pdataset = nullptr;
-    
     BigDataStatMeth::hdf5Dataset* dsIn;
     std::string stroutgroup, stroutdataset, stroutdata;
     
@@ -47,7 +44,6 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         std::string strdatasetout;
         int iblocksize = 0; //, iwholesize = 0;
         bool bcols, bforce;
-        
         
         if(bycols.isNull()) { bcols = true ;
         } else {   bcols = Rcpp::as<bool>(bycols);}
@@ -61,11 +57,8 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         if(outdataset.isNull()){  stroutdataset = dataset ;
         } else {   stroutdataset = Rcpp::as<std::string>(outdataset);}
         
-        
-
         dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsIn->openDataset();
-        
         
         if( dsIn->getDatasetptr() != nullptr ) { 
             
@@ -124,16 +117,34 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
             
         }
     
-        delete dsIn;    
+        delete dsIn; dsIn = nullptr;
         Rcpp::Rcout<<"Dataset has been splitted, results can be found in "<< stroutgroup + "/" + stroutdataset <<"\n";
         
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        if( dsIn->isOpen()) dsIn->close_file();
+        checkClose_file(dsIn);
         Rcpp::Rcerr<<"\nc++ exception bdSplit_matrix_hdf5 (File IException)\n";
         return void();
+    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        checkClose_file(dsIn);
+        Rcpp::Rcerr<<"\nc++ exception bdSplit_matrix_hdf5 (DataSet IException)";
+        return void();
+    } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
+        checkClose_file(dsIn);
+        Rcpp::Rcerr<<"\nc++ exception bdSplit_matrix_hdf5 (DataSpace IException)";
+        return void();
+    } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
+        checkClose_file(dsIn);
+        Rcpp::Rcerr<<"\nc++ exception bdSplit_matrix_hdf5 (DataType IException)";
+        return void();
+    } catch(std::exception &ex) {
+        checkClose_file(dsIn);
+        Rcpp::Rcerr<<"\nC++ exception bdSplit_matrix_hdf5 : "<< ex.what();
+    } catch (...) {
+        checkClose_file(dsIn);
+        Rcpp::Rcerr<<"\nC++ exception bdSplit_matrix_hdf5 (unknown reason)";
+        return void();
     }
-    
     
     return void();
 }

@@ -74,13 +74,11 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
             
         } else {
             throw("Matrix A is not numeric - Only numeric matrix allowed");
-            
         }
         
         if(B.isNull()) {
             C = BigDataStatMeth::bdtcrossproduct(mA);
         } else {
-            
             
             if(Rcpp::is<Rcpp::NumericMatrix>(B) || Rcpp::is<Rcpp::IntegerMatrix>(B)) {
                 try{  
@@ -99,11 +97,12 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
             } else if (bparal == false)  {
                 C = BigDataStatMeth::Rcpp_block_matrix_mul(mA, mTrans, block_size);
             }
-            
         }
         
     } catch(std::exception &ex) {
-        Rcpp::Rcout<< ex.what();
+        Rcpp::Rcerr<<"\nc++ exception bdtCrossprod\n";
+    } catch (...) {
+        Rcpp::Rcerr<<"\nC++ exception bdtCrossprod (unknown reason)";
     }
     
     return(C);

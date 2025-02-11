@@ -105,7 +105,9 @@ Eigen::MatrixXd bdCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B = 
         }
         
     } catch(std::exception &ex) {
-        Rcpp::Rcout<< ex.what();
+        Rcpp::Rcerr<<"\nc++ exception bdCrossprod\n";
+    } catch (...) {
+        Rcpp::Rcerr<<"\nC++ exception bdCrossprod (unknown reason)";
     }
     
     return(C);

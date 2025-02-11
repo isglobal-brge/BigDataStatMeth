@@ -222,8 +222,8 @@ namespace BigDataStatMeth {
                 dsv->writeDataset(Rcpp::wrap(v));
             }
             
-            //.2025-02-05 Only for debugging purpose.// remove_elements(dsA->getFileptr(), strGroupName);
             remove_elements(dsA->getFileptr(), strGroupName);
+            
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
             Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5_Block (File IException)\n";

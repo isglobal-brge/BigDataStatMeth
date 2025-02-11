@@ -64,6 +64,7 @@ const int MAXSTRING = 20;
 const hsize_t MAXSTRBLOCK = 1 << 5;
 
 const hsize_t MAXELEMSINBLOCK = ((2 << 29) - 1);
+// const hsize_t MAXELEMSINBLOCK = ((2 << 5) - 1);
 const hsize_t MAXBLOCKSIZE = std::floor(std::sqrt(MAXELEMSINBLOCK));
 const hsize_t MAXMULTBLOCKSIZE = 1 << 13;
 

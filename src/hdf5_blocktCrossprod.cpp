@@ -86,8 +86,9 @@
         iblockfactor = 2;
      bool bparal, bforce;
      
-     BigDataStatMeth::hdf5Dataset* dsA;
-     BigDataStatMeth::hdf5Dataset* dsB;
+     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+     BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+     BigDataStatMeth::hdf5Dataset* dsC = nullptr;
      
      std::string strsubgroupOut, 
      strdatasetOut, 
@@ -127,7 +128,7 @@
          
          if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
              
-             BigDataStatMeth::hdf5Dataset* dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+             dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
              
              iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
              
@@ -145,23 +146,27 @@
              } else if (bparal == false) { // Not parallel
                  dsC = BigDataStatMeth::tcrossprod(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
              }    
-             delete dsC;    
+             delete dsC; dsC = nullptr;    
          }
          
-         delete dsA;
-         delete dsB;
+         delete dsA; dsA = nullptr;
+         delete dsB; dsB = nullptr;
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         if( dsA->isOpen()) dsA->close_file();
+         checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr<<"\nc++ c++ exception bdtCrossprod_hdf5 (File IException)\n";
          return void();
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         if( dsA->isOpen()) dsA->close_file();
+         checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr<<"\nc++ exception bdtCrossprod_hdf5 (DataSet IException)\n";
          return void();
      } catch(std::exception &ex) {
-         if( dsA->isOpen()) dsA->close_file();
+         checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr<<"\nc++ exception bdtCrossprod_hdf5\n";
+         return void();
+     } catch (...) {
+         checkClose_file(dsA, dsB, dsC);
+         Rcpp::Rcerr<<"\nC++ exception bdtCrossprod_hdf5 (unknown reason)";
          return void();
      }
      

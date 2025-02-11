@@ -13,8 +13,8 @@
 Rcpp::RObject  bdgetDim_hdf5( std::string filename, std::string dataset)
 {
     
-    BigDataStatMeth::hdf5Dataset* ds;
-    Rcpp::IntegerVector dims(4);
+    BigDataStatMeth::hdf5Dataset* ds = nullptr;
+    Rcpp::IntegerVector dims(2);
     
     try
     {
@@ -27,24 +27,27 @@ Rcpp::RObject  bdgetDim_hdf5( std::string filename, std::string dataset)
             dims[1] = ds->ncols_r();
         }
         
-        delete ds;
-        
+        delete ds; ds = nullptr;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        if( ds->isOpen()) ds->close_file();
-        Rcpp::Rcerr<<"\nc++ exception bdReduce_hdf5_dataset (File IException)";
+        checkClose_file(ds);
+        Rcpp::Rcerr<<"\nc++ exception bdgetDim_hdf5 (File IException)";
         return(dims);
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        if( ds->isOpen()) ds->close_file();
-        Rcpp::Rcerr<<"\nc++ exception bdReduce_hdf5_dataset (Group IException)";
+        checkClose_file(ds);
+        Rcpp::Rcerr<<"\nc++ exception bdgetDim_hdf5 (Group IException)";
         return(dims);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        if( ds->isOpen()) ds->close_file();
-        Rcpp::Rcerr<<"\nc++ exception bdReduce_hdf5_dataset (DataSet IException)";
+        checkClose_file(ds);
+        Rcpp::Rcerr<<"\nc++ exception bdgetDim_hdf5 (DataSet IException)";
         return(dims);
     } catch(std::exception& ex) {
-        if( ds->isOpen()) ds->close_file();
-        Rcpp::Rcerr<<"\nc++ exception bdReduce_hdf5_dataset" << ex.what();
+        checkClose_file(ds);
+        Rcpp::Rcerr<<"\nc++ exception bdgetDim_hdf5" << ex.what();
+        return(dims);
+    } catch (...) {
+        checkClose_file(ds);
+        Rcpp::Rcerr<<"\nC++ exception bdgetDim_hdf5 (unknown reason)";
         return(dims);
     }
     

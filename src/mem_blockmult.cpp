@@ -87,7 +87,9 @@ Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B,
         
         
     } catch(std::exception &ex) {
-        Rcpp::Rcout<< ex.what();
+        Rcpp::Rcerr<<"\nc++ exception bdblockMult\n";
+    } catch (...) {
+        Rcpp::Rcerr<<"\nC++ exception bdblockMult (unknown reason)";
     }
 
     return(R_NilValue);
