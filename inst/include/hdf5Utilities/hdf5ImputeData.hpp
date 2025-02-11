@@ -76,9 +76,7 @@ namespace BigDataStatMeth {
         
         try{
             
-            std::vector<hsize_t> offset = {0,0},
-                                 count = {0,0},
-                                 stride = {1,1},
+            std::vector<hsize_t> stride = {1,1},
                                  block = {1,1};
             
             int ilimit,
@@ -89,12 +87,8 @@ namespace BigDataStatMeth {
             // id bycols == true : read all rows by group of columns ; else : all columns by group of rows
             if (bycols == true) {
                 ilimit = dims_out[0];
-                count[1] = dims_out[1];
-                offset[1] = 0;
             } else {
                 ilimit = dims_out[1];
-                count[0] = dims_out[0];
-                offset[0] = 0;
             };
             
             
@@ -104,25 +98,30 @@ namespace BigDataStatMeth {
             
             dsOut->openDataset();
             
-            
             int ithreads = get_number_threads(threads, R_NilValue);
             int chunks = (ilimit + (blocksize - 1)) / blocksize; //(ilimit/blocksize);
-            
-            
+
             #pragma omp parallel num_threads(ithreads) shared(dsIn, dsOut, chunks)
             {
                 #pragma omp for schedule(auto)
                 for( int i=0; i < chunks; i++) 
                 {
+                    
+                    std::vector<hsize_t> offset = {0,0},
+                                         count = {0,0};
+                    
                     int iread;
                     
                     if( (i+1)*blocksize < ilimit) iread = blocksize;
                     else iread = ilimit - (i*blocksize);
                     
+                    // id bycols == true : read all rows by group of columns ; else : all columns by group of rows
                     if(bycols == true) {
                         count[0] = iread; 
+                        count[1] = dims_out[1];
                         offset[0] = i*blocksize;
                     } else {
+                        count[0] = dims_out[0];
                         count[1] = iread; 
                         offset[1] = i*blocksize;
                     }
@@ -168,13 +167,13 @@ namespace BigDataStatMeth {
                             
                             auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
                             while (it != std::end(v)) {
-                                
                                 if(*it==3) *it = get_value_to_impute_discrete(myMap);
                                 it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
                             }
                             
                             Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
                             data.col(col) = X;
+                            
                         }
                     }
                     
