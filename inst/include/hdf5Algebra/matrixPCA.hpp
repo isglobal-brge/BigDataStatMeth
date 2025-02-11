@@ -250,11 +250,11 @@ void RcppGetPCAIndividualsHdf5( std::string strPCAgroup,
         return void();
     } catch(std::exception &ex) {
         checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
-        Rcpp::Rcout<<"\nc++ exception RcppGetPCAIndividualsHdf5 \n"<< ex.what();
+        Rcpp::Rcerr<<"\nc++ exception RcppGetPCAIndividualsHdf5 \n"<< ex.what();
         return void();
     } catch (...) {
         checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
-        Rcpp::Rcout<<"\nC++ exception RcppGetPCAIndividualsHdf5 (unknown reason)";
+        Rcpp::Rcerr<<"\nC++ exception RcppGetPCAIndividualsHdf5 (unknown reason)";
         return void();
     }
     
@@ -291,12 +291,19 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
         
         delete file; file = nullptr;
         
+        Rcpp::Rcout<<"\nAnem a per el SVD";
         
         if( bexistsSVD == 0 ||  bforce == true ) {
             
             dsA = new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false);
             dsA->openDataset();
-            RcppTypifyNormalizeHdf5( dsA, bcenter, bscale, false); // Normalize and tipify data ( ((x-mu)/(sd)) * 1/sqrt(n-1) )
+            if( dsA->getDatasetptr() != nullptr ) {
+                RcppTypifyNormalizeHdf5( dsA, bcenter, bscale, false); // Normalize and tipify data ( ((x-mu)/(sd)) * 1/sqrt(n-1) )
+            } else {
+                checkClose_file(dsA, dsd, dsu, dsv, dsX);
+                return void();
+            }
+            
             delete dsA; dsA = nullptr;
             
             BigDataStatMeth::RcppbdSVD_hdf5( filename, "NORMALIZED_T/" + strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, method, ithreads );
@@ -305,11 +312,15 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
             
         }
         
+        Rcpp::Rcout<<"\nSVD Fet";
+        
         // Check if PCA decomposition exists
         if( bexistsPCA != 0  && bforce == false) {
             Rcpp::Rcout<<"PCA decomposition exits, please set overwrite = true to overwrite the existing results";
             return void();
         }
+        
+        Rcpp::Rcout<<"\nCalcul de variables";
         
         // ------------ Variables ----------------
         
@@ -322,6 +333,9 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
         if( dsd->getDatasetptr() != nullptr && dsv->getDatasetptr() != nullptr) {
             RcppGetPCAVariablesHdf5( strPCAgroup, dsd, dsv, bforce );
         }
+        
+        
+        Rcpp::Rcout<<"\nCalcul Individuals";
         
         delete dsv; dsv = nullptr;
         // delete dsA;
