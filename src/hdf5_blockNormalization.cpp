@@ -40,15 +40,21 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
                     Rcpp::Nullable<int> wsize  = R_NilValue, Rcpp::Nullable<bool> overwrite  = false)
 {
  
-    bool bc, bs, bforce, bbyrows, corrected = false;
-    hsize_t nrows, ncols;
-    std::string strgroupout;
-    std::vector<hsize_t> stride = {1, 1},
-                         block = {1, 1};
-     
-     Eigen::MatrixXd datanormal;
+    
+     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+     BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
+     BigDataStatMeth::hdf5Dataset* dssd = nullptr;
+     BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
      
      try{
+         
+         bool bc, bs, bforce, bbyrows, corrected = false;
+         hsize_t nrows, ncols;
+         std::string strgroupout;
+         std::vector<hsize_t> stride = {1, 1},
+             block = {1, 1};
+         
+         Eigen::MatrixXd datanormal;
          
          if( bcenter.isNull()) {  bc = true;   }
          else {   bc = Rcpp::as<bool> (bcenter);  }
@@ -62,63 +68,76 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
          if( overwrite.isNull()) {   bforce = false;   }
          else {   bforce = Rcpp::as<bool> (overwrite);   }
          
-         BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+         dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
          dsA->openDataset();
          
          nrows = dsA->nrows();
          ncols = dsA->ncols();
          
          // Define blocksize atending number of elements in rows and cols
-         if( bbyrows == false) {
-             datanormal = Eigen::MatrixXd::Zero(2,nrows);
-             get_HDF5_mean_sd_by_column( dsA, datanormal, wsize);
+         if( dsA->getDatasetptr() != nullptr) {
+             if( bbyrows == false) {
+                 datanormal = Eigen::MatrixXd::Zero(2,nrows);
+                 get_HDF5_mean_sd_by_column( dsA, datanormal, wsize);
+             } else {
+                 datanormal = Eigen::MatrixXd::Zero(2,ncols);
+                 get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
+             }    
          } else {
-             datanormal = Eigen::MatrixXd::Zero(2,ncols);
-             get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
+             checkClose_file(dsA, dsmean, dssd, dsNormal);
+             Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : error with "<<dataset<< " datset\n";
+             return void();    
          }
          
          strgroupout = "NORMALIZED/" + group;
          std::string strdatasetmean = "mean." + dataset;
          std::string strdatasetsd = "sd." + dataset;
          
-         BigDataStatMeth::hdf5Dataset* dsmean = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetmean, bforce);
+         dsmean = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetmean, bforce);
          dsmean->createDataset( datanormal.cols(), 1, "real");
          dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
          
-         BigDataStatMeth::hdf5Dataset* dssd = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetsd, bforce);
+         dssd = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetsd, bforce);
          dssd->createDataset( datanormal.cols(), 1, "real");
          dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
          
-         delete dssd;
-         delete dsmean;
-         
+         delete dssd; dssd = nullptr;
+         delete dsmean; dsmean = nullptr;
 
-         BigDataStatMeth::hdf5Dataset* dsNormal = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, dataset, bforce);
+         dsNormal = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, dataset, bforce);
          dsNormal->createDataset( dsA, "real");
          
-         BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal, datanormal, wsize, bc, bs, bbyrows, corrected);
+         if( dsA->getDatasetptr() != nullptr && dsNormal->getDatasetptr() != nullptr){
+             BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal, datanormal, wsize, bc, bs, bbyrows, corrected);
+         }
 
-         delete dsNormal;
-         delete dsA;
+         delete dsNormal; dsNormal = nullptr;
+         delete dsA; dsA = nullptr;
 
-     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         Rcpp::Rcout<<"c++ exception bdNormalize_hdf5 (File IException)";
+     } catch( H5::FileIException& error ) {
+         checkClose_file(dsA, dsmean, dssd, dsNormal);
+         Rcpp::Rcerr<<"\nc++ exception bdNormalize_hdf5 (File IException)";
          return void();
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         Rcpp::Rcout << "c++ exception bdNormalize_hdf5 (DataSet IException)";
+         checkClose_file(dsA, dsmean, dssd, dsNormal);
+         Rcpp::Rcerr<<"\nc++ exception bdNormalize_hdf5 (DataSet IException)";
          return void();
-     } catch(std::exception& ex) {
-         Rcpp::Rcout << "c++ exception bdNormalize_hdf5" << ex.what();
+     } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
+         checkClose_file(dsA, dsmean, dssd, dsNormal);
+         Rcpp::Rcerr<<"\nc++ exception bdNormalize_hdf5 (DataSpace IException)";
+         return void();
+     } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
+         checkClose_file(dsA, dsmean, dssd, dsNormal);
+         Rcpp::Rcerr<<"\nc++ exception bdNormalize_hdf5 (DataType IException)";
+         return void();
+     } catch(std::exception &ex) {
+         checkClose_file(dsA, dsmean, dssd, dsNormal);
+         Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : "<< ex.what();
+     } catch (...) {
+         checkClose_file(dsA, dsmean, dssd, dsNormal);
+         Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 (unknown reason)";
          return void();
      }
 
      return void();
 }
-
-
-/***
- //' @param bcenter logical (default = TRUE) if TRUE, centering is done by 
- //' subtracting the column means
- //' @param bscale logical (default = TRUE) if TRUE, centering is done by 
- //' subtracting the column means
- */

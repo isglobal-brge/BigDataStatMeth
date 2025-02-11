@@ -266,21 +266,27 @@ namespace BigDataStatMeth {
             }
             
         }catch( H5::FileIException& error ) {
-            ::Rf_error( "c++ exception RcppNormalizeHdf5 (File IException)" );
+            checkClose_file(dsA, dsNormal);
+            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (File IException)";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataSet IException)" );
+            checkClose_file(dsA, dsNormal);
+            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (DataSet IException)";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataSpace IException)" );
+            checkClose_file(dsA, dsNormal);
+            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (DataSpace IException)";
             return void();
         } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataType IException)" );
+            checkClose_file(dsA, dsNormal);
+            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (DataType IException)";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<< "C++ exception RcppNormalizeHdf5 : "<< ex.what();
+            checkClose_file(dsA, dsNormal);
+            Rcpp::Rcerr<<"\nC++ exception RcppNormalizeHdf5 : "<< ex.what();
         } catch (...) {
-            ::Rf_error("C++ exception RcppNormalizeHdf5 (unknown reason)");
+            checkClose_file(dsA, dsNormal);
+            Rcpp::Rcerr<<"\nC++ exception RcppNormalizeHdf5 (unknown reason)";
             return void();
         }
         
@@ -295,6 +301,10 @@ namespace BigDataStatMeth {
     extern inline void RcppTypifyNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
                                                 bool bc, bool bs, bool bbyrows)
     {
+        
+        BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
+        BigDataStatMeth::hdf5Dataset* dssd = nullptr;
+        BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
         
         try{
             
@@ -321,39 +331,46 @@ namespace BigDataStatMeth {
                 get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
             }
             
-            BigDataStatMeth::hdf5Dataset* dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout_ms, strdatasetmean, true);
+            dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout_ms, strdatasetmean, true);
             dsmean->createDataset( datanormal.cols(), 1, "real");
             dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
-            delete dsmean;
+            delete dsmean; dsmean = nullptr;
             
-            BigDataStatMeth::hdf5Dataset* dssd = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout_ms, strdatasetsd, true);
+            dssd = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout_ms, strdatasetsd, true);
             dssd->createDataset( datanormal.cols(), 1, "real");
             dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
-            delete dssd;
+            delete dssd; dssd = nullptr;
             
-            BigDataStatMeth::hdf5Dataset* dsNormal = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout, dsA->getDatasetName(), true);
+            dsNormal = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout, dsA->getDatasetName(), true);
             dsNormal->createDataset( dsA, "real");
             
-            BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal, datanormal, wsize, bc, bs, bbyrows, corrected);
+            if( dsA->getDatasetptr() != nullptr && dsNormal->getDatasetptr() != nullptr){
+                BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal, datanormal, wsize, bc, bs, bbyrows, corrected);    
+            }
+            delete dsNormal; dsNormal = nullptr;
             
-            delete dsNormal;
-            
-        }catch( H5::FileIException& error ) {
-            ::Rf_error( "c++ exception RcppNormalizeHdf5 (File IException)" );
+        } catch( H5::FileIException& error ) {
+            checkClose_file(dsA, dsmean, dssd, dsNormal);
+            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (File IException)";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataSet IException)" );
+            checkClose_file(dsA, dsmean, dssd, dsNormal);
+            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (DataSet IException)";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataSpace IException)" );
+            checkClose_file(dsA, dsmean, dssd, dsNormal);
+            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (DataSpace IException)";
             return void();
         } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-            ::Rf_error( "c++ exception RcppNormalizeHdf5 (DataType IException)" );
+            checkClose_file(dsA, dsmean, dssd, dsNormal);
+            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (DataType IException)";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<< "C++ exception RcppNormalizeHdf5 : "<< ex.what();
+            checkClose_file(dsA, dsmean, dssd, dsNormal);
+            Rcpp::Rcerr<<"\nC++ exception RcppNormalizeHdf5 : "<< ex.what();
         } catch (...) {
-            ::Rf_error("C++ exception RcppNormalizeHdf5 (unknown reason)");
+            checkClose_file(dsA, dsmean, dssd, dsNormal);
+            Rcpp::Rcerr<<"\nC++ exception RcppNormalizeHdf5 (unknown reason)";
             return void();
         }
         
