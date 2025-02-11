@@ -44,8 +44,8 @@ void bdImportTextFile_hdf5( std::string filename,
                             Rcpp::Nullable<bool> overwriteFile = R_NilValue)
 {
 
-    BigDataStatMeth::hdf5File* objFile;
-    BigDataStatMeth::hdf5Dataset* datasetOut;
+    BigDataStatMeth::hdf5File* objFile = nullptr;
+    BigDataStatMeth::hdf5Dataset* datasetOut = nullptr;
 
     try{
         
@@ -70,6 +70,7 @@ void bdImportTextFile_hdf5( std::string filename,
             
             // Create dataset
             datasetOut = new BigDataStatMeth::hdf5Dataset(objFile, outGroup, outDataset, boverwrite);
+            delete objFile; objFile = nullptr;
             // datasetOut->openDataset();
 
             Rcpp_Import_File_to_hdf5( filename, datasetOut, sep, header, rownames, paral, threads) ;
@@ -78,28 +79,30 @@ void bdImportTextFile_hdf5( std::string filename,
             Rcpp::Rcerr << "File "<<filename<<" doesn't exists, please, review location" << std::endl;
         }
 
+        delete datasetOut; datasetOut = nullptr;
         
-        
-    }catch(const std::runtime_error& re) {
+    } catch(const std::runtime_error& re) {
         // speciffic handling for runtime_error
-        delete datasetOut;
+        checkClose_file(datasetOut);
+        if(objFile != nullptr) { delete objFile; objFile = nullptr; }
         Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Runtime error: " << re.what() << std::endl;
         return void();
     } catch(const std::exception& ex) {
-        delete datasetOut;
+        checkClose_file(datasetOut);
+        if(objFile != nullptr) { delete objFile; objFile = nullptr; }
         Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Error occurred: " << ex.what() << std::endl;
         return void();
     } catch(...) {
         // catch any other errors (that we have no information about)
-        delete datasetOut;
+        checkClose_file(datasetOut);
+        if(objFile != nullptr) { delete objFile; objFile = nullptr; }
         Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Unknown failure occurred. Possible memory corruption" << std::endl;
         return void();
     }
     
     Rcpp::message(Rcpp::wrap("The file has been imported"));
     
-    delete datasetOut;
-    delete objFile;
+    
     return void();
 
 }
