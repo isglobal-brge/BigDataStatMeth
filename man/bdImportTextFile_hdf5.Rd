@@ -19,7 +19,7 @@ bdImportTextFile_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name with data to be imported}
+\item{filename}{string specifying the path to the HDF5 file}
 
 \item{outputfile}{file name and path to store imported data}
 
@@ -49,7 +49,7 @@ computation else performs seria computation}
 threads in parallelization if threads is null then threads =  maximum
 number of threads available}
 
-\item{fileoverwrite}{logical (optional), CAUTION, if TRUE, file will be
+\item{overwriteFile}{logical (optional), CAUTION, if TRUE, file will be
 overwritten with imported dataset, by default \code{fileoverwrite = FALSE} to avoid
 file overwritting.}
 }

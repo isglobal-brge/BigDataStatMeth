@@ -872,7 +872,7 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #'
 #' Converts text file to hdf5 data file
 #'
-#' @param filename string file name with data to be imported
+#' @inheritParams bdblockmult_hdf5
 #' @param outputfile file name and path to store imported data
 #' @param outGroup group name to store the dataset
 #' @param outDataset dataset name to store the input file in hdf5
@@ -887,7 +887,7 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #' row names to be written.
 #' @param overwrite (optional) either a logical value indicating whether the 
 #' output file can be overwritten or not.
-#' @param fileoverwrite logical (optional), CAUTION, if TRUE, file will be 
+#' @param overwriteFile logical (optional), CAUTION, if TRUE, file will be 
 #' overwritten with imported dataset, by default `fileoverwrite = FALSE` to avoid
 #' file overwritting.
 #' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel 
@@ -906,7 +906,7 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #'
 #' Impute SNPs in hdf5 omic dataset 
 #' 
-#' @param filename, character array indicating the name of the file to create
+#' @inheritParams bdblockmult_hdf5
 #' @param group, character array indicating the input group where the data set to be imputed is. 
 #' @param dataset, character array indicating the input dataset to be imputed
 #' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows

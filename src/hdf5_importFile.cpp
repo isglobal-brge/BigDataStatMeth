@@ -6,7 +6,7 @@
 //'
 //' Converts text file to hdf5 data file
 //'
-//' @param filename string file name with data to be imported
+//' @inheritParams bdblockmult_hdf5
 //' @param outputfile file name and path to store imported data
 //' @param outGroup group name to store the dataset
 //' @param outDataset dataset name to store the input file in hdf5
@@ -21,7 +21,7 @@
 //' row names to be written.
 //' @param overwrite (optional) either a logical value indicating whether the 
 //' output file can be overwritten or not.
-//' @param fileoverwrite logical (optional), CAUTION, if TRUE, file will be 
+//' @param overwriteFile logical (optional), CAUTION, if TRUE, file will be 
 //' overwritten with imported dataset, by default `fileoverwrite = FALSE` to avoid
 //' file overwritting.
 //' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel 

@@ -6,7 +6,7 @@
 //'
 //' Impute SNPs in hdf5 omic dataset 
 //' 
-//' @param filename, character array indicating the name of the file to create
+//' @inheritParams bdblockmult_hdf5
 //' @param group, character array indicating the input group where the data set to be imputed is. 
 //' @param dataset, character array indicating the input dataset to be imputed
 //' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows

@@ -17,7 +17,7 @@ bdImputeSNPs_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file to create}
+\item{filename}{string specifying the path to the HDF5 file}
 
 \item{group, }{character array indicating the input group where the data set to be imputed is.}
 
@@ -28,6 +28,12 @@ bdImputeSNPs_hdf5(
 \item{outdataset, }{optional character array indicating dataset to store the resulting data after imputation if \code{outdataset} is NULL, input dataset will be overwritten.}
 
 \item{bycols, }{boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows}
+
+\item{paral}{boolean (optional), an optional parameter to enable parallel
+computation. Defaults to FALSE. Set \code{paral = true} to force parallel execution}
+
+\item{threads}{integer (optional), an optional parameter specifying the
+number of threads to use if paral = TRUE. Ignored if paral = FALSE.}
 
 \item{overwrite, }{optional boolean if true, previous results in same location
 inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
