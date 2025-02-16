@@ -61,9 +61,10 @@ void bdgetSDandMean_hdf5( std::string filename,
                           Rcpp::Nullable<int> wsize  = R_NilValue, 
                           Rcpp::Nullable<bool> overwrite  = false)
 {
- 
- // bool bsd, bmean, bforce, bbyrows;
-// hsize_t blocksize, nrows, ncols;
+    
+    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
+    BigDataStatMeth::hdf5Dataset* dssd = nullptr;
  
     try {
         
@@ -73,11 +74,6 @@ void bdgetSDandMean_hdf5( std::string filename,
         std::string strgroupout;
         Eigen::MatrixXd datanormal;
          
-         // if( mean.isNull()) {   bmean = true;   } 
-         // else {  bmean = Rcpp::as<bool> (mean);   }
-         
-         // if( sd.isNull()) {   bsd = true;   } 
-         // else {   bsd = Rcpp::as<bool> (sd);   }
          
          if( byrows.isNull()) {   bbyrows = false;   } 
          else {   bbyrows = Rcpp::as<bool> (byrows);   }
@@ -85,47 +81,59 @@ void bdgetSDandMean_hdf5( std::string filename,
          if( overwrite.isNull()) { bforce = false; } 
          else { bforce = Rcpp::as<bool> (overwrite);  }
          
-         BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+         
+         dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
          dsA->openDataset();
          
-         nrows = dsA->nrows();
-         ncols = dsA->ncols();
-         
-         // Define blocksize atending number of elements in rows and cols
-         if( bbyrows == false) {
-             datanormal = Eigen::MatrixXd::Zero(2,nrows);
-             get_HDF5_mean_sd_by_column( dsA, datanormal, wsize);
-         } else {
-             datanormal = Eigen::MatrixXd::Zero(2,ncols);
-             get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
+         if( dsA->getDatasetptr() != nullptr) {
+             
+             nrows = dsA->nrows();
+             ncols = dsA->ncols();
+             
+             // Define blocksize atending number of elements in rows and cols
+             if( bbyrows == false) {
+                 datanormal = Eigen::MatrixXd::Zero(2,nrows);
+                 get_HDF5_mean_sd_by_column( dsA, datanormal, wsize);
+             } else {
+                 datanormal = Eigen::MatrixXd::Zero(2,ncols);
+                 get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
+             }
+             
+             strgroupout = "mean_sd";
+             std::string strdatasetmean = "mean." + dataset;
+             std::string strdatasetsd = "sd." + dataset;
+             
+             BigDataStatMeth::hdf5Dataset* dsmean = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetmean, bforce);
+             dsmean->createDataset( datanormal.cols(), 1, "real");
+             dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
+             
+             BigDataStatMeth::hdf5Dataset* dssd = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetsd, bforce);
+             dssd->createDataset( datanormal.cols(), 1, "real");
+             dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );    
          }
          
-         strgroupout = "mean_sd";
-         std::string strdatasetmean = "mean." + dataset;
-         std::string strdatasetsd = "sd." + dataset;
          
-         BigDataStatMeth::hdf5Dataset* dsmean = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetmean, bforce);
-         dsmean->createDataset( datanormal.cols(), 1, "real");
-         dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
-         
-         BigDataStatMeth::hdf5Dataset* dssd = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetsd, bforce);
-         dssd->createDataset( datanormal.cols(), 1, "real");
-         dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
-         
-         delete dsA;
-         delete dssd;
-         delete dsmean;
+         delete dsA; dsA = nullptr;
+         delete dssd; dssd = nullptr;
+         delete dsmean; dsmean = nullptr;
      
-     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         Rcpp::Rcout<<"c++ exception bdgetSDandMean_hdf5 (File IException)";
+     } catch( H5::FileIException& error ) { 
+         checkClose_file(dsA, dssd, dsmean);
+         Rcpp::Rcerr<<"c++ exception bdgetSDandMean_hdf5 (File IException)";
          return void();
-     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception bdgetSDandMean_hdf5 (DataSet IException)";
-        return void();
-    } catch(std::exception& ex) {
-        Rcpp::Rcout << "c++ exception bdgetSDandMean_hdf5" << ex.what();
-        return void();
-    }
+     } catch( H5::DataSetIException& error ) { 
+         checkClose_file(dsA, dssd, dsmean);
+         Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5 (DataSet IException)";
+         return void();
+     } catch(std::exception& ex) {
+         checkClose_file(dsA, dssd, dsmean);
+         Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5" << ex.what();
+         return void();
+     } catch (...) {
+         checkClose_file(dsA, dssd, dsmean);
+         Rcpp::Rcerr<<"\nC++ exception bdgetSDandMean_hdf5 (unknown reason)";
+         return void();
+     }
  
     return void();
 
