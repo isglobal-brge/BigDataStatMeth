@@ -291,8 +291,6 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
         
         delete file; file = nullptr;
         
-        Rcpp::Rcout<<"\nAnem a per el SVD";
-        
         if( bexistsSVD == 0 ||  bforce == true ) {
             
             dsA = new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false);
@@ -312,15 +310,11 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
             
         }
         
-        Rcpp::Rcout<<"\nSVD Fet";
-        
         // Check if PCA decomposition exists
         if( bexistsPCA != 0  && bforce == false) {
             Rcpp::Rcout<<"PCA decomposition exits, please set overwrite = true to overwrite the existing results";
             return void();
         }
-        
-        Rcpp::Rcout<<"\nCalcul de variables";
         
         // ------------ Variables ----------------
         
@@ -333,9 +327,6 @@ extern void RcppPCAHdf5( std::string filename, std::string strgroup, std::string
         if( dsd->getDatasetptr() != nullptr && dsv->getDatasetptr() != nullptr) {
             RcppGetPCAVariablesHdf5( strPCAgroup, dsd, dsv, bforce );
         }
-        
-        
-        Rcpp::Rcout<<"\nCalcul Individuals";
         
         delete dsv; dsv = nullptr;
         // delete dsA;

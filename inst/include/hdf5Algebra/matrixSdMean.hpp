@@ -132,8 +132,6 @@ extern inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA
         else
             count[0] = dims_out[0];
         
-        Rcpp::Rcout<<"\n--------- Estem a les modificacions??  -------------\n";
-        
         // Read data in blocks of 500 columns
         for(hsize_t i=0; (i <= floor(dims_out[0]/block_size)) || i==0; i++)
         {
