@@ -114,19 +114,25 @@ void bdCreate_hdf5_matrix(std::string filename,
             dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
             
             if(dimnames.size()>0 ) {
-                svrows = dimnames[0];
-                svrcols = dimnames[1];
+                
+                if(!Rf_isNull(dimnames[0])) {
+                    svrows = rownames(object);
+                }
+                
+                if(!Rf_isNull(dimnames[1])) {
+                    svrcols = colnames(object);
+                }
                 
                 if( svrows.size() < dims[0]){
-                    Rcpp::StringVector svrownames(1);
+                    Rcpp::CharacterVector svrownames(1);
                     dsdims->writeDimnames( Rcpp::wrap(svrownames), Rcpp::wrap(svrcols));
                 } else if(svrcols.size() < dims[1]){
-                    Rcpp::StringVector svrcolnames(1);
+                    Rcpp::CharacterVector svrcolnames(1);
                     dsdims->writeDimnames( svrows, svrcolnames);
                 } else {
-                    // Write rownames and colnames
                     dsdims->writeDimnames( svrows, svrcols);
                 }
+                
             }
             
             delete dsdims; dsdims = nullptr;
