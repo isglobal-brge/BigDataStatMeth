@@ -61,6 +61,8 @@ void bdWriteOppsiteTriangularMatrix_hdf5(std::string filename,
      bool blower;
      long dElementsBlock;
      
+     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+     
      try
      {
          
@@ -74,32 +76,41 @@ void bdWriteOppsiteTriangularMatrix_hdf5(std::string filename,
          std::string strDataset = group + "/" + dataset;
          
          
-         BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+         dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
          dsA->openDataset();
          
-         if(dsA->nrows() != dsA->ncols()) {
-             Rcpp::Rcout<<"\nCan not write opposite triangular matrix - Non squuare matrix";
-             delete dsA;
-             return void();   
+         if( dsA->getDatasetptr() != nullptr)  {
+             
+             if(dsA->nrows() != dsA->ncols()) {
+                 Rcpp::Rcout<<"\nCan not write opposite triangular matrix - Non squuare matrix";
+                 delete dsA; dsA = nullptr;
+                 return void();   
+             }
+             
+             if( blower == false ) {
+                 setLowerTriangularMatrix( dsA, dElementsBlock);
+             } else {
+                 setUpperTriangularMatrix( dsA, dElementsBlock);
+             }    
          }
          
-         if( blower == false ) {
-             setLowerTriangularMatrix( dsA, dElementsBlock);
-         } else {
-             setUpperTriangularMatrix( dsA, dElementsBlock);
-         }
+         delete dsA; dsA = nullptr;
          
-         delete dsA;
-         
-     }
-     catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         Rcpp::Rcout<<"c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (File IException)";
+     } catch( H5::FileIException& error ) { 
+         checkClose_file(dsA);
+         Rcpp::Rcerr<<"c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (File IException)";
          return void();
-     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         Rcpp::Rcout << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (DataSet IException)";
+     } catch( H5::DataSetIException& error ) { 
+         checkClose_file(dsA);
+         Rcpp::Rcerr << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (DataSet IException)";
          return void();
      } catch(std::exception& ex) {
-         Rcpp::Rcout << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5" << ex.what();
+         checkClose_file(dsA);
+         Rcpp::Rcerr << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5" << ex.what();
+         return void();
+     } catch (...) {
+         checkClose_file(dsA);
+         Rcpp::Rcerr<<"\nC++ exception bdWriteOppsiteTriangularMatrix_hdf5 (unknown reason)";
          return void();
      }
      
