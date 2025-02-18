@@ -117,8 +117,25 @@ namespace BigDataStatMeth {
                 Rcpp::Rcout<<"matrix substract error: non-conformable arguments\n";
             }
             
-        } catch(std::exception &ex) {
-            Rcpp::Rcout<< ex.what();
+        } catch( H5::FileIException& error ) { 
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5 (File IException)";
+            return(dsC);
+        } catch( H5::GroupIException & error ) { 
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5 (Group IException)";
+            return(dsC);
+        } catch( H5::DataSetIException& error ) { 
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5 (DataSet IException)";
+            return(dsC);
+        } catch(std::exception& ex) {
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5" << ex.what();
+            return(dsC);
+        } catch (...) {
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nC++ exception Rcpp_block_matrix_substract_hdf5 (unknown reason)";
             return(dsC);
         }
         
@@ -245,8 +262,6 @@ namespace BigDataStatMeth {
                         
                         #pragma omp critical (accessFile)
                         {
-                            // dsC->writeDatasetBlock( Rcpp::transpose(B), offset, count, stride, block, false); 
-                            // dsC->writeDatasetBlock( Rcpp::as<std::vector<double> >(B), offset, count, stride, block);
                             dsC->writeDatasetBlock( vdB, offset, count, stride, block);
                         }
                     }
@@ -255,10 +270,28 @@ namespace BigDataStatMeth {
                 Rcpp::Rcout<< "vector substract error: non-conformable arguments\n";
             }
             
+        } catch( H5::FileIException& error ) { 
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 (File IException)";
+            return(dsC);
+        } catch( H5::GroupIException & error ) { 
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 (Group IException)";
+            return(dsC);
+        } catch( H5::DataSetIException& error ) { 
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 (DataSet IException)";
+            return(dsC);
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception substraction: "<<ex.what()<< " \n";
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 " << ex.what();
+            return(dsC);
+        } catch (...) {
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nC++ exception Rcpp_block_matrix_vector_substract_hdf5 (unknown reason)";
             return(dsC);
         }
+        
         return(dsC);
     }
 
