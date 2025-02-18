@@ -38,7 +38,6 @@ namespace BigDataStatMeth {
                 std::vector<hsize_t> vstart, vsizetoRead;
                 std::vector<hsize_t> stride = {1, 1};
                 std::vector<hsize_t> block = {1, 1};
-                // hsize_t isize = hdf5_block + 1;
                 
                 dsC->createDataset( N, K, "real"); 
                 
@@ -116,8 +115,25 @@ namespace BigDataStatMeth {
                 Rcpp::Rcout<<"matrix sum error: non-conformable arguments\n";
             }
             
-        } catch(std::exception &ex) {
-            Rcpp::Rcout<< ex.what();
+        } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_sum_hdf5 (File IException)";
+            return(dsC);
+        } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_sum_hdf5 (Group IException)";
+            return(dsC);
+        } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_sum_hdf5 (DataSet IException)";
+            return(dsC);
+        } catch(std::exception& ex) {
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_sum_hdf5: " << ex.what();
+            return(dsC);
+        } catch (...) {
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nC++ exception Rcpp_block_matrix_sum_hdf5 (unknown reason)";
             return(dsC);
         }
         
@@ -244,8 +260,6 @@ namespace BigDataStatMeth {
                         
                         #pragma omp critical (accessFile)
                         {
-                            // dsC->writeDatasetBlock( Rcpp::transpose(B), offset, count, stride, block, false); 
-                            //.. 2024/03/29..//dsC->writeDatasetBlock( Rcpp::as<std::vector<double> >(B), offset, count, stride, block);
                             dsC->writeDatasetBlock( vdB, offset, count, stride, block);
                         }
                     }
@@ -254,10 +268,28 @@ namespace BigDataStatMeth {
                 Rcpp::Rcout<< "vector sum error: non-conformable arguments\n";
             }
     
+        } catch( H5::FileIException& error ) { 
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_sum_hdf5 (File IException)";
+            return(dsC);
+        } catch( H5::GroupIException & error ) { 
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_sum_hdf5 (Group IException)";
+            return(dsC);
+        } catch( H5::DataSetIException& error ) { 
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_sum_hdf5 (DataSet IException)";
+            return(dsC);
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception Sum: "<<ex.what()<< " \n";
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_sum_hdf5: " << ex.what();
+            return(dsC);
+        } catch (...) {
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"\nC++ exception Rcpp_block_matrix_vector_sum_hdf5 (unknown reason)";
             return(dsC);
         }
+        
         return(dsC);
     }
 
