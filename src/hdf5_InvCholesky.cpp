@@ -59,22 +59,18 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
                          Rcpp::Nullable<long> elementsBlock = 1000000)
 {
     
-    long dElementsBlock;
-    // std::string strOutgroup, strIndataset, 
-    //             strOutdataset, strOutdataset_tmp;
     
-    std::string strOutgroup, strOutdataset;
-    // int ithreads;
-    // bool bforce, bfull;
-    bool bfull;
-    int nrows = 0, ncols = 0;
+    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    BigDataStatMeth::hdf5DatasetInternal* dstmp = nullptr;
     
     try
     {
         
-        // Get default values for Nullable variables
-        // if(force.isNull()) { bforce = false; } 
-        // else {  bforce = Rcpp::as<bool>(force); }
+        long dElementsBlock;
+        
+        std::string strOutgroup, strOutdataset;
+        bool bfull;
+        int nrows = 0, ncols = 0;
         
         if(fullMatrix.isNull()) { bfull = false; } 
         else {  bfull = Rcpp::as<bool>(fullMatrix); }
@@ -82,64 +78,55 @@ void bdInvCholesky_hdf5( std::string filename, std::string group, std::string da
         if(outgroup.isNull()) { strOutgroup = group; } 
         else {   strOutgroup = Rcpp::as<std::string>(outgroup); }
         
-        // if(threads.isNull()) { ithreads = 2; } 
-        // else { ithreads = Rcpp::as<int>(threads); }
-        
         if(elementsBlock.isNull()) { dElementsBlock = MAXELEMSINBLOCK; } 
         else { dElementsBlock = Rcpp::as<long>(elementsBlock); }
         
-        
-        // strIndataset = group + "/" + dataset;
         strOutdataset = strOutgroup + "/" + outdataset;
-        // strOutdataset_tmp = "tmp/tmp_L";
 
-        BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsA->openDataset();
         
-        nrows = dsA->nrows();
-        ncols = dsA->ncols();
-        
-        
-        if(nrows == ncols) {
-
-            BigDataStatMeth::hdf5DatasetInternal* dstmp = new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true);
-            dstmp->createDataset(nrows, ncols, "real");
+        if( dsA->getDatasetptr() != nullptr  )  {
             
-            BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA, dstmp, bfull, dElementsBlock, threads);
+            nrows = dsA->nrows();
+            ncols = dsA->ncols();
             
-            // int res = Cholesky_decomposition_hdf5(dsA, dstmp, nrows, ncols, dElementsBlock, threads);
-            // delete dsA;
-            // 
-            // if(res == 0)
-            // {
-            //     Inverse_of_Cholesky_decomposition_hdf5( dstmp, nrows, ncols, dElementsBlock, threads);
-            //     Inverse_Matrix_Cholesky_parallel( dstmp, nrows, ncols, dElementsBlock, threads); 
-            //     
-            //     if( bfull==true ) {
-            //         setUpperTriangularMatrix( dstmp, dElementsBlock);
-            //     }
-            // }
-            
-            delete dsA;
-            delete dstmp;
-            
-        } else {
-            delete dsA;
-            Rcpp::Rcout<<"\n Can't get inverse matrix for "<< group + "/" + dataset <<" using Cholesky decomposition \n";
-            return void();
+            if(nrows == ncols) {
+                
+                dstmp = new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true);
+                dstmp->createDataset(nrows, ncols, "real");
+                
+                BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA, dstmp, bfull, dElementsBlock, threads);
+                
+            } else {
+                delete dsA; dsA = nullptr;
+                Rcpp::Rcout<<"\n Can't get inverse matrix for "<< group + "/" + dataset <<" using Cholesky decomposition \n";
+                return void();
+            }    
         }
         
+        delete dsA; dsA = nullptr;
+        delete dstmp; dstmp = nullptr;
+        
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcout<<"c++ exception bdInvCholesky_hdf5 (File IException)";
+        checkClose_file(dsA, dstmp);
+        Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception bdInvCholesky_hdf5 (Group IException)";
+        checkClose_file(dsA, dstmp);
+        Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception bdInvCholesky_hdf5 (DataSet IException)";
+        checkClose_file(dsA, dstmp);
+        Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
-        Rcpp::Rcout << "c++ exception bdInvCholesky_hdf5" << ex.what();
+        checkClose_file(dsA, dstmp);
+        Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5: " << ex.what();
+        return void();
+    } catch (...) {
+        checkClose_file(dsA, dstmp);
+        Rcpp::Rcerr<<"\nC++ exception bdInvCholesky_hdf5 (unknown reason)";
         return void();
     }
     
