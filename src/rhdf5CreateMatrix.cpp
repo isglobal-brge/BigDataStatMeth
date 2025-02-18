@@ -111,9 +111,9 @@ void bdCreate_hdf5_matrix(std::string filename,
             
             Rcpp::List dimnames = object.attr( "dimnames" );
             
-            dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
-            
             if(dimnames.size()>0 ) {
+                
+                dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
                 
                 if(!Rf_isNull(dimnames[0])) {
                     svrows = rownames(object);
