@@ -35,27 +35,39 @@
 void bdRemove_hdf5_element(std::string filename, std::vector<std::string> elements)
 {
     
+    BigDataStatMeth::hdf5File* objFile = nullptr;
+    
     try
     {
         
-        BigDataStatMeth::hdf5File* objFile = new BigDataStatMeth::hdf5File(filename, false);
+        objFile = new BigDataStatMeth::hdf5File(filename, false);
         objFile->openFile("rw");
         
-        BigDataStatMeth::RcppRemove_hdf5_elements(objFile, elements);
+        if(objFile->getFileptr() != nullptr) {
+            BigDataStatMeth::RcppRemove_hdf5_elements(objFile, elements);    
+        }
         
-        delete objFile;
+        delete objFile; objFile = nullptr;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcout<<"c++ exception bdBind_hdf5_datasets (File IException)";
+        delete objFile; objFile = nullptr;
+        Rcpp::Rcerr<<"\nc++ exception bdRemove_hdf5_element (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception bdBind_hdf5_datasets (Group IException)";
+        delete objFile; objFile = nullptr;
+        Rcpp::Rcerr <<"\nc++ exception bdRemove_hdf5_element (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception bdBind_hdf5_datasets (DataSet IException)";
+        delete objFile; objFile = nullptr;
+        Rcpp::Rcerr <<"\nc++ exception bdRemove_hdf5_element (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
-        Rcpp::Rcout << "c++ exception bdBind_hdf5_datasets" << ex.what();
+        delete objFile; objFile = nullptr;
+        Rcpp::Rcerr <<"\nc++ exception bdRemove_hdf5_element" << ex.what();
+        return void();
+    } catch (...) {
+        delete objFile; objFile = nullptr;
+        Rcpp::Rcerr<<"\nC++ exception bdRemove_hdf5_element (unknown reason)";
         return void();
     }
     

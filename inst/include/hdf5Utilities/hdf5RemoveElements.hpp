@@ -13,7 +13,7 @@ namespace BigDataStatMeth {
         {
             H5::Exception::dontPrint();
             
-            // Remove group
+            
             if(elements.size() == 0) {
                 std::string strmessage = "Nothing to be removed removed";
                 Rcpp::message(Rcpp::wrap(strmessage));
@@ -34,18 +34,22 @@ namespace BigDataStatMeth {
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (File IException)" );
+            Rcpp::Rcerr<<"\nc++ exception RcppRemove_hdf5_elements (File IException)";
             return void();
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-            ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (Group IException)" );
+            Rcpp::Rcerr<<"\nc++ exception RcppRemove_hdf5_elements (Group IException)";
             return void();
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (DataSet IException)" );
+            Rcpp::Rcerr<<"\nc++ exception RcppRemove_hdf5_elements (DataSet IException)";
             return void();
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            ::Rf_error( "c++ exception remove_HDF5_multiple_elements_ptr (DataSpace IException)" );
+            Rcpp::Rcerr<<"\nc++ exception RcppRemove_hdf5_elements (DataSpace IException)";
             return void();
-        } 
+        } catch (...) {
+            Rcpp::Rcerr<<"\nC++ exception RcppRemove_hdf5_elements (unknown reason)";
+            return void();
+        }
+        
         return void();
     }
 
