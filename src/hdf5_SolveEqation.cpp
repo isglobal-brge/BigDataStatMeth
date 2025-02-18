@@ -140,6 +140,10 @@ void bdSolve_hdf5(std::string filename, std::string groupA, std::string datasetA
                       Rcpp::Nullable<bool> overwrite = R_NilValue) 
 {
     
+    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsRes = nullptr;
+    
     try {
         
         std::string strOutgroup, strOutdataset;
@@ -154,25 +158,45 @@ void bdSolve_hdf5(std::string filename, std::string groupA, std::string datasetA
         if(overwrite.isNull()) { bforce = false ; }
         else { bforce = Rcpp::as<bool>(overwrite); }
         
-        BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, groupA, datasetA, false);
+        dsA = new BigDataStatMeth::hdf5Dataset(filename, groupA, datasetA, false);
         dsA->openDataset();
         
-        BigDataStatMeth::hdf5Dataset* dsB = new BigDataStatMeth::hdf5Dataset(filename, groupB, datasetB, false);
+        dsB = new BigDataStatMeth::hdf5Dataset(filename, groupB, datasetB, false);
         dsB->openDataset();
         
-        BigDataStatMeth::hdf5Dataset* dsRes = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset, bforce);
+        dsRes = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset, bforce);
         dsRes->createDataset( dsB->nrows(), dsB->ncols(), "real" );
         
-        RcppSolveHdf5(dsA, dsB, dsRes );
+        if( dsA->getDatasetptr() != nullptr &&  dsB->getDatasetptr() != nullptr && dsRes->getDatasetptr() != nullptr ) {
+            RcppSolveHdf5( dsA, dsB, dsRes );    
+        }
         
-        delete dsRes;
-        delete dsB;
-        delete dsA;
+        delete dsRes; dsRes = nullptr;
+        delete dsB; dsB = nullptr;
+        delete dsA; dsA = nullptr;
         
-    } catch(std::exception &ex) {
-        Rcpp::Rcout<< ex.what();
+    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        checkClose_file(dsA, dsB, dsRes);
+        Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5 (File IException)";
+        return void();
+    } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
+        checkClose_file(dsA, dsB, dsRes);
+        Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5 (Group IException)";
+        return void();
+    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        checkClose_file(dsA, dsB, dsRes);
+        Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5 (DataSet IException)";
+        return void();
+    } catch(std::exception& ex) {
+        checkClose_file(dsA, dsB, dsRes);
+        Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5" << ex.what();
+        return void();
+    } catch (...) {
+        checkClose_file(dsA, dsB, dsRes);
+        Rcpp::Rcerr<<"\nC++ exception bdSolve_hdf5 (unknown reason)";
         return void();
     }
+    
     return void();
      
  }

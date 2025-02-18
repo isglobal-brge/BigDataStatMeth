@@ -64,11 +64,11 @@ namespace BigDataStatMeth {
         
         try {
             
-            std::vector<hsize_t> offset = {0,0},
-                countA = {dsA->nrows(), dsA->ncols()},
-                countB = {dsB->nrows(), dsB->ncols()},
-                stride = {1,1},
-                block = {1,1};
+            std::vector<hsize_t> offset = { 0, 0 },
+                                 countA = { dsA->nrows(), dsA->ncols() },
+                                 countB = { dsB->nrows(), dsB->ncols() },
+                                 stride = { 1, 1},
+                                 block = { 1, 1};
             
             std::vector<double> vdB( countB[0] * countB[1] );
             dsB->readDatasetBlock( {offset[0], offset[1]}, {countB[0], countB[1]}, stride, block, vdB.data() );
@@ -105,9 +105,25 @@ namespace BigDataStatMeth {
             
             dsX->writeDataset(b.data());
             
-        } catch(std::exception &ex) {
-            Rcpp::Rcout<<"Error in RcppSolveHdf5";
-            Rcpp::Rcout<< ex.what();
+        } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+            checkClose_file(dsA, dsB, dsX);
+            Rcpp::Rcerr<<"\nc++ exception RcppSolveHdf5 (File IException)";
+            return void();
+        } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
+            checkClose_file(dsA, dsB, dsX);
+            Rcpp::Rcerr<<"\nc++ exception RcppSolveHdf5 (Group IException)";
+            return void();
+        } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+            checkClose_file(dsA, dsB, dsX);
+            Rcpp::Rcerr<<"\nc++ exception RcppSolveHdf5 (DataSet IException)";
+            return void();
+        } catch(std::exception& ex) {
+            checkClose_file(dsA, dsB, dsX);
+            Rcpp::Rcerr<<"\nc++ exception RcppSolveHdf5" << ex.what();
+            return void();
+        } catch (...) {
+            checkClose_file(dsA, dsB, dsX);
+            Rcpp::Rcerr<<"\nC++ exception RcppSolveHdf5 (unknown reason)";
             return void();
         }
         
