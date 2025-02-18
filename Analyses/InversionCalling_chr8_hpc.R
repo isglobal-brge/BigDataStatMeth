@@ -143,7 +143,7 @@ res <- bdSVD_hdf5(file = "/scratch/dpelegri/working/InversionCalling/results/dat
                   group = "invs", 
                   dataset = "genofilter_maf", 
                   k = 40, 
-                  threads = 8, 
+                  threads = 12, 
                   bcenter = TRUE, 
                   bscale = TRUE)
 
@@ -164,15 +164,16 @@ print(paste0(format(Sys.time(), "%a %b %d %X %Y - "), ".....SVD Do it "))
 ## 6.- Get data from hdf5 data file
 ## ##########################################
 
+filename <- "/scratch/dpelegri/working/InversionCalling/results/data/chr8.hdf5"
 # Examine hierarchy before open file
-h5ls(res$file)
+h5ls(filename)
 
 
 
 
 # Open file and get data, all data is stored under SVD group
 #..# h5fsvd = H5Fopen("/scratch/dpelegri/working/InversionCalling/results/data/chr8.hdf5")
-h5fsvd = H5Fopen(res$file)
+h5fsvd = H5Fopen(filename)
 
 v <- h5fsvd$SVD$genofilter_maf$v
 d <- h5fsvd$SVD$genofilter_maf$d
