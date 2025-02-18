@@ -99,6 +99,9 @@
      
      Rcpp::NumericVector oper = {0, 1, 2, 3};
      oper.names() = Rcpp::CharacterVector({"+", "-", "*", "/"});
+     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+     BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+     BigDataStatMeth::hdf5Dataset* dsC = nullptr;
      
      try{
          
@@ -121,42 +124,46 @@
              return void();
          } 
 
-         BigDataStatMeth::hdf5Dataset* dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+         dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
          dsA->openDataset();
          
-         BigDataStatMeth::hdf5Dataset* dsB = new BigDataStatMeth::hdf5Dataset(filename, vectorgroup, vectordataset, false);
+         dsB = new BigDataStatMeth::hdf5Dataset(filename, vectorgroup, vectordataset, false);
          dsB->openDataset();
          
-         // Check Vector dataset and matrix dataset A should be matrix and B should be the vector
-         if( dsA->nrows()==1 || dsA->ncols()==1) {
-             Rcpp::Rcout<<"\ndataset is not a matrix";
-             bError = true;
-         }
-         
-         if( dsB->nrows()!=1 && dsB->ncols()!=1) {
-             Rcpp::Rcout<<"\nvectordataset is not a vector";
-             bError = true;
-         }
-         
-         if( bError == false ) {
-             BigDataStatMeth::hdf5Dataset* dsC = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, outdataset, bforce);
+         if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr)  {
              
-             if( (bbyrows == false && dsB->ncols() != dsA->ncols()) || dsB->nrows() != 1 ) {
-                 Rcpp::Rcout<<"\nNon-conformable dimensions or vector dataset is not a vector";
-                 Rcpp::Rcout<<"\nCalculus has not been computed\n";
-             } else if( bbyrows == true && dsB->ncols() != dsA->nrows()) {
-                 Rcpp::Rcout<<"\nNon-conformable dimensions - byrows = true";
-                 Rcpp::Rcout<<"\nCalculus has not been computed\n";
-             } else {
-                 
-                 dsC = hdf5_matrixVector_calculus( dsA, dsB, dsC, oper(oper.findName(func)), bbyrows, bparal, threads);
+             // Check Vector dataset and matrix dataset A should be matrix and B should be the vector
+             if( dsA->nrows()==1 || dsA->ncols()==1) {
+                 Rcpp::Rcout<<"\ndataset is not a matrix";
+                 bError = true;
              }
              
-             delete dsC;
+             if( dsB->nrows()!=1 && dsB->ncols()!=1) {
+                 Rcpp::Rcout<<"\nvectordataset is not a vector";
+                 bError = true;
+             }
+             
+             if( bError == false ) {
+                 dsC = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, outdataset, bforce);
+                 
+                 if( (bbyrows == false && dsB->ncols() != dsA->ncols()) || dsB->nrows() != 1 ) {
+                     Rcpp::Rcout<<"\nNon-conformable dimensions or vector dataset is not a vector";
+                     Rcpp::Rcout<<"\nCalculus has not been computed\n";
+                 } else if( bbyrows == true && dsB->ncols() != dsA->nrows()) {
+                     Rcpp::Rcout<<"\nNon-conformable dimensions - byrows = true";
+                     Rcpp::Rcout<<"\nCalculus has not been computed\n";
+                 } else {
+                     
+                     dsC = hdf5_matrixVector_calculus( dsA, dsB, dsC, oper(oper.findName(func)), bbyrows, bparal, threads);
+                 }
+                 
+                 delete dsC; dsC = nullptr;
+             }    
+             
          }
          
-         delete dsA;
-         delete dsB;
+         delete dsA; dsA = nullptr;
+         delete dsB; dsB = nullptr;
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
          ::Rf_error( "c++ exception bdcomputeMatrixVector_hdf5 (File IException)" );
