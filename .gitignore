@@ -13,3 +13,4 @@ inst/cc
 *.html
 *.tmp
 *.old
+*.remove

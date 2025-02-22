@@ -56,7 +56,7 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue, 
+void bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue,
                        Rcpp::Nullable<Rcpp::CharacterVector> dataset = R_NilValue,
                        Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
                        Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
@@ -100,7 +100,8 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::Characte
              str_filename = Rcpp::as<std::string>(filename);
          } else {
              Rcpp::Rcout<< "File name must be character string";
-             return Rcpp::List::create(Rcpp::Named("file") = "");
+             // return Rcpp::List::create(Rcpp::Named("file") = "");
+             return void();
          }
          
          if(rankthreshold.isNull()) {  
@@ -108,10 +109,12 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::Characte
          } else {
              if( Rcpp::as<double>(rankthreshold) > 0.1 ) {
                  Rcpp::Rcout<< "Threshold to big, please set threshold with value lower than 0.1";
-                 return Rcpp::List::create(Rcpp::Named("file") = str_filename);
+                 return void();
+                 // return Rcpp::List::create(Rcpp::Named("file") = str_filename);
              } else if( Rcpp::as<double>(rankthreshold) < 0 ) {
                  Rcpp::Rcout<< "Threshold must be a positive value near zero";
-                 return Rcpp::List::create(Rcpp::Named("file") = str_filename);
+                 return void();
+                 // return Rcpp::List::create(Rcpp::Named("file") = str_filename);
              } else {
                  dthreshold = Rcpp::as<double>(rankthreshold);
              }
@@ -120,12 +123,30 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::Characte
          // retsvd = BigDataStatMeth::RcppbdSVD_hdf5( filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, threads );
          BigDataStatMeth::RcppbdSVD_hdf5( str_filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, bforce, bRowMajor, method, threads );
          
-     } catch(std::exception &ex) {
-         Rcpp::Rcout<<"c++ exception bdSVD_hdf5 \n"<< ex.what();
-         return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
+     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+         Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (File IException)";
+         // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
+         return void();
+     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
+         Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (Group IException)";
+         // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
+         return void();
+     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+         Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (DataSet IException)";
+         // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
+         return void();
+     } catch(std::exception& ex) {
+         Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5" << ex.what();
+         // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
+         return void();
+     } catch (...) {
+         Rcpp::Rcerr<<"\nC++ exception bdSVD_hdf5 (unknown reason)";
+         // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
+         return void();
      }
      
-     return Rcpp::List::create(Rcpp::Named("file") = str_filename);
+     // return Rcpp::List::create(Rcpp::Named("file") = str_filename);
+     return void();
  
 }
 
@@ -139,4 +160,6 @@ Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::Characte
  //' The matrix rank is equal to the number of singular values different from the 
  //' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
  //' can be changed to an approximation of 0.
+ //' 
+ //' Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue,
  */

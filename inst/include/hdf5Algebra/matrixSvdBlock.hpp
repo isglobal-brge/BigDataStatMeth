@@ -246,7 +246,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
             get_HDF5_mean_sd_by_column(dsA, datanormal, wsize);    
         }
         
-        
         M = pow(k, q);
         if(M>p)
             throw std::runtime_error("k^q must not be greater than the number of columns in the matrix");
@@ -261,7 +260,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         
         // Get all the offsets and counts inside the file to write and read
         paralPos = prepareForParallelization( dsA, M, k, transp, block_size, strGroupName + "/A");
-        
         #pragma omp parallel num_threads(ithreads) shared (normalizedData)
         {
             
@@ -302,13 +300,18 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                         
                     if( transp == false) {
                         X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
+                        
                         #pragma omp critical(accessFile)
                         {   
                             normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
                         }
+                        
                     } else {
+                        
                         X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
-                        count_tmp = {(unsigned long long)X.rows(), (unsigned long long)X.cols()};
+                        count_tmp = {(unsigned long long)X.cols(), (unsigned long long)X.rows()};
+                        offset_tmp = {paralPos[i].totOffset[1], paralPos[i].totOffset[0]};
+                        
                         #pragma omp critical(accessFile)
                         {   
                             normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
@@ -316,6 +319,8 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                     }
                 }
                 
+                
+                // Rcpp::Rcout<<"\nPeta a l'step 1? - 1";
                 {
                     //    b) SVD for each block
                     svdeig retsvd;
@@ -354,21 +359,20 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                 paralPos[i].write_count = {(hsize_t)restmp.rows(), (hsize_t)restmp.cols()};
                 
                 //    d) Write results to hdf5 file
-                
                 #pragma omp ordered
                 {
                     #pragma omp critical(accessFile)
                     {
-                        
+                    
                         if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !exists_HDF5_element(dsA->getFileptr(),  paralPos[i].strDatasetName )) ) )
                         {
                             unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true );
-                            unlimDataset->createUnlimitedDataset(restmp.rows(), restmp.cols(), "real");
+                            unlimDataset->createUnlimitedDataset(paralPos[i].write_count[0], paralPos[i].write_count[1], "real");
                             delete unlimDataset; unlimDataset = nullptr;
                             
                             paralPos[i].write_offset = 0;
                         }
-                        
+    
                         unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true );
                         unlimDataset->openDataset();
                         
@@ -376,12 +380,14 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                         if((i%(M/k)) != 0 && paralPos[i].write_offset > 0) {
                             unlimDataset->extendUnlimitedDataset(0, paralPos[i].write_count[1] );
                         }
-                        
+
+                        // std::vector<double> vtmpc(restmp.data(), restmp.data() + restmp.rows() * restmp.cols());
                         unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), {0, paralPos[i].write_offset}, paralPos[i].write_count, paralPos[i].stride, paralPos[i].block, false);
                         delete unlimDataset; unlimDataset = nullptr;
-                        
-                        if( i<M )
+            
+                        if( i<M-1 )
                             paralPos[i+1].write_offset = paralPos[i].write_offset + paralPos[i].write_count[1];
+     
                     }
                 }
             }
