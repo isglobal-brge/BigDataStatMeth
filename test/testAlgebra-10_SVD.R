@@ -8,8 +8,8 @@ library(rhdf5)
 
 setwd("~/PhD/dummy")
 
-N = 5000
-M = 300
+M = 5000
+N = 300
 
 # N = 300
 # M = 5000
@@ -26,18 +26,54 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
                      transp = FALSE,
                      overwriteFile = TRUE, overwriteDataset = TRUE, 
                      unlimited = FALSE)
+
+bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", 
+            k = 2, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, 
+            overwrite  = TRUE, threads = 4)
+
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
 microbenchmark( svdR = svd(scale(Y)),
-                SVD_block_q1k2 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = NULL), 
+                SVD_block_q1k2 = bdSVD_hdf5( "test_temp.hdf5", group = "data", method = "blocks", dataset = "matrix", k = 2, q = 1, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite  = TRUE, threads = 4), 
                 times = 10 )
-res <- svd(Y)
+resr <- svd(scale(Y))
 file <- "test_temp.hdf5"
 dataset.d <- "/SVD/matrix/d"
 dataset.u <- "/SVD/matrix/u"
+dataset.v <- "/SVD/matrix/v"
+normalmatrix <- "//tmpgroup/normalmatrix"
 
 res.d <-  h5read(file, dataset.d)
 res.u <-  h5read(file, dataset.u)
+res.v <-  h5read(file, dataset.v)
+nY <-   h5read(file, normalmatrix)
 
+res.d[1:5]
+resr$d[1:5]
+
+res.v[1:5,1:5]
+resr$v[1:5,1:5]
+
+res.u[1:5,1:5]
+resr$u[1:5,1:5]
+
+all.equal(abs(res.v), abs(resr$v))
+all.equal(abs(res.u), abs(resr$u))
+
+
+
+
+
+v <- crossprod(scale(Y),res.v)
+
+vt <- (scale(Y) %*% res.v)
+vt2 <- (t(nY) %*% res.v)
+
+nY
+
+
+v <- sweep(v,2, res.d, FUN="/")
+
+all.equal(as.numeric(res.d[1:100]), resr$d[1:150])
 
 
 

@@ -216,7 +216,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         
         std::vector<svdPositions> paralPos;
         
-        int  M, p, n, irows, icols;
+        int  M, p, n, irows, icols, normalsize;
         //int maxsizetoread, ithreads, cummoffset;
         int ithreads;
         bool transp = false;
@@ -225,7 +225,6 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         irows = dsA->ncols();
         icols = dsA->nrows();
         
-        
         ithreads = get_number_threads(threads, R_NilValue);
         
         // Work with transposed matrix
@@ -233,18 +232,15 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
             transp = true;
             n = icols;
             p = irows;
+            normalsize = n;
         } else {
             n = irows;
             p = icols;
+            normalsize = p;
         }
         
-        Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2, n);
-        
-        if(!transp) {
-            get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
-        } else {
-            get_HDF5_mean_sd_by_column(dsA, datanormal, wsize);    
-        }
+        Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2, normalsize);
+        get_HDF5_mean_sd_by_column(dsA, datanormal, wsize);
         
         M = pow(k, q);
         if(M>p)
@@ -255,7 +251,9 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
         
         if (bcenter==true || bscale==true) { // Create dataset to store normalized data
             normalizedData = new BigDataStatMeth::hdf5DatasetInternal (dsA->getFullPath(), strGroupName, "normalmatrix", true);
+            // normalizedData->createDataset( irows, icols, "real");
             normalizedData->createDataset( irows, icols, "real");
+            //.Caldria revisar... .// normalizedData->createDataset( n, p, "real");
         }
         
         // Get all the offsets and counts inside the file to write and read
@@ -299,7 +297,8 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                     } 
                         
                     if( transp == false) {
-                        X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
+                        // X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
+                        X = RcppNormalizeColwise(X, bcenter, bscale);
                         
                         #pragma omp critical(accessFile)
                         {   
@@ -308,74 +307,75 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                         
                     } else {
                         
-                        X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
+                        X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[0], 2, count_tmp[0]));
+                        
                         count_tmp = {(unsigned long long)X.cols(), (unsigned long long)X.rows()};
                         offset_tmp = {paralPos[i].totOffset[1], paralPos[i].totOffset[0]};
                         
                         #pragma omp critical(accessFile)
                         {   
-                            normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
+                            normalizedData->writeDatasetBlock( Rcpp::wrap(X.transpose()), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
                         }
                     }
                 }
                 
-                
+
                 // Rcpp::Rcout<<"\nPeta a l'step 1? - 1";
                 {
                     //    b) SVD for each block
                     svdeig retsvd;
                     retsvd = RcppbdSVD_lapack(X, false, false, false);
-                    
+
                     int size_d = (retsvd.d).size();
                     int nzeros = 0;
-                    
+
                     if( (retsvd.d)[size_d - 1] <= dthreshold ){
                         nzeros = 1;
                         for( int j = (size_d - 2); ( j>1 && (retsvd.d)[i] <= dthreshold ); j-- ) {
                             nzeros++;
                         }
                     }
-                    
+
                     //    c)  U*d
                     // Create diagonal matrix from svd decomposition d
                     int isize = (retsvd.d).size() - nzeros;
-                    
+
                     if( isize < 2 ) {
                         isize = 2;
                     }
-                    
+
                     Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
                     d.diagonal() = (retsvd.d).head(isize);
-                    
+
                     Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
-                    
+
                     if( u.size() < MAXELEMSINBLOCK ) {
                         restmp = u*d;
                     } else{
                         restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);
                     }
                 }
-                
+
                 paralPos[i].write_count = {(hsize_t)restmp.rows(), (hsize_t)restmp.cols()};
-                
+
                 //    d) Write results to hdf5 file
                 #pragma omp ordered
                 {
                     #pragma omp critical(accessFile)
                     {
-                    
+
                         if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !exists_HDF5_element(dsA->getFileptr(),  paralPos[i].strDatasetName )) ) )
                         {
                             unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true );
                             unlimDataset->createUnlimitedDataset(paralPos[i].write_count[0], paralPos[i].write_count[1], "real");
                             delete unlimDataset; unlimDataset = nullptr;
-                            
+
                             paralPos[i].write_offset = 0;
                         }
-    
+
                         unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true );
                         unlimDataset->openDataset();
-                        
+
                         // Extend dataset before to put the data
                         if((i%(M/k)) != 0 && paralPos[i].write_offset > 0) {
                             unlimDataset->extendUnlimitedDataset(0, paralPos[i].write_count[1] );
@@ -384,10 +384,10 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
                         // std::vector<double> vtmpc(restmp.data(), restmp.data() + restmp.rows() * restmp.cols());
                         unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), {0, paralPos[i].write_offset}, paralPos[i].write_count, paralPos[i].stride, paralPos[i].block, false);
                         delete unlimDataset; unlimDataset = nullptr;
-            
+
                         if( i<M-1 )
                             paralPos[i+1].write_offset = paralPos[i].write_offset + paralPos[i].write_count[1];
-     
+
                     }
                 }
             }

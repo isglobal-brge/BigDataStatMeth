@@ -316,24 +316,6 @@ namespace BigDataStatMeth {
             getBlockPositionsSizes( M, block_size, vstartM, vsizetoReadM );
             getBlockPositionsSizes( K, block_size, vstartK, vsizetoReadK );
             
-            // 
-            // 
-            // Rcpp::Rcout<<"\nInicis i posicions de M: ";
-            // for (hsize_t ii = 0; ii <vstartM.size(); ii ++) {
-            //     Rcpp::Rcout<<"\n\t"<<vstartM[ii]<<" - "<<vsizetoReadM[ii];
-            // }
-            // 
-            // Rcpp::Rcout<<"\nInicis i posicions de N: ";
-            // for (hsize_t ii = 0; ii <vstartN.size(); ii ++) {
-            //     Rcpp::Rcout<<"\n\t"<<vstartN[ii]<<" - "<<vsizetoReadN[ii];
-            // }
-            // 
-            // Rcpp::Rcout<<"\nInicis i posicions de K: ";
-            // for (hsize_t ii = 0; ii <vstartK.size(); ii ++) {
-            //     Rcpp::Rcout<<"\n\t"<<vstartK[ii]<<" - "<<vsizetoReadK[ii];
-            // }
-            // 
-            
             // chunks = vstartM.size()/ithreads;
             
             #pragma omp parallel num_threads(ithreads) shared(A, B, C)// chunks) // private(tid ) 

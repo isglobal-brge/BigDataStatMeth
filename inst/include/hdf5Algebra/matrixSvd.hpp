@@ -126,35 +126,35 @@ namespace BigDataStatMeth {
             for(int j = 1; j < q; j++) { // For each decomposition level :
                 Next_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, j, dthreshold, threads);
             }
-            
+
             // Get dataset names
             Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, strPrefix);
-            
+
             // 1.- Join matrix and remove parts from file
             std::string strnewdataset = std::string((joindata[0])).substr(0,1);
-            
+
             dsJoined = new hdf5DatasetInternal(dsA->getFullPath(), strGroupName, strnewdataset, true);
-            
+
             join_datasets( dsJoined, strGroupName, joindata, false, true );
-            
+
             // 2.- Get SVD from Blocks full mattrix
             hsize_t* dims_out = dsJoined->dim();
-            
-            std::vector<double> vdreaded( dims_out[0] * dims_out[1] ); 
+
+            std::vector<double> vdreaded( dims_out[0] * dims_out[1] );
             dsJoined->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, {1, 1}, {1, 1}, vdreaded.data() );
-            
+
             matlast = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdreaded.data(), dims_out[0], dims_out[1] );
             delete dsJoined; dsJoined = nullptr;
-            
+
             retsvd = RcppbdSVD_lapack(matlast, false, false, false);
-            
-            
+
+
             // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
             dsd->createDataset( 1, retsvd.d.size(), "real");
             dsd->writeDataset( Rcpp::wrap(retsvd.d) );
-            
+
             // 3.- crossprod initial matrix and svdA$u
-            
+
             if( bcenter == true || bscale == true || (dsA->getGroupName().find("NORMALIZED_T") != std::string::npos) ) {
 
                 if(bcenter == true || bscale == true) {
@@ -169,7 +169,14 @@ namespace BigDataStatMeth {
 
                     delete dsnormalizedData; dsnormalizedData = nullptr;
 
-                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads);
+                    if(transp == false) {
+                        v = A * retsvd.u;
+                    } else {
+                        v = A.transpose() * retsvd.u;
+                        // v = Rcpp_block_matrix_mul_parallel(A,v retsvd.u, false, false, R_NilValue, threads); // multiplication
+                    }
+                    
+                    // v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads);
 
                 } else {
 
@@ -204,8 +211,9 @@ namespace BigDataStatMeth {
             }
 
             // 4.- resuls / svdA$d
-            v = v.array().rowwise()/(retsvd.d).transpose().array();
-
+            // v = v.array().rowwise()/(retsvd.d).transpose().array();
+            v = v.array().rowwise() / Eigen::Map<Eigen::RowVectorXd>(retsvd.d.data(), (retsvd.d).size()).array();
+            
             if (transp == true)  {
                 dsu->createDataset( v.rows(), v.cols(), "real");
                 dsv->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real");
@@ -219,9 +227,9 @@ namespace BigDataStatMeth {
                 dsu->writeDataset(Rcpp::wrap(retsvd.u));
                 dsv->writeDataset(Rcpp::wrap(v));
             }
-            
+
             remove_elements(dsA->getFileptr(), strGroupName);
- 
+
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);

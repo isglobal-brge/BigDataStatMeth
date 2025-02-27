@@ -11,10 +11,13 @@ namespace BigDataStatMeth {
 
 
     // Function declaration
-    // template< typename M> extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata );
     template< typename M> extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata );
     template< typename M> extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs);
-    // template< typename M> extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs);
+    
+    template< typename M> extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata );
+    template< typename M> extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs );
+    
+    template< typename M> extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata );
     template< typename M> extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool bRowMajor );
     
     
@@ -30,18 +33,17 @@ namespace BigDataStatMeth {
         
         static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
                       std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
-                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value ,
                       "Error - type not allowed");
         
         Eigen::MatrixXd rX = X;
 
         if( btransp == true)
         {
-            rX = RcppNormalizeColwise(X, bc, bs );
+            rX = RcppNormalizeRowwise(X, bc, bs, normdata );
 
         } else {
-            
-            rX = RcppNormalizeColwise(X, bc, bs );
+            rX = RcppNormalizeColwise(X, bc, bs, normdata );
         }
 
         return(rX);
@@ -142,6 +144,36 @@ namespace BigDataStatMeth {
         return(rX);
     }
     
+    
+    template< typename M>
+    extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata )
+    {
+
+        static_assert(std::is_same<M, Eigen::MatrixXd >::value ||
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value ||
+                      std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> >::value,
+                      "Error - type not allowed");
+
+        Eigen::MatrixXd rX = X;
+
+        Eigen::VectorXd std = normdata.row(1);
+        Eigen::VectorXd mean = normdata.row(0);
+        
+        if( bc==true && bs==true )  {
+
+            rX = (X.colwise() - mean).array().colwise() / std.array();
+
+        }   else if (bc == true  && bs==false)   {
+
+            rX = (X.colwise() - mean);
+
+        }  else if ( bc == false && bs == true)   {
+
+            rX = X.array().colwise() / std.array();
+        }
+
+        return(rX);
+    }
     
 
     // Internal call - 
