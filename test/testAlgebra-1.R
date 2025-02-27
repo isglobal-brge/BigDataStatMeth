@@ -27,12 +27,15 @@ library("BigDataStatMeth")
 
 setwd("/Users/mailos/PhD/dummy")
 
-N = 2500
-M = 2500
+N = 12
+K = 5
+M = 10
 
 set.seed(555)
-a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
-b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+# a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
+# b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+a <- matrix( seq(1,N*K), N, K) 
+b <- matrix( seq(1,K*M), K, M) 
 v <- rnorm( N, mean=0, sd=1)
 
 Y <- matrix(rnorm(100), 10, 10)
@@ -56,7 +59,7 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
                      unlimited = FALSE)
 
 bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-                     object = t(b), 
+                     object = b, 
                      group = "pepet", 
                      dataset = "tdatasetpepet",
                      transp = FALSE,
@@ -111,11 +114,12 @@ bdblockSubstract_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetp
 
 # Matrix Multiplication
 # ----------------------
-
-bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", overwrite = TRUE )
 # devtools::reload(pkgload::inst("BigDataStatMeth"))
-bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", overwrite = TRUE, paral = TRUE, threads = 4 )
-bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse", overwrite = TRUE, paral = TRUE, threads = 4 ,block_size = 1024)
+bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse1", overwrite = TRUE )
+
+bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse2", overwrite = TRUE, paral = TRUE, threads = 4 )
+# devtools::reload(pkgload::inst("BigDataStatMeth"))
+bdblockmult_hdf5(filename = "test_temp.hdf5",group = "pepet", A = "datasetpepet", B = "tdatasetpepet", outgroup = "results", outdataset = "resSparse3", overwrite = TRUE, paral = TRUE, threads = 1 ,block_size = 2)
 
 
 # Matrix Multiplication - Sparse
