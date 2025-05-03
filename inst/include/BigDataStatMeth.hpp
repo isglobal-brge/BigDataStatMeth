@@ -30,8 +30,8 @@
 #endif
 #include <Rinternals.h>
 #define SEXPPTR_RO(x) ((const SEXP *)DATAPTR_RO(x))  // to avoid overhead of looped STRING_ELT and VECTOR_ELT
-#include <stdint.h>    // for uint64_t rather than unsigned long long
-#include <stdbool.h>
+    #include <stdint.h>    // for uint64_t rather than unsigned long long
+    #include <stdbool.h>
 #ifdef WIN32  // positional specifiers (%n$) used in translations; #4402
 #  define snprintf dt_win_snprintf  // see our snprintf.c; tried and failed to link to _sprintf_p on Windows
 #endif
@@ -83,18 +83,76 @@ SEXP getDTthreads_R(SEXP verbose);
 
 // Load class headers from BigDataStatMeth
 
-// Classes
-#include "hdf5Utilities/hdf5Files.hpp"
-#include "hdf5Utilities/hdf5Groups.hpp"
-#include "hdf5Utilities/hdf5Datasets.hpp"
-#include "hdf5Utilities/hdf5DatasetsInternal.hpp"
-#include "hdf5Utilities/hdf5Dims.hpp"
 
-#include "hdf5Utilities/hdf5CheckClose.hpp"
+#ifndef _BIGDATASTATMETH_BASIC_HEADERS_HPP
+#define _BIGDATASTATMETH_BASIC_HEADERS_HPP
 
+    // Classes
+    #include "hdf5Utilities/hdf5Files.hpp"
+    #include "hdf5Utilities/hdf5Groups.hpp"
+    #include "hdf5Utilities/hdf5Datasets.hpp"
+    #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
+    #include "hdf5Utilities/hdf5Dims.hpp"
+    
+    #include "hdf5Utilities/hdf5CheckClose.hpp"
+
+#endif
 
 // Load function definition from BigDataStatMeth
+#ifndef _BIGDATASTATMETH_FUNCTION_HEADERS_HPP
+#define _BIGDATASTATMETH_FUNCTION_HEADERS_HPP
+    #include "hdf5Algebra.hpp"  // Algebra (hdf5 data files)
+    #include "hdf5Utilities.hpp" // Utilities (hdf5 data files)
+    #include "memAlgebra.hpp"  // Algebra (on-memort)
+#endif
 
+
+
+
+// // Algebra related functions
+    // #include "hdf5Algebra/matrixNormalization.hpp"
+    // #include "hdf5Algebra/matrixSdMean.hpp"
+    // #include "hdf5Algebra/multiplication.hpp"
+    // #include "hdf5Algebra/matrixPCA.hpp"
+    // #include "hdf5Algebra/matrixEquationSolver.hpp"
+    // #include "hdf5Algebra/matrixSvd.hpp"
+    // #include "hdf5Algebra/matrixNormalization.hpp"
+    // #include "hdf5Algebra/matrixSvdBlock.hpp"
+    // #include "hdf5Algebra/multiplicationSparse.hpp"
+    // #include "hdf5Algebra/matrixQR.hpp"
+    // #include "hdf5Algebra/tcrossprod.hpp"
+    // #include "hdf5Algebra/matrixInvCholesky.hpp"
+    // #include "hdf5Algebra/matrixSum.hpp"
+    // #include "hdf5Algebra/matrixDiagonal.hpp"
+    // #include "hdf5Algebra/vectormatrix.hpp"
+    // #include "hdf5Algebra/matrixSubstract.hpp"
+    // #include "hdf5Algebra/matrixPseudoinverse.hpp"
+    // #include "hdf5Algebra/matrixTriangular.hpp"
+    // #include "hdf5Algebra/crossprod.hpp"
+
+// Omics related functions
+    // #include "hdf5Omics/hdf5RemoveMAF.hpp"
+    // #include "hdf5Omics/hdf5OmicsUtils.hpp"
+
+
+// Other hdf5 functions
+    // #include "hdf5Utilities/hdf5ReduceDataset.hpp"
+    // #include "hdf5Utilities/hdf5SplitDataset.hpp"
+    // #include "hdf5Utilities/hdf5ImportFiles.hpp"
+    // #include "hdf5Utilities/hdf5BindDatasets.hpp"
+    // #include "hdf5Utilities/hdf5Methods.hpp"
+    // #include "hdf5Utilities/hdf5RemoveElements.hpp"
+    // #include "hdf5Utilities/hdf5RemoveLowData.hpp"
+    // #include "hdf5Utilities/hdf5Dims.hpp"
+    // #include "hdf5Utilities/hdf5SortDataset.hpp"
+    // #include "hdf5Utilities/hdf5ImputeData.hpp"
+
+// On-memory related functions
+    // #include "memAlgebra/memOtherFunctions.hpp"
+    // #include "memAlgebra/memOptimizedProducts.hpp"
+    // #include "memAlgebra/memMultiplication.hpp"
+    // #include "memAlgebra/memSubstract.hpp"
+    // #include "memAlgebra/memSum.hpp"
 
 
 #endif
