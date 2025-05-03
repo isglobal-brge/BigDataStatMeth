@@ -11,7 +11,7 @@ namespace BigDataStatMeth {
     //          - binternal = true for internal calls, for example if we are
     //          performing a reduction as a intermediate step using C++ interface,
     //          - binternal = false only for R interface (get transposed results)
-    void RcppReduce_dataset_hdf5 ( std::string filename, 
+    extern inline void RcppReduce_dataset_hdf5 ( std::string filename, 
                                    std::string stringroup, 
                                    std::string stroutgroup, 
                                    std::string stroutdataset, 
@@ -36,7 +36,7 @@ namespace BigDataStatMeth {
             objFile->openFile("r");
             
             // Get dataset names without prefix, all datasets inside the group
-            Rcpp::StringVector joindata =  objFile->getDatasetNames(stringroup, "");
+            Rcpp::StringVector joindata =  objFile->getDatasetNames(stringroup, "", "");
             
             delete objFile; // Close file 
             

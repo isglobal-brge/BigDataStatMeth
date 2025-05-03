@@ -9,10 +9,16 @@ bdgetDatasetsList_hdf5(filename, group, prefix = NULL)
 \arguments{
 \item{filename, }{character array with the name of the file to be accessed}
 
-\item{group, }{character array with the input group name where the data sets are stored}
+\item{group, }{character array with the input group name where the data sets
+are stored}
 
-\item{prefix, }{character array optional, indicates the prefix with which the dataset
-names begin, if null, then the function returns all datasets inside the group}
+\item{prefix, }{character array optional, indicates the prefix with which the
+dataset names begin, if prefix and sufix are null, the function returns all
+datasets inside the group}
+
+\item{sufix, }{character array optional, indicates the sufix with which the
+dataset names ends, if prefix and sufix are null, the function returns all
+datasets inside the group}
 }
 \value{
 character array with the name of all datasets inside the group

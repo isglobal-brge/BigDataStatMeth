@@ -466,7 +466,7 @@ extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string s
                                               "Y","Z"};
 
         // Get dataset names
-        Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, (std::string)strvmatnames[q-1]);
+        Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, (std::string)strvmatnames[q-1], "");
         M = joindata.size();
         
         ithreads = get_number_threads(threads, R_NilValue);

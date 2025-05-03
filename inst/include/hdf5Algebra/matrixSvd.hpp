@@ -14,7 +14,10 @@
 #include "hdf5Utilities/hdf5Methods.hpp"
 
 #include "Utilities/Utilities.hpp"
-#include <spectra/SymEigsSolver.h>
+#include "spectra/SymEigsSolver.h"
+
+// #include <Spectra/SymEigsSolver.h>
+
 
 
 namespace BigDataStatMeth {
@@ -26,7 +29,7 @@ namespace BigDataStatMeth {
         
         svdeig retsvd;
         Eigen::MatrixXd nX;
-        int nconv;
+        int nconv [[maybe_unused]];
         
         if( k==0 )    k = (std::min(X.rows(), X.cols()))-1;
         else if (k > (std::min(X.rows(), X.cols()))-1 ) k = (std::min(X.rows(), X.cols()))-1;
@@ -128,7 +131,7 @@ namespace BigDataStatMeth {
             }
 
             // Get dataset names
-            Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, strPrefix);
+            Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, strPrefix, "");
 
             // 1.- Join matrix and remove parts from file
             std::string strnewdataset = std::string((joindata[0])).substr(0,1);

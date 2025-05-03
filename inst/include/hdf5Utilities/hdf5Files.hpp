@@ -148,8 +148,8 @@ public:
     std::string getPath() { return(path); }  // Return file path
     std::string getFullPath() { return(fullPath); }  // Return file path
     bool checkFile() { return(ResFileExist_filestream()); } // Return file exists
-    Rcpp::StringVector getDatasetNames( std::string strgroup, std::string strprefix){ 
-        return(get_dataset_names_from_group( strgroup, strprefix)); 
+    Rcpp::StringVector getDatasetNames( std::string strgroup, std::string strprefix, std::string strsufix){ 
+        return(get_dataset_names_from_group( strgroup, strprefix, strsufix)); 
     } // Return a dataset name list with all the datasets inside
     
     
@@ -207,7 +207,23 @@ private:
     bool boverwrite;
     
     
-    // Function declarations
+    // Function
+    
+    #if __cplusplus >= 201703L // C++17 and later 
+    #include <string_view>
+        
+        static bool ends_with(std::string_view str, std::string_view suffix)
+        {
+            return str.size() >= suffix.size() && str.compare(str.size()-suffix.size(), suffix.size(), suffix) == 0;
+        }
+        
+        static bool starts_with(std::string_view str, std::string_view prefix)
+        {
+            return str.size() >= prefix.size() && str.compare(0, prefix.size(), prefix) == 0;
+        }
+        
+    #endif // C++17
+    
     
     // Test if file exsits
     bool ResFileExist_filestream() 
@@ -226,7 +242,8 @@ private:
     }
 
 
-    bool isHDF5FileOpen() {
+    bool isHDF5FileOpen() 
+    {
         
         bool bCorrupt = false;
         
@@ -249,10 +266,8 @@ private:
     }
     
     
-    
-    
     // Get dataset names inside the strgroup
-    Rcpp::StringVector get_dataset_names_from_group(std::string strgroup, std::string strprefix)
+    Rcpp::StringVector get_dataset_names_from_group(std::string strgroup, std::string strprefix, std::string strsufix)
     {
         
         Rcpp::StringVector datasetnames;
@@ -274,7 +289,7 @@ private:
             // get dataset names inside group
             err = H5Gget_num_objs(gid, &nobj);
             if(err<0 ) {
-                ::Rf_error( "c++ exception get_dataset_names_from_group (err IException)" );
+                Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (err IException)\n";
                 return -1;
             } else {
                 for (unsigned int i = 0; i < nobj; i++) 
@@ -282,15 +297,34 @@ private:
                     len = H5Gget_objname_by_idx(gid, (hsize_t)i, memb_name, (size_t)MAX_NAME );
                     
                     if(len == 0) {
-                        ::Rf_error( "c++ exception get_dataset_names_from_group (len IException)" );
+                        Rcpp::Rcerr<<"c++ exception get_dataset_names_from_group (len IException)\n";
                         return -1;
                     }
                     
                     otype =  H5Gget_objtype_by_idx(gid, (size_t)i );
                     
-                    // 202109
-                    if( strprefix.compare("")!=0 ){
-                        if(otype == H5G_DATASET && (memb_name[0] == strprefix[0])) {
+                    // // 202109
+                    // if( strprefix.compare("")!=0 ){
+                    //     if(otype == H5G_DATASET && (memb_name[0] == strprefix[0])) {
+                    //         datasetnames.push_back(memb_name);
+                    //     }
+                    // } else {
+                    //     if(otype == H5G_DATASET ) {
+                    //         datasetnames.push_back(memb_name);
+                    //     }
+                    // }
+                    
+                    // 202505
+                    if( strprefix.compare("")!=0 && strsufix.compare("")==0 ){
+                        if(otype == H5G_DATASET && (starts_with(memb_name, strprefix)) ) {
+                            datasetnames.push_back(memb_name);
+                        }
+                    } else if( strprefix.compare("")==0 && strsufix.compare("")!=0 ){
+                        if(otype == H5G_DATASET && (ends_with(memb_name, strsufix)) ) {
+                            datasetnames.push_back(memb_name);
+                        }
+                    } else if( strprefix.compare("")!=0 && strsufix.compare("")!=0 ) {
+                        if(otype == H5G_DATASET && starts_with(memb_name, strprefix) && ends_with(memb_name, strsufix)  ) {
                             datasetnames.push_back(memb_name);
                         }
                     } else {
@@ -302,19 +336,19 @@ private:
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception get_dataset_names_from_group (File IException)" );
+            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (File IException)\n";
             return -1;
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            ::Rf_error( "c++ exception get_dataset_names_from_group (DataSet IException)" );
+            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (DataSet IException)\n";
             return -1;
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-            ::Rf_error( "c++ exception get_dataset_names_from_group (Group IException)" );
+            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (Group IException)\n";
             return -1;
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            ::Rf_error( "c++ exception get_dataset_names_from_group (DataSpace IException)" );
+            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (DataSpace IException)\n";
             return -1;
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
-            ::Rf_error( "c++ exception get_dataset_names_from_group (Data TypeIException)" );
+            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (Data TypeIException)\n";
             return -1;
         }
         return(datasetnames);
