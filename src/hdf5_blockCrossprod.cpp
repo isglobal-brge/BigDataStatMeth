@@ -1,6 +1,6 @@
 #include <BigDataStatMeth.hpp>
-#include "hdf5Algebra/crossprod.hpp"
-#include "Utilities/Utilities.hpp"
+// #include "hdf5Algebra/crossprod.hpp"
+// #include "Utilities/Utilities.hpp"
 
 
 //' Crossprod with hdf5 matrix

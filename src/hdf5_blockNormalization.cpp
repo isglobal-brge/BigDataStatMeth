@@ -1,6 +1,6 @@
 #include <BigDataStatMeth.hpp>
-#include "hdf5Algebra/matrixSdMean.hpp"
-#include "hdf5Algebra/matrixNormalization.hpp"
+// #include "hdf5Algebra/matrixSdMean.hpp"
+// #include "hdf5Algebra/matrixNormalization.hpp"
 
 
 //' Normalize dataset in hdf5 file

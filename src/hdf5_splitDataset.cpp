@@ -1,5 +1,5 @@
 #include <BigDataStatMeth.hpp>
-#include "hdf5Utilities/hdf5SplitDataset.hpp"
+// #include "hdf5Utilities/hdf5SplitDataset.hpp"
 
 //' Split hdf5 dataset
 //'
@@ -43,13 +43,13 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         std::string strdataset = group + "/" + dataset;
         std::string strdatasetout;
         int iblocksize = 0; //, iwholesize = 0;
-        bool bcols, bforce;
+        bool bcols; //, bforce;
         
         if(bycols.isNull()) { bcols = true ;
         } else {   bcols = Rcpp::as<bool>(bycols);}
         
-        if(overwrite.isNull()) { bforce = false ;
-        } else {   bforce = Rcpp::as<bool>(overwrite);}
+        // if(overwrite.isNull()) { bforce = false ;
+        // } else {   bforce = Rcpp::as<bool>(overwrite);}
         
         if(outgroup.isNull()) {  stroutgroup = group ;
         } else {   stroutgroup = Rcpp::as<std::string>(outgroup);}

@@ -46,7 +46,7 @@ namespace BigDataStatMeth {
 
 
     // Check if file ends with newline "\n"
-    bool get_NewLineEnding(const char *filename) {
+    extern inline bool get_NewLineEnding(const char *filename) {
         const int LINE_FEED = '\x0A';
         FILE *f = fopen(filename, "rb");  /* binary mode */
         if (f == NULL) return false;
@@ -58,7 +58,7 @@ namespace BigDataStatMeth {
     }
     
     // Test if read data is numeric or not
-    bool is_number(const std::string& s)
+    extern inline bool is_number(const std::string& s)
     {
         char* end = nullptr;
         double val = strtod(s.c_str(), &end);

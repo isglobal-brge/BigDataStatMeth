@@ -1,10 +1,10 @@
 #include <BigDataStatMeth.hpp>
-#include "memAlgebra/memOptimizedProducts.hpp"
-#include "hdf5Algebra/matrixQR.hpp"
-#include "hdf5Algebra/multiplication.hpp"
-#include "hdf5Algebra/matrixInvCholesky.hpp"
-#include "hdf5Algebra/matrixEquationSolver.hpp"
-#include "hdf5Algebra/matrixSdMean.hpp"
+// #include "memAlgebra/memOptimizedProducts.hpp"
+// #include "hdf5Algebra/matrixQR.hpp"
+// #include "hdf5Algebra/multiplication.hpp"
+// #include "hdf5Algebra/matrixInvCholesky.hpp"
+// #include "hdf5Algebra/matrixEquationSolver.hpp"
+// #include "hdf5Algebra/matrixSdMean.hpp"
 
 //' Apply function to different datasets inside a group
 //'
@@ -200,7 +200,7 @@ void bdapply_Function_hdf5( std::string filename,
                         if(oper(oper.findName( func )) == 3 ) {
                             BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA, dsOut, bfullMatrix, dElementsBlock, threads);    
                         } else {
-                            int res = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
+                            int res [[maybe_unused]] = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
                         }
                         
                         delete dsA; dsA = nullptr;

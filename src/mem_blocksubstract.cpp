@@ -1,5 +1,5 @@
 #include <BigDataStatMeth.hpp>
-#include "memAlgebra/memSubstract.hpp"
+// #include "memAlgebra/memSubstract.hpp"
 
 //' @title Hdf5 datasets substract
 //' @description substract two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset

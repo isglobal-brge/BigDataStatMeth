@@ -1,6 +1,6 @@
 #include <BigDataStatMeth.hpp>
-#include "memAlgebra/memMultiplication.hpp"
-#include "memAlgebra/memOptimizedProducts.hpp"
+// #include "memAlgebra/memMultiplication.hpp"
+// #include "memAlgebra/memOptimizedProducts.hpp"
 
 //' @title Matrix multiplication
 //' @description Miltiplies two existing data matrices on memory

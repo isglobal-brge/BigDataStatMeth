@@ -6,7 +6,7 @@
 namespace BigDataStatMeth {
 
 
-    void RcppRemove_hdf5_elements(BigDataStatMeth::hdf5File* file, std::vector<std::string> elements)
+    extern inline void RcppRemove_hdf5_elements(BigDataStatMeth::hdf5File* file, std::vector<std::string> elements)
     {
         
         try

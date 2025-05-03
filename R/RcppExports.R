@@ -205,7 +205,7 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #' 
 #' @export
 bdSVD_hdf5 <- function(filename, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite = NULL, method = NULL, threads = NULL) {
-    .Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, k, q, bcenter, bscale, rankthreshold, overwrite, method, threads)
+    invisible(.Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, k, q, bcenter, bscale, rankthreshold, overwrite, method, threads))
 }
 
 #' Solve matrix equations
@@ -859,9 +859,14 @@ bdgetDim_hdf5 <- function(filename, dataset) {
 #' starting with a prefix under a group
 #' 
 #' @param filename, character array with the name of the file to be accessed
-#' @param group, character array with the input group name where the data sets are stored 
-#' @param prefix, character array optional, indicates the prefix with which the dataset
-#' names begin, if null, then the function returns all datasets inside the group
+#' @param group, character array with the input group name where the data sets 
+#' are stored 
+#' @param prefix, character array optional, indicates the prefix with which the 
+#' dataset names begin, if prefix and sufix are null, the function returns all 
+#' datasets inside the group
+#' @param sufix, character array optional, indicates the sufix with which the 
+#' dataset names ends, if prefix and sufix are null, the function returns all 
+#' datasets inside the group
 #' @return character array with the name of all datasets inside the group
 #' @export
 bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {

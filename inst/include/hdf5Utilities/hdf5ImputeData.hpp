@@ -9,7 +9,7 @@ namespace BigDataStatMeth {
 
 
     // Get value for imputation
-    int get_value_to_impute_discrete(std::map<double, double> probMap)
+    extern inline int get_value_to_impute_discrete(std::map<double, double> probMap)
     {
         std::vector <double> probs;
         
@@ -39,7 +39,7 @@ namespace BigDataStatMeth {
     
     
     // Convert NumericVector to map (key:vlues - value: frequency value in vector)
-    std::map<double, double> VectortoOrderedMap_SNP_counts( Eigen::VectorXd  vdata)
+    extern inline std::map<double, double> VectortoOrderedMap_SNP_counts( Eigen::VectorXd  vdata)
     {
         std::map<double, double> mapv;
         
@@ -70,7 +70,7 @@ namespace BigDataStatMeth {
     // Pedestrian dataset imputation .... 
     // TODO : 
     //    - perform better imputation
-    void Rcpp_Impute_snps_hdf5(BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5DatasetInternal* dsOut,
+    extern inline void Rcpp_Impute_snps_hdf5(BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5DatasetInternal* dsOut,
                          bool bycols, std::string stroutdataset, Rcpp::Nullable<int> threads  = R_NilValue)
     {
         

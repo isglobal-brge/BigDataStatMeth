@@ -35,5 +35,9 @@ PKG_LIBS += $(RHDF5_LIBS)
 #..#CXXFLAGS = -g3 -O3 -Wall
 #..# PKG_CXXFLAGS += -g3 -O2 -std=c++17 -Wall
 #..# PKG_CXXFLAGS += -g3 -O3 -Wall
+
+#.ORIGINAL OK - CHECKS CRAN.# CCACHE=ccache
+#.ORIGINAL OK - CHECKS CRAN.# CXX_STD = $(CCACHE) CXX
+CXXFLAGS += -g3 -O3 -std=c++17 -Wall
 CCACHE=ccache
-CXX_STD = $(CCACHE) CXX
+CXX_STD = $(CCACHE) CXX17

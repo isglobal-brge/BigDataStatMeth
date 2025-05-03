@@ -1,5 +1,5 @@
 #include <BigDataStatMeth.hpp>
-#include "hdf5Algebra/matrixDiagonal.hpp"
+// #include "hdf5Algebra/matrixDiagonal.hpp"
 
 
 

@@ -7,7 +7,7 @@ namespace BigDataStatMeth {
 
 
     // Removes row or column with high missing data percentage
-    int Rcpp_Remove_Low_Data_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5Dataset* dsOut, bool bycols, double pcent)
+    extern inline int Rcpp_Remove_Low_Data_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5Dataset* dsOut, bool bycols, double pcent)
     {
         
         int itotrem = 0;

@@ -23,7 +23,7 @@ namespace BigDataStatMeth {
 
 
     // Internal call 
-    void RcppSort_dataset_hdf5 ( BigDataStatMeth::hdf5Dataset* dsIn, 
+    extern inline void RcppSort_dataset_hdf5 ( BigDataStatMeth::hdf5Dataset* dsIn, 
                                  BigDataStatMeth::hdf5Dataset* dsOut,
                                  Rcpp::List blockedSortlist, std::string func)
     {

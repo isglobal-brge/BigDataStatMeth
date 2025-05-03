@@ -1,6 +1,6 @@
 #include <BigDataStatMeth.hpp>
-#include "memAlgebra/memOptimizedProducts.hpp"
-#include "memAlgebra/memMultiplication.hpp"
+// #include "memAlgebra/memOptimizedProducts.hpp"
+// #include "memAlgebra/memMultiplication.hpp"
 
 
 //' Crossproduct 
