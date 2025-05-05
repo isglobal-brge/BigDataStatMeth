@@ -813,6 +813,14 @@ public:
             Rcpp::Rcerr<<"\nc++ exception readDatasetBlock (Data TypeIException)";
             // return(nullptr);
             return void();
+        } catch(std::exception &ex) {
+            close_dataset_file();
+            Rcpp::Rcerr<<"\nc++ exception readDatasetBlock \n"<< ex.what();
+            return void();
+        } catch (...) {
+            close_dataset_file();
+            Rcpp::Rcerr<<"\nC++ exception readDatasetBlock (unknown reason)";
+            return void();
         }
         // return(rdatablock);
         return void();
