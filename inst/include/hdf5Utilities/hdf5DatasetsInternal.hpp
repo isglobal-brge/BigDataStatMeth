@@ -73,7 +73,8 @@ public:
             
             bool bexists = exists_HDF5_element(pfile, fullDatasetPath);
             if( bexists == true && boverwrite == false) {
-                ::Rf_error("Dataset exits, please set overwrite = true to overwrite the existing dataset (DataSet IException)");
+                Rcpp::Rcerr<<"\nDataset exits, please set overwrite = true to overwrite the existing dataset (DataSet IException)";
+                return void();
             } else {
                 
                 if( boverwrite == true && bexists == true) {
@@ -101,7 +102,7 @@ public:
                         writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDataset[0], dimDataset[1]) ));
                     }
                 } else {
-                    ::Rf_error( "Dataset data type not allowed or no matrix defined (createDataset)" );
+                    Rcpp::Rcerr<<"\nDataset data type not allowed or no matrix defined (createDataset)";
                 }
             }
             
@@ -109,11 +110,11 @@ public:
             addAttribute( "internal", Rcpp::wrap("1") );
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception createDataset_int (File IException) " );
+            Rcpp::Rcerr<<"\nc++ exception createDataset_int (File IException)";
         } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception createDataset_int (Group IException)");
+            Rcpp::Rcerr<<"\nc++ exception createDataset_int (Group IException)";
         } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception createDataset_int (DataSet IException)");
+            Rcpp::Rcerr<<"\nc++ exception createDataset_int (DataSet IException)";
         } 
         return void();
     }
@@ -126,11 +127,11 @@ public:
             createDataset( dsLike->nrows(), dsLike->ncols(), strdatatype);
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception createDataset (File IException) " );
+            Rcpp::Rcerr<<"\nc++ exception createDataset (File IException)";
         } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception createDataset (Group IException)");
+            Rcpp::Rcerr<<"\nc++ exception createDataset (Group IException)";
         } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception createDataset (DataSet IException)");
+            Rcpp::Rcerr<<"\nc++ exception createDataset (DataSet IException)";
         } 
         
         return void();

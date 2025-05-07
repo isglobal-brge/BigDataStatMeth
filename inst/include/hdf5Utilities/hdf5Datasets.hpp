@@ -768,7 +768,7 @@ public:
             
             H5::DataSpace memspace(RANK2, dimsm, NULL);
             
-            //  Get dataspace of the dataset.
+            //  Get dataset dataspace.
             H5::DataSpace dataspace = pdataset->getSpace();
             dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block); 
             

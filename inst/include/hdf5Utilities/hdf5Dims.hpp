@@ -214,7 +214,7 @@ protected:
                     // Create the dataset.
                     dataset = new H5::DataSet(pfile->createDataSet(datasetname, mtype, dataspace));
                     
-                    // Get dataspace of the dataset.
+                    //  Get dataset dataspace.
                     dataspace = dataset->getSpace();
                     
                     if(vectorsize > MAXSTRBLOCK) {
