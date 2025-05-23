@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdRemoveMAF_hdf5}
 \alias{bdRemoveMAF_hdf5}
-\title{Remove SNPs in hdf5 omic dataset with low data}
+\title{Remove SNPs Based on Minor Allele Frequency}
 \usage{
 bdRemoveMAF_hdf5(
   filename,
@@ -17,28 +17,99 @@ bdRemoveMAF_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file to create}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group, }{character array indicating the input group where the data set to be imputed is.}
+\item{group}{Character string. Path to the group containing input dataset.}
 
-\item{dataset, }{character array indicating the input dataset to be imputed}
+\item{dataset}{Character string. Name of the dataset to filter.}
 
-\item{outgroup, }{character array indicating group where the data set will be saved after remove data with if \code{outgroup} is NULL, output dataset is stored in the same input group.}
+\item{outgroup}{Character string. Output group path for filtered data.}
 
-\item{outdataset, }{character array indicating dataset to store the resulting data after imputation if \code{outdataset} is NULL, input dataset will be overwritten.}
+\item{outdataset}{Character string. Output dataset name for filtered data.}
 
-\item{maf, }{by default maf = 0.05. Numeric indicating the percentage to be considered to remove SNPs, SNPS with higest MAF will be removed from data}
+\item{maf}{Numeric (optional). MAF threshold for filtering (0-1).
+Default is 0.05. SNPs with MAF above this threshold are removed.}
 
-\item{bycols, }{boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.}
+\item{bycols}{Logical (optional). Whether to process by columns (TRUE) or
+rows (FALSE). Default is FALSE.}
 
-\item{blocksize, }{integer, block size dataset to read/write and calculate MAF, by default this operations is made in with 100 rows if byrows = true or 100 cols if byrows = false.}
+\item{blocksize}{Integer (optional). Block size for processing. Default is 100.
+Larger values use more memory but may be faster.}
 
-\item{overwrite, }{optional boolean if true, previous results in same location
-inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
+\item{overwrite}{Logical (optional). Whether to overwrite existing dataset.
+Default is FALSE.}
 }
 \value{
-Original hdf5 data file with imputed data
+No return value, called for side effects (data filtering).
+Prints a warning message indicating the number of rows/columns removed.
 }
 \description{
-Remove SNPs in hdf5 omic dataset with low data
+Filters SNPs (Single Nucleotide Polymorphisms) based on Minor Allele
+Frequency (MAF) in genomic data stored in HDF5 format.
+}
+\details{
+This function provides efficient MAF-based filtering capabilities with:
+\itemize{
+\item Filtering options:
+\itemize{
+\item MAF threshold-based filtering
+\item Row-wise or column-wise processing
+\item Block-based processing
+}
+\item Implementation features:
+\itemize{
+\item Memory-efficient processing
+\item Block-based operations
+\item Safe file operations
+\item Progress reporting
+}
+}
+
+The function supports both in-place modification and creation of new datasets.
+}
+\examples{
+\dontrun{
+library(BigDataStatMeth)
+
+# Create test SNP data
+snps <- matrix(sample(c(0, 1, 2), 1000, replace = TRUE,
+                     prob = c(0.7, 0.2, 0.1)), 100, 10)
+
+# Save to HDF5
+fn <- "snp_data.hdf5"
+bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
+                     overwriteFile = TRUE)
+
+# Remove SNPs with high MAF
+bdRemoveMAF_hdf5(
+  filename = fn,
+  group = "genotype",
+  dataset = "raw_snps",
+  outgroup = "genotype_filtered",
+  outdataset = "filtered_snps",
+  maf = 0.1,
+  bycols = TRUE,
+  blocksize = 50
+)
+
+# Cleanup
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+\item Marees, A. T., et al. (2018). A tutorial on conducting genome‐wide
+association studies: Quality control and statistical analysis. International
+Journal of Methods in Psychiatric Research, 27(2), e1608.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdRemovelowdata_hdf5}} for removing low-representation SNPs
+\item \code{\link{bdImputeSNPs_hdf5}} for imputing missing SNP values
+}
 }

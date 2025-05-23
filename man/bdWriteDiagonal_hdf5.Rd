@@ -2,45 +2,81 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdWriteDiagonal_hdf5}
 \alias{bdWriteDiagonal_hdf5}
-\title{Write diagonal matrix}
+\title{Write Matrix Diagonal to HDF5}
 \usage{
 bdWriteDiagonal_hdf5(diagonal, filename, group, dataset)
 }
 \arguments{
-\item{diagonal, }{numeric vector with diagonal elements to be written in existing dataset.}
+\item{diagonal}{Numeric vector. New diagonal elements to write.}
 
-\item{filename, }{character array with the name of an existin hdf5 data file containing the dataset to be modified}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group, }{character array indicating the input group where the data set to be modified.}
+\item{group}{Character string. Path to the group containing the dataset.}
 
-\item{dataset, }{character array indicating the input dataset to be modified}
+\item{dataset}{Character string. Name of the dataset to modify.}
 }
 \value{
-Original hdf5 dataset with new diagonal elements
+No return value, called for side effects (diagonal modification).
 }
 \description{
-Write diagonal matrix to an existing dataset inside hdf5
+Updates the diagonal elements of a matrix stored in an HDF5 file.
+}
+\details{
+This function provides efficient diagonal modification capabilities with:
+\itemize{
+\item Write features:
+\itemize{
+\item Direct diagonal access
+\item Type checking and validation
+\item Support for large matrices
+}
+\item Implementation features:
+\itemize{
+\item Safe HDF5 file operations
+\item Memory-efficient implementation
+\item Comprehensive error handling
+\item Type conversion support
+}
+}
+
+The function validates input types and dimensions before modification.
 }
 \examples{
+\dontrun{
 library(BigDataStatMeth)
-library(rhdf5)
 
-# Prepare data and functions
+# Create test matrix
 X <- matrix(rnorm(100), 10, 10)
-diagonal <- c(1,2,3,4,5,6,7, 8, 9, 10)
 
-# Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
-                      overwriteFile = TRUE, 
-                      overwriteDataset = FALSE, 
-                      unlimited = FALSE)
+# Save to HDF5
+bdCreate_hdf5_matrix("test.hdf5", X, "data", "matrix1",
+                     overwriteFile = TRUE)
+
+# Create new diagonal
+new_diag <- seq(1, 10)
 
 # Update diagonal
-bdWriteDiagonal_hdf5(diagonal, "test_file.hdf5", "data", "X")
+bdWriteDiagonal_hdf5(new_diag, "test.hdf5", "data", "matrix1")
 
-# Remove file (used as example)
-if (file.exists("test_file.hdf5")) {
-    file.remove("test_file.hdf5")
+# Verify
+diag_elements <- bdgetDiagonal_hdf5("test.hdf5", "data", "matrix1")
+print(diag_elements)
+
+# Cleanup
+if (file.exists("test.hdf5")) {
+  file.remove("test.hdf5")
+}
 }
 
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdgetDiagonal_hdf5}} for reading diagonal elements
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+}
 }

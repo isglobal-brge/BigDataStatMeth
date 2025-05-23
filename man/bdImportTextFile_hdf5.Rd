@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdImportTextFile_hdf5}
 \alias{bdImportTextFile_hdf5}
-\title{Converts text file to hdf5 data file}
+\title{Import Text File to HDF5}
 \usage{
 bdImportTextFile_hdf5(
   filename,
@@ -19,43 +19,93 @@ bdImportTextFile_hdf5(
 )
 }
 \arguments{
-\item{filename}{string specifying the path to the HDF5 file}
+\item{filename}{Character string. Path to the input text file.}
 
-\item{outputfile}{file name and path to store imported data}
+\item{outputfile}{Character string. Path to the output HDF5 file.}
 
-\item{outGroup}{group name to store the dataset}
+\item{outGroup}{Character string. Name of the group to create in HDF5 file.}
 
-\item{outDataset}{dataset name to store the input file in hdf5}
+\item{outDataset}{Character string. Name of the dataset to create.}
 
-\item{sep}{(optional), by default = "\\t". The field separator string.
-Values within each row of x are separated by this string.}
+\item{sep}{Character string (optional). Field separator, default is "\\t".}
 
-\item{header}{(optional) either a logical value indicating whether the
-column names of x are to be written along with x, or a character vector of
-column names to be written. See the section on ‘CSV files’ for the meaning
-of col.names = NA.}
+\item{header}{Logical (optional). Whether first row contains column names.}
 
-\item{rownames}{(optional) either a logical value indicating whether the
-row names of x are to be written along with x, or a character vector of
-row names to be written.}
+\item{rownames}{Logical (optional). Whether first column contains row names.}
 
-\item{overwrite}{(optional) either a logical value indicating whether the
-output file can be overwritten or not.}
+\item{overwrite}{Logical (optional). Whether to overwrite existing dataset.}
 
-\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel
-computation else performs seria computation}
+\item{paral}{Logical (optional). Whether to use parallel processing.}
 
-\item{threads}{(optional) only if bparal = true, number of concurrent
-threads in parallelization if threads is null then threads =  maximum
-number of threads available}
+\item{threads}{Integer (optional). Number of threads for parallel processing.}
 
-\item{overwriteFile}{logical (optional), CAUTION, if TRUE, file will be
-overwritten with imported dataset, by default \code{fileoverwrite = FALSE} to avoid
-file overwritting.}
+\item{overwriteFile}{Logical (optional). Whether to overwrite existing HDF5 file.}
 }
 \value{
-none value returned, data are stored in a dataset inside an hdf5 data file.
+No return value, called for side effects (file creation).
 }
 \description{
-Converts text file to hdf5 data file
+Converts a text file (e.g., CSV, TSV) to HDF5 format, providing efficient
+storage and access capabilities.
+}
+\details{
+This function provides flexible text file import capabilities with support for:
+\itemize{
+\item Input format options:
+\itemize{
+\item Custom field separators
+\item Header row handling
+\item Row names handling
+}
+\item Processing options:
+\itemize{
+\item Parallel processing
+\item Memory-efficient import
+\item Configurable thread count
+}
+\item File handling:
+\itemize{
+\item Safe file operations
+\item Overwrite protection
+\item Comprehensive error handling
+}
+}
+
+The function supports parallel processing for large files and provides
+memory-efficient import capabilities.
+}
+\examples{
+\dontrun{
+library(BigDataStatMeth)
+
+# Create a test CSV file
+data <- matrix(rnorm(100), 10, 10)
+write.csv(data, "test.csv", row.names = FALSE)
+
+# Import to HDF5
+bdImportTextFile_hdf5(
+  filename = "test.csv",
+  outputfile = "output.hdf5",
+  outGroup = "data",
+  outDataset = "matrix1",
+  sep = ",",
+  header = TRUE,
+  overwriteFile = TRUE
+)
+
+# Cleanup
+unlink(c("test.csv", "output.hdf5"))
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices directly
+\item \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+}
 }

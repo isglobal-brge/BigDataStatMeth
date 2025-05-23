@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdgetSDandMean_hdf5}
 \alias{bdgetSDandMean_hdf5}
-\title{Get sd and Mean by Rows or Columns}
+\title{Compute Matrix Standard Deviation and Mean in HDF5}
 \usage{
 bdgetSDandMean_hdf5(
   filename,
@@ -16,61 +16,105 @@ bdgetSDandMean_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group}{string Matrix}
+\item{group}{Character string. Path to the group containing the dataset.}
 
-\item{dataset}{string Matrix}
+\item{dataset}{Character string. Name of the dataset to analyze.}
 
-\item{sd}{logical (default = TRUE) if TRUE, standard deviation is computed}
+\item{sd}{Logical (optional). Whether to compute standard deviation.
+Default is TRUE.}
 
-\item{mean}{logical (default = TRUE) if TRUE, mean is computed}
+\item{mean}{Logical (optional). Whether to compute mean. Default is TRUE.}
 
-\item{byrows}{logical (default = FALSE) if TRUE, sd and mean are computed
-by columns, if byrows=TRUE then sd and mean are computed by Rows.}
+\item{byrows}{Logical (optional). Whether to compute by rows (TRUE) or
+columns (FALSE). Default is FALSE.}
 
-\item{wsize}{integer (default = 1000), file block size to read to
-perform calculus exitexit}
+\item{wsize}{Integer (optional). Block size for processing. Default is 1000.}
 
-\item{overwrite, }{boolean if true, previous results in same location inside
-hdf5 will be overwritten.}
+\item{overwrite}{Logical (optional). Whether to overwrite existing results.
+Default is FALSE.}
 }
 \value{
-hdf5 data file containing two new datasets, one for sd (if sd is
-requested) and another for the mean (if mean is requested). Results are
-stored inside a folder mean_sd inside hdf5 data file with names:
-sd.\<dataset\>, mean.\<dataset\> respectively
+No return value, called for side effects (statistics computation).
+Results are stored in the HDF5 file under the 'mean_sd' group with names:
+\itemize{
+\item 'sd.\code{dataset}' for standard deviation
+\item 'mean.\code{dataset}' for mean
+}
 }
 \description{
-This functions gets Standard Deviation (sd) or Mean by Rows or Columns and
-store results in hdf5 dataset inside the file
+Computes standard deviation and/or mean statistics for a matrix stored in
+HDF5 format, with support for row-wise or column-wise computations.
+}
+\details{
+This function provides efficient statistical computation capabilities with:
+\itemize{
+\item Computation options:
+\itemize{
+\item Standard deviation computation
+\item Mean computation
+\item Row-wise or column-wise processing
+}
+\item Processing features:
+\itemize{
+\item Block-based computation
+\item Memory-efficient processing
+\item Configurable block size
+}
+\item Implementation features:
+\itemize{
+\item Safe HDF5 file operations
+\item Memory-efficient implementation
+\item Comprehensive error handling
+}
+}
+
+Results are stored in a new group 'mean_sd' within the HDF5 file.
 }
 \examples{
-
+\dontrun{
 library(BigDataStatMeth)
-    
-# Prepare data and functions
+
+# Create test matrices
 set.seed(123)
 Y <- matrix(rnorm(100), 10, 10)
 X <- matrix(rnorm(10), 10, 1)
-    
-# Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", 
-                        overwriteFile = TRUE, 
-                        overwriteDataset = FALSE, 
-                        unlimited = FALSE)
-bdCreate_hdf5_matrix( "test.hdf5", X, "data", "X", 
-                       overwriteFile = FALSE, 
-                       overwriteDataset = FALSE, 
-                       unlimited = FALSE)
 
-# Get mean and sd        
-bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
-                    sd = TRUE, mean = TRUE,byrows = TRUE)
-                    
-# Remove file (used as example)
+# Save to HDF5
+bdCreate_hdf5_matrix("test.hdf5", Y, "data", "matrix1",
+                     overwriteFile = TRUE)
+bdCreate_hdf5_matrix("test.hdf5", X, "data", "vector1",
+                     overwriteFile = FALSE)
+
+# Compute statistics
+bdgetSDandMean_hdf5(
+  filename = "test.hdf5",
+  group = "data",
+  dataset = "matrix1",
+  sd = TRUE,
+  mean = TRUE,
+  byrows = TRUE,
+  wsize = 500
+)
+
+# Cleanup
 if (file.exists("test.hdf5")) {
   file.remove("test.hdf5")
 }
-        
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+\item Welford, B. P. (1962). Note on a method for calculating corrected
+sums of squares and products. Technometrics, 4(3), 419-420.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+\item \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+}
 }

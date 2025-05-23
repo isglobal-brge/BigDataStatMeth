@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdWriteOppsiteTriangularMatrix_hdf5}
 \alias{bdWriteOppsiteTriangularMatrix_hdf5}
-\title{Write Upper/Lower triangular matrix}
+\title{Write Upper/Lower Triangular Matrix}
 \usage{
 bdWriteOppsiteTriangularMatrix_hdf5(
   filename,
@@ -13,54 +13,101 @@ bdWriteOppsiteTriangularMatrix_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array with the name of an existin hdf5 data file containing the dataset to be modified}
+\item{filename}{Character string specifying the path to an existing HDF5 file}
 
-\item{group, }{character array indicating the input group where the data set to be modified.}
+\item{group}{Character string indicating the input group containing the dataset}
 
-\item{dataset, }{character array indicating the input dataset to be modified}
+\item{dataset}{Character string specifying the dataset to be modified}
 
-\item{copytolower, }{boolean with default value = false. If true, sets lower
-triangular matrix using upper triangular matrix, if lower=false (default
-value) sets upper triangular matrix using lower triangular matrix.}
+\item{copytolower}{Logical. If TRUE, copies upper triangular to lower triangular.
+If FALSE (default), copies lower triangular to upper triangular.}
 
-\item{elementsBlock, }{optional integer defines de maximum number of elements
-to read from hdf5 data file in each block. By default this value is set
-to 10000. If matrix is bigger thant 5000x5000 then block is set to number
-of rows or columns x 2}
+\item{elementsBlock}{Integer defining the maximum number of elements to process
+in each block. Default is 1,000,000. For matrices larger than 5000x5000,
+automatically adjusted to number of rows or columns * 2.}
+}
+\value{
+No direct return value. The function modifies the HDF5 dataset in-place.
 }
 \description{
-Write diagonal matrix to an existing dataset inside hdf5
+Creates a symmetric matrix by mirroring values from one triangular part to the other
+in an HDF5-stored matrix. This function modifies the matrix in-place, either copying
+the upper triangular values to the lower triangular part or vice versa.
+}
+\details{
+This function provides an efficient way to create symmetric matrices from triangular
+data. It operates directly on HDF5 datasets using block processing for memory
+efficiency. The function:
+\itemize{
+\item Validates that the input matrix is square
+\item Processes the matrix in blocks for memory efficiency
+\item Performs in-place modification of the dataset
+\item Preserves the original values in the source triangular part
+\item Supports both upper-to-lower and lower-to-upper mirroring
+}
+
+The implementation uses block processing to handle large matrices efficiently,
+making it suitable for big data applications. The block size can be adjusted
+based on available memory and performance requirements.
 }
 \examples{
 library(BigDataStatMeth)
 
-# Prepare data and functions
+# Create a matrix with upper triangular values
 X <- matrix(rnorm(100), 10, 10)
 X.1 <- X
 X[lower.tri(X)] <- 0
-# Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
-                      overwriteFile = TRUE, 
-                      overwriteDataset = FALSE, 
-                      unlimited = FALSE)
-# Update Lower triangular matrix in hdf5
-bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
-        group = "data", dataset = "X", copytolower = TRUE, elementsBlock = 10)
 
+# Save to HDF5
+bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
+                     overwriteFile = TRUE, 
+                     overwriteDataset = FALSE, 
+                     unlimited = FALSE)
+                     
+# Mirror upper triangular to lower
+bdWriteOppsiteTriangularMatrix_hdf5(
+  filename = "test_file.hdf5", 
+  group = "data",
+  dataset = "X",
+  copytolower = TRUE,
+  elementsBlock = 10
+)
+
+# Create a matrix with lower triangular values
 X <- X.1
 X[upper.tri(X)] <- 0
-# CAdd matrix data to a file
-bdCreate_hdf5_matrix( "test_file.hdf5", X, "data", "Y", 
-                        overwriteFile = FALSE, 
-                        overwriteDataset = FALSE, 
-                        unlimited = FALSE)
-# Update Upper triangular matrix in hdf5
-bdWriteOppsiteTriangularMatrix_hdf5(filename = "test_file.hdf5", 
-        group = "data", dataset = "Y", copytolower = FALSE, elementsBlock = 10)
-        
-# Remove file (used as example)
+
+# Add to HDF5 file
+bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "Y", 
+                     overwriteFile = FALSE, 
+                     overwriteDataset = FALSE, 
+                     unlimited = FALSE)
+                     
+# Mirror lower triangular to upper
+bdWriteOppsiteTriangularMatrix_hdf5(
+  filename = "test_file.hdf5", 
+  group = "data",
+  dataset = "Y",
+  copytolower = FALSE,
+  elementsBlock = 10
+)
+
+# Cleanup
 if (file.exists("test_file.hdf5")) {
-    file.remove("test_file.hdf5")
+  file.remove("test_file.hdf5")
 }
 
+}
+\references{
+\itemize{
+\item Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+Johns Hopkins University Press.
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+\item \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+}
 }

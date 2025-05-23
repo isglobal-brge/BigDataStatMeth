@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdCholesky_hdf5}
 \alias{bdCholesky_hdf5}
-\title{Compute Cholesky decomposition with hdf5 data files}
+\title{Cholesky Decomposition for HDF5-Stored Matrices}
 \usage{
 bdCholesky_hdf5(
   filename,
@@ -17,87 +17,106 @@ bdCholesky_hdf5(
 )
 }
 \arguments{
-\item{filename}{string specifying the path to the HDF5 file}
+\item{filename}{Character string. Path to the HDF5 file containing the input matrix.}
 
-\item{group}{string specifying the group within the HDF5 file containing
-matrix A.}
+\item{group}{Character string. Path to the group containing the input dataset.}
 
-\item{dataset}{string, a string specifying the name of the dataset to
-perform calculus.}
+\item{dataset}{Character string. Name of the input dataset to decompose.}
 
-\item{outdataset}{string (optional), An optional parameter specifying the
-dataset name for the output matrix. If NULL, the default name will be
-constructed as the name of dataset A concatenated with \emph{x} and the
-name of dataset B.}
+\item{outdataset}{Character string. Name for the output dataset.}
 
-\item{outgroup}{string (optional), An optional parameger specifying the group
-where the output matrix will be stored. If NULL, the output will be stored
-in the default group "OUTPUT".}
+\item{outgroup}{Character string. Optional output group path. If not provided,
+results are stored in the input group.}
 
-\item{fullMatrix}{boolean, optional parameter, by default false.
-If fullMatrix = true, in the hdf5 file the complete matrix is stored.
-If false, only the lower triangular matrix is saved}
+\item{fullMatrix}{Logical. If TRUE, stores the complete matrix. If FALSE (default),
+stores only the lower triangular part to save space.}
 
-\item{overwrite}{logical (optional), An optional parameter to indicate whether
-existing results in the HDF5 file should be overwritten. Defaults to FALSE.
-If FALSE and the dataset already exists, an error will be displayed, and
-no calculations will be performed. If TRUE and a dataset with the same
-name as specified in outdataset already exists, it will be overwritten.}
+\item{overwrite}{Logical. If TRUE, allows overwriting existing results.}
 
-\item{threads}{integer (optional), an optional parameter specifying the
-number of threads to use if paral = TRUE. Ignored if paral = FALSE.}
+\item{threads}{Integer. Number of threads for parallel computation.}
 
-\item{elementsBlock}{integer (optional), an integer that specifies the
-maximum number of elements to read from the HDF5 data file in each block.
-By default, this value is set to 100,000. If the matrix size exceeds 5000x5000,
-the block size is automatically adjusted to number of rows or columns * 2}
+\item{elementsBlock}{Integer. Maximum number of elements to process in each block
+(default = 100,000). For matrices larger than 5000x5000, automatically adjusted
+to number of rows or columns * 2.}
 }
 \value{
-Original hdf5 data file with Cholesky decomposition
+No direct return value. Results are written to the HDF5 file in the
+specified location with the following structure:
+\describe{
+\item{L}{The lower triangular Cholesky factor}
+}
 }
 \description{
-Compute cholesky decomposition with datasets stored in hdf5 data files. Function returns the upper triangular matrix.
+Computes the Cholesky decomposition of a symmetric positive-definite matrix stored
+in an HDF5 file. The Cholesky decomposition factors a matrix A into the product
+A = LL' where L is a lower triangular matrix.
 }
 \details{
-The \strong{Cholesky decomposition} is a factorization of a \strong{symmetric positive-definite matrix} \eqn{A}
-into the product of a \strong{lower triangular matrix} \eqn{L} and its transpose.
-\deqn{A = L L^\top}
-where:
+The Cholesky decomposition is a specialized factorization for symmetric
+positive-definite matrices that provides several advantages:
 \itemize{
-\item \eqn{A} is a symmetric positive-definite matrix of size \eqn{n \times n},
-\item \eqn{L} is a lower triangular matrix of size \eqn{n \times n},
-\item \eqn{L^\top} is the transpose of \eqn{L}.
+\item More efficient than LU decomposition for symmetric positive-definite matrices
+\item Numerically stable
+\item Useful for solving linear systems and computing matrix inverses
+\item Important in statistical computing (e.g., for sampling from multivariate normal distributions)
 }
-\subsection{Key Properties}{
-\enumerate{
-\item \strong{Positive-Definiteness}: The matrix \eqn{A} must be positive-definite
-\item \strong{Positive Diagonal}: The diagonal elements of \eqn{L}, \eqn{l_{ii}}, are strictly positive.
+
+This implementation features:
+\itemize{
+\item Block-based computation for large matrices
+\item Optional storage formats (full or triangular)
+\item Parallel processing support
+\item Memory-efficient block algorithm
 }
+
+Mathematical Details:
+For a symmetric positive-definite matrix A, the decomposition A = LL' has the following properties:
+\itemize{
+\item L is lower triangular
+\item L has positive diagonal elements
+\item L is unique
 }
+
+The elements of L are computed using:
+\deqn{l_{ii} = \sqrt{a_{ii} - \sum_{k=1}^{i-1} l_{ik}^2}}
+\deqn{l_{ji} = \frac{1}{l_{ii}}(a_{ji} - \sum_{k=1}^{i-1} l_{ik}l_{jk})}
 }
 \examples{
-
-library(BigDataStatMeth)
+\dontrun{
 library(rhdf5)
 
+# Create a symmetric positive-definite matrix
 set.seed(1234)
-    Y <- matrix(sample.int(10, 100, replace = TRUE), ncol = 10)
-    
-# devtools::reload(pkgload::inst("BigDataStatMeth"))
-Ycp <- crossprod(Y)
-        
-# devtools::reload(pkgload::inst("BigDataStatMeth"))
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-                        object = Ycp, group = "data", dataset = "matrix",
-                        transp = FALSE,
-                        overwriteFile = TRUE, overwriteDataset = TRUE, 
-                        unlimited = FALSE)
-       
-# Get Inverse Cholesky
-bdCholesky_hdf5(filename = "test_temp.hdf5", group = "data", 
-   dataset = "matrix", outdataset = "matrixDec", outgroup = "Cholesky_Dec", 
-   fullMatrix = FALSE, overwrite = TRUE)
-       
-res <-  h5read("test_temp.hdf5", "Cholesky_Dec/matrixDec")
+X <- matrix(rnorm(100), 10, 10)
+A <- crossprod(X)  # A = X'X is symmetric positive-definite
 
+# Save to HDF5
+h5createFile("matrix.h5")
+h5write(A, "matrix.h5", "data/matrix")
+
+# Compute Cholesky decomposition
+bdCholesky_hdf5("matrix.h5", "data", "matrix",
+                outdataset = "chol",
+                outgroup = "decompositions",
+                fullMatrix = FALSE)
+
+# Verify the decomposition
+L <- h5read("matrix.h5", "decompositions/chol")
+max(abs(A - L \%*\% t(L)))  # Should be very small
+}
+
+}
+\references{
+\itemize{
+\item Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+Johns Hopkins University Press.
+\item Higham, N. J. (2009). Cholesky factorization.
+Wiley Interdisciplinary Reviews: Computational Statistics, 1(2), 251-254.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdInvCholesky_hdf5}} for computing inverse using Cholesky decomposition
+\item \code{\link{bdSolveEquation_hdf5}} for solving linear systems
+}
 }

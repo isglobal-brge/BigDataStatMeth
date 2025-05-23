@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdReduce_hdf5_dataset}
 \alias{bdReduce_hdf5_dataset}
-\title{Reduce hdf5 dataset}
+\title{Reduce Multiple HDF5 Datasets}
 \usage{
 bdReduce_hdf5_dataset(
   filename,
@@ -15,23 +15,99 @@ bdReduce_hdf5_dataset(
 )
 }
 \arguments{
-\item{filename, }{character array with the name of the file where datasets are stored}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group, }{character array with the input group name where the data sets are stored}
+\item{group}{Character string. Path to the group containing datasets.}
 
-\item{reducefunction, }{single character with function to apply, can be '+' or  '-'}
+\item{reducefunction}{Character. Operation to apply, either "+" or "-".}
 
-\item{outgroup, }{optional character array with the group name where the dataset will be stored after reduction. If \code{outgroup} is NULL, the resulting dataset is stored in the same input group.}
+\item{outgroup}{Character string (optional). Output group path. If NULL,
+uses input group.}
 
-\item{outdataset, }{optional character with the dataset name for the resulting dataset after reduction if \code{outdataset} is NULL, then the input group name is used as outdataset name}
+\item{outdataset}{Character string (optional). Output dataset name. If NULL,
+uses input group name.}
 
-\item{overwrite, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
+\item{overwrite}{Logical (optional). Whether to overwrite existing dataset.
+Default is FALSE.}
 
-\item{remove, }{boolean if true, removes original matrices, by default bremove = false.}
+\item{remove}{Logical (optional). Whether to remove source datasets after
+reduction. Default is FALSE.}
 }
 \value{
-Full matrix with results from reduction
+No return value, called for side effects (dataset reduction).
 }
 \description{
-Reduce hdf5 datasets inside a group by rows or columns and store complete matrix inside the hdf5 data file.
+Reduces multiple datasets within an HDF5 group using arithmetic operations
+(addition or subtraction).
+}
+\details{
+This function provides efficient dataset reduction capabilities with:
+\itemize{
+\item Operation options:
+\itemize{
+\item Addition of datasets
+\item Subtraction of datasets
+}
+\item Output options:
+\itemize{
+\item Custom output location
+\item Configurable dataset name
+\item Overwrite protection
+}
+\item Implementation features:
+\itemize{
+\item Memory-efficient processing
+\item Safe file operations
+\item Optional source cleanup
+\item Comprehensive error handling
+}
+}
+
+The function processes datasets efficiently while maintaining data integrity.
+}
+\examples{
+\dontrun{
+library(BigDataStatMeth)
+
+# Create test matrices
+X1 <- matrix(1:100, 10, 10)
+X2 <- matrix(101:200, 10, 10)
+X3 <- matrix(201:300, 10, 10)
+
+# Save to HDF5
+fn <- "test.hdf5"
+bdCreate_hdf5_matrix(fn, X1, "data", "matrix1",
+                     overwriteFile = TRUE)
+bdCreate_hdf5_matrix(fn, X2, "data", "matrix2",
+                     overwriteFile = FALSE)
+bdCreate_hdf5_matrix(fn, X3, "data", "matrix3",
+                     overwriteFile = FALSE)
+
+# Reduce datasets by addition
+bdReduce_hdf5_dataset(
+  filename = fn,
+  group = "data",
+  reducefunction = "+",
+  outgroup = "results",
+  outdataset = "sum_matrix",
+  overwrite = TRUE
+)
+
+# Cleanup
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+\item \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdSplit_matrix_hdf5}
 \alias{bdSplit_matrix_hdf5}
-\title{Split hdf5 dataset}
+\title{Split HDF5 Dataset into Submatrices}
 \usage{
 bdSplit_matrix_hdf5(
   filename,
@@ -17,36 +17,113 @@ bdSplit_matrix_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file where
-dataset to split is stored}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group, }{character array indicating the input group where the data set
-to be splitted is.}
+\item{group}{Character string. Path to the group containing input dataset.}
 
-\item{dataset, }{character array indicating the input dataset to be splitted}
+\item{dataset}{Character string. Name of the dataset to split.}
 
-\item{outgroup, }{optional character array indicating group where the data set
-will be saved after split process if \code{outgroup} is NULL, output dataset is
-stored in the same input group.}
+\item{outgroup}{Character string (optional). Output group path. If NULL,
+uses input group.}
 
-\item{outdataset, }{optional character array indicating basename for the
-splitted dataset if \code{outdataset} is NULL, input dataset name is used adding .x,
-where x is the splitted block number.}
+\item{outdataset}{Character string (optional). Base name for output datasets.
+If NULL, uses input dataset name with block number suffix.}
 
-\item{nblocks, }{integer number of blocks in which we want to split the data}
+\item{nblocks}{Integer (optional). Number of blocks to split into.
+Mutually exclusive with blocksize.}
 
-\item{blocksize, }{integer, number of elements in each block}
+\item{blocksize}{Integer (optional). Size of each block.
+Mutually exclusive with nblocks.}
 
-\item{bycols, }{boolean by default = true, true indicates that the imputation
-will be done by columns, otherwise, the imputation will be done by rows}
+\item{bycols}{Logical (optional). Whether to split by columns (TRUE) or
+rows (FALSE). Default is TRUE.}
 
-\item{overwrite, }{boolean if true, previous results in same location inside
-hdf5 will be overwritten.}
+\item{overwrite}{Logical (optional). Whether to overwrite existing datasets.
+Default is FALSE.}
 }
 \value{
-Splitted datasets inside an hdf5 data file
+No return value, called for side effects (dataset splitting).
+Creates multiple datasets in the HDF5 file named as
+"\code{outdataset}.1", "\code{outdataset}.2", etc.
 }
 \description{
-Split hdf5 dataset in small datasets by rows or columns and store splitted
-submatrices inside an hdf5 file.
+Splits a large dataset in an HDF5 file into smaller submatrices, with
+support for both row-wise and column-wise splitting.
+}
+\details{
+This function provides efficient dataset splitting capabilities with:
+\itemize{
+\item Splitting options:
+\itemize{
+\item Row-wise or column-wise splitting
+\item Fixed block size splitting
+\item Fixed block count splitting
+}
+\item Implementation features:
+\itemize{
+\item Memory-efficient processing
+\item Block-based operations
+\item Safe file operations
+\item Progress reporting
+}
+}
+
+The function supports two splitting strategies:
+\enumerate{
+\item By number of blocks: Splits the dataset into a specified number of
+roughly equal-sized blocks
+\item By block size: Splits the dataset into blocks of a specified size
+}
+}
+\examples{
+\dontrun{
+library(BigDataStatMeth)
+
+# Create test data
+data <- matrix(rnorm(1000), 100, 10)
+
+# Save to HDF5
+fn <- "test.hdf5"
+bdCreate_hdf5_matrix(fn, data, "data", "matrix1",
+                     overwriteFile = TRUE)
+
+# Split by number of blocks
+bdSplit_matrix_hdf5(
+  filename = fn,
+  group = "data",
+  dataset = "matrix1",
+  outgroup = "data_split",
+  outdataset = "block",
+  nblocks = 4,
+  bycols = TRUE
+)
+
+# Split by block size
+bdSplit_matrix_hdf5(
+  filename = fn,
+  group = "data",
+  dataset = "matrix1",
+  outgroup = "data_split2",
+  outdataset = "block",
+  blocksize = 25,
+  bycols = TRUE
+)
+
+# Cleanup
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+\item \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+}
 }

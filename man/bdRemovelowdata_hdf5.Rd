@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdRemovelowdata_hdf5}
 \alias{bdRemovelowdata_hdf5}
-\title{Remove SNPs in hdf5 omic dataset with low data}
+\title{Remove Low-Representation SNPs from HDF5 Dataset}
 \usage{
 bdRemovelowdata_hdf5(
   filename,
@@ -16,34 +16,95 @@ bdRemovelowdata_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file to create}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group, }{character array indicating the input group where the data set to be imputed is.}
+\item{group}{Character string. Path to the group containing input dataset.}
 
-\item{dataset, }{character array indicating the input dataset to be imputed}
+\item{dataset}{Character string. Name of the dataset to filter.}
 
-\item{outgroup, }{character array indicating group where the data set will be
-saved after remove data with if \code{outgroup} is NULL, output dataset is stored
-in the same input group.}
+\item{outgroup}{Character string. Output group path for filtered data.}
 
-\item{outdataset, }{character array indicating dataset to store the resulting
-data after imputation if \code{outdataset} is NULL, input dataset will be overwritten.}
+\item{outdataset}{Character string. Output dataset name for filtered data.}
 
-\item{pcent, }{by default pcent = 0.5. Numeric indicating the percentage to be
-considered to remove SNPs, SNPS with percentage equal or higest will be removed from data}
+\item{pcent}{Numeric (optional). Threshold percentage for removal (0-1).
+Default is 0.5. SNPs with representation below this threshold are removed.}
 
-\item{bycols, }{boolean by default = true, if true, indicates that SNPs are in
-cols, if SNPincols = false indicates that SNPs are in rows.}
+\item{bycols}{Logical (optional). Whether to filter by columns (TRUE) or
+rows (FALSE). Default is TRUE.}
 
-\item{overwrite, }{optional boolean if true, previous results in same location
-inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
+\item{overwrite}{Logical (optional). Whether to overwrite existing dataset.
+Default is FALSE.}
 }
 \value{
-Original hdf5 data file without cols/rows with low represented snps
+No return value, called for side effects (data filtering).
+Prints a warning message indicating the number of rows/columns removed.
 }
 \description{
-Remove SNPs in hdf5 omic dataset with low data
+Removes SNPs (Single Nucleotide Polymorphisms) with low representation from
+genomic data stored in HDF5 format.
+}
+\details{
+This function provides efficient filtering capabilities for genomic data with
+support for:
+\itemize{
+\item Filtering options:
+\itemize{
+\item Row-wise or column-wise filtering
+\item Configurable threshold percentage
+\item Flexible output location
+}
+\item Implementation features:
+\itemize{
+\item Memory-efficient processing
+\item Safe file operations
+\item Comprehensive error handling
+\item Progress reporting
+}
+}
+
+The function supports both in-place modification and creation of new datasets.
 }
 \examples{
-print('see vignette')
+\dontrun{
+library(BigDataStatMeth)
+
+# Create test SNP data with missing values
+snps <- matrix(sample(c(0, 1, 2, NA), 100, replace = TRUE,
+                     prob = c(0.3, 0.3, 0.3, 0.1)), 10, 10)
+
+# Save to HDF5
+fn <- "snp_data.hdf5"
+bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
+                     overwriteFile = TRUE)
+
+# Remove SNPs with low representation
+bdRemovelowdata_hdf5(
+  filename = fn,
+  group = "genotype",
+  dataset = "raw_snps",
+  outgroup = "genotype_filtered",
+  outdataset = "filtered_snps",
+  pcent = 0.3,
+  bycols = TRUE
+)
+
+# Cleanup
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+\item Marchini, J., & Howie, B. (2010). Genotype imputation for genome-wide
+association studies. Nature Reviews Genetics, 11(7), 499-511.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdImputeSNPs_hdf5}} for imputing missing SNP values
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+}
 }

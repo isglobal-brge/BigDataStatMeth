@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdCrossprod}
 \alias{bdCrossprod}
-\title{Crossproduct}
+\title{Efficient Matrix Cross-Product Computation}
 \usage{
 bdCrossprod(
   A,
@@ -14,47 +14,85 @@ bdCrossprod(
 )
 }
 \arguments{
-\item{A}{numerical matrix}
+\item{A}{Numeric matrix. First input matrix.}
 
-\item{B}{optional, numerical matrix}
+\item{B}{Optional numeric matrix. If provided, computes A'B instead of A'A.}
 
-\item{transposed}{optional parameter. Boolean if true we use the
-transposed dataframe to perform calculus. By default transp_dataset = false.}
+\item{transposed}{Logical. If TRUE, uses transposed input matrix.}
 
-\item{block_size}{(optional, defalut = NULL) block size to make matrix
-multiplication, if \code{block_size = 1} no block size is applied
-(size 1 = 1 element per block) if \code{block_size = NULL} (default) optimum
-block size is computed}
+\item{block_size}{Integer. Block size for computation. If NULL, uses optimal
+block size based on matrix dimensions and cache size.}
 
-\item{paral, }{(optional, default = TRUE) if paral = TRUE performs parallel
-computation else if paral = FALSE performs serial computation}
+\item{paral}{Logical. If TRUE, enables parallel computation.}
 
-\item{threads}{(optional) only if bparal = true, number of concurrent threads
-in parallelization if threads is null then threads =  maximum number of
-threads available}
+\item{threads}{Integer. Number of threads for parallel computation. If NULL,
+uses all available threads.}
 }
 \value{
-numerical matrix with crossproduct
+Numeric matrix containing the cross-product result.
 }
 \description{
-This function performs a crossproduct of a numerical matrix.
+Computes matrix cross-products efficiently using block-based algorithms and
+optional parallel processing. Supports both single-matrix (X'X) and two-matrix
+(X'Y) cross-products.
+}
+\details{
+This function implements efficient cross-product computation using block-based
+algorithms optimized for cache efficiency and memory usage. Key features:
+\itemize{
+\item Operation modes:
+\itemize{
+\item Single matrix: Computes X'X
+\item Two matrices: Computes X'Y
+}
+\item Performance optimizations:
+\itemize{
+\item Block-based computation for cache efficiency
+\item Parallel processing for large matrices
+\item Automatic block size selection
+\item Memory-efficient implementation
+}
+}
+
+The function automatically selects optimal computation strategies based on
+input size and available resources. For large matrices, block-based computation
+is used to improve cache utilization.
 }
 \examples{
+library(BigDataStatMeth)
 
+# Single matrix cross-product
 n <- 100
 p <- 60
-
 X <- matrix(rnorm(n*p), nrow=n, ncol=p)
 res <- bdCrossprod(X)
 
+# Verify against base R
 all.equal(crossprod(X), res)
 
+# Two-matrix cross-product
 n <- 100
 p <- 100
-
 Y <- matrix(rnorm(n*p), nrow=n)
+res <- bdCrossprod(X, Y)
 
-# With two matrices
-res <- bdCrossprod(X,Y)
+# Parallel computation
+res_par <- bdCrossprod(X, Y,
+                       paral = TRUE,
+                       threads = 4)
 
+}
+\references{
+\itemize{
+\item Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+Johns Hopkins University Press.
+\item Kumar, V. et al. (1994). Introduction to Parallel Computing: Design and
+Analysis of Algorithms. Benjamin/Cummings Publishing Company.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdtCrossprod}} for transposed cross-product
+\item \code{\link{bdblockMult}} for block-based matrix multiplication
+}
 }

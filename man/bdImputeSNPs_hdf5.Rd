@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdImputeSNPs_hdf5}
 \alias{bdImputeSNPs_hdf5}
-\title{Impute SNPs in hdf5 omic dataset}
+\title{Impute Missing SNP Values in HDF5 Dataset}
 \usage{
 bdImputeSNPs_hdf5(
   filename,
@@ -17,33 +17,100 @@ bdImputeSNPs_hdf5(
 )
 }
 \arguments{
-\item{filename}{string specifying the path to the HDF5 file}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group, }{character array indicating the input group where the data set to be imputed is.}
+\item{group}{Character string. Path to the group containing input dataset.}
 
-\item{dataset, }{character array indicating the input dataset to be imputed}
+\item{dataset}{Character string. Name of the dataset to impute.}
 
-\item{outgroup, }{optional character array indicating group where the data set will be saved after imputation if \code{outgroup} is NULL, output dataset is stored in the same input group.}
+\item{outgroup}{Character string (optional). Output group path. If NULL,
+uses input group.}
 
-\item{outdataset, }{optional character array indicating dataset to store the resulting data after imputation if \code{outdataset} is NULL, input dataset will be overwritten.}
+\item{outdataset}{Character string (optional). Output dataset name. If NULL,
+overwrites input dataset.}
 
-\item{bycols, }{boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows}
+\item{bycols}{Logical (optional). Whether to impute by columns (TRUE) or
+rows (FALSE). Default is TRUE.}
 
-\item{paral}{boolean (optional), an optional parameter to enable parallel
-computation. Defaults to FALSE. Set \code{paral = true} to force parallel execution}
+\item{paral}{Logical (optional). Whether to use parallel processing.}
 
-\item{threads}{integer (optional), an optional parameter specifying the
-number of threads to use if paral = TRUE. Ignored if paral = FALSE.}
+\item{threads}{Integer (optional). Number of threads for parallel processing.}
 
-\item{overwrite, }{optional boolean if true, previous results in same location
-inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
+\item{overwrite}{Logical (optional). Whether to overwrite existing dataset.}
 }
 \value{
-Original hdf5 data file with imputed data
+No return value, called for side effects (data imputation).
 }
 \description{
-Impute SNPs in hdf5 omic dataset
+Performs imputation of missing values in SNP (Single Nucleotide Polymorphism)
+data stored in HDF5 format.
+}
+\details{
+This function provides efficient imputation capabilities for genomic data with
+support for:
+\itemize{
+\item Imputation options:
+\itemize{
+\item Row-wise or column-wise imputation
+\item Parallel processing
+\item Configurable thread count
+}
+\item Output options:
+\itemize{
+\item Custom output location
+\item In-place modification
+\item Overwrite protection
+}
+\item Implementation features:
+\itemize{
+\item Memory-efficient processing
+\item Safe file operations
+\item Error handling
+}
+}
+
+The function supports both in-place modification and creation of new datasets.
 }
 \examples{
-print('see vignette')
+\dontrun{
+library(BigDataStatMeth)
+
+# Create test data with missing values
+data <- matrix(sample(c(0, 1, 2, NA), 100, replace = TRUE), 10, 10)
+
+# Save to HDF5
+fn <- "snp_data.hdf5"
+bdCreate_hdf5_matrix(fn, data, "genotype", "snps",
+                     overwriteFile = TRUE)
+
+# Impute missing values
+bdImputeSNPs_hdf5(
+  filename = fn,
+  group = "genotype",
+  dataset = "snps",
+  outgroup = "genotype_imputed",
+  outdataset = "snps_complete",
+  bycols = TRUE,
+  paral = TRUE
+)
+
+# Cleanup
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+\item Li, Y., et al. (2009). Genotype Imputation. Annual Review of Genomics
+and Human Genetics, 10, 387-406.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+\item \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+}
 }

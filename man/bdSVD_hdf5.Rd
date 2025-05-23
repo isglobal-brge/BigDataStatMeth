@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdSVD_hdf5}
 \alias{bdSVD_hdf5}
-\title{Block SVD decomposition with HDF5 files}
+\title{Singular Value Decomposition for HDF5-Stored Matrices}
 \usage{
 bdSVD_hdf5(
   filename,
@@ -19,70 +19,98 @@ bdSVD_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{Character string. Path to the HDF5 file containing the input matrix.}
 
-\item{group}{string specifying the group within the HDF5 file containing
-matrix dataset.}
+\item{group}{Character string. Path to the group containing the input dataset.}
 
-\item{dataset}{string, a string specifying the name of the dataset to
-perform calculus.}
+\item{dataset}{Character string. Name of the input dataset to decompose.}
 
-\item{k}{numerical, number of local SVDs to concatenate at each level.
-Defaults is set to 2.
-This parameter helps optimize the performance and memory usage during PCA
-calculations.}
+\item{k}{Integer. Number of local SVDs to concatenate at each level (default = 2).
+Controls the trade-off between memory usage and computation speed.}
 
-\item{q}{numerical, number of levels to compute SVD for PCA.
-This parameter helps optimize the performance and memory usage during PCA
-calculations.}
+\item{q}{Integer. Number of levels for SVD computation (default = 1).
+Higher values can improve accuracy but increase computation time.}
 
-\item{bcenter}{logical (optional). If TRUE (default), the data is centered
-by subtracting the column means (ignoring NAs) of the \code{dataset} from their
-corresponding columns. If FALSE, no centering is performed.}
+\item{bcenter}{Logical. If TRUE (default), centers the data by subtracting column means.}
 
-\item{bscale}{(optional). If TRUE (default), the data is scaled by dividing
-the (centered) columns of \code{x} by their standard deviations if \code{bcenter}
-is TRUE, or by the root mean square otherwise. If FALSE, no scaling is
-performed.}
+\item{bscale}{Logical. If TRUE (default), scales the centered columns by their
+standard deviations or root mean square.}
 
-\item{rankthreshold}{\code{double}. Threshold used to determine the range of
-the matrix. The matrix rank is defined as the number of singular values that
-differ from the threshold. By default, \code{threshold = 0} is used to compute
-the matrix rank, but it can be adjusted to a value close to zero for
-approximations.}
+\item{rankthreshold}{Numeric. Threshold for determining matrix rank (default = 0).
+Must be between 0 and 0.1. Used to approximate rank for nearly singular matrices.}
 
-\item{overwrite}{logical value, If TRUE, forces the recalculation of results
-even if they already exist.}
+\item{overwrite}{Logical. If TRUE, allows overwriting existing results.}
 
-\item{method}{optional, defalut is "auto" possible values are: "auto",
-"blocks", "full":
-* \code{"auto"}:
-The option method = "auto" chooses the "full" or
-"blocks" method depending on the size of the matrix to be decomposed
-* \code{"blocks"}:
-The SVD decomposition can be carried out by blocks, recommended option
-for large matrices that do not fit in memory
-* \code{"full"}:
-The SVD decomposition is performed directly without partitioning the matrix}
+\item{method}{Character string. Computation method:
+\itemize{
+\item "auto": Automatically selects between "full" and "blocks" based on matrix size
+\item "blocks": Uses block-based computation (recommended for large matrices)
+\item "full": Performs direct computation without partitioning
+}}
 
-\item{threads}{integer (optional), an optional parameter specifying the
-number of threads to use.}
+\item{threads}{Integer. Number of threads for parallel computation.}
 }
 \value{
-three dataset inside HDF5 data files with the singular values and
-left and right singular vectors of the dataset:
-\itemize{
-\item \code{"u"}:
-eigenvectors of AA^t, mxn and column orthogonal matrix
-\item \verb{"v}:
-eigenvectors of A^tA, nxn orthogonal matrix
-\item \code{"d"}:
-singular values, nxn diagonal matrix (non-negative real values)
+No direct return value. Results are written to the HDF5 file as:
+\describe{
+\item{u}{Left singular vectors (U matrix)}
+\item{d}{Singular values (diagonal of D matrix)}
+\item{v}{Right singular vectors (V matrix)}
 }
 }
 \description{
-This function computes the singular values and left singular vectors of a
-real nxp matrix using Block SVD decomposition with an incremental algorithm.
-The input matrix is read from an HDF5 file, and the results are saved in the
-same file.
+Computes the Singular Value Decomposition (SVD) of a large matrix stored in an HDF5 file.
+The SVD decomposes a matrix A into a product A = UDV' where U and V are orthogonal
+matrices and D is a diagonal matrix containing the singular values.
+}
+\details{
+This function implements a block-based SVD algorithm suitable for large matrices
+that may not fit in memory. Key features include:
+\itemize{
+\item Automatic method selection based on matrix size
+\item Block-based computation for large matrices
+\item Data centering and scaling options
+\item Parallel processing support
+\item Rank approximation through threshold
+\item Memory-efficient incremental algorithm
+}
+
+The implementation uses an incremental algorithm with two key parameters:
+\itemize{
+\item k: number of local SVDs to concatenate at each level
+\item q: number of levels in the computation
+}
+}
+\examples{
+\dontrun{
+# Create a sample large matrix in HDF5
+library(rhdf5)
+A <- matrix(rnorm(10000), 1000, 10)
+h5createFile("large_matrix.h5")
+h5write(A, "large_matrix.h5", "data/matrix")
+
+# Compute SVD with default parameters
+bdSVD_hdf5("large_matrix.h5", "data", "matrix")
+
+# Compute SVD with custom parameters
+bdSVD_hdf5("large_matrix.h5", "data", "matrix",
+           k = 4, q = 2,
+           bcenter = TRUE, bscale = TRUE,
+           method = "blocks",
+           threads = 4)
+}
+
+}
+\references{
+\itemize{
+\item Halko, N., Martinsson, P. G., & Tropp, J. A. (2011). Finding structure with randomness:
+Probabilistic algorithms for constructing approximate matrix decompositions.
+SIAM Review, 53(2), 217-288.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdPCA_hdf5}} for Principal Component Analysis
+\item \code{\link{bdQR_hdf5}} for QR decomposition
+}
 }

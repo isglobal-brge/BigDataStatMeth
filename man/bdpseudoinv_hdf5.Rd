@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdpseudoinv_hdf5}
 \alias{bdpseudoinv_hdf5}
-\title{Pseudo-Inverse}
+\title{Compute Matrix Pseudoinverse (HDF5-Stored)}
 \usage{
 bdpseudoinv_hdf5(
   filename,
@@ -15,25 +15,94 @@ bdpseudoinv_hdf5(
 )
 }
 \arguments{
-\item{filename, }{character array with the name of an existin hdf5 data file containing the dataset}
+\item{filename}{String. Path to the HDF5 file.}
 
-\item{group, }{character array indicating the input group where the dataset is stored}
+\item{group}{String. Group containing the input matrix.}
 
-\item{dataset, }{character array indicating the input dataset that contains an m x n singular matrix}
+\item{dataset}{String. Dataset name for the input matrix.}
 
-\item{outgroup}{optional, character array with output group name where we want to
-store results if not provided then results are stored in the same group as original dataset}
+\item{outgroup}{Optional string. Output group name (defaults to "PseudoInverse").}
 
-\item{outdataset}{character array with output dataset name where we want to store results}
+\item{outdataset}{Optional string. Output dataset name (defaults to input dataset name).}
 
-\item{overwrite, }{optional boolean if true, previous results in same location inside
-hdf5 will be overwritten, by default overwrite = false, data was not overwritten.}
+\item{overwrite}{Logical. Whether to overwrite existing results.}
 
-\item{threads}{optional parameter. Integer with numbers of threads to be used}
+\item{threads}{Optional integer. Number of threads for parallel computation.}
 }
 \value{
-Pseudo-inverse matrix of A
+No direct return value. Results are written to the HDF5 file.
 }
 \description{
-Compute the pseudo-inverse of a singular matrix in hdf5 data files
+Computes the Moore-Penrose pseudoinverse of a matrix stored in HDF5 format.
+The implementation is designed for large matrices, using block-based processing
+and efficient I/O operations.
+}
+\details{
+This function provides an HDF5-based implementation for computing pseudoinverses
+of large matrices. Key features:
+\itemize{
+\item HDF5 Integration:
+\itemize{
+\item Efficient reading of input matrix
+\item Block-based processing for large matrices
+\item Memory-efficient computation
+\item Direct output to HDF5 format
+}
+\item Implementation Features:
+\itemize{
+\item SVD-based computation
+\item Parallel processing support
+\item Automatic memory management
+\item Flexible output options
+}
+}
+
+The function handles:
+\itemize{
+\item Data validation
+\item Memory management
+\item Error handling
+\item HDF5 file operations
+}
+}
+\examples{
+library(BigDataStatMeth)
+
+# Create a singular matrix
+X <- matrix(c(1,2,3,2,4,6), 2, 3)
+fn <- "test.hdf5"
+
+# Save to HDF5
+bdCreate_hdf5_matrix(filename = fn,
+                     object = X,
+                     group = "data",
+                     dataset = "X",
+                     overwriteFile = TRUE)
+
+# Compute pseudoinverse
+bdpseudoinv_hdf5(filename = fn,
+                 group = "data",
+                 dataset = "X",
+                 outgroup = "results",
+                 outdataset = "X_pinv",
+                 overwrite = TRUE)
+
+# Cleanup
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+
+}
+\references{
+\itemize{
+\item Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+Johns Hopkins University Press.
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdpseudoinv}} for in-memory computation
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+}
 }

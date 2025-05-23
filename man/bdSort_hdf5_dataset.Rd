@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdSort_hdf5_dataset}
 \alias{bdSort_hdf5_dataset}
-\title{Sort existing dataset}
+\title{Sort HDF5 Dataset Using Predefined Order}
 \usage{
 bdSort_hdf5_dataset(
   filename,
@@ -16,32 +16,81 @@ bdSort_hdf5_dataset(
 )
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file to be sorted}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group, }{character array indicating the input group where the data set
-to be sorted is stored.}
+\item{group}{Character string. Path to the group containing input dataset.}
 
-\item{dataset, }{character array indicating the input dataset to be sorted}
+\item{dataset}{Character string. Name of the dataset to sort.}
 
-\item{outdataset, }{character array indicating the name for the new sorted
-dataset. This dataset}
+\item{outdataset}{Character string. Name for the sorted dataset.}
 
-\item{blockedSortlist, }{a list with blocks with sorted positions, see example
-$\code{1}
+\item{blockedSortlist}{List of data frames. Each data frame specifies the
+sorting order for a block of elements. See Details for structure.}
+
+\item{func}{Character string. Function to apply:
+\itemize{
+\item "sortRows" for row-wise sorting
+\item "sortCols" for column-wise sorting
+}}
+
+\item{outgroup}{Character string (optional). Output group path. If NULL,
+uses input group.}
+
+\item{overwrite}{Logical (optional). Whether to overwrite existing dataset.
+Default is FALSE.}
+}
+\value{
+No return value, called for side effects (dataset sorting).
+}
+\description{
+Sorts a dataset in an HDF5 file based on a predefined ordering specified
+through a list of sorting blocks.
+}
+\details{
+This function provides efficient dataset sorting capabilities with:
+\itemize{
+\item Sorting options:
+\itemize{
+\item Row-wise sorting
+\item Column-wise sorting
+\item Block-based processing
+}
+\item Implementation features:
+\itemize{
+\item Memory-efficient processing
+\item Block-based operations
+\item Safe file operations
+\item Progress reporting
+}
+}
+
+The sorting order is specified through a list of data frames, where each
+data frame represents a block of elements to be sorted. Each data frame
+must contain:
+\itemize{
+\item Row names (current identifiers)
+\item chr (new identifiers)
+\item order (current positions)
+\item newOrder (target positions)
+}
+
+Example sorting blocks structure:
+
+Block 1 (maintaining order):
 chr order newOrder Diagonal
 TCGA-OR-A5J1 TCGA-OR-A5J1     1        1        1
 TCGA-OR-A5J2 TCGA-OR-A5J2     2        2        1
 TCGA-OR-A5J3 TCGA-OR-A5J3     3        3        1
 TCGA-OR-A5J4 TCGA-OR-A5J4     4        4        1
 
-$\code{2}
+Block 2 (reordering with new identifiers):
 chr order newOrder
 TCGA-OR-A5J5 TCGA-OR-A5JA    10        5        1
 TCGA-OR-A5J6 TCGA-OR-A5JB    11        6        1
 TCGA-OR-A5J7 TCGA-OR-A5JC    12        7        0
 TCGA-OR-A5J8 TCGA-OR-A5JD    13        8        1
 
-$\code{3}
+Block 3 (reordering with identifier swaps):
 chr order newOrder
 TCGA-OR-A5J9 TCGA-OR-A5J5     5        9        1
 TCGA-OR-A5JA TCGA-OR-A5J6     6       10        1
@@ -49,29 +98,67 @@ TCGA-OR-A5JB TCGA-OR-A5J7     7       11        1
 TCGA-OR-A5JC TCGA-OR-A5J8     8       12        1
 TCGA-OR-A5JD TCGA-OR-A5J9     9       13        0
 
-where rowname is the current rowname, chr is the new rowname, order is the
-current position and newOrder is the new position}
-
-\item{func, }{character array function to be applyed
-\describe{
-\item{sortRows}{sort datasets rows}
-\item{sortCols}{sort datasets columns}
-}}
-
-\item{outgroup, }{optional, character array indicating group where the data
-set will be saved after imputation if \code{outgroup} is NULL, output dataset is
-stored in the same input group.}
-
-\item{overwrite, }{boolean if true, previous results in same location inside hdf5
-will be overwritten.}
+In this example:
+\itemize{
+\item Block 1 maintains the original order
+\item Block 2 assigns new identifiers (A5JA-D) to elements
+\item Block 3 swaps identifiers between elements
+\item The Diagonal column indicates whether the element is on the diagonal (1) or not (0)
 }
-\value{
-Original hdf5 data file with sorted dataset
-}
-\description{
-Sort an existing dataset taking in to account a list with sorted positions
 }
 \examples{
+\dontrun{
+library(BigDataStatMeth)
 
-print("See vignette")
+# Create test data
+data <- matrix(rnorm(100), 10, 10)
+rownames(data) <- paste0("TCGA-OR-A5J", 1:10)
+
+# Save to HDF5
+fn <- "test.hdf5"
+bdCreate_hdf5_matrix(fn, data, "data", "matrix1",
+                     overwriteFile = TRUE)
+
+# Create sorting blocks
+block1 <- data.frame(
+  chr = paste0("TCGA-OR-A5J", c(2,1,3,4)),
+  order = 1:4,
+  newOrder = c(2,1,3,4),
+  row.names = paste0("TCGA-OR-A5J", 1:4)
+)
+
+block2 <- data.frame(
+  chr = paste0("TCGA-OR-A5J", c(6,5,8,7)),
+  order = 5:8,
+  newOrder = c(6,5,8,7),
+  row.names = paste0("TCGA-OR-A5J", 5:8)
+)
+
+# Sort dataset
+bdSort_hdf5_dataset(
+  filename = fn,
+  group = "data",
+  dataset = "matrix1",
+  outdataset = "matrix1_sorted",
+  blockedSortlist = list(block1, block2),
+  func = "sortRows"
+)
+
+# Cleanup
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+\item \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+}
 }

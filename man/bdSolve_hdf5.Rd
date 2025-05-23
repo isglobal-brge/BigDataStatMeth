@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdSolve_hdf5}
 \alias{bdSolve_hdf5}
-\title{Solve matrix equations}
+\title{Solve Linear System AX = B (HDF5-Stored)}
 \usage{
 bdSolve_hdf5(
   filename,
@@ -16,66 +16,119 @@ bdSolve_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{String. Path to the HDF5 file.}
 
-\item{groupA}{string with the group name where matrix A is stored inside HDF5 file}
+\item{groupA}{String. Group containing matrix A.}
 
-\item{datasetA}{datasetname with matrix to be solved (A)}
+\item{datasetA}{String. Dataset name for matrix A.}
 
-\item{groupB}{string with the group name where matrix B is stored inside HDF5 file}
+\item{groupB}{String. Group containing matrix B.}
 
-\item{datasetB}{a double vector (B).}
+\item{datasetB}{String. Dataset name for matrix B.}
 
-\item{outgroup}{(optional) string with group name where we want to store the result matrix}
+\item{outgroup}{Optional string. Output group name (defaults to "Solved").}
 
-\item{outdataset}{(optional) string with dataset name where we want to store the results}
+\item{outdataset}{Optional string. Output dataset name (defaults to "A_B").}
 
-\item{overwrite}{(optional) either a logical value indicating whether the results must be overwritten or not.}
+\item{overwrite}{Logical. Whether to overwrite existing results.}
 }
 \value{
-void
+No direct return value. Results are written to the HDF5 file.
 }
 \description{
-This function solve matrix equations
-\code{A * X = B }
-where A is an N-by-N matrix and X and B are N-by-NRHS matrices.
+Solves the linear system AX = B where matrices A and B are stored in HDF5
+format. The solution X is written back to the HDF5 file.
+}
+\details{
+This function provides an HDF5-based implementation for solving large linear
+systems. Key features:
+\itemize{
+\item HDF5 Integration:
+\itemize{
+\item Efficient reading of input matrices
+\item Memory-efficient processing
+\item Direct output to HDF5 format
+}
+\item Implementation Features:
+\itemize{
+\item Automatic solver selection
+\item Support for large matrices
+\item Flexible output options
+\item Memory-efficient processing
+}
+}
+
+The function handles:
+\itemize{
+\item Data validation
+\item Memory management
+\item Error handling
+\item HDF5 file operations
+}
 }
 \examples{
-
 library(BigDataStatMeth)
 
-N = 1800; M = 1800
-fn = "test_temp.hdf5"
+# Create test matrices
+N <- 1800
+M <- 1800
+fn <- "test_temp.hdf5"
 
 set.seed(555)
-    Y <- matrix(rnorm(N*M), N, M)
-    X <- matrix(rnorm(N), N, 1)
-    Ycp <- crossprod(Y)
-    
-# On-memory execution
+Y <- matrix(rnorm(N*M), N, M)
+X <- matrix(rnorm(N), N, 1)
+Ycp <- crossprod(Y)
+
+# Compare with in-memory solution
 resm <- bdSolve(Ycp, X)
 resr <- solve(Ycp, X)
-        
-all.equal( resm, resr)
-        
-bdCreate_hdf5_matrix(filename = fn, 
-                     object = Ycp, group = "data", dataset = "A",
+all.equal(resm, resr)
+
+# Save matrices to HDF5
+bdCreate_hdf5_matrix(filename = fn,
+                     object = Ycp,
+                     group = "data",
+                     dataset = "A",
                      transp = FALSE,
-                     overwriteFile = TRUE, overwriteDataset = TRUE, 
+                     overwriteFile = TRUE,
+                     overwriteDataset = TRUE,
                      unlimited = FALSE)
-            
-bdCreate_hdf5_matrix(filename = fn, 
-                     object = X,  group = "data",  dataset = "B",
+
+bdCreate_hdf5_matrix(filename = fn,
+                     object = X,
+                     group = "data",
+                     dataset = "B",
                      transp = FALSE,
-                     overwriteFile = FALSE, overwriteDataset = TRUE, 
+                     overwriteFile = FALSE,
+                     overwriteDataset = TRUE,
                      unlimited = FALSE)
-            
-bdSolve_hdf5( filename = fn, groupA = "data", 
-    datasetA = "A", groupB = "data", datasetB = "B", 
-    outgroup = "Solved", outdataset = "A_B", overwrite = TRUE )
-    
+
+# Solve using HDF5-stored matrices
+bdSolve_hdf5(filename = fn,
+             groupA = "data",
+             datasetA = "A",
+             groupB = "data",
+             datasetB = "B",
+             outgroup = "Solved",
+             outdataset = "A_B",
+             overwrite = TRUE)
+
+# Cleanup
 if (file.exists(fn)) {
     file.remove(fn)
 }
 
+}
+\references{
+\itemize{
+\item Anderson, E. et al. (1999). LAPACK Users' Guide, 3rd Edition.
+SIAM, Philadelphia.
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdSolve}} for in-memory matrix solving
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+}
 }

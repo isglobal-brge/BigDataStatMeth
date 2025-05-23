@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdblockSubstract}
 \alias{bdblockSubstract}
-\title{Hdf5 datasets substract}
+\title{Block-Based Matrix Subtraction}
 \usage{
 bdblockSubstract(
   A,
@@ -14,35 +14,89 @@ bdblockSubstract(
 )
 }
 \arguments{
-\item{A}{Matrix or vector A}
+\item{A}{Matrix or vector. First input operand.}
 
-\item{B}{Matrix or vector B}
+\item{B}{Matrix or vector. Second input operand.}
 
-\item{block_size}{PARAM_DESCRIPTION, Default: NULL}
+\item{block_size}{Integer. Block size for computation. If NULL, uses maximum
+allowed block size.}
 
-\item{paral}{if paral = TRUE performs parallel computation else performs seria computation, Default: FALSE}
+\item{paral}{Logical. If TRUE, enables parallel computation. Default is FALSE.}
 
-\item{byBlocks}{If data matrix has more than 2.25e+08 (15000 x 15000) elements, by default the addition is done by blocks, but it can be forced not to be partitioned with parameter byblocks = FALSE, Default: TRUE}
+\item{byBlocks}{Logical. If TRUE (default), forces block-based computation for
+large matrices. Can be set to FALSE to disable blocking.}
 
-\item{threads}{only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  (maximum number of threads available / 2), Default: NULL}
+\item{threads}{Integer. Number of threads for parallel computation. If NULL,
+uses half of available threads.}
 }
 \value{
-new matrix with A + B
+Matrix or vector containing the result of A - B.
 }
 \description{
-substract two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset
+Performs efficient matrix subtraction using block-based algorithms. The function
+supports various input combinations (matrix-matrix, matrix-vector, vector-vector)
+and provides options for parallel processing and block-based computation.
+}
+\details{
+This function implements block-based matrix subtraction algorithms optimized
+for cache efficiency and memory usage. Key features:
+\itemize{
+\item Input combinations supported:
+\itemize{
+\item Matrix-matrix subtraction
+\item Matrix-vector subtraction (both left and right)
+\item Vector-vector subtraction
+}
+\item Performance optimizations:
+\itemize{
+\item Block-based computation for cache efficiency
+\item Parallel processing for large matrices
+\item Automatic method selection based on input size
+\item Memory-efficient implementation
+}
+}
+
+The function automatically selects the appropriate subtraction method based
+on input types and sizes. For large matrices (>2.25e+08 elements), block-based
+computation is used by default.
 }
 \examples{
 \dontrun{
-if(interactive()){
-    N <- 2500
-    M <- 400
-    nc <-  4
-    
-    set.seed(555)
-    mat <- matrix( rnorm( N*M, mean=0, sd=10), N, M) 
-    
-    sum_mem = bdblockSubstract(mat, mat, paral = TRUE, threads = nc)
- }
+library(BigDataStatMeth)
+
+# Matrix-matrix subtraction
+N <- 2500
+M <- 400
+nc <- 4
+
+set.seed(555)
+mat1 <- matrix(rnorm(N*M, mean=0, sd=10), N, M)
+mat2 <- matrix(rnorm(N*M, mean=0, sd=10), N, M)
+
+# Parallel block subtraction
+result <- bdblockSubstract(mat1, mat2,
+                          paral = TRUE,
+                          threads = nc)
+
+# Matrix-vector subtraction
+vec <- rnorm(M)
+result_mv <- bdblockSubstract(mat1, vec,
+                             paral = TRUE,
+                             threads = nc)
+}
+
+}
+\references{
+\itemize{
+\item Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+Johns Hopkins University Press.
+\item Kumar, V. et al. (1994). Introduction to Parallel Computing: Design and
+Analysis of Algorithms. Benjamin/Cummings Publishing Company.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdblockSum}} for block-based matrix addition
+\item \code{\link{bdblockMult}} for block-based matrix multiplication
 }
 }
