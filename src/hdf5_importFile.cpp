@@ -1,36 +1,126 @@
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Utilities/hdf5ImportFiles.hpp"
 
+/**
+ * @file hdf5_importFile.cpp
+ * @brief Implementation of text file to HDF5 conversion functionality
+ * @details This file provides functionality for importing text files into HDF5
+ * format. The implementation supports:
+ * - Flexible text file parsing
+ * - Customizable separators
+ * - Header and row name handling
+ * - Parallel processing capabilities
+ * - Memory-efficient import
+ * 
+ * Key features:
+ * - Support for large text files
+ * - Configurable import options
+ * - Error handling and validation
+ * - Parallel processing support
+ * - Memory-efficient implementation
+ */
 
-//' Converts text file to hdf5 data file
+/**
+ * @brief Imports text file to HDF5 format
+ * 
+ * @details Implements efficient text file import functionality with support for
+ * various text formats and import configurations. The function handles file
+ * operations safely and provides comprehensive error handling.
+ * 
+ * Implementation features:
+ * - Flexible text parsing options
+ * - Support for headers and row names
+ * - Parallel processing capabilities
+ * - Memory-efficient import process
+ * - Safe file operations
+ * 
+ * @param filename Path to input text file
+ * @param outputfile Path to output HDF5 file
+ * @param outGroup Target group in HDF5 file
+ * @param outDataset Target dataset name
+ * @param sep Field separator string
+ * @param header Whether to process header row
+ * @param rownames Whether to process row names
+ * @param overwrite Whether to overwrite existing dataset
+ * @param paral Whether to use parallel processing
+ * @param threads Number of threads for parallel processing
+ * @param overwriteFile Whether to overwrite existing HDF5 file
+ * 
+ * @throws std::runtime_error for runtime errors during import
+ * @throws std::exception for other errors
+ */
+
+//' Import Text File to HDF5
 //'
-//' Converts text file to hdf5 data file
+//' @description
+//' Converts a text file (e.g., CSV, TSV) to HDF5 format, providing efficient
+//' storage and access capabilities.
 //'
-//' @inheritParams bdblockmult_hdf5
-//' @param outputfile file name and path to store imported data
-//' @param outGroup group name to store the dataset
-//' @param outDataset dataset name to store the input file in hdf5
-//' @param sep (optional), by default = "\\t". The field separator string. 
-//' Values within each row of x are separated by this string.
-//' @param header (optional) either a logical value indicating whether the 
-//' column names of x are to be written along with x, or a character vector of 
-//' column names to be written. See the section on ‘CSV files’ for the meaning 
-//' of col.names = NA.
-//' @param rownames (optional) either a logical value indicating whether the 
-//' row names of x are to be written along with x, or a character vector of 
-//' row names to be written.
-//' @param overwrite (optional) either a logical value indicating whether the 
-//' output file can be overwritten or not.
-//' @param overwriteFile logical (optional), CAUTION, if TRUE, file will be 
-//' overwritten with imported dataset, by default `fileoverwrite = FALSE` to avoid
-//' file overwritting.
-//' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel 
-//' computation else performs seria computation
-//' @param threads (optional) only if bparal = true, number of concurrent 
-//' threads in parallelization if threads is null then threads =  maximum 
-//' number of threads available
+//' @details
+//' This function provides flexible text file import capabilities with support for:
+//' 
+//' * Input format options:
+//'   - Custom field separators
+//'   - Header row handling
+//'   - Row names handling
+//' 
+//' * Processing options:
+//'   - Parallel processing
+//'   - Memory-efficient import
+//'   - Configurable thread count
+//' 
+//' * File handling:
+//'   - Safe file operations
+//'   - Overwrite protection
+//'   - Comprehensive error handling
 //'
-//' @return none value returned, data are stored in a dataset inside an hdf5 data file.
+//' The function supports parallel processing for large files and provides
+//' memory-efficient import capabilities.
+//'
+//' @param filename Character string. Path to the input text file.
+//' @param outputfile Character string. Path to the output HDF5 file.
+//' @param outGroup Character string. Name of the group to create in HDF5 file.
+//' @param outDataset Character string. Name of the dataset to create.
+//' @param sep Character string (optional). Field separator, default is "\\t".
+//' @param header Logical (optional). Whether first row contains column names.
+//' @param rownames Logical (optional). Whether first column contains row names.
+//' @param overwrite Logical (optional). Whether to overwrite existing dataset.
+//' @param paral Logical (optional). Whether to use parallel processing.
+//' @param threads Integer (optional). Number of threads for parallel processing.
+//' @param overwriteFile Logical (optional). Whether to overwrite existing HDF5 file.
+//'
+//' @return No return value, called for side effects (file creation).
+//'
+//' @examples
+//' \dontrun{
+//' library(BigDataStatMeth)
+//' 
+//' # Create a test CSV file
+//' data <- matrix(rnorm(100), 10, 10)
+//' write.csv(data, "test.csv", row.names = FALSE)
+//' 
+//' # Import to HDF5
+//' bdImportTextFile_hdf5(
+//'   filename = "test.csv",
+//'   outputfile = "output.hdf5",
+//'   outGroup = "data",
+//'   outDataset = "matrix1",
+//'   sep = ",",
+//'   header = TRUE,
+//'   overwriteFile = TRUE
+//' )
+//' 
+//' # Cleanup
+//' unlink(c("test.csv", "output.hdf5"))
+//' }
+//'
+//' @references
+//' * The HDF Group. (2000-2010). HDF5 User's Guide.
+//'
+//' @seealso
+//' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices directly
+//' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+//'
 //' @export
 // [[Rcpp::export]]
 void bdImportTextFile_hdf5( std::string filename,
@@ -68,21 +158,29 @@ void bdImportTextFile_hdf5( std::string filename,
                 objFile->openFile("rw");
             } 
             
-            // Create dataset
-            datasetOut = new BigDataStatMeth::hdf5Dataset(objFile, outGroup, outDataset, boverwrite);
-            delete objFile; objFile = nullptr;
-            // datasetOut->openDataset();
-
-            Rcpp_Import_File_to_hdf5( filename, datasetOut, sep, header, rownames, paral, threads) ;
+            if( objFile->getFileptr() != nullptr ) {
+                // Create dataset
+                datasetOut = new BigDataStatMeth::hdf5Dataset(objFile, outGroup, outDataset, boverwrite);
+                // datasetOut->openDataset();
+                
+                Rcpp_Import_File_to_hdf5( filename, datasetOut, sep, header, rownames, paral, threads) ;
+                
+            } else {
+                Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5: " << "Error opening file";
+                delete objFile; objFile = nullptr;
+                return void();
+            }
 
         } else {
-            Rcpp::Rcerr << "File "<<filename<<" doesn't exists, please, review location" << std::endl;
+            Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5: " << "File "<<filename<<" doesn't exists, please, review location";
+            delete objFile; objFile = nullptr;
+            return void();
         }
 
         delete datasetOut; datasetOut = nullptr;
-        
+        delete objFile; objFile = nullptr;
+
     } catch(const std::runtime_error& re) {
-        // speciffic handling for runtime_error
         checkClose_file(datasetOut);
         if(objFile != nullptr) { delete objFile; objFile = nullptr; }
         Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Runtime error: " << re.what() << std::endl;

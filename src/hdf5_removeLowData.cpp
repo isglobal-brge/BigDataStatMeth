@@ -1,39 +1,143 @@
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Utilities/hdf5RemoveLowData.hpp"
 
+/**
+ * @file hdf5_removeLowData.cpp
+ * @brief Implementation of low data removal for HDF5-stored genomic data
+ * @details This file provides functionality for removing SNPs (Single Nucleotide
+ * Polymorphisms) with low representation in genomic data stored in HDF5 format.
+ * The implementation supports:
+ * - Row-wise and column-wise filtering
+ * - Configurable threshold for removal
+ * - Flexible output options
+ * - Memory-efficient operations
+ * 
+ * Key features:
+ * - Support for large genomic datasets
+ * - Configurable filtering direction
+ * - Threshold-based filtering
+ * - Memory-efficient implementation
+ * - Comprehensive error handling
+ */
 
-//' Remove SNPs in hdf5 omic dataset with low data
+/**
+ * @brief Removes SNPs with low representation from HDF5 dataset
+ * 
+ * @details Implements efficient removal of SNPs with low representation in
+ * genomic data stored in HDF5 format. The function supports both row-wise
+ * and column-wise filtering with configurable thresholds.
+ * 
+ * Implementation features:
+ * - Flexible filtering direction (row/column)
+ * - Configurable removal threshold
+ * - Memory-efficient operations
+ * - Safe file operations
+ * - Comprehensive error handling
+ * 
+ * @param filename Path to HDF5 file
+ * @param group Input group containing dataset
+ * @param dataset Input dataset name
+ * @param outgroup Output group for results
+ * @param outdataset Output dataset name
+ * @param pcent Threshold percentage for removal
+ * @param bycols Whether to filter by columns
+ * @param overwrite Whether to overwrite existing dataset
+ * 
+ * @throws H5::FileIException for HDF5 file operation errors
+ * @throws H5::DataSetIException for HDF5 dataset operation errors
+ * @throws H5::DataSpaceIException for HDF5 dataspace errors
+ * @throws H5::DataTypeIException for HDF5 datatype errors
+ * @throws std::exception for other errors
+ */
+
+//' Remove Low-Representation SNPs from HDF5 Dataset
 //'
-//' Remove SNPs in hdf5 omic dataset with low data
+//' @description
+//' Removes SNPs (Single Nucleotide Polymorphisms) with low representation from
+//' genomic data stored in HDF5 format.
+//'
+//' @details
+//' This function provides efficient filtering capabilities for genomic data with
+//' support for:
 //' 
-//' @param filename, character array indicating the name of the file to create
-//' @param group, character array indicating the input group where the data set to be imputed is. 
-//' @param dataset, character array indicating the input dataset to be imputed
-//' @param outgroup, character array indicating group where the data set will be 
-//' saved after remove data with if `outgroup` is NULL, output dataset is stored 
-//' in the same input group. 
-//' @param outdataset, character array indicating dataset to store the resulting 
-//' data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
-//' @param pcent, by default pcent = 0.5. Numeric indicating the percentage to be 
-//' considered to remove SNPs, SNPS with percentage equal or higest will be removed from data
-//' @param bycols, boolean by default = true, if true, indicates that SNPs are in 
-//' cols, if SNPincols = false indicates that SNPs are in rows.
-//' @param overwrite, optional boolean if true, previous results in same location 
-//' inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
-//' @return Original hdf5 data file without cols/rows with low represented snps
+//' * Filtering options:
+//'   - Row-wise or column-wise filtering
+//'   - Configurable threshold percentage
+//'   - Flexible output location
+//' 
+//' * Implementation features:
+//'   - Memory-efficient processing
+//'   - Safe file operations
+//'   - Comprehensive error handling
+//'   - Progress reporting
+//'
+//' The function supports both in-place modification and creation of new datasets.
+//'
+//' @param filename Character string. Path to the HDF5 file.
+//' @param group Character string. Path to the group containing input dataset.
+//' @param dataset Character string. Name of the dataset to filter.
+//' @param outgroup Character string. Output group path for filtered data.
+//' @param outdataset Character string. Output dataset name for filtered data.
+//' @param pcent Numeric (optional). Threshold percentage for removal (0-1).
+//'   Default is 0.5. SNPs with representation below this threshold are removed.
+//' @param bycols Logical (optional). Whether to filter by columns (TRUE) or
+//'   rows (FALSE). Default is TRUE.
+//' @param overwrite Logical (optional). Whether to overwrite existing dataset.
+//'   Default is FALSE.
+//'
+//' @return No return value, called for side effects (data filtering).
+//'   Prints a warning message indicating the number of rows/columns removed.
+//'
 //' @examples
-//' print('see vignette')
+//' \dontrun{
+//' library(BigDataStatMeth)
+//' 
+//' # Create test SNP data with missing values
+//' snps <- matrix(sample(c(0, 1, 2, NA), 100, replace = TRUE,
+//'                      prob = c(0.3, 0.3, 0.3, 0.1)), 10, 10)
+//' 
+//' # Save to HDF5
+//' fn <- "snp_data.hdf5"
+//' bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
+//'                      overwriteFile = TRUE)
+//' 
+//' # Remove SNPs with low representation
+//' bdRemovelowdata_hdf5(
+//'   filename = fn,
+//'   group = "genotype",
+//'   dataset = "raw_snps",
+//'   outgroup = "genotype_filtered",
+//'   outdataset = "filtered_snps",
+//'   pcent = 0.3,
+//'   bycols = TRUE
+//' )
+//' 
+//' # Cleanup
+//' if (file.exists(fn)) {
+//'   file.remove(fn)
+//' }
+//' }
+//'
+//' @references
+//' * The HDF Group. (2000-2010). HDF5 User's Guide.
+//' * Marchini, J., & Howie, B. (2010). Genotype imputation for genome-wide
+//'   association studies. Nature Reviews Genetics, 11(7), 499-511.
+//'
+//' @seealso
+//' * \code{\link{bdImputeSNPs_hdf5}} for imputing missing SNP values
+//' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+//'
 //' @export
 // [[Rcpp::export]]
 void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, 
                                Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
     
+    BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+    BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
+
     try
     {
-        
-        BigDataStatMeth::hdf5Dataset* dsIn;
-        BigDataStatMeth::hdf5DatasetInternal* dsOut;
         
         bool bcols, bforce;
         double dpcent;
@@ -60,11 +164,17 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
             dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, outdataset, bforce);
             
         } else {
-            throw std::range_error("Input and output dataset must be different");  
+            Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5: " << "Input and output dataset must be different";
             return void();
         }
         
-        iremoved = Rcpp_Remove_Low_Data_hdf5( dsIn, dsOut, bcols, dpcent);
+        if( dsIn->getDatasetptr() != nullptr) {
+            iremoved = Rcpp_Remove_Low_Data_hdf5( dsIn, dsOut, bcols, dpcent);
+        } else {
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5: " << "File does not exist";
+            return void();
+        }
         
         Rcpp::Function warning("warning");
         if (bycols )
@@ -72,23 +182,32 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
         else
             warning( std::to_string(iremoved) + " Rows have been removed");
     
-        delete dsIn;
-        delete dsOut;
+        delete dsIn; dsIn = nullptr;
+        delete dsOut; dsOut = nullptr;
         
-    } catch( H5::FileIException& error ){ // catch failure caused by the H5File operations
-        ::Rf_error( "c++ exception bdRemovelowdata_hdf5 (File IException)" );
+    } catch( H5::FileIException& error ){  
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (File IException)";
         return void();
-    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        ::Rf_error( "c++ exception bdRemovelowdata_hdf5 (DataSet IException)" );
+    } catch( H5::DataSetIException& error ) { 
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (DataSet IException)";
         return void();
-    } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception bdRemovelowdata_hdf5 (DataSpace IException)" );
+    } catch( H5::DataSpaceIException& error ) { 
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (DataSpace IException)";
         return void();
-    } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-        ::Rf_error( "c++ exception bdRemovelowdata_hdf5 (DataType IException)" );
+    } catch( H5::DataTypeIException& error ) { 
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (DataType IException)";
         return void();
     } catch(std::exception &ex) {
-        Rcpp::Rcout<< ex.what();
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5" << ex.what();
+        return void();
+    } catch (...) {
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (unknown reason)";
         return void();
     }
     

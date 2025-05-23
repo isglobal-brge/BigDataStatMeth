@@ -1,55 +1,178 @@
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Utilities/hdf5SortDataset.hpp"
 
-//' Sort existing dataset 
+/**
+ * @file hdf5_sortDataset.cpp
+ * @brief Implementation of dataset sorting functionality for HDF5 matrices
+ * @details This file provides functionality for sorting datasets stored in HDF5
+ * format based on predefined sorting orders. The implementation supports:
+ * - Row-wise and column-wise sorting
+ * - Block-based sorting operations
+ * - Flexible output options
+ * - Memory-efficient operations
+ * 
+ * Key features:
+ * - Support for large datasets
+ * - Block-based processing
+ * - Flexible sorting criteria
+ * - Memory-efficient implementation
+ * - Comprehensive error handling
+ */
+
+/**
+ * @brief Sorts HDF5 dataset based on predefined order
+ * 
+ * @details Implements efficient sorting of HDF5 datasets using block-based
+ * operations and predefined sorting orders. The function supports both row-wise
+ * and column-wise sorting with flexible output options.
+ * 
+ * Implementation features:
+ * - Block-based sorting
+ * - Memory-efficient operations
+ * - Safe file operations
+ * - Flexible output handling
+ * - Comprehensive error handling
+ * 
+ * @param filename Path to HDF5 file
+ * @param group Input group containing dataset
+ * @param dataset Input dataset name
+ * @param outdataset Output dataset name
+ * @param blockedSortlist List of sorting blocks
+ * @param func Sorting function to apply
+ * @param outgroup Output group for results
+ * @param overwrite Whether to overwrite existing dataset
+ * 
+ * @throws H5::FileIException for HDF5 file operation errors
+ * @throws H5::GroupIException for HDF5 group operation errors
+ * @throws H5::DataSetIException for HDF5 dataset operation errors
+ * @throws std::exception for other errors
+ */
+
+//' Sort HDF5 Dataset Using Predefined Order
 //'
-//' Sort an existing dataset taking in to account a list with sorted positions
+//' @description
+//' Sorts a dataset in an HDF5 file based on a predefined ordering specified
+//' through a list of sorting blocks.
+//'
+//' @details
+//' This function provides efficient dataset sorting capabilities with:
 //' 
-//' @param filename, character array indicating the name of the file to be sorted
-//' @param group, character array indicating the input group where the data set 
-//' to be sorted is stored.
-//' @param dataset, character array indicating the input dataset to be sorted
-//' @param outdataset, character array indicating the name for the new sorted 
-//' dataset. This dataset 
-//' @param blockedSortlist, a list with blocks with sorted positions, see example
-//' $`1`
+//' * Sorting options:
+//'   - Row-wise sorting
+//'   - Column-wise sorting
+//'   - Block-based processing
+//' 
+//' * Implementation features:
+//'   - Memory-efficient processing
+//'   - Block-based operations
+//'   - Safe file operations
+//'   - Progress reporting
+//'
+//' The sorting order is specified through a list of data frames, where each
+//' data frame represents a block of elements to be sorted. Each data frame
+//' must contain:
+//' - Row names (current identifiers)
+//' - chr (new identifiers)
+//' - order (current positions)
+//' - newOrder (target positions)
+//'
+//' Example sorting blocks structure:
+//' 
+//' Block 1 (maintaining order):
 //'                       chr order newOrder Diagonal
 //' TCGA-OR-A5J1 TCGA-OR-A5J1     1        1        1
 //' TCGA-OR-A5J2 TCGA-OR-A5J2     2        2        1
 //' TCGA-OR-A5J3 TCGA-OR-A5J3     3        3        1
 //' TCGA-OR-A5J4 TCGA-OR-A5J4     4        4        1
-//' 
-//' $`2`
+//'
+//' Block 2 (reordering with new identifiers):
 //'                       chr order newOrder
 //' TCGA-OR-A5J5 TCGA-OR-A5JA    10        5        1
 //' TCGA-OR-A5J6 TCGA-OR-A5JB    11        6        1
 //' TCGA-OR-A5J7 TCGA-OR-A5JC    12        7        0
 //' TCGA-OR-A5J8 TCGA-OR-A5JD    13        8        1
-//' 
-//' $`3`
+//'
+//' Block 3 (reordering with identifier swaps):
 //'                       chr order newOrder
 //' TCGA-OR-A5J9 TCGA-OR-A5J5     5        9        1
 //' TCGA-OR-A5JA TCGA-OR-A5J6     6       10        1
 //' TCGA-OR-A5JB TCGA-OR-A5J7     7       11        1
 //' TCGA-OR-A5JC TCGA-OR-A5J8     8       12        1
 //' TCGA-OR-A5JD TCGA-OR-A5J9     9       13        0
-//' 
-//' where rowname is the current rowname, chr is the new rowname, order is the
-//' current position and newOrder is the new position
-//' @param func, character array function to be applyed
-//' \describe{
-//'     \item{sortRows}{sort datasets rows}
-//'     \item{sortCols}{sort datasets columns}
-//' }
-//' @param outgroup, optional, character array indicating group where the data 
-//' set will be saved after imputation if `outgroup` is NULL, output dataset is 
-//' stored in the same input group. 
-//' @param overwrite, boolean if true, previous results in same location inside hdf5
-//' will be overwritten.
-//' @return Original hdf5 data file with sorted dataset
+//'
+//' In this example:
+//' - Block 1 maintains the original order
+//' - Block 2 assigns new identifiers (A5JA-D) to elements
+//' - Block 3 swaps identifiers between elements
+//' - The Diagonal column indicates whether the element is on the diagonal (1) or not (0)
+//'
+//' @param filename Character string. Path to the HDF5 file.
+//' @param group Character string. Path to the group containing input dataset.
+//' @param dataset Character string. Name of the dataset to sort.
+//' @param outdataset Character string. Name for the sorted dataset.
+//' @param blockedSortlist List of data frames. Each data frame specifies the
+//'   sorting order for a block of elements. See Details for structure.
+//' @param func Character string. Function to apply:
+//'   - "sortRows" for row-wise sorting
+//'   - "sortCols" for column-wise sorting
+//' @param outgroup Character string (optional). Output group path. If NULL,
+//'   uses input group.
+//' @param overwrite Logical (optional). Whether to overwrite existing dataset.
+//'   Default is FALSE.
+//'
+//' @return No return value, called for side effects (dataset sorting).
+//'
 //' @examples
+//' \dontrun{
+//' library(BigDataStatMeth)
 //' 
-//' print("See vignette")
+//' # Create test data
+//' data <- matrix(rnorm(100), 10, 10)
+//' rownames(data) <- paste0("TCGA-OR-A5J", 1:10)
+//' 
+//' # Save to HDF5
+//' fn <- "test.hdf5"
+//' bdCreate_hdf5_matrix(fn, data, "data", "matrix1",
+//'                      overwriteFile = TRUE)
+//' 
+//' # Create sorting blocks
+//' block1 <- data.frame(
+//'   chr = paste0("TCGA-OR-A5J", c(2,1,3,4)),
+//'   order = 1:4,
+//'   newOrder = c(2,1,3,4),
+//'   row.names = paste0("TCGA-OR-A5J", 1:4)
+//' )
+//' 
+//' block2 <- data.frame(
+//'   chr = paste0("TCGA-OR-A5J", c(6,5,8,7)),
+//'   order = 5:8,
+//'   newOrder = c(6,5,8,7),
+//'   row.names = paste0("TCGA-OR-A5J", 5:8)
+//' )
+//' 
+//' # Sort dataset
+//' bdSort_hdf5_dataset(
+//'   filename = fn,
+//'   group = "data",
+//'   dataset = "matrix1",
+//'   outdataset = "matrix1_sorted",
+//'   blockedSortlist = list(block1, block2),
+//'   func = "sortRows"
+//' )
+//' 
+//' # Cleanup
+//' if (file.exists(fn)) {
+//'   file.remove(fn)
+//' }
+//' }
+//'
+//' @references
+//' * The HDF Group. (2000-2010). HDF5 User's Guide.
+//'
+//' @seealso
+//' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+//' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+//'
 //' @export
 // [[Rcpp::export]]
 void bdSort_hdf5_dataset( std::string filename, std::string group, 
@@ -59,11 +182,11 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
                           Rcpp::Nullable<bool> overwrite = false )
 {
     
+    BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
+
     try
     {
-        
-        BigDataStatMeth::hdf5Dataset* dsIn;
-        BigDataStatMeth::hdf5Dataset* dsOut;
         
         std::string strOutgroup;
         bool boverwrite;
@@ -71,7 +194,7 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
                 nrows = 0;
         
         if( blockedSortlist.length()<=0 ) {
-            Rcpp::Rcout<<"\nList is empty, please create a list with the new sort";
+            Rcpp::Rcerr<<"\nList is empty, please create a list with the new sort";
             return void();
         }
         
@@ -84,10 +207,16 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
         dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsIn->openDataset();
         
+        if( dsIn->getDatasetptr() == nullptr ) {
+            checkClose_file(dsIn);
+            Rcpp::Rcerr<<"\nError opening dataset";
+            return void();
+        }
+        
         ncols = dsIn->ncols();
 
         // Get the nomber of rows in dataframes inside the list
-        for(int i=0; i<blockedSortlist.size(); i++) {     
+        for(int i = 0; i < blockedSortlist.size(); i++) {     
             Rcpp::DataFrame df(blockedSortlist[i]);
             nrows = nrows + df.nrow();
         } 
@@ -95,22 +224,36 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
         dsOut = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, outdataset, boverwrite);
         dsOut->createDataset( ncols, nrows, "real");
         
-        RcppSort_dataset_hdf5(dsIn, dsOut, blockedSortlist, func);
+        if( dsOut->getDatasetptr() != nullptr ) {
+            RcppSort_dataset_hdf5(dsIn, dsOut, blockedSortlist, func);
+        } else {
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"\nError creating dataset";
+            return void();
+        }
         
-        delete dsIn;
-        delete dsOut;
+        delete dsIn; dsIn = nullptr;
+        delete dsOut; dsOut = nullptr;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcout<<"c++ exception bdSort_hdf5_dataset (File IException)";
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr<<"c++ exception bdSort_hdf5_dataset (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception bdSort_hdf5_dataset (Group IException)";
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception bdSort_hdf5_dataset (DataSet IException)";
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
-        Rcpp::Rcout << "c++ exception bdSort_hdf5_dataset" << ex.what();
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset" << ex.what();
+        return void();
+    } catch (...) {
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset (unknown reason)";
         return void();
     }
     

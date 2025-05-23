@@ -1,59 +1,121 @@
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Algebra/matrixSvd.hpp"
 
+/**
+ * @file hdf5_SVD.cpp
+ * @brief Implementation of Singular Value Decomposition (SVD) for HDF5-stored matrices
+ * @details This file contains implementations for computing SVD of large matrices 
+ * stored in HDF5 files using block-based and incremental algorithms. The implementation
+ * supports both full and block-based computation methods, with options for data
+ * centering, scaling, and parallel processing.
+ */
 
-
-//' Block SVD decomposition with HDF5 files
+/**
+ * @brief Computes SVD of a matrix stored in an HDF5 file
+ * 
+ * @details Performs SVD of a matrix A into a product A = UDV' where:
+ * - U contains the left singular vectors
+ * - D contains the singular values
+ * - V contains the right singular vectors
+ * 
+ * The function supports:
+ * - Both full and block-based computation methods
+ * - Data centering and scaling
+ * - Parallel computation
+ * - Rank approximation through threshold
+ * 
+ * @param filename Path to HDF5 file containing input matrix
+ * @param group Path to group containing input dataset
+ * @param dataset Name of input dataset
+ * @param k Number of local SVDs to concatenate at each level
+ * @param q Number of levels for incremental computation
+ * @param bcenter Whether to center the data
+ * @param bscale Whether to scale the data
+ * @param rankthreshold Threshold for determining matrix rank
+ * @param overwrite Whether to overwrite existing results
+ * @param method Computation method ("auto", "blocks", or "full")
+ * @param threads Number of threads for parallel computation
+ * 
+ * @throws H5::FileIException if there are HDF5 file operation errors
+ * @throws H5::GroupIException if there are HDF5 group operation errors
+ * @throws H5::DataSetIException if there are HDF5 dataset operation errors
+ * @throws std::exception for other errors
+ */
+//' Singular Value Decomposition for HDF5-Stored Matrices
 //'
-//' This function computes the singular values and left singular vectors of a 
-//' real nxp matrix using Block SVD decomposition with an incremental algorithm. 
-//' The input matrix is read from an HDF5 file, and the results are saved in the 
-//' same file.
+//' @description
+//' Computes the Singular Value Decomposition (SVD) of a large matrix stored in an HDF5 file.
+//' The SVD decomposes a matrix A into a product A = UDV' where U and V are orthogonal
+//' matrices and D is a diagonal matrix containing the singular values.
 //' 
-//' @inheritParams bdNormalize_hdf5
-//' @param k numerical, number of local SVDs to concatenate at each level. 
-//' Defaults is set to 2.
-//' This parameter helps optimize the performance and memory usage during PCA 
-//' calculations. 
-//' @param q numerical, number of levels to compute SVD for PCA.
-//' This parameter helps optimize the performance and memory usage during PCA 
-//' calculations. 
-//' @param bcenter logical (optional). If TRUE (default), the data is centered 
-//' by subtracting the column means (ignoring NAs) of the `dataset` from their 
-//' corresponding columns. If FALSE, no centering is performed.
-//' @param bscale (optional). If TRUE (default), the data is scaled by dividing 
-//' the (centered) columns of `x` by their standard deviations if `bcenter` 
-//' is TRUE, or by the root mean square otherwise. If FALSE, no scaling is 
-//' performed.
-//' @param rankthreshold `double`. Threshold used to determine the range of 
-//' the matrix. The matrix rank is defined as the number of singular values that 
-//' differ from the threshold. By default, `threshold = 0` is used to compute 
-//' the matrix rank, but it can be adjusted to a value close to zero for 
-//' approximations.
-//' @param overwrite logical value, If TRUE, forces the recalculation of results 
-//' even if they already exist.
-//' @param method optional, defalut is "auto" possible values are: "auto", 
-//' "blocks", "full":
-//'     * `"auto"`:
-//'       The option method = "auto" chooses the "full" or 
-//'       "blocks" method depending on the size of the matrix to be decomposed 
-//'     * `"blocks"`:
-//'       The SVD decomposition can be carried out by blocks, recommended option 
-//'       for large matrices that do not fit in memory
-//'     * `"full"`:
-//'       The SVD decomposition is performed directly without partitioning the matrix
-//' @param threads integer (optional), an optional parameter specifying the 
-//' number of threads to use.
-//' @return three dataset inside HDF5 data files with the singular values and 
-//' left and right singular vectors of the dataset:
-//' 
-//'   * `"u"`:
-//'     eigenvectors of AA^t, mxn and column orthogonal matrix 
-//'   * `"v`:
-//'     eigenvectors of A^tA, nxn orthogonal matrix
-//'   * `"d"`:
-//'     singular values, nxn diagonal matrix (non-negative real values) 
-//' 
+//' @details
+//' This function implements a block-based SVD algorithm suitable for large matrices
+//' that may not fit in memory. Key features include:
+//' * Automatic method selection based on matrix size
+//' * Block-based computation for large matrices
+//' * Data centering and scaling options
+//' * Parallel processing support
+//' * Rank approximation through threshold
+//' * Memory-efficient incremental algorithm
+//'
+//' The implementation uses an incremental algorithm with two key parameters:
+//' * k: number of local SVDs to concatenate at each level
+//' * q: number of levels in the computation
+//'
+//' @param filename Character string. Path to the HDF5 file containing the input matrix.
+//' @param group Character string. Path to the group containing the input dataset.
+//' @param dataset Character string. Name of the input dataset to decompose.
+//' @param k Integer. Number of local SVDs to concatenate at each level (default = 2).
+//'   Controls the trade-off between memory usage and computation speed.
+//' @param q Integer. Number of levels for SVD computation (default = 1).
+//'   Higher values can improve accuracy but increase computation time.
+//' @param bcenter Logical. If TRUE (default), centers the data by subtracting column means.
+//' @param bscale Logical. If TRUE (default), scales the centered columns by their
+//'   standard deviations or root mean square.
+//' @param rankthreshold Numeric. Threshold for determining matrix rank (default = 0).
+//'   Must be between 0 and 0.1. Used to approximate rank for nearly singular matrices.
+//' @param overwrite Logical. If TRUE, allows overwriting existing results.
+//' @param method Character string. Computation method:
+//'   * "auto": Automatically selects between "full" and "blocks" based on matrix size
+//'   * "blocks": Uses block-based computation (recommended for large matrices)
+//'   * "full": Performs direct computation without partitioning
+//' @param threads Integer. Number of threads for parallel computation.
+//'
+//' @return No direct return value. Results are written to the HDF5 file as:
+//' \describe{
+//'   \item{u}{Left singular vectors (U matrix)}
+//'   \item{d}{Singular values (diagonal of D matrix)}
+//'   \item{v}{Right singular vectors (V matrix)}
+//' }
+//'
+//' @examples
+//' \dontrun{
+//' # Create a sample large matrix in HDF5
+//' library(rhdf5)
+//' A <- matrix(rnorm(10000), 1000, 10)
+//' h5createFile("large_matrix.h5")
+//' h5write(A, "large_matrix.h5", "data/matrix")
+//'
+//' # Compute SVD with default parameters
+//' bdSVD_hdf5("large_matrix.h5", "data", "matrix")
+//'
+//' # Compute SVD with custom parameters
+//' bdSVD_hdf5("large_matrix.h5", "data", "matrix",
+//'            k = 4, q = 2,
+//'            bcenter = TRUE, bscale = TRUE,
+//'            method = "blocks",
+//'            threads = 4)
+//' }
+//'
+//' @references
+//' * Halko, N., Martinsson, P. G., & Tropp, J. A. (2011). Finding structure with randomness:
+//'   Probabilistic algorithms for constructing approximate matrix decompositions.
+//'   SIAM Review, 53(2), 217-288.
+//'
+//' @seealso
+//' * \code{\link{bdPCA_hdf5}} for Principal Component Analysis
+//' * \code{\link{bdQR_hdf5}} for QR decomposition
+//'
 //' @export
 // [[Rcpp::export]]
 void bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue,
@@ -150,16 +212,3 @@ void bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> 
  
 }
 
-/**
- //' @param file a real nxp matrix in hdf5 file
- //' @param group group in hdf5 data file where dataset is located
- //' @param dataset matrix dataset with data to perform SVD
- //' @param k number of local SVDs to concatenate at each level 
- //' @param q number of levels
- //' @param rankthreshold double, threshold used to determine the range of the array. 
- //' The matrix rank is equal to the number of singular values different from the 
- //' threshold. By default, threshold = 0 is used to get the matrix rank , but it 
- //' can be changed to an approximation of 0.
- //' 
- //' Rcpp::RObject bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue,
- */

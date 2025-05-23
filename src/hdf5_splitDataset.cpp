@@ -1,29 +1,147 @@
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Utilities/hdf5SplitDataset.hpp"
 
-//' Split hdf5 dataset
+/**
+ * @file hdf5_splitDataset.cpp
+ * @brief Implementation of dataset splitting functionality for HDF5 matrices
+ * @details This file provides functionality for splitting large datasets in HDF5
+ * format into smaller submatrices. The implementation supports:
+ * - Row-wise and column-wise splitting
+ * - Block size or block count specification
+ * - Flexible output options
+ * - Memory-efficient operations
+ * 
+ * Key features:
+ * - Support for large datasets
+ * - Configurable splitting strategy
+ * - Memory-efficient implementation
+ * - Comprehensive error handling
+ * - Progress reporting
+ */
+
+/**
+ * @brief Splits HDF5 dataset into smaller submatrices
+ * 
+ * @details Implements efficient splitting of large HDF5 datasets into smaller
+ * submatrices. The function supports both row-wise and column-wise splitting
+ * with configurable block sizes or counts.
+ * 
+ * Implementation features:
+ * - Flexible splitting options
+ * - Memory-efficient operations
+ * - Safe file operations
+ * - Progress tracking
+ * - Comprehensive error handling
+ * 
+ * @param filename Path to HDF5 file
+ * @param group Input group containing dataset
+ * @param dataset Input dataset name
+ * @param outgroup Output group for results
+ * @param outdataset Base name for output datasets
+ * @param nblocks Number of blocks to split into
+ * @param blocksize Size of each block
+ * @param bycols Whether to split by columns
+ * @param overwrite Whether to overwrite existing datasets
+ * 
+ * @throws H5::FileIException for HDF5 file operation errors
+ * @throws H5::DataSetIException for HDF5 dataset operation errors
+ * @throws H5::DataSpaceIException for HDF5 dataspace errors
+ * @throws H5::DataTypeIException for HDF5 datatype errors
+ * @throws std::exception for other errors
+ */
+
+//' Split HDF5 Dataset into Submatrices
 //'
-//' Split hdf5 dataset in small datasets by rows or columns and store splitted 
-//' submatrices inside an hdf5 file.
+//' @description
+//' Splits a large dataset in an HDF5 file into smaller submatrices, with
+//' support for both row-wise and column-wise splitting.
+//'
+//' @details
+//' This function provides efficient dataset splitting capabilities with:
 //' 
-//' @param filename, character array indicating the name of the file where 
-//' dataset to split is stored
-//' @param group, character array indicating the input group where the data set 
-//' to be splitted is. 
-//' @param dataset, character array indicating the input dataset to be splitted
-//' @param outgroup, optional character array indicating group where the data set 
-//' will be saved after split process if `outgroup` is NULL, output dataset is 
-//' stored in the same input group. 
-//' @param outdataset, optional character array indicating basename for the 
-//' splitted dataset if `outdataset` is NULL, input dataset name is used adding .x, 
-//' where x is the splitted block number. 
-//' @param nblocks, integer number of blocks in which we want to split the data
-//' @param blocksize, integer, number of elements in each block
-//' @param bycols, boolean by default = true, true indicates that the imputation 
-//' will be done by columns, otherwise, the imputation will be done by rows
-//' @param overwrite, boolean if true, previous results in same location inside 
-//' hdf5 will be overwritten.
-//' @return Splitted datasets inside an hdf5 data file
+//' * Splitting options:
+//'   - Row-wise or column-wise splitting
+//'   - Fixed block size splitting
+//'   - Fixed block count splitting
+//' 
+//' * Implementation features:
+//'   - Memory-efficient processing
+//'   - Block-based operations
+//'   - Safe file operations
+//'   - Progress reporting
+//'
+//' The function supports two splitting strategies:
+//' 1. By number of blocks: Splits the dataset into a specified number of
+//'    roughly equal-sized blocks
+//' 2. By block size: Splits the dataset into blocks of a specified size
+//'
+//' @param filename Character string. Path to the HDF5 file.
+//' @param group Character string. Path to the group containing input dataset.
+//' @param dataset Character string. Name of the dataset to split.
+//' @param outgroup Character string (optional). Output group path. If NULL,
+//'   uses input group.
+//' @param outdataset Character string (optional). Base name for output datasets.
+//'   If NULL, uses input dataset name with block number suffix.
+//' @param nblocks Integer (optional). Number of blocks to split into.
+//'   Mutually exclusive with blocksize.
+//' @param blocksize Integer (optional). Size of each block.
+//'   Mutually exclusive with nblocks.
+//' @param bycols Logical (optional). Whether to split by columns (TRUE) or
+//'   rows (FALSE). Default is TRUE.
+//' @param overwrite Logical (optional). Whether to overwrite existing datasets.
+//'   Default is FALSE.
+//'
+//' @return No return value, called for side effects (dataset splitting).
+//'   Creates multiple datasets in the HDF5 file named as
+//'   "`outdataset`.1", "`outdataset`.2", etc.
+//'
+//' @examples
+//' \dontrun{
+//' library(BigDataStatMeth)
+//' 
+//' # Create test data
+//' data <- matrix(rnorm(1000), 100, 10)
+//' 
+//' # Save to HDF5
+//' fn <- "test.hdf5"
+//' bdCreate_hdf5_matrix(fn, data, "data", "matrix1",
+//'                      overwriteFile = TRUE)
+//' 
+//' # Split by number of blocks
+//' bdSplit_matrix_hdf5(
+//'   filename = fn,
+//'   group = "data",
+//'   dataset = "matrix1",
+//'   outgroup = "data_split",
+//'   outdataset = "block",
+//'   nblocks = 4,
+//'   bycols = TRUE
+//' )
+//' 
+//' # Split by block size
+//' bdSplit_matrix_hdf5(
+//'   filename = fn,
+//'   group = "data",
+//'   dataset = "matrix1",
+//'   outgroup = "data_split2",
+//'   outdataset = "block",
+//'   blocksize = 25,
+//'   bycols = TRUE
+//' )
+//' 
+//' # Cleanup
+//' if (file.exists(fn)) {
+//'   file.remove(fn)
+//' }
+//' }
+//'
+//' @references
+//' * The HDF Group. (2000-2010). HDF5 User's Guide.
+//'
+//' @seealso
+//' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+//' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+//'
 //' @export
 // [[Rcpp::export]]
 void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string dataset, 
@@ -35,11 +153,11 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
                           Rcpp::Nullable<bool> overwrite = false  )
 {
     
-    BigDataStatMeth::hdf5Dataset* dsIn;
-    std::string stroutgroup, stroutdataset, stroutdata;
+    BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
     
     try
     {
+        std::string stroutgroup, stroutdataset, stroutdata;
         std::string strdataset = group + "/" + dataset;
         std::string strdatasetout;
         int iblocksize = 0; //, iwholesize = 0;
@@ -63,24 +181,23 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         if( dsIn->getDatasetptr() != nullptr ) { 
             
             hsize_t nrows = dsIn->nrows(),
-                ncols = dsIn->ncols();
-            
+            ncols = dsIn->ncols();
             
             if( nblocks.isNull() && blocksize.isNull()){
-                delete dsIn;
-                Rcpp::Rcerr<<"\n Block size or number of blocks are needed to proceed with matrix split. Please, review parameters";
+                checkClose_file(dsIn);
+                Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "Block size or number of blocks are needed to proceed with matrix split. Please, review parameters";
                 return void();
                 
             } else if (!nblocks.isNull() && !blocksize.isNull()) {
-                delete dsIn;
-                Rcpp::Rcerr<<"\nBlock size and number of blocks are defined, please define only one option, split by number of blocks or by block size";
+                checkClose_file(dsIn);
+                Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "Block size and number of blocks are defined, please define only one option, split by number of blocks or by block size";
                 return void();
                 
             } else if(!nblocks.isNull()) {
                 
                 if ( Rcpp::as<int>(nblocks) == 1) {
-                    delete dsIn;
-                    Rcpp::Rcerr<<"\nNumbers of blocks = 1, no data to split";
+                    checkClose_file(dsIn);
+                    Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "Numbers of blocks = 1, no data to split";
                     return void();
                     
                 } else {
@@ -102,18 +219,26 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
                 
                 if( bcols == true ) {
                     if( iblocksize == nrows) {  
-                        delete dsIn;
-                        throw std::range_error( "c++ exception in bdSplit_matrix_hdf5 ( No data to split)" ); 
+                        checkClose_file(dsIn);
+                        Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "No data to split";
+                        return void();
                     }
                 } else {
                     if( iblocksize == ncols) {  
-                        delete dsIn;
-                        throw std::range_error( "c++ exception in bdSplit_matrix_hdf5 ( No data to split)" ); 
+                        checkClose_file(dsIn);
+                        Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "No data to split";
+                        return void();
                     }
                 }
             }
             
-            RcppSplit_matrix_hdf5 ( dsIn, bcols, stroutgroup, stroutdataset, iblocksize, ncols, nrows );    
+            if( dsIn->getDatasetptr() != nullptr) {
+                RcppSplit_matrix_hdf5 ( dsIn, bcols, stroutgroup, stroutdataset, iblocksize, ncols, nrows );    
+            } else {
+                checkClose_file(dsIn);
+                Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "File does not exist";
+                return void();
+            }
             
         }
     
@@ -121,28 +246,28 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         Rcpp::Rcout<<"Dataset has been splitted, results can be found in "<< stroutgroup + "/" + stroutdataset <<"\n";
         
         
-    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+    } catch( H5::FileIException& error ) { 
         checkClose_file(dsIn);
-        Rcpp::Rcerr<<"\nc++ exception bdSplit_matrix_hdf5 (File IException)\n";
+        Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5 (File IException)";
         return void();
-    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+    } catch( H5::DataSetIException& error ) { 
         checkClose_file(dsIn);
-        Rcpp::Rcerr<<"\nc++ exception bdSplit_matrix_hdf5 (DataSet IException)";
+        Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5 (DataSet IException)";
         return void();
-    } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
+    } catch( H5::DataSpaceIException& error ) { 
         checkClose_file(dsIn);
-        Rcpp::Rcerr<<"\nc++ exception bdSplit_matrix_hdf5 (DataSpace IException)";
+        Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5 (DataSpace IException)";
         return void();
-    } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
+    } catch( H5::DataTypeIException& error ) { 
         checkClose_file(dsIn);
-        Rcpp::Rcerr<<"\nc++ exception bdSplit_matrix_hdf5 (DataType IException)";
+        Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5 (DataType IException)";
         return void();
     } catch(std::exception &ex) {
         checkClose_file(dsIn);
-        Rcpp::Rcerr<<"\nC++ exception bdSplit_matrix_hdf5 : "<< ex.what();
+        Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5 : " << ex.what();
     } catch (...) {
         checkClose_file(dsIn);
-        Rcpp::Rcerr<<"\nC++ exception bdSplit_matrix_hdf5 (unknown reason)";
+        Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5 (unknown reason)";
         return void();
     }
     

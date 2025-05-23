@@ -2,65 +2,133 @@
 // #include "hdf5Algebra/matrixInvCholesky.hpp"
 // #include "hdf5Algebra/matrixTriangular.hpp"
 
+/**
+ * @file hdf5_CholeskyDec.cpp
+ * @brief Implementation of Cholesky Decomposition for HDF5-stored matrices
+ * @details This file contains implementations for computing the Cholesky decomposition
+ * of large symmetric positive-definite matrices stored in HDF5 files. The implementation
+ * supports both full matrix and triangular storage formats, with options for block-based
+ * computation and parallel processing.
+ */
 
-
-//' Compute Cholesky decomposition with hdf5 data files
+/**
+ * @brief Computes Cholesky decomposition of a matrix stored in an HDF5 file
+ * 
+ * @details Performs Cholesky decomposition of a symmetric positive-definite matrix A
+ * into the product A = LL' where:
+ * - L is a lower triangular matrix
+ * - L' is the transpose of L
+ * 
+ * The implementation:
+ * - Verifies matrix symmetry and positive-definiteness
+ * - Supports block-based computation for large matrices
+ * - Provides options for storage format (full or triangular)
+ * - Utilizes parallel computation when available
+ * 
+ * @param filename Path to HDF5 file containing input matrix
+ * @param group Path to group containing input dataset
+ * @param dataset Name of input dataset
+ * @param outdataset Name for output dataset
+ * @param outgroup Optional group for output (defaults to input group)
+ * @param fullMatrix Whether to store full matrix or just triangular part
+ * @param overwrite Whether to overwrite existing results
+ * @param threads Number of threads for parallel computation
+ * @param elementsBlock Block size for block-based computation
+ * 
+ * @throws H5::FileIException if there are HDF5 file operation errors
+ * @throws H5::GroupIException if there are HDF5 group operation errors
+ * @throws H5::DataSetIException if there are HDF5 dataset operation errors
+ * @throws std::exception for other errors
+ */
+//' Cholesky Decomposition for HDF5-Stored Matrices
 //'
-//' Compute cholesky decomposition with datasets stored in hdf5 data files. Function returns the upper triangular matrix.
-//'
-//' @inheritParams bdblockmult_hdf5
-//' @inheritParams bdNormalize_hdf5
-//' @param fullMatrix boolean, optional parameter, by default false. 
-//' If fullMatrix = true, in the hdf5 file the complete matrix is stored. 
-//' If false, only the lower triangular matrix is saved
-//' @param elementsBlock integer (optional), an integer that specifies the 
-//' maximum number of elements to read from the HDF5 data file in each block. 
-//' By default, this value is set to 100,000. If the matrix size exceeds 5000x5000, 
-//' the block size is automatically adjusted to number of rows or columns * 2
-//' @return Original hdf5 data file with Cholesky decomposition
+//' @description
+//' Computes the Cholesky decomposition of a symmetric positive-definite matrix stored
+//' in an HDF5 file. The Cholesky decomposition factors a matrix A into the product
+//' A = LL' where L is a lower triangular matrix.
 //' 
 //' @details 
-//' The **Cholesky decomposition** is a factorization of a **symmetric positive-definite matrix** \eqn{A} 
-//' into the product of a **lower triangular matrix** \eqn{L} and its transpose.
-//' \deqn{A = L L^\top}
-//' where:
-//'   * \eqn{A} is a symmetric positive-definite matrix of size \eqn{n \times n},
-//'   * \eqn{L} is a lower triangular matrix of size \eqn{n \times n},
-//'   * \eqn{L^\top} is the transpose of \eqn{L}.
-//'   
-//' ### Key Properties
-//' 1. **Positive-Definiteness**: The matrix \eqn{A} must be positive-definite
-//' 2. **Positive Diagonal**: The diagonal elements of \eqn{L}, \eqn{l_{ii}}, are strictly positive.
+//' The Cholesky decomposition is a specialized factorization for symmetric 
+//' positive-definite matrices that provides several advantages:
+//' * More efficient than LU decomposition for symmetric positive-definite matrices
+//' * Numerically stable
+//' * Useful for solving linear systems and computing matrix inverses
+//' * Important in statistical computing (e.g., for sampling from multivariate normal distributions)
+//'
+//' This implementation features:
+//' * Block-based computation for large matrices
+//' * Optional storage formats (full or triangular)
+//' * Parallel processing support
+//' * Memory-efficient block algorithm
+//'
+//' Mathematical Details:
+//' For a symmetric positive-definite matrix A, the decomposition A = LL' has the following properties:
+//' * L is lower triangular
+//' * L has positive diagonal elements
+//' * L is unique
+//'
+//' The elements of L are computed using:
+//' \deqn{l_{ii} = \sqrt{a_{ii} - \sum_{k=1}^{i-1} l_{ik}^2}}
+//' \deqn{l_{ji} = \frac{1}{l_{ii}}(a_{ji} - \sum_{k=1}^{i-1} l_{ik}l_{jk})}
+//'
+//' @param filename Character string. Path to the HDF5 file containing the input matrix.
+//' @param group Character string. Path to the group containing the input dataset.
+//' @param dataset Character string. Name of the input dataset to decompose.
+//' @param outdataset Character string. Name for the output dataset.
+//' @param outgroup Character string. Optional output group path. If not provided,
+//'   results are stored in the input group.
+//' @param fullMatrix Logical. If TRUE, stores the complete matrix. If FALSE (default),
+//'   stores only the lower triangular part to save space.
+//' @param overwrite Logical. If TRUE, allows overwriting existing results.
+//' @param threads Integer. Number of threads for parallel computation.
+//' @param elementsBlock Integer. Maximum number of elements to process in each block
+//'   (default = 100,000). For matrices larger than 5000x5000, automatically adjusted
+//'   to number of rows or columns * 2.
+//'
+//' @return No direct return value. Results are written to the HDF5 file in the
+//' specified location with the following structure:
+//' \describe{
+//'   \item{L}{The lower triangular Cholesky factor}
+//' }
 //' 
 //' @examples
-//' 
-//' library(BigDataStatMeth)
+//' \dontrun{
 //' library(rhdf5)
 //' 
+//' # Create a symmetric positive-definite matrix
 //' set.seed(1234)
-//'     Y <- matrix(sample.int(10, 100, replace = TRUE), ncol = 10)
+//' X <- matrix(rnorm(100), 10, 10)
+//' A <- crossprod(X)  # A = X'X is symmetric positive-definite
 //'     
-//' # devtools::reload(pkgload::inst("BigDataStatMeth"))
-//' Ycp <- crossprod(Y)
+//' # Save to HDF5
+//' h5createFile("matrix.h5")
+//' h5write(A, "matrix.h5", "data/matrix")
 //'         
-//' # devtools::reload(pkgload::inst("BigDataStatMeth"))
-//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-//'                         object = Ycp, group = "data", dataset = "matrix",
-//'                         transp = FALSE,
-//'                         overwriteFile = TRUE, overwriteDataset = TRUE, 
-//'                         unlimited = FALSE)
+//' # Compute Cholesky decomposition
+//' bdCholesky_hdf5("matrix.h5", "data", "matrix",
+//'                 outdataset = "chol",
+//'                 outgroup = "decompositions",
+//'                 fullMatrix = FALSE)
 //'        
-//' # Get Inverse Cholesky
-//' bdCholesky_hdf5(filename = "test_temp.hdf5", group = "data", 
-//'    dataset = "matrix", outdataset = "matrixDec", outgroup = "Cholesky_Dec", 
-//'    fullMatrix = FALSE, overwrite = TRUE)
+//' # Verify the decomposition
+//' L <- h5read("matrix.h5", "decompositions/chol")
+//' max(abs(A - L %*% t(L)))  # Should be very small
+//' }
+//'
+//' @references
+//' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+//'   Johns Hopkins University Press.
+//' * Higham, N. J. (2009). Cholesky factorization.
+//'   Wiley Interdisciplinary Reviews: Computational Statistics, 1(2), 251-254.
 //'        
-//' res <-  h5read("test_temp.hdf5", "Cholesky_Dec/matrixDec")
+//' @seealso
+//' * \code{\link{bdInvCholesky_hdf5}} for computing inverse using Cholesky decomposition
+//' * \code{\link{bdSolveEquation_hdf5}} for solving linear systems
 //' 
 //' @export
 // [[Rcpp::export]]
- void bdCholesky_hdf5( std::string filename, std::string group, std::string dataset,
-                          std::string  outdataset,
+void bdCholesky_hdf5(std::string filename, std::string group, std::string dataset,
+                     std::string outdataset,
                           Rcpp::Nullable<std::string> outgroup = R_NilValue, 
                           Rcpp::Nullable<bool> fullMatrix = R_NilValue, 
                           Rcpp::Nullable<bool> overwrite = R_NilValue,
@@ -95,6 +163,7 @@
          dsA->openDataset();
          
          if( dsA->getDatasetptr() != nullptr) { 
+
              nrows = dsA->nrows();
              ncols = dsA->ncols();
              
@@ -103,51 +172,53 @@
                  dstmp = new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true);
                  dstmp->createDataset(nrows, ncols, "real");
                  
-                 int res = Cholesky_decomposition_hdf5(dsA, dstmp, nrows, ncols, dElementsBlock, threads);
-                 
+                int res = 0;
+                if( dstmp->getDatasetptr() != nullptr ) {
+                    res = Cholesky_decomposition_hdf5(dsA, dstmp, nrows, ncols, dElementsBlock, threads);
                  if(res != 0) {
                      Rcpp::Rcout<<"\n Can't get Cholesky decomposition \n";
+                    }
+                } else {
+                    checkClose_file(dsA, dstmp);
+                    Rcpp::Rcerr << "c++ exception bdCholesky_hdf5: " << "Error creating dataset";
+                    return void();
                  }
                  
                  delete dstmp; dstmp = nullptr;
                  
              } else {
-                 Rcpp::Rcout<<"\n Can't get Cholesky decomposition \n";
+                Rcpp::Rcout<<"\n Can't get Cholesky decomposition not a square matrix\n";
              }    
+        } else {
+            delete dsA; dsA = nullptr;
+            Rcpp::Rcerr << "c++ exception bdCholesky_hdf5: " << "Error opening dataset";
+            return void();
          }
          
          delete dsA; dsA = nullptr;
          
-         
      } catch( H5::FileIException& error ) { 
          checkClose_file(dsA, dstmp);
          Rcpp::Rcerr<<"c++ exception bdCholesky_hdf5 (File IException)";
+        return void();
      } catch( H5::GroupIException & error ) { 
          checkClose_file(dsA, dstmp);
          Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (Group IException)";
+        return void();
      } catch( H5::DataSetIException& error ) { 
          checkClose_file(dsA, dstmp);
          Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (DataSet IException)";
+        return void();
      } catch(std::exception& ex) {
          checkClose_file(dsA, dstmp);
          Rcpp::Rcerr << "c++ exception bdCholesky_hdf5" << ex.what();
+        return void();
      } catch (...) {
          checkClose_file(dsA, dstmp);
          Rcpp::Rcerr<<"\nC++ exception bdCholesky_hdf5 (unknown reason)";
+        return void();
      }
      
      return void();
  }
 
-
-/***
- //' @param filename, character array with the name of an existin hdf5 data file containing the dataset to be modified
- //' @param group, character array indicating the input group where the data set to be modified. 
- //' @param dataset, character array indicating the input dataset to be modified
- //' @param outdataset character array with output dataset name where we want to store results
- //' @param outgroup optional, character array with output group name where we want to 
- //' store results if not provided then results are stored in the same group as original dataset
- //' @param overwrite, optional boolean if true, previous results in same location inside 
- //' hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
- //' @param threads optional parameter. Integer with numbers of threads to be used
- */

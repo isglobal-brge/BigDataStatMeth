@@ -2,45 +2,117 @@
 // #include "memAlgebra/memOptimizedProducts.hpp"
 // #include "memAlgebra/memMultiplication.hpp"
 
+/**
+ * @file mem_tcrossprod.cpp
+ * @brief Implementation of efficient transposed cross-product computation for in-memory matrices
+ * @details This file provides functionality for computing matrix transposed
+ * cross-products (XX' or XY') efficiently. The implementation supports:
+ * - Single matrix transposed cross-product (XX')
+ * - Two-matrix transposed cross-product (XY')
+ * - Block-based computation for large matrices
+ * - Parallel processing capabilities
+ * 
+ * Key features:
+ * - Memory-efficient block processing
+ * - Parallel computation support
+ * - Optimized for cache utilization
+ * - Automatic block size selection
+ */
 
-//' Transpodsed Crossproduct 
+/**
+ * @brief Computes matrix transposed cross-product efficiently
+ * 
+ * @details Implements efficient transposed cross-product computation using
+ * block-based algorithms and optional parallel processing. For a single matrix X,
+ * computes XX'. For two matrices X and Y, computes XY'.
+ * 
+ * Implementation features:
+ * - Block-based computation for large matrices
+ * - Parallel processing support
+ * - Automatic block size optimization
+ * - Memory-efficient implementation
+ * 
+ * @param A First input matrix
+ * @param B Optional second input matrix
+ * @param transposed Whether to use transposed input
+ * @param block_size Block size for computation
+ * @param paral Whether to use parallel processing
+ * @param threads Number of threads for parallel processing
+ * 
+ * @return Result of transposed cross-product operation
+ * @throws std::exception if computation fails
+ */
+
+//' Efficient Matrix Transposed Cross-Product Computation
+//'
+//' @description
+//' Computes matrix transposed cross-products efficiently using block-based
+//' algorithms and optional parallel processing. Supports both single-matrix (XX')
+//' and two-matrix (XY') transposed cross-products.
+//'
+//' @details
+//' This function implements efficient transposed cross-product computation using
+//' block-based algorithms optimized for cache efficiency and memory usage.
+//' Key features:
 //' 
-//' This function performs a transposed crossproduct of a numerical matrix.
+//' * Operation modes:
+//'   - Single matrix: Computes XX'
+//'   - Two matrices: Computes XY'
 //' 
-//' @export
-//' 
-//' @param A numerical matrix
-//' @param B optional, numerical matrix
-//' @param transposed optional parameter. Boolean if true we use the 
-//' transposed dataframe to perform calculus. By default transposed = false. 
-//' @param block_size (optional, defalut = NULL) block size to make matrix 
-//' multiplication, if `block_size = 1` no block size is applied 
-//' (size 1 = 1 element per block) if `block_size = NULL` (default) optimum 
-//' block size is computed
-//' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel 
-//' computation else if paral = FALSE performs serial computation
-//' @param threads (optional) only if bparal = true, number of concurrent threads
-//' in parallelization if threads is null then threads =  maximum number of 
-//' threads available
-//' @return numerical matrix with transposed crossproduct
+//' * Performance optimizations:
+//'   - Block-based computation for cache efficiency
+//'   - Parallel processing for large matrices
+//'   - Automatic block size selection
+//'   - Memory-efficient implementation
+//'
+//' The function automatically selects optimal computation strategies based on
+//' input size and available resources. For large matrices, block-based computation
+//' is used to improve cache utilization.
+//'
+//' @param A Numeric matrix. First input matrix.
+//' @param B Optional numeric matrix. If provided, computes XY' instead of XX'.
+//' @param transposed Logical. If TRUE, uses transposed input matrix.
+//' @param block_size Integer. Block size for computation. If NULL, uses optimal
+//'   block size based on matrix dimensions and cache size.
+//' @param paral Logical. If TRUE, enables parallel computation.
+//' @param threads Integer. Number of threads for parallel computation. If NULL,
+//'   uses all available threads.
+//'
+//' @return Numeric matrix containing the transposed cross-product result.
+//'
 //' @examples
+//' library(BigDataStatMeth)
 //' 
+//' # Single matrix transposed cross-product
 //' n <- 100
 //' p <- 60
-//' 
 //' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
 //' res <- bdtCrossprod(X)
 //' 
+//' # Verify against base R
 //' all.equal(tcrossprod(X), res)
 //' 
+//' # Two-matrix transposed cross-product
 //' n <- 100
 //' p <- 100
-//' 
 //' Y <- matrix(rnorm(n*p), nrow=n)
+//' res <- bdtCrossprod(X, Y)
 //' 
-//' # With two matrices
-//' res <- bdtCrossprod(X,Y)
-//' 
+//' # Parallel computation
+//' res_par <- bdtCrossprod(X, Y,
+//'                         paral = TRUE,
+//'                         threads = 4)
+//'
+//' @references
+//' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+//'   Johns Hopkins University Press.
+//' * Kumar, V. et al. (1994). Introduction to Parallel Computing: Design and
+//'   Analysis of Algorithms. Benjamin/Cummings Publishing Company.
+//'
+//' @seealso
+//' * \code{\link{bdCrossprod}} for standard cross-product
+//' * \code{\link{bdblockMult}} for block-based matrix multiplication
+//'
 //' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =  R_NilValue, 
@@ -99,10 +171,13 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
             }
         }
         
-    } catch(std::exception &ex) {
-        Rcpp::Rcerr<<"\nc++ exception bdtCrossprod\n";
+    } catch(std::exception &ex) {   
+        Rcpp::Rcerr<<"c++ exception bdtCrossprod: ";
+        Rcpp::Rcerr << ex.what();
+        return(Eigen::MatrixXd(0,0));
     } catch (...) {
         Rcpp::Rcerr<<"\nC++ exception bdtCrossprod (unknown reason)";
+        return(Eigen::MatrixXd(0,0));
     }
     
     return(C);

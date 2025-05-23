@@ -1,56 +1,137 @@
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Algebra/matrixSdMean.hpp"
 
+/**
+ * @file hdf5_matrixSdMean.cpp
+ * @brief Implementation of matrix statistics (SD and mean) for HDF5-stored matrices
+ * @details This file provides functionality for computing standard deviation
+ * and mean statistics for matrices stored in HDF5 format. The implementation
+ * supports:
+ * - Row-wise and column-wise computations
+ * - Block-based processing for large matrices
+ * - Parallel computation capabilities
+ * - Memory-efficient operations
+ * 
+ * Key features:
+ * - Support for large matrices
+ * - Configurable block size
+ * - Flexible computation direction
+ * - Memory-efficient implementation
+ * - Comprehensive error handling
+ */
 
+/**
+ * @brief Computes standard deviation and mean of HDF5 matrix
+ * 
+ * @details Implements efficient computation of standard deviation and mean
+ * statistics for matrices stored in HDF5 format. The function supports both
+ * row-wise and column-wise computations with block-based processing.
+ * 
+ * Implementation features:
+ * - Block-based computation
+ * - Configurable processing direction
+ * - Memory-efficient operations
+ * - Safe file operations
+ * - Comprehensive error handling
+ * 
+ * @param filename Path to HDF5 file
+ * @param group Group containing dataset
+ * @param dataset Dataset name
+ * @param sd Whether to compute standard deviation
+ * @param mean Whether to compute mean
+ * @param byrows Whether to compute by rows
+ * @param wsize Block size for processing
+ * @param overwrite Whether to overwrite existing results
+ * 
+ * @throws H5::FileIException for HDF5 file operation errors
+ * @throws H5::DataSetIException for HDF5 dataset operation errors
+ * @throws std::exception for other errors
+ */
 
-//' Get sd and Mean by Rows or Columns
+//' Compute Matrix Standard Deviation and Mean in HDF5
+//'
+//' @description
+//' Computes standard deviation and/or mean statistics for a matrix stored in
+//' HDF5 format, with support for row-wise or column-wise computations.
+//'
+//' @details
+//' This function provides efficient statistical computation capabilities with:
 //' 
-//' This functions gets Standard Deviation (sd) or Mean by Rows or Columns and
-//' store results in hdf5 dataset inside the file
+//' * Computation options:
+//'   - Standard deviation computation
+//'   - Mean computation
+//'   - Row-wise or column-wise processing
 //' 
-//' @param filename string file name where dataset to normalize is stored
-//' @param group string Matrix
-//' @param dataset string Matrix
-//' @param sd logical (default = TRUE) if TRUE, standard deviation is computed
-//' @param mean logical (default = TRUE) if TRUE, mean is computed 
-//' @param byrows logical (default = FALSE) if TRUE, sd and mean are computed
-//' by columns, if byrows=TRUE then sd and mean are computed by Rows.
-//' @param wsize integer (default = 1000), file block size to read to 
-//' perform calculus exitexit
-//' @param overwrite, boolean if true, previous results in same location inside 
-//' hdf5 will be overwritten.
-//' @return hdf5 data file containing two new datasets, one for sd (if sd is 
-//' requested) and another for the mean (if mean is requested). Results are
-//' stored inside a folder mean_sd inside hdf5 data file with names: 
-//' sd.\<dataset\>, mean.\<dataset\> respectively
+//' * Processing features:
+//'   - Block-based computation
+//'   - Memory-efficient processing
+//'   - Configurable block size
+//' 
+//' * Implementation features:
+//'   - Safe HDF5 file operations
+//'   - Memory-efficient implementation
+//'   - Comprehensive error handling
+//'
+//' Results are stored in a new group 'mean_sd' within the HDF5 file.
+//'
+//' @param filename Character string. Path to the HDF5 file.
+//' @param group Character string. Path to the group containing the dataset.
+//' @param dataset Character string. Name of the dataset to analyze.
+//' @param sd Logical (optional). Whether to compute standard deviation.
+//'   Default is TRUE.
+//' @param mean Logical (optional). Whether to compute mean. Default is TRUE.
+//' @param byrows Logical (optional). Whether to compute by rows (TRUE) or
+//'   columns (FALSE). Default is FALSE.
+//' @param wsize Integer (optional). Block size for processing. Default is 1000.
+//' @param overwrite Logical (optional). Whether to overwrite existing results.
+//'   Default is FALSE.
+//'
+//' @return No return value, called for side effects (statistics computation).
+//'   Results are stored in the HDF5 file under the 'mean_sd' group with names:
+//'   * 'sd.`dataset`' for standard deviation
+//'   * 'mean.`dataset`' for mean
+//'
 //' @examples
-//' 
+//' \dontrun{
 //' library(BigDataStatMeth)
-//'     
-//' # Prepare data and functions
+//' 
+//' # Create test matrices
 //' set.seed(123)
 //' Y <- matrix(rnorm(100), 10, 10)
 //' X <- matrix(rnorm(10), 10, 1)
-//'     
-//' # Create hdf5 data file with  data (Y)
-//' bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y", 
-//'                         overwriteFile = TRUE, 
-//'                         overwriteDataset = FALSE, 
-//'                         unlimited = FALSE)
-//' bdCreate_hdf5_matrix( "test.hdf5", X, "data", "X", 
-//'                        overwriteFile = FALSE, 
-//'                        overwriteDataset = FALSE, 
-//'                        unlimited = FALSE)
 //' 
-//' # Get mean and sd        
-//' bdgetSDandMean_hdf5(filename = "test.hdf5", group = "data", dataset = "Y",
-//'                     sd = TRUE, mean = TRUE,byrows = TRUE)
-//'                     
-//' # Remove file (used as example)
+//' # Save to HDF5
+//' bdCreate_hdf5_matrix("test.hdf5", Y, "data", "matrix1",
+//'                      overwriteFile = TRUE)
+//' bdCreate_hdf5_matrix("test.hdf5", X, "data", "vector1",
+//'                      overwriteFile = FALSE)
+//' 
+//' # Compute statistics
+//' bdgetSDandMean_hdf5(
+//'   filename = "test.hdf5",
+//'   group = "data",
+//'   dataset = "matrix1",
+//'   sd = TRUE,
+//'   mean = TRUE,
+//'   byrows = TRUE,
+//'   wsize = 500
+//' )
+//' 
+//' # Cleanup
 //' if (file.exists("test.hdf5")) {
 //'   file.remove("test.hdf5")
 //' }
-//'         
+//' }
+//'
+//' @references
+//' * The HDF Group. (2000-2010). HDF5 User's Guide.
+//' * Welford, B. P. (1962). Note on a method for calculating corrected
+//'   sums of squares and products. Technometrics, 4(3), 419-420.
+//'
+//' @seealso
+//' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+//' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+//'
 //' @export
 // [[Rcpp::export]]
 void bdgetSDandMean_hdf5( std::string filename, 
@@ -105,11 +186,28 @@ void bdgetSDandMean_hdf5( std::string filename,
              
              BigDataStatMeth::hdf5Dataset* dsmean = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetmean, bforce);
              dsmean->createDataset( datanormal.cols(), 1, "real");
-             dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
+             if( dsmean->getDatasetptr() != nullptr ) {
+                 dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
+             } else {
+                 checkClose_file(dsA, dsmean);
+                 Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5: " << "Error creating dataset";
+                 return void();
+             }
              
              BigDataStatMeth::hdf5Dataset* dssd = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetsd, bforce);
              dssd->createDataset( datanormal.cols(), 1, "real");
-             dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );    
+             if( dssd->getDatasetptr() != nullptr ) {
+                 dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
+             } else {
+                 checkClose_file(dsA, dssd, dsmean);
+                 Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5: " << "Error creating dataset";
+                 return void();
+             }
+             
+         } else {
+             checkClose_file(dsA);
+             Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5: " << "Error opening dataset";
+             return void();
          }
          
          

@@ -1,22 +1,136 @@
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Utilities/hdf5ImputeData.hpp"
 
+/**
+ * @file hdf5_imputation.cpp
+ * @brief Implementation of SNP imputation for HDF5-stored genomic data
+ * @details This file provides functionality for imputing missing values in
+ * SNP (Single Nucleotide Polymorphism) data stored in HDF5 format. The
+ * implementation supports:
+ * - Row-wise and column-wise imputation
+ * - Parallel processing capabilities
+ * - Memory-efficient operations
+ * - Flexible output options
+ * 
+ * Key features:
+ * - Support for large genomic datasets
+ * - Configurable imputation direction
+ * - Error handling and validation
+ * - Parallel processing support
+ * - Memory-efficient implementation
+ */
 
-//' Impute SNPs in hdf5 omic dataset 
+/**
+ * @brief Imputes missing SNP values in HDF5 datasets
+ * 
+ * @details Implements efficient SNP imputation for genomic data stored in
+ * HDF5 format. The function supports both row-wise and column-wise imputation
+ * with parallel processing capabilities.
+ * 
+ * Implementation features:
+ * - Flexible imputation direction (row/column)
+ * - Support for parallel processing
+ * - Memory-efficient operations
+ * - Safe file operations
+ * - Comprehensive error handling
+ * 
+ * @param filename Path to HDF5 file
+ * @param group Input group containing dataset
+ * @param dataset Input dataset name
+ * @param outgroup Output group for results
+ * @param outdataset Output dataset name
+ * @param bycols Whether to impute by columns
+ * @param paral Whether to use parallel processing
+ * @param threads Number of threads for parallel processing
+ * @param overwrite Whether to overwrite existing dataset
+ * 
+ * @throws H5::FileIException for HDF5 file operation errors
+ * @throws H5::DataSetIException for HDF5 dataset operation errors
+ * @throws H5::DataSpaceIException for HDF5 dataspace errors
+ * @throws H5::DataTypeIException for HDF5 datatype errors
+ * @throws std::exception for other errors
+ */
+
+//' Impute Missing SNP Values in HDF5 Dataset
 //'
-//' Impute SNPs in hdf5 omic dataset 
+//' @description
+//' Performs imputation of missing values in SNP (Single Nucleotide Polymorphism)
+//' data stored in HDF5 format.
+//'
+//' @details
+//' This function provides efficient imputation capabilities for genomic data with
+//' support for:
 //' 
-//' @inheritParams bdblockmult_hdf5
-//' @param group, character array indicating the input group where the data set to be imputed is. 
-//' @param dataset, character array indicating the input dataset to be imputed
-//' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
-//' @param outgroup, optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
-//' @param outdataset, optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
-//' @param overwrite, optional boolean if true, previous results in same location 
-//' inside hdf5 will be overwritten, by default overwrite = false, data was not overwritten.
-//' @return Original hdf5 data file with imputed data
+//' * Imputation options:
+//'   - Row-wise or column-wise imputation
+//'   - Parallel processing
+//'   - Configurable thread count
+//' 
+//' * Output options:
+//'   - Custom output location
+//'   - In-place modification
+//'   - Overwrite protection
+//' 
+//' * Implementation features:
+//'   - Memory-efficient processing
+//'   - Safe file operations
+//'   - Error handling
+//'
+//' The function supports both in-place modification and creation of new datasets.
+//'
+//' @param filename Character string. Path to the HDF5 file.
+//' @param group Character string. Path to the group containing input dataset.
+//' @param dataset Character string. Name of the dataset to impute.
+//' @param outgroup Character string (optional). Output group path. If NULL,
+//'   uses input group.
+//' @param outdataset Character string (optional). Output dataset name. If NULL,
+//'   overwrites input dataset.
+//' @param bycols Logical (optional). Whether to impute by columns (TRUE) or
+//'   rows (FALSE). Default is TRUE.
+//' @param paral Logical (optional). Whether to use parallel processing.
+//' @param threads Integer (optional). Number of threads for parallel processing.
+//' @param overwrite Logical (optional). Whether to overwrite existing dataset.
+//'
+//' @return No return value, called for side effects (data imputation).
+//'
 //' @examples
-//' print('see vignette')
+//' \dontrun{
+//' library(BigDataStatMeth)
+//' 
+//' # Create test data with missing values
+//' data <- matrix(sample(c(0, 1, 2, NA), 100, replace = TRUE), 10, 10)
+//' 
+//' # Save to HDF5
+//' fn <- "snp_data.hdf5"
+//' bdCreate_hdf5_matrix(fn, data, "genotype", "snps",
+//'                      overwriteFile = TRUE)
+//' 
+//' # Impute missing values
+//' bdImputeSNPs_hdf5(
+//'   filename = fn,
+//'   group = "genotype",
+//'   dataset = "snps",
+//'   outgroup = "genotype_imputed",
+//'   outdataset = "snps_complete",
+//'   bycols = TRUE,
+//'   paral = TRUE
+//' )
+//' 
+//' # Cleanup
+//' if (file.exists(fn)) {
+//'   file.remove(fn)
+//' }
+//' }
+//'
+//' @references
+//' * The HDF Group. (2000-2010). HDF5 User's Guide.
+//' * Li, Y., et al. (2009). Genotype Imputation. Annual Review of Genomics
+//'   and Human Genetics, 10, 387-406.
+//'
+//' @seealso
+//' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+//' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
+//'
 //' @export
 // [[Rcpp::export]]
 void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, 
@@ -60,33 +174,37 @@ void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string data
             dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, stroutgroup, stroutdataset, bforce);
             Rcpp_Impute_snps_hdf5( dsIn, dsOut, bcols, stroutdataset, threads);
             delete dsOut; dsOut = nullptr;
+        } else {
+            delete dsIn; dsIn = nullptr;
+            Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5: " << "Error opening dataset";
+            return void();
         }
         
         delete dsIn; dsIn = nullptr;
         
     } catch( H5::FileIException& error ){
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (File IException)\n";
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (File IException)\n";
         return void();
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataSet IException)\n";
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (DataSet IException)\n";
         return void();
     } catch( H5::DataSpaceIException& error ) { 
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataSpace IException)\n";
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (DataSpace IException)\n";
         return void();
-    } catch( H5::DataTypeIException& error ) { 
+    } catch( H5::DataTypeIException&    error ) { 
         checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataType IException)\n";
         return void();
-    } catch(std::exception &ex) {
+    } catch(std::exception &ex) {   
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5: "<< ex.what()<<"\n";
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5: " << ex.what()<<"\n";
         return void();
     }  catch (...) {
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr<<"\nC++ exception bdImputeSNPs_hdf5 (unknown reason)";
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (unknown reason)";
         return void();
     }
     

@@ -153,7 +153,7 @@ void bdblockmult_hdf5(std::string filename,
         return void();
     } catch(std::exception &ex) {
         checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"\nc++ exception blockmult_hdf5\n";
+        Rcpp::Rcerr << "c++ exception blockmult_hdf5: " << ex.what();
         return void();
     }  catch (...) {
         checkClose_file(dsA, dsB, dsC);
