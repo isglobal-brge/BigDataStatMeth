@@ -51,7 +51,7 @@
 #' \describe{
 #'   \item{L}{The lower triangular Cholesky factor}
 #' }
-#'
+#' 
 #' @examples
 #' \dontrun{
 #' library(rhdf5)
@@ -60,17 +60,17 @@
 #' set.seed(1234)
 #' X <- matrix(rnorm(100), 10, 10)
 #' A <- crossprod(X)  # A = X'X is symmetric positive-definite
-#' 
+#'     
 #' # Save to HDF5
 #' h5createFile("matrix.h5")
 #' h5write(A, "matrix.h5", "data/matrix")
-#' 
+#'         
 #' # Compute Cholesky decomposition
 #' bdCholesky_hdf5("matrix.h5", "data", "matrix",
 #'                 outdataset = "chol",
 #'                 outgroup = "decompositions",
 #'                 fullMatrix = FALSE)
-#' 
+#'        
 #' # Verify the decomposition
 #' L <- h5read("matrix.h5", "decompositions/chol")
 #' max(abs(A - L %*% t(L)))  # Should be very small
@@ -81,7 +81,7 @@
 #'   Johns Hopkins University Press.
 #' * Higham, N. J. (2009). Cholesky factorization.
 #'   Wiley Interdisciplinary Reviews: Computational Statistics, 1(2), 251-254.
-#'
+#'        
 #' @seealso
 #' * \code{\link{bdInvCholesky_hdf5}} for computing inverse using Cholesky decomposition
 #' * \code{\link{bdSolveEquation_hdf5}} for solving linear systems
@@ -172,7 +172,7 @@ bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NUL
 #' @seealso
 #' * \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
 #' * \code{\link{bdSolveEquation_hdf5}} for solving linear systems
-#' 
+#'
 #' @export
 bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
     invisible(.Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock))
@@ -357,7 +357,7 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #' @seealso
 #' * \code{\link{bdPCA_hdf5}} for Principal Component Analysis
 #' * \code{\link{bdQR_hdf5}} for QR decomposition
-#' 
+#'
 #' @export
 bdSVD_hdf5 <- function(filename, group = NULL, dataset = NULL, k = 2L, q = 1L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite = NULL, method = NULL, threads = NULL) {
     invisible(.Call('_BigDataStatMeth_bdSVD_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, k, q, bcenter, bscale, rankthreshold, overwrite, method, threads))
@@ -409,10 +409,10 @@ bdSVD_hdf5 <- function(filename, group = NULL, dataset = NULL, k = 2L, q = 1L, b
 #' A <- matrix(runif(n*m), nrow = n, ncol = m)
 #' B <- matrix(runif(n), nrow = n)
 #' AS <- A %*% t(A)  # Create symmetric matrix
-#'       
+#' 
 #' # Solve using bdSolve
 #' X <- bdSolve(A, B)
-#'       
+#' 
 #' # Compare with R's solve
 #' XR <- solve(A, B)
 #' all.equal(X, XR, check.attributes=FALSE)
@@ -426,7 +426,7 @@ bdSVD_hdf5 <- function(filename, group = NULL, dataset = NULL, k = 2L, q = 1L, b
 #' @seealso
 #' * \code{\link{bdSolve_hdf5}} for solving systems with HDF5-stored matrices
 #' * \code{\link{solve}} for R's built-in solver
-#'   
+#'
 #' @export
 bdSolve <- function(A, B) {
     .Call('_BigDataStatMeth_bdSolve', PACKAGE = 'BigDataStatMeth', A, B)
@@ -487,9 +487,9 @@ bdSolve <- function(A, B) {
 #' resm <- bdSolve(Ycp, X)
 #' resr <- solve(Ycp, X)
 #' all.equal(resm, resr)
-#'         
+#' 
 #' # Save matrices to HDF5
-#' bdCreate_hdf5_matrix(filename = fn, 
+#' bdCreate_hdf5_matrix(filename = fn,
 #'                      object = Ycp,
 #'                      group = "data",
 #'                      dataset = "A",
@@ -497,8 +497,8 @@ bdSolve <- function(A, B) {
 #'                      overwriteFile = TRUE,
 #'                      overwriteDataset = TRUE,
 #'                      unlimited = FALSE)
-#'             
-#' bdCreate_hdf5_matrix(filename = fn, 
+#' 
+#' bdCreate_hdf5_matrix(filename = fn,
 #'                      object = X,
 #'                      group = "data",
 #'                      dataset = "B",
@@ -506,7 +506,7 @@ bdSolve <- function(A, B) {
 #'                      overwriteFile = FALSE,
 #'                      overwriteDataset = TRUE,
 #'                      unlimited = FALSE)
-#'             
+#' 
 #' # Solve using HDF5-stored matrices
 #' bdSolve_hdf5(filename = fn,
 #'              groupA = "data",
@@ -530,7 +530,7 @@ bdSolve <- function(A, B) {
 #' @seealso
 #' * \code{\link{bdSolve}} for in-memory matrix solving
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' 
+#'
 #' @export
 bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
     invisible(.Call('_BigDataStatMeth_bdSolve_hdf5', PACKAGE = 'BigDataStatMeth', filename, groupA, datasetA, groupB, datasetB, outgroup, outdataset, overwrite))
@@ -1191,7 +1191,7 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
 #' @seealso
 #' * \code{\link{bdgetDatasetsList_hdf5}} for listing available datasets
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' 
+#'
 #' @export
 bdgetDim_hdf5 <- function(filename, dataset) {
     .Call('_BigDataStatMeth_bdgetDim_hdf5', PACKAGE = 'BigDataStatMeth', filename, dataset)
@@ -1484,7 +1484,7 @@ bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdata
 #' @seealso
 #' * \code{\link{bdWriteDiagonal_hdf5}} for writing diagonal elements
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' 
+#'
 #' @export
 bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
     .Call('_BigDataStatMeth_bdgetDiagonal_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset)
@@ -1551,7 +1551,7 @@ bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
 #' @seealso
 #' * \code{\link{bdgetDiagonal_hdf5}} for reading diagonal elements
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' 
+#'
 #' @export
 bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
     invisible(.Call('_BigDataStatMeth_bdWriteDiagonal_hdf5', PACKAGE = 'BigDataStatMeth', diagonal, filename, group, dataset))
@@ -1603,12 +1603,12 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' @examples
 #' \dontrun{
 #' library(BigDataStatMeth)
-#'     
+#' 
 #' # Create test matrices
 #' set.seed(123)
 #' Y <- matrix(rnorm(100), 10, 10)
 #' X <- matrix(rnorm(10), 10, 1)
-#'     
+#' 
 #' # Save to HDF5
 #' bdCreate_hdf5_matrix("test.hdf5", Y, "data", "matrix1",
 #'                      overwriteFile = TRUE)
@@ -1640,7 +1640,7 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
 #' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
-#'         
+#'
 #' @export
 bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL, byrows = NULL, wsize = NULL, overwrite = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdgetSDandMean_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, sd, mean, byrows, wsize, overwrite))
@@ -1905,7 +1905,7 @@ bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NU
 #'   (e.g., "group/dataset" or "group/subgroup").
 #'
 #' @return No return value, called for side effects (element removal).
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' library(BigDataStatMeth)
@@ -2145,14 +2145,14 @@ bdRemoveMAF_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf
 #' TCGA-OR-A5J2 TCGA-OR-A5J2     2        2        1
 #' TCGA-OR-A5J3 TCGA-OR-A5J3     3        3        1
 #' TCGA-OR-A5J4 TCGA-OR-A5J4     4        4        1
-#' 
+#'
 #' Block 2 (reordering with new identifiers):
 #'                       chr order newOrder
 #' TCGA-OR-A5J5 TCGA-OR-A5JA    10        5        1
 #' TCGA-OR-A5J6 TCGA-OR-A5JB    11        6        1
 #' TCGA-OR-A5J7 TCGA-OR-A5JC    12        7        0
 #' TCGA-OR-A5J8 TCGA-OR-A5JD    13        8        1
-#' 
+#'
 #' Block 3 (reordering with identifier swaps):
 #'                       chr order newOrder
 #' TCGA-OR-A5J9 TCGA-OR-A5J5     5        9        1
@@ -2160,7 +2160,7 @@ bdRemoveMAF_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf
 #' TCGA-OR-A5JB TCGA-OR-A5J7     7       11        1
 #' TCGA-OR-A5JC TCGA-OR-A5J8     8       12        1
 #' TCGA-OR-A5JD TCGA-OR-A5J9     9       13        0
-#' 
+#'
 #' In this example:
 #' - Block 1 maintains the original order
 #' - Block 2 assigns new identifiers (A5JA-D) to elements
@@ -2424,7 +2424,7 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
 #' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
-#' 
+#'
 #' @export
 bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copytolower = NULL, elementsBlock = 1000000L) {
     invisible(.Call('_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, copytolower, elementsBlock))
@@ -2543,7 +2543,7 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
 #' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
-#' 
+#'
 #' @export
 bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup = NULL, byrows = NULL, paral = NULL, threads = NULL, overwrite = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, paral, threads, overwrite))
@@ -2587,7 +2587,7 @@ bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, ve
 #'
 #' @return Matrix or vector containing the result of A * B.
 #'
-#' @examples 
+#' @examples
 #' \dontrun{
 #' library(BigDataStatMeth)
 #' 
@@ -2621,7 +2621,7 @@ bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, ve
 #' * \code{\link{bdblockSum}} for block-based matrix addition
 #' * \code{\link{bdblockSubstract}} for block-based matrix subtraction
 #'
-#' @export 
+#' @export
 bdblockMult <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, threads = NULL) {
     .Call('_BigDataStatMeth_bdblockMult', PACKAGE = 'BigDataStatMeth', A, B, block_size, paral, byBlocks, threads)
 }
@@ -2664,7 +2664,7 @@ bdblockMult <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, 
 #'
 #' @return Matrix or vector containing the result of A - B.
 #'
-#' @examples 
+#' @examples
 #' \dontrun{
 #' library(BigDataStatMeth)
 #' 
@@ -2699,7 +2699,7 @@ bdblockMult <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, 
 #' * \code{\link{bdblockSum}} for block-based matrix addition
 #' * \code{\link{bdblockMult}} for block-based matrix multiplication
 #'
-#' @export 
+#' @export
 bdblockSubstract <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, threads = NULL) {
     .Call('_BigDataStatMeth_bdblockSubstract', PACKAGE = 'BigDataStatMeth', A, B, block_size, paral, byBlocks, threads)
 }
@@ -2742,7 +2742,7 @@ bdblockSubstract <- function(A, B, block_size = NULL, paral = NULL, byBlocks = T
 #'
 #' @return Matrix or vector containing the result of A + B.
 #'
-#' @examples 
+#' @examples
 #' \dontrun{
 #' library(BigDataStatMeth)
 #' 
@@ -2777,7 +2777,7 @@ bdblockSubstract <- function(A, B, block_size = NULL, paral = NULL, byBlocks = T
 #' * \code{\link{bdblockSubstract}} for block-based matrix subtraction
 #' * \code{\link{bdblockMult}} for block-based matrix multiplication
 #'
-#' @export 
+#' @export
 bdblockSum <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, threads = NULL) {
     .Call('_BigDataStatMeth_bdblockSum', PACKAGE = 'BigDataStatMeth', A, B, block_size, paral, byBlocks, threads)
 }
@@ -2850,7 +2850,7 @@ bdblockSum <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, t
 #' @seealso
 #' * \code{\link{bdtCrossprod}} for transposed cross-product
 #' * \code{\link{bdblockMult}} for block-based matrix multiplication
-#' 
+#'
 #' @export
 bdCrossprod <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral = NULL, threads = NULL) {
     .Call('_BigDataStatMeth_bdCrossprod', PACKAGE = 'BigDataStatMeth', A, B, transposed, block_size, paral, threads)
@@ -2925,7 +2925,7 @@ bdCrossprod <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral
 #' @seealso
 #' * \code{\link{bdCrossprod}} for standard cross-product
 #' * \code{\link{bdblockMult}} for block-based matrix multiplication
-#' 
+#'
 #' @export
 bdtCrossprod <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral = NULL, threads = NULL) {
     .Call('_BigDataStatMeth_bdtCrossprod', PACKAGE = 'BigDataStatMeth', A, B, transposed, block_size, paral, threads)
