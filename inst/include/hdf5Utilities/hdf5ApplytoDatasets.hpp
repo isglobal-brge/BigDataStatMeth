@@ -1,3 +1,32 @@
+/**
+ * @file hdf5ApplytoDatasets.hpp
+ * @brief Advanced mathematical operations on HDF5 datasets
+ * 
+ * This file provides a comprehensive set of mathematical and statistical operations
+ * that can be applied to HDF5 datasets. It implements various matrix operations,
+ * decompositions, and statistical computations with support for parallel processing
+ * and memory-efficient block operations.
+ * 
+ * Key features:
+ * - Matrix operations (multiplication, cross products)
+ * - Matrix decompositions (QR, Cholesky)
+ * - Statistical computations (mean, standard deviation)
+ * - Support for parallel processing
+ * - Memory-efficient block operations
+ * - Flexible dataset transformations
+ * 
+ * Supported operations:
+ * - QR Decomposition
+ * - Cross Product and Transposed Cross Product
+ * - Inverse Cholesky
+ * - Block Matrix Multiplication
+ * - Matrix Equation Solving
+ * - Normalization
+ * - Statistical Measures
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_APPLY_HPP
 #define BIGDATASTATMETH_HDF5_APPLY_HPP
 
@@ -5,6 +34,66 @@
 
 namespace BigDataStatMeth {
 
+    /**
+     * @brief Applies mathematical functions to HDF5 datasets
+     * 
+     * This function serves as a high-level interface for applying various mathematical
+     * operations to HDF5 datasets. It supports both single-dataset operations and
+     * operations between multiple datasets.
+     * 
+     * @param filename Path to the HDF5 file
+     * @param group Group containing input datasets
+     * @param datasets Vector of input dataset names
+     * @param outgroup Output group path
+     * @param func Operation to apply:
+     *        - "QR": QR decomposition
+     *        - "CrossProd": Cross product
+     *        - "tCrossProd": Transposed cross product
+     *        - "invChol": Inverse using Cholesky
+     *        - "blockmult": Block matrix multiplication
+     *        - "solve": Solve matrix equation
+     *        - "normalize": Normalize data
+     *        - "sdmean": Compute SD and mean
+     *        - "descChol": Cholesky decomposition
+     * @param b_group Optional group for second dataset in two-dataset operations
+     * @param b_datasets Optional second dataset names for two-dataset operations
+     * @param overwrite Optional flag to overwrite existing datasets
+     * @param transp_dataset Optional flag to transpose first dataset
+     * @param transp_bdataset Optional flag to transpose second dataset
+     * @param fullMatrix Optional flag for full matrix output
+     * @param byrows Optional flag for row-wise operations
+     * @param threads Optional number of threads for parallel processing
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::GroupIException on group operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * 
+     * Performance considerations:
+     * - Uses block-wise processing for large datasets
+     * - Implements parallel processing where applicable
+     * - Optimizes memory usage through Eigen
+     * - Handles large matrices efficiently
+     * 
+     * Implementation details:
+     * 1. Validates input parameters and operation type
+     * 2. Sets up appropriate dataset handlers
+     * 3. Performs requested operation with error handling
+     * 4. Manages memory cleanup
+     * 
+     * Example:
+     * @code
+     * // Perform QR decomposition
+     * RcppApplyFunctionHdf5("data.h5", "/input", {"matrix1"}, "/output", "QR");
+     * 
+     * // Perform matrix multiplication
+     * RcppApplyFunctionHdf5("data.h5", "/input", {"A"}, "/output", "blockmult",
+     *                       "/input", {"B"}, false, false, false);
+     * @endcode
+     * 
+     * @note Maximum block size is controlled by MAXELEMSINBLOCK
+     * @warning Some operations require specific matrix dimensions or properties
+     */
     extern inline void RcppApplyFunctionHdf5( std::string filename, 
                                 std::string group, 
                                 Rcpp::StringVector datasets, 
@@ -75,8 +164,6 @@ namespace BigDataStatMeth {
                     func = "tCrossProd_double";
                 }
             }
-            
-
             
             
             if( b_group.isNull()) {
@@ -214,7 +301,6 @@ namespace BigDataStatMeth {
                         }
                         
                         
-                        
                     } else if( oper(oper.findName( func )) == 5) {
                         // ==> Solve matrix equation Ax = B
                         
@@ -278,19 +364,19 @@ namespace BigDataStatMeth {
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             checkClose_file(dsA, dsB, dsQ, dsR, dsOut, dsmean, dssd);
-            Rcpp::Rcerr<<"\nc++ exception RcppApplyFunctionHdf5 (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception RcppApplyFunctionHdf5 (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
             checkClose_file(dsA, dsB, dsQ, dsR, dsOut, dsmean, dssd);
-            Rcpp::Rcerr<<"\nc++ exception RcppApplyFunctionHdf5 (DataSet IException)\n";
+            Rcpp::Rcerr<<"c++ exception RcppApplyFunctionHdf5 (DataSet IException)\n";
             return void();
         } catch(std::exception &ex) {
             checkClose_file(dsA, dsB, dsQ, dsR, dsOut, dsmean, dssd);
-            Rcpp::Rcerr<<"\nc++ exception RcppApplyFunctionHdf5\n";
+            Rcpp::Rcerr << "c++ exception blockmult_hdf5: " << ex.what();
             return void();
         } catch (...) {
             checkClose_file(dsA, dsB, dsQ, dsR, dsOut, dsmean, dssd);
-            Rcpp::Rcerr<<"\nC++ exception RcppApplyFunctionHdf5 (unknown reason)";
+            Rcpp::Rcerr<<"C++ exception RcppApplyFunctionHdf5 (unknown reason)";
             return void();
         }
         

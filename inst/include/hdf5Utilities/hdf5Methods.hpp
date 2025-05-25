@@ -1,3 +1,22 @@
+/**
+ * @file hdf5Methods.hpp
+ * @brief Core HDF5 utility methods for dataset operations
+ * 
+ * This file provides core functionality for HDF5 dataset operations,
+ * particularly focusing on joining multiple datasets. It implements
+ * efficient methods for combining datasets while handling memory
+ * management and error conditions.
+ * 
+ * Key features:
+ * - Template-based dataset joining
+ * - Support for both regular and internal HDF5 datasets
+ * - Automatic memory management
+ * - Comprehensive error handling
+ * - Efficient data transfer using Eigen
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_METHODS_HPP
 #define BIGDATASTATMETH_HDF5_METHODS_HPP
 
@@ -6,9 +25,49 @@
 
 namespace BigDataStatMeth {
 
-
-    // Join multiple datasets in one dataset in the same group
-    
+    /**
+     * @brief Joins multiple HDF5 datasets into a single dataset within the same group
+     * 
+     * @tparam T Dataset type (must be either hdf5Dataset* or hdf5DatasetInternal*)
+     * @param dsJoined Pointer to the output dataset where joined data will be stored
+     * @param strsubgroup Subgroup path where the datasets are located
+     * @param strinput Vector of input dataset names to join
+     * @param bremoveJoined Flag to remove original datasets after joining
+     * @param byCols Flag indicating whether to join by columns
+     * 
+     * @return int Returns 0 on success, -1 on failure
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::GroupIException on group operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * @throws H5::DataTypeIException on datatype operation errors
+     * @throws std::exception on general errors
+     * 
+     * @note The function uses unlimited datasets to allow for dynamic growth
+     * @note Memory is managed efficiently using Eigen's mapping capabilities
+     * 
+     * Performance considerations:
+     * - Uses block-wise reading and writing for memory efficiency
+     * - Implements Eigen for fast matrix operations
+     * - Automatically extends dataset size as needed
+     * 
+     * Implementation details:
+     * 1. Creates an unlimited dataset for output
+     * 2. Processes input datasets sequentially
+     * 3. For each dataset:
+     *    - Reads data into memory
+     *    - Extends output dataset if needed
+     *    - Writes data to the extended region
+     * 4. Optionally removes original datasets
+     * 
+     * Example:
+     * @code
+     * BigDataStatMeth::hdf5Dataset* joined = new hdf5Dataset(...);
+     * Rcpp::StringVector inputs = {"dataset1", "dataset2"};
+     * join_datasets(joined, "/group", inputs, true, false);
+     * @endcode
+     */
     template< typename T>
     int join_datasets ( T* dsJoined, std::string strsubgroup, Rcpp::StringVector strinput, bool bremoveJoined, bool byCols )
     {
@@ -87,24 +146,32 @@ namespace BigDataStatMeth {
             
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            delete dsJoined;
-            ::Rf_error( "c++ exception join_datasets (File IException)" );
+            checkClose_file(dsJoined);
+            Rcpp::Rcerr<<"c++ exception join_datasets (File IException)" << std::endl;
             return -1;
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            delete dsJoined;
-            ::Rf_error( "c++ exception join_datasets (DataSet IException)" );
+            checkClose_file(dsJoined);
+            Rcpp::Rcerr<<"c++ exception join_datasets (DataSet IException)" << std::endl;
             return -1;
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-            delete dsJoined;
-            ::Rf_error( "c++ exception join_datasets (Group IException)" );
+            checkClose_file(dsJoined);
+            Rcpp::Rcerr<<"c++ exception join_datasets (Group IException)" << std::endl;
             return -1;
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            delete dsJoined;
-            ::Rf_error( "c++ exception join_datasets (DataSpace IException)" );
+            checkClose_file(dsJoined);
+            Rcpp::Rcerr<<"c++ exception join_datasets (DataSpace IException)" << std::endl;
             return -1;
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
-            delete dsJoined;
-            ::Rf_error( "c++ exception join_datasets (Data TypeIException)" );
+            checkClose_file(dsJoined);
+            Rcpp::Rcerr<<"c++ exception join_datasets (Data TypeIException)" << std::endl;
+            return -1;
+        } catch(std::exception &ex) {
+            checkClose_file(dsJoined);
+            Rcpp::Rcerr << "c++ exception join_datasets: " << ex.what();
+            return -1;
+        } catch (...) {
+            checkClose_file(dsJoined);
+            Rcpp::Rcerr<<"C++ exception join_datasets (unknown reason)";
             return -1;
         }
         return(0);

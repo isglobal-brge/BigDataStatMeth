@@ -1,3 +1,22 @@
+/**
+ * @file hdf5RemoveLowData.hpp
+ * @brief Quality control utilities for handling low-quality data in HDF5 datasets
+ * 
+ * This file provides functionality for removing rows or columns from HDF5 datasets
+ * that contain a high percentage of missing or low-quality data. It implements
+ * efficient block-wise processing for large datasets and provides comprehensive
+ * error handling.
+ * 
+ * Key features:
+ * - Row-wise and column-wise filtering
+ * - Block-wise processing for memory efficiency
+ * - Configurable threshold for data removal
+ * - Automatic dataset resizing
+ * - Comprehensive error handling
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #ifndef BIGDATASTATMETH_UTIL_QC_BASICS_HPP
 #define BIGDATASTATMETH_UTIL_QC_BASICS_HPP
 
@@ -5,8 +24,50 @@
 
 namespace BigDataStatMeth {
 
-
-    // Removes row or column with high missing data percentage
+    /**
+     * @brief Removes rows or columns with high percentage of missing data from HDF5 dataset
+     * 
+     * This function processes an HDF5 dataset in blocks, removing rows or columns
+     * where the percentage of missing data (represented by value 3) exceeds the
+     * specified threshold. The filtered data is written to a new dataset.
+     * 
+     * @param dsIn Pointer to input HDF5 dataset
+     * @param dsOut Pointer to output HDF5 dataset where filtered data will be stored
+     * @param bycols If true, process by columns; if false, process by rows
+     * @param pcent Threshold percentage (0.0-1.0) of missing data to trigger removal
+     * 
+     * @return int Number of rows/columns removed (negative) or error code
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::GroupIException on group operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * @throws H5::DataTypeIException on datatype operation errors
+     * 
+     * Performance considerations:
+     * - Uses block-wise processing with configurable block size (default 1000)
+     * - Implements Eigen for efficient matrix operations
+     * - Minimizes memory usage through streaming processing
+     * 
+     * Implementation details:
+     * 1. Processes data in blocks to handle large datasets
+     * 2. For each block:
+     *    - Reads data into memory
+     *    - Analyzes rows/columns for missing data percentage
+     *    - Removes rows/columns exceeding threshold
+     *    - Writes filtered data to output
+     * 3. Automatically extends output dataset as needed
+     * 
+     * @note Missing data is identified by the value 3 in the dataset
+     * @warning If all data is removed, a warning is issued suggesting parameter adjustment
+     * 
+     * Example:
+     * @code
+     * BigDataStatMeth::hdf5Dataset* input = new hdf5Dataset("data.h5", "/input");
+     * BigDataStatMeth::hdf5Dataset* output = new hdf5Dataset("data.h5", "/output");
+     * int removed = Rcpp_Remove_Low_Data_hdf5(input, output, true, 0.5);
+     * @endcode
+     */
     extern inline int Rcpp_Remove_Low_Data_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5Dataset* dsOut, bool bycols, double pcent)
     {
         
@@ -125,29 +186,32 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error) { // catch failure caused by the H5File operations
-            delete dsIn;
-            delete dsOut;
-            ::Rf_error( "c++ exception Rcpp_Remove_Low_Data_hdf5 (File IException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (File IException)" << std::endl;
             return -1;
         } catch( H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            delete dsIn;
-            delete dsOut;
-            ::Rf_error( "c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSet IException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSet IException)" << std::endl;
             return -1;
         } catch( H5::GroupIException& error) { // catch failure caused by the Group operations
-            delete dsIn;
-            delete dsOut;
-            ::Rf_error( "c++ exception Rcpp_Remove_Low_Data_hdf5 (Group IException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (Group IException)" << std::endl;
             return -1;
         } catch( H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            delete dsIn;
-            delete dsOut;
-            ::Rf_error( "c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSpace IException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSpace IException)" << std::endl;
             return -1;
         } catch( H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
-            delete dsIn;
-            delete dsOut;
-            ::Rf_error( "c++ exception Rcpp_Remove_Low_Data_hdf5 (Data TypeIException)" );
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (Data TypeIException)" << std::endl;
+            return -1;
+        } catch(std::exception &ex) {
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr << "c++ exception Rcpp_Remove_Low_Data_hdf5: " << ex.what();
+            return -1;
+        } catch (...) {
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"C++ exception Rcpp_Remove_Low_Data_hdf5 (unknown reason)";
             return -1;
         }
         

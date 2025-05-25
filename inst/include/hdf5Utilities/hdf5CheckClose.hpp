@@ -1,9 +1,40 @@
+/**
+ * @file hdf5CheckClose.hpp
+ * @brief Safe file closing utilities for HDF5 datasets
+ * 
+ * This file provides a set of overloaded functions for safely closing HDF5 datasets.
+ * It implements comprehensive error handling and ensures proper cleanup of resources
+ * even in error conditions. The functions support closing multiple datasets
+ * simultaneously with proper null pointer checking.
+ * 
+ * Key features:
+ * - Safe dataset closing
+ * - Comprehensive error handling
+ * - Support for multiple datasets
+ * - Null pointer checking
+ * - Resource cleanup
+ * 
+ * @note This module is part of the BigDataStatMeth library.
+ * @note This module is part of the BigDataStatMeth library and is not intended to be 
+ * used directly by the user. It is used internally by the library.
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_CHECK_CLOSE_FILE_HPP
 #define BIGDATASTATMETH_HDF5_CHECK_CLOSE_FILE_HPP
 
-
 namespace BigDataStatMeth {
 
+    /**
+     * @brief Safely closes a single HDF5 dataset
+     * 
+     * @param ds1 Pointer to the dataset to close
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * 
+     * @note Checks for null pointer before attempting to close
+     */
     extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1) 
     {
         try{
@@ -13,19 +44,19 @@ namespace BigDataStatMeth {
             } 
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSet IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSet IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSpace IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSpace IException)\n";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<<"\nc++ exception checkClose_file \n"<< ex.what();
+            Rcpp::Rcout<<"c++ exception checkClose_file \n"<< ex.what();
             return void();
         } catch (...) {
-            Rcpp::Rcout<<"\nC++ exception checkClose_file (unknown reason)";
+            Rcpp::Rcout<<"C++ exception checkClose_file (unknown reason)";
             return void();
         }
         
@@ -33,6 +64,18 @@ namespace BigDataStatMeth {
     }
     
     
+    /**
+     * @brief Safely closes two HDF5 datasets
+     * 
+     * @param ds1 Pointer to the first dataset
+     * @param ds2 Pointer to the second dataset
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * 
+     * @note Checks each pointer for null before attempting to close
+     */
     extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                          BigDataStatMeth::hdf5Dataset* ds2) 
     {
@@ -45,19 +88,19 @@ namespace BigDataStatMeth {
             } 
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSet IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSet IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSpace IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSpace IException)\n";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<<"\nc++ exception checkClose_file \n"<< ex.what();
+            Rcpp::Rcout<<"c++ exception checkClose_file \n"<< ex.what();
             return void();
         } catch (...) {
-            Rcpp::Rcout<<"\nC++ exception checkClose_file (unknown reason)";
+            Rcpp::Rcout<<"C++ exception checkClose_file (unknown reason)";
             return void();
         }
         
@@ -65,6 +108,19 @@ namespace BigDataStatMeth {
     }
     
     
+    /**
+     * @brief Safely closes three HDF5 datasets
+     * 
+     * @param ds1 Pointer to the first dataset
+     * @param ds2 Pointer to the second dataset
+     * @param ds3 Pointer to the third dataset
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * 
+     * @note Checks each pointer for null before attempting to close
+     */
     extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                          BigDataStatMeth::hdf5Dataset* ds2, 
                          BigDataStatMeth::hdf5Dataset* ds3) 
@@ -80,25 +136,39 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSet IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSet IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSpace IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSpace IException)\n";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<<"\nc++ exception checkClose_file \n"<< ex.what();
+            Rcpp::Rcout<<"c++ exception checkClose_file \n"<< ex.what();
             return void();
         } catch (...) {
-            Rcpp::Rcout<<"\nC++ exception checkClose_file (unknown reason)";
+            Rcpp::Rcout<<"C++ exception checkClose_file (unknown reason)";
             return void();
         }
         
         return void();
     }
     
+    /**
+     * @brief Safely closes four HDF5 datasets
+     * 
+     * @param ds1 Pointer to the first dataset
+     * @param ds2 Pointer to the second dataset
+     * @param ds3 Pointer to the third dataset
+     * @param ds4 Pointer to the fourth dataset
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * 
+     * @note Checks each pointer for null before attempting to close
+     */
     extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                          BigDataStatMeth::hdf5Dataset* ds2, 
                          BigDataStatMeth::hdf5Dataset* ds3, 
@@ -117,19 +187,19 @@ namespace BigDataStatMeth {
             } 
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSet IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSet IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSpace IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSpace IException)\n";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<<"\nc++ exception checkClose_file \n"<< ex.what();
+            Rcpp::Rcout<<"c++ exception checkClose_file \n"<< ex.what();
             return void();
         } catch (...) {
-            Rcpp::Rcout<<"\nC++ exception checkClose_file (unknown reason)";
+            Rcpp::Rcout<<"C++ exception checkClose_file (unknown reason)";
             return void();
         }
         
@@ -139,6 +209,21 @@ namespace BigDataStatMeth {
     
     
     
+    /**
+     * @brief Safely closes five HDF5 datasets
+     * 
+     * @param ds1 Pointer to the first dataset
+     * @param ds2 Pointer to the second dataset
+     * @param ds3 Pointer to the third dataset
+     * @param ds4 Pointer to the fourth dataset
+     * @param ds5 Pointer to the fifth dataset
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * 
+     * @note Checks each pointer for null before attempting to close
+     */
     extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                                 BigDataStatMeth::hdf5Dataset* ds2, 
                                 BigDataStatMeth::hdf5Dataset* ds3, 
@@ -160,19 +245,19 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSet IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSet IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSpace IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSpace IException)\n";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<<"\nc++ exception checkClose_file \n"<< ex.what();
+            Rcpp::Rcout<<"c++ exception checkClose_file \n"<< ex.what();
             return void();
         } catch (...) {
-            Rcpp::Rcout<<"\nC++ exception checkClose_file (unknown reason)";
+            Rcpp::Rcout<<"C++ exception checkClose_file (unknown reason)";
             return void();
         }
         
@@ -181,6 +266,22 @@ namespace BigDataStatMeth {
 
 
 
+    /**
+     * @brief Safely closes six HDF5 datasets
+     * 
+     * @param ds1 Pointer to the first dataset
+     * @param ds2 Pointer to the second dataset
+     * @param ds3 Pointer to the third dataset
+     * @param ds4 Pointer to the fourth dataset
+     * @param ds5 Pointer to the fifth dataset
+     * @param ds6 Pointer to the sixth dataset
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * 
+     * @note Checks each pointer for null before attempting to close
+     */
     extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                                        BigDataStatMeth::hdf5Dataset* ds2, 
                                        BigDataStatMeth::hdf5Dataset* ds3, 
@@ -205,25 +306,42 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSet IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSet IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSpace IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSpace IException)\n";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<<"\nc++ exception checkClose_file \n"<< ex.what();
+            Rcpp::Rcout<<"c++ exception checkClose_file \n"<< ex.what();
             return void();
         } catch (...) {
-            Rcpp::Rcout<<"\nC++ exception checkClose_file (unknown reason)";
+            Rcpp::Rcout<<"C++ exception checkClose_file (unknown reason)";
             return void();
         }
         
         return void();
     }
     
+    /**
+     * @brief Safely closes seven HDF5 datasets
+     * 
+     * @param ds1 Pointer to the first dataset
+     * @param ds2 Pointer to the second dataset
+     * @param ds3 Pointer to the third dataset
+     * @param ds4 Pointer to the fourth dataset
+     * @param ds5 Pointer to the fifth dataset
+     * @param ds6 Pointer to the sixth dataset
+     * @param ds7 Pointer to the seventh dataset
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * 
+     * @note Checks each pointer for null before attempting to close
+     */
     extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                                        BigDataStatMeth::hdf5Dataset* ds2, 
                                        BigDataStatMeth::hdf5Dataset* ds3, 
@@ -251,19 +369,19 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSet IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSet IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSpace IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSpace IException)\n";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<<"\nc++ exception checkClose_file \n"<< ex.what();
+            Rcpp::Rcout<<"c++ exception checkClose_file \n"<< ex.what();
             return void();
         } catch (...) {
-            Rcpp::Rcout<<"\nC++ exception checkClose_file (unknown reason)";
+            Rcpp::Rcout<<"C++ exception checkClose_file (unknown reason)";
             return void();
         }
         
@@ -271,6 +389,24 @@ namespace BigDataStatMeth {
     }
 
 
+    /**
+     * @brief Safely closes eight HDF5 datasets
+     * 
+     * @param ds1 Pointer to the first dataset
+     * @param ds2 Pointer to the second dataset
+     * @param ds3 Pointer to the third dataset
+     * @param ds4 Pointer to the fourth dataset
+     * @param ds5 Pointer to the fifth dataset
+     * @param ds6 Pointer to the sixth dataset
+     * @param ds7 Pointer to the seventh dataset
+     * @param ds8 Pointer to the eighth dataset
+     * 
+     * @throws H5::FileIException on file operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * 
+     * @note Checks each pointer for null before attempting to close
+     */
     extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                                        BigDataStatMeth::hdf5Dataset* ds2, 
                                        BigDataStatMeth::hdf5Dataset* ds3, 
@@ -301,19 +437,19 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSet IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSet IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception checkClose_file (DataSpace IException)\n";
+            Rcpp::Rcerr<<"c++ exception checkClose_file (DataSpace IException)\n";
             return void();
         } catch(std::exception &ex) {
-            Rcpp::Rcout<<"\nc++ exception checkClose_file \n"<< ex.what();
+            Rcpp::Rcout<<"c++ exception checkClose_file \n"<< ex.what();
             return void();
         } catch (...) {
-            Rcpp::Rcout<<"\nC++ exception checkClose_file (unknown reason)";
+            Rcpp::Rcout<<"C++ exception checkClose_file (unknown reason)";
             return void();
         }
         

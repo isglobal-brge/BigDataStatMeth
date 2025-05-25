@@ -1,22 +1,56 @@
+/**
+ * @file hdf5BindDatasets.hpp
+ * @brief Utilities for combining HDF5 datasets
+ * 
+ * This file provides functionality for binding multiple HDF5 datasets together,
+ * either by rows or columns. It supports operations similar to R's rbind and cbind
+ * functions, but optimized for HDF5 datasets. The implementation handles large
+ * datasets efficiently and provides proper error handling.
+ * 
+ * Key features:
+ * - Column-wise binding (cbind equivalent)
+ * - Row-wise binding (rbind equivalent)
+ * - Index-based row binding
+ * - Automatic dimension adjustment
+ * - Support for unlimited datasets
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ * @note Data in R is transposed when stored in HDF5 data files
+ */
+
 #ifndef BIGDATASTATMETH_UTIL_BIND_DATASETS_HPP
 #define BIGDATASTATMETH_UTIL_BIND_DATASETS_HPP
 
-
-
 namespace BigDataStatMeth {
 
-
-    // 
-    // Possible functions: 
-    //  if oper = 
-    //      0: Bind by Cols
-    //      1: Bind by Rows
-    //      2: Bind by Rows taking in to account an index
-    //      
-    //  IMPORTANT: Take in to account that in R data is transposed when stored 
-    //          in hdf5 data files
-    //          
-    
+    /**
+     * @brief Binds multiple HDF5 datasets together
+     * 
+     * @param filename HDF5 file path
+     * @param group Group containing the datasets
+     * @param datasets Vector of dataset names to bind
+     * @param dsOut Pointer to output HDF5 dataset
+     * @param func Operation type:
+     *        - 0: Bind by Columns (cbind)
+     *        - 1: Bind by Rows (rbind)
+     *        - 2: Bind by Rows with index
+     * @param binternal Internal processing flag
+     * 
+     * @note When binding by columns, if dimensions don't match, the function will attempt to
+     *       resize matrices by adding needed columns/rows
+     * @note For row binding, the number of columns must match
+     * @note For column binding, the number of rows must match
+     * 
+     * @throws H5::FileIException on file access errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws H5::DataSpaceIException on dataspace operation errors
+     * @throws std::exception on general errors
+     * 
+     * Performance considerations:
+     * - Uses Eigen for efficient matrix operations
+     * - Implements block-wise reading and writing
+     * - Supports unlimited datasets for flexible growth
+     */
     extern inline void RcppBind_datasets_hdf5( std::string filename, std::string group, 
                                  Rcpp::StringVector datasets, 
                                  BigDataStatMeth::hdf5Dataset* dsOut,  
@@ -120,15 +154,23 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error ) {
             checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nc++ exception RcppBind_datasets_hdf5 (File IException)\n";
+            Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5 (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
             checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nc++ exception RcppBind_datasets_hdf5 (dstosplit IException)\n";
+            Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5 (dstosplit IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
             checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nc++ exception RcppBind_datasets_hdf5 (DataSpace IException)\n";
+            Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5 (DataSpace IException)\n";
+            return void();
+        } catch(std::exception &ex) {
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr << "c++ exception RcppBind_datasets_hdf5: " << ex.what();
+            return void();
+        } catch (...) {
+            checkClose_file(dsIn, dsOut);
+            Rcpp::Rcerr<<"C++ exception RcppBind_datasets_hdf5 (unknown reason)";
             return void();
         } 
         
@@ -136,9 +178,35 @@ namespace BigDataStatMeth {
         
     }
 
-
-
-
+    /**
+     * @brief High-level interface for binding HDF5 datasets
+     * 
+     * @param filename HDF5 file path
+     * @param group Source group containing input datasets
+     * @param datasets Vector of dataset names to bind
+     * @param outgroup Output group path
+     * @param outdataset Output dataset name
+     * @param func Binding function type:
+     *        - "bindCols": Combine datasets by columns
+     *        - "bindRows": Combine datasets by rows
+     *        - "bindRowsbyIndex": Combine datasets by rows using an index
+     * @param binternal Internal processing flag
+     * @param overwrite Optional flag to overwrite existing output dataset
+     * 
+     * @throws std::range_error if func is not one of the allowed values
+     * @throws H5::FileIException on file access errors
+     * @throws H5::GroupIException on group operation errors
+     * @throws H5::DataSetIException on dataset operation errors
+     * @throws std::exception on general errors
+     * 
+     * @see RcppBind_datasets_hdf5(std::string, std::string, Rcpp::StringVector, BigDataStatMeth::hdf5Dataset*, int, bool)
+     *      for the lower-level implementation
+     * 
+     * Example:
+     * @code
+     * RcppBind_datasets_hdf5("data.h5", "/input", {"ds1", "ds2"}, "/output", "combined", "bindRows", false, true);
+     * @endcode
+     */
     extern inline void RcppBind_datasets_hdf5( std::string filename, std::string group, Rcpp::StringVector datasets, 
                                std::string outgroup, std::string outdataset, std::string func, 
                                bool binternal, Rcpp::Nullable<bool> overwrite = false )
@@ -172,26 +240,29 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error ) { 
             checkClose_file(dsOut);
-            Rcpp::Rcerr<<"\nc++ exception RcppBind_datasets_hdf5_ (File IException)";
+            Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5_ (File IException)";
             return void();
         } catch( H5::GroupIException & error ) { 
             checkClose_file(dsOut);
-            Rcpp::Rcerr <<"\nc++ exception RcppBind_datasets_hdf5_ (Group IException)";
+            Rcpp::Rcerr <<"c++ exception RcppBind_datasets_hdf5_ (Group IException)";
             return void();
         } catch( H5::DataSetIException& error ) { 
             checkClose_file(dsOut);
-            Rcpp::Rcerr <<"\nc++ exception RcppBind_datasets_hdf5_ (DataSet IException)";
+            Rcpp::Rcerr <<"c++ exception RcppBind_datasets_hdf5_ (DataSet IException)";
             return void();
         } catch(std::exception& ex) {
             checkClose_file(dsOut);
-            Rcpp::Rcerr <<"\nc++ exception RcppBind_datasets_hdf5_" << ex.what();
+            Rcpp::Rcerr <<"c++ exception RcppBind_datasets_hdf5_" << ex.what();
+            return void();
+        } catch (...) {
+            checkClose_file(dsOut);
+            Rcpp::Rcerr<<"C++ exception RcppBind_datasets_hdf5_ (unknown reason)";
             return void();
         }
         
         return void();
         
     }
-
 
 }
 

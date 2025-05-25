@@ -1,3 +1,22 @@
+/**
+ * @file hdf5ImportFiles.hpp
+ * @brief Utilities for importing data files into HDF5 format
+ * 
+ * This file provides functionality for importing and processing data files into HDF5 format.
+ * It includes utilities for matrix operations, string parsing, file handling, and data type
+ * conversion. The implementation focuses on efficient handling of large datasets through
+ * block-wise processing.
+ * 
+ * Key features:
+ * - Matrix transposition
+ * - String splitting and parsing
+ * - File format validation
+ * - Numeric data validation and conversion
+ * - Parallel processing support
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_IMPORTFILES_HPP
 #define BIGDATASTATMETH_HDF5_IMPORTFILES_HPP
 
@@ -10,6 +29,15 @@ namespace BigDataStatMeth {
     using matrix = std::vector< std::vector<double> >;
 
 
+    /**
+     * @brief Transposes a 2D matrix
+     * 
+     * @param M Input matrix to be transposed
+     * @return matrix Transposed matrix where rows become columns and vice versa
+     * 
+     * @note Time complexity: O(rows * cols)
+     * @note Space complexity: O(rows * cols) for the new matrix
+     */
     extern inline matrix transpose( const matrix &M )
     {
         int rows = M.size();
@@ -25,7 +53,15 @@ namespace BigDataStatMeth {
         return T;
     }
 
-    // Split the line in several fields and store results in a Vector String.
+    /**
+     * @brief Splits a string into fields based on a regular expression
+     * 
+     * @param line Input string to be split
+     * @param reg_expres Regular expression defining the splitting pattern
+     * @return std::vector<std::string> Vector containing the split substrings
+     * 
+     * @see get_data_as_Matrix() for numeric conversion of the split data
+     */
     extern inline std::vector<std::string> get_SplitData_in_vectorString(std::string line, std::regex reg_expres)
     {
         std::vector<std::string> strValues;
@@ -45,7 +81,14 @@ namespace BigDataStatMeth {
     }
 
 
-    // Check if file ends with newline "\n"
+    /**
+     * @brief Checks if a file ends with a newline character
+     * 
+     * @param filename Path to the file to check
+     * @return bool True if file ends with newline, false otherwise
+     * 
+     * @note Opens file in binary mode to ensure consistent behavior across platforms
+     */
     extern inline bool get_NewLineEnding(const char *filename) {
         const int LINE_FEED = '\x0A';
         FILE *f = fopen(filename, "rb");  /* binary mode */
@@ -57,7 +100,15 @@ namespace BigDataStatMeth {
         return result;
     }
     
-    // Test if read data is numeric or not
+    /**
+     * @brief Tests if a string represents a valid number
+     * 
+     * @param s String to test
+     * @return bool True if string represents a valid number, false otherwise
+     * 
+     * @note Handles both integer and floating-point representations
+     * @note Also validates against overflow conditions
+     */
     extern inline bool is_number(const std::string& s)
     {
         char* end = nullptr;
@@ -67,8 +118,15 @@ namespace BigDataStatMeth {
     }
 
 
-    // Convert readed block from string to double
-
+    /**
+     * @brief Converts a vector of string values to numeric (double) values
+     * 
+     * @param strBlockValues Vector of strings to convert
+     * @return std::vector<double> Vector of converted double values
+     * 
+     * @throws Rcpp::stop If any value is not numeric or if empty fields are found
+     * @note Handles end-of-line characters in the last column
+     */
     extern inline std::vector<double> get_data_as_Matrix(std::vector<std::string> strBlockValues)
     {
         
@@ -94,6 +152,23 @@ namespace BigDataStatMeth {
 
 
 
+    /**
+     * @brief Imports data from a file into an HDF5 dataset
+     * 
+     * @param filename Path to the input file
+     * @param dsOut Pointer to the HDF5 dataset where data will be stored
+     * @param sep Optional separator character (defaults to tab)
+     * @param header Optional flag indicating presence of header row (defaults to false)
+     * @param rownames Optional flag indicating presence of row names (defaults to false)
+     * @param bparal Optional flag for parallel processing
+     * @param threads Optional number of threads for parallel processing
+     * 
+     * @note Performance optimized through block-wise reading and processing
+     * @note Automatically adjusts block size based on number of columns
+     * @note Supports parallel processing for improved performance on large datasets
+     * 
+     * @see hdf5Dataset for the dataset structure
+     */
     extern inline void Rcpp_Import_File_to_hdf5( Rcpp::CharacterVector filename,
                                    BigDataStatMeth::hdf5Dataset* dsOut,
                                    Rcpp::Nullable<std::string> sep = R_NilValue,
@@ -301,13 +376,13 @@ namespace BigDataStatMeth {
             delete dsdims;
 
         } catch( H5::FileIException& error ) {
-            ::Rf_error( "c++ exception Convert_text_to_HDF5 (File IException)" );
+            Rcpp::Rcerr<<"c++ exception Convert_text_to_HDF5 (File IException)" << std::endl;
             return void();
         } catch( H5::GroupIException& error ) {
-            ::Rf_error( "c++ exception Convert_text_to_HDF5 (Group IException)" );
+            Rcpp::Rcerr<<"c++ exception Convert_text_to_HDF5 (Group IException)" << std::endl;
             return void();
         } catch( H5::DataSetIException& error ) {
-            ::Rf_error( "c++ exception Convert_text_to_HDF5 (DataSet IException)" );
+            Rcpp::Rcerr<<"c++ exception Convert_text_to_HDF5 (DataSet IException)" << std::endl;
             return void();
         } catch(const std::runtime_error& re) {
             Rcpp::Rcerr << "Runtime error: " << re.what() << std::endl;

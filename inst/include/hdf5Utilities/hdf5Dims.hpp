@@ -1,15 +1,44 @@
+/**
+ * @file hdf5Dims.hpp
+ * @brief Dimension management utilities for HDF5 datasets
+ * 
+ * This file provides functionality for managing dimension names (row and column names)
+ * in HDF5 datasets. It implements efficient storage and retrieval of dimension
+ * information, with support for large datasets through block-wise processing.
+ * 
+ * Key features:
+ * - Row and column name management
+ * - Efficient string storage
+ * - Block-wise processing for large datasets
+ * - Automatic dimension validation
+ * - Comprehensive error handling
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_DIMS_HPP
 #define BIGDATASTATMETH_HDF5_DIMS_HPP
 
-
 namespace BigDataStatMeth
 {
-
+    /**
+     * @brief Class for managing dimension names in HDF5 datasets
+     * 
+     * This class extends hdf5Group to provide specialized functionality for
+     * storing and managing dimension names (row and column names) associated
+     * with HDF5 datasets.
+     */
     class hdf5Dims : public hdf5Group
     {
-
-public:
-
+    public:
+        /**
+         * @brief Constructs a dimension manager for an HDF5 dataset
+         * 
+         * @param pdataset Pointer to the HDF5 dataset to manage dimensions for
+         * 
+         * @note Creates a hidden group to store dimension information
+         * @note If dimension information already exists, it will be removed
+         */
         hdf5Dims(BigDataStatMeth::hdf5Dataset* pdataset) :
         hdf5Group(pdataset->getFileName(), pdataset->getGroup() + "/." + pdataset->getDatasetName() + "_dimnames")
         {
@@ -23,8 +52,26 @@ public:
 
         }
 
-
-        // template< typename T>
+        /**
+         * @brief Writes dimension names to the HDF5 file
+         * 
+         * @param rownames Vector of row names
+         * @param colnames Vector of column names
+         * 
+         * @throws H5::FileIException on file operation errors
+         * @throws H5::DataSetIException on dataset operation errors
+         * @throws H5::GroupIException on group operation errors
+         * @throws H5::DataSpaceIException on dataspace operation errors
+         * @throws H5::DataTypeIException on datatype operation errors
+         * 
+         * @note Validates dimensions against the main dataset
+         * @note Overwrites existing dimension names if they exist
+         * 
+         * Performance considerations:
+         * - Uses block-wise processing for large string vectors
+         * - Implements efficient string storage with fixed-length buffers
+         * - Handles memory cleanup automatically
+         */
         void writeDimnames( Rcpp::StringVector rownames, Rcpp::StringVector colnames)
         {
             try {
@@ -104,42 +151,31 @@ public:
 
         }
 
-        // Destructor
+        /**
+         * @brief Virtual destructor
+         */
         virtual ~hdf5Dims(){
         }
 
-
-protected:
-
-        // ------------------------
-        //   Struct declaration
-        // -----------------------
-
+    protected:
+        /**
+         * @brief Structure for storing name strings
+         */
         typedef struct names {
-            char chr[MAXSTRING];
+            char chr[MAXSTRING];  ///< Fixed-length character array for name storage
         } names;
 
+        BigDataStatMeth::hdf5Dataset* pmaindataset;  ///< Pointer to main dataset
+        H5::DataSet* pdsrownames = nullptr;          ///< Dataset for row names
+        H5::DataSet* pdscolnames = nullptr;          ///< Dataset for column names
+        std::string strrows = "1";                   ///< Identifier for row names
+        std::string strcols = "2";                   ///< Identifier for column names
+        hsize_t dimcolnames[2];                      ///< Dimensions for column names
+        hsize_t dimrownames[2];                      ///< Dimensions for row names
 
-        // ------------------------
-        //   Variables declaration
-        // ------------------------
-
-        BigDataStatMeth::hdf5Dataset* pmaindataset;
-
-        H5::DataSet* pdsrownames = nullptr;
-        H5::DataSet* pdscolnames = nullptr;
-
-        std::string strrows = "1";
-        std::string strcols = "2";
-
-        hsize_t dimcolnames[2];
-        hsize_t dimrownames[2];
-
-
-        // ------------------------
-        //   Function declarations
-        // ------------------------
-
+        /**
+         * @brief Closes all open datasets
+         */
         void close_datasets()
         {
             pdsrownames->close();
@@ -147,6 +183,16 @@ protected:
 
         }
 
+        /**
+         * @brief Converts R data frame to HDF5-compatible range list
+         * 
+         * @param DatasetValues R object containing values to convert
+         * @param rowscols Identifier for row or column conversion
+         * @param bFullDataset Flag indicating if full dataset conversion is needed
+         * @return names* Pointer to array of converted names
+         * 
+         * @note Caller is responsible for freeing returned memory
+         */
         names* convert_DataFrame_to_RangeList(Rcpp::RObject DatasetValues, std::string rowscols, bool bFullDataset)
         {
 
@@ -179,11 +225,23 @@ protected:
             return(names_list);
         }
 
-        
     private:
-        
-        // Create dataset from stringVector
-        //..// int write_hdf5_string_vector(H5File* file, std::string datasetname, StringVector DatasetValues)
+        /**
+         * @brief Writes a string vector to an HDF5 dataset
+         * 
+         * @param dataset Pointer to HDF5 dataset
+         * @param datasetname Name of the dataset
+         * @param DatasetValues Vector of strings to write
+         * 
+         * Implementation details:
+         * 1. Creates appropriate HDF5 datatype for strings
+         * 2. Processes data in blocks for large vectors
+         * 3. Handles string truncation and null termination
+         * 4. Manages memory efficiently
+         * 
+         * @note Uses MAXSTRBLOCK for block size in processing
+         * @note Automatically handles quotation mark removal
+         */
         void writeStringVector( H5::DataSet* dataset, std::string datasetname, Rcpp::StringVector DatasetValues)
         {
             
@@ -295,27 +353,28 @@ protected:
                 }
             } 
             catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-                ::Rf_error( "c++ exception write_hdf5_string_vector (File IException)" );
+                Rcpp::Rcerr<<"c++ exception write_hdf5_string_vector (File IException)" << std::endl;
                 return void();
             } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-                ::Rf_error( "c++ exception write_hdf5_string_vector (DataSet IException)" );
+                Rcpp::Rcerr<<"c++ exception write_hdf5_string_vector (DataSet IException)" << std::endl;
                 return void();
             } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-                ::Rf_error( "c++ exception write_hdf5_string_vector (Group IException)" );
+                Rcpp::Rcerr<<"c++ exception write_hdf5_string_vector (Group IException)" << std::endl;
                 return void();
             } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-                ::Rf_error( "c++ exception write_hdf5_string_vector (DataSpace IException)" );
+                Rcpp::Rcerr<<"c++ exception write_hdf5_string_vector (DataSpace IException)" << std::endl;
+                return void();
+            } catch(std::exception &ex) {
+                Rcpp::Rcerr << "c++ exception write_hdf5_string_vector: " << ex.what();
+                return void();
+            } catch (...) {
+                Rcpp::Rcerr<<"C++ exception write_hdf5_string_vector (unknown reason)";
                 return void();
             }
             
             dataset->close();
             return void();
         }
-        
-        
-
-
-
     };
 }
 
