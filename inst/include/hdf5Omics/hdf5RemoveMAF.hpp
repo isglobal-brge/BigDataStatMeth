@@ -1,15 +1,86 @@
+/**
+ * @file hdf5RemoveMAF.hpp
+ * @brief Implementation of Minor Allele Frequency (MAF) filtering for genomic data in HDF5 format
+ *
+ * This file provides functionality for filtering genomic data based on Minor Allele
+ * Frequency (MAF) thresholds. It operates on large-scale genomic datasets stored
+ * in HDF5 format, implementing memory-efficient block-wise operations for handling
+ * large datasets that don't fit in memory.
+ *
+ * Key features:
+ * - MAF-based filtering of genomic data
+ * - Row-wise or column-wise filtering options
+ * - Block-wise processing for memory efficiency
+ * - Dynamic dataset resizing
+ * - Comprehensive error handling
+ *
+ * @note This implementation is particularly useful in genomic studies where
+ * filtering variants based on MAF is a common quality control step.
+ *
+ * @see BigDataStatMeth::hdf5Dataset
+ * @see BigDataStatMeth::calc_freq
+ */
+
 #ifndef BIGDATASTATMETH_OMICS_RM_MAF_HPP
 #define BIGDATASTATMETH_OMICS_RM_MAF_HPP
 
 #include "hdf5Utilities/hdf5Utilities.hpp"
 #include "hdf5Omics/hdf5OmicsUtils.hpp"
 
-
-
 namespace BigDataStatMeth {
 
-    // Removes row or column with high missing data percentage
-    int Rcpp_Remove_MAF_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5Dataset* dsOut, bool bycols, double pcent, int blocksize)
+    /**
+     * @brief Removes rows or columns from a dataset based on MAF threshold
+     *
+     * @param dsIn Input HDF5 dataset containing genomic data
+     * @param dsOut Output HDF5 dataset for filtered data
+     * @param bycols If true, process by columns; if false, process by rows
+     * @param pcent MAF threshold percentage (0.0 to 1.0)
+     * @param blocksize Number of rows/columns to process in each block
+     * @return int Number of removed rows/columns (negative) or error code
+     *
+     * @details Implementation approach:
+     * - Processes data in blocks to manage memory usage
+     * - Dynamically creates and extends output dataset
+     * - Supports both row-wise and column-wise filtering
+     * - Preserves data structure while removing low-MAF variants
+     *
+     * Algorithm steps:
+     * 1. Read data blocks according to specified orientation
+     * 2. Calculate MAF for each row/column in block
+     * 3. Remove elements below threshold
+     * 4. Write filtered block to output dataset
+     * 5. Extend output dataset as needed
+     *
+     * Performance considerations:
+     * - Time complexity: O(n*m) where n,m are dataset dimensions
+     * - Space complexity: O(blocksize * min(n,m))
+     * - I/O operations optimized through block processing
+     *
+     * Usage example:
+     * @code
+     * auto* input = hdf5Dataset(...);   // Input genomic data
+     * auto* output = hdf5Dataset(...);  // Output filtered data
+     * int removed = Rcpp_Remove_MAF_hdf5(input, output, true, 0.05, 1000);
+     * @endcode
+     *
+     * Error codes:
+     * - Negative values indicate errors
+     * - -1: General error (see error message)
+     * - Positive values: Number of removed elements (as negative number)
+     *
+     * @throws H5::FileIException on HDF5 file operation errors
+     * @throws H5::DataSetIException on HDF5 dataset operation errors
+     * @throws H5::DataSpaceIException on HDF5 dataspace errors
+     * @throws H5::DataTypeIException on HDF5 datatype errors
+     * @throws std::exception on general errors
+     *
+     * @see calc_freq for MAF calculation
+     * @see removeRow, removeColumn for filtering operations
+     */
+    int Rcpp_Remove_MAF_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, 
+                            BigDataStatMeth::hdf5Dataset* dsOut, 
+                            bool bycols, double pcent, int blocksize)
     {
         
         int itotrem = 0;
@@ -37,7 +108,7 @@ namespace BigDataStatMeth {
                 ilimit = dims_out[1];
                 count[0] = dims_out[0];
                 offset[0] = 0;
-            };
+            }
             
             for( int i=0; i <= (ilimit/blocksize); i++) 
             {
@@ -167,6 +238,6 @@ namespace BigDataStatMeth {
 
 
 
-}
+} // namespace BigDataStatMeth
 
 #endif // BIGDATASTATMETH_OMICS_RM_MAF_HPP
