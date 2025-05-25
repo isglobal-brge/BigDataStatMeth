@@ -1,3 +1,26 @@
+/**
+ * @file matrixInvCholesky.hpp
+ * @brief Implementation of Cholesky decomposition and matrix inversion using HDF5
+ *
+ * This file provides functionality for computing matrix inverses using the Cholesky
+ * decomposition method, specifically designed for large matrices stored in HDF5 format.
+ * The implementation includes parallel processing capabilities and memory-efficient
+ * block operations.
+ *
+ * Key features:
+ * - Cholesky decomposition for positive definite matrices
+ * - Matrix inversion using Cholesky decomposition
+ * - Block-wise processing for memory efficiency
+ * - Parallel computation support
+ * - HDF5 integration for large matrix handling
+ *
+ * @note This implementation is particularly efficient for large, symmetric,
+ * positive-definite matrices that don't fit in memory.
+ *
+ * @see BigDataStatMeth::hdf5Dataset
+ * @see BigDataStatMeth::hdf5DatasetInternal
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 #define BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 
@@ -11,10 +34,109 @@
 
 namespace BigDataStatMeth {
 
+/**
+ * @brief Computes matrix inverse using Cholesky decomposition with HDF5 storage
+ *
+ * @param inDataset Input matrix dataset (must be symmetric positive-definite)
+ * @param outDataset Output dataset for the inverse matrix
+ * @param bfull If true, computes full matrix inverse; if false, only lower triangular part
+ * @param dElementsBlock Block size for processing (minimum 2 * matrix dimension)
+ * @param threads Number of threads for parallel processing (optional)
+ *
+ * @details This function performs matrix inversion in three steps:
+ * 1. Cholesky decomposition (A = LL^T)
+ * 2. Inverse of the Cholesky factor (L^-1)
+ * 3. Computation of full inverse (A^-1 = L^-T L^-1)
+ *
+ * Performance considerations:
+ * - Time complexity: O(n³) for n×n matrix
+ * - Space complexity: O(b²) where b is the block size
+ * - Parallel efficiency depends on matrix and block sizes
+ *
+ * @throws H5::FileIException on HDF5 file operation errors
+ * @throws H5::GroupIException on HDF5 group operation errors
+ * @throws H5::DataSetIException on HDF5 dataset operation errors
+ * @throws std::exception on general errors
+ */
 extern inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,  BigDataStatMeth::hdf5DatasetInternal* outDataset, bool bfull, long dElementsBlock, Rcpp::Nullable<int> threads );
-extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  BigDataStatMeth::hdf5Dataset* outDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads );
-extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf5Dataset* InOutDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads);
-extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOutDataset, int idim0, int idim1, long dElementsBlock, Rcpp::Nullable<int> threads);
+
+/**
+ * @brief Performs Cholesky decomposition on a matrix stored in HDF5 format
+ *
+ * @param inDataset Input matrix dataset
+ * @param outDataset Output dataset for Cholesky factor L
+ * @param idim0 Number of rows
+ * @param idim1 Number of columns
+ * @param dElementsBlock Block size for processing
+ * @param threads Number of threads for parallel processing (optional)
+ * @return int 0 on success, 1 if matrix is not positive definite, 2 on HDF5 errors
+ *
+ * @details Implements block-wise Cholesky decomposition algorithm:
+ * - Processes matrix in blocks to manage memory usage
+ * - Computes lower triangular factor L where A = LL^T
+ * - Uses parallel processing for row computations
+ *
+ * Implementation notes:
+ * - Minimum block size is 2 * matrix dimension
+ * - Checks for positive definiteness during computation
+ * - Optimized for symmetric matrices
+ *
+ * @throws H5::FileIException on HDF5 file operation errors
+ * @throws H5::GroupIException on HDF5 group operation errors
+ * @throws H5::DataSetIException on HDF5 dataset operation errors
+ */
+extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  
+                                             BigDataStatMeth::hdf5Dataset* outDataset, 
+                                             int idim0, int idim1, long dElementsBlock, 
+                                             Rcpp::Nullable<int> threads );
+
+/**
+ * @brief Computes inverse of Cholesky factor in-place
+ *
+ * @param InOutDataset Dataset containing Cholesky factor L (will be overwritten with L^-1)
+ * @param idim0 Number of rows
+ * @param idim1 Number of columns
+ * @param dElementsBlock Block size for processing
+ * @param threads Number of threads for parallel processing (optional)
+ *
+ * @details Implements block-wise inversion of lower triangular matrix:
+ * - Processes matrix in blocks for memory efficiency
+ * - Overwrites input with its inverse
+ * - Uses parallel processing for independent computations
+ *
+ * @note This function assumes input is a lower triangular matrix from Cholesky decomposition
+ *
+ * @throws H5::FileIException on HDF5 file operation errors
+ * @throws H5::GroupIException on HDF5 group operation errors
+ * @throws H5::DataSetIException on HDF5 dataset operation errors
+ */
+extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                                         int idim0, int idim1, long dElementsBlock, 
+                                                         Rcpp::Nullable<int> threads);
+
+/**
+ * @brief Computes final matrix inverse using inverted Cholesky factors
+ *
+ * @param InOutDataset Dataset containing L^-1 (will be overwritten with A^-1)
+ * @param idim0 Number of rows
+ * @param idim1 Number of columns
+ * @param dElementsBlock Block size for processing
+ * @param threads Number of threads for parallel processing (optional)
+ *
+ * @details Computes A^-1 = L^-T L^-1 where L^-1 is the inverse of Cholesky factor:
+ * - Uses block matrix multiplication for memory efficiency
+ * - Implements parallel processing for block operations
+ * - Result is symmetric but only lower triangular part is computed
+ *
+ * @note Upper triangular part can be filled using setUpperTriangularMatrix if needed
+ *
+ * @throws H5::FileIException on HDF5 file operation errors
+ * @throws H5::GroupIException on HDF5 group operation errors
+ * @throws H5::DataSetIException on HDF5 dataset operation errors
+ */
+extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                                   int idim0, int idim1, long dElementsBlock, 
+                                                   Rcpp::Nullable<int> threads );
 
 
 
@@ -72,7 +194,7 @@ extern inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDatas
 extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  
                            BigDataStatMeth::hdf5Dataset* outDataset, 
                            int idim0,  int idim1,  long dElementsBlock, 
-                           Rcpp::Nullable<int> threads )
+                           Rcpp::Nullable<int> threads  = R_NilValue)
 {
     
     try {

@@ -1,3 +1,25 @@
+/**
+ * @file crossprod.hpp
+ * @brief Implementation of matrix cross-product operations using HDF5
+ *
+ * This file provides functionality for computing matrix cross-products (A^T * B)
+ * for large matrices stored in HDF5 format. The implementation uses block-wise
+ * operations to handle matrices that don't fit in memory, with optimizations
+ * for performance and memory usage.
+ *
+ * Key features:
+ * - Block-wise matrix cross-product computation
+ * - Memory-efficient implementation for large matrices
+ * - Optimized block size selection
+ * - Support for row-major and column-major storage
+ * - Optional parallel processing
+ *
+ * @note This implementation is particularly suited for large matrices
+ * where traditional in-memory operations are not feasible.
+ *
+ * @see BigDataStatMeth::hdf5Dataset
+ */
+
 #ifndef BIGDATASTATMETH_ALGEBRA_CROSSPROD_HPP
 #define BIGDATASTATMETH_ALGEBRA_CROSSPROD_HPP
 
@@ -5,7 +27,52 @@
 
 namespace BigDataStatMeth {
 
-
+/**
+ * @brief Computes the cross-product of two matrices stored in HDF5 format
+ *
+ * @param dsA First input matrix dataset (A)
+ * @param dsB Second input matrix dataset (B)
+ * @param dsC Output matrix dataset for result
+ * @param hdf5_block Block size for HDF5 operations
+ * @param mem_block_size Memory block size for computations
+ * @param bparal Whether to use parallel processing
+ * @param browmajor Whether matrices are stored in row-major order
+ * @param threads Number of threads for parallel processing (optional)
+ * @return BigDataStatMeth::hdf5Dataset* Pointer to the result dataset
+ *
+ * @details Computes C = A^T * B using block-wise operations:
+ * - Divides matrices into blocks for memory-efficient processing
+ * - Processes blocks using optimized Eigen operations
+ * - Accumulates results in the output dataset
+ *
+ * Implementation notes:
+ * - Block sizes are automatically adjusted for matrix boundaries
+ * - Uses Eigen for efficient block matrix operations
+ * - Handles row-major and column-major storage formats
+ *
+ * Performance considerations:
+ * - Time complexity: O(N*M*K) for matrices of sizes N×K and M×K
+ * - Space complexity: O(block_size²) for block operations
+ * - I/O complexity depends on block size and matrix dimensions
+ *
+ * Optimization parameters:
+ * - hdf5_block: Controls HDF5 read/write block size
+ * - mem_block_size: Controls in-memory block processing size
+ * - Block sizes are adjusted for optimal performance
+ *
+ * Example usage:
+ * @code
+ * auto* A = hdf5Dataset(...);  // N×K matrix
+ * auto* B = hdf5Dataset(...);  // M×K matrix
+ * auto* C = hdf5Dataset(...);  // N×M result matrix
+ * crossprod(A, B, C, 1000, 1000, true, true);
+ * @endcode
+ *
+ * @throws std::range_error if matrix dimensions are incompatible
+ * @throws std::exception on HDF5 operations errors
+ *
+ * @see getOptimBlockSize for block size optimization
+ */
 extern inline BigDataStatMeth::hdf5Dataset* crossprod( 
         BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, 
         BigDataStatMeth::hdf5Dataset* dsC, hsize_t hdf5_block, hsize_t mem_block_size, 
