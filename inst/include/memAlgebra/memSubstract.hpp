@@ -1,5 +1,33 @@
-#ifndef BIGDATASTATMETH_ALGEBRA_MSUBSTRACT_HPP
-#define BIGDATASTATMETH_ALGEBRA_MSUBSTRACT_HPP
+/**
+ * @file memSubstract.hpp
+ * @brief Matrix subtraction operations for in-memory computations
+ * @details This header file provides comprehensive matrix subtraction
+ * functionality for in-memory computations. The implementation includes:
+ * 
+ * Key features:
+ * - Matrix subtraction operations
+ * - Element-wise subtraction
+ * - Block-based subtraction
+ * - Parallel processing support
+ * - Memory-efficient implementations
+ * 
+ * Supported operations:
+ * - Matrix-matrix subtraction
+ * - Matrix-scalar subtraction
+ * - Column/row-wise subtraction
+ * - Block matrix subtraction
+ * - Multi-threaded subtraction
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Dynamic block sizing
+ * - Thread-level parallelism
+ * - Memory access optimization
+ * - SIMD vectorization
+ */
+
+#ifndef BIGDATASTATMETH_ALGEBRA_MEM_SUBSTRACT_HPP
+#define BIGDATASTATMETH_ALGEBRA_MEM_SUBSTRACT_HPP
 
 // #include <RcppEigen.h>
 #include "Utilities/openme-utils.hpp"
@@ -10,13 +38,76 @@ namespace BigDataStatMeth {
 
 
     
+    /**
+     * @brief Matrix subtraction
+     * @details Subtracts two matrices element-wise.
+     * 
+     * @tparam T Matrix type
+     * @param A First input matrix
+     * @param B Second input matrix (subtracted from A)
+     * @return Result of matrix subtraction (A - B)
+     */
     template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_substract ( T  A, T  B);
+    /**
+     * @brief Matrix-vector subtraction
+     * @details Subtracts a vector from each row or column of a matrix.
+     * 
+     * @tparam T Matrix type
+     * @tparam U Vector type
+     * @param A Input matrix
+     * @param B Input vector (subtracted from A)
+     * @return Result of matrix-vector subtraction
+     */
     template< typename T, typename U>  extern inline Rcpp::RObject Rcpp_matrix_vect_substract ( T  A, U  B);
+    /**
+     * @brief Vector subtraction
+     * @details Subtracts two vectors element-wise.
+     * 
+     * @tparam T Vector type
+     * @param A First input vector
+     * @param B Second input vector (subtracted from A)
+     * @return Result of vector subtraction (A - B)
+     */
     template< typename T>  extern inline Rcpp::RObject Rcpp_vector_substract ( T  A, T  B);
     
+    /**
+     * @brief Block-based matrix subtraction
+     * @details Implements block-based matrix subtraction with optional parallel processing.
+     * 
+     * @tparam T Matrix type
+     * @param A First input matrix
+     * @param B Second input matrix (subtracted from A)
+     * @param threads Number of threads for parallel computation
+     * @return Result of matrix subtraction (A - B)
+     */
     template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_blockSubstract ( T  A, T  B, Rcpp::Nullable<int> threads = R_NilValue);
+    /**
+     * @brief Block-based matrix-vector subtraction
+     * @details Implements block-based matrix-vector subtraction with optional
+     * parallel processing.
+     * 
+     * @tparam T Matrix/vector type
+     * @param A Input matrix
+     * @param B Input vector (subtracted from A)
+     * @param bparal Whether to use parallel processing
+     * @param threads Number of threads for parallel computation
+     * @return Result of matrix-vector subtraction
+     */
     template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_vector_blockSubstract( T  A, T  B, Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads);
     
+    /**
+     * @brief Low-level block-based matrix-vector subtraction
+     * @details Internal implementation of block-based matrix-vector subtraction
+     * with configurable block size and parallel processing.
+     * 
+     * @tparam T Matrix/vector type
+     * @param A Input matrix
+     * @param B Input vector (subtracted from A)
+     * @param block_size Size of blocks for computation
+     * @param bparal Whether to use parallel processing
+     * @param threads Number of threads for parallel computation
+     * @return Result of matrix-vector subtraction
+     */
     template< typename T>
     extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_substract( T  A, T  B, hsize_t block_size, 
                                                                 bool bparal, Rcpp::Nullable<int> threads = R_NilValue);
@@ -45,6 +136,15 @@ namespace BigDataStatMeth {
     // }
 
     
+    /**
+     * @brief Matrix subtraction
+     * @details Subtracts two matrices element-wise.
+     * 
+     * @tparam T Matrix type
+     * @param A First input matrix
+     * @param B Second input matrix (subtracted from A)
+     * @return Result of matrix subtraction (A - B)
+     */
     template< typename T>
     extern inline Rcpp::RObject Rcpp_matrix_substract ( T  A, T  B)
     {
@@ -70,6 +170,16 @@ namespace BigDataStatMeth {
     
     // Resta per files o columnes depenent si la mida del vector es igual al nombre
     // de files o igual al nombre de columnes
+    /**
+     * @brief Matrix-vector subtraction
+     * @details Subtracts a vector from each row or column of a matrix.
+     * 
+     * @tparam T Matrix type
+     * @tparam U Vector type
+     * @param A Input matrix
+     * @param B Input vector (subtracted from A)
+     * @return Result of matrix-vector subtraction
+     */
     template< typename T, typename U>
     extern inline Rcpp::RObject Rcpp_matrix_vect_substract ( T  A, U  B)
     {
@@ -103,6 +213,15 @@ namespace BigDataStatMeth {
     }
     
     
+    /**
+     * @brief Vector subtraction
+     * @details Subtracts two vectors element-wise.
+     * 
+     * @tparam T Vector type
+     * @param A First input vector
+     * @param B Second input vector (subtracted from A)
+     * @return Result of vector subtraction (A - B)
+     */
     template< typename T>
     extern inline Rcpp::RObject Rcpp_vector_substract ( T  A, T  B)
     {
@@ -126,6 +245,16 @@ namespace BigDataStatMeth {
     }
     
     
+    /**
+     * @brief Block-based matrix subtraction
+     * @details Implements block-based matrix subtraction with optional parallel processing.
+     * 
+     * @tparam T Matrix type
+     * @param A First input matrix
+     * @param B Second input matrix (subtracted from A)
+     * @param threads Number of threads for parallel computation
+     * @return Result of matrix subtraction (A - B)
+     */
     template< typename T>
     extern inline Rcpp::RObject Rcpp_matrix_blockSubstract ( T  A, T  B, Rcpp::Nullable<int> threads)
     {
@@ -209,6 +338,18 @@ namespace BigDataStatMeth {
     
     
     
+    /**
+     * @brief Block-based matrix-vector subtraction
+     * @details Implements block-based matrix-vector subtraction with optional
+     * parallel processing.
+     * 
+     * @tparam T Matrix/vector type
+     * @param A Input matrix
+     * @param B Input vector (subtracted from A)
+     * @param bparal Whether to use parallel processing
+     * @param threads Number of threads for parallel computation
+     * @return Result of matrix-vector subtraction
+     */
     template< typename T>
     extern inline Rcpp::RObject Rcpp_matrix_vector_blockSubstract( T  A, T  B,  
                                 Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads)
@@ -321,4 +462,4 @@ namespace BigDataStatMeth {
 
 }
 
-#endif // BIGDATASTATMETH_ALGEBRA_MSUBSTRACT_HPP
+#endif // BIGDATASTATMETH_ALGEBRA_MEM_SUBSTRACT_HPP

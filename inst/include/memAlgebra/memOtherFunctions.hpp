@@ -1,3 +1,10 @@
+/**
+ * @file memOtherFunctions.hpp
+ * @brief Utility functions for in-memory matrix operations
+ * @details This header file provides utility functions for in-memory matrix
+ * operations, particularly focused on block-based processing and vector operations.
+ */
+
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_OTHER_FUNCTIONS_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_OTHER_FUNCTIONS_HPP
 
@@ -7,7 +14,16 @@
 
 namespace BigDataStatMeth {
 
-
+    /**
+     * @brief Calculate block positions and sizes for matrix operations
+     * @details Determines optimal block positions and sizes for block-based matrix
+     * operations, ensuring efficient memory usage and processing.
+     * 
+     * @param maxPosition Maximum position to process
+     * @param blockSize Size of each block
+     * @param[out] starts Vector to store starting positions of blocks
+     * @param[out] sizes Vector to store sizes of blocks
+     */
     extern inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
         
         hsize_t isize = blockSize + 1;
@@ -30,6 +46,14 @@ namespace BigDataStatMeth {
     }
     
     
+    /**
+     * @brief Compute cumulative sum of a vector
+     * @details Calculates the cumulative sum (running sum) of elements in a vector.
+     * For a vector [a, b, c], returns [a, a+b, a+b+c].
+     * 
+     * @param x Input vector
+     * @return Vector containing cumulative sums
+     */
     extern inline Eigen::VectorXd cumsum(Eigen::VectorXd x)
     {
         // initialize an accumulator variable

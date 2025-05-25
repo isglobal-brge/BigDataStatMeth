@@ -1,3 +1,37 @@
+/**
+ * @file memOptimizedProducts.hpp
+ * @brief Optimized matrix product operations for in-memory computations
+ * @details This header file provides highly optimized implementations of matrix
+ * product operations for in-memory computations. The implementation includes:
+ * 
+ * Key features:
+ * - Cache-efficient matrix multiplication
+ * - Cache-efficient matrix transposed multiplication
+ * - Cache-efficient matrix-vector products
+ * - Cache-efficient vector-matrix products
+ * - Cache-efficient diagonal matrix products
+ * - Cache-efficient weighted cross-product
+ * - Cache-efficient weighted transposed cross-product
+ * - Cache-efficient weighted matrix-vector product
+ * - Cache-efficient weighted vector-matrix product
+ * - Block-based matrix operations
+ * - SIMD optimizations where available
+ * - Multi-threaded implementations
+ * - Memory-efficient algorithms
+ * 
+ * The module focuses on:
+ * - Dense matrix multiplication
+ * - Matrix-vector products
+ * - Block matrix operations
+ * - Parallel processing optimizations
+ * - Cache-friendly algorithms
+ * 
+ * Performance optimizations include:
+ * - Loop unrolling
+ * - Cache blocking
+ * - Vectorization
+ * - Thread-level parallelism
+ */
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_OPTIMIZED_PRODS_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_OPTIMIZED_PRODS_HPP
 
@@ -14,13 +48,113 @@ namespace BigDataStatMeth {
 
 // extern inline Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& mat);
 // extern inline Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& mat);
+
+/**
+ * @brief Compute matrix cross-product X'X
+ * @details Efficiently computes the cross-product of a matrix with its transpose (X'X)
+ * using optimized matrix operations.
+ * 
+ * @tparam T Matrix type (MatrixXd or compatible mapped types)
+ * @param X Input matrix
+ * @return Cross-product matrix X'X
+ */
 template< typename T> extern inline Eigen::MatrixXd bdcrossproduct ( T X );
+
+/**
+ * @brief Compute matrix transposed cross-product XX'
+ * @details Efficiently computes the transposed cross-product of a matrix (XX')
+ * using optimized matrix operations.
+ * 
+ * @tparam T Matrix type (MatrixXd or compatible mapped types)
+ * @param X Input matrix
+ * @return Transposed cross-product matrix XX'
+ */
 template< typename T> extern inline Eigen::MatrixXd bdtcrossproduct ( T X );
 
+/**
+ * @brief Compute weighted cross-product XwX'
+ * @details Computes the weighted cross-product of a matrix with its transpose,
+ * where w is a diagonal weight matrix.
+ * 
+ * @param X Input matrix
+ * @param w Weight matrix
+ * @return Weighted cross-product XwX'
+ */
 extern inline Eigen::MatrixXd xwxt(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
+
+/**
+ * @brief Compute transposed weighted cross-product X'wX
+ * @details Computes the transposed weighted cross-product of a matrix,
+ * where w is a diagonal weight matrix.
+ * 
+ * @param X Input matrix
+ * @param w Weight matrix
+ * @return Transposed weighted cross-product X'wX
+ */
 extern inline Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
+
+/**
+ * @brief Compute  matrix-diagonal product Xw
+ * @details Implementation of matrix-diagonal product computation.
+ * 
+ * @param X Input matrix
+ * @param w Vector representing diagonal matrix
+ * @return Matrix-diagonal product Xw
+ */
 extern inline Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorXd& w);
+
+/**
+ * @brief Compute matrix-diagonal product Xw
+ * @details Computes the product of a matrix with a diagonal matrix
+ * represented as a matrix.
+ * 
+ * @param X Input matrix
+ * @param w Matrix representing diagonal matrix
+ * @return Matrix-diagonal product Xw
+ */
+extern inline Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
+
+/**
+ * @brief Compute diagonal-matrix product wX
+ * @details Computes the product of a diagonal matrix with a matrix.
+ * 
+ * @param X Input matrix
+ * @param w Matrix representing diagonal matrix
+ * @return Diagonal-matrix product wX
+ */
+extern inline Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
+
+/**
+ * @brief Compute diagonal-matrix product wX
+ * @details Computes the product of a diagonal matrix (represented as a vector)
+ * with a matrix using sequential processing.
+ * 
+ * @param X Input matrix
+ * @param w Vector representing diagonal matrix
+ * @return Diagonal-matrix product wX
+ */
+extern inline Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorXd& w);
+
+/**
+ * @brief Compute parallel matrix-diagonal product Xw
+ * @details Parallel implementation of matrix-diagonal product computation.
+ * 
+ * @param X Input matrix
+ * @param w Vector representing diagonal matrix
+ * @param threads Number of threads for parallel computation
+ * @return Matrix-diagonal product Xw
+ */
 extern inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads);
+
+/**
+ * @brief Compute parallel diagonal-matrix product wX
+ * @details Parallel implementation of diagonal-matrix product computation.
+ * 
+ * @param X Input matrix
+ * @param w Vector representing diagonal matrix
+ * @param threads Number of threads for parallel computation
+ * @return Diagonal-matrix product wX
+ */
 extern inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads);
 
 

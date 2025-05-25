@@ -1,14 +1,52 @@
+/**
+ * @file memMultiplication.hpp
+ * @brief Matrix multiplication operations for in-memory computations
+ * @details This header file provides comprehensive matrix multiplication
+ * functionality for in-memory computations. The implementation includes:
+ * 
+ * Key features:
+ * - Dense matrix multiplication
+ * - Matrix-vector multiplication
+ * - Block-based multiplication
+ * - Parallel processing support
+ * - Memory-efficient implementations
+ * 
+ * Supported operations:
+ * - Standard matrix multiplication (AB)
+ * - Transposed multiplication (A'B, AB')
+ * - Weighted multiplication
+ * - Block matrix multiplication
+ * - Multi-threaded multiplication
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Dynamic block sizing
+ * - Thread-level parallelism
+ * - Memory access optimization
+ * - SIMD vectorization
+ */
+
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_MULTIPLICATION_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_MULTIPLICATION_HPP
 
-// #include <RcppEigen.h>
 #include "Utilities/openme-utils.hpp"
 #include "memAlgebra/memOtherFunctions.hpp"
-// #include <thread>
 
 namespace BigDataStatMeth {
 
     // extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size);
+    /**
+     * @brief Block-based matrix multiplication
+     * @details Implements efficient block-based matrix multiplication using
+     * cache-friendly algorithms.
+     * 
+     * @tparam T First matrix type (MatrixXd or compatible mapped types)
+     * @tparam U Second matrix type (MatrixXd or compatible mapped types)
+     * @param X First input matrix
+     * @param Y Second input matrix
+     * @param iblock_size Block size for computation
+     * @return Result of matrix multiplication
+     */
     template<typename T, typename U> extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( T X, U Y, Rcpp::Nullable<int>  iblock_size);
 
     
@@ -34,6 +72,16 @@ namespace BigDataStatMeth {
     // }
     
     
+    /**
+     * @brief Calculate block positions and sizes for matrix operations
+     * @details Determines optimal block positions and sizes for block-based matrix
+     * operations, ensuring efficient memory usage and processing.
+     * 
+     * @param maxPosition Maximum position to process
+     * @param blockSize Size of each block
+     * @param[out] starts Vector to store starting positions of blocks
+     * @param[out] sizes Vector to store sizes of blocks
+     */
     extern inline void getBlockPositionsSizes_mat( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
         
         hsize_t isize = blockSize + 1;
@@ -55,73 +103,6 @@ namespace BigDataStatMeth {
     }
     
     
-    // // In-memory execution - Serial version by Blocks
-    // extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size)
-    // {
-    //     
-    //     Eigen::MatrixXd C;
-    //     
-    //     try{
-    //         
-    //         int M = A.rows(),
-    //             K = A.cols(),
-    //             N = B.cols(),
-    //             block_size;
-    //         
-    //         if( iblock_size.isNotNull()) {
-    //             block_size =  Rcpp::as<int>(iblock_size);
-    //         } else {
-    //             block_size =  MAXBLOCKSIZE/3;
-    //         }
-    //         
-    //         if( K == B.rows())
-    //         {
-    //             C = Eigen::MatrixXd::Zero(M,N) ; 
-    //             
-    //             int isize = block_size+1,
-    //                 ksize = block_size+1,
-    //                 jsize = block_size+1;
-    //             
-    //             for (int ii = 0; ii < M; ii += block_size)
-    //             {
-    //                 if( ii + block_size > M ) isize = M - ii;
-    //                 for (int jj = 0; jj < N; jj += block_size)
-    //                 {
-    //                     if( jj + block_size > N) jsize = N - jj;
-    //                     for(int kk = 0; kk < K; kk += block_size)
-    //                     {
-    //                         if( kk + block_size > K ) ksize = K - kk;
-    //                         
-    //                         hsize_t minii = std::min(block_size,isize),
-    //                                 minjj = std::min(block_size,jsize),
-    //                                 minkk = std::min(block_size,ksize);
-    //                         
-    //                         C.block(ii, jj, minii, minjj) =  C.block(ii, jj, minii, minjj) + 
-    //                             (A.block(ii, kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
-    //                         
-    //                         if( kk + block_size > K ) ksize = block_size+1;
-    //                     }
-    //                     if( jj + block_size > N ) jsize = block_size+1;
-    //                 }
-    //                 if( ii + block_size > M ) isize = block_size+1;
-    //             }
-    //             
-    //         } else {
-    //             throw std::range_error("non-conformable arguments");
-    //         }    
-    //         
-    //     } catch(std::exception &ex) {
-    //         Rcpp::Rcout<<"c++ error : Bblock_matrix_mul : " <<ex.what();
-    //         return(C);
-    //         
-    //     } catch(...) { 
-    //         ::Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
-    //     }
-    //     
-    //     return(C);
-    // }
-    // 
-    // 
    
    // In-memory execution - Serial version by Blocks
    template<typename T, typename U>
@@ -131,55 +112,7 @@ namespace BigDataStatMeth {
        Eigen::MatrixXd C;
        
        try{
-           
-           // int M = A.rows(),
-           //     K = A.cols(),
-           //     N = B.cols(),
-           //     block_size;
-           // 
-           // if( iblock_size.isNotNull()) {
-           //     block_size =  Rcpp::as<int>(iblock_size);
-           // } else {
-           //     block_size =  MAXBLOCKSIZE/3;
-           // }
-           // 
-           // if( K == B.rows())
-           // {
-           //     C = Eigen::MatrixXd::Zero(M,N) ; 
-           //     
-           //     int isize = block_size+1,
-           //         ksize = block_size+1,
-           //         jsize = block_size+1;
-           //     
-           //     for (int ii = 0; ii < M; ii += block_size)
-           //     {
-           //         if( ii + block_size > M ) isize = M - ii;
-           //         for (int jj = 0; jj < N; jj += block_size)
-           //         {
-           //             if( jj + block_size > N) jsize = N - jj;
-           //             for(int kk = 0; kk < K; kk += block_size)
-           //             {
-           //                 if( kk + block_size > K ) ksize = K - kk;
-           //                 
-           //                 hsize_t minii = std::min(block_size,isize),
-           //                     minjj = std::min(block_size,jsize),
-           //                     minkk = std::min(block_size,ksize);
-           //                 
-           //                 C.block(ii, jj, minii, minjj) =  C.block(ii, jj, minii, minjj) + 
-           //                     (A.block(ii, kk, minii, minkk) * B.block(kk, jj, minkk, minjj));
-           //                 
-           //                 if( kk + block_size > K ) ksize = block_size+1;
-           //             }
-           //             if( jj + block_size > N ) jsize = block_size+1;
-           //         }
-           //         if( ii + block_size > M ) isize = block_size+1;
-           //     }
-           //     
-           // } else {
-           //     throw std::range_error("non-conformable arguments");
-           // }    
-           
-           
+
            static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
                          std::is_same<T, Eigen::Map< Eigen::MatrixXd >>::value || 
                          std::is_same<T, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
@@ -253,14 +186,28 @@ namespace BigDataStatMeth {
        
        return(C);
    }
-    
-    
-    
-    
-    
-    
+
     
     // In-memory execution - Parallel version - by Blocks
+    /**
+     * @brief Parallel block-based matrix multiplication
+     * @details Implements parallel block-based matrix multiplication with configurable
+     * block sizes and thread count. This function:
+     * - Supports matrix transposition before multiplication
+     * - Uses OpenMP for parallel processing
+     * - Implements cache-friendly block-based algorithm
+     * - Handles edge cases for non-uniform block sizes
+     * 
+     * @tparam T First matrix type (MatrixXd or compatible mapped types)
+     * @tparam U Second matrix type (MatrixXd or compatible mapped types)
+     * @param X First input matrix
+     * @param Y Second input matrix
+     * @param transpX Whether to transpose X before multiplication
+     * @param transpY Whether to transpose Y before multiplication
+     * @param iblock_size Block size for computation
+     * @param threads Number of threads for parallel processing
+     * @return Result of matrix multiplication
+     */
     template<typename T, typename U>
     extern inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, U Y, 
                                                                   bool transpX,
@@ -343,6 +290,18 @@ namespace BigDataStatMeth {
         return(C);
     }
     
+    /**
+     * @brief Matrix-vector multiplication
+     * @details Performs matrix-vector multiplication with dimension validation
+     * and efficient memory handling.
+     * 
+     * @tparam T Matrix type
+     * @tparam U Vector type
+     * @param A Input matrix
+     * @param B Input vector
+     * @return Result of matrix-vector multiplication
+     * @throws Runtime error if dimensions are not compatible
+     */
     template< typename T, typename U>
     extern inline Rcpp::RObject Rcpp_matrix_vect_mult ( T  A, U  B)
     {
@@ -376,6 +335,16 @@ namespace BigDataStatMeth {
     }
     
     
+    /**
+     * @brief Vector multiplication (dot product)
+     * @details Computes the dot product of two vectors with dimension validation.
+     * 
+     * @tparam T Vector type
+     * @param A First input vector
+     * @param B Second input vector
+     * @return Scalar result of vector dot product
+     * @throws Runtime error if vector dimensions don't match
+     */
     template< typename T>
     extern inline Rcpp::RObject Rcpp_vector_mult ( T  A, T  B)
     {
@@ -398,6 +367,22 @@ namespace BigDataStatMeth {
     }
     
     
+    /**
+     * @brief Block-based matrix-vector multiplication
+     * @details Implements block-based matrix-vector multiplication with:
+     * - Optional parallel processing
+     * - Configurable block sizes
+     * - Thread count control
+     * - Cache-friendly algorithms
+     * 
+     * @tparam T Matrix/vector type
+     * @param A Input matrix
+     * @param B Input vector
+     * @param bparal Whether to use parallel processing
+     * @param iblock_size Block size for computation
+     * @param threads Number of threads for parallel processing
+     * @return Result of matrix-vector multiplication
+     */
     template< typename T>
     extern inline Rcpp::RObject Rcpp_matrix_vector_blockMult( T  A, T  B, Rcpp::Nullable<bool> bparal, 
                             Rcpp::Nullable<int> iblock_size, Rcpp::Nullable<int> threads)

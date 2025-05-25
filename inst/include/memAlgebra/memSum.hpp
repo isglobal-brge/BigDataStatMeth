@@ -1,5 +1,34 @@
-#ifndef BIGDATASTATMETH_ALGEBRA_MSUM_HPP
-#define BIGDATASTATMETH_ALGEBRA_MSUM_HPP
+/**
+ * @file memSum.hpp
+ * @brief Matrix addition and summation operations for in-memory computations
+ * @details This header file provides comprehensive matrix addition and summation
+ * functionality for in-memory computations. The implementation includes:
+ * 
+ * Key features:
+ * - Matrix addition operations
+ * - Element-wise summation
+ * - Column/row-wise sums
+ * - Block-based summation
+ * - Parallel processing support
+ * 
+ * Supported operations:
+ * - Matrix-matrix addition
+ * - Matrix-scalar addition
+ * - Column sums and means
+ * - Row sums and means
+ * - Weighted sums
+ * - Running sums
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Block-based processing
+ * - Thread-level parallelism
+ * - Vectorized operations
+ * - Memory access optimization
+ */
+
+#ifndef BIGDATASTATMETH_ALGEBRA_MEM_SUM_HPP
+#define BIGDATASTATMETH_ALGEBRA_MEM_SUM_HPP
 
 // #include <RcppEigen.h>
 #include "Utilities/openme-utils.hpp"
@@ -17,9 +46,25 @@ namespace BigDataStatMeth {
     template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_blockSum ( T  A, T  B, Rcpp::Nullable<int> threads = R_NilValue);
     template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_vector_blockSum( T  A, T  B, Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads);
 
-    template< typename T>
-    extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t block_size, 
-                                                  bool bparal, Rcpp::Nullable<int> threads = R_NilValue);
+    // /**
+    //  * @brief Low-level block-based matrix-vector addition implementation
+    //  * @details Core implementation that:
+    //  * - Processes matrix in cache-friendly blocks
+    //  * - Supports parallel execution through OpenMP
+    //  * - Optimizes memory access patterns
+    //  * - Handles edge cases for non-uniform block sizes
+    //  * 
+    //  * @tparam T Matrix/vector type
+    //  * @param A Input matrix
+    //  * @param B Input vector
+    //  * @param block_size Size of processing blocks
+    //  * @param bparal Enable/disable parallel processing
+    //  * @param threads Number of threads for parallel computation
+    //  * @return Eigen::MatrixXd containing the result
+    //  */
+    // template< typename T>
+    // extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t block_size, 
+    //                                               bool bparal, Rcpp::Nullable<int> threads = R_NilValue);
 
 
 
@@ -130,6 +175,24 @@ namespace BigDataStatMeth {
     }
     
     
+    /**
+     * @brief Block-based matrix addition implementation
+     * @details Internal implementation of block-based matrix addition that processes
+     * matrices in blocks for better cache utilization and memory efficiency.
+     * 
+     * This function:
+     * - Determines optimal block sizes based on matrix dimensions
+     * - Processes matrices in blocks to improve cache efficiency
+     * - Supports parallel processing through OpenMP
+     * - Handles edge cases for non-uniform block sizes
+     * 
+     * @tparam T Matrix type (typically Eigen::MatrixXd or similar)
+     * @param A First input matrix
+     * @param B Second input matrix
+     * @param threads Optional number of threads for parallel processing
+     * @return Rcpp::RObject containing the result matrix
+     * @throws Runtime error if matrices are not conformable
+     */
     template< typename T>
     extern inline Rcpp::RObject Rcpp_matrix_blockSum ( T  A, T  B, Rcpp::Nullable<int> threads)
     {
@@ -212,6 +275,20 @@ namespace BigDataStatMeth {
     
     
     
+    /**
+     * @brief Block-based matrix-vector addition with parallel processing
+     * @details High-level interface for block-based matrix-vector addition that:
+     * - Validates input dimensions
+     * - Configures parallel processing based on input parameters
+     * - Delegates to low-level implementation
+     * 
+     * @tparam T Matrix/vector type
+     * @param A Input matrix
+     * @param B Input vector
+     * @param bparal Boolean flag to enable/disable parallel processing
+     * @param threads Number of threads for parallel computation (if enabled)
+     * @return Rcpp::RObject containing the result
+     */
     template< typename T>
     extern inline Rcpp::RObject Rcpp_matrix_vector_blockSum( T  A, T  B,  
                                  Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads)
