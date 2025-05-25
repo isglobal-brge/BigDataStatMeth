@@ -1,3 +1,38 @@
+/**
+ * @file vectormatrix.hpp
+ * @brief Vector-matrix operations for HDF5 matrices
+ * @details This header file provides implementations for vector-matrix operations
+ * on matrices stored in HDF5 format. The implementation includes:
+ * 
+ * Key features:
+ * - Vector-matrix multiplication
+ * - Matrix-vector multiplication
+ * - Block-based computation
+ * - Memory-efficient algorithms
+ * - Parallel processing support
+ * 
+ * Supported operations:
+ * - Vector-matrix products
+ * - Matrix-vector products
+ * - Row/column vector operations
+ * - Block vector operations
+ * - Transposed operations
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Dynamic block sizing
+ * - Multi-threaded processing
+ * - I/O optimization
+ * - Memory management
+ * 
+ * The implementation uses:
+ * - BLAS Level 2 operations
+ * - Block algorithms
+ * - HDF5 chunked storage
+ * - Parallel I/O
+ * - Vectorized operations
+ */
+
 #ifndef BIGDATASTATMETH_ALGEBRA_VECTORMATRIX_HPP
 #define BIGDATASTATMETH_ALGEBRA_VECTORMATRIX_HPP
 
@@ -7,62 +42,132 @@
 
 namespace BigDataStatMeth {
 
-
-// by Rows
-
+/**
+ * @brief Matrix-vector multiplication by rows
+ * @details Multiplies each row of a matrix by a vector element-wise.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of row-wise multiplication
+ */
 extern inline Eigen::MatrixXd Rcpp_matrixVectorMultiplication_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().colwise() * v.array();
     return(X);
 }
 
+/**
+ * @brief Matrix-vector addition by rows
+ * @details Adds a vector to each row of a matrix.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of row-wise addition
+ */
 extern inline Eigen::MatrixXd Rcpp_matrixVectorSum_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().colwise() + v.array();
     return(X);
 }
 
+/**
+ * @brief Matrix-vector subtraction by rows
+ * @details Subtracts a vector from each row of a matrix.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of row-wise subtraction
+ */
 extern inline Eigen::MatrixXd Rcpp_matrixVectorSubstract_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().colwise() - v.array();
     return(X);
 }
 
+/**
+ * @brief Matrix-vector division by rows
+ * @details Divides each row of a matrix by a vector element-wise.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of row-wise division
+ */
 extern inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().colwise() / v.array();
     return(X);
 }
 
-
-// by Columns
-
+/**
+ * @brief Matrix-vector multiplication by columns
+ * @details Multiplies each column of a matrix by a vector element-wise.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of column-wise multiplication
+ */
 extern inline Eigen::MatrixXd Rcpp_matrixVectorMultiplication_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().rowwise() * v.transpose().array();    
     return(X);
 }
 
+/**
+ * @brief Matrix-vector addition by columns
+ * @details Adds a vector to each column of a matrix.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of column-wise addition
+ */
 extern inline Eigen::MatrixXd Rcpp_matrixVectorSum_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().rowwise() + v.transpose().array();    
     return(X);
 }
 
+/**
+ * @brief Matrix-vector subtraction by columns
+ * @details Subtracts a vector from each column of a matrix.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of column-wise subtraction
+ */
 extern inline Eigen::MatrixXd Rcpp_matrixVectorSubstract_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().rowwise() - v.transpose().array();    
     return(X);
 }
 
+/**
+ * @brief Matrix-vector division by columns
+ * @details Divides each column of a matrix by a vector element-wise.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of column-wise division
+ */
 extern inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().rowwise() / v.transpose().array();    
     return(X);
 }
 
 
-
-/* *****************
- * Function:
- *  1: '+'
- *  2: '-'
- *  3: '*'
- *  4: '/'
-***************** */
-
+/*
+    Annotation: 
+        * Function:
+        *  1: '+'
+        *  2: '-'
+        *  3: '*'
+        *  4: '/'
+*/
+/**
+ * @brief Vector-matrix operations for HDF5 matrices
+ * @details Performs vector-matrix operations on HDF5 datasets with support for
+ * parallel processing and row/column-wise operations.
+ * 
+ * @param dsA Input matrix dataset
+ * @param dsB Input vector dataset
+ * @param dsC Output matrix dataset
+ * @param function Operation type (multiplication, addition, subtraction, division)
+ * @param bbyrows Whether to operate by rows or columns
+ * @param bparal Whether to use parallel processing
+ * @param threads Number of threads for parallel processing
+ */
 extern inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
         BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, 
         BigDataStatMeth::hdf5Dataset* dsC, int function, bool bbyrows, 

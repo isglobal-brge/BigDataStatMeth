@@ -1,3 +1,39 @@
+/**
+ * @file matrixPseudoinverse.hpp
+ * @brief Pseudoinverse computation for HDF5 matrices
+ * @details This header file provides implementations for computing the
+ * Moore-Penrose pseudoinverse of matrices stored in HDF5 format. The
+ * implementation includes:
+ * 
+ * Key features:
+ * - SVD-based pseudoinverse computation
+ * - Memory-efficient algorithms
+ * - Parallel processing support
+ * - Numerical stability checks
+ * - LAPACK integration
+ * 
+ * Supported operations:
+ * - Full pseudoinverse computation
+ * - Singular value thresholding
+ * - In-memory computation
+ * - HDF5 storage computation
+ * - Multi-threaded processing
+ * 
+ * Performance features:
+ * - LAPACK optimizations
+ * - Cache-friendly algorithms
+ * - Multi-threaded processing
+ * - I/O optimization
+ * - Memory management
+ * 
+ * The implementation uses:
+ * - LAPACK DGESVD for SVD
+ * - BLAS Level 3 operations
+ * - HDF5 chunked storage
+ * - Parallel processing
+ * - Vectorized operations
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_MATRIXPSEUDOINVERSE_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXPSEUDOINVERSE_HPP
 
@@ -9,27 +45,41 @@
 
 namespace BigDataStatMeth {
 
-// dgemm_ is a symbol in the LAPACK-BLAS library files 
-//    DGEMM  performs one of the matrix-matrix operations : C := alpha*op( A )*op( B ) + beta*C,
+/**
+ * @brief LAPACK DGEMM matrix multiplication
+ * @details External LAPACK function for matrix-matrix multiplication:
+ * C := alpha*op(A)*op(B) + beta*C
+ */
 extern "C" {
     extern void dgemm_( char*, char*, int*, int*, int*, double*, double*, int*, double*, int*, double*, double*, int* );
 }
 
-// dgesvd_ is a symbol in the LAPACK-BLAS Level 3 
-//    DGESVD computes the singular value decomposition (SVD) of a real M-by-N matrix A, 
-//       optionally computing the left and/or right singular vectors
+/**
+ * @brief LAPACK DGESVD singular value decomposition
+ * @details External LAPACK function for computing the singular value decomposition
+ * of a real M-by-N matrix A
+ */
 extern "C" {
     extern void dgesvd_( char*, char*, int*, int*, double*, int*, double*, double*, int*, double*, int*, double*, int*, int*);
 }
 
-// dscal_ is a symbol in the LAPACK-BLAS Level 3 
-//    DSCAL scales a vector by a constant.
+/**
+ * @brief LAPACK DSCAL vector scaling
+ * @details External LAPACK function for scaling a vector by a constant
+ */
 extern "C" {
     extern void dscal_( int*, double*, double*, int*);
 }
 
-
-
+/**
+ * @brief Compute pseudoinverse of in-memory matrix
+ * @details Computes the Moore-Penrose pseudoinverse using SVD decomposition
+ * with parallel processing support.
+ * 
+ * @param A Input matrix to compute pseudoinverse of
+ * @param threads Number of threads for parallel processing (optional)
+ * @return Pseudoinverse matrix
+ */
 extern inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A, 
                                             Rcpp::Nullable<int> threads = R_NilValue)
 {
@@ -82,7 +132,15 @@ extern inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A,
 }
 
 
-
+/**
+ * @brief Compute pseudoinverse of HDF5 matrix
+ * @details Computes the Moore-Penrose pseudoinverse of a matrix stored in
+ * HDF5 format using SVD decomposition with parallel processing support.
+ * 
+ * @param dsA Input matrix dataset
+ * @param dsR Output pseudoinverse dataset
+ * @param threads Number of threads for parallel processing (optional)
+ */
 extern inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA, 
                                       BigDataStatMeth::hdf5Dataset* dsR, 
                                       Rcpp::Nullable<int> threads = R_NilValue )

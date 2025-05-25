@@ -1,3 +1,37 @@
+/**
+ * @file matrixTriangular.hpp
+ * @brief Triangular matrix operations for HDF5 matrices
+ * @details This header file provides implementations for operations involving
+ * triangular matrices stored in HDF5 format. The implementation includes:
+ * 
+ * Key features:
+ * - Upper triangular operations
+ * - Lower triangular operations
+ * - Triangular solvers
+ * - Block-based processing
+ * - Memory-efficient algorithms
+ * 
+ * Supported operations:
+ * - Triangular matrix multiplication
+ * - Triangular system solving
+ * - Back substitution
+ * - Forward substitution
+ * - Matrix decomposition
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Block-based computation
+ * - Multi-threaded processing
+ * - Memory access optimization
+ * - I/O efficiency
+ * 
+ * The implementation uses:
+ * - BLAS Level 3 operations
+ * - Block algorithms
+ * - HDF5 chunked storage
+ * - Parallel processing
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_MATRIXTRIANGULAR_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXTRIANGULAR_HPP
 
@@ -6,7 +40,13 @@
 
 namespace BigDataStatMeth {
 
-
+/**
+ * @brief Set the upper triangular matrix
+ * @details Set the upper triangular matrix of a dataset
+ * 
+ * @param dsMat The dataset to set the upper triangular matrix of
+ * @param dElementsBlock The block size to use for the matrix
+ */
 extern inline void setUpperTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
 {
     
@@ -76,7 +116,13 @@ extern inline void setUpperTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat
     return void();
 }
 
-
+/**
+ * @brief Set the lower triangular matrix
+ * @details Set the lower triangular matrix of a dataset
+ * 
+ * @param dsMat The dataset to set the lower triangular matrix of
+ * @param dElementsBlock The block size to use for the matrix
+ */
 extern inline void setLowerTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
 {
     

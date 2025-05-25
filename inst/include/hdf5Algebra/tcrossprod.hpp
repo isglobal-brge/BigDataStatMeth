@@ -1,3 +1,38 @@
+/**
+ * @file tcrossprod.hpp
+ * @brief Transposed cross-product operations for HDF5 matrices
+ * @details This header file provides implementations for transposed cross-product
+ * operations on matrices stored in HDF5 format. The implementation includes:
+ * 
+ * Key features:
+ * - Transposed matrix multiplication
+ * - Block-based computation
+ * - Memory-efficient algorithms
+ * - Parallel processing support
+ * - Error handling and validation
+ * 
+ * Supported operations:
+ * - A'A computation
+ * - AA' computation
+ * - Block cross-products
+ * - Weighted cross-products
+ * - Symmetric results
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Dynamic block sizing
+ * - Multi-threaded processing
+ * - I/O optimization
+ * - Memory management
+ * 
+ * The implementation uses:
+ * - BLAS Level 3 operations
+ * - Block algorithms
+ * - HDF5 chunked storage
+ * - Parallel I/O
+ * - Symmetric optimizations
+ */
+
 #ifndef BIGDATASTATMETH_ALGEBRA_TCROSSPROD_HPP
 #define BIGDATASTATMETH_ALGEBRA_TCROSSPROD_HPP
 
@@ -8,7 +43,20 @@
 
 namespace BigDataStatMeth {
 
-
+/**
+ * @brief Transposed cross-product for HDF5 matrices
+ * @details Computes the transposed cross-product of matrices stored in HDF5 format.
+ * Supports both A'A and AA' computations with block-based processing.
+ * 
+ * @param dsA Input matrix dataset
+ * @param dsB Input matrix dataset
+ * @param dsC Output matrix dataset
+ * @param hdf5_block Block size for HDF5 I/O operations
+ * @param mem_block_size Block size for in-memory operations
+ * @param bparal Whether to use parallel processing
+ * @param browmajor Whether matrices are stored in row-major order
+ * @param threads Number of threads for parallel processing
+ */
 extern inline BigDataStatMeth::hdf5Dataset* tcrossprod( 
         BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, 
         BigDataStatMeth::hdf5Dataset* dsC, hsize_t hdf5_block, hsize_t mem_block_size, 

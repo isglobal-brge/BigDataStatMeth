@@ -1,5 +1,40 @@
-#ifndef BIGDATASTATMETH_ALGEBRA_MULTIPLICATION_HPP
-#define BIGDATASTATMETH_ALGEBRA_MULTIPLICATION_HPP
+/**
+ * @file multiplication.hpp
+ * @brief Matrix multiplication operations for HDF5 matrices
+ * @details This header file provides implementations for matrix multiplication
+ * operations on matrices stored in HDF5 format. The implementation includes:
+ * 
+ * Key features:
+ * - Dense matrix multiplication
+ * - Block-based multiplication
+ * - Parallel processing support
+ * - Memory-efficient algorithms
+ * - Error handling and validation
+ * 
+ * Supported operations:
+ * - Matrix-matrix multiplication
+ * - Block matrix multiplication
+ * - Transposed multiplication
+ * - Multi-threaded multiplication
+ * - Out-of-core processing
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Dynamic block sizing
+ * - Multi-threaded processing
+ * - I/O optimization
+ * - Memory management
+ * 
+ * The implementation uses:
+ * - BLAS Level 3 operations
+ * - Block algorithms
+ * - HDF5 chunked storage
+ * - Parallel I/O
+ * - Cache blocking
+ */
+
+#ifndef BIGDATASTATMETH_HDF5_MULTIPLICATION_HPP
+#define BIGDATASTATMETH_HDF5_MULTIPLICATION_HPP
 
 // #include <RcppEigen.h>
 #include "Utilities/openme-utils.hpp"
@@ -9,12 +44,33 @@
 namespace BigDataStatMeth {
 
 
+/**
+ * @brief Main matrix multiplication function for HDF5 matrices
+ * @details Performs matrix multiplication C = A * B where A, B, and C are HDF5 datasets.
+ * Supports parallel processing and block-based computation for memory efficiency.
+ * 
+ * @param dsA First input matrix dataset
+ * @param dsB Second input matrix dataset
+ * @param dsC Output matrix dataset
+ * @param bparal Whether to use parallel processing
+ * @param hdf5_block Block size for HDF5 I/O operations
+ * @param threads Number of threads for parallel processing
+ */
     extern inline void multiplication( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
                                        Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> hdf5_block, Rcpp::Nullable<int> threads);
 
 
 
-
+/**
+ * @brief Calculate block positions and sizes for HDF5 matrix operations
+ * @details Determines optimal block positions and sizes for block-based matrix
+ * operations on HDF5 datasets.
+ * 
+ * @param maxPosition Maximum position to process
+ * @param blockSize Size of each block
+ * @param[out] starts Vector to store starting positions of blocks
+ * @param[out] sizes Vector to store sizes of blocks
+ */
 extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
 
         hsize_t isize = blockSize + 1;
@@ -42,6 +98,17 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
     // 
     //  IMPORTANT : FUNCIÓ MODIFICADA EL 2024/04/06  I NO TESTEJADA !!!!
     // 
+
+    /**
+     * @brief Parallel block-based matrix multiplication
+     * @details Implements parallel block-based matrix multiplication for in-memory matrices.
+     * 
+     * @param A First input matrix
+     * @param B Second input matrix
+     * @param block_size Size of blocks for computation
+     * @param threads Number of threads for parallel processing
+     * @return Result of matrix multiplication
+     */
     extern inline Eigen::MatrixXd Bblock_matrix_mul_parallel( Eigen::MatrixXd A, Eigen::MatrixXd B, 
                                                              int block_size, Rcpp::Nullable<int> threads  = R_NilValue)
     {

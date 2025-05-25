@@ -1,3 +1,38 @@
+/**
+ * @file matrixSum.hpp
+ * @brief Matrix addition operations for HDF5 matrices
+ * @details This header file provides implementations for matrix addition
+ * operations on matrices stored in HDF5 format. The implementation includes:
+ * 
+ * Key features:
+ * - Matrix-matrix addition
+ * - Matrix-vector addition
+ * - Block-based computation
+ * - Memory-efficient algorithms
+ * - Parallel processing support
+ * 
+ * Supported operations:
+ * - Element-wise addition
+ * - Block-based addition
+ * - Row/column vector addition
+ * - Multi-threaded addition
+ * - In-place operations
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Dynamic block sizing
+ * - Multi-threaded processing
+ * - I/O optimization
+ * - Memory management
+ * 
+ * The implementation uses:
+ * - Block-based algorithms
+ * - HDF5 chunked storage
+ * - Parallel processing
+ * - Vectorized operations
+ * - Memory-efficient I/O
+ */
+
 #ifndef BIGDATASTATMETH_ALGEBRA_SUM_HPP
 #define BIGDATASTATMETH_ALGEBRA_SUM_HPP
 
@@ -19,7 +54,20 @@ namespace BigDataStatMeth {
     
     
     
-    // Working directly with C-matrix in hdf5 file
+
+    /**
+     * @brief Block-based matrix addition for HDF5 matrices
+     * @details Performs block-based matrix addition C = A + B where A, B, and C
+     * are HDF5 datasets. Optimized for large matrices with parallel processing.
+     * 
+     * @param dsA First input matrix dataset
+     * @param dsB Second input matrix dataset
+     * @param dsC Output matrix dataset
+     * @param hdf5_block Block size for HDF5 I/O operations
+     * @param bparal Whether to use parallel processing
+     * @param threads Number of threads for parallel processing (optional)
+     * @return Pointer to result dataset
+     */
     extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5( 
             BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
             hsize_t hdf5_block, bool bparal, Rcpp::Nullable<int> threads  = R_NilValue)
@@ -142,11 +190,20 @@ namespace BigDataStatMeth {
     
     
     
-    // This function makes summatori with a matrix and a vector, returns a matrix.
-    //
-    // Working directly with C-matrix in hdf5 file
-    // browmajor : if = true, indicates that R data is stored in hdf5 as row major (default in hdf5)
-    //             else, indicates that R data is stored in hdf5 as column major
+
+/**
+ * @brief Block-based matrix-vector addition for HDF5 matrices
+ * @details Performs block-based matrix-vector addition where one operand
+ * is a vector and the other is a matrix. Supports both row and column vectors.
+ * 
+ * @param dsA Input vector dataset
+ * @param dsB Input matrix dataset
+ * @param dsC Output matrix dataset
+ * @param hdf5_block Block size for HDF5 I/O operations
+ * @param bparal Whether to use parallel processing
+ * @param threads Number of threads for parallel processing (optional)
+ * @return Pointer to result dataset
+ */
     extern inline BigDataStatMeth::hdf5Dataset* Rcpp_block_matrix_vector_sum_hdf5( 
             BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
             hsize_t hdf5_block, bool bparal, Rcpp::Nullable<int> threads  = R_NilValue)

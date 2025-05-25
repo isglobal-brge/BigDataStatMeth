@@ -1,3 +1,39 @@
+/**
+ * @file matrixSdMean.hpp
+ * @brief Mean and standard deviation calculations for HDF5 matrices
+ * @details This header file provides implementations for computing mean and
+ * standard deviation statistics for matrices stored in HDF5 format. The
+ * implementation includes:
+ * 
+ * Key features:
+ * - Row-wise statistics
+ * - Column-wise statistics
+ * - Block-based computation
+ * - Memory-efficient algorithms
+ * - Parallel processing support
+ * 
+ * Supported operations:
+ * - Mean calculation
+ * - Standard deviation calculation
+ * - Corrected standard deviation
+ * - Block-based processing
+ * - Large matrix support
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Dynamic block sizing
+ * - Multi-threaded processing
+ * - I/O optimization
+ * - Memory management
+ * 
+ * The implementation uses:
+ * - Efficient statistical algorithms
+ * - Block-based computation
+ * - HDF5 chunked storage
+ * - Parallel I/O
+ * - Vectorized operations
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSDMEAN_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSDMEAN_HPP
 
@@ -9,8 +45,16 @@
 
 namespace BigDataStatMeth {
 
-
-// Returns de block size to be used in sd and mean calculus 
+/**
+ * @brief Calculate optimal block size for processing
+ * @details Determines the optimal block size for processing based on matrix
+ * dimensions and memory constraints.
+ * 
+ * @param wsize User-specified block size (optional)
+ * @param reference_size Primary dimension size
+ * @param alternative_size Secondary dimension size
+ * @return Optimal block size for processing
+ */
 extern inline hsize_t get_block_size( Rcpp::Nullable<int> wsize, hsize_t reference_size, hsize_t alternative_size) {
     
     hsize_t bsize = 0;
@@ -34,10 +78,15 @@ extern inline hsize_t get_block_size( Rcpp::Nullable<int> wsize, hsize_t referen
     
 }
 
-
-
-// Get mean and corrected sd from each row in dataset 
-// void get_HDF5_mean_sd_by_row_ptr( BigDataStatMeth::hdf5Dataset* dsA, Eigen::MatrixXd& normalize, hsize_t block_size )
+/**
+ * @brief Calculate row-wise mean and standard deviation
+ * @details Computes mean and standard deviation for each row of the matrix
+ * using block-based processing for memory efficiency.
+ * 
+ * @param dsA Input matrix dataset
+ * @param normalize Output matrix for mean and std values
+ * @param wsize Block size for processing
+ */
 extern inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, Eigen::MatrixXd& normalize, Rcpp::Nullable<int> wsize )
 {
     
@@ -104,9 +153,16 @@ extern inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, E
     
 }
 
-
-// Get mean and corrected sd from each column in dataset in the case of n<<m, this information is used
-// to normalize data, center or scale.
+/**
+ * @brief Calculate column-wise mean and standard deviation
+ * @details Computes mean and standard deviation for each column of the matrix
+ * using block-based processing for memory efficiency. Optimized for cases
+ * where n << m (rows much fewer than columns).
+ * 
+ * @param dsA Input matrix dataset
+ * @param normalize Output matrix for mean and std values
+ * @param wsize Block size for processing
+ */
 extern inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA, Eigen::MatrixXd& normalize, Rcpp::Nullable<int> wsize )
 {
     

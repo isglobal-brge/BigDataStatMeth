@@ -1,3 +1,40 @@
+/**
+ * @file matrixPCA.hpp
+ * @brief Principal Component Analysis (PCA) for HDF5 matrices
+ * @details This header file provides implementations for performing Principal
+ * Component Analysis on large matrices stored in HDF5 format. The implementation
+ * includes:
+ * 
+ * Key features:
+ * - Full and truncated PCA computation
+ * - Variable contributions analysis
+ * - Individual contributions analysis
+ * - Memory-efficient algorithms
+ * - Parallel processing support
+ * 
+ * Supported operations:
+ * - PCA decomposition
+ * - Variable coordinates
+ * - Individual coordinates
+ * - Variance contributions
+ * - Cos² quality metrics
+ * - Component analysis
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Block-based computation
+ * - Multi-threaded processing
+ * - I/O optimization
+ * - Memory management
+ * 
+ * The implementation uses:
+ * - SVD decomposition
+ * - Efficient statistical algorithms
+ * - HDF5 chunked storage
+ * - Parallel I/O
+ * - Vectorized operations
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_MATRIXPCA_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXPCA_HPP
 
@@ -11,6 +48,20 @@ namespace BigDataStatMeth {
     // var.contr, C, var.coord and var.cos^2 and write results to hdf5 file
     
     // void get_HDF5_PCA_variables_ptr(  H5File* file, std::string strdataset)
+    /**
+     * @brief Calculate PCA variables statistics
+     * @details Computes and stores various PCA statistics for variables including:
+     * - Eigenvalues (lambda)
+     * - Variance contributions
+     * - Cumulative variance
+     * - Variable coordinates
+     * - Cos² quality metrics
+     * 
+     * @param strPCAgroup HDF5 group name for PCA results
+     * @param dsd Singular values dataset
+     * @param dsv Right singular vectors dataset
+     * @param overwrite Whether to overwrite existing results
+     */
     extern inline void RcppGetPCAVariablesHdf5( std::string strPCAgroup, 
                                   BigDataStatMeth::hdf5Dataset* dsd, 
                                   BigDataStatMeth::hdf5Dataset* dsv, 
@@ -118,6 +169,21 @@ namespace BigDataStatMeth {
     
     
     
+    /**
+     * @brief Calculate PCA individuals statistics
+     * @details Computes and stores various PCA statistics for individuals including:
+     * - Distances
+     * - Component coordinates
+     * - Individual coordinates
+     * - Cos² quality metrics
+     * - Contributions
+     * 
+     * @param strPCAgroup HDF5 group name for PCA results
+     * @param dsX Input data matrix dataset
+     * @param dsd Singular values dataset
+     * @param dsu Left singular vectors dataset
+     * @param overwrite Whether to overwrite existing results
+     */
     extern inline void RcppGetPCAIndividualsHdf5( std::string strPCAgroup, 
                                     BigDataStatMeth::hdf5Dataset* dsX,
                                     BigDataStatMeth::hdf5Dataset* dsd, 
@@ -254,6 +320,29 @@ namespace BigDataStatMeth {
     }
     
     
+    /**
+     * @brief Perform Principal Component Analysis
+     * @details Performs PCA on an HDF5 dataset with options for:
+     * - Full or truncated analysis
+     * - Data preprocessing (centering/scaling)
+     * - Method selection
+     * - Parallel processing
+     * 
+     * @param filename HDF5 file name
+     * @param strgroup Group name for results
+     * @param strdataset Dataset name
+     * @param strSVDgroup SVD group name
+     * @param k Number of components to compute
+     * @param q Block size for processing
+     * @param nev Number of eigenvalues
+     * @param bcenter Whether to center the data
+     * @param bscale Whether to scale the data
+     * @param dthreshold Convergence threshold
+     * @param bforce Whether to force computation
+     * @param asRowMajor Whether data is in row-major order
+     * @param method Method selection (optional)
+     * @param ithreads Number of threads (optional)
+     */
     extern inline void RcppPCAHdf5( std::string filename, std::string strgroup, std::string strdataset,  
                              std::string strSVDgroup, int k, int q, int nev, 
                              bool bcenter, bool bscale, double dthreshold, 

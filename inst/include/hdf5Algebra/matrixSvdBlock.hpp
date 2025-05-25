@@ -1,3 +1,39 @@
+/**
+ * @file matrixSvdBlock.hpp
+ * @brief Block-based Singular Value Decomposition for HDF5 matrices
+ * @details This header file provides implementations for computing the Singular
+ * Value Decomposition of large matrices stored in HDF5 format using block-based
+ * algorithms. The implementation includes:
+ * 
+ * Key features:
+ * - Block-based SVD computation
+ * - Memory-efficient processing
+ * - Parallel computation support
+ * - Automatic block size optimization
+ * - Error handling and validation
+ * 
+ * Supported operations:
+ * - Block SVD computation
+ * - Incremental SVD updates
+ * - Truncated block SVD
+ * - Out-of-core processing
+ * - Distributed computation
+ * 
+ * Performance features:
+ * - Dynamic block sizing
+ * - Memory usage optimization
+ * - Multi-threaded processing
+ * - I/O optimization
+ * - Load balancing
+ * 
+ * The implementation uses:
+ * - Block Lanczos methods
+ * - Randomized algorithms
+ * - HDF5 chunked storage
+ * - Parallel I/O
+ * - Cache-efficient algorithms
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSVDBLOCK_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSVDBLOCK_HPP
 

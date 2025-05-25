@@ -1,3 +1,38 @@
+/**
+ * @file matrixSvd.hpp
+ * @brief Singular Value Decomposition (SVD) for HDF5 matrices
+ * @details This header file provides implementations for computing the Singular
+ * Value Decomposition of large matrices stored in HDF5 format. The implementation
+ * includes:
+ * 
+ * Key features:
+ * - Full and truncated SVD computation
+ * - Memory-efficient implementation
+ * - Block-based processing
+ * - Parallel computation support
+ * - Error handling and validation
+ * 
+ * Supported operations:
+ * - Full SVD (U, S, V)
+ * - Truncated SVD (k components)
+ * - Left singular vectors (U)
+ * - Right singular vectors (V)
+ * - Singular values (S)
+ * 
+ * Performance features:
+ * - Block-based computation
+ * - Memory-efficient algorithms
+ * - Multi-threaded processing
+ * - HDF5 chunked storage
+ * - Optimized I/O operations
+ * 
+ * The implementation uses:
+ * - Eigen's SVD solver
+ * - Block Krylov methods
+ * - Randomized algorithms
+ * - HDF5's parallel I/O
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSVD_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSVD_HPP
 

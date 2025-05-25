@@ -1,3 +1,38 @@
+/**
+ * @file matrixQR.hpp
+ * @brief QR decomposition for HDF5 matrices
+ * @details This header file provides implementations for computing the QR
+ * decomposition of matrices stored in HDF5 format. The implementation includes:
+ * 
+ * Key features:
+ * - Full and thin QR decomposition
+ * - Memory-efficient algorithms
+ * - Parallel processing support
+ * - Rank computation
+ * - Householder transformations
+ * 
+ * Supported operations:
+ * - Full QR decomposition
+ * - Thin QR decomposition
+ * - Rank-revealing QR
+ * - In-memory computation
+ * - HDF5 storage computation
+ * 
+ * Performance features:
+ * - Eigen optimizations
+ * - Cache-friendly algorithms
+ * - Multi-threaded processing
+ * - I/O optimization
+ * - Memory management
+ * 
+ * The implementation uses:
+ * - Householder QR algorithm
+ * - Block-based computation
+ * - HDF5 chunked storage
+ * - Parallel processing
+ * - Vectorized operations
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_MATRIXQR_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXQR_HPP
 
@@ -11,7 +46,30 @@
 namespace BigDataStatMeth {
 
 // Function declaration
+/**
+ * @brief Template function for QR decomposition
+ * @details Computes the QR decomposition of a matrix using Householder
+ * transformations. Supports both full and thin decomposition.
+ * 
+ * @tparam M Matrix type (Eigen::MatrixXd or mapped matrix)
+ * @param X Input matrix to decompose
+ * @param bthin Whether to compute thin QR
+ * @return Structure containing Q and R matrices
+ */
 template< typename M> extern inline strQR RcppQR ( M X, bool bthin );
+
+/**
+ * @brief QR decomposition for HDF5 matrices
+ * @details Computes the QR decomposition of a matrix stored in HDF5 format.
+ * Supports both full and thin decomposition with parallel processing.
+ * 
+ * @param dsA Input matrix dataset
+ * @param dsQ Output Q matrix dataset
+ * @param dsR Output R matrix dataset
+ * @param bthin Whether to compute thin QR
+ * @param block_size Block size for processing (optional)
+ * @param threads Number of threads for parallel processing (optional)
+ */
 extern inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsQ, BigDataStatMeth::hdf5Dataset* dsR, 
                                bool bthin, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads );
 

@@ -1,3 +1,38 @@
+/**
+ * @file matrixNormalization.hpp
+ * @brief Matrix normalization operations for HDF5 matrices
+ * @details This header file provides implementations for matrix normalization
+ * operations on matrices stored in HDF5 format. The implementation includes:
+ * 
+ * Key features:
+ * - Column-wise normalization
+ * - Row-wise normalization
+ * - Mean centering
+ * - Standard deviation scaling
+ * - Block-based processing
+ * 
+ * Supported operations:
+ * - Z-score normalization
+ * - Mean centering only
+ * - Standard deviation scaling only
+ * - Custom normalization parameters
+ * - Parallel processing support
+ * 
+ * Performance features:
+ * - Cache-friendly algorithms
+ * - Block-based computation
+ * - Multi-threaded processing
+ * - Memory-efficient algorithms
+ * - I/O optimization
+ * 
+ * The implementation uses:
+ * - Efficient statistical computations
+ * - Block algorithms
+ * - HDF5 chunked storage
+ * - Parallel I/O
+ * - Vectorized operations
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
 
@@ -27,6 +62,19 @@ namespace BigDataStatMeth {
     //   use this data to compute normalized matrix
     
     //.. ORIGINAL name ..// Eigen::MatrixXd RcppNormalize_Data_hdf5 ( Eigen::MatrixXd  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata )
+    /**
+     * @brief Template function for normalizing data with pre-computed statistics
+     * @details Normalizes matrix data using pre-computed mean and standard deviation.
+     * Supports both row-wise and column-wise normalization.
+     * 
+     * @tparam M Matrix type (Eigen::MatrixXd or mapped matrix)
+     * @param X Input matrix to normalize
+     * @param bc Whether to center the data
+     * @param bs Whether to scale the data
+     * @param btransp Whether to transpose before normalization
+     * @param normdata Pre-computed normalization parameters (mean and std)
+     * @return Normalized matrix
+     */
     template< typename M>
     extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata )
     {
@@ -50,6 +98,17 @@ namespace BigDataStatMeth {
     }
     
 
+    /**
+     * @brief Column-wise normalization with pre-computed statistics
+     * @details Normalizes matrix columns using pre-computed mean and standard deviation.
+     * 
+     * @tparam M Matrix type (Eigen::MatrixXd or mapped matrix)
+     * @param X Input matrix to normalize
+     * @param bc Whether to center the data
+     * @param bs Whether to scale the data
+     * @param normdata Pre-computed normalization parameters (mean and std)
+     * @return Column-wise normalized matrix
+     */
     template< typename M>
     extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata )
     {
@@ -222,6 +281,20 @@ namespace BigDataStatMeth {
     
     
     
+    /**
+     * @brief HDF5 matrix normalization with pre-computed statistics
+     * @details Normalizes an HDF5 matrix dataset using pre-computed statistics.
+     * Supports both row-wise and column-wise normalization.
+     * 
+     * @param dsA Input matrix dataset
+     * @param dsNormal Output normalized dataset
+     * @param datanormal Pre-computed normalization parameters
+     * @param wsize Block size for processing
+     * @param bc Whether to center the data
+     * @param bs Whether to scale the data
+     * @param bbyrows Whether to normalize by rows
+     * @param bcorrected Whether to use corrected standard deviation
+     */
     extern inline void RcppNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
                                           BigDataStatMeth::hdf5Dataset* dsNormal,
                                           Eigen::MatrixXd datanormal,
