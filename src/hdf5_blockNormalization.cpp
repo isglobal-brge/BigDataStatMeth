@@ -1,37 +1,131 @@
+/**
+ * @file hdf5_blockNormalization.cpp
+ * @brief Block-wise data normalization for HDF5 datasets
+ * 
+ * This file implements efficient block-wise normalization operations for large
+ * datasets stored in HDF5 format. It provides functionality for centering and
+ * scaling data, with support for both row-wise and column-wise operations.
+ * 
+ * Key features:
+ * - Data centering (mean subtraction)
+ * - Data scaling (standard deviation division)
+ * - Row-wise and column-wise operations
+ * - Block-wise processing
+ * - Memory-efficient implementation
+ * 
+ * The implementation focuses on:
+ * - Efficient statistical computations
+ * - Memory-efficient block processing
+ * - Flexible normalization options
+ * - Resource management
+ * - Error handling
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Algebra/matrixSdMean.hpp"
 // #include "hdf5Algebra/matrixNormalization.hpp"
 
+/**
+ * @brief Normalize HDF5 datasets through centering and scaling
+ *
+ * @details Performs block-wise normalization of datasets stored in HDF5 format
+ * through centering and/or scaling operations. Supports both row-wise and
+ * column-wise normalization with memory-efficient block processing.
+ *
+ * Normalization options:
+ * - Centering: Subtract mean from each column/row
+ * - Scaling: Divide by standard deviation
+ * - Row-wise or column-wise processing
+ *
+ * @param filename [in] HDF5 file path
+ * @param group [in] Group containing the dataset
+ * @param dataset [in] Dataset name to normalize
+ * @param bcenter [in] Whether to center the data
+ * @param bscale [in] Whether to scale the data
+ * @param byrows [in] Whether to operate by rows
+ * @param wsize [in] Block size for processing
+ * @param overwrite [in] Whether to overwrite existing datasets
+ *
+ * @return void
+ *
+ * @throws H5::FileIException if file operations fail
+ * @throws H5::DataSetIException if dataset operations fail
+ * @throws H5::DataSpaceIException if dataspace operations fail
+ * @throws H5::DataTypeIException if datatype operations fail
+ * @throws std::exception for other errors
+ *
+ * @note Block size affects performance and memory usage
+ * @see RcppNormalizeHdf5()
+ */
 
-//' Normalize dataset in hdf5 file
+//' Normalize dataset in HDF5 file
 //' 
-//' This function normalize data scaling, centering or scaling and centering 
-//' in a dataset stored in hdf5 file
+//' Performs block-wise normalization of datasets stored in HDF5 format through
+//' centering and/or scaling operations. Supports both row-wise and column-wise
+//' normalization with memory-efficient block processing.
 //' 
-//' @param filename string file name where dataset to normalize is stored
-//' @param group string specifying the group within the HDF5 file containing
-//' matrix dataset.
-//' @param dataset string, a string specifying the name of the dataset to 
-//' perform calculus.
-//' @param bcenter logical (optional). If TRUE (default), the data is centered by 
-//' subtracting the column means (ignoring NAs) of `x` from their corresponding columns. 
-//' If FALSE, no centering is performed.
-//' @param bscale (optional). If TRUE (default), the data is scaled by dividing 
-//' the (centered) columns of `x` by their standard deviations if `bcenter` is TRUE, 
-//' or by the root mean square otherwise. If FALSE, no scaling is performed.
-//' @param byrows logical (default = FALSE) if TRUE, centering is done by 
-//' subtracting the rows means, util when working with hdf5 datasets stored 
-//' in Row Major format.
-//' @param wsize integer (default = 1000), file block size to read to 
-//' perform normalization
-//' @param overwrite, boolean if true, previous results in same location inside 
-//' hdf5 will be overwritten.
-//' @return the original HDF5 file with normalized data stored under the group 
-//' "NORMALIZED", where:
-//'     * the dataset for the mean is named "mean." + original_dataset_name
-//'     * the dataset for the scaling is named "sd." + original_dataset_name
+//' @param filename String indicating the HDF5 file path
+//' @param group String specifying the group containing the dataset
+//' @param dataset String specifying the dataset name to normalize
+//' @param bcenter Optional boolean indicating whether to center the data.
+//'        If TRUE (default), subtracts mean from each column/row
+//' @param bscale Optional boolean indicating whether to scale the data.
+//'        If TRUE (default), divides by standard deviation
+//' @param byrows Optional boolean indicating whether to operate by rows.
+//'        If TRUE, processes row-wise; if FALSE (default), column-wise
+//' @param wsize Optional integer specifying the block size for processing.
+//'        Default is 1000
+//' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+//'        Default is false
+//' 
+//' @return Modifies the HDF5 file in place, adding:
+//'         - Normalized data under "NORMALIZED/[group]/[dataset]"
+//'         - Mean values under "NORMALIZED/[group]/mean.[dataset]"
+//'         - Standard deviations under "NORMALIZED/[group]/sd.[dataset]"
+//' 
+//' @details
+//' The function implements block-wise normalization through:
+//' 
+//' Statistical computations:
+//' - Mean calculation (for centering)
+//' - Standard deviation calculation (for scaling)
+//' - Efficient block-wise updates
+//' 
+//' Memory efficiency:
+//' - Block-wise data processing
+//' - Minimal temporary storage
+//' - Proper resource cleanup
+//' 
+//' Processing options:
+//' - Row-wise or column-wise operations
+//' - Flexible block size selection
+//' - Optional centering and scaling
+//' 
+//' Error handling:
+//' - Input validation
+//' - Resource management
+//' - Exception handling
+//' 
 //' @examples
-//'   a = "See vignette"
+//' \dontrun{
+//' library(BigDataStatMeth)
+//' 
+//' # Create test data
+//' data <- matrix(rnorm(1000*100), 1000, 100)
+//' 
+//' # Save to HDF5
+//' bdCreate_hdf5_matrix("test.hdf5", data, "data", "matrix",
+//'                      overwriteFile = TRUE)
+//' 
+//' # Normalize data
+//' bdNormalize_hdf5("test.hdf5", "data", "matrix",
+//'                  bcenter = TRUE,
+//'                  bscale = TRUE,
+//'                  wsize = 1000)
+//' }
+//' 
 //' @export
 // [[Rcpp::export]]
 void bdNormalize_hdf5( std::string filename, std::string group, std::string dataset,
@@ -95,11 +189,23 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
          
          dsmean = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetmean, bforce);
          dsmean->createDataset( datanormal.cols(), 1, "real");
-         dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
+         if( dsmean->getDatasetptr() != nullptr) {
+            dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
+         } else {
+            checkClose_file(dsA, dsmean, dssd, dsNormal);
+            Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : error with "<<strdatasetmean<< " datset\n";
+            return void();
+         }
          
          dssd = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetsd, bforce);
          dssd->createDataset( datanormal.cols(), 1, "real");
-         dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
+         if( dssd->getDatasetptr() != nullptr) {
+            dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
+         } else {
+            checkClose_file(dsA, dsmean, dssd, dsNormal);
+            Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : error with "<<strdatasetsd<< " datset\n";
+            return void();
+         }
          
          delete dssd; dssd = nullptr;
          delete dsmean; dsmean = nullptr;
@@ -116,26 +222,27 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
 
      } catch( H5::FileIException& error ) {
          checkClose_file(dsA, dsmean, dssd, dsNormal);
-         Rcpp::Rcerr<<"\nc++ exception bdNormalize_hdf5 (File IException)";
+         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (File IException)";
          return void();
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
          checkClose_file(dsA, dsmean, dssd, dsNormal);
-         Rcpp::Rcerr<<"\nc++ exception bdNormalize_hdf5 (DataSet IException)";
+         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (DataSet IException)";
          return void();
      } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
          checkClose_file(dsA, dsmean, dssd, dsNormal);
-         Rcpp::Rcerr<<"\nc++ exception bdNormalize_hdf5 (DataSpace IException)";
+         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (DataSpace IException)";
          return void();
      } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
          checkClose_file(dsA, dsmean, dssd, dsNormal);
-         Rcpp::Rcerr<<"\nc++ exception bdNormalize_hdf5 (DataType IException)";
+         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (DataType IException)";
          return void();
      } catch(std::exception &ex) {
          checkClose_file(dsA, dsmean, dssd, dsNormal);
-         Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : "<< ex.what();
+         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 : "<< ex.what();
+         return void();
      } catch (...) {
          checkClose_file(dsA, dsmean, dssd, dsNormal);
-         Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 (unknown reason)";
+         Rcpp::Rcerr<<"C++ exception bdNormalize_hdf5 (unknown reason)";
          return void();
      }
 

@@ -1,60 +1,142 @@
+/**
+ * @file hdf5_blocksum.cpp
+ * @brief Block-wise matrix addition for HDF5 datasets
+ * 
+ * This file implements efficient block-wise matrix addition operations for
+ * large datasets stored in HDF5 format. It supports both matrix-matrix and
+ * matrix-vector addition with optimizations for memory usage and parallel
+ * processing.
+ * 
+ * Key features:
+ * - Matrix-matrix addition
+ * - Matrix-vector addition
+ * - Block-wise processing
+ * - Parallel computation support
+ * - Automatic block size optimization
+ * 
+ * The implementation focuses on:
+ * - Memory-efficient operations
+ * - Optimized block processing
+ * - Flexible data handling
+ * - Resource management
+ * - Error handling
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #include <BigDataStatMeth.hpp>
 #include "hdf5Algebra/matrixSum.hpp"
 #include "Utilities/Utilities.hpp"
 
+/**
+ * @brief Block-wise matrix addition for HDF5 datasets
+ *
+ * @details Performs optimized block-wise addition between two datasets stored
+ * in HDF5 format. Supports both matrix-matrix and matrix-vector operations with
+ * memory-efficient block processing.
+ *
+ * Operation modes:
+ * - Matrix-matrix addition (A + B)
+ * - Matrix-vector addition
+ * - Vector-matrix addition
+ *
+ * @param filename [in] HDF5 file path
+ * @param group [in] Group containing matrix A
+ * @param A [in] Dataset name for matrix A
+ * @param B [in] Dataset name for matrix B
+ * @param groupB [in] Optional group containing matrix B
+ * @param block_size [in] Block size for processing
+ * @param paral [in] Whether to use parallel processing
+ * @param threads [in] Number of threads for parallel processing
+ * @param outgroup [in] Output group name
+ * @param outdataset [in] Output dataset name
+ * @param overwrite [in] Whether to overwrite existing datasets
+ *
+ * @return void
+ *
+ * @throws H5::FileIException if file operations fail
+ * @throws H5::GroupIException if group operations fail
+ * @throws H5::DataSetIException if dataset operations fail
+ * @throws std::exception for other errors
+ *
+ * @note Performance depends on chosen block size and parallel processing options
+ * @see Rcpp_block_matrix_sum_hdf5(), Rcpp_block_matrix_vector_sum_hdf5()
+ */
 
-//' Hdf5 datasets sum
+//' HDF5 dataset addition
 //'
-//' Sum two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
+//' Performs optimized block-wise addition between two datasets stored in HDF5
+//' format. Supports both matrix-matrix and matrix-vector operations with
+//' memory-efficient block processing.
 //' 
-//' @param filename string file name where dataset to normalize is stored
-//' @param group string with the group name where matrix is stored inside HDF5 file
-//' @param A string, datasetname with matrix to be multiplied
-//' @param B string, datasetname with matrix to be multiplied
-//' @param groupB, string, (optional) group name where dataset B is stored, if empty group folder is used
-//' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-//' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
-//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-//' @param outgroup (optional) string with group name where we want to store the result matrix, by default out group = "OUTGROUP"
-//' @param outdataset (optional) string with dataset name where we want to store the results
-//' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+//' @param filename String indicating the HDF5 file path
+//' @param group String indicating the group containing matrix A
+//' @param A String specifying the dataset name for matrix A
+//' @param B String specifying the dataset name for matrix B
+//' @param groupB Optional string indicating group containing matrix B.
+//'        If NULL, uses same group as A
+//' @param block_size Optional integer specifying block size for processing.
+//'        If NULL, automatically determined based on matrix dimensions
+//' @param paral Optional boolean indicating whether to use parallel processing.
+//'        Default is false
+//' @param threads Optional integer specifying number of threads for parallel processing.
+//'        If NULL, uses maximum available threads
+//' @param outgroup Optional string specifying output group.
+//'        Default is "OUTPUT"
+//' @param outdataset Optional string specifying output dataset name.
+//'        Default is "A_+_B"
+//' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+//'        Default is false
 //' 
-//' @return a dataset inside the hdf5 data file with A+B 
+//' @return Modifies the HDF5 file in place, adding the addition result
+//' 
+//' @details
+//' The function implements optimized addition through:
+//' 
+//' Operation modes:
+//' - Matrix-matrix addition (A + B)
+//' - Matrix-vector addition
+//' - Vector-matrix addition
+//' 
+//' Block processing:
+//' - Automatic block size selection
+//' - Memory-efficient operations
+//' - Parallel computation support
+//' 
+//' Block size optimization based on:
+//' - Matrix dimensions
+//' - Available memory
+//' - Operation type (matrix/vector)
+//' 
+//' Error handling:
+//' - Dimension validation
+//' - Resource management
+//' - Exception handling
 //' 
 //' @examples
-//' library("BigDataStatMeth")
+//' \dontrun{
+//' library(BigDataStatMeth)
 //' 
-//' N = 1500;  M = 1500
-//' 
+//' # Create test matrices
+//' N <- 1500
+//' M <- 1500
 //' set.seed(555)
-//' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
-//' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+//' a <- matrix(rnorm(N*M), N, M)
+//' b <- matrix(rnorm(N*M), N, M)
 //' 
-//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-//'                      object = a, group = "groupA", 
-//'                      dataset = "datasetA",
-//'                      transp = FALSE,
-//'                      overwriteFile = TRUE, 
-//'                      overwriteDataset = FALSE, 
-//'                      unlimited = FALSE)
-//'                      
-//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-//'                      object = t(b), 
-//'                      group = "groupA", 
-//'                      dataset = "datasetB",
-//'                      transp = FALSE,
-//'                      overwriteFile = FALSE, 
-//'                      overwriteDataset = TRUE, 
-//'                      unlimited = FALSE)
-//'                      
-//' # Multiply two matrix
-//' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
-//'     A = "datasetA", B = "datasetB", outgroup = "results", 
-//'     outdataset = "res", overwrite = TRUE ) 
-//'     
-//' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
-//'     A = "datasetA", B = "datasetB", outgroup = "results", 
-//'     outdataset = "res", block_size = 1024, overwrite = TRUE )  
+//' # Save to HDF5
+//' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+//'                      overwriteFile = TRUE)
+//' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+//'                      overwriteFile = FALSE)
+//' 
+//' # Perform addition
+//' bdblockSum_hdf5("test.hdf5", "data", "A", "B",
+//'                 outgroup = "results",
+//'                 outdataset = "sum",
+//'                 block_size = 1024,
+//'                 paral = TRUE)
+//' }
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -71,15 +153,7 @@ void bdblockSum_hdf5(std::string filename,
                    Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
     
-    int iblock_size;
-    bool bparal, 
-         bforce;
     
-    std::string strsubgroupOut, 
-                strdatasetOut, 
-                strsubgroupIn,
-                strsubgroupInB,
-                strGroupB;
     
     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
     BigDataStatMeth::hdf5Dataset* dsB = nullptr;
@@ -88,6 +162,16 @@ void bdblockSum_hdf5(std::string filename,
     try{
         
         H5::Exception::dontPrint();  
+
+        int iblock_size,
+            bparal, 
+            bforce;
+    
+        std::string strsubgroupOut, 
+                    strdatasetOut, 
+                    strsubgroupIn,
+                    strsubgroupInB,
+                    strGroupB;
         
         if( outgroup.isNull()) { strsubgroupOut = "OUTPUT"; } 
         else { strsubgroupOut = Rcpp::as<std::string> (outgroup); }
@@ -159,23 +243,23 @@ void bdblockSum_hdf5(std::string filename,
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"\nc++ exception bdblockSum_hdf5 (File IException)";
+        Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"\nc++ exception bdblockSum_hdf5 (Group IException)";
+        Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"\nc++ exception bdblockSum_hdf5 (DataSet IException)";
+        Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
         checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"\nc++ exception bdblockSum_hdf5: " << ex.what();
+        Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5: " << ex.what();
         return void();
     } catch (...) {
         checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"\nC++ exception bdblockSum_hdf5 (unknown reason)";
+        Rcpp::Rcerr<<"C++ exception bdblockSum_hdf5 (unknown reason)";
         return void();
     }
     

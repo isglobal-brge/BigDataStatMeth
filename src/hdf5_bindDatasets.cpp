@@ -1,30 +1,123 @@
+/**
+ * @file hdf5_bindDatasets.cpp
+ * @brief Dataset binding operations for HDF5 files
+ * 
+ * This file implements functionality for combining multiple HDF5 datasets through
+ * row-wise and column-wise binding operations. It provides an interface similar
+ * to R's rbind and cbind functions but optimized for HDF5 datasets.
+ * 
+ * Key features:
+ * - Row-wise binding (rbind equivalent)
+ * - Column-wise binding (cbind equivalent)
+ * - Index-based row binding
+ * - Automatic dimension validation
+ * - Memory-efficient operations
+ * - Comprehensive error handling
+ * 
+ * The implementation focuses on:
+ * - Efficient handling of large datasets
+ * - Proper memory management
+ * - Flexible binding options
+ * - Data integrity preservation
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Utilities/hdf5BindDatasets.hpp"
 
-
+/**
+ * @brief Bind HDF5 datasets by rows or columns
+ *
+ * @details This function merges existing matrices within an HDF5 data file either by
+ * combining their rows (stacking vertically) or columns (joining horizontally).
+ * It provides functionality similar to R's rbind and cbind operations.
+ *
+ * Supported binding operations:
+ * - bindCols: Merge datasets by columns (horizontal joining)
+ * - bindRows: Merge datasets by rows (vertical stacking)
+ * - bindRowsbyIndex: Merge datasets by rows using an index
+ *
+ * @param filename [in] Name of the HDF5 file
+ * @param group [in] Input group containing the datasets
+ * @param datasets [in] Input datasets to bind
+ * @param outgroup [in] Output group for merged dataset
+ * @param outdataset [in] Name for the new merged dataset
+ * @param func [in] Binding operation to perform
+ * @param overwrite [in] Whether to overwrite existing datasets
+ *
+ * @return void
+ *
+ * @throws H5::FileIException if file operations fail
+ * @throws H5::GroupIException if group operations fail
+ * @throws H5::DataSetIException if dataset operations fail
+ * @throws std::exception for other errors
+ *
+ * @note Memory efficiency is achieved through block-wise processing
+ * @see RcppBind_datasets_hdf5()
+ */
 
 //' Bind matrices by rows or columns
 //'
-//' Merge existing matrices inside hdf5 data file by rows or by columns
+//' This function merges existing matrices within an HDF5 data file either by
+//' combining their rows (stacking vertically) or columns (joining horizontally).
+//' It provides functionality similar to R's rbind and cbind operations.
 //' 
-//' @param filename, character array indicating the name of the file to create
-//' @param group, character array indicating the input group where the data set to be imputed is. 
-//' @param datasets, character array indicating the input dataset to be imputed
-//' @param outgroup, character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
-//' @param outdataset, character array indicating the name for the new merged dataset
-//' @param func, character array function to be applyed
-//' \describe{
-//'     \item{bindRows}{merge datasets by rows}
-//'     \item{bindCols}{merge datasets by columns}
+//' @param filename Character array indicating the name of the file to create
+//' @param group Character array indicating the input group containing the datasets
+//' @param datasets Character array specifying the input datasets to bind
+//' @param outgroup Character array indicating the output group for the merged dataset.
+//'        If NULL, output is stored in the same input group
+//' @param outdataset Character array specifying the name for the new merged dataset
+//' @param func Character array specifying the binding operation:
+//'        - "bindRows": Merge datasets by rows (vertical stacking)
+//'        - "bindCols": Merge datasets by columns (horizontal joining)
+//'        - "bindRowsbyIndex": Merge datasets by rows using an index
+//' @param overwrite Boolean indicating whether to overwrite existing datasets.
+//'        Defaults to false
+//' 
+//' @return Modifies the HDF5 file in place, adding the merged dataset
+//' 
+//' @details
+//' The function performs dimension validation before binding:
+//' - For row binding: All datasets must have the same number of columns
+//' - For column binding: All datasets must have the same number of rows
+//' 
+//' Memory efficiency is achieved through:
+//' - Block-wise reading and writing
+//' - Minimal data copying
+//' - Proper resource cleanup
+//' 
+//' @note When binding by rows with an index, the index determines the
+//'       order of combination
+//' 
+//' @examples
+//' \dontrun{
+//' library(BigDataStatMeth)
+//' 
+//' # Create test matrices
+//' a <- matrix(1:12, 4, 3)
+//' b <- matrix(13:24, 4, 3)
+//' 
+//' # Save to HDF5
+//' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A")
+//' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B")
+//' 
+//' # Bind by rows
+//' bdBind_hdf5_datasets("test.hdf5", "data", 
+//'                      c("A", "B"),
+//'                      "results", "combined",
+//'                      "bindRows")
 //' }
-//' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
-//' @return Original hdf5 data file with results after input datasets
+//' 
 //' @export
 // [[Rcpp::export]]
 void bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::StringVector datasets, 
                   std::string outgroup, std::string outdataset, std::string func,
                   Rcpp::Nullable<bool> overwrite = false )
 {
+    
+    BigDataStatMeth::hdf5Dataset* dsOut  = nullptr;
     
     try
     {
@@ -44,24 +137,32 @@ void bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::String
         
         int bindFunction = oper.findName( func );
         
-        BigDataStatMeth::hdf5Dataset* dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outdataset, boverwrite);
+        dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outdataset, boverwrite);
         
         RcppBind_datasets_hdf5( filename, group, datasets, dsOut, bindFunction, false);
         
-        delete dsOut;
+        delete dsOut; dsOut = nullptr;
         
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcout<<"c++ exception bdBind_hdf5_datasets (File IException)";
+        checkClose_file(dsOut);
+        Rcpp::Rcerr<<"c++ exception bdBind_hdf5_datasets (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception bdBind_hdf5_datasets (Group IException)";
+        checkClose_file(dsOut);
+        Rcpp::Rcerr << "c++ exception bdBind_hdf5_datasets (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception bdBind_hdf5_datasets (DataSet IException)";
+        checkClose_file(dsOut);
+        Rcpp::Rcerr << "c++ exception bdBind_hdf5_datasets (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
-        Rcpp::Rcout << "c++ exception bdBind_hdf5_datasets" << ex.what();
+        checkClose_file(dsOut);
+        Rcpp::Rcerr << "c++ exception bdBind_hdf5_datasets" << ex.what();
+        return void();
+    } catch (...) {
+        checkClose_file(dsOut);
+        Rcpp::Rcerr<<"C++ exception bdBind_hdf5_datasets (unknown reason)";
         return void();
     }
     
@@ -70,204 +171,3 @@ void bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::String
     return void();
     
 }
-
-
-/*// //'     \item{bindRowsbyIndex}{merge datasets by rows taking in to accoutn an index}*/
-
-// 
-// /***R
-// 
-// library(BigDataStatMeth)
-// library(rhdf5)
-// library(data.table)
-// 
-// setwd("/Users/mailos/DOCTORAT_Local/BigDataStatMeth_Analysis/cca/")
-// 
-// # devtools::reload(pkgload::inst("BigDataStatMeth"))
-// 
-// # Prepare data and functions
-// X <- matrix(rnorm(150), 50, 3)
-// Y <- matrix(rnorm(250), 50, 5)
-// 
-// 
-// # Create hdf5 data file with  data (Y)
-// bdCreate_hdf5_matrix_file("cca_cars.hdf5", Y, "data", "Y", force = TRUE)
-// 
-// # Create hdf5 data file with data (X)
-// bdCreate_hdf5_matrix( "cca_cars.hdf5", X, "data", "X", force = TRUE)
-// 
-// 
-// 
-// 
-// # Prepare data - Normalize data (only Center)
-// # 
-// bdNormalize_hdf5(filename = "cca_cars.hdf5", 
-//                  group = "data", dataset = "X", 
-//                  bcenter = TRUE, bscale = FALSE)
-// 
-// bdNormalize_hdf5(filename = "cca_cars.hdf5", 
-//                  group = "data", dataset = "Y", 
-//                  bcenter = TRUE, bscale = FALSE)
-// 
-// 
-// # Set number of partitions
-// m <- 10
-// 
-// 
-// 
-// # # Step 1 :
-// # # x.block <- splitMatByRow(X, m)
-// # # y.block <- splitMatByRow(matrix(Y, ncol = 1), m)
-// 
-// 
-// 
-// # Split datasets X abd Y by rows and store data to data file
-// bdSplit_matrix_hdf5( filename = "cca_cars.hdf5", 
-//                      group = "NORMALIZED/data", dataset = "X", 
-//                      outgroup = "Step1/Xrows", 
-//                      nblocks = m, bycols = FALSE, force = TRUE)
-// 
-// bdSplit_matrix_hdf5( filename = "cca_cars.hdf5", 
-//                      group = "NORMALIZED/data", dataset = "Y", 
-//                      outgroup = "Step1/Yrows", 
-//                      nblocks = m, bycols = FALSE, force = TRUE)
-// 
-// 
-// # Step 2 :
-// 
-// # Get splitted dataset names
-// x.blocks <- BigDataStatMeth::bdgetDatasetsList_hdf5("cca_cars.hdf5", "Step1/Xrows")
-// bdapply_Function_hdf5( filename = "cca_cars.hdf5", group = "Step1/Xrows", 
-//                        datasets = x.blocks, 
-//                        outgroup = "Step2/Xrows", 
-//                        func = "QR", 
-//                        force = TRUE )
-// 
-// y.blocks <- BigDataStatMeth::bdgetDatasetsList_hdf5("cca_cars.hdf5", "Step1/Yrows")
-// bdapply_Function_hdf5( filename = "cca_cars.hdf5", group = "Step1/Yrows", 
-//                        datasets = y.blocks, 
-//                        outgroup = "Step2/Yrows", 
-//                        func = "QR", 
-//                        force = TRUE )
-// 
-// 
-// 
-// 
-// #  Step 3 :
-// 
-// # Merge R in Rt from X and Y
-// 
-// x.blocks.qr <- bdgetDatasetsList_hdf5("cca_cars.hdf5", "Step2/Xrows")
-// bdBind_hdf5(filename = "cca_cars.hdf5", group = "Step2/Xrows", datasets = x.blocks.qr[which(x.blocks.qr %like% ".R")],
-//             outgroup = "Step3/merged", outdataset = "XRt", 
-//             func = "bindRows", force = TRUE )
-// bdapply_Function_hdf5( "cca_cars.hdf5", "Step3/merged", "XRt", "Step3/Final_QR", "QR", force = TRUE )
-// 
-// 
-// y.blocks.qr <- bdgetDatasetsList_hdf5("cca_cars.hdf5", "Step2/Yrows")
-// bdBind_hdf5(filename = "cca_cars.hdf5", group = "Step2/Yrows", datasets = y.blocks.qr[which(y.blocks.qr %like% ".R")],
-//             outgroup = "Step3/merged", outdataset = "YRt", 
-//             func = "bindRows", force = TRUE )
-// bdapply_Function_hdf5( "cca_cars.hdf5", "Step3/merged", "YRt", "Step3/Final_QR", "QR", force = TRUE )
-// 
-// 
-// 
-// 
-// 
-// # Step 4 :
-// 
-// bdSplit_matrix_hdf5("cca_cars.hdf5", "Step3/Final_QR", "XRt.Q", 
-//                     outgroup = "Step4/splitted", 
-//                     nblocks = m, 
-//                     bycols = FALSE, force = TRUE )
-// 
-// bdSplit_matrix_hdf5("cca_cars.hdf5", "Step3/Final_QR", "YRt.Q", 
-//                     outgroup = "Step4/splitted", 
-//                     nblocks = m, 
-//                     bycols = FALSE, force = TRUE )
-// 
-// # Step 5 :
-// 
-// # Get splitted matrices names
-// tmp <- bdgetDatasetsList_hdf5("cca_cars.hdf5", "Step4/splitted")
-// X.Rt.Q.divide <- tmp[which(tmp %like% "XRt.Q")]
-// # multiply previous splitted matrices with Q descomposed matrices from model (X)
-// bdapply_Function_hdf5(  filename = "cca_cars.hdf5", group = "Step2/Xrows", 
-//                         datasets = x.blocks.qr[which(x.blocks.qr %like% ".Q")], 
-//                         outgroup = "Step5", func = "blockmult",
-//                         b_group = "Step4/splitted", b_datasets = X.Rt.Q.divide,
-//                         force = TRUE )
-// 
-// tmp <- bdgetDatasetsList_hdf5("cca_cars.hdf5", "Step4/splitted")
-// Y.Rt.Q.divide <- tmp[which(tmp %like% "YRt.Q")]
-// # multiply previous splitted matrices with Q descomposed matrices from Y
-// bdapply_Function_hdf5(  filename = "cca_cars.hdf5", group = "Step2/Yrows", 
-//                         datasets = y.blocks.qr[which(y.blocks.qr %like% ".Q")], 
-//                         outgroup = "Step5", func = "blockmult",
-//                         b_group = "Step4/splitted", b_datasets = Y.Rt.Q.divide,
-//                         force = TRUE )
-// 
-// 
-// # Step 6 : 
-// #   Merge all blocks to create complete QX and QY
-// 
-// blocks.Q <- bdgetDatasetsList_hdf5("cca_cars.hdf5", "Step5")
-// bdBind_hdf5(filename = "cca_cars.hdf5", group = "Step5", datasets = blocks.Q[which(blocks.Q %like% "X.")],
-//             outgroup = "Step6", outdataset = "XQ", 
-//             func = "bindRows", force = TRUE )
-// 
-// bdBind_hdf5(filename = "cca_cars.hdf5", group = "Step5", datasets = blocks.Q[which(blocks.Q %like% "Y.")],
-//             outgroup = "Step6", outdataset = "YQ", 
-//             func = "bindRows", force = TRUE )
-// 
-// 
-// # Step 7
-// #   tQXQY <- crossprod(t(QX), QY)[1:ncol(x), ]
-// 
-// res <- bdCrossprod_hdf5(filename = "cca_cars.hdf5", 
-//                         group = "Step6", A = "XQ",
-//                         groupB = "Step6", B = "YQ", 
-//                         outgroup = "Step7")
-// 
-// 
-// 
-// # Step 8 : 
-// # z <- svd( tQXQY )
-// # 
-// res <- bdSVD_hdf5(file = "cca_cars.hdf5", 
-//                   group = "Step7", dataset = "CrossProd_XQxYQ",
-//                   bcenter = FALSE, bscale = FALSE)
-// 
-// 
-// # Step 9 :
-// #   We can solve data on memory (data is small)
-// #   Solve( QX[1L:dx, 1L:dx, drop = FALSE], z$u)
-// #   Solve( QY[1L:dy, 1L:dy, drop = FALSE], z$v)
-// 
-// h5ls(res$file)
-// 
-// h5f = H5Fopen(res$file)
-// XQ <- h5f$Step6$XQ[1:ncol(X), 1:ncol(X)]
-// YQ <- h5f$Step6$YQ[1:ncol(Y), 1:ncol(Y)]
-// XR <- h5f$Step3$Final_QR$XRt.R
-// YR <- h5f$Step3$Final_QR$YRt.R
-// u <- h5f$SVD$CrossProd_XQxYQ$u
-// d <- h5f$SVD$CrossProd_XQxYQ$d
-// v <- h5f$SVD$CrossProd_XQxYQ$v
-// h5closeAll()
-// 
-// # Get qr compact (more or less)
-// XR[lower.tri(XR, diag = F)] <- 0
-// XQ[upper.tri(XQ, diag = TRUE)] <- 0
-// XQR <- XR + XQ
-// 
-// 
-// YR[lower.tri(YR, diag = F)] <- 0
-// YQ[upper.tri(YQ, diag = TRUE)] <- 0
-// YQR <- YR + YQ
-// 
-// 
-// xcoef.hdf5 <- bdSolve(XQR, u)
-// ycoef.hdf5 <- bdSolve(YQR, v)
-// 
-// */

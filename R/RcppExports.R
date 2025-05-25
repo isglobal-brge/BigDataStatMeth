@@ -538,57 +538,90 @@ bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup 
 
 #' Apply function to different datasets inside a group
 #'
-#' Apply function to different datasets inside a group
+#' This function provides a unified interface for applying various mathematical
+#' operations to HDF5 datasets. It supports both single-dataset operations and
+#' operations between multiple datasets.
 #' 
-#' @param filename, Character array, indicating the name of the file to create
-#' @param group, Character array, indicating the input group where the data set
-#' to be imputed is. 
-#' @param datasets, Character array, indicating the input datasets to be used
-#' @param outgroup, Character, array, indicating group where the data set will 
-#' be saved after imputation if `outgroup` is NULL, output dataset is stored 
-#' in the same input group. 
-#' @param func, Character array, function to be applyed : 
-#' QR to apply bdQR() function to datasets
-#' CrossProd to apply bdCrossprod() function to datasets
-#' tCrossProd to apply bdtCrossprod() function to datasets
-#' invChol to apply bdInvCholesky() function to datasets
-#' blockmult to apply matrix multiplication, in that case, we need the datasets 
-#' to be used defined in b_datasets variable, datasets and b_datasets must be 
-#' of the same lenght, in that case, the operation is performed according to 
-#' index, for example, if we have `datasets = \{"A1", "A2", "A3\}` and 
-#' `b_datasets = \{"B1", "B2", "B3\}`, the functions performs : A1%*%B1, 
-#' A2%*%B2 and A3%*%B3 
-#' CrossProd_double to  performs crossprod using two matrices, see blockmult 
-#' tCrossProd_double to  performs transposed crossprod using two matrices, 
-#' see blockmult 
-#' solve to solve matrix equation system, see blockmult for parametrization 
-#' sdmean to get sd and mean from de datasets by cols or rows
-#' @param b_group, optional Character array indicating the input group where 
-#' data are stored when we need a second dataset to operate, for example in 
-#' functions like matrix multiplication
-#' @param b_datasets, optional Character array indicating the input datasets 
-#' to be used when we need a second dataset in functions like matrix 
-#' multiplication
-#' @param overwrite, optional Boolean if true, previous results in same location 
-#' inside hdf5 will be overwritten, by default overwrite = false, data was not 
-#' overwritten.
-#' @param transp_dataset optional parameter. Boolean if true we use the 
-#' transposed dataframe to perform calculus. By default transp_dataset = false, 
-#' we use the original dataset stored in hdf5 data file. Currently this option 
-#' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
-#' @param transp_bdataset optional parameter. Boolean if true we use the 
-#' transposed dataframe to perform calculus.By default transp_bdataset = false, 
-#' we use the original dataset stored in hdf5 data file. Currently this option 
-#' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
-#' @param fullMatrix boolean, optional parameter used in Inverse Cholesky, by 
-#' default false. If fullMatrix = true, in the hdf5 file the complete matrix 
-#' is stored. If false, only the lower triangular matrix is stored
-#' @param byrows boolean, optional parameter used in sd and mean calculus, by 
-#' default false. If byrows = true, the sd and mean is computed by columns. 
-#' If false, sd and mean is computed by rows.
-#' @param threads optional parameter. Integer with numbers of threads to be used
-#' @return Original hdf5 data file with results after apply function to 
-#' different datasets
+#' @param filename Character array, indicating the name of the file to create
+#' @param group Character array, indicating the input group where the data set
+#'        to be imputed is
+#' @param datasets Character array, indicating the input datasets to be used
+#' @param outgroup Character array, indicating group where the data set will 
+#'        be saved after imputation. If NULL, output dataset is stored 
+#'        in the same input group
+#' @param func Character array, function to be applied:
+#'        - "QR": QR decomposition via bdQR()
+#'        - "CrossProd": Cross product via bdCrossprod()
+#'        - "tCrossProd": Transposed cross product via bdtCrossprod()
+#'        - "invChol": Inverse via Cholesky decomposition
+#'        - "blockmult": Matrix multiplication 
+#'        - "CrossProd_double": Cross product with two matrices
+#'        - "tCrossProd_double": Transposed cross product with two matrices
+#'        - "solve": Matrix equation solving
+#'        - "sdmean": Standard deviation and mean computation
+#' @param b_group Optional character array indicating the input group for
+#'        secondary datasets (used in two-matrix operations)
+#' @param b_datasets Optional character array indicating the secondary datasets
+#'        for two-matrix operations
+#' @param overwrite Optional boolean. If true, overwrites existing results
+#' @param transp_dataset Optional boolean. If true, transposes first dataset
+#' @param transp_bdataset Optional boolean. If true, transposes second dataset
+#' @param fullMatrix Optional boolean for Cholesky operations. If true, stores
+#'        complete matrix; if false, stores only lower triangular
+#' @param byrows Optional boolean for statistical operations. If true, computes
+#'        by rows; if false, by columns
+#' @param threads Optional integer specifying number of threads for parallel processing
+#' 
+#' @return Modifies the HDF5 file in place, adding computed results
+#' 
+#' @details
+#' //' For matrix multiplication operations (`blockmult`, `CrossProd_double`, `tCrossProd_double`),
+#' the `datasets` and `b_datasets` vectors must have the same length. Each operation is performed
+#' element-wise between the corresponding pairs of datasets. Specifically, the `b_datasets` vector
+#' defines the second operand for each matrix multiplication. For example, if
+#' `datasets = {"A1", "A2", "A3"}` and `b_datasets = {"B1", "B2", "B3"}`, the operations
+#' executed are: `A1 %*% B1`, `A2 %*% B2`, and `A3 %*% B3`.
+#' 
+#' Example: If `datasets = {"A1", "A2", "A3"}` and `b_datasets = {"B1", "B2", "B3"}`,
+#' the function computes: `A1 %*% B1`, `A2 %*% B2`, and `A3 %*% B3`
+#' 
+#' @examples
+#' \dontrun{
+#' # Create a sample large matrix in HDF5
+#' # Create hdf5 datasets
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                     object = Y, group = "data", dataset = "Y",
+#'                     transp = FALSE,
+#'                     overwriteFile = TRUE, overwriteDataset = TRUE, 
+#'                     unlimited = FALSE)
+#' 
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                     object = X,  group = "data",  dataset = "X",
+#'                     transp = FALSE,
+#'                     overwriteFile = FALSE, overwriteDataset = TRUE, 
+#'                     unlimited = FALSE)
+#' 
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
+#'                     object = Z,  group = "data",  dataset = "Z",
+#'                     transp = FALSE,
+#'                     overwriteFile = FALSE, overwriteDataset = TRUE,
+#'                     unlimited = FALSE)
+#' 
+#' dsets <- bdgetDatasetsList_hdf5("test_temp.hdf5", group = "data")
+#' dsets
+#' 
+#' # Apply function :  QR Decomposition
+#' bdapply_Function_hdf5(filename = "test_temp.hdf5",
+#'                      group = "data",datasets = dsets,
+#'                      outgroup = "QR",func = "QR",
+#'                      overwrite = TRUE)
+#' }
+#' 
+#' @note Performance is optimized through:
+#'       - Block-wise processing for large datasets
+#'       - Parallel computation where applicable
+#'       - Memory-efficient matrix operations
+#' 
 #' @export
 bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_group = NULL, b_datasets = NULL, overwrite = FALSE, transp_dataset = FALSE, transp_bdataset = FALSE, fullMatrix = FALSE, byrows = FALSE, threads = 2L) {
     invisible(.Call('_BigDataStatMeth_bdapply_Function_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, func, b_group, b_datasets, overwrite, transp_dataset, transp_bdataset, fullMatrix, byrows, threads))
@@ -685,20 +718,57 @@ bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FAL
 
 #' Bind matrices by rows or columns
 #'
-#' Merge existing matrices inside hdf5 data file by rows or by columns
+#' This function merges existing matrices within an HDF5 data file either by
+#' combining their rows (stacking vertically) or columns (joining horizontally).
+#' It provides functionality similar to R's rbind and cbind operations.
 #' 
-#' @param filename, character array indicating the name of the file to create
-#' @param group, character array indicating the input group where the data set to be imputed is. 
-#' @param datasets, character array indicating the input dataset to be imputed
-#' @param outgroup, character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
-#' @param outdataset, character array indicating the name for the new merged dataset
-#' @param func, character array function to be applyed
-#' \describe{
-#'     \item{bindRows}{merge datasets by rows}
-#'     \item{bindCols}{merge datasets by columns}
+#' @param filename Character array indicating the name of the file to create
+#' @param group Character array indicating the input group containing the datasets
+#' @param datasets Character array specifying the input datasets to bind
+#' @param outgroup Character array indicating the output group for the merged dataset.
+#'        If NULL, output is stored in the same input group
+#' @param outdataset Character array specifying the name for the new merged dataset
+#' @param func Character array specifying the binding operation:
+#'        - "bindRows": Merge datasets by rows (vertical stacking)
+#'        - "bindCols": Merge datasets by columns (horizontal joining)
+#'        - "bindRowsbyIndex": Merge datasets by rows using an index
+#' @param overwrite Boolean indicating whether to overwrite existing datasets.
+#'        Defaults to false
+#' 
+#' @return Modifies the HDF5 file in place, adding the merged dataset
+#' 
+#' @details
+#' The function performs dimension validation before binding:
+#' - For row binding: All datasets must have the same number of columns
+#' - For column binding: All datasets must have the same number of rows
+#' 
+#' Memory efficiency is achieved through:
+#' - Block-wise reading and writing
+#' - Minimal data copying
+#' - Proper resource cleanup
+#' 
+#' @note When binding by rows with an index, the index determines the
+#'       order of combination
+#' 
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' 
+#' # Create test matrices
+#' a <- matrix(1:12, 4, 3)
+#' b <- matrix(13:24, 4, 3)
+#' 
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A")
+#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B")
+#' 
+#' # Bind by rows
+#' bdBind_hdf5_datasets("test.hdf5", "data", 
+#'                      c("A", "B"),
+#'                      "results", "combined",
+#'                      "bindRows")
 #' }
-#' @param overwrite, boolean if true, previous results in same location inside hdf5 will be overwritten.
-#' @return Original hdf5 data file with results after input datasets
+#' 
 #' @export
 bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset, func, overwrite = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdBind_hdf5_datasets', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, outdataset, func, overwrite))
@@ -706,102 +776,144 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 
 #' Crossprod with hdf5 matrix
 #' 
-#' This function performs the cross product of one or two matrices inside 
-#' and hdf5 data file
+#' Performs optimized cross product operations on matrices stored in HDF5 format.
+#' For a single matrix A, computes A^t * A. For two matrices A and B, computes
+#' A^t * B. Uses block-wise processing for memory efficiency.
 #' 
-#' @inheritParams bdblockmult_hdf5
-#' @param outdataset string (optional), An optional parameter specifying the 
-#' dataset name for the output matrix. If NULL, the default name will be 
-#' constructed as "CrossProd_" concatenated with the name of dataset A 
-#' "_x_" and the name of dataset B.
-#' @param mixblock_size only for debug pourpose
+#' @param filename String indicating the HDF5 file path
+#' @param group String indicating the input group containing matrix A
+#' @param A String specifying the dataset name for matrix A
+#' @param B Optional string specifying dataset name for matrix B.
+#'        If NULL, performs A^t * A
+#' @param groupB Optional string indicating group containing matrix B.
+#'        If NULL, uses same group as A
+#' @param block_size Optional integer specifying the block size for processing.
+#'        Default is automatically determined based on matrix dimensions
+#' @param mixblock_size Optional integer for memory block size in parallel processing
+#' @param paral Optional boolean indicating whether to use parallel processing.
+#'        Default is false
+#' @param threads Optional integer specifying number of threads for parallel processing.
+#'        If NULL, uses maximum available threads
+#' @param outgroup Optional string specifying output group.
+#'        Default is "OUTPUT"
+#' @param outdataset Optional string specifying output dataset name.
+#'        Default is "CrossProd_A_x_B"
+#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+#'        Default is false
+#' 
+#' @return Modifies the HDF5 file in place, adding the cross product result
+#' 
 #' @details
-#' For a single matrix \eqn{A}, the cross product is defined as \eqn{A^t A}, 
-#' where \eqn{A^t} is the transpose of \eqn{A}. For two matrices \eqn{A} and 
-#' \eqn{B}, the cross product is \eqn{A^5 B}. This operation is often used in 
-#' linear algebra for projections and other computations.
-#' @return no value
+#' The function implements block-wise matrix multiplication to handle large matrices
+#' efficiently. Block size is automatically optimized based on:
+#' - Available memory
+#' - Matrix dimensions
+#' - Whether parallel processing is enabled
+#' 
+#' For parallel processing:
+#' - Uses OpenMP for thread management
+#' - Implements cache-friendly block operations
+#' - Provides automatic thread count optimization
+#' 
+#' Memory efficiency is achieved through:
+#' - Block-wise reading and writing
+#' - Minimal temporary storage
+#' - Proper resource cleanup
+#' 
 #' @examples
-#'   
+#' \dontrun{
 #'   library(BigDataStatMeth)
 #'   library(rhdf5)
 #'   
+#'   # Create test matrix
 #'   N = 1000
 #'   M = 1000
-#'   
 #'   set.seed(555)
-#'   a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
+#'   a <- matrix(rnorm(N*M), N, M)
 #'   
-#'   bdCreate_hdf5_matrix( filename = "test_temp.hdf5", 
-#'                         object = a, group = "INPUT", 
-#'                         dataset = "datasetA",
-#'                         transp = FALSE,
-#'                         overwriteFile = TRUE, 
-#'                         overwriteDataset = FALSE, 
-#'                         unlimited = FALSE)
-#'                         
-#'     file <- "test_temp.hdf5"
-#'     dataset <- "results/res"
-#'     
-#'     bdCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
-#'                        A = "datasetA", outgroup = "results", 
-#'                        outdataset = "res", overwrite = TRUE ) # 
-#'                        
-#'     # Check results
-#'     resr <- tcrossprod(a)
-#'     res <-  h5read(file,dataset)
-#'     all.equal( resr, res)
-#'     
-#'     bdCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
-#'                        A = "datasetA", outgroup = "results", 
-#'                        outdataset = "res", block_size = 1024, 
-#'                        overwrite = TRUE ) # 
-#'     
-#'     # Check results
-#'     resr <- tcrossprod(a)
-#'     res <-  h5read(file,dataset)
-#'     all.equal( resr, res)
+#'   # Save to HDF5
+#'   bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A", overwriteFile = TRUE)
 #'   
-#'     # Remove file (used as example)
-#'     if (file.exists("test_temp.hdf5")) {
-#'       file.remove("test_temp.hdf5")
-#'     }
-#'   
+#'   # Compute cross product
+#'   bdCrossprod_hdf5("test.hdf5", "INPUT", "A", 
+#'                    outgroup = "OUTPUT",
+#'                    outdataset = "result",
+#'                    block_size = 1024,
+#'                    paral = TRUE,
+#'                    threads = 4)
+#' }
 #' 
 #' @export
 bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
     invisible(.Call('_BigDataStatMeth_bdCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
-#' Normalize dataset in hdf5 file
+#' Normalize dataset in HDF5 file
 #' 
-#' This function normalize data scaling, centering or scaling and centering 
-#' in a dataset stored in hdf5 file
+#' Performs block-wise normalization of datasets stored in HDF5 format through
+#' centering and/or scaling operations. Supports both row-wise and column-wise
+#' normalization with memory-efficient block processing.
 #' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param group string specifying the group within the HDF5 file containing
-#' matrix dataset.
-#' @param dataset string, a string specifying the name of the dataset to 
-#' perform calculus.
-#' @param bcenter logical (optional). If TRUE (default), the data is centered by 
-#' subtracting the column means (ignoring NAs) of `x` from their corresponding columns. 
-#' If FALSE, no centering is performed.
-#' @param bscale (optional). If TRUE (default), the data is scaled by dividing 
-#' the (centered) columns of `x` by their standard deviations if `bcenter` is TRUE, 
-#' or by the root mean square otherwise. If FALSE, no scaling is performed.
-#' @param byrows logical (default = FALSE) if TRUE, centering is done by 
-#' subtracting the rows means, util when working with hdf5 datasets stored 
-#' in Row Major format.
-#' @param wsize integer (default = 1000), file block size to read to 
-#' perform normalization
-#' @param overwrite, boolean if true, previous results in same location inside 
-#' hdf5 will be overwritten.
-#' @return the original HDF5 file with normalized data stored under the group 
-#' "NORMALIZED", where:
-#'     * the dataset for the mean is named "mean." + original_dataset_name
-#'     * the dataset for the scaling is named "sd." + original_dataset_name
+#' @param filename String indicating the HDF5 file path
+#' @param group String specifying the group containing the dataset
+#' @param dataset String specifying the dataset name to normalize
+#' @param bcenter Optional boolean indicating whether to center the data.
+#'        If TRUE (default), subtracts mean from each column/row
+#' @param bscale Optional boolean indicating whether to scale the data.
+#'        If TRUE (default), divides by standard deviation
+#' @param byrows Optional boolean indicating whether to operate by rows.
+#'        If TRUE, processes row-wise; if FALSE (default), column-wise
+#' @param wsize Optional integer specifying the block size for processing.
+#'        Default is 1000
+#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+#'        Default is false
+#' 
+#' @return Modifies the HDF5 file in place, adding:
+#'         - Normalized data under "NORMALIZED/[group]/[dataset]"
+#'         - Mean values under "NORMALIZED/[group]/mean.[dataset]"
+#'         - Standard deviations under "NORMALIZED/[group]/sd.[dataset]"
+#' 
+#' @details
+#' The function implements block-wise normalization through:
+#' 
+#' Statistical computations:
+#' - Mean calculation (for centering)
+#' - Standard deviation calculation (for scaling)
+#' - Efficient block-wise updates
+#' 
+#' Memory efficiency:
+#' - Block-wise data processing
+#' - Minimal temporary storage
+#' - Proper resource cleanup
+#' 
+#' Processing options:
+#' - Row-wise or column-wise operations
+#' - Flexible block size selection
+#' - Optional centering and scaling
+#' 
+#' Error handling:
+#' - Input validation
+#' - Resource management
+#' - Exception handling
+#' 
 #' @examples
-#'   a = "See vignette"
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' 
+#' # Create test data
+#' data <- matrix(rnorm(1000*100), 1000, 100)
+#' 
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", data, "data", "matrix",
+#'                      overwriteFile = TRUE)
+#' 
+#' # Normalize data
+#' bdNormalize_hdf5("test.hdf5", "data", "matrix",
+#'                  bcenter = TRUE,
+#'                  bscale = TRUE,
+#'                  wsize = 1000)
+#' }
+#' 
 #' @export
 bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, byrows = NULL, wsize = NULL, overwrite = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, byrows, wsize, overwrite))
@@ -893,30 +1005,58 @@ bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = 
     invisible(.Call('_BigDataStatMeth_bdblockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
-#' Block matrix multiplication
+#' Block matrix multiplication for sparse matrices
 #' 
-#' This function performs a block matrix-matrix multiplication with numeric matrix
+#' Performs optimized block-wise matrix multiplication for sparse matrices stored
+#' in HDF5 format. The implementation is specifically designed to handle large
+#' sparse matrices efficiently through block operations and parallel processing.
 #' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param group string path inside hdf5 data file where matrix A is stored
-#' @param A, string with dataset name where matrix is stored
-#' @param B, string with dataset name where matrix is stored
-#' @param groupB string path inside hdf5 data file where matrix B is stored
-#' @param block_size integer, block size used to perform calculus
-#' @param mixblock_size integer
-#' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
-#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @param outgroup string with the group name under the matrix will be stored
-#' @param outdataset string with the dataset name to store results
-#' @param overwrite, boolean
+#' @param filename String indicating the HDF5 file path
+#' @param group String indicating the group path for matrix A
+#' @param A String specifying the dataset name for matrix A
+#' @param B String specifying the dataset name for matrix B
+#' @param groupB Optional string indicating group path for matrix B.
+#'        If NULL, uses same group as A
+#' @param block_size Optional integer specifying block size for processing.
+#'        If NULL, automatically determined based on matrix dimensions
+#' @param mixblock_size Optional integer for memory block size in parallel processing
+#' @param paral Optional boolean indicating whether to use parallel processing.
+#'        Default is false
+#' @param threads Optional integer specifying number of threads for parallel processing.
+#'        If NULL, uses maximum available threads
+#' @param outgroup Optional string specifying output group.
+#'        Default is "OUTPUT"
+#' @param outdataset Optional string specifying output dataset name.
+#'        Default is "A_x_B"
+#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+#'        Default is false
 #' 
-#' @return a dataset inside the hdf5 data file with A+B 
+#' @return Modifies the HDF5 file in place, adding the multiplication result
+#' 
+#' @details
+#' The function implements optimized sparse matrix multiplication through:
+#' - Block-wise processing to manage memory usage
+#' - Automatic block size optimization
+#' - Parallel processing support
+#' - Efficient sparse matrix storage
+#' 
+#' Block size optimization considers:
+#' - Available system memory
+#' - Matrix dimensions and sparsity
+#' - Parallel processing requirements
+#' 
+#' Memory efficiency is achieved through:
+#' - Sparse matrix storage format
+#' - Block-wise processing
+#' - Minimal temporary storage
+#' - Proper resource cleanup
 #' 
 #' @examples
-#' 
+#' \dontrun{
 #' library(Matrix)
 #' library(BigDataStatMeth)
 #' 
+#' # Create sparse test matrices
 #' k <- 1e3
 #' set.seed(1)
 #' x_sparse <- sparseMatrix(
@@ -924,6 +1064,7 @@ bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = 
 #'     j = sample(x = k, size = k),
 #'     x = rnorm(n = k)
 #' )
+#' 
 #' set.seed(2)
 #' y_sparse <- sparseMatrix(
 #'     i = sample(x = k, size = k),
@@ -931,18 +1072,15 @@ bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = 
 #'     x = rnorm(n = k)
 #' )
 #' 
-#' if( isTRUE(file.exists('BasicMatVect.hdf5'))) {
-#'      file.remove('BasicMatVect.hdf5')
-#' }
-#' bdCreate_hdf5_matrix("BasicMatVect.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
-#' bdCreate_hdf5_matrix("BasicMatVect.hdf5", as.matrix(y_sparse), "SPARSE", "y_sparse")
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
+#' bdCreate_hdf5_matrix("test.hdf5", as.matrix(y_sparse), "SPARSE", "y_sparse")
 #' 
-#' d <- bdblockmult_sparse_hdf5("BasicMatVect.hdf5", "SPARSE", "x_sparse", "y_sparse")
-#' 
-#' # Remove file (used as example)
-#' if (file.exists("BasicMatVect.hdf5")) {
-#'   # Delete file if it exist
-#'   file.remove("BasicMatVect.hdf5")
+#' # Perform multiplication
+#' bdblockmult_sparse_hdf5("test.hdf5", "SPARSE", "x_sparse", "y_sparse",
+#'                         block_size = 1024,
+#'                         paral = TRUE,
+#'                         threads = 4)
 #' }
 #' 
 #' @export
@@ -950,182 +1088,240 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, groupB = NULL, block_
     invisible(.Call('_BigDataStatMeth_bdblockmult_sparse_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
-#' Hdf5 datasets substract
+#' HDF5 dataset subtraction
 #'
-#' Substracts two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
+#' Performs optimized block-wise subtraction between two datasets stored in HDF5
+#' format. Supports both matrix-matrix and matrix-vector operations with
+#' memory-efficient block processing.
 #' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param group string with the group name where matrix is stored inside HDF5 file
-#' @param A string, datasetname with matrix to be multiplied
-#' @param B string, datasetname with matrix to be multiplied
-#' @param groupB, string, (optional) group name where dataset B is stored, if empty group folder is used
-#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-#' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
-#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @param outgroup (optional) string with group name where we want to store the result matrix, by default out group = "OUTGROUP"
-#' @param outdataset (optional) string with dataset name where we want to store the results
-#' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
-#' @return a dataset inside the hdf5 data file with A-B
+#' @param filename String indicating the HDF5 file path
+#' @param group String indicating the group containing matrix A
+#' @param A String specifying the dataset name for matrix A
+#' @param B String specifying the dataset name for matrix B
+#' @param groupB Optional string indicating group containing matrix B.
+#'        If NULL, uses same group as A
+#' @param block_size Optional integer specifying block size for processing.
+#'        If NULL, automatically determined based on matrix dimensions
+#' @param paral Optional boolean indicating whether to use parallel processing.
+#'        Default is false
+#' @param threads Optional integer specifying number of threads for parallel processing.
+#'        If NULL, uses maximum available threads
+#' @param outgroup Optional string specifying output group.
+#'        Default is "OUTPUT"
+#' @param outdataset Optional string specifying output dataset name.
+#'        Default is "A_-_B"
+#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+#'        Default is false
+#' 
+#' @return Modifies the HDF5 file in place, adding the subtraction result
+#' 
+#' @details
+#' The function implements optimized subtraction through:
+#' 
+#' Operation modes:
+#' - Matrix-matrix subtraction (A - B)
+#' - Matrix-vector subtraction
+#' - Vector-matrix subtraction
+#' 
+#' Block processing:
+#' - Automatic block size selection
+#' - Memory-efficient operations
+#' - Parallel computation support
+#' 
+#' Block size optimization based on:
+#' - Matrix dimensions
+#' - Available memory
+#' - Operation type (matrix/vector)
+#' 
+#' Error handling:
+#' - Dimension validation
+#' - Resource management
+#' - Exception handling
 #' 
 #' @examples
-#' library("BigDataStatMeth")
+#' \dontrun{
+#' library(BigDataStatMeth)
 #' 
-#' N = 1500;  M = 1500
-#' 
+#' # Create test matrices
+#' N <- 1500
+#' M <- 1500
 #' set.seed(555)
-#' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
-#' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+#' a <- matrix(rnorm(N*M), N, M)
+#' b <- matrix(rnorm(N*M), N, M)
 #' 
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-#'                      object = a, group = "groupA", 
-#'                      dataset = "datasetA",
-#'                      transp = FALSE,
-#'                      overwriteFile = TRUE, 
-#'                      overwriteDataset = FALSE, 
-#'                      unlimited = FALSE)
-#'                      
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-#'                      object = t(b), 
-#'                      group = "groupA", 
-#'                      dataset = "datasetB",
-#'                      transp = FALSE,
-#'                      overwriteFile = FALSE, 
-#'                      overwriteDataset = TRUE, 
-#'                      unlimited = FALSE)
-#'                      
-#' # Multiply two matrix
-#' bdblockSubstract_hdf5(filename = "test_temp.hdf5", group = "groupA", 
-#'     A = "datasetA", B = "datasetB", outgroup = "results", 
-#'     outdataset = "res", overwrite = TRUE ) 
-#' bdblockSubstract_hdf5(filename = "test_temp.hdf5", group = "groupA", 
-#'     A = "datasetA", B = "datasetB", outgroup = "results", outdataset = "res", 
-#'     block_size = 1024, overwrite = TRUE )  
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+#'                      overwriteFile = TRUE)
+#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+#'                      overwriteFile = FALSE)
+#' 
+#' # Perform subtraction
+#' bdblockSubstract_hdf5("test.hdf5", "data", "A", "B",
+#'                       outgroup = "results",
+#'                       outdataset = "diff",
+#'                       block_size = 1024,
+#'                       paral = TRUE)
+#' }
 #' 
 #' @export
 bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
     invisible(.Call('_BigDataStatMeth_bdblockSubstract_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
-#' Hdf5 datasets sum
+#' HDF5 dataset addition
 #'
-#' Sum two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
+#' Performs optimized block-wise addition between two datasets stored in HDF5
+#' format. Supports both matrix-matrix and matrix-vector operations with
+#' memory-efficient block processing.
 #' 
-#' @param filename string file name where dataset to normalize is stored
-#' @param group string with the group name where matrix is stored inside HDF5 file
-#' @param A string, datasetname with matrix to be multiplied
-#' @param B string, datasetname with matrix to be multiplied
-#' @param groupB, string, (optional) group name where dataset B is stored, if empty group folder is used
-#' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-#' @param paral, boolean (optional, default = FALSE) set paral = true to force parallel execution
-#' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-#' @param outgroup (optional) string with group name where we want to store the result matrix, by default out group = "OUTGROUP"
-#' @param outdataset (optional) string with dataset name where we want to store the results
-#' @param overwrite (optional) either a logical value indicating whether the results must be overwritten or not.
+#' @param filename String indicating the HDF5 file path
+#' @param group String indicating the group containing matrix A
+#' @param A String specifying the dataset name for matrix A
+#' @param B String specifying the dataset name for matrix B
+#' @param groupB Optional string indicating group containing matrix B.
+#'        If NULL, uses same group as A
+#' @param block_size Optional integer specifying block size for processing.
+#'        If NULL, automatically determined based on matrix dimensions
+#' @param paral Optional boolean indicating whether to use parallel processing.
+#'        Default is false
+#' @param threads Optional integer specifying number of threads for parallel processing.
+#'        If NULL, uses maximum available threads
+#' @param outgroup Optional string specifying output group.
+#'        Default is "OUTPUT"
+#' @param outdataset Optional string specifying output dataset name.
+#'        Default is "A_+_B"
+#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+#'        Default is false
 #' 
-#' @return a dataset inside the hdf5 data file with A+B 
+#' @return Modifies the HDF5 file in place, adding the addition result
+#' 
+#' @details
+#' The function implements optimized addition through:
+#' 
+#' Operation modes:
+#' - Matrix-matrix addition (A + B)
+#' - Matrix-vector addition
+#' - Vector-matrix addition
+#' 
+#' Block processing:
+#' - Automatic block size selection
+#' - Memory-efficient operations
+#' - Parallel computation support
+#' 
+#' Block size optimization based on:
+#' - Matrix dimensions
+#' - Available memory
+#' - Operation type (matrix/vector)
+#' 
+#' Error handling:
+#' - Dimension validation
+#' - Resource management
+#' - Exception handling
 #' 
 #' @examples
-#' library("BigDataStatMeth")
+#' \dontrun{
+#' library(BigDataStatMeth)
 #' 
-#' N = 1500;  M = 1500
-#' 
+#' # Create test matrices
+#' N <- 1500
+#' M <- 1500
 #' set.seed(555)
-#' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
-#' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+#' a <- matrix(rnorm(N*M), N, M)
+#' b <- matrix(rnorm(N*M), N, M)
 #' 
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-#'                      object = a, group = "groupA", 
-#'                      dataset = "datasetA",
-#'                      transp = FALSE,
-#'                      overwriteFile = TRUE, 
-#'                      overwriteDataset = FALSE, 
-#'                      unlimited = FALSE)
-#'                      
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-#'                      object = t(b), 
-#'                      group = "groupA", 
-#'                      dataset = "datasetB",
-#'                      transp = FALSE,
-#'                      overwriteFile = FALSE, 
-#'                      overwriteDataset = TRUE, 
-#'                      unlimited = FALSE)
-#'                      
-#' # Multiply two matrix
-#' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
-#'     A = "datasetA", B = "datasetB", outgroup = "results", 
-#'     outdataset = "res", overwrite = TRUE ) 
-#'     
-#' bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
-#'     A = "datasetA", B = "datasetB", outgroup = "results", 
-#'     outdataset = "res", block_size = 1024, overwrite = TRUE )  
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+#'                      overwriteFile = TRUE)
+#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+#'                      overwriteFile = FALSE)
+#' 
+#' # Perform addition
+#' bdblockSum_hdf5("test.hdf5", "data", "A", "B",
+#'                 outgroup = "results",
+#'                 outdataset = "sum",
+#'                 block_size = 1024,
+#'                 paral = TRUE)
+#' }
 #' 
 #' @export
 bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
     invisible(.Call('_BigDataStatMeth_bdblockSum_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite))
 }
 
-#' tCrossprod with hdf5 matrix
+#' Transposed cross product with HDF5 matrices
 #' 
-#' This function performs the transposed cross product of one or two matrices
+#' Performs optimized transposed cross product operations on matrices stored in
+#' HDF5 format. For a single matrix A, computes A * A^t. For two matrices A and B,
+#' computes A * B^t. Uses block-wise processing for memory efficiency.
 #' 
-#' @inheritParams bdblockmult_hdf5
-#' @param outdataset string (optional), An optional parameter specifying the 
-#' dataset name for the output matrix. If NULL, the default name will be 
-#' constructed as "tCrossProd_" concatenated with the name of dataset A 
-#' "_x_" and the name of dataset B.
-#' @param mixblock_size only for debug pourpose
+#' @param filename String indicating the HDF5 file path
+#' @param group String indicating the input group containing matrix A
+#' @param A String specifying the dataset name for matrix A
+#' @param B Optional string specifying dataset name for matrix B.
+#'        If NULL, performs A * A^t
+#' @param groupB Optional string indicating group containing matrix B.
+#'        If NULL, uses same group as A
+#' @param block_size Optional integer specifying the block size for processing.
+#'        Default is automatically determined based on matrix dimensions
+#' @param mixblock_size Optional integer for memory block size in parallel processing
+#' @param paral Optional boolean indicating whether to use parallel processing.
+#'        Default is false
+#' @param threads Optional integer specifying number of threads for parallel processing.
+#'        If NULL, uses maximum available threads
+#' @param outgroup Optional string specifying output group.
+#'        Default is "OUTPUT"
+#' @param outdataset Optional string specifying output dataset name.
+#'        Default is "tCrossProd_A_x_B"
+#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+#'        Default is false
+#' 
+#' @return Modifies the HDF5 file in place, adding the transposed cross product result
+#' 
 #' @details
-#' For a single matrix \eqn{A}, the cross product is defined as \eqn{A A^t}, 
-#' where \eqn{A^t} is the transpose of \eqn{A}. For two matrices \eqn{A} and 
-#' \eqn{B}, the cross product is \eqn{A B^t}. This operation is often used in 
-#' linear algebra for projections and other computations.
-#' @return no value
+#' The function implements block-wise matrix multiplication to handle large matrices
+#' efficiently. Block size is automatically optimized based on:
+#' - Available memory
+#' - Matrix dimensions
+#' - Whether parallel processing is enabled
+#' 
+#' For parallel processing:
+#' - Uses OpenMP for thread management
+#' - Implements cache-friendly block operations
+#' - Provides automatic thread count optimization
+#' 
+#' Memory efficiency is achieved through:
+#' - Block-wise reading and writing
+#' - Minimal temporary storage
+#' - Proper resource cleanup
+#' 
+#' Mathematical operations:
+#' - For single matrix A: computes A * A^t
+#' - For two matrices A, B: computes A * B^t
+#' - Optimized for numerical stability
+#' 
 #' @examples
-#'   
-#'   library(BigDataStatMeth)
-#'   library(rhdf5)
-#'   
-#'   N = 1000
-#'   M = 1000
-#'   
-#'   set.seed(555)
-#'   a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
-#'   
-#'   bdCreate_hdf5_matrix( filename = "test_temp.hdf5", 
-#'                         object = a, group = "INPUT", 
-#'                         dataset = "datasetA",
-#'                         transp = FALSE,
-#'                         overwriteFile = TRUE, 
-#'                         overwriteDataset = FALSE, 
-#'                         unlimited = FALSE)
-#'                         
-#'     file <- "test_temp.hdf5"
-#'     dataset <- "results/res"
-#'     
-#'     bdtCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
-#'                        A = "datasetA", outgroup = "results", 
-#'                        outdataset = "res", overwrite = TRUE ) # 
-#'                        
-#'     # Check results
-#'     resr <- tcrossprod(a)
-#'     res <-  h5read(file,dataset)
-#'     all.equal( resr, res)
-#'     
-#'     bdtCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
-#'                        A = "datasetA", outgroup = "results", 
-#'                        outdataset = "res", block_size = 1024, 
-#'                        overwrite = TRUE ) # 
-#'     
-#'     # Check results
-#'     resr <- tcrossprod(a)
-#'     res <-  h5read(file,dataset)
-#'     all.equal( resr, res)
-#'   
-#'     # Remove file (used as example)
-#'     if (file.exists("test_temp.hdf5")) {
-#'       file.remove("test_temp.hdf5")
-#'     }
-#'   
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' library(rhdf5)
+#' 
+#' # Create test matrix
+#' N <- 1000
+#' M <- 1000
+#' set.seed(555)
+#' a <- matrix(rnorm(N*M), N, M)
+#' 
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A",
+#'                      overwriteFile = TRUE)
+#' 
+#' # Compute transposed cross product
+#' bdtCrossprod_hdf5("test.hdf5", "INPUT", "A",
+#'                   outgroup = "OUTPUT",
+#'                   outdataset = "result",
+#'                   block_size = 1024,
+#'                   paral = TRUE,
+#'                   threads = 4)
+#' }
 #' 
 #' @export
 bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {

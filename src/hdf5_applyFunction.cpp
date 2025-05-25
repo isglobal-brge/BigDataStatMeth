@@ -1,3 +1,28 @@
+/**
+ * @file hdf5_applyFunction.cpp
+ * @brief Advanced mathematical operations on HDF5 datasets
+ * 
+ * This file implements high-level mathematical operations that can be applied to
+ * HDF5 datasets. It provides a unified interface for various matrix operations
+ * including decompositions, products, and statistical computations.
+ * 
+ * Key features:
+ * - QR decomposition
+ * - Cross products and transposed cross products
+ * - Matrix multiplication
+ * - Cholesky decomposition and inverse
+ * - Matrix equation solving
+ * - Statistical measures (mean, standard deviation)
+ * 
+ * The implementation focuses on:
+ * - Memory efficiency through block-wise processing
+ * - Parallel computation support
+ * - Flexible dataset handling
+ * - Comprehensive error management
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #include <BigDataStatMeth.hpp>
 // #include "memAlgebra/memOptimizedProducts.hpp"
 // #include "hdf5Algebra/matrixQR.hpp"
@@ -6,59 +31,134 @@
 // #include "hdf5Algebra/matrixEquationSolver.hpp"
 // #include "hdf5Algebra/matrixSdMean.hpp"
 
+/**
+ * @brief Apply mathematical functions to HDF5 datasets
+ *
+ * @details This function provides a unified interface for applying various mathematical
+ * operations to HDF5 datasets. It supports both single-dataset operations and
+ * operations between multiple datasets.
+ *
+ * The function supports the following operations:
+ * - QR decomposition via bdQR()
+ * - Cross product via bdCrossprod()
+ * - Transposed cross product via bdtCrossprod()
+ * - Inverse via Cholesky decomposition
+ * - Matrix multiplication
+ * - Cross product with two matrices
+ * - Transposed cross product with two matrices
+ * - Matrix equation solving
+ * - Standard deviation and mean computation
+ *
+ * @param filename [in] Name of the HDF5 file
+ * @param group [in] Input group containing the datasets
+ * @param datasets [in] Input datasets to process
+ * @param outgroup [in] Output group for results storage
+ * @param func [in] Function to apply (QR, CrossProd, etc.)
+ * @param b_group [in] Optional group for secondary datasets
+ * @param b_datasets [in] Optional secondary datasets
+ * @param overwrite [in] Whether to overwrite existing results
+ * @param transp_dataset [in] Whether to transpose first dataset
+ * @param transp_bdataset [in] Whether to transpose second dataset
+ * @param fullMatrix [in] Whether to store complete matrix in Cholesky operations
+ * @param byrows [in] Whether to compute by rows in statistical operations
+ * @param threads [in] Number of threads for parallel processing
+ *
+ * @return void
+ *
+ * @throws H5::FileIException if file operations fail
+ * @throws H5::DataSetIException if dataset operations fail
+ * @throws std::exception for other errors
+ *
+ * @note Performance is optimized through block-wise processing and parallel computation
+ * @see bdQR(), bdCrossprod(), bdtCrossprod()
+ */
+
 //' Apply function to different datasets inside a group
 //'
-//' Apply function to different datasets inside a group
+//' This function provides a unified interface for applying various mathematical
+//' operations to HDF5 datasets. It supports both single-dataset operations and
+//' operations between multiple datasets.
 //' 
-//' @param filename, Character array, indicating the name of the file to create
-//' @param group, Character array, indicating the input group where the data set
-//' to be imputed is. 
-//' @param datasets, Character array, indicating the input datasets to be used
-//' @param outgroup, Character, array, indicating group where the data set will 
-//' be saved after imputation if `outgroup` is NULL, output dataset is stored 
-//' in the same input group. 
-//' @param func, Character array, function to be applyed : 
-//' QR to apply bdQR() function to datasets
-//' CrossProd to apply bdCrossprod() function to datasets
-//' tCrossProd to apply bdtCrossprod() function to datasets
-//' invChol to apply bdInvCholesky() function to datasets
-//' blockmult to apply matrix multiplication, in that case, we need the datasets 
-//' to be used defined in b_datasets variable, datasets and b_datasets must be 
-//' of the same lenght, in that case, the operation is performed according to 
-//' index, for example, if we have `datasets = \{"A1", "A2", "A3\}` and 
-//' `b_datasets = \{"B1", "B2", "B3\}`, the functions performs : A1%*%B1, 
-//' A2%*%B2 and A3%*%B3 
-//' CrossProd_double to  performs crossprod using two matrices, see blockmult 
-//' tCrossProd_double to  performs transposed crossprod using two matrices, 
-//' see blockmult 
-//' solve to solve matrix equation system, see blockmult for parametrization 
-//' sdmean to get sd and mean from de datasets by cols or rows
-//' @param b_group, optional Character array indicating the input group where 
-//' data are stored when we need a second dataset to operate, for example in 
-//' functions like matrix multiplication
-//' @param b_datasets, optional Character array indicating the input datasets 
-//' to be used when we need a second dataset in functions like matrix 
-//' multiplication
-//' @param overwrite, optional Boolean if true, previous results in same location 
-//' inside hdf5 will be overwritten, by default overwrite = false, data was not 
-//' overwritten.
-//' @param transp_dataset optional parameter. Boolean if true we use the 
-//' transposed dataframe to perform calculus. By default transp_dataset = false, 
-//' we use the original dataset stored in hdf5 data file. Currently this option 
-//' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
-//' @param transp_bdataset optional parameter. Boolean if true we use the 
-//' transposed dataframe to perform calculus.By default transp_bdataset = false, 
-//' we use the original dataset stored in hdf5 data file. Currently this option 
-//' is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"
-//' @param fullMatrix boolean, optional parameter used in Inverse Cholesky, by 
-//' default false. If fullMatrix = true, in the hdf5 file the complete matrix 
-//' is stored. If false, only the lower triangular matrix is stored
-//' @param byrows boolean, optional parameter used in sd and mean calculus, by 
-//' default false. If byrows = true, the sd and mean is computed by columns. 
-//' If false, sd and mean is computed by rows.
-//' @param threads optional parameter. Integer with numbers of threads to be used
-//' @return Original hdf5 data file with results after apply function to 
-//' different datasets
+//' @param filename Character array, indicating the name of the file to create
+//' @param group Character array, indicating the input group where the data set
+//'        to be imputed is
+//' @param datasets Character array, indicating the input datasets to be used
+//' @param outgroup Character array, indicating group where the data set will 
+//'        be saved after imputation. If NULL, output dataset is stored 
+//'        in the same input group
+//' @param func Character array, function to be applied:
+//'        - "QR": QR decomposition via bdQR()
+//'        - "CrossProd": Cross product via bdCrossprod()
+//'        - "tCrossProd": Transposed cross product via bdtCrossprod()
+//'        - "invChol": Inverse via Cholesky decomposition
+//'        - "blockmult": Matrix multiplication 
+//'        - "CrossProd_double": Cross product with two matrices
+//'        - "tCrossProd_double": Transposed cross product with two matrices
+//'        - "solve": Matrix equation solving
+//'        - "sdmean": Standard deviation and mean computation
+//' @param b_group Optional character array indicating the input group for
+//'        secondary datasets (used in two-matrix operations)
+//' @param b_datasets Optional character array indicating the secondary datasets
+//'        for two-matrix operations
+//' @param overwrite Optional boolean. If true, overwrites existing results
+//' @param transp_dataset Optional boolean. If true, transposes first dataset
+//' @param transp_bdataset Optional boolean. If true, transposes second dataset
+//' @param fullMatrix Optional boolean for Cholesky operations. If true, stores
+//'        complete matrix; if false, stores only lower triangular
+//' @param byrows Optional boolean for statistical operations. If true, computes
+//'        by rows; if false, by columns
+//' @param threads Optional integer specifying number of threads for parallel processing
+//' 
+//' @return Modifies the HDF5 file in place, adding computed results
+//' 
+//' @details
+//' //' For matrix multiplication operations (`blockmult`, `CrossProd_double`, `tCrossProd_double`),
+//' the `datasets` and `b_datasets` vectors must have the same length. Each operation is performed
+//' element-wise between the corresponding pairs of datasets. Specifically, the `b_datasets` vector
+//' defines the second operand for each matrix multiplication. For example, if
+//' `datasets = {"A1", "A2", "A3"}` and `b_datasets = {"B1", "B2", "B3"}`, the operations
+//' executed are: `A1 %*% B1`, `A2 %*% B2`, and `A3 %*% B3`.
+//' 
+//' Example: If `datasets = {"A1", "A2", "A3"}` and `b_datasets = {"B1", "B2", "B3"}`,
+//' the function computes: `A1 %*% B1`, `A2 %*% B2`, and `A3 %*% B3`
+//' 
+//' @examples
+//' \dontrun{
+//' # Create a sample large matrix in HDF5
+//' # Create hdf5 datasets
+//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+//'                     object = Y, group = "data", dataset = "Y",
+//'                     transp = FALSE,
+//'                     overwriteFile = TRUE, overwriteDataset = TRUE, 
+//'                     unlimited = FALSE)
+//' 
+//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+//'                     object = X,  group = "data",  dataset = "X",
+//'                     transp = FALSE,
+//'                     overwriteFile = FALSE, overwriteDataset = TRUE, 
+//'                     unlimited = FALSE)
+//' 
+//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
+//'                     object = Z,  group = "data",  dataset = "Z",
+//'                     transp = FALSE,
+//'                     overwriteFile = FALSE, overwriteDataset = TRUE,
+//'                     unlimited = FALSE)
+//' 
+//' dsets <- bdgetDatasetsList_hdf5("test_temp.hdf5", group = "data")
+//' dsets
+//' 
+//' # Apply function :  QR Decomposition
+//' bdapply_Function_hdf5(filename = "test_temp.hdf5",
+//'                      group = "data",datasets = dsets,
+//'                      outgroup = "QR",func = "QR",
+//'                      overwrite = TRUE)
+//' }
+//' 
+//' @note Performance is optimized through:
+//'       - Block-wise processing for large datasets
+//'       - Parallel computation where applicable
+//'       - Memory-efficient matrix operations
+//' 
 //' @export
 // [[Rcpp::export]]
 void bdapply_Function_hdf5( std::string filename, 
@@ -331,19 +431,19 @@ void bdapply_Function_hdf5( std::string filename,
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsA, dsB, dsQ, dsR, dsOut, dsmean, dssd);
-        Rcpp::Rcerr<<"\nc++ exception bdapply_Function_hdf5 (File IException)\n";
+        Rcpp::Rcerr<<"c++ exception bdapply_Function_hdf5 (File IException)";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsB, dsQ, dsR, dsOut, dsmean, dssd);
-        Rcpp::Rcerr<<"\nc++ exception bdapply_Function_hdf5 (DataSet IException)\n";
+        Rcpp::Rcerr<<"c++ exception bdapply_Function_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception &ex) {
         checkClose_file(dsA, dsB, dsQ, dsR, dsOut, dsmean, dssd);
-        Rcpp::Rcerr<<"\nc++ exception bdapply_Function_hdf5\n";
+        Rcpp::Rcerr<<"c++ exception bdapply_Function_hdf5";
         return void();
     } catch (...) {
         checkClose_file(dsA, dsB, dsQ, dsR, dsOut, dsmean, dssd);
-        Rcpp::Rcerr<<"\nC++ exception bdapply_Function_hdf5 (unknown reason)";
+        Rcpp::Rcerr<<"C++ exception bdapply_Function_hdf5 (unknown reason)";
         return void();
     }
     

@@ -15,27 +15,68 @@ bdBind_hdf5_datasets(
 )
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file to create}
+\item{filename}{Character array indicating the name of the file to create}
 
-\item{group, }{character array indicating the input group where the data set to be imputed is.}
+\item{group}{Character array indicating the input group containing the datasets}
 
-\item{datasets, }{character array indicating the input dataset to be imputed}
+\item{datasets}{Character array specifying the input datasets to bind}
 
-\item{outgroup, }{character array indicating group where the data set will be saved after imputation if \code{outgroup} is NULL, output dataset is stored in the same input group.}
+\item{outgroup}{Character array indicating the output group for the merged dataset.
+If NULL, output is stored in the same input group}
 
-\item{outdataset, }{character array indicating the name for the new merged dataset}
+\item{outdataset}{Character array specifying the name for the new merged dataset}
 
-\item{func, }{character array function to be applyed
-\describe{
-\item{bindRows}{merge datasets by rows}
-\item{bindCols}{merge datasets by columns}
-}}
+\item{func}{Character array specifying the binding operation:
+- "bindRows": Merge datasets by rows (vertical stacking)
+- "bindCols": Merge datasets by columns (horizontal joining)
+- "bindRowsbyIndex": Merge datasets by rows using an index}
 
-\item{overwrite, }{boolean if true, previous results in same location inside hdf5 will be overwritten.}
+\item{overwrite}{Boolean indicating whether to overwrite existing datasets.
+Defaults to false}
 }
 \value{
-Original hdf5 data file with results after input datasets
+Modifies the HDF5 file in place, adding the merged dataset
 }
 \description{
-Merge existing matrices inside hdf5 data file by rows or by columns
+This function merges existing matrices within an HDF5 data file either by
+combining their rows (stacking vertically) or columns (joining horizontally).
+It provides functionality similar to R's rbind and cbind operations.
+}
+\details{
+The function performs dimension validation before binding:
+\itemize{
+\item For row binding: All datasets must have the same number of columns
+\item For column binding: All datasets must have the same number of rows
+}
+
+Memory efficiency is achieved through:
+\itemize{
+\item Block-wise reading and writing
+\item Minimal data copying
+\item Proper resource cleanup
+}
+}
+\note{
+When binding by rows with an index, the index determines the
+order of combination
+}
+\examples{
+\dontrun{
+library(BigDataStatMeth)
+
+# Create test matrices
+a <- matrix(1:12, 4, 3)
+b <- matrix(13:24, 4, 3)
+
+# Save to HDF5
+bdCreate_hdf5_matrix("test.hdf5", a, "data", "A")
+bdCreate_hdf5_matrix("test.hdf5", b, "data", "B")
+
+# Bind by rows
+bdBind_hdf5_datasets("test.hdf5", "data", 
+                     c("A", "B"),
+                     "results", "combined",
+                     "bindRows")
+}
+
 }

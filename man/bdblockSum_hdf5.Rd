@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdblockSum_hdf5}
 \alias{bdblockSum_hdf5}
-\title{Hdf5 datasets sum}
+\title{HDF5 dataset addition}
 \usage{
 bdblockSum_hdf5(
   filename,
@@ -19,67 +19,97 @@ bdblockSum_hdf5(
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{String indicating the HDF5 file path}
 
-\item{group}{string with the group name where matrix is stored inside HDF5 file}
+\item{group}{String indicating the group containing matrix A}
 
-\item{A}{string, datasetname with matrix to be multiplied}
+\item{A}{String specifying the dataset name for matrix A}
 
-\item{B}{string, datasetname with matrix to be multiplied}
+\item{B}{String specifying the dataset name for matrix B}
 
-\item{groupB, }{string, (optional) group name where dataset B is stored, if empty group folder is used}
+\item{groupB}{Optional string indicating group containing matrix B.
+If NULL, uses same group as A}
 
-\item{block_size}{(optional, defalut = 128) block size to make matrix multiplication, if \code{block_size = 1} no block size is applied (size 1 = 1 element per block)}
+\item{block_size}{Optional integer specifying block size for processing.
+If NULL, automatically determined based on matrix dimensions}
 
-\item{paral, }{boolean (optional, default = FALSE) set paral = true to force parallel execution}
+\item{paral}{Optional boolean indicating whether to use parallel processing.
+Default is false}
 
-\item{threads}{(optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available}
+\item{threads}{Optional integer specifying number of threads for parallel processing.
+If NULL, uses maximum available threads}
 
-\item{outgroup}{(optional) string with group name where we want to store the result matrix, by default out group = "OUTGROUP"}
+\item{outgroup}{Optional string specifying output group.
+Default is "OUTPUT"}
 
-\item{outdataset}{(optional) string with dataset name where we want to store the results}
+\item{outdataset}{Optional string specifying output dataset name.
+Default is "A_+_B"}
 
-\item{overwrite}{(optional) either a logical value indicating whether the results must be overwritten or not.}
+\item{overwrite}{Optional boolean indicating whether to overwrite existing datasets.
+Default is false}
 }
 \value{
-a dataset inside the hdf5 data file with A+B
+Modifies the HDF5 file in place, adding the addition result
 }
 \description{
-Sum two existing datasets in hdf5 datafile and stores results i a new hdf5 dataset.
+Performs optimized block-wise addition between two datasets stored in HDF5
+format. Supports both matrix-matrix and matrix-vector operations with
+memory-efficient block processing.
+}
+\details{
+The function implements optimized addition through:
+
+Operation modes:
+\itemize{
+\item Matrix-matrix addition (A + B)
+\item Matrix-vector addition
+\item Vector-matrix addition
+}
+
+Block processing:
+\itemize{
+\item Automatic block size selection
+\item Memory-efficient operations
+\item Parallel computation support
+}
+
+Block size optimization based on:
+\itemize{
+\item Matrix dimensions
+\item Available memory
+\item Operation type (matrix/vector)
+}
+
+Error handling:
+\itemize{
+\item Dimension validation
+\item Resource management
+\item Exception handling
+}
 }
 \examples{
-library("BigDataStatMeth")
+\dontrun{
+library(BigDataStatMeth)
 
-N = 1500;  M = 1500
-
+# Create test matrices
+N <- 1500
+M <- 1500
 set.seed(555)
-a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
-b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
+a <- matrix(rnorm(N*M), N, M)
+b <- matrix(rnorm(N*M), N, M)
 
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-                     object = a, group = "groupA", 
-                     dataset = "datasetA",
-                     transp = FALSE,
-                     overwriteFile = TRUE, 
-                     overwriteDataset = FALSE, 
-                     unlimited = FALSE)
-                     
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-                     object = t(b), 
-                     group = "groupA", 
-                     dataset = "datasetB",
-                     transp = FALSE,
-                     overwriteFile = FALSE, 
-                     overwriteDataset = TRUE, 
-                     unlimited = FALSE)
-                     
-# Multiply two matrix
-bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
-    A = "datasetA", B = "datasetB", outgroup = "results", 
-    outdataset = "res", overwrite = TRUE ) 
-    
-bdblockSum_hdf5(filename = "test_temp.hdf5",group = "groupA", 
-    A = "datasetA", B = "datasetB", outgroup = "results", 
-    outdataset = "res", block_size = 1024, overwrite = TRUE )  
+# Save to HDF5
+bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+                     overwriteFile = TRUE)
+bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+                     overwriteFile = FALSE)
+
+# Perform addition
+bdblockSum_hdf5("test.hdf5", "data", "A", "B",
+                outgroup = "results",
+                outdataset = "sum",
+                block_size = 1024,
+                paral = TRUE)
+}
 
 }

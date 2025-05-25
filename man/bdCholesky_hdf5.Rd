@@ -89,17 +89,17 @@ library(rhdf5)
 set.seed(1234)
 X <- matrix(rnorm(100), 10, 10)
 A <- crossprod(X)  # A = X'X is symmetric positive-definite
-
+    
 # Save to HDF5
 h5createFile("matrix.h5")
 h5write(A, "matrix.h5", "data/matrix")
-
+        
 # Compute Cholesky decomposition
 bdCholesky_hdf5("matrix.h5", "data", "matrix",
                 outdataset = "chol",
                 outgroup = "decompositions",
                 fullMatrix = FALSE)
-
+       
 # Verify the decomposition
 L <- h5read("matrix.h5", "decompositions/chol")
 max(abs(A - L \%*\% t(L)))  # Should be very small

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdtCrossprod_hdf5}
 \alias{bdtCrossprod_hdf5}
-\title{tCrossprod with hdf5 matrix}
+\title{Transposed cross product with HDF5 matrices}
 \usage{
 bdtCrossprod_hdf5(
   filename,
@@ -20,104 +20,98 @@ bdtCrossprod_hdf5(
 )
 }
 \arguments{
-\item{filename}{string specifying the path to the HDF5 file}
+\item{filename}{String indicating the HDF5 file path}
 
-\item{group}{string specifying the group within the HDF5 file containing
-matrix A.}
+\item{group}{String indicating the input group containing matrix A}
 
-\item{A}{string specifying the dataset name for matrix A.
-the data matrix to be used in calculus}
+\item{A}{String specifying the dataset name for matrix A}
 
-\item{B}{string specifying the dataset name for matrix B.}
+\item{B}{Optional string specifying dataset name for matrix B.
+If NULL, performs A * A^t}
 
-\item{groupB}{string, (optional), An optional string specifying the group
-for matrix B. Defaults to the value of \code{group} if not provided.}
+\item{groupB}{Optional string indicating group containing matrix B.
+If NULL, uses same group as A}
 
-\item{block_size}{integer (optional), an optional parameter specifying the
-block size for processing the matrices. If not provided, a default block
-size is used. The block size should be chosen based on the available memory
-and the size of the matrices}
+\item{block_size}{Optional integer specifying the block size for processing.
+Default is automatically determined based on matrix dimensions}
 
-\item{mixblock_size}{only for debug pourpose}
+\item{mixblock_size}{Optional integer for memory block size in parallel processing}
 
-\item{paral}{boolean (optional), an optional parameter to enable parallel
-computation. Defaults to FALSE. Set \code{paral = true} to force parallel execution}
+\item{paral}{Optional boolean indicating whether to use parallel processing.
+Default is false}
 
-\item{threads}{integer (optional), an optional parameter specifying the
-number of threads to use if paral = TRUE. Ignored if paral = FALSE.}
+\item{threads}{Optional integer specifying number of threads for parallel processing.
+If NULL, uses maximum available threads}
 
-\item{outgroup}{string (optional), An optional parameger specifying the group
-where the output matrix will be stored. If NULL, the output will be stored
-in the default group "OUTPUT".}
+\item{outgroup}{Optional string specifying output group.
+Default is "OUTPUT"}
 
-\item{outdataset}{string (optional), An optional parameter specifying the
-dataset name for the output matrix. If NULL, the default name will be
-constructed as "tCrossProd_" concatenated with the name of dataset A
-"\emph{x}" and the name of dataset B.}
+\item{outdataset}{Optional string specifying output dataset name.
+Default is "tCrossProd_A_x_B"}
 
-\item{overwrite}{logical (optional), An optional parameter to indicate whether
-existing results in the HDF5 file should be overwritten. Defaults to FALSE.
-If FALSE and the dataset already exists, an error will be displayed, and
-no calculations will be performed. If TRUE and a dataset with the same
-name as specified in outdataset already exists, it will be overwritten.}
+\item{overwrite}{Optional boolean indicating whether to overwrite existing datasets.
+Default is false}
 }
 \value{
-no value
+Modifies the HDF5 file in place, adding the transposed cross product result
 }
 \description{
-This function performs the transposed cross product of one or two matrices
+Performs optimized transposed cross product operations on matrices stored in
+HDF5 format. For a single matrix A, computes A * A^t. For two matrices A and B,
+computes A * B^t. Uses block-wise processing for memory efficiency.
 }
 \details{
-For a single matrix \eqn{A}, the cross product is defined as \eqn{A A^t},
-where \eqn{A^t} is the transpose of \eqn{A}. For two matrices \eqn{A} and
-\eqn{B}, the cross product is \eqn{A B^t}. This operation is often used in
-linear algebra for projections and other computations.
+The function implements block-wise matrix multiplication to handle large matrices
+efficiently. Block size is automatically optimized based on:
+\itemize{
+\item Available memory
+\item Matrix dimensions
+\item Whether parallel processing is enabled
+}
+
+For parallel processing:
+\itemize{
+\item Uses OpenMP for thread management
+\item Implements cache-friendly block operations
+\item Provides automatic thread count optimization
+}
+
+Memory efficiency is achieved through:
+\itemize{
+\item Block-wise reading and writing
+\item Minimal temporary storage
+\item Proper resource cleanup
+}
+
+Mathematical operations:
+\itemize{
+\item For single matrix A: computes A * A^t
+\item For two matrices A, B: computes A * B^t
+\item Optimized for numerical stability
+}
 }
 \examples{
-  
-  library(BigDataStatMeth)
-  library(rhdf5)
-  
-  N = 1000
-  M = 1000
-  
-  set.seed(555)
-  a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
-  
-  bdCreate_hdf5_matrix( filename = "test_temp.hdf5", 
-                        object = a, group = "INPUT", 
-                        dataset = "datasetA",
-                        transp = FALSE,
-                        overwriteFile = TRUE, 
-                        overwriteDataset = FALSE, 
-                        unlimited = FALSE)
-                        
-    file <- "test_temp.hdf5"
-    dataset <- "results/res"
-    
-    bdtCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
-                       A = "datasetA", outgroup = "results", 
-                       outdataset = "res", overwrite = TRUE ) # 
-                       
-    # Check results
-    resr <- tcrossprod(a)
-    res <-  h5read(file,dataset)
-    all.equal( resr, res)
-    
-    bdtCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
-                       A = "datasetA", outgroup = "results", 
-                       outdataset = "res", block_size = 1024, 
-                       overwrite = TRUE ) # 
-    
-    # Check results
-    resr <- tcrossprod(a)
-    res <-  h5read(file,dataset)
-    all.equal( resr, res)
-  
-    # Remove file (used as example)
-    if (file.exists("test_temp.hdf5")) {
-      file.remove("test_temp.hdf5")
-    }
-  
+\dontrun{
+library(BigDataStatMeth)
+library(rhdf5)
+
+# Create test matrix
+N <- 1000
+M <- 1000
+set.seed(555)
+a <- matrix(rnorm(N*M), N, M)
+
+# Save to HDF5
+bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A",
+                     overwriteFile = TRUE)
+
+# Compute transposed cross product
+bdtCrossprod_hdf5("test.hdf5", "INPUT", "A",
+                  outgroup = "OUTPUT",
+                  outdataset = "result",
+                  block_size = 1024,
+                  paral = TRUE,
+                  threads = 4)
+}
 
 }

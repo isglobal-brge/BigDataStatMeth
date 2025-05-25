@@ -157,7 +157,7 @@ void bdblockmult_hdf5(std::string filename,
         return void();
     }  catch (...) {
         checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"\nC++ exception blockmult_hdf5 (unknown reason)";
+        Rcpp::Rcerr<<"C++ exception blockmult_hdf5 (unknown reason)";
         return void();
     }
     

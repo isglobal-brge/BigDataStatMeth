@@ -1,74 +1,147 @@
+/**
+ * @file hdf5_blocktCrossprod.cpp
+ * @brief Block-wise transposed cross product operations for HDF5 matrices
+ * 
+ * This file implements efficient block-wise transposed cross product operations
+ * for large matrices stored in HDF5 format. It supports both single-matrix
+ * operations (A * A^t) and two-matrix operations (A * B^t) with optimizations
+ * for memory usage and parallel processing.
+ * 
+ * Key features:
+ * - Block-wise matrix multiplication
+ * - Transposed operations
+ * - Parallel processing support
+ * - Memory-efficient operations
+ * - Automatic block size optimization
+ * 
+ * The implementation focuses on:
+ * - Minimizing memory usage for large matrices
+ * - Optimizing performance through block operations
+ * - Supporting parallel computation
+ * - Providing comprehensive error handling
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
+
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Algebra/tcrossprod.hpp"
 // #include "Utilities/Utilities.hpp"
 
+/**
+ * @brief Compute transposed cross product of HDF5 matrices
+ *
+ * @details Performs optimized transposed cross product operations on matrices
+ * stored in HDF5 format. For a single matrix A, computes A * A^t. For two
+ * matrices A and B, computes A * B^t. Uses block-wise processing for memory
+ * efficiency.
+ *
+ * Block-wise processing features:
+ * - Automatic block size optimization
+ * - Memory-efficient operations
+ * - Parallel computation support
+ * - Cache-friendly algorithms
+ *
+ * @param filename [in] HDF5 file path
+ * @param group [in] Input group containing matrix A
+ * @param A [in] Dataset name for matrix A
+ * @param B [in] Optional dataset name for matrix B
+ * @param groupB [in] Optional group containing matrix B
+ * @param block_size [in] Block size for processing
+ * @param mixblock_size [in] Memory block size for parallel processing
+ * @param paral [in] Whether to use parallel processing
+ * @param threads [in] Number of threads for parallel processing
+ * @param outgroup [in] Output group name
+ * @param outdataset [in] Output dataset name
+ * @param overwrite [in] Whether to overwrite existing datasets
+ *
+ * @return void
+ *
+ * @throws H5::FileIException if file operations fail
+ * @throws H5::DataSetIException if dataset operations fail
+ * @throws std::exception for other errors
+ *
+ * @note Performance significantly improves with appropriate block sizes and parallel processing
+ * @see tcrossprod()
+ */
 
-//' tCrossprod with hdf5 matrix
+//' Transposed cross product with HDF5 matrices
 //' 
-//' This function performs the transposed cross product of one or two matrices
+//' Performs optimized transposed cross product operations on matrices stored in
+//' HDF5 format. For a single matrix A, computes A * A^t. For two matrices A and B,
+//' computes A * B^t. Uses block-wise processing for memory efficiency.
 //' 
-//' @inheritParams bdblockmult_hdf5
-//' @param outdataset string (optional), An optional parameter specifying the 
-//' dataset name for the output matrix. If NULL, the default name will be 
-//' constructed as "tCrossProd_" concatenated with the name of dataset A 
-//' "_x_" and the name of dataset B.
-//' @param mixblock_size only for debug pourpose
+//' @param filename String indicating the HDF5 file path
+//' @param group String indicating the input group containing matrix A
+//' @param A String specifying the dataset name for matrix A
+//' @param B Optional string specifying dataset name for matrix B.
+//'        If NULL, performs A * A^t
+//' @param groupB Optional string indicating group containing matrix B.
+//'        If NULL, uses same group as A
+//' @param block_size Optional integer specifying the block size for processing.
+//'        Default is automatically determined based on matrix dimensions
+//' @param mixblock_size Optional integer for memory block size in parallel processing
+//' @param paral Optional boolean indicating whether to use parallel processing.
+//'        Default is false
+//' @param threads Optional integer specifying number of threads for parallel processing.
+//'        If NULL, uses maximum available threads
+//' @param outgroup Optional string specifying output group.
+//'        Default is "OUTPUT"
+//' @param outdataset Optional string specifying output dataset name.
+//'        Default is "tCrossProd_A_x_B"
+//' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+//'        Default is false
+//' 
+//' @return Modifies the HDF5 file in place, adding the transposed cross product result
+//' 
 //' @details
-//' For a single matrix \eqn{A}, the cross product is defined as \eqn{A A^t}, 
-//' where \eqn{A^t} is the transpose of \eqn{A}. For two matrices \eqn{A} and 
-//' \eqn{B}, the cross product is \eqn{A B^t}. This operation is often used in 
-//' linear algebra for projections and other computations.
-//' @return no value
+//' The function implements block-wise matrix multiplication to handle large matrices
+//' efficiently. Block size is automatically optimized based on:
+//' - Available memory
+//' - Matrix dimensions
+//' - Whether parallel processing is enabled
+//' 
+//' For parallel processing:
+//' - Uses OpenMP for thread management
+//' - Implements cache-friendly block operations
+//' - Provides automatic thread count optimization
+//' 
+//' Memory efficiency is achieved through:
+//' - Block-wise reading and writing
+//' - Minimal temporary storage
+//' - Proper resource cleanup
+//' 
+//' Mathematical operations:
+//' - For single matrix A: computes A * A^t
+//' - For two matrices A, B: computes A * B^t
+//' - Optimized for numerical stability
+//' 
 //' @examples
-//'   
-//'   library(BigDataStatMeth)
-//'   library(rhdf5)
-//'   
-//'   N = 1000
-//'   M = 1000
-//'   
-//'   set.seed(555)
-//'   a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
-//'   
-//'   bdCreate_hdf5_matrix( filename = "test_temp.hdf5", 
-//'                         object = a, group = "INPUT", 
-//'                         dataset = "datasetA",
-//'                         transp = FALSE,
-//'                         overwriteFile = TRUE, 
-//'                         overwriteDataset = FALSE, 
-//'                         unlimited = FALSE)
-//'                         
-//'     file <- "test_temp.hdf5"
-//'     dataset <- "results/res"
-//'     
-//'     bdtCrossprod_hdf5( filename = "test_temp.hdf5", group = "INPUT", 
-//'                        A = "datasetA", outgroup = "results", 
-//'                        outdataset = "res", overwrite = TRUE ) # 
-//'                        
-//'     # Check results
-//'     resr <- tcrossprod(a)
-//'     res <-  h5read(file,dataset)
-//'     all.equal( resr, res)
-//'     
-//'     bdtCrossprod_hdf5(filename = "test_temp.hdf5", group = "INPUT", 
-//'                        A = "datasetA", outgroup = "results", 
-//'                        outdataset = "res", block_size = 1024, 
-//'                        overwrite = TRUE ) # 
-//'     
-//'     # Check results
-//'     resr <- tcrossprod(a)
-//'     res <-  h5read(file,dataset)
-//'     all.equal( resr, res)
-//'   
-//'     # Remove file (used as example)
-//'     if (file.exists("test_temp.hdf5")) {
-//'       file.remove("test_temp.hdf5")
-//'     }
-//'   
+//' \dontrun{
+//' library(BigDataStatMeth)
+//' library(rhdf5)
+//' 
+//' # Create test matrix
+//' N <- 1000
+//' M <- 1000
+//' set.seed(555)
+//' a <- matrix(rnorm(N*M), N, M)
+//' 
+//' # Save to HDF5
+//' bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A",
+//'                      overwriteFile = TRUE)
+//' 
+//' # Compute transposed cross product
+//' bdtCrossprod_hdf5("test.hdf5", "INPUT", "A",
+//'                   outgroup = "OUTPUT",
+//'                   outdataset = "result",
+//'                   block_size = 1024,
+//'                   paral = TRUE,
+//'                   threads = 4)
+//' }
 //' 
 //' @export
 // [[Rcpp::export]]
- void bdtCrossprod_hdf5( std::string filename, 
+void bdtCrossprod_hdf5( std::string filename, 
                         std::string group, 
                         std::string A, 
                         Rcpp::Nullable<std::string> B = R_NilValue, 
@@ -79,26 +152,31 @@
                         Rcpp::Nullable<int> threads = R_NilValue,
                         Rcpp::Nullable<std::string> outgroup = R_NilValue,
                         Rcpp::Nullable<std::string> outdataset = R_NilValue,
-                        Rcpp::Nullable<bool> overwrite = R_NilValue )                                
- {
+                        Rcpp::Nullable<bool> overwrite = R_NilValue )
+{
      
-     int iblock_size,
-        iblockfactor = 2;
-     bool bparal, bforce;
+     
      
      BigDataStatMeth::hdf5Dataset* dsA = nullptr;
      BigDataStatMeth::hdf5Dataset* dsB = nullptr;
      BigDataStatMeth::hdf5Dataset* dsC = nullptr;
      
-     std::string strsubgroupOut, 
-     strdatasetOut, 
-     strsubgroupIn,
-     strsubgroupInB;
-     std::string matB;
+     
      
      try {
          
          H5::Exception::dontPrint();  
+
+         int iblock_size;
+         int iblockfactor = 2;
+         bool bparal, bforce;
+
+         std::string strsubgroupOut, 
+         strdatasetOut, 
+         strsubgroupIn,
+         strsubgroupInB;
+         std::string matB;
+         
          
          strsubgroupIn = group;
          
@@ -154,19 +232,19 @@
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
          checkClose_file(dsA, dsB, dsC);
-         Rcpp::Rcerr<<"\nc++ c++ exception bdtCrossprod_hdf5 (File IException)\n";
+         Rcpp::Rcerr<<"c++ c++ exception bdtCrossprod_hdf5 (File IException)";
          return void();
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
          checkClose_file(dsA, dsB, dsC);
-         Rcpp::Rcerr<<"\nc++ exception bdtCrossprod_hdf5 (DataSet IException)\n";
+         Rcpp::Rcerr<<"c++ exception bdtCrossprod_hdf5 (DataSet IException)";
          return void();
      } catch(std::exception &ex) {
          checkClose_file(dsA, dsB, dsC);
-         Rcpp::Rcerr<<"\nc++ exception bdtCrossprod_hdf5\n";
+         Rcpp::Rcerr << "c++ exception bdtCrossprod_hdf5: " << ex.what();
          return void();
      } catch (...) {
          checkClose_file(dsA, dsB, dsC);
-         Rcpp::Rcerr<<"\nC++ exception bdtCrossprod_hdf5 (unknown reason)";
+         Rcpp::Rcerr<<"C++ exception bdtCrossprod_hdf5 (unknown reason)";
          return void();
      }
      
