@@ -1,3 +1,25 @@
+/**
+ * @file hdf5Datasets.hpp
+ * @brief HDF5 dataset management class and utilities
+ * @details This header file provides a comprehensive class for managing HDF5 datasets
+ * and related operations. The implementation includes:
+ * 
+ * Key features:
+ * - Dataset creation and management
+ * - Data reading and writing operations
+ * - Block-based data access
+ * - Attribute handling
+ * - Support for various data types
+ * - Unlimited dataset support
+ * 
+ * The class supports:
+ * - Integer, numeric (double), and string datasets
+ * - Row and column-major data layouts
+ * - Block-based read/write operations
+ * - Dataset attributes
+ * - Automatic resource management
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_DATASETS_HPP
 #define BIGDATASTATMETH_HDF5_DATASETS_HPP
 
@@ -7,11 +29,30 @@
 
 namespace BigDataStatMeth {
 
+/**
+ * @class hdf5Dataset
+ * @brief Class for managing HDF5 datasets
+ * @details Provides comprehensive functionality for creating, reading, writing,
+ * and managing HDF5 datasets. Inherits from hdf5Group to handle group operations.
+ * 
+ * Key capabilities:
+ * - Dataset creation with various data types
+ * - Block-based data access
+ * - Attribute management
+ * - Resource cleanup
+ * - Dimension handling
+ */
 class hdf5Dataset : public hdf5Group
 {
     
 public:
-
+    /**
+     * @brief Constructor with file, group, and dataset name
+     * @param file HDF5 file pointer
+     * @param group Group path
+     * @param datasetname Dataset name
+     * @param overwrite Whether to overwrite existing dataset
+     */
     hdf5Dataset(H5::H5File* file, std::string group, std::string datasetname, bool overwrite) : 
     hdf5Group(file, group)
     {
@@ -53,15 +94,27 @@ public:
     }
     
     
+    /**
+     * @brief Remove the dataset
+     * @details Deletes the dataset from the HDF5 file
+     */
     virtual void remove() {
         remove_elements(pfile, getGroupName(), {name}); 
     }
     
     
-    // Create empty hdf5 DataSet, strdatatype can be: 
-    //  . "int": integer dataset
-    //  . "numeric" or "real": double dataset
-    //  . "string": string dataset
+    /**
+     * @brief Create a new dataset
+     * @details Creates a new HDF5 dataset with specified dimensions and data type.
+     * Supported data types:
+     * - "int": Integer dataset
+     * - "numeric" or "real": Double dataset
+     * - "string": String dataset
+     * 
+     * @param rows Number of rows
+     * @param cols Number of columns
+     * @param strdatatype Data type ("int", "numeric", "real", or "string")
+     */
     virtual void createDataset(size_t rows, size_t cols, std::string strdatatype) 
     {
         
@@ -138,19 +191,26 @@ public:
     }
     
     
+    /**
+     * @brief Create a dataset based on another dataset's dimensions
+     * @details Creates a new dataset with the same dimensions as the reference dataset
+     * but with a specified data type.
+     * 
+     * @param dsLike Reference dataset to copy dimensions from
+     * @param strdatatype Data type for the new dataset
+     */
     virtual void createDataset(BigDataStatMeth::hdf5Dataset* dsLike, std::string strdatatype) 
     {
         try{
             
             createDataset( dsLike->ncols(), dsLike->nrows(), strdatatype);
-            
-        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::FileIException& error) {
             close_file();
             Rcpp::Rcerr<<"\nc++ exception createDataset (File IException)";
-        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) {
             close_file();
             Rcpp::Rcerr<<"\nc++ exception createDataset (Group IException)";
-        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) {
             close_file();
             Rcpp::Rcerr<<"\nc++ exception createDataset (DataSet IException)";
         } 
@@ -158,7 +218,20 @@ public:
         return void();
     }
     
-    // Create empty hdf5 data file
+    /**
+     * @brief Create an unlimited dataset
+     * @details Creates a new HDF5 dataset with unlimited dimensions, allowing it to
+     * grow in size. The dataset is created with initial dimensions but can be extended.
+     * 
+     * Features:
+     * - Unlimited dimensions in both directions
+     * - Chunked storage for efficiency
+     * - Configurable initial size
+     * 
+     * @param rows Initial number of rows
+     * @param cols Initial number of columns
+     * @param strdatatype Data type for the dataset
+     */
     virtual void createUnlimitedDataset(size_t rows, size_t cols, std::string strdatatype) 
     {
         try
@@ -238,6 +311,15 @@ public:
     }
     
     
+    /**
+     * @brief Extend an unlimited dataset
+     * @details Increases the dimensions of an unlimited dataset to accommodate
+     * more data. Only works with datasets created as unlimited.
+     * 
+     * @param rows New number of rows
+     * @param cols New number of columns
+     * @throws H5::DataSetIException if dataset is not unlimited
+     */
     virtual void extendUnlimitedDataset(const size_t rows, const size_t cols)
     {
         try
@@ -314,8 +396,18 @@ public:
     
     
     
-    // Write data in existing hdf5 dataSet - Only writes data if the size of existing hdf5 dataset
-    // is equal to input data (size)
+    /**
+     * @brief Write data to the dataset
+     * @details Writes data to the dataset, handling different data types and
+     * formats. Supports:
+     * - Numeric matrices
+     * - Integer matrices
+     * - String data
+     * - Vector data
+     * 
+     * @param DatasetValues R object containing the data to write
+     * @throws H5::DataSetIException if write operation fails
+     */
     virtual void writeDataset( Rcpp::RObject DatasetValues )
     {
         
@@ -393,8 +485,13 @@ public:
     
     
     
-    // Write data in existing hdf5 dataSet - Only writes data if the size of existing hdf5 dataset
-    // is equal to input data (size)
+    /**
+     * @brief Write raw double data to dataset
+     * @details Direct write of double array to dataset without type conversion.
+     * 
+     * @param mdata Pointer to double array
+     * @throws H5::DataSetIException if write operation fails
+     */
     void writeDataset ( double* mdata)
     {
         try
@@ -439,8 +536,20 @@ public:
     
 
     // SPECIFIC FUNCTIONS TO WORK WITH EIGEN OBJECTS -- RowMajor Matrix
-    // Write data in existing hdf5 dataSet - Writes a block inside a hdf5
-    // dataset starting at offset position x-y
+    /**
+     * @brief Write block of data in row-major order
+     * @details Writes a block of data to the dataset using row-major memory layout.
+     * Supports:
+     * - Partial dataset updates
+     * - Strided access
+     * - Block-based operations
+     * 
+     * @param DatasetValues Matrix data in row-major format
+     * @param vOffset Starting position for write
+     * @param vCount Number of elements to write
+     * @param vStride Stride between elements
+     * @param vBlock Size of blocks
+     */
     virtual void writeRowMajorDatasetBlock( Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> DatasetValues, 
                                     std::vector<hsize_t> vOffset,  std::vector<hsize_t> vCount, 
                                     std::vector<hsize_t> vStride, std::vector<hsize_t> vBlock)
@@ -497,8 +606,19 @@ public:
     
     
     // SPECIFIC FUNCTIONS TO WORK WITH EIGEN OBJECTS -- RowMajor Matrix
-    // Write data in existing hdf5 dataSet - Writes a block inside a hdf5
-    // dataset starting at offset position x-y
+    /**
+     * @brief Write block of data in column-major order
+     * @details Writes a block of data to the dataset using column-major memory layout.
+     * Supports:
+     * - Partial dataset updates
+     * - Strided access
+     * - Block-based operations
+     * 
+     * @param DatasetValues Matrix data in column-major format
+     * @param vOffset Starting position for write
+     * @param vStride Stride between elements
+     * @param vBlock Size of blocks
+     */
     virtual void writeColMajorDatasetBlock( Eigen::MatrixXd DatasetValues, 
                                             std::vector<hsize_t> vOffset, std::vector<hsize_t> vStride, std::vector<hsize_t> vBlock)
     {
@@ -551,9 +671,21 @@ public:
         return void();
     }
     
-    // GENERIC FUNCTION USE WITH R-OBJECTS 
-    // Write data in existing hdf5 dataSet - Writes a block inside a hdf5
-    // dataset starting at offset position x-y
+    /**
+     * @brief Write block of data with optional transposition
+     * @details Writes a block of data to the dataset with configurable layout and
+     * optional transposition. Supports:
+     * - Row/column-major formats
+     * - Data transposition
+     * - Block-based access
+     * 
+     * @param DatasetValues Data to write
+     * @param vOffset Starting position
+     * @param vCount Number of elements
+     * @param vStride Stride between elements
+     * @param vBlock Block size
+     * @param bTranspose Whether to transpose data
+     */
     virtual void writeDatasetBlock( Rcpp::RObject DatasetValues, std::vector<hsize_t> vOffset, 
                             std::vector<hsize_t> vCount, std::vector<hsize_t> vStride,
                             std::vector<hsize_t> vBlock, bool bTranspose)
@@ -672,8 +804,17 @@ public:
         return void();
     }
 
-    
-    
+    /**
+     * @brief Write block of vector data
+     * @details Writes a block of vector data to the dataset. Useful for
+     * column/row-wise operations.
+     * 
+     * @param DatasetValues Vector data to write
+     * @param vOffset Starting position
+     * @param vCount Number of elements
+     * @param vStride Stride between elements
+     * @param vBlock Block size
+     */
     virtual void writeDatasetBlock( std::vector<double> DatasetValues, std::vector<hsize_t> vOffset, 
                                     std::vector<hsize_t> vCount, std::vector<hsize_t> vStride,
                                     std::vector<hsize_t> vBlock)
@@ -830,6 +971,15 @@ public:
     
     
     /* Create single attribute to hdf5 group */
+    /**
+     * @brief Add an attribute to the dataset
+     * @details Adds or updates an attribute associated with the dataset.
+     * Supports various R data types.
+     * 
+     * @param attrName Name of the attribute
+     * @param attr_data Attribute data
+     * @return EXEC_OK on success, EXEC_ERROR on failure
+     */
     int addAttribute( std::string attrName, Rcpp::RObject attr_data)
     {
         
@@ -906,6 +1056,12 @@ public:
     }
     
     
+    /**
+     * @brief Get an attribute from the dataset
+     * @details Retrieves the value of a named attribute from the dataset.
+     * 
+     * @param strAtribute Name of the attribute to retrieve
+     */
     void getAttribute(std::string strAtribute)
     {
         try
@@ -963,25 +1119,104 @@ public:
         return void();
     }
     
-    
+    /**
+     * @brief Get dataset pointer
+     * @return Pointer of the dataset
+     */
     H5::DataSet* getDatasetptr() { return(pdataset); }  // Return dataset pointer
+    
+    /**
+     * @brief Get dataset name
+     * @return Name of the dataset
+     */
     std::string getDatasetName() { return(name); }  // Return dataset name
+    
+    /**
+     * @brief Get group name
+     * @return Name of the group containing the dataset
+     */
     std::string getGroup() { return(getGroupName()); }  // Return group name
+    
+    /**
+     * @brief Get file name
+     * @return Name of the file containing the dataset
+     */
     std::string getFileName() { return(getFilename()); }  // Return file name
+    
+    /**
+     * @brief Get number of rows in internal format
+     * @return Number of rows in the dataset's internal storage
+     */
     hsize_t nrows() { return(dimDataset[0]); }  // Return number of rows
+    
+    /**
+     * @brief Get number of columns in internal format
+     * @return Number of columns in the dataset's internal storage
+     */
     hsize_t ncols() { return(dimDataset[1]); }  // Return number of columns
+    
+    /**
+     * @brief Get number of rows in R format
+     * @return Number of rows in R's representation (transposed)
+     */
     hsize_t nrows_r() { return(dimDatasetinFile[1]); }  // Return number of rows in R (transposed values)
+    
+    /**
+     * @brief Get number of columns in R format
+     * @return Number of columns in R's representation (transposed)
+     */
     hsize_t ncols_r() { return(dimDatasetinFile[0]); }  // Return number of columns in R (transposed values)
+    
+    /**
+     * @brief Get dataset dimension
+     * @return Pointer to dataset dimension (rows x columns)
+     */
     hsize_t* dim() { return(dimDataset); }  // Return dataset dimension (rows x columns)
+    
+    /**
+     * @brief Get dataset file dimension
+     * @return Pointer to dataset file dimension (rows x columns)
+     */
     hsize_t* dimFile() { return(dimDatasetinFile); } // Return dataset file dimensions (rows x columns)
+    
+    /**
+     * @brief Get number of rows in file
+     * @return Number of rows in file storage
+     */
     hsize_t nrows_file() { return(dimDatasetinFile[0]); }  // Return number of rows
+    
+    /**
+     * @brief Get number of columns in file
+     * @return Number of columns in file storage
+     */
     hsize_t ncols_file() { return(dimDatasetinFile[1]); }  // Return number of columns
+    
+    
+    /**
+     * @brief Check if dataset is unlimited
+     * @return True if dataset has unlimited dimensions
+     */
     bool isUnlimited() { return(unlimited); }  // Return if dataset is an unlimited dataset
+    
+    /**
+     * @brief Check if dataset is internal
+     * @return True if dataset is used for internal storage
+     */
     bool isInternal() { return(internalDataset); }  // Return if dataset is an unlimited dataset
+    
+    /**
+     * @brief Check if dataset is open
+     * @return True if dataset is currently open
+     */
     bool isOpen() { return( isDatasetOpen()); } // Return if dataset is open and exists or not
     
     
     // Destructor
+    
+    /**
+     * @brief Destructor
+     * @details Closes the dataset and releases resources
+     */
     virtual ~hdf5Dataset(){
         if(pdataset){
             pdataset->close();
@@ -995,6 +1230,10 @@ protected:
     //   Struct declaration
     // -----------------------
     
+    /**
+     * @brief Structure for string data
+     * @details Used for storing fixed-length string data in HDF5
+     */
     typedef struct names {
         char chr[MAXSTRING];
     } names;
@@ -1004,15 +1243,63 @@ protected:
     //   Variables declaration
     // ------------------------
     
-    std::string name;
-    std::string type;
-    std::string colnamesDataset;
-    std::string rownamesDataset;
-    bool boverwrite;
+     /**
+     * @brief Dataset pointer
+     * @details Pointer to the HDF5 dataset object
+     */
     H5::DataSet* pdataset = nullptr;
+
+    /**
+     * @brief Dataset dimensions
+     * @details Array storing the dimensions of the dataset [rows, columns]
+     */
     hsize_t dimDataset[2];
+
+    /**
+     * @brief File storage dimensions
+     * @details Array storing the dimensions as stored in file [rows, columns]
+     */
     hsize_t dimDatasetinFile[2];
+
+    /**
+     * @brief Dataset name
+     */
+    std::string name;
+
+    /**
+     * @brief Dataset type
+     * @details String indicating the data type ("int", "numeric", "string", etc.)
+     */
+    std::string type;
+
+    /**
+     * @brief Column names dataset
+     * @details Name of associated dataset storing column names
+     */
+    std::string colnamesDataset;
+
+    /**
+     * @brief Row names dataset
+     * @details Name of associated dataset storing row names
+     */
+    std::string rownamesDataset;
+
+    /**
+     * @brief Overwrite flag
+     * @details Whether to overwrite existing datasets
+     */
+    bool boverwrite;
+
+    /**
+     * @brief Unlimited dimensions flag
+     * @details Whether the dataset has unlimited dimensions
+     */
     bool unlimited = false;
+
+    /**
+     * @brief Internal dataset flag
+     * @details Whether the dataset is used for internal storage
+     */
     bool internalDataset = false;
     
     
@@ -1020,23 +1307,33 @@ protected:
     //   Function declarations
     // ------------------------
     
+    /**
+     * @brief Close the dataset
+     * @details Closes the dataset and releases associated resources
+     */
     void close_dataset() 
     {
         pdataset->close();
     }
     
+    /**
+     * @brief Close dataset and file
+     * @details Closes both the dataset and its associated file
+     */
     void close_dataset_file()
     {
         pdataset->close();
         pfile->close();
     }
     
-    // void close_file()
-    // {
-    //     pfile->close();
-    // }
-
-    
+    /**
+     * @brief Convert DataFrame to range list
+     * @details Converts R DataFrame to HDF5-compatible range list format
+     * 
+     * @param DatasetValues R DataFrame to convert
+     * @param bFullDataset Whether to convert entire dataset
+     * @return Array of name structures
+     */
     names* convert_DataFrame_to_RangeList(Rcpp::RObject DatasetValues, bool bFullDataset) 
     {
         
@@ -1065,6 +1362,10 @@ protected:
     }
     
     
+    /**
+     * @brief Get dimensions of existing dataset
+     * @details Retrieves and stores the dimensions of an existing dataset
+     */
     void getDimensExistingDataset()
     {
         try
@@ -1115,6 +1416,12 @@ protected:
     }
     
     
+    /**
+     * @brief Check if dataset is open
+     * @details Verifies if the dataset is currently open and accessible
+     * 
+     * @return True if dataset is open, false otherwise
+     */
     bool isDatasetOpen() {
         hid_t datasetId = pdataset->getId();
         // Check ID

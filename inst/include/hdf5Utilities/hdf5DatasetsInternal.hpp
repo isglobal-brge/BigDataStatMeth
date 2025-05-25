@@ -1,3 +1,18 @@
+/**
+ * @file hdf5DatasetsInternal.hpp
+ * @brief Internal HDF5 dataset management class
+ * @details This header file provides a specialized class for managing internal HDF5
+ * datasets. These are datasets used for internal storage and processing within the
+ * package. The implementation includes:
+ * 
+ * Key features:
+ * - Internal dataset creation and management
+ * - Specialized data handling for internal operations
+ * - Memory-efficient data access
+ * - Automatic resource management
+ * - Support for various data types
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_DATASETINTERNAL_HPP
 #define BIGDATASTATMETH_HDF5_DATASETINTERNAL_HPP
 
@@ -5,49 +20,103 @@
 
 namespace BigDataStatMeth {
 
+/**
+ * @class hdf5DatasetInternal
+ * @brief Class for managing internal HDF5 datasets
+ * @details Provides specialized functionality for creating and managing HDF5 datasets
+ * used for internal operations. Inherits from hdf5Dataset to extend basic dataset
+ * functionality with internal-specific features.
+ * 
+ * Key capabilities:
+ * - Internal dataset creation
+ * - Specialized data access patterns
+ * - Memory-efficient operations
+ * - Resource management
+ */
 class hdf5DatasetInternal : public hdf5Dataset 
 {
     
 public:
 
+    using hdf5Dataset::createDataset; 
+
+    /**
+     * @brief Constructor with file, group, and dataset name
+     * @param file HDF5 file pointer
+     * @param group Group path
+     * @param datasetname Dataset name
+     * @param overwrite Whether to overwrite existing dataset
+     */
     hdf5DatasetInternal(H5::H5File* file, std::string group, std::string datasetname, bool overwrite) : 
         hdf5Dataset(file, group, datasetname, overwrite)
     { 
         internalDataset = true;
     }
     
+    /**
+     * @brief Constructor with file and dataset path
+     * @param file HDF5 file pointer
+     * @param dataset Full dataset path
+     * @param overwrite Whether to overwrite existing dataset
+     */
     hdf5DatasetInternal(H5::H5File* file, std::string dataset, bool overwrite) : 
         hdf5Dataset(file, dataset, overwrite)
     { 
         internalDataset = true;
     }
     
+    /**
+     * @brief Constructor with file object, group, and dataset name
+     * @param oFile HDF5 file object
+     * @param group Group path
+     * @param datasetname Dataset name
+     * @param overwrite Whether to overwrite existing dataset
+     */
     hdf5DatasetInternal(BigDataStatMeth::hdf5File* oFile, std::string group, std::string datasetname, bool overwrite) : 
         hdf5Dataset(oFile, group, datasetname, overwrite)
     { 
         internalDataset = true;
     }
     
+    /**
+     * @brief Constructor with filename and dataset path
+     * @param filename Name of HDF5 file
+     * @param dataset Full dataset path
+     * @param overwrite Whether to overwrite existing dataset
+     */
     hdf5DatasetInternal(std::string filename, std::string dataset, bool overwrite) : 
     hdf5Dataset(filename, dataset, overwrite)
     { 
         internalDataset = true;
     }
     
-    
+    /**
+     * @brief Constructor with filename, group, and dataset name
+     * @param filename Name of HDF5 file
+     * @param group Group path
+     * @param datasetname Dataset name
+     * @param overwrite Whether to overwrite existing dataset
+     */
     hdf5DatasetInternal(std::string filename, std::string group, std::string datasetname, bool overwrite) : 
     hdf5Dataset(filename, group, datasetname, overwrite)
     { 
         internalDataset = true;
     }
     
-    
-    
-    
-    // Create empty hdf5 DataSet, strdatatype can be: 
-    //  . "int": integer dataset
-    //  . "numeric" or "real": double dataset
-    //  . "string": string dataset
+    /**
+     * @brief Create a new internal dataset
+     * @details Creates a new HDF5 dataset with specified dimensions and data type.
+     * The dataset is marked as internal for specialized handling.
+     * 
+     * Supported data types:
+     * - "int": Integer dataset
+     * - "numeric" or "real": Double dataset
+     * - "string": String dataset
+     * 
+     * @param rows Number of rows
+     * @param cols Number of columns
+     * @param strdatatype Data type ("int", "numeric", "real", or "string")
+     */
     void createDataset(size_t rows, size_t cols, std::string strdatatype) 
     {
         
@@ -119,7 +188,14 @@ public:
         return void();
     }
     
-    
+    /**
+     * @brief Create a dataset based on another internal dataset
+     * @details Creates a new internal dataset with the same dimensions as the
+     * reference dataset but with a specified data type.
+     * 
+     * @param dsLike Reference internal dataset to copy dimensions from
+     * @param strdatatype Data type for the new dataset
+     */
     void createDataset(BigDataStatMeth::hdf5DatasetInternal* dsLike, std::string strdatatype) 
     {
         try{
@@ -137,7 +213,20 @@ public:
         return void();
     }
     
-    // Create empty hdf5 data file
+    /**
+     * @brief Create an unlimited internal dataset
+     * @details Creates a new internal HDF5 dataset with unlimited dimensions.
+     * The dataset is marked as internal and unlimited and can grow in size.
+     * 
+     * Features:
+     * - Unlimited dimensions in both directions
+     * - Chunked storage for efficiency
+     * - Internal dataset marking
+     * 
+     * @param rows Initial number of rows
+     * @param cols Initial number of columns
+     * @param strdatatype Data type for the dataset
+     */
     void createUnlimitedDataset(size_t rows, size_t cols, std::string strdatatype) 
     {
         try
@@ -213,7 +302,15 @@ public:
         return void();
     }
     
-    
+    /**
+     * @brief Extend an unlimited internal dataset
+     * @details Increases the dimensions of an unlimited internal dataset.
+     * Only works with datasets created as unlimited.
+     * 
+     * @param rows New number of rows
+     * @param cols New number of columns
+     * @throws H5::DataSetIException if dataset is not unlimited
+     */
     void extendUnlimitedDataset(const size_t rows, const size_t cols)
     {
         try
@@ -247,11 +344,20 @@ public:
         return void();
     }
     
-    
-    
-    
-    // Write data in existing hdf5 dataSet - Only writes data if the size of existing hdf5 dataset
-    // is equal to input data (size)
+    /**
+     * @brief Write data to the internal dataset
+     * @details Writes data to the internal dataset, handling different data types
+     * and formats. Optimized for internal storage patterns.
+     * 
+     * Supports:
+     * - Numeric matrices
+     * - Integer matrices
+     * - String data
+     * - Vector data
+     * 
+     * @param DatasetValues R object containing the data to write
+     * @throws H5::DataSetIException if write operation fails
+     */
     void writeDataset( Rcpp::RObject DatasetValues )
     {
         
@@ -319,12 +425,24 @@ public:
         return void();
     }
     
-    
-    
-    
-    // GENERIC FUNCTION USE WITH HDF5 internalDataset Objects
-    // Write data in existing hdf5 dataSet - Writes a block inside a hdf5
-    // dataset starting at offset position x-y
+    /**
+     * @brief Write block of data to internal dataset
+     * @details Writes a block of data to the internal dataset with configurable
+     * layout and optional transposition.
+     * 
+     * Features:
+     * - Row/column-major formats
+     * - Data transposition
+     * - Block-based access
+     * - Memory-efficient operations
+     * 
+     * @param DatasetValues Data to write
+     * @param vOffset Starting position
+     * @param vCount Number of elements
+     * @param vStride Stride between elements
+     * @param vBlock Block size
+     * @param bTranspose Whether to transpose data
+     */
     void writeDatasetBlock( Rcpp::RObject DatasetValues, std::vector<hsize_t> vOffset, 
                             std::vector<hsize_t> vCount, std::vector<hsize_t> vStride,
                             std::vector<hsize_t> vBlock, bool bTranspose)
@@ -444,9 +562,17 @@ public:
         return void();
     }
 
-    
-    
-    
+    /**
+     * @brief Write block of vector data to internal dataset
+     * @details Writes a block of vector data to the internal dataset.
+     * Optimized for vector operations.
+     * 
+     * @param DatasetValues Vector data to write
+     * @param vOffset Starting position
+     * @param vCount Number of elements
+     * @param vStride Stride between elements
+     * @param vBlock Block size
+     */
     void writeDatasetBlock( std::vector<double> DatasetValues, std::vector<hsize_t> vOffset, 
                                     std::vector<hsize_t> vCount, std::vector<hsize_t> vStride,
                                     std::vector<hsize_t> vBlock)
@@ -508,16 +634,18 @@ public:
         return void();
     }
 
-    
-
-    // Read rhdf5 data matrix subset, 
-    // input : 
-    //      ivoffset : start position
-    //      ivcount : block size
-    //      ivstride :(1,1) by default.
-    //      ivblock : (1,1) by default.
-    // output : 
-    //    rdatablock : matrix block
+    /**
+     * @brief Read a block of data from internal dataset
+     * @details Reads a specified block of data from the internal dataset.
+     * Optimized for internal data access patterns.
+     * 
+     * @param ivoffset Starting position for read
+     * @param ivcount Number of elements to read
+     * @param ivstride Stride between elements
+     * @param ivblock Size of blocks
+     * @param rdatablock Pointer to read data (double*) 
+     * @return Pointer to read data (double*)
+     */
     double* readDatasetBlock(std::vector<hsize_t> ivoffset, std::vector<hsize_t> ivcount,
                              std::vector<hsize_t> ivstride, std::vector<hsize_t> ivblock,
                              double* rdatablock)
@@ -592,15 +720,30 @@ public:
     
     
     H5::DataSet* getDatasetptr() { return(pdataset); }  // Return dataset pointer
-    std::string getDatasetName() { return(name); }  // Return dataset name
-    std::string getGroup() { return(getGroupName()); }  // Return group name
-    std::string getFileName() { return(getFilename()); }  // Return group name
+    /**
+     * @brief Get dataset name
+     * @return Name of the internal dataset
+     */
+    std::string getDatasetName() { return(name); }
+    /**
+     * @brief Get group name
+     * @return Name of the group containing the internal dataset
+     */
+    std::string getGroup() { return(getGroupName()); }
+    /**
+     * @brief Get file name
+     * @return Name of the file containing the internal dataset
+     */
+    std::string getFileName() { return(getFilename()); }
     hsize_t nrows() { return(dimDataset[0]); }  // Return number of rows
     hsize_t ncols() { return(dimDataset[1]); }  // Return number of columns
     hsize_t* dim() { return(dimDataset); }  // Return dataset dimension (rows x columns)
     bool isUnlimited() { return(unlimited); }  // Return if dataset is an unlimited dataset
     
-    // Destructor
+    /**
+     * @brief Destructor
+     * @details Closes the internal dataset and releases resources
+     */
     ~hdf5DatasetInternal(){
         
     }
@@ -619,11 +762,19 @@ private:
     //   Function declarations
     // ------------------------
     
+    /**
+     * @brief Close the dataset
+     * @details Closes the internal dataset and releases associated resources
+     */
     void close_dataset() 
     {
         pdataset->close();
     }
     
+    /**
+     * @brief Close dataset and file
+     * @details Closes both the internal dataset and its associated file
+     */
     void close_dataset_file()
     {
         pdataset->close();
@@ -631,6 +782,15 @@ private:
     }
 
     
+    /**
+     * @brief Convert DataFrame to range list
+     * @details Converts R DataFrame to HDF5-compatible range list format
+     * for internal storage.
+     * 
+     * @param DatasetValues R DataFrame to convert
+     * @param bFullDataset Whether to convert entire dataset
+     * @return Array of name structures
+     */
     names* convert_DataFrame_to_RangeList(Rcpp::RObject DatasetValues, bool bFullDataset) 
     {
         
@@ -659,6 +819,10 @@ private:
     }
     
     
+    /**
+     * @brief Get dimensions of existing dataset
+     * @details Retrieves and stores the dimensions of an existing internal dataset
+     */
     void getDimensExistingDataset()
     {
         try

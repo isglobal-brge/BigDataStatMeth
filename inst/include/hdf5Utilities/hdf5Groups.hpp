@@ -1,3 +1,17 @@
+/**
+ * @file hdf5Groups.hpp
+ * @brief HDF5 group management class and utilities
+ * @details This header file provides a class for managing HDF5 groups and related
+ * operations. The implementation includes:
+ * 
+ * Key features:
+ * - Group creation and management
+ * - Hierarchical group structure support
+ * - Group existence checking
+ * - Error handling
+ * - Resource management
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_GROUPS_HPP
 #define BIGDATASTATMETH_HDF5_GROUPS_HPP
 
@@ -8,11 +22,22 @@
 
 namespace BigDataStatMeth {
 
+/**
+ * @class hdf5Group
+ * @brief Class for managing HDF5 groups
+ * @details Provides functionality for creating and managing HDF5 groups.
+ * Inherits from hdf5File to handle file operations.
+ */
 class hdf5Group : public hdf5File
 {
     
 public:
     
+    /**
+     * @brief Constructor with filename and group name
+     * @param filename Name of HDF5 file
+     * @param group Group name/path
+     */
     hdf5Group(std::string filename, std::string group) :
     hdf5File(filename, false)
     {
@@ -21,6 +46,11 @@ public:
     }
     
     
+    /**
+     * @brief Constructor with file pointer and group name
+     * @param file HDF5 file pointer
+     * @param group Group name/path
+     */
     hdf5Group(H5::H5File* file, std::string group) : 
     hdf5File(file)
     {
@@ -28,6 +58,14 @@ public:
         groupname = group;
     }
     
+    /**
+     * @brief Constructor with file object and group name
+     * @details Creates a new group, with option to force creation by removing existing group
+     * 
+     * @param objFile HDF5 file object
+     * @param group Group name/path
+     * @param forceGroup Whether to force group creation by removing existing group
+     */
     hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group, bool forceGroup) : 
     hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
     {
@@ -51,6 +89,13 @@ public:
     }
     
     
+    /**
+     * @brief Constructor with file object and group name
+     * @details Creates a new group if it doesn't exist
+     * 
+     * @param objFile HDF5 file object
+     * @param group Group name/path
+     */
     hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group) : 
     hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
     {
@@ -68,6 +113,12 @@ public:
     }
     
     
+    /**
+     * @brief Create multiple nested groups
+     * @details Creates a hierarchy of groups based on path separated by "/"
+     * 
+     * @param mGroup Group path with groups separated by "/"
+     */
     // Create multiple group in hdf5 data file, groups must be separated by "/"
     void create_HDF5_groups( H5std_string mGroup)
     {

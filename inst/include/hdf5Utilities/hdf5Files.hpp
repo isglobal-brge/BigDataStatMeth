@@ -1,3 +1,17 @@
+/**
+ * @file hdf5Files.hpp
+ * @brief HDF5 file handling class and utilities
+ * @details This header file provides a class for managing HDF5 files and related
+ * operations. The implementation includes:
+ * 
+ * Key features:
+ * - File creation and opening
+ * - File status checking
+ * - Dataset management
+ * - Error handling
+ * - Resource management
+ */
+
 #ifndef BIGDATASTATMETH_HDF5_FILES_HPP
 #define BIGDATASTATMETH_HDF5_FILES_HPP
 
@@ -10,11 +24,23 @@
 
 namespace BigDataStatMeth {
 
+/**
+ * @class hdf5File
+ * @brief Class for managing HDF5 files
+ * @details Provides functionality for creating, opening, and managing HDF5 files.
+ * Includes methods for file operations, dataset management, and resource cleanup.
+ */
 class hdf5File
 {
     
 public:
     
+    /**
+     * @brief Constructor with path and filename
+     * @param route Directory path
+     * @param filen Filename
+     * @param overwrite Whether to overwrite existing file
+     */
     hdf5File(std::string route, std::string filen, bool overwrite) 
     {
         filename = filen;
@@ -33,6 +59,13 @@ public:
         }
     }
     
+    /**
+     * @brief Constructor with path, filename, and file pointer
+     * @param route Directory path
+     * @param filen Filename
+     * @param file HDF5 file pointer
+     * @param overwrite Whether to overwrite existing file
+     */
     hdf5File(std::string route, std::string filen, H5::H5File* file, bool overwrite) 
     {
         filename = filen;
@@ -54,6 +87,11 @@ public:
     }
     
     
+    /**
+     * @brief Constructor with full path
+     * @param filen Full path to file
+     * @param overwrite Whether to overwrite existing file
+     */
     hdf5File(std::string filen, bool overwrite)
     {
         fullPath = filen;
@@ -64,13 +102,23 @@ public:
     }
     
     
+    /**
+     * @brief Constructor with file pointer
+     * @param file HDF5 file pointer
+     */
     hdf5File(H5::H5File* file)
     {
         pfile = file;
     }
 
 
-    // Create empty hdf5 data file
+    /**
+     * @brief Create a new HDF5 file
+     * @details Creates a new HDF5 file at the specified location. If the file
+     * exists and overwrite is true, it will be truncated.
+     * 
+     * @return EXEC_OK on success, EXEC_ERROR on error, EXEC_WARNING if file exists
+     */
     int createFile() 
     {
         int iExec = EXEC_OK;
@@ -111,10 +159,13 @@ public:
     }
     
     
-    // Open hdf5 data file
-    //  opentype:
-    //      r: read
-    //      rw: read/write (default)
+    /**
+     * @brief Open an existing HDF5 file
+     * @details Opens an HDF5 file in read or read/write mode.
+     * 
+     * @param opentype Access mode ("r" for read-only, "rw" for read-write)
+     * @return Pointer to opened file or nullptr on error
+     */
     H5::H5File* openFile(std::string opentype)
     {
         try
@@ -143,17 +194,52 @@ public:
         return(pfile);
     }
 
+    /**
+     * @brief Get file pointer
+     * @return Pointer to HDF5 file
+     */
     H5::H5File* getFileptr() { return(pfile); }  // Return file pointer
+
+    /**
+     * @brief Get filename
+     * @return Filename without path
+     */
     std::string getFilename() { return(filename); }  // Return file name
+
+    /**
+     * @brief Get file path
+     * @return Directory path without filename
+     */
     std::string getPath() { return(path); }  // Return file path
+
+    /**
+     * @brief Get full file path
+     * @return Complete path including filename
+     */
     std::string getFullPath() { return(fullPath); }  // Return file path
+
+    /**
+     * @brief Check if file exists
+     * @return True if file exists, false otherwise
+     */
     bool checkFile() { return(ResFileExist_filestream()); } // Return file exists
+
+    /**
+     * @brief Get list of dataset names
+     * @param strgroup Group path
+     * @param strprefix Prefix filter
+     * @param strsufix Suffix filter
+     * @return Vector of dataset names
+     */
     Rcpp::StringVector getDatasetNames( std::string strgroup, std::string strprefix, std::string strsufix){ 
         return(get_dataset_names_from_group( strgroup, strprefix, strsufix)); 
     } // Return a dataset name list with all the datasets inside
     
     
-    // Close file and all the opened objects (emergency)
+    /**
+     * @brief Close file and cleanup resources
+     * @details Closes all open objects and the file itself. Used for emergency cleanup.
+     */
     void close_file() {
         try {
             
@@ -187,7 +273,10 @@ public:
     
     
     
-    // Destructor
+    /**
+     * @brief Destructor
+     * @details Closes the file and releases resources
+     */
     ~hdf5File(){
         // close_file();
         pfile->close();
@@ -212,11 +301,23 @@ private:
     #if __cplusplus >= 201703L // C++17 and later 
     #include <string_view>
         
+        /**
+         * @brief Check if string ends with suffix
+         * @param str String to check
+         * @param suffix Suffix to match
+         * @return True if string ends with suffix
+         */
         static bool ends_with(std::string_view str, std::string_view suffix)
         {
             return str.size() >= suffix.size() && str.compare(str.size()-suffix.size(), suffix.size(), suffix) == 0;
         }
         
+        /**
+         * @brief Check if string starts with prefix
+         * @param str String to check
+         * @param prefix Prefix to match
+         * @return True if string starts with prefix
+         */
         static bool starts_with(std::string_view str, std::string_view prefix)
         {
             return str.size() >= prefix.size() && str.compare(0, prefix.size(), prefix) == 0;
@@ -225,7 +326,10 @@ private:
     #endif // C++17
     
     
-    // Test if file exsits
+    /**
+     * @brief Check if file exists using file stream
+     * @return True if file exists and is accessible
+     */
     bool ResFileExist_filestream() 
     {
         bool exists = false;
@@ -242,6 +346,10 @@ private:
     }
 
 
+    /**
+     * @brief Check if HDF5 file is already open
+     * @return True if file is open
+     */
     bool isHDF5FileOpen() 
     {
         
@@ -266,7 +374,13 @@ private:
     }
     
     
-    // Get dataset names inside the strgroup
+    /**
+     * @brief Get dataset names from group
+     * @param strgroup Group path
+     * @param strprefix Prefix filter
+     * @param strsufix Suffix filter
+     * @return Vector of dataset names
+     */
     Rcpp::StringVector get_dataset_names_from_group(std::string strgroup, std::string strprefix, std::string strsufix)
     {
         
