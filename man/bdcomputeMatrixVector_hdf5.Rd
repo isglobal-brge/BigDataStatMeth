@@ -152,6 +152,5 @@ Integration. Journal of Statistical Software, 40(8), 1-18.
 \seealso{
 \itemize{
 \item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-\item \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 }
 }

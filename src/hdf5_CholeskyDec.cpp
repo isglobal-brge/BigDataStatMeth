@@ -123,7 +123,7 @@
 //'        
 //' @seealso
 //' * \code{\link{bdInvCholesky_hdf5}} for computing inverse using Cholesky decomposition
-//' * \code{\link{bdSolveEquation_hdf5}} for solving linear systems
+//' * \code{\link{bdSolve_hdf5}} for solving linear systems
 //' 
 //' @export
 // [[Rcpp::export]]

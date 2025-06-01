@@ -81,9 +81,9 @@
 //'        Default is false
 //' 
 //' @return Modifies the HDF5 file in place, adding:
-//'         - Normalized data under "NORMALIZED/[group]/[dataset]"
-//'         - Mean values under "NORMALIZED/[group]/mean.[dataset]"
-//'         - Standard deviations under "NORMALIZED/[group]/sd.[dataset]"
+//'         - Normalized data under "NORMALIZED/\[group\]/\[dataset\]"
+//'         - Mean values under "NORMALIZED/\[group\]/mean.\[dataset\]"
+//'         - Standard deviations under "NORMALIZED/\[group\]/sd.\[dataset\]"
 //' 
 //' @details
 //' The function implements block-wise normalization through:

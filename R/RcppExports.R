@@ -84,7 +84,7 @@
 #'        
 #' @seealso
 #' * \code{\link{bdInvCholesky_hdf5}} for computing inverse using Cholesky decomposition
-#' * \code{\link{bdSolveEquation_hdf5}} for solving linear systems
+#' * \code{\link{bdSolve_hdf5}} for solving linear systems
 #' 
 #' @export
 bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = NULL, elementsBlock = 1000000L) {
@@ -171,7 +171,7 @@ bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NUL
 #'
 #' @seealso
 #' * \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
-#' * \code{\link{bdSolveEquation_hdf5}} for solving linear systems
+#' * \code{\link{bdSolve_hdf5}} for solving linear systems
 #'
 #' @export
 bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
@@ -869,9 +869,9 @@ bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_
 #'        Default is false
 #' 
 #' @return Modifies the HDF5 file in place, adding:
-#'         - Normalized data under "NORMALIZED/[group]/[dataset]"
-#'         - Mean values under "NORMALIZED/[group]/mean.[dataset]"
-#'         - Standard deviations under "NORMALIZED/[group]/sd.[dataset]"
+#'         - Normalized data under "NORMALIZED/\[group\]/\[dataset\]"
+#'         - Mean values under "NORMALIZED/\[group\]/mean.\[dataset\]"
+#'         - Standard deviations under "NORMALIZED/\[group\]/sd.\[dataset\]"
 #' 
 #' @details
 #' The function implements block-wise normalization through:
@@ -1355,8 +1355,8 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
 #'   (e.g., "group/subgroup/dataset").
 #'
 #' @return Integer vector of length 2 containing:
-#'   - [1] Number of rows
-#'   - [2] Number of columns
+#'   - \[1\] Number of rows
+#'   - \[2\] Number of columns
 #'
 #' @examples
 #' \dontrun{
@@ -1457,7 +1457,6 @@ bdgetDim_hdf5 <- function(filename, dataset) {
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
@@ -1533,7 +1532,6 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices directly
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE, paral = NULL, threads = NULL, overwriteFile = NULL) {
@@ -1618,7 +1616,6 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE, paral = NULL, threads = NULL, overwrite = NULL) {
@@ -1835,7 +1832,6 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL, byrows = NULL, wsize = NULL, overwrite = FALSE) {
@@ -1902,7 +1898,7 @@ bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL
 #'
 #' @seealso
 #' * \code{\link{bdpseudoinv_hdf5}} for HDF5-stored matrices
-#' * \code{\link{bdSVD}} for singular value decomposition
+#' * \code{\link{bdSVD_hdf5}} for singular value decomposition
 #'
 #' @export
 bdpseudoinv <- function(X, threads = NULL) {
@@ -2068,7 +2064,6 @@ bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdatas
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NULL, outdataset = NULL, overwrite = FALSE, remove = FALSE) {
@@ -2131,7 +2126,6 @@ bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NU
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdRemove_hdf5_element <- function(filename, elements) {
@@ -2428,7 +2422,6 @@ bdRemoveMAF_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSortlist, func, outgroup = NULL, overwrite = FALSE) {
@@ -2525,7 +2518,6 @@ bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSor
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, nblocks = NULL, blocksize = NULL, bycols = TRUE, overwrite = FALSE) {
@@ -2619,7 +2611,6 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copytolower = NULL, elementsBlock = 1000000L) {
@@ -2738,7 +2729,6 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'
 #' @seealso
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-#' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 #'
 #' @export
 bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup = NULL, byrows = NULL, paral = NULL, threads = NULL, overwrite = FALSE) {

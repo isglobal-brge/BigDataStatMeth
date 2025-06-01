@@ -15,8 +15,8 @@ bdgetDim_hdf5(filename, dataset)
 \value{
 Integer vector of length 2 containing:
 \itemize{
-\item \link{1} Number of rows
-\item \link{2} Number of columns
+\item [1] Number of rows
+\item [2] Number of columns
 }
 }
 \description{

@@ -114,6 +114,6 @@ Johns Hopkins University Press.
 \seealso{
 \itemize{
 \item \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
-\item \code{\link{bdSolveEquation_hdf5}} for solving linear systems
+\item \code{\link{bdSolve_hdf5}} for solving linear systems
 }
 }

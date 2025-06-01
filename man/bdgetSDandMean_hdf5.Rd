@@ -115,6 +115,5 @@ sums of squares and products. Technometrics, 4(3), 419-420.
 \seealso{
 \itemize{
 \item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-\item \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 }
 }

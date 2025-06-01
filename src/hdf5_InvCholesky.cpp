@@ -121,7 +121,7 @@
 //'
 //' @seealso
 //' * \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
-//' * \code{\link{bdSolveEquation_hdf5}} for solving linear systems
+//' * \code{\link{bdSolve_hdf5}} for solving linear systems
 //'
 //' @export
 // [[Rcpp::export]]

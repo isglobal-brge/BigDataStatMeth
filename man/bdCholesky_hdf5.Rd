@@ -117,6 +117,6 @@ Wiley Interdisciplinary Reviews: Computational Statistics, 1(2), 251-254.
 \seealso{
 \itemize{
 \item \code{\link{bdInvCholesky_hdf5}} for computing inverse using Cholesky decomposition
-\item \code{\link{bdSolveEquation_hdf5}} for solving linear systems
+\item \code{\link{bdSolve_hdf5}} for solving linear systems
 }
 }

@@ -39,9 +39,9 @@ Default is false}
 }
 \value{
 Modifies the HDF5 file in place, adding:
-- Normalized data under "NORMALIZED/\link{group}/\link{dataset}"
-- Mean values under "NORMALIZED/\link{group}/mean.\link{dataset}"
-- Standard deviations under "NORMALIZED/\link{group}/sd.\link{dataset}"
+- Normalized data under "NORMALIZED/[group]/[dataset]"
+- Mean values under "NORMALIZED/[group]/mean.[dataset]"
+- Standard deviations under "NORMALIZED/[group]/sd.[dataset]"
 }
 \description{
 Performs block-wise normalization of datasets stored in HDF5 format through

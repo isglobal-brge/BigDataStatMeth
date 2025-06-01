@@ -32,12 +32,9 @@ PKG_LIBS += $(RHDF5_LIBS)
 
 ## With R 3.1.0 or later, you can uncomment the following line to tell R to 
 ## enable compilation with C++11 (or even C++14) where available
-#..#CXXFLAGS = -g3 -O3 -Wall
-#..# PKG_CXXFLAGS += -g3 -O2 -std=c++17 -Wall
-#..# PKG_CXXFLAGS += -g3 -O3 -Wall
 
-#.ORIGINAL OK - CHECKS CRAN.# CCACHE=ccache
-#.ORIGINAL OK - CHECKS CRAN.# CXX_STD = $(CCACHE) CXX
-CXXFLAGS += -g3 -O3 -std=c++17 -Wall
 CCACHE=ccache
 CXX_STD = $(CCACHE) CXX17
+
+# Optional: safe compiler-specific additions (commented by default)
+# PKG_CXXFLAGS += -g3 -O3 -std=c++17 -Wall

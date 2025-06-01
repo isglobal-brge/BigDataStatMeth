@@ -67,8 +67,8 @@
 //'   (e.g., "group/subgroup/dataset").
 //'
 //' @return Integer vector of length 2 containing:
-//'   - [1] Number of rows
-//'   - [2] Number of columns
+//'   - \[1\] Number of rows
+//'   - \[2\] Number of columns
 //'
 //' @examples
 //' \dontrun{

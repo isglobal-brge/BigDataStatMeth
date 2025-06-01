@@ -102,7 +102,7 @@
 //'
 //' @seealso
 //' * \code{\link{bdpseudoinv_hdf5}} for HDF5-stored matrices
-//' * \code{\link{bdSVD}} for singular value decomposition
+//' * \code{\link{bdSVD_hdf5}} for singular value decomposition
 //'
 //' @export
 // [[Rcpp::export]]

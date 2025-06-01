@@ -167,7 +167,6 @@
 //'
 //' @seealso
 //' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-//' * \code{\link{bdRead_hdf5_matrix}} for reading HDF5 matrices
 //'
 //' @export
 // [[Rcpp::export]]
