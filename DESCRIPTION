@@ -1,7 +1,7 @@
 Package: BigDataStatMeth
 Type: Package
 Title: Statistical Methods and Algorithms for Big Data
-Version: 0.65.0
+Version: 1.0.0
 Authors@R: 
     c(
         person( given = "Dolors", 
