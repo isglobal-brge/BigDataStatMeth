@@ -84,7 +84,7 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-void bdblockmult_hdf5(std::string filename, 
+Rcpp::List bdblockmult_hdf5(std::string filename, 
                     std::string group, 
                     std::string A, 
                     std::string B,
@@ -101,6 +101,9 @@ void bdblockmult_hdf5(std::string filename,
     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
     BigDataStatMeth::hdf5Dataset* dsB = nullptr;
     BigDataStatMeth::hdf5Dataset* dsC = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
     
     try {
         
@@ -135,7 +138,10 @@ void bdblockmult_hdf5(std::string filename,
         
         if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
             dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
-            BigDataStatMeth::multiplication(dsA, dsB, dsC, paral, block_size, threads);    
+            BigDataStatMeth::multiplication(dsA, dsB, dsC, paral, block_size, threads); 
+            
+            lst_return["fn"] = filename;
+            lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
             
             delete dsC; dsC = nullptr;
         }
@@ -146,23 +152,24 @@ void bdblockmult_hdf5(std::string filename,
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"\nc++ c++ exception blockmult_hdf5 (File IException)\n";
-        return void();
+        return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"\nc++ exception blockmult_hdf5 (DataSet IException)\n";
-        return void();
+        return(lst_return);
     } catch(std::exception &ex) {
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr << "c++ exception blockmult_hdf5: " << ex.what();
-        return void();
+        return(lst_return);
     }  catch (...) {
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"C++ exception blockmult_hdf5 (unknown reason)";
-        return void();
+        return(lst_return);
     }
     
-    // return List::create(Named("filename") = filename,
+    return(lst_return);
+    // return Rcpp::List::create(Named("filename") = filename,
     //                     Named("dataset") = strsubgroupOut + "/" + strdatasetOut);
-    return void();
+    // return void();
 }
 

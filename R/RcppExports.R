@@ -1002,7 +1002,7 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' 
 #' @export
 bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdblockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite))
+    .Call('_BigDataStatMeth_bdblockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite)
 }
 
 #' Block matrix multiplication for sparse matrices
