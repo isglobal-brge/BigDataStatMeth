@@ -140,7 +140,7 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-void bdblockSum_hdf5(std::string filename, 
+Rcpp::List bdblockSum_hdf5(std::string filename, 
                    std::string group, 
                    std::string A, 
                    std::string B,
@@ -158,6 +158,9 @@ void bdblockSum_hdf5(std::string filename,
     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
     BigDataStatMeth::hdf5Dataset* dsB = nullptr;
     BigDataStatMeth::hdf5Dataset* dsC = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
     
     try{
         
@@ -237,6 +240,9 @@ void bdblockSum_hdf5(std::string filename,
             }
         }
         
+        lst_return["fn"] = filename;
+        lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
+        
         delete dsA; dsA = nullptr;
         delete dsB; dsB = nullptr;
         delete dsC; dsC = nullptr;
@@ -244,23 +250,18 @@ void bdblockSum_hdf5(std::string filename,
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (File IException)";
-        return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (Group IException)";
-        return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (DataSet IException)";
-        return void();
     } catch(std::exception& ex) {
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5: " << ex.what();
-        return void();
     } catch (...) {
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"C++ exception bdblockSum_hdf5 (unknown reason)";
-        return void();
     }
     
     // //..// return(C);
@@ -268,5 +269,5 @@ void bdblockSum_hdf5(std::string filename,
     //                     Named("dataset") = strsubgroupOut + "/" + strdatasetOut,
     //                     Named("result") = wrap(0));
     
-    return void();
+    return(lst_return);
 }

@@ -152,19 +152,15 @@ Rcpp::List bdblockmult_hdf5(std::string filename,
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"\nc++ c++ exception blockmult_hdf5 (File IException)\n";
-        return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"\nc++ exception blockmult_hdf5 (DataSet IException)\n";
-        return(lst_return);
     } catch(std::exception &ex) {
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr << "c++ exception blockmult_hdf5: " << ex.what();
-        return(lst_return);
     }  catch (...) {
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"C++ exception blockmult_hdf5 (unknown reason)";
-        return(lst_return);
     }
     
     return(lst_return);

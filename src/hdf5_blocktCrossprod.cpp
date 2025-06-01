@@ -141,18 +141,18 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-void bdtCrossprod_hdf5( std::string filename, 
-                        std::string group, 
-                        std::string A, 
-                        Rcpp::Nullable<std::string> B = R_NilValue, 
-                        Rcpp::Nullable<std::string> groupB = R_NilValue, 
-                        Rcpp::Nullable<int> block_size = R_NilValue,
-                        Rcpp::Nullable<int> mixblock_size = R_NilValue,
-                        Rcpp::Nullable<bool> paral = R_NilValue,
-                        Rcpp::Nullable<int> threads = R_NilValue,
-                        Rcpp::Nullable<std::string> outgroup = R_NilValue,
-                        Rcpp::Nullable<std::string> outdataset = R_NilValue,
-                        Rcpp::Nullable<bool> overwrite = R_NilValue )
+Rcpp::List bdtCrossprod_hdf5( std::string filename, 
+                              std::string group, 
+                              std::string A, 
+                              Rcpp::Nullable<std::string> B = R_NilValue, 
+                              Rcpp::Nullable<std::string> groupB = R_NilValue, 
+                              Rcpp::Nullable<int> block_size = R_NilValue,
+                              Rcpp::Nullable<int> mixblock_size = R_NilValue,
+                              Rcpp::Nullable<bool> paral = R_NilValue,
+                              Rcpp::Nullable<int> threads = R_NilValue,
+                              Rcpp::Nullable<std::string> outgroup = R_NilValue,
+                              Rcpp::Nullable<std::string> outdataset = R_NilValue,
+                              Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
      
      
@@ -161,7 +161,8 @@ void bdtCrossprod_hdf5( std::string filename,
      BigDataStatMeth::hdf5Dataset* dsB = nullptr;
      BigDataStatMeth::hdf5Dataset* dsC = nullptr;
      
-     
+     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                                Rcpp::Named("ds") = "");
      
      try {
          
@@ -176,7 +177,6 @@ void bdtCrossprod_hdf5( std::string filename,
          strsubgroupIn,
          strsubgroupInB;
          std::string matB;
-         
          
          strsubgroupIn = group;
          
@@ -224,6 +224,10 @@ void bdtCrossprod_hdf5( std::string filename,
              } else if (bparal == false) { // Not parallel
                  dsC = BigDataStatMeth::tcrossprod(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
              }    
+             
+             lst_return["fn"] = filename;
+             lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
+             
              delete dsC; dsC = nullptr;    
          }
          
@@ -233,24 +237,21 @@ void bdtCrossprod_hdf5( std::string filename,
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
          checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr<<"c++ c++ exception bdtCrossprod_hdf5 (File IException)";
-         return void();
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
          checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr<<"c++ exception bdtCrossprod_hdf5 (DataSet IException)";
-         return void();
      } catch(std::exception &ex) {
          checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr << "c++ exception bdtCrossprod_hdf5: " << ex.what();
-         return void();
      } catch (...) {
          checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr<<"C++ exception bdtCrossprod_hdf5 (unknown reason)";
-         return void();
      }
      
      // return List::create(Named("filename") = filename,
      //                     Named("dataset") = strsubgroupOut + "/" + strdatasetOut);
-     return void();
+     // return void();
+     return(lst_return);
      
      
  }
