@@ -41,8 +41,13 @@ public:
     hdf5Group(std::string filename, std::string group) :
     hdf5File(filename, false)
     {
-        openFile("rw");
-        groupname = group;
+        // Rcpp::Rcout<<"\nPassa per 1";
+        // if( pfile != nullptr ){
+            openFile("rw");
+            groupname = group;
+        // } else {
+        //     ::Rf_error( "c++ exception Please create or close the file before proceeding." );
+        // }
     }
     
     
@@ -54,8 +59,13 @@ public:
     hdf5Group(H5::H5File* file, std::string group) : 
     hdf5File(file)
     {
-        openFile("rw");
-        groupname = group;
+        Rcpp::Rcout<<"\nPassa per 2";
+        if( pfile != nullptr ){
+            openFile("rw");
+            groupname = group;
+        } else {
+            ::Rf_error( "c++ exception Please create or close the file before proceeding." );
+        }
     }
     
     /**
@@ -69,23 +79,26 @@ public:
     hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group, bool forceGroup) : 
     hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
     {
-        if( pfile ){
+        Rcpp::Rcout<<"\nPassa per 3";
+        if( pfile != nullptr ){
             openFile("rw");
         } else {
-            ::Rf_error( "c++ exception Please create file before proceed" );
+            ::Rf_error( "c++ exception Please create or close the file before proceeding." );
         }
         
         if( exists_HDF5_element(pfile, group) ) {
             if( forceGroup == true) {
                 remove_elements(pfile, getGroupName(), {}); 
             } else {
-                ::Rf_error( "c++ exception Please create file before proceed" );
+                ::Rf_error( "c++ exception. Data already exists in the file. Please set overwrite = true to proceed." );
             }
             
         }
         create_HDF5_groups(group);    
         
         groupname = group;
+        
+        
     }
     
     
@@ -99,7 +112,7 @@ public:
     hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group) : 
     hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
     {
-        if( pfile ){
+        if( pfile != nullptr ){
             openFile("rw");
         } else {
             ::Rf_error( "c++ exception Please create file before proceed" );

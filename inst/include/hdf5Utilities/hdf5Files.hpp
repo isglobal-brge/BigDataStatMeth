@@ -172,9 +172,10 @@ public:
         {
             H5::Exception::dontPrint();
             
-            bool bFileExists = ResFileExist_filestream();
-            
-            if( bFileExists ) {
+            // bool bFileExists = ResFileExist_filestream();
+            // checkHDF5File
+            // if( bFileExists ) {
+            if( checkHDF5File() ) {
                 if(opentype == "r") {
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
                 } else {
@@ -265,6 +266,7 @@ public:
             
             pfile->close();
         } catch(std::exception& ex) {
+            
             Rcpp::Rcerr<< "c++ exception close_file (err FileException)";
         }
         
@@ -278,8 +280,10 @@ public:
      * @details Closes the file and releases resources
      */
     ~hdf5File(){
-        // close_file();
-        pfile->close();
+        if(pfile != nullptr) {
+            pfile->close();
+            pfile = nullptr;
+        }
     }
     
 protected:
@@ -345,6 +349,128 @@ private:
         return(exists);
     }
 
+    
+    /**
+     * @brief Check if file is corrupt, open, accessible or has_valid_structure
+     * @return True if file exists and is accessible
+     */
+    bool checkHDF5File() {
+        
+        bool is_accessible = false;
+        // bool is_open = false;
+        // bool is_corrupt = false;
+        bool has_valid_structure = false;
+        std::string error_message = "";
+        
+        try {
+            // Turn off automatic error printing
+            H5::Exception::dontPrint();
+            
+            // Method 1: Check if file is accessible
+            try {
+                // Try to check if file exists and is HDF5 format
+                if (H5::H5File::isHdf5(fullPath)) {
+                    is_accessible = true;
+                } else {
+                    ::Rf_error( "c++ exception File is not in HDF5 format" );
+                    // error_message = "File is not in HDF5 format";
+                    // is_corrupt = true;
+                }
+            } catch (const H5::FileIException& e) {
+                error_message = "c++ exception File access error: " + std::string(e.getCDetailMsg());
+                ::Rf_error( error_message.c_str() );
+                // error_message = "File access error: " + std::string(e.getCDetailMsg());
+                // is_corrupt = true;
+            } catch (const H5::Exception& e) {
+                error_message = "c++ exception HDF5 Exception during accessibility check: " + std::string(e.getCDetailMsg());
+                ::Rf_error( error_message.c_str() );
+                // error_message = "HDF5 Exception during accessibility check: " + std::string(e.getCDetailMsg());
+                // is_corrupt = true;
+            }
+            
+            // Method 2: Try to open the file if accessible
+            if (is_accessible) {
+                try {
+                    H5::H5File* file = new H5::H5File(fullPath, H5F_ACC_RDONLY);
+                    // is_open = true;
+                    
+                    // Method 3: Validate file structure
+                    try {
+                        // Try to access root group
+                        H5::Group root_group = file->openGroup("/");
+                        
+                        // Get file info to check integrity
+                        hsize_t file_size = file->getFileSize();
+                        if (file_size > 0) {
+                            has_valid_structure = true;
+                        }
+                        
+                        root_group.close();
+                        
+                    } catch (const H5::GroupIException& e) {
+                        error_message =  "c++ exception Root group access failed: " + std::string(e.getCDetailMsg());
+                        ::Rf_error( error_message.c_str() );
+                        // error_message = "Root group access failed: " + std::string(e.getCDetailMsg());
+                        // is_corrupt = true;
+                    } catch (const H5::Exception& e) {
+                        error_message =  "c++ exception Structure validation failed: " + std::string(e.getCDetailMsg() );
+                        ::Rf_error( error_message.c_str() );
+                        // error_message = "Structure validation failed: " + std::string(e.getCDetailMsg());
+                        // is_corrupt = true;
+                    }
+                    
+                    // Close the file
+                    file->close();
+                    delete file;
+                    
+                } catch (const H5::FileIException& e) {
+                    error_message = "c++ exception Cannot open file: " + std::string(e.getCDetailMsg());
+                    ::Rf_error( error_message.c_str() );
+                    // error_message = "Cannot open file: " + std::string(e.getCDetailMsg());
+                    // is_corrupt = true;
+                    // is_open = false;
+                } catch (const H5::Exception& e) {
+                    error_message ="c++ exception HDF5 Exception during file opening: " + std::string(e.getCDetailMsg() );
+                    ::Rf_error( error_message.c_str() );
+                    // error_message = "HDF5 Exception during file opening: " + std::string(e.getCDetailMsg());
+                    // is_corrupt = true;
+                    // is_open = false;
+                }
+            }
+            
+        } catch (const std::exception& e) {
+            error_message = "c++ exception: " + std::string(e.what());
+            ::Rf_error( error_message.c_str() );
+            
+            // error_message = "Standard exception: " + std::string(e.what());
+            // is_corrupt = true;
+        } catch (...) {
+            error_message = "c++ exception: Unknown exception occurred" ;
+            ::Rf_error( error_message.c_str() );
+            // error_message = "Unknown exception occurred";
+            // is_corrupt = true;
+        }
+        
+        return(true);
+        
+        // Create result list
+        // return List::create(
+        //     Named("filename") = filename,
+        //     Named("is_accessible") = is_accessible,
+        //     Named("is_open") = is_open,
+        //     Named("is_corrupt") = is_corrupt,
+        //     Named("has_valid_structure") = has_valid_structure,
+        //     Named("error_message") = error_message
+        // );
+    }
+    
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * @brief Check if HDF5 file is already open
