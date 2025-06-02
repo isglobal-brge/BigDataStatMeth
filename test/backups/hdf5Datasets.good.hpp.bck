@@ -1,0 +1,177 @@
+#ifndef BIGDATASTATMETH_HDF5_DATASETS_HPP
+#define BIGDATASTATMETH_HDF5_DATASETS_HPP
+
+#include "BigDataStatMeth.hpp"
+#include "Utilities/Utilities.hpp"
+#include "hdf5Utilities/hdf5Utilities.hpp"
+
+
+
+namespace BigDataStatMeth {
+
+class hdf5Dataset
+{
+    
+public:
+    
+    hdf5Dataset(H5::H5File* file, std::string group, std::string datasetname, bool overwrite) 
+    {
+        pfile = file;
+        groupname = group;
+        name = datasetname;
+        boverwrite = overwrite;
+        
+    }
+    
+    hdf5Dataset(H5::H5File* file, std::string dataset, bool overwrite)
+    {
+        pfile = file;
+        fullpath datasetroute = SplitElementName(dataset);
+        groupname = datasetroute.path;
+        name = datasetroute.filename;
+        boverwrite = overwrite;
+    }
+    
+    
+    // Create empty hdf5 data file
+    void createDataset(size_t rows, size_t cols, std::string strdatatype) 
+    {
+        try
+        {
+            H5::Exception::dontPrint();
+            std::string fullPath = groupname + "/" + name;
+            
+            // dataset dimensions
+            dimDataset[0] = rows;
+            dimDataset[1] = cols;
+            
+            type = strdatatype;
+            
+            H5::DataSpace dataspace( RANK2, dimDataset );
+            
+            if( !exists_HDF5_element(pfile, groupname) ) {
+                create_HDF5_groups(pfile, groupname);
+            } else {
+                if( exists_HDF5_element(pfile, fullPath) && boverwrite == false) {
+                    Rcpp::Rcout<<"\n Dataset exits, please set overwrite = true to overwrite data \n";
+                } else {
+                    if( strdatatype == "int") {
+                        H5::IntType datatype( H5::PredType::NATIVE_INT );
+                        pdataset = new H5::DataSet(pfile->createDataSet( fullPath, datatype, dataspace ));
+                    } else {
+                        H5::IntType datatype( H5::PredType::NATIVE_DOUBLE ); 
+                        pdataset = new H5::DataSet(pfile->createDataSet( fullPath, datatype, dataspace ));
+                    }        
+                }
+            }
+            
+            dataspace.close();
+            
+        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+            ::Rf_error( "c++ exception hdf5Dataset (File IException) " );
+        } catch(H5::GroupIException error) { // catch failure caused by the H5File operations
+            ::Rf_error( "c++ exception hdf5Dataset (File IException) " );
+        } catch(H5::DataSetIException error) { // catch failure caused by the H5File operations
+            ::Rf_error( "c++ exception hdf5Dataset (File IException) " );
+        } 
+        
+        return void();
+    }
+    
+    
+    // Open an existing hdf5 dataSet
+    H5::DataSet* openDataset()
+    {
+        try
+        {
+            H5::Exception::dontPrint();
+            std::string fullPath = groupname + "/" + name;
+            
+            
+                /// ESTIC AQUÍ !!!! 
+                /// FALTA IMPLEMENTAR LA FUNCIÓ OPEN !!!!
+            
+            
+        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+            ::Rf_error( "c++ exception hdf5File (File IException) " );
+        } 
+        return(pdataset);
+    }
+    
+    
+    
+    // Create multiple group in hdf5 data file, groups must be separated by "/"
+    void create_HDF5_groups( H5::H5File* file, H5std_string mGroup)
+    {
+        try
+        {
+            H5::Exception::dontPrint();
+            
+            char * pch;
+            std::string strgroup = mGroup;
+            char*  cpgroup = &strgroup[0];
+            std::string results = "";
+            
+            pch = strtok(cpgroup, "/"); 
+            
+            while (pch != NULL)  
+            {  
+                if( results.compare("") == 0 ) {
+                    results = pch;
+                } else {
+                    results = results + "/" + pch;
+                }
+                
+                if(!pathExists( file->getId(), results )) {
+                    file->createGroup(results);
+                }
+                pch = strtok (NULL, "/");  
+            }  
+            
+        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+            file->close();
+            ::Rf_error( "c++ exception create_HDF5_groups_ptr (File IException)" );
+            return void();
+        } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
+            file->close();
+            ::Rf_error( "c++ exception create_HDF5_groups_ptr (Group IException)" );
+            return void();
+        } 
+        
+        return void();
+    }
+    
+    
+    H5::DataSet* getDatasetptr() { return(pdataset); }  // Return dataset pointer
+    std::string getDatasetName() { return(name); }  // Return dataset name
+    std::string getGroup() { return(groupname); }  // Return group name
+    
+    
+    // Destructor
+    ~hdf5Dataset(){
+        pdataset->close();
+        pfile->close();
+    }
+    
+    
+private:
+    
+    // Variables declaration
+    std::string groupname, name;
+    std::string type;
+    bool boverwrite;
+    H5::H5File* pfile = nullptr;
+    H5::DataSet* pdataset = nullptr;
+    hsize_t dimDataset[2];
+    
+    // Function declarations
+    
+    void close_dataset() {
+        pdataset->close();
+    }
+    
+    
+};
+}
+
+#endif // BIGDATASTATMETH_HDF5_DATASETS_HPP

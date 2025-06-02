@@ -2,32 +2,79 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdgetDim_hdf5}
 \alias{bdgetDim_hdf5}
-\title{Get dataset dimensions}
+\title{Get HDF5 Dataset Dimensions}
 \usage{
-bdgetDim_hdf5(filename, element)
+bdgetDim_hdf5(filename, dataset)
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file to create}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{element}{path to element, character array indicating the complete route to the element to query size (folder or dataset).}
+\item{dataset}{Character string. Full path to the dataset within the HDF5 file
+(e.g., "group/subgroup/dataset").}
 }
 \value{
-none
+Integer vector of length 2 containing:
+\itemize{
+\item [1] Number of rows
+\item [2] Number of columns
+}
 }
 \description{
-get dataset dimensions
+Retrieves the dimensions (number of rows and columns) of a dataset stored in
+an HDF5 file.
+}
+\details{
+This function provides efficient access to dataset dimensions in HDF5 files.
+Key features:
+\itemize{
+\item Dimension information:
+\itemize{
+\item Number of rows
+\item Number of columns
+}
+\item Implementation features:
+\itemize{
+\item Safe HDF5 file operations
+\item Memory-efficient implementation
+\item Comprehensive error handling
+\item Read-only access to files
+}
+}
+
+The function opens the HDF5 file in read-only mode to ensure data safety.
 }
 \examples{
+\dontrun{
+library(BigDataStatMeth)
 
-matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+# Create a test HDF5 file
+fn <- "test.hdf5"
+X <- matrix(rnorm(100), 10, 10)
 
-bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-bdgetDim_hdf5("BasicMatVect.hdf5", "INPUT/matA")
+# Save matrix to HDF5
+bdCreate_hdf5_matrix(fn, X, "data", "matrix1",
+                     overwriteFile = TRUE)
 
-# Remove file (used as example)
-  if (file.exists("BasicMatVect.hdf5")) {
-    # Delete file if it exist
-    file.remove("BasicMatVect.hdf5")
-  }
-  
+# Get dimensions
+dims <- bdgetDim_hdf5(fn, "data/matrix1")
+print(paste("Rows:", dims[1]))
+print(paste("Columns:", dims[2]))
+
+# Cleanup
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdgetDatasetsList_hdf5}} for listing available datasets
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+}
 }

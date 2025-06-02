@@ -2,33 +2,74 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdgetDiagonal_hdf5}
 \alias{bdgetDiagonal_hdf5}
-\title{Write diagonal matrix}
+\title{Get Matrix Diagonal from HDF5}
 \usage{
 bdgetDiagonal_hdf5(filename, group, dataset)
 }
 \arguments{
-\item{filename, }{character array with the name of an existin hdf5 data file containing the dataset to be modified}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group, }{character array indicating the input group where the data set to be modified.}
+\item{group}{Character string. Path to the group containing the dataset.}
 
-\item{dataset, }{character array indicating the input dataset to be modified}
+\item{dataset}{Character string. Name of the dataset.}
 }
 \value{
-Numeric vector with all diagonal elements from hdf5 dataset
+Numeric vector containing diagonal elements.
 }
 \description{
-Write diagonal matrix to an existing dataset inside hdf5
+Retrieves the diagonal elements from a matrix stored in an HDF5 file.
+}
+\details{
+This function provides efficient access to matrix diagonal elements with:
+\itemize{
+\item Access features:
+\itemize{
+\item Direct diagonal access
+\item Memory-efficient retrieval
+\item Support for large matrices
+}
+\item Implementation features:
+\itemize{
+\item Safe HDF5 file operations
+\item Memory-efficient implementation
+\item Comprehensive error handling
+\item Read-only access to files
+}
+}
+
+The function opens the HDF5 file in read-only mode to ensure data safety.
 }
 \examples{
-
+\dontrun{
 library(BigDataStatMeth)
-library(rhdf5)
 
+# Create test matrix
 X <- matrix(rnorm(100), 10, 10)
 diag(X) <- 0.5
-# Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file2.hdf5", X, "data", "X", force = TRUE)
-# Update diagonal
-diagonal <- bdgetDiagonal_hdf5("test_file.hdf5", "data", "X")
 
+# Save to HDF5
+bdCreate_hdf5_matrix("test.hdf5", X, "data", "matrix1",
+                     overwriteFile = TRUE)
+
+# Get diagonal
+diag_elements <- bdgetDiagonal_hdf5("test.hdf5", "data", "matrix1")
+print(diag_elements)
+
+# Cleanup
+if (file.exists("test.hdf5")) {
+  file.remove("test.hdf5")
+}
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdWriteDiagonal_hdf5}} for writing diagonal elements
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+}
 }

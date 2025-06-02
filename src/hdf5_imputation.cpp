@@ -1,317 +1,214 @@
-#include "include/hdf5_imputation.h"
+#include <BigDataStatMeth.hpp>
+// #include "hdf5Utilities/hdf5ImputeData.hpp"
 
+/**
+ * @file hdf5_imputation.cpp
+ * @brief Implementation of SNP imputation for HDF5-stored genomic data
+ * @details This file provides functionality for imputing missing values in
+ * SNP (Single Nucleotide Polymorphism) data stored in HDF5 format. The
+ * implementation supports:
+ * - Row-wise and column-wise imputation
+ * - Parallel processing capabilities
+ * - Memory-efficient operations
+ * - Flexible output options
+ * 
+ * Key features:
+ * - Support for large genomic datasets
+ * - Configurable imputation direction
+ * - Error handling and validation
+ * - Parallel processing support
+ * - Memory-efficient implementation
+ */
 
-// Get value for imputation
-int get_value_to_impute_discrete(std::map<double, double> probMap)
-{
-  std::vector <double> probs;
+/**
+ * @brief Imputes missing SNP values in HDF5 datasets
+ * 
+ * @details Implements efficient SNP imputation for genomic data stored in
+ * HDF5 format. The function supports both row-wise and column-wise imputation
+ * with parallel processing capabilities.
+ * 
+ * Implementation features:
+ * - Flexible imputation direction (row/column)
+ * - Support for parallel processing
+ * - Memory-efficient operations
+ * - Safe file operations
+ * - Comprehensive error handling
+ * 
+ * @param filename Path to HDF5 file
+ * @param group Input group containing dataset
+ * @param dataset Input dataset name
+ * @param outgroup Output group for results
+ * @param outdataset Output dataset name
+ * @param bycols Whether to impute by columns
+ * @param paral Whether to use parallel processing
+ * @param threads Number of threads for parallel processing
+ * @param overwrite Whether to overwrite existing dataset
+ * 
+ * @throws H5::FileIException for HDF5 file operation errors
+ * @throws H5::DataSetIException for HDF5 dataset operation errors
+ * @throws H5::DataSpaceIException for HDF5 dataspace errors
+ * @throws H5::DataTypeIException for HDF5 datatype errors
+ * @throws std::exception for other errors
+ */
 
-  // Get values and counts for each map element
-  for( auto it = probMap.begin(); it != probMap.end(); ++it )
-    probs.push_back( it->second );
-
-  // remove last element (corresponds to 3=<NA>)
-  probs.erase(probs.end() - 1);
-
-  // Get total count
-  double totalSNPS = std::accumulate(probs.begin(), probs.end(), decltype(probs)::value_type(0));
-  
-  // Get probabilities without <NA>
-  for (std::vector<double>::iterator it = probs.begin() ; it != probs.end(); ++it)
-    *it = *it/totalSNPS;
-  
-  // Generate value with given probabilities
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  
-  std::discrete_distribution<> d(probs.begin(), probs.end());
-  
-  return (d(gen));
-
-}
-
-
-// Convert NumericVector to map (key:vlues - value: frequency value in vector)
-std::map<double, double> VectortoOrderedMap_SNP_counts( Eigen::VectorXd  vdata)
-{
-  std::map<double, double> mapv;
-  
-  try 
-  {
-    int position = 0;
-    //.commented 20201120 - warning check().// int vlength = vdata.size();
-    std::vector<double> v(vdata.data(), vdata.data()+vdata.size());
-
-    std::sort(v.begin(), v.end() ); // Sort vector to optimize search and count
-    
-    for (size_t i = 0; i <=  *std::max_element(v.begin(), v.end()) ; ++i)  
-    {
-      double mycount = std::count(v.begin() + position, v.end(), i);
-      mapv[i] = mycount;
-      position = position + mycount;
-    }
-
-
-  } catch(std::exception &ex) {	
-    forward_exception_to_r(ex);
-  } catch(...) { 
-    ::Rf_error("c++ exception (unknown reason)"); 
-  }
-  
-  return mapv;
-}
-
-
-// Pedestrian dataset imputation .... 
-// TODO : 
-//    - perform better imputation
-void Impute_snp_HDF5(H5File* file, DataSet* dataset, bool bycols, std::string stroutdataset)
-{
-  IntegerVector stride = IntegerVector::create(1, 1);
-  IntegerVector block = IntegerVector::create(1, 1);
-  IntegerVector offset = IntegerVector::create(0, 0);
-  IntegerVector count = IntegerVector::create(0, 0);
-  DataSet* outdataset = nullptr;
-  int ilimit;
-  int blocksize = 1000;
-  
-  try{
-    
-    // Real data set dimension
-    IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
-    
-    // id bycols == true : read all rows by group of columns ; else : all columns by group of rows
-    if (bycols == true) {
-      ilimit = dims_out[0];
-      count[1] = dims_out[1];
-      offset[1] = 0;
-    } else {
-      ilimit = dims_out[1];
-      count[0] = dims_out[0];
-      offset[0] = 0;
-    };
-    
-    
-    if( stroutdataset.compare("")!=0)
-    {
-      hsize_t     dimsf[2];              // dataset dimensions
-      dimsf[0] = dims_out[0];
-      dimsf[1] = dims_out[1];
-      
-      DataSpace dataspace( RANK2, dimsf );
-      outdataset = new DataSet(file->createDataSet(stroutdataset, PredType::NATIVE_DOUBLE, dataspace));
-      
-    } else  {
-      outdataset = dataset;
-    }
-    
-    
-    
-    for( int i=0; i<=(ilimit/blocksize); i++) 
-    {
-      int iread;
-      
-      if( (i+1)*blocksize < ilimit) iread = blocksize;
-      else iread = ilimit - (i*blocksize);
-      
-      if(bycols == true) {
-        count[0] = iread; 
-        offset[0] = i*blocksize;
-      } else {
-        count[1] = iread; 
-        offset[1] = i*blocksize;
-      }
-      
-      // read block
-      Eigen::MatrixXd data = GetCurrentBlock_hdf5(file, dataset, offset[0], offset[1], count[0], count[1]);
-      
-      if(bycols == true) // We have to do it by rows
-      {
-        for( int row = 0; row<data.rows(); row++)  // COMPLETE EXECUTION
-        {
-          std::map<double, double> myMap;
-          myMap = VectortoOrderedMap_SNP_counts(data.row(row));
-          
-          /*** ORIGINAL FUNCIONA PERFECTAMENT PERÒ ASSIGNA UN MATEIX VALOR A TOS... !!!
-           data.row(row) = (data.row(row).array() == 3).select( get_value_to_impute_discrete(myMap), data.row(row)); 
-           ***/
-          
-          //..// data.row(row) = (data.row(row).array() == 0).select( -5, data.row(row)); 
-          //..// data.row(row) = (data.row(row).array() == 1).select( 0, data.row(row)); 
-          //..// data.row(row) = (data.row(row).array() == 2).select( 5, data.row(row)); 
-          //..// data.row(row) = (data.row(row).array() == 3).select( 99, data.row(row)); 
-          
-          Eigen::VectorXd ev = data.row(row);
-          std::vector<double> v(ev.data(), ev.data() + ev.size());
-          
-          auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
-          while (it != std::end(v)) {
-            //..// results.emplace_back(std::distance(std::begin(v), it));
-            if(*it==3) *it = get_value_to_impute_discrete(myMap);
-            it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
-          }
-          
-          Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
-          data.row(row) = X;
-          
-        }
-        
-      } else {
-        for( int col = 0; col<data.cols(); col++) 
-        {
-          std::map<double, double> myMap;
-          myMap = VectortoOrderedMap_SNP_counts(data.col(col));
-          //..// data.col(col) = (data.col(col).array() == 3).select( get_value_to_impute_discrete(myMap), data.col(col));
-          Eigen::VectorXd ev = data.col(col);
-          std::vector<double> v(ev.data(), ev.data() + ev.size());
-          
-          auto it = std::find_if(std::begin(v), std::end(v), [](int i){return i == 3;});
-          while (it != std::end(v)) {
-            //..// results.emplace_back(std::distance(std::begin(v), it));
-            if(*it==3) *it = get_value_to_impute_discrete(myMap);
-            it = std::find_if(std::next(it), std::end(v), [](int i){return i == 3;});
-          }
-          
-          Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(v.data(), v.size());
-          data.col(col) = X;
-        }
-      }
-      //..// write_HDF5_matrix_subset_v2(file, dataset, offset, count, stride, block, wrap(data) );
-      write_HDF5_matrix_subset_v2(file, outdataset, offset, count, stride, block, wrap(data) );
-    }
-    
-    outdataset->close();
-    
-  } catch(FileIException& error) { // catch failure caused by the H5File operations
-    outdataset->close();
-    file->close();
-    ::Rf_error( "c++ exception Impute_snp_HDF5 (File IException)" );
-  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
-    outdataset->close();
-    file->close();
-    ::Rf_error( "c++ exception Impute_snp_HDF5 (DataSet IException)" );
-  } catch(GroupIException& error) { // catch failure caused by the Group operations
-    outdataset->close();
-    file->close();
-    ::Rf_error( "c++ exception Impute_snp_HDF5 (Group IException)" );
-  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-    outdataset->close();
-    file->close();
-    ::Rf_error( "c++ exception Impute_snp_HDF5 (DataSpace IException)" );
-  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
-    outdataset->close();
-    file->close();
-    ::Rf_error( "c++ exception Impute_snp_HDF5 (Data TypeIException)" );
-  }
-  
-}
-
-
-
-
-//' Impute SNPs in hdf5 omic dataset 
+//' Impute Missing SNP Values in HDF5 Dataset
 //'
-//' Impute SNPs in hdf5 omic dataset 
+//' @description
+//' Performs imputation of missing values in SNP (Single Nucleotide Polymorphism)
+//' data stored in HDF5 format.
+//'
+//' @details
+//' This function provides efficient imputation capabilities for genomic data with
+//' support for:
 //' 
-//' @param filename, character array indicating the name of the file to create
-//' @param group, character array indicating the input group where the data set to be imputed is. 
-//' @param dataset, character array indicating the input dataset to be imputed
-//' @param bycols, boolean by default = true, true indicates that the imputation will be done by columns, otherwise, the imputation will be done by rows
-//' @param outgroup, optional character array indicating group where the data set will be saved after imputation if `outgroup` is NULL, output dataset is stored in the same input group. 
-//' @param outdataset, optional character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
-//' @return Original hdf5 data file with imputed data
+//' * Imputation options:
+//'   - Row-wise or column-wise imputation
+//'   - Parallel processing
+//'   - Configurable thread count
+//' 
+//' * Output options:
+//'   - Custom output location
+//'   - In-place modification
+//'   - Overwrite protection
+//' 
+//' * Implementation features:
+//'   - Memory-efficient processing
+//'   - Safe file operations
+//'   - Error handling
+//'
+//' The function supports both in-place modification and creation of new datasets.
+//'
+//' @param filename Character string. Path to the HDF5 file.
+//' @param group Character string. Path to the group containing input dataset.
+//' @param dataset Character string. Name of the dataset to impute.
+//' @param outgroup Character string (optional). Output group path. If NULL,
+//'   uses input group.
+//' @param outdataset Character string (optional). Output dataset name. If NULL,
+//'   overwrites input dataset.
+//' @param bycols Logical (optional). Whether to impute by columns (TRUE) or
+//'   rows (FALSE). Default is TRUE.
+//' @param paral Logical (optional). Whether to use parallel processing.
+//' @param threads Integer (optional). Number of threads for parallel processing.
+//' @param overwrite Logical (optional). Whether to overwrite existing dataset.
+//'
+//' @return No return value, called for side effects (data imputation).
+//'
+//' @examples
+//' \dontrun{
+//' library(BigDataStatMeth)
+//' 
+//' # Create test data with missing values
+//' data <- matrix(sample(c(0, 1, 2, NA), 100, replace = TRUE), 10, 10)
+//' 
+//' # Save to HDF5
+//' fn <- "snp_data.hdf5"
+//' bdCreate_hdf5_matrix(fn, data, "genotype", "snps",
+//'                      overwriteFile = TRUE)
+//' 
+//' # Impute missing values
+//' bdImputeSNPs_hdf5(
+//'   filename = fn,
+//'   group = "genotype",
+//'   dataset = "snps",
+//'   outgroup = "genotype_imputed",
+//'   outdataset = "snps_complete",
+//'   bycols = TRUE,
+//'   paral = TRUE
+//' )
+//' 
+//' # Cleanup
+//' if (file.exists(fn)) {
+//'   file.remove(fn)
+//' }
+//' }
+//'
+//' @references
+//' * The HDF Group. (2000-2010). HDF5 User's Guide.
+//' * Li, Y., et al. (2009). Genotype Imputation. Annual Review of Genomics
+//'   and Human Genetics, 10, 387-406.
+//'
+//' @seealso
+//' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+//'
 //' @export
 // [[Rcpp::export]]
-void bdImpute_snps_hdf5(std::string filename, std::string group, std::string dataset, 
-                              Rcpp::Nullable<std::string> outgroup = R_NilValue, Rcpp::Nullable<std::string> outdataset = R_NilValue, 
-                              Rcpp::Nullable<bool> bycols = true )
+void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, 
+                        Rcpp::Nullable<std::string> outgroup = R_NilValue, 
+                        Rcpp::Nullable<std::string> outdataset = R_NilValue, 
+                        Rcpp::Nullable<bool> bycols = true, 
+                        Rcpp::Nullable<bool> paral = R_NilValue,
+                        Rcpp::Nullable<int> threads = R_NilValue, 
+                        Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
-  
-  H5File* file = nullptr;
-  DataSet* pdataset = nullptr;
-  
-  try
-  {
-    std::string strdataset = group +"/" + dataset;
-    std::string stroutgroup, stroutdataset, stroutdata;
-    std::string strdatasetout;
     
-    //.commented 20201120 - warning check().// int res;
-    bool bcols;
+    BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+    BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
     
-    
-    if(bycols.isNull())  bcols = true ;
-    else    bcols = Rcpp::as<bool>(bycols);
-    
-    if(outgroup.isNull())  stroutgroup = group ;
-    else    stroutgroup = Rcpp::as<std::string>(outgroup);
-    
-    if(outdataset.isNull())  stroutdataset = dataset ;
-    else    stroutdataset = Rcpp::as<std::string>(outdataset);
-    
-    stroutdata = stroutgroup +"/" + stroutdataset;
-    
-
-    if(!ResFileExist_filestream(filename)){
-      throw std::range_error("File not exits, create file before access to dataset");
-    }
-    
-    file = new H5File( filename, H5F_ACC_RDWR );
-    
-
-    if(exists_HDF5_element_ptr(file, strdataset)) 
+    try
     {
-      try
-      {
-        pdataset = new DataSet(file->openDataSet(strdataset));
         
-        if( strdataset.compare(stroutdata)!= 0)
-        {
-          // If output is different from imput --> Remve possible existing dataset and create new
-          if(exists_HDF5_element_ptr(file, stroutdata))
-            remove_HDF5_element_ptr(file, stroutdata);
-          
-          // Create group if not exists
-          if(!exists_HDF5_element_ptr(file, stroutgroup))
-            file->createGroup(stroutgroup);
-          
+        std::string strdataset = group +"/" + dataset;
+        std::string stroutgroup, stroutdataset, stroutdata;
+        
+        bool bcols, bforce;
+        
+        if(bycols.isNull()){  bcols = true ; }
+        else{  bcols = Rcpp::as<bool>(bycols); }
+        
+        if(outgroup.isNull())  stroutgroup = group ;
+        else    stroutgroup = Rcpp::as<std::string>(outgroup);
+        
+        if(outdataset.isNull())  stroutdataset = dataset ;
+        else    stroutdataset = Rcpp::as<std::string>(outdataset);
+        
+        if(overwrite.isNull()) { bforce = false ; }
+        else { bforce = Rcpp::as<bool>(overwrite); }
+        
+        stroutdata = stroutgroup + "/" + stroutdataset;
+        
+        dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        dsIn->openDataset();
+        
+        if( dsIn->getDatasetptr() != nullptr ) {
+            dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, stroutgroup, stroutdataset, bforce);
+            Rcpp_Impute_snps_hdf5( dsIn, dsOut, bcols, stroutdataset, threads);
+            delete dsOut; dsOut = nullptr;
         } else {
-          stroutdata = "";
+            delete dsIn; dsIn = nullptr;
+            Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5: " << "Error opening dataset";
+            return void();
         }
         
-        Impute_snp_HDF5( file, pdataset, bcols, stroutdata);
+        delete dsIn; dsIn = nullptr;
         
-      }catch(FileIException& error) {
-        pdataset->close(); //.created 20201120 - warning check().//
-        file->close();
-      }
-      
-      
-    } else{
-      //.commented 20201120 - warning check().// pdataset->close();
-      file->close();
-      throw std::range_error("Dataset not exits");  
+    } catch( H5::FileIException& error ){
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (File IException)\n";
+        return void();
+    } catch( H5::DataSetIException& error ) { 
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (DataSet IException)\n";
+        return void();
+    } catch( H5::DataSpaceIException& error ) { 
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (DataSpace IException)\n";
+        return void();
+    } catch( H5::DataTypeIException&    error ) { 
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataType IException)\n";
+        return void();
+    } catch(std::exception &ex) {   
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5: " << ex.what()<<"\n";
+        return void();
+    }  catch (...) {
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (unknown reason)";
+        return void();
     }
     
-    
-  }
-  catch( FileIException& error ) { // catch failure caused by the H5File operations
-    //.commented 20201120 - warning check().// pdataset->close();
-    file->close();
-    ::Rf_error( "c++ exception (File IException)" );
+    // Rcpp::Rcout<<"SNPs with missing values has been imputed\n";
     return void();
-  }
-  
-  pdataset->close();
-  file->close();
-  Rcpp::Rcout<<"SNPs with missing values has been imputed\n";
-  return void();
-  
+    
 }
 
-
-
-
-/***R
-
-*/

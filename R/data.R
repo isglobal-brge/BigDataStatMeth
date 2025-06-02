@@ -32,4 +32,15 @@
 #' data(miRNA)
 "miRNA"
 
+#' Dataset colesterol
+#'
+#' This dataset contains a dummy data for import dataset example
+#'
+#' @name colesterol
+#'
+#' @section colesterol.csv:
+#'
+#' This data is used in bdImportTextFile_hdf5() function.
+NULL
+
 NULL

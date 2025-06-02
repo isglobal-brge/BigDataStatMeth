@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdcomputeMatrixVector_hdf5}
 \alias{bdcomputeMatrixVector_hdf5}
-\title{Apply vector calculus to a dataset in hdf5 file}
+\title{Apply Vector Operations to HDF5 Matrix}
 \usage{
 bdcomputeMatrixVector_hdf5(
   filename,
@@ -14,79 +14,143 @@ bdcomputeMatrixVector_hdf5(
   func,
   outgroup = NULL,
   byrows = NULL,
-  force = FALSE
+  paral = NULL,
+  threads = NULL,
+  overwrite = FALSE
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to apply weights is located}
+\item{filename}{String. Path to the HDF5 file containing the datasets.}
 
-\item{group}{string with the path inside the hdf5 data file where matrix 
-is located}
+\item{group}{String. Path to the group containing the matrix dataset.}
 
-\item{dataset}{string with the matrix name}
+\item{dataset}{String. Name of the matrix dataset.}
 
-\item{vectorgroup}{string with the path inside the hdf5 data file where 
-vector is located}
+\item{vectorgroup}{String. Path to the group containing the vector dataset.}
 
-\item{vectordataset}{string with the vector name}
+\item{vectordataset}{String. Name of the vector dataset.}
 
-\item{outdataset}{character array with output dataset name where we want to 
-store results}
+\item{outdataset}{String. Name for the output dataset.}
 
-\item{func, }{Character array, function to be applyed : 
-"+" : to sum a vector to a matrix dataset by columns or rows
-"-" : to substract a vector to a matrix dataset by columns or rows
-"*" : to multiply a vector to a matrix dataset by columns or rows
-"/" : to divide a vector to a matrix dataset by columns or rows}
+\item{func}{String. Operation to perform: "+", "-", "*", or "/".}
 
-\item{outgroup}{optional, character array with output group name where we 
-want to store results if not provided then results are stored in the same 
-group as original dataset}
+\item{outgroup}{Optional string. Output group path. If not provided,
+results are stored in the same group as the input matrix.}
 
-\item{byrows}{logical (default = FALSE). By default weights are applied by 
-columns but if byrows=TRUE then weights are applied by rows}
+\item{byrows}{Logical. If TRUE, applies operation by rows. If FALSE (default),
+applies operation by columns.}
 
-\item{force, }{boolean if true, previous results in same location inside 
-hdf5 will be overwritten.}
+\item{paral}{Logical. If TRUE, enables parallel processing.}
+
+\item{threads}{Integer. Number of threads for parallel processing.
+Ignored if paral is FALSE.}
+
+\item{overwrite}{Logical. If TRUE, allows overwriting existing datasets.}
 }
 \value{
-file with weighted dataset
+No direct return value. Results are written to the HDF5 file in the
+specified location.
 }
 \description{
-This function applies a calculus with a vector to a matrix. Multiplies, 
-sums, substract or divide each matrix row/column from a hdf5 dataset 
-using a vector
+Performs element-wise operations between a matrix and a vector stored in HDF5
+format. The function supports addition, subtraction, multiplication, and division
+operations, with options for row-wise or column-wise application and parallel
+processing.
+}
+\details{
+This function provides a flexible interface for performing element-wise operations
+between matrices and vectors stored in HDF5 format. It supports:
+\itemize{
+\item Four basic operations:
+\itemize{
+\item Addition (+): Adds vector elements to matrix rows/columns
+\item Subtraction (-): Subtracts vector elements from matrix rows/columns
+\item Multiplication (*): Multiplies matrix rows/columns by vector elements
+\item Division (/): Divides matrix rows/columns by vector elements
+}
+\item Processing options:
+\itemize{
+\item Row-wise or column-wise operations
+\item Parallel processing for improved performance
+\item Configurable thread count for parallel execution
+\item Memory-efficient processing for large datasets
+}
+}
+
+The function performs extensive validation:
+\itemize{
+\item Checks matrix and vector dimensions for compatibility
+\item Validates operation type
+\item Verifies HDF5 file and dataset accessibility
+\item Ensures proper data structures (matrix vs. vector)
+}
 }
 \examples{
 library(BigDataStatMeth)
-   
-# Prepare data and functions
+    
+# Create test data
 set.seed(123)
 Y <- matrix(rnorm(100), 10, 10)
 X <- matrix(rnorm(10), 10, 1)
-       
-# Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test.hdf5", Y, "data", "Y", force = TRUE)
-bdAdd_hdf5_matrix( X, "test.hdf5",  "data", "X", force = TRUE)
-           
-bdcomputeMatrixVector_hdf5("test.hdf5", 
-                          group = "data", dataset = "Y",
-                          vectorgroup = "data", vectordataset = "X", 
-                          outdataset = "ProdComputed", 
-                          func = "*",
-                          byrows = TRUE, force = TRUE)
-   
-bdcomputeMatrixVector_hdf5("test.hdf5", 
-                          group = "data", dataset = "Y",
-                          vectorgroup = "data", vectordataset = "X", 
-                          outdataset = "SumComputed", 
-                          func = "-",
-                          byrows = TRUE, force = TRUE)
-   
-bdcomputeMatrixVector_hdf5("test.hdf5", 
-                          group = "data", dataset = "Y",
-                          vectorgroup = "data", vectordataset = "X", 
-                          outdataset = "SubsComputed", 
-                          func = "-",
-                          byrows = FALSE, force = TRUE)
+        
+# Save to HDF5
+bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y",
+                     overwriteFile = TRUE,
+                     overwriteDataset = FALSE,
+                     unlimited = FALSE)
+bdCreate_hdf5_matrix("test.hdf5", X, "data", "X",
+                     overwriteFile = FALSE,
+                     overwriteDataset = FALSE,
+                     unlimited = FALSE)
+            
+# Multiply matrix rows by vector
+bdcomputeMatrixVector_hdf5("test.hdf5",
+                           group = "data",
+                           dataset = "Y",
+                           vectorgroup = "data",
+                           vectordataset = "X",
+                           outdataset = "ProdComputed",
+                           func = "*",
+                           byrows = TRUE,
+                           overwrite = TRUE)
+    
+# Subtract vector from matrix rows
+bdcomputeMatrixVector_hdf5("test.hdf5",
+                           group = "data",
+                           dataset = "Y",
+                           vectorgroup = "data",
+                           vectordataset = "X",
+                           outdataset = "SubsComputed",
+                           func = "-",
+                           byrows = TRUE,
+                           overwrite = TRUE)
+    
+# Subtract vector from matrix columns
+bdcomputeMatrixVector_hdf5("test.hdf5",
+                           group = "data",
+                           dataset = "Y",
+                           vectorgroup = "data",
+                           vectordataset = "X",
+                           outdataset = "SubsComputed",
+                           func = "-",
+                           byrows = FALSE,
+                           overwrite = TRUE)
+                           
+# Cleanup
+if (file.exists("test.hdf5")) {
+  file.remove("test.hdf5")
+}
+
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+\item Eddelbuettel, D., & François, R. (2011). Rcpp: Seamless R and C++
+Integration. Journal of Statistical Software, 40(8), 1-18.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+}
 }

@@ -7,8 +7,8 @@
 \format{
 Dataframe with 21 samples and 537 variables
 \describe{
-  \item{columns}{variables}
-  \item{rows}{samples}
+\item{columns}{variables}
+\item{rows}{samples}
 }
 }
 \usage{

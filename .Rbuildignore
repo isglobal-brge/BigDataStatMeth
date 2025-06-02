@@ -1,2 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^test\.*
+^Analyses\.*
+^pkg\.*
+^.*\.hdf5$
+^\.github$

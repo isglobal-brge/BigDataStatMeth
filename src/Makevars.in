@@ -1,4 +1,7 @@
-PKG_CXXFLAGS = @PKG_CFLAGS@ @openmp_cflags@ @zlib_cflags@
+# Register where the header files for the package can be found
+PKG_CXXFLAGS=-I../inst/include/
+
+PKG_CXXFLAGS += @PKG_CFLAGS@ @openmp_cflags@ @zlib_cflags@
 PKG_LIBS = @PKG_LIBS@ @openmp_cflags@ @zlib_libs@
 # See WRE $1.2.1.1. But retain user supplied PKG_* too, #4664.
 # WRE states ($1.6) that += isn't portable and that we aren't allowed to use it.
@@ -12,11 +15,11 @@ PKG_LIBS = @PKG_LIBS@ @openmp_cflags@ @zlib_libs@
 ## no user-facing library. The include path to headers is already set by R.
 #PKG_LIBS = 
 
-# RcppParallel
-PKG_LIBS = $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
+# ..# # RcppParallel
+# ..# PKG_LIBS = $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
 
 # OpenMP
-PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) 
+PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) -g3 # -O2 -Wall
 PKG_LIBS += $(SHLIB_OPENMP_CXXFLAGS)
 
 # Blas i Lapack
@@ -29,6 +32,9 @@ PKG_LIBS += $(RHDF5_LIBS)
 
 ## With R 3.1.0 or later, you can uncomment the following line to tell R to 
 ## enable compilation with C++11 (or even C++14) where available
-#..#CXXFLAGS = -g3 -O3 -Wall
-# CXXFLAGS += -g3 -O3 -std=c++11 -Wall
-CXX_STD = CXX11
+
+CCACHE=ccache
+CXX_STD = $(CCACHE) CXX17
+
+# Optional: safe compiler-specific additions (commented by default)
+# PKG_CXXFLAGS += -g3 -O3 -std=c++17 -Wall

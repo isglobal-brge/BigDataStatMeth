@@ -2,32 +2,93 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdblockmult_sparse_hdf5}
 \alias{bdblockmult_sparse_hdf5}
-\title{Block matrix multiplication}
+\title{Block matrix multiplication for sparse matrices}
 \usage{
-bdblockmult_sparse_hdf5(filename, group, A, B, outgroup = NULL)
+bdblockmult_sparse_hdf5(
+  filename,
+  group,
+  A,
+  B,
+  groupB = NULL,
+  block_size = NULL,
+  mixblock_size = NULL,
+  paral = NULL,
+  threads = NULL,
+  outgroup = NULL,
+  outdataset = NULL,
+  overwrite = NULL
+)
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{String indicating the HDF5 file path}
 
-\item{group}{string Matrix}
+\item{group}{String indicating the group path for matrix A}
 
-\item{A, }{string with dataset name where matrix is stored}
+\item{A}{String specifying the dataset name for matrix A}
 
-\item{B, }{string with dataset name where matrix is stored}
+\item{B}{String specifying the dataset name for matrix B}
 
-\item{outgroup}{string with de group name under the matrix will be stored}
+\item{groupB}{Optional string indicating group path for matrix B.
+If NULL, uses same group as A}
+
+\item{block_size}{Optional integer specifying block size for processing.
+If NULL, automatically determined based on matrix dimensions}
+
+\item{mixblock_size}{Optional integer for memory block size in parallel processing}
+
+\item{paral}{Optional boolean indicating whether to use parallel processing.
+Default is false}
+
+\item{threads}{Optional integer specifying number of threads for parallel processing.
+If NULL, uses maximum available threads}
+
+\item{outgroup}{Optional string specifying output group.
+Default is "OUTPUT"}
+
+\item{outdataset}{Optional string specifying output dataset name.
+Default is "A_x_B"}
+
+\item{overwrite}{Optional boolean indicating whether to overwrite existing datasets.
+Default is false}
 }
 \value{
-list with filename and the group and dataset name under the results are stored
+Modifies the HDF5 file in place, adding the multiplication result
 }
 \description{
-This function performs a block matrix-matrix multiplication with numeric matrix
+Performs optimized block-wise matrix multiplication for sparse matrices stored
+in HDF5 format. The implementation is specifically designed to handle large
+sparse matrices efficiently through block operations and parallel processing.
+}
+\details{
+The function implements optimized sparse matrix multiplication through:
+\itemize{
+\item Block-wise processing to manage memory usage
+\item Automatic block size optimization
+\item Parallel processing support
+\item Efficient sparse matrix storage
+}
+
+Block size optimization considers:
+\itemize{
+\item Available system memory
+\item Matrix dimensions and sparsity
+\item Parallel processing requirements
+}
+
+Memory efficiency is achieved through:
+\itemize{
+\item Sparse matrix storage format
+\item Block-wise processing
+\item Minimal temporary storage
+\item Proper resource cleanup
+}
 }
 \examples{
-
+\dontrun{
 library(Matrix)
 library(BigDataStatMeth)
 
+# Create sparse test matrices
 k <- 1e3
 set.seed(1)
 x_sparse <- sparseMatrix(
@@ -42,18 +103,15 @@ y_sparse <- sparseMatrix(
     x = rnorm(n = k)
 )
 
-if( isTRUE(file.exists('BasicMatVect.hdf5'))) {
-     file.remove('BasicMatVect.hdf5')
-}
-bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
-bdAdd_hdf5_matrix(as.matrix(y_sparse), "BasicMatVect.hdf5", "SPARSE", "y_sparse")
+# Save to HDF5
+bdCreate_hdf5_matrix("test.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
+bdCreate_hdf5_matrix("test.hdf5", as.matrix(y_sparse), "SPARSE", "y_sparse")
 
-d <- bdblockmult_sparse_hdf5("BasicMatVect.hdf5", "SPARSE", "x_sparse", "y_sparse")
-
-# Remove file (used as example)
-if (file.exists("BasicMatVect.hdf5")) {
-  # Delete file if it exist
-  file.remove("BasicMatVect.hdf5")
+# Perform multiplication
+bdblockmult_sparse_hdf5("test.hdf5", "SPARSE", "x_sparse", "y_sparse",
+                        block_size = 1024,
+                        paral = TRUE,
+                        threads = 4)
 }
 
 }

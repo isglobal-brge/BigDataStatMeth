@@ -1,348 +1,250 @@
-#include "include/hdf5_blockCrossprod.h"
+/**
+ * @file hdf5_blockCrossprod.cpp
+ * @brief Block-wise cross product operations for HDF5 matrices
+ * 
+ * This file implements efficient block-wise cross product operations for large
+ * matrices stored in HDF5 format. It supports both single-matrix operations
+ * (A^t * A) and two-matrix operations (A^t * B) with optimizations for memory
+ * usage and parallel processing.
+ * 
+ * Key features:
+ * - Block-wise matrix multiplication
+ * - Parallel processing support
+ * - Memory-efficient operations
+ * - Flexible output options
+ * - Automatic block size optimization
+ * 
+ * The implementation focuses on:
+ * - Minimizing memory usage for large matrices
+ * - Optimizing performance through block operations
+ * - Supporting parallel computation
+ * - Providing comprehensive error handling
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
 
+#include <BigDataStatMeth.hpp>
+// #include "hdf5Algebra/crossprod.hpp"
+// #include "Utilities/Utilities.hpp"
 
-
-// Working directly with C-matrix in hdf5 file
-// If option paral·lel is enabled, this function loads hdf5 read blocks
-// of medium size into memory and calculates the multiplication of blocks
-// by applying the parallel algorithm Bblock_matrix_mul_parallel (in-memory process)
-// browmajor : if = true, indicates that R data is stored in hdf5 as row major (default in hdf5)
-//             else, indicates that R data is stored in hdf5 as column major
-int hdf5_block_matrix_crossprod_hdf5( std::string matA, IntegerVector sizeA, 
-                                      std::string matB, IntegerVector sizeB, 
-                                      int hdf5_block,
-                                      std::string filename, 
-                                      std::string strsubgroupIN, std::string strsubgroupINB, 
-                                      std::string strsubgroupOUT, 
-                                      int mem_block_size, bool bparal, bool browmajor, 
-                                      Rcpp::Nullable<int> threads  = R_NilValue)
-{
-  
-  int N = sizeA[0];
-  int K = sizeA[1];
-  
-  int M = sizeB[0];
-  int L = sizeB[1];
-  
-  IntegerVector stride = {1,1};
-  IntegerVector block = {1,1};
-  
-  if( K == L)
-  {
-    
-    int isize = hdf5_block + 1;
-    int ksize = hdf5_block + 1;
-    int jsize = hdf5_block + 1;
-    
-    IntegerVector stride = IntegerVector::create(1, 1);
-    IntegerVector block = IntegerVector::create(1, 1); 
-
-    // Create an empty dataset for C-matrix into hdf5 file
-    //.Works OK - trans.// create_HDF5_dataset( filename, strsubgroupOUT + "CrossProd_" + matA + "x" + matB, N, M, "real");
-    create_HDF5_dataset( filename, strsubgroupOUT + "CrossProd_" + matA + "x" + matB, M, N, "real");
-    
-    // Open file and get dataset
-    H5File* file = new H5File( filename, H5F_ACC_RDWR );
-    
-    DataSet* datasetA = new DataSet(file->openDataSet(strsubgroupIN + matA));
-    DataSet* datasetB = new DataSet(file->openDataSet(strsubgroupINB + matB));
-    DataSet* datasetC = new DataSet(file->openDataSet(strsubgroupOUT + "CrossProd_" + matA + "x" + matB));
-    
-    // Això haurien de ser les columnes de la matriu i no les files com ara....
-    for (int ii = 0; ii < N; ii += hdf5_block)
-    {
-      
-      if( ii + hdf5_block > N ) isize = N - ii;
-      // Això haurien de ser files i no per columnes
-      for (int jj = 0; jj < M; jj += hdf5_block)
-      {
-        
-        if( jj + hdf5_block > M) jsize = M - jj;
-        
-        for(int kk = 0; kk < K; kk += hdf5_block)
-        {
-          if( kk + hdf5_block > K ) ksize = K - kk;
-          
-          
-          // Get blocks from hdf5 file
-          Eigen::MatrixXd A = GetCurrentBlock_hdf5( file, datasetA, ii, kk,
-                                                    std::min(hdf5_block,isize),std::min(hdf5_block,ksize));
-          
-          Eigen::MatrixXd B = GetCurrentBlock_hdf5_Original( file, datasetB, jj, kk, 
-                                                    std::min(hdf5_block,jsize),std::min(hdf5_block,ksize));
-
-          //.Works OK - trans.// Eigen::MatrixXd C = GetCurrentBlock_hdf5( file, datasetC, ii, jj, 
-          //.Works OK - trans.//                                           std::min(hdf5_block,isize),std::min(hdf5_block,jsize));
-          Eigen::MatrixXd C = GetCurrentBlock_hdf5( file, datasetC, jj, ii, 
-                                                    std::min(hdf5_block,jsize),std::min(hdf5_block,isize));
-          
-          C.transposeInPlace();
-
-          if( bparal == false)
-            C = C + A*B;
-          else
-            C = C + Bblock_matrix_mul_parallel(A, B, mem_block_size, threads);
-          
-          //.Works OK - trans.// IntegerVector count = {std::min(hdf5_block,isize), std::min(hdf5_block,jsize)};
-          //.Works OK - trans.// IntegerVector offset = {ii,jj};
-          IntegerVector count = {std::min(hdf5_block,jsize), std::min(hdf5_block,isize)};
-          IntegerVector offset = {jj,ii};
-          
-          //.Works OK - trans.// write_HDF5_matrix_subset_v2( file, datasetC, offset, count, stride, block, Rcpp::wrap(C));
-          write_HDF5_matrix_subset_v2( file, datasetC, offset, count, stride, block, Rcpp::wrap(C.transpose()));
-          
-          if( kk + hdf5_block > K ) ksize = hdf5_block + 1;
-        }
-        
-        if( jj + hdf5_block > M ) jsize = hdf5_block + 1;
-      }
-      
-      if( ii + hdf5_block > N ) isize = hdf5_block + 1;
-    }
-    
-    datasetA->close();
-    delete(datasetA);
-    datasetB->close();
-    delete(datasetB);
-    datasetC->close();
-    delete(datasetC);
-    file->close();
-    delete(file);
-    
-    return(0);
-  } else {
-    throw std::range_error("non-conformable arguments");
-  }
-}
-
-
-
-
+/**
+ * @brief Compute cross product of HDF5 matrices
+ *
+ * @details Performs optimized cross product operations on matrices stored in HDF5 format.
+ * For a single matrix A, computes A^t * A. For two matrices A and B, computes
+ * A^t * B. Uses block-wise processing for memory efficiency.
+ *
+ * Block-wise processing features:
+ * - Automatic block size optimization
+ * - Memory-efficient operations
+ * - Parallel computation support
+ * - Cache-friendly algorithms
+ *
+ * @param filename [in] HDF5 file path
+ * @param group [in] Input group containing matrix A
+ * @param A [in] Dataset name for matrix A
+ * @param B [in] Optional dataset name for matrix B
+ * @param groupB [in] Optional group containing matrix B
+ * @param block_size [in] Block size for processing
+ * @param mixblock_size [in] Memory block size for parallel processing
+ * @param paral [in] Whether to use parallel processing
+ * @param threads [in] Number of threads for parallel processing
+ * @param outgroup [in] Output group name
+ * @param outdataset [in] Output dataset name
+ * @param overwrite [in] Whether to overwrite existing datasets
+ *
+ * @return void
+ *
+ * @throws H5::FileIException if file operations fail
+ * @throws H5::DataSetIException if dataset operations fail
+ * @throws std::exception for other errors
+ *
+ * @note Performance significantly improves with appropriate block sizes and parallel processing
+ * @see crossprod()
+ */
 
 //' Crossprod with hdf5 matrix
 //' 
-//' This function performs the crossprod from a matrix inside and hdf5 data file
+//' Performs optimized cross product operations on matrices stored in HDF5 format.
+//' For a single matrix A, computes A^t * A. For two matrices A and B, computes
+//' A^t * B. Uses block-wise processing for memory efficiency.
 //' 
-//' @param filename string file name where dataset to normalize is stored
-//' @param group, string, group name where dataset A is stored
-//' @param A string name inside HDF5 file
-//' @param groupB, string, group name where dataset b is stored
-//' @param B string, dataset name for matrix B inside HDF5 file
-//' @param block_size (optional, defalut = 128) block size to make matrix multiplication, if `block_size = 1` no block size is applied (size 1 = 1 element per block)
-//' @param paral, (optional, default = TRUE) if paral = TRUE performs parallel computation else performs seria computation
-//' @param threads (optional) only if bparal = true, number of concurrent threads in parallelization if threads is null then threads =  maximum number of threads available
-//' @param mixblock_size (optional) only for debug pourpose
-//' @param outgroup (optional) group name to store results from Crossprod inside hdf5 data file
+//' @param filename String indicating the HDF5 file path
+//' @param group String indicating the input group containing matrix A
+//' @param A String specifying the dataset name for matrix A
+//' @param B Optional string specifying dataset name for matrix B.
+//'        If NULL, performs A^t * A
+//' @param groupB Optional string indicating group containing matrix B.
+//'        If NULL, uses same group as A
+//' @param block_size Optional integer specifying the block size for processing.
+//'        Default is automatically determined based on matrix dimensions
+//' @param mixblock_size Optional integer for memory block size in parallel processing
+//' @param paral Optional boolean indicating whether to use parallel processing.
+//'        Default is false
+//' @param threads Optional integer specifying number of threads for parallel processing.
+//'        If NULL, uses maximum available threads
+//' @param outgroup Optional string specifying output group.
+//'        Default is "OUTPUT"
+//' @param outdataset Optional string specifying output dataset name.
+//'        Default is "CrossProd_A_x_B"
+//' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+//'        Default is false
+//' 
+//' @return Modifies the HDF5 file in place, adding the cross product result
+//' 
+//' @details
+//' The function implements block-wise matrix multiplication to handle large matrices
+//' efficiently. Block size is automatically optimized based on:
+//' - Available memory
+//' - Matrix dimensions
+//' - Whether parallel processing is enabled
+//' 
+//' For parallel processing:
+//' - Uses OpenMP for thread management
+//' - Implements cache-friendly block operations
+//' - Provides automatic thread count optimization
+//' 
+//' Memory efficiency is achieved through:
+//' - Block-wise reading and writing
+//' - Minimal temporary storage
+//' - Proper resource cleanup
+//' 
 //' @examples
-//'   
+//' \dontrun{
 //'   library(BigDataStatMeth)
 //'   library(rhdf5)
-//'      
-//'   matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-//'   matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
-//'                    42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
 //'   
-//'   bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-//'   bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+//'   # Create test matrix
+//'   N = 1000
+//'   M = 1000
+//'   set.seed(555)
+//'   a <- matrix(rnorm(N*M), N, M)
 //'   
-//'   res <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT","matA", block_size = 3)
-//'   res2 <- bdCrossprod_hdf5("BasicMatVect.hdf5", "INPUT",
-//'                            "matA", "INPUT","matB", block_size = 3)
+//'   # Save to HDF5
+//'   bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A", overwriteFile = TRUE)
 //'   
-//'   # Examine hierarchy before open file
-//'   h5ls("BasicMatVect.hdf5")
-//'   
-//'   # Open file
-//'   h5fdelay = H5Fopen("BasicMatVect.hdf5")
-//'   
-//'   # Show hdf5 hierarchy (groups)
-//'   h5fdelay
-//'   
-//'   res <- h5fdelay$OUTPUT$CrossProd_matAxmatA
-//'   res2 <- h5fdelay$OUTPUT$CrossProd_matAxmatB
-//'   
-//'   all.equal(crossprod(matA), res)
-//'   all.equal(crossprod(matA,matB), res2)
-//'   
-//'   # Close hdf5 data file
-//'   H5Fclose(h5fdelay)
-//'   
-//'   # Remove file (used as example)
-//'   if (file.exists("BasicMatVect.hdf5")) {
-//'     # Delete file if it exist
-//'     file.remove("BasicMatVect.hdf5")
-//'   }
-//'   
-//' @return If all process is ok, returns a list with : 
-//' \itemize{
-//'   \item{"filename"}{ File name where results are storesd }
-//'   \item{"dataset"}{ route to results inside hdf5 data file }
+//'   # Compute cross product
+//'   bdCrossprod_hdf5("test.hdf5", "INPUT", "A", 
+//'                    outgroup = "OUTPUT",
+//'                    outdataset = "result",
+//'                    block_size = 1024,
+//'                    paral = TRUE,
+//'                    threads = 4)
 //' }
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdCrossprod_hdf5(std::string filename, const std::string group,
-                               std::string A, 
-                               Rcpp::Nullable<std::string> groupB = R_NilValue, 
-                               Rcpp::Nullable<std::string>  B = R_NilValue, 
-                               Rcpp::Nullable<int> block_size = R_NilValue, 
-                               Rcpp::Nullable<bool> paral = R_NilValue,
-                               Rcpp::Nullable<int> threads = R_NilValue,
-                               Rcpp::Nullable<double> mixblock_size = R_NilValue,
-                               Rcpp::Nullable<std::string> outgroup = R_NilValue)
+Rcpp::List bdCrossprod_hdf5( std::string filename, 
+                             std::string group, 
+                             std::string A, 
+                             Rcpp::Nullable<std::string> B = R_NilValue, 
+                             Rcpp::Nullable<std::string> groupB = R_NilValue, 
+                             Rcpp::Nullable<int> block_size = R_NilValue,
+                             Rcpp::Nullable<int> mixblock_size = R_NilValue,
+                             Rcpp::Nullable<bool> paral = R_NilValue,
+                             Rcpp::Nullable<int> threads = R_NilValue,
+                             Rcpp::Nullable<std::string> outgroup = R_NilValue,
+                             Rcpp::Nullable<std::string> outdataset = R_NilValue,
+                             Rcpp::Nullable<bool> overwrite = R_NilValue )                                
 {
-
-////        t(matA) %*% matA
-
-  int iblock_size, res;
-  bool bparal, bexistgroup;// = Rcpp::as<double>;
-  Eigen::MatrixXd C;
-  std::string matB;
-  std::string strsubgroupIn, strsubgroupInB;
-  
-  
-  H5File* file = nullptr;
-  
-  std::string strsubgroupOut;
-
-  IntegerVector dsizeA;
-  
-  // hdf5 parameters
-  try{
     
-    H5::Exception::dontPrint();  
+   
     
-    if( outgroup.isNull()) {
-      strsubgroupOut = "OUTPUT/";
-    } else {
-      strsubgroupOut = Rcpp::as<std::string> (outgroup) + "/";
+    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsC = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
+    
+    try {
+        
+        H5::Exception::dontPrint();  
+
+        int iblock_size;
+        int iblockfactor = 2;
+        bool bparal, bforce;
+
+        std::string strsubgroupOut, 
+        strdatasetOut, 
+        strsubgroupIn,
+        strsubgroupInB;
+        std::string matB;
+        
+        strsubgroupIn = group;
+        
+        if( outgroup.isNull()) { strsubgroupOut = "OUTPUT";
+        } else { strsubgroupOut = Rcpp::as<std::string> (outgroup); }
+        
+        if(B.isNotNull()){ matB =  Rcpp::as<std::string> (B) ; } 
+        else { matB =  A; }
+        
+        if(groupB.isNotNull()){ strsubgroupInB =  Rcpp::as<std::string> (groupB) ; } 
+        else { strsubgroupInB =  group; }
+        
+        if (paral.isNull()) { bparal = false; } 
+        else { bparal = Rcpp::as<bool> (paral); }
+        
+        if (overwrite.isNull()) { bforce = false; } 
+        else { bforce = Rcpp::as<bool> (overwrite); }
+        
+        if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
+        else { strdatasetOut = "CrossProd_" + A + "_x_" + matB; }
+        
+        
+        dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        dsA->openDataset();
+        dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, matB, false);
+        dsB->openDataset();
+        
+        if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
+            
+            dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+            
+            iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
+            
+            if(bparal == true) { // parallel
+                
+                int memory_block; 
+                if(mixblock_size.isNotNull()) {
+                    memory_block = Rcpp::as<int> (mixblock_size);
+                } else {
+                    memory_block = iblock_size/2;
+                }
+                
+                dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, iblock_size, memory_block, bparal, true, threads);
+                
+            } else if (bparal == false) { // Not parallel
+                dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
+            }
+            
+            lst_return["fn"] = filename;
+            lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
+            
+            delete dsC; dsC = nullptr;
+        }
+        
+        delete dsA; dsA = nullptr;
+        delete dsB; dsB = nullptr;
+        
+    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        checkClose_file(dsA, dsB, dsC);
+        Rcpp::Rcerr<<"c++ c++ exception bdCrossprod_hdf5 (File IException)";
+    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        checkClose_file(dsA, dsB, dsC);
+        Rcpp::Rcerr<<"c++ exception bdCrossprod_hdf5 (DataSet IException)";
+    } catch(std::exception &ex) {
+        checkClose_file(dsA, dsB, dsC);
+        Rcpp::Rcerr << "c++ exception blockmult_hdf5: " << ex.what();
+    } catch (...) {
+        checkClose_file(dsA, dsB, dsC);
+        Rcpp::Rcerr<<"C++ exception bdCrossprod_hdf5 (unknown reason)";
     }
     
-    //..// std::string strsubgroup = "Base.matrices/";
-    strsubgroupIn = group + "/";
-
-    // Open file and get dataset
-    file = new H5File( filename, H5F_ACC_RDONLY );
+    // return List::create(Named("filename") = filename,
+    //                     Named("dataset") = strsubgroupOut + "/" + strdatasetOut);
+    // return void();
+    return(lst_return);
     
-    DataSet dsA = file->openDataSet(strsubgroupIn + A);
-    IntegerVector dsizeA = get_HDF5_dataset_size(dsA);
-    bexistgroup = exists_HDF5_element_ptr(file,strsubgroupOut );
-    
-    dsA.close();
-    file->close();
-    delete(file);
-    
-    DataSet dsB;
-    IntegerVector dsizeB;
-    
-    
-    if( groupB.isNull()) {
-      strsubgroupInB = group + "/";
-      dsizeB = dsizeA;
-      matB =  A;
-      
-    } else {
-      
-      strsubgroupInB = as<std::string>(groupB) + "/";
-      //std::string strgroup = as<std::string>(groupB) + "/";
-      matB = as<std::string>(B);
-      
-      // Open file and get dataset
-      file = new H5File( filename, H5F_ACC_RDONLY );
-      
-      DataSet dsB = file->openDataSet(strsubgroupInB + matB);
-      dsizeB = get_HDF5_dataset_size(dsB);
-      
-      dsB.close();
-      file->close();
-      delete(file);
-
-    }
-    
-      
-    if(block_size.isNotNull())
-    {
-      iblock_size = Rcpp::as<int> (block_size);
-    } else {
-      iblock_size =  std::min(std::min(dsizeA[0], dsizeA[1]), std::min(dsizeB[0], dsizeB[1]));
-      
-      if (iblock_size>1024) {
-        iblock_size = 1024;
-      }
-    }
-    
-    if( paral.isNull()) {
-      bparal = false;
-    } else {
-      bparal = Rcpp::as<bool> (paral);
-    }
-    
-    if(!bexistgroup) {
-      res = create_HDF5_group(filename, strsubgroupOut );
-    }
-
-    if(bparal == true)
-    {
-      //.. TODO : Work with parallel hdf5 access
-      //..// C = hdf5_block_matrix_mul_parallel( dsizeA, dsizeB, iblock_size, filename, strsubgroup, threads );
-      
-      int memory_block; // Block size to apply to read hdf5 data to paralelize calculus
-      
-      if(mixblock_size.isNotNull())
-        memory_block = Rcpp::as<int> (mixblock_size);
-      else 
-        memory_block = 128;
-      
-
-      // Test mix versión read block from file and calculate multiplication in memory (with paral·lel algorithm)
-      hdf5_block_matrix_crossprod_hdf5(A, dsizeA, matB, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupInB, strsubgroupOut, 
-                                             memory_block, bparal,true, threads);
-      
-    }else if (bparal == false)
-    {
-      
-      // Not parallel
-      hdf5_block_matrix_crossprod_hdf5(A, dsizeA, matB, dsizeB, iblock_size, filename, strsubgroupIn, strsubgroupInB, strsubgroupOut, 
-                                       0, bparal,true, threads);
-      
-    }
-
-  } catch( FileIException& error ) { // catch failure caused by the H5File operations
-    file->close();
-      delete(file);
-    ::Rf_error( "c++ exception Crossprod_hdf5 (File IException)" );
-    return wrap(-1);
-  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-    file->close();
-      delete(file);
-    ::Rf_error( "c++ exception Crossprod_hdf5 (DataSet IException)" );
-    return wrap(-1);
-  } catch(std::exception& ex) {
-      file->close();
-      delete(file);
-    Rcpp::Rcout<< ex.what();
-    return wrap(-1);
-  }
-  
-  
-  //..// return wrap(wrap(C));
-  
-  //..// return(C);
-  std::string strname;
-  
-  if(B.isNull()) {
-    strname = "CrossProd_" + A;
-  } else {
-    strname = "CrossProd_" + A + "x" + as<std::string>(B);
-  }
-  
-  return List::create( Named("filename") = filename,
-                       Named("dataset") = strsubgroupOut + "/" +  strname
-                     );
-  
 }
 
-
-/***R
-
-*/

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdNormalize_hdf5}
 \alias{bdNormalize_hdf5}
-\title{Normalize dataset in hdf5 file}
+\title{Normalize dataset in HDF5 file}
 \usage{
 bdNormalize_hdf5(
   filename,
@@ -12,39 +12,89 @@ bdNormalize_hdf5(
   bscale = NULL,
   byrows = NULL,
   wsize = NULL,
-  force = FALSE
+  overwrite = FALSE
 )
 }
 \arguments{
-\item{filename}{string file name where dataset to normalize is stored}
+\item{filename}{String indicating the HDF5 file path}
 
-\item{group}{string Matrix}
+\item{group}{String specifying the group containing the dataset}
 
-\item{dataset}{string Matrix}
+\item{dataset}{String specifying the dataset name to normalize}
 
-\item{bcenter}{logical (default = TRUE) if TRUE, centering is done by 
-subtracting the column means}
+\item{bcenter}{Optional boolean indicating whether to center the data.
+If TRUE (default), subtracts mean from each column/row}
 
-\item{bscale}{logical (default = TRUE) if TRUE, centering is done by 
-subtracting the column means}
+\item{bscale}{Optional boolean indicating whether to scale the data.
+If TRUE (default), divides by standard deviation}
 
-\item{byrows}{logical (default = FALSE) if TRUE, centering is done by 
-subtracting the rows means, util when working with hdf5 datasets stored 
-in Row Major format.}
+\item{byrows}{Optional boolean indicating whether to operate by rows.
+If TRUE, processes row-wise; if FALSE (default), column-wise}
 
-\item{wsize}{integer (default = 1000), file block size to read to 
-perform normalization}
+\item{wsize}{Optional integer specifying the block size for processing.
+Default is 1000}
 
-\item{force, }{boolean if true, previous results in same location inside 
-hdf5 will be overwritten.}
+\item{overwrite}{Optional boolean indicating whether to overwrite existing datasets.
+Default is false}
 }
 \value{
-file with scaled, centered or scaled and centered dataset
+Modifies the HDF5 file in place, adding:
+- Normalized data under "NORMALIZED/[group]/[dataset]"
+- Mean values under "NORMALIZED/[group]/mean.[dataset]"
+- Standard deviations under "NORMALIZED/[group]/sd.[dataset]"
 }
 \description{
-This function normalize data scaling, centering or scaling and centering 
-in a dataset stored in hdf5 file
+Performs block-wise normalization of datasets stored in HDF5 format through
+centering and/or scaling operations. Supports both row-wise and column-wise
+normalization with memory-efficient block processing.
+}
+\details{
+The function implements block-wise normalization through:
+
+Statistical computations:
+\itemize{
+\item Mean calculation (for centering)
+\item Standard deviation calculation (for scaling)
+\item Efficient block-wise updates
+}
+
+Memory efficiency:
+\itemize{
+\item Block-wise data processing
+\item Minimal temporary storage
+\item Proper resource cleanup
+}
+
+Processing options:
+\itemize{
+\item Row-wise or column-wise operations
+\item Flexible block size selection
+\item Optional centering and scaling
+}
+
+Error handling:
+\itemize{
+\item Input validation
+\item Resource management
+\item Exception handling
+}
 }
 \examples{
-  a = "See vignette"
+\dontrun{
+library(BigDataStatMeth)
+
+# Create test data
+data <- matrix(rnorm(1000*100), 1000, 100)
+
+# Save to HDF5
+bdCreate_hdf5_matrix("test.hdf5", data, "data", "matrix",
+                     overwriteFile = TRUE)
+
+# Normalize data
+bdNormalize_hdf5("test.hdf5", "data", "matrix",
+                 bcenter = TRUE,
+                 bscale = TRUE,
+                 wsize = 1000)
+}
+
 }

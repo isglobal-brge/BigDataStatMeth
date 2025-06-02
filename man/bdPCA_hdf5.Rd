@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdPCA_hdf5}
 \alias{bdPCA_hdf5}
-\title{PCA Descomposition}
+\title{Principal Component Analysis for HDF5-Stored Matrices}
 \usage{
 bdPCA_hdf5(
   filename,
@@ -14,38 +14,118 @@ bdPCA_hdf5(
   k = 2L,
   q = 1L,
   rankthreshold = 0,
-  force = FALSE,
+  SVDgroup = NULL,
+  overwrite = FALSE,
+  method = NULL,
   threads = NULL
 )
 }
 \arguments{
-\item{filename}{string, file name where dataset is stored}
+\item{filename}{Character string. Path to the HDF5 file containing the input matrix.}
 
-\item{group}{string group name  where dataset is stored in file}
+\item{group}{Character string. Path to the group containing the input dataset.}
 
-\item{dataset}{string dataset name with data to perform PCA}
+\item{dataset}{Character string. Name of the input dataset to analyze.}
 
-\item{ncomponents}{integer, number of components to be computed, by default ncomponents = 0, all components are computed}
+\item{ncomponents}{Integer. Number of principal components to compute (default = 0,
+which computes all components).}
 
-\item{bcenter}{logical value if true data is centered to zero}
+\item{bcenter}{Logical. If TRUE, centers the data by subtracting column means.
+Default is FALSE.}
 
-\item{bscale}{logical value, if true data is scaled}
+\item{bscale}{Logical. If TRUE, scales the centered columns by their standard
+deviations (if centered) or root mean square. Default is FALSE.}
 
-\item{k}{number of local SVDs to concatenate at each level, performance parameter}
+\item{k}{Integer. Number of local SVDs to concatenate at each level (default = 2).
+Controls memory usage in block computation.}
 
-\item{q}{number of levels to compute SVD for PCA, performance parameter}
+\item{q}{Integer. Number of levels for SVD computation (default = 1).
+Higher values can improve accuracy but increase computation time.}
 
-\item{rankthreshold}{double, threshold used to determine the range of the array. The matrix rank is equal to the number of
-singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
-changed to an approximation of 0.}
+\item{rankthreshold}{Numeric. Threshold for determining matrix rank (default = 0).
+Must be between 0 and 0.1.}
 
-\item{force}{logical value, if true, the SVD is forced to be computed although the SVD exists}
+\item{SVDgroup}{Character string. Group name where intermediate SVD results are
+stored. If SVD was previously computed, results will be reused from this group.}
 
-\item{threads}{integer number of threads used to run PCA}
+\item{overwrite}{Logical. If TRUE, forces recomputation of SVD even if results exist.}
+
+\item{method}{Character string. Computation method:
+\itemize{
+\item "auto": Automatically selects method based on matrix size
+\item "blocks": Uses block-based computation (for large matrices)
+\item "full": Performs direct computation (for smaller matrices)
+}}
+
+\item{threads}{Integer. Number of threads for parallel computation.}
 }
 \value{
-original file with results in folder PCA/<datasetname>
+No direct return value. Results are written to the HDF5 file in the
+group 'PCA/\code{dataset}' with the following components:
+\itemize{
+\item sdev: Standard deviations of the principal components
+\item rotation: Matrix of variable loadings (eigenvectors)
+\item x: Matrix containing the rotated data (principal components)
+\item center: Column means (if center = TRUE)
+\item scale: Column standard deviations (if scale = TRUE)
+}
 }
 \description{
-Compute PCA
+Performs Principal Component Analysis (PCA) on a large matrix stored in an HDF5 file.
+PCA reduces the dimensionality of the data while preserving as much variance as
+possible. The implementation uses SVD internally for efficient and numerically
+stable computation.
+}
+\details{
+This function implements a scalable PCA algorithm suitable for large matrices
+that may not fit in memory. Key features include:
+\itemize{
+\item Automatic method selection based on matrix size
+\item Block-based computation for large matrices
+\item Optional data preprocessing (centering and scaling)
+\item Parallel processing support
+\item Memory-efficient incremental algorithm
+\item Reuse of existing SVD results
+}
+
+The implementation uses SVD internally and supports two computation methods:
+\itemize{
+\item Full decomposition: Suitable for matrices that fit in memory
+\item Block-based decomposition: For large matrices, uses an incremental algorithm
+}
+}
+\examples{
+\dontrun{
+# Create a sample large matrix in HDF5
+library(rhdf5)
+X <- matrix(rnorm(10000), 1000, 10)
+h5createFile("data.h5")
+h5write(X, "data.h5", "data/matrix")
+
+# Basic PCA with default parameters
+bdPCA_hdf5("data.h5", "data", "matrix")
+
+# PCA with preprocessing and specific number of components
+bdPCA_hdf5("data.h5", "data", "matrix",
+           ncomponents = 3,
+           bcenter = TRUE, bscale = TRUE,
+           method = "blocks",
+           threads = 4)
+}
+
+}
+\references{
+\itemize{
+\item Halko, N., Martinsson, P. G., & Tropp, J. A. (2011). Finding structure with randomness:
+Probabilistic algorithms for constructing approximate matrix decompositions.
+SIAM Review, 53(2), 217-288.
+\item Jolliffe, I. T. (2002). Principal Component Analysis, Second Edition.
+Springer Series in Statistics.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdSVD_hdf5}} for the underlying SVD computation
+\item \code{\link{bdNormalize_hdf5}} for data preprocessing options
+}
 }
