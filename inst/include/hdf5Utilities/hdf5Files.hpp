@@ -359,7 +359,7 @@ private:
         bool is_accessible = false;
         // bool is_open = false;
         // bool is_corrupt = false;
-        bool has_valid_structure = false;
+        // bool has_valid_structure = false;
         std::string error_message = "";
         
         try {
@@ -401,9 +401,9 @@ private:
                         
                         // Get file info to check integrity
                         hsize_t file_size = file->getFileSize();
-                        if (file_size > 0) {
-                            has_valid_structure = true;
-                        }
+                        // if (file_size > 0) {
+                        //     // has_valid_structure = true;
+                        // }
                         
                         root_group.close();
                         
