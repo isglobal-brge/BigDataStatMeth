@@ -1,21 +1,120 @@
-#include "include/hdf5_blockmultSparse.h"
+/**
+ * @file hdf5_blockmultSparse.cpp
+ * @brief Block-wise sparse matrix multiplication for HDF5 datasets
+ * 
+ * This file implements efficient block-wise matrix multiplication operations
+ * specifically optimized for sparse matrices stored in HDF5 format. It provides
+ * memory-efficient processing of large sparse matrices through block operations
+ * and parallel computation support.
+ * 
+ * Key features:
+ * - Sparse matrix multiplication
+ * - Block-wise processing
+ * - Parallel computation support
+ * - Memory optimization
+ * - Automatic block size selection
+ * 
+ * The implementation focuses on:
+ * - Efficient sparse matrix operations
+ * - Memory-efficient block processing
+ * - Parallel computation optimization
+ * - Resource management
+ * - Error handling
+ * 
+ * @note This module is part of the BigDataStatMeth library
+ */
 
+#include <BigDataStatMeth.hpp>
+// #include "hdf5Algebra/multiplicationSparse.hpp"
 
-//' Block matrix multiplication
+/**
+ * @brief Block matrix multiplication for sparse matrices
+ *
+ * @details Performs optimized block-wise matrix multiplication for sparse matrices
+ * stored in HDF5 format. The implementation is specifically designed to handle
+ * large sparse matrices efficiently through block operations and parallel processing.
+ *
+ * Optimization features:
+ * - Sparse matrix storage format
+ * - Block-wise processing
+ * - Parallel computation
+ * - Memory-efficient operations
+ *
+ * @param filename [in] HDF5 file path
+ * @param group [in] Group path for matrix A
+ * @param A [in] Dataset name for matrix A
+ * @param B [in] Dataset name for matrix B
+ * @param groupB [in] Optional group path for matrix B
+ * @param block_size [in] Block size for processing
+ * @param mixblock_size [in] Memory block size for parallel processing
+ * @param paral [in] Whether to use parallel processing
+ * @param threads [in] Number of threads for parallel processing
+ * @param outgroup [in] Output group name
+ * @param outdataset [in] Output dataset name
+ * @param overwrite [in] Whether to overwrite existing datasets
+ *
+ * @return void
+ *
+ * @throws H5::FileIException if file operations fail
+ * @throws H5::DataSetIException if dataset operations fail
+ * @throws std::exception for other errors
+ *
+ * @note Performance significantly improves with appropriate block sizes and parallel processing
+ * @see multiplicationSparse()
+ */
+
+//' Block matrix multiplication for sparse matrices
 //' 
-//' This function performs a block matrix-matrix multiplication with numeric matrix
+//' Performs optimized block-wise matrix multiplication for sparse matrices stored
+//' in HDF5 format. The implementation is specifically designed to handle large
+//' sparse matrices efficiently through block operations and parallel processing.
 //' 
-//' @param filename string file name where dataset to normalize is stored
-//' @param group string Matrix
-//' @param A, string with dataset name where matrix is stored
-//' @param B, string with dataset name where matrix is stored
-//' @param outgroup string with de group name under the matrix will be stored
-//' @return list with filename and the group and dataset name under the results are stored
+//' @param filename String indicating the HDF5 file path
+//' @param group String indicating the group path for matrix A
+//' @param A String specifying the dataset name for matrix A
+//' @param B String specifying the dataset name for matrix B
+//' @param groupB Optional string indicating group path for matrix B.
+//'        If NULL, uses same group as A
+//' @param block_size Optional integer specifying block size for processing.
+//'        If NULL, automatically determined based on matrix dimensions
+//' @param mixblock_size Optional integer for memory block size in parallel processing
+//' @param paral Optional boolean indicating whether to use parallel processing.
+//'        Default is false
+//' @param threads Optional integer specifying number of threads for parallel processing.
+//'        If NULL, uses maximum available threads
+//' @param outgroup Optional string specifying output group.
+//'        Default is "OUTPUT"
+//' @param outdataset Optional string specifying output dataset name.
+//'        Default is "A_x_B"
+//' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+//'        Default is false
+//' 
+//' @return Modifies the HDF5 file in place, adding the multiplication result
+//' 
+//' @details
+//' The function implements optimized sparse matrix multiplication through:
+//' - Block-wise processing to manage memory usage
+//' - Automatic block size optimization
+//' - Parallel processing support
+//' - Efficient sparse matrix storage
+//' 
+//' Block size optimization considers:
+//' - Available system memory
+//' - Matrix dimensions and sparsity
+//' - Parallel processing requirements
+//' 
+//' Memory efficiency is achieved through:
+//' - Sparse matrix storage format
+//' - Block-wise processing
+//' - Minimal temporary storage
+//' - Proper resource cleanup
+//' 
 //' @examples
-//' 
+//' \dontrun{
 //' library(Matrix)
 //' library(BigDataStatMeth)
 //' 
+//' # Create sparse test matrices
 //' k <- 1e3
 //' set.seed(1)
 //' x_sparse <- sparseMatrix(
@@ -23,6 +122,7 @@
 //'     j = sample(x = k, size = k),
 //'     x = rnorm(n = k)
 //' )
+//' 
 //' set.seed(2)
 //' y_sparse <- sparseMatrix(
 //'     i = sample(x = k, size = k),
@@ -30,151 +130,138 @@
 //'     x = rnorm(n = k)
 //' )
 //' 
-//' if( isTRUE(file.exists('BasicMatVect.hdf5'))) {
-//'      file.remove('BasicMatVect.hdf5')
-//' }
-//' bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
-//' bdAdd_hdf5_matrix(as.matrix(y_sparse), "BasicMatVect.hdf5", "SPARSE", "y_sparse")
+//' # Save to HDF5
+//' bdCreate_hdf5_matrix("test.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
+//' bdCreate_hdf5_matrix("test.hdf5", as.matrix(y_sparse), "SPARSE", "y_sparse")
 //' 
-//' d <- bdblockmult_sparse_hdf5("BasicMatVect.hdf5", "SPARSE", "x_sparse", "y_sparse")
-//' 
-//' # Remove file (used as example)
-//' if (file.exists("BasicMatVect.hdf5")) {
-//'   # Delete file if it exist
-//'   file.remove("BasicMatVect.hdf5")
+//' # Perform multiplication
+//' bdblockmult_sparse_hdf5("test.hdf5", "SPARSE", "x_sparse", "y_sparse",
+//'                         block_size = 1024,
+//'                         paral = TRUE,
+//'                         threads = 4)
 //' }
 //' 
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdblockmult_sparse_hdf5(std::string filename, const std::string group, 
-                             std::string A, std::string B,
-                             Rcpp::Nullable<std::string> outgroup = R_NilValue )
+void bdblockmult_sparse_hdf5( std::string filename, std::string group, 
+                          std::string A, std::string B,
+                          Rcpp::Nullable<std::string> groupB = R_NilValue, 
+                          Rcpp::Nullable<int> block_size = R_NilValue,
+                          Rcpp::Nullable<int> mixblock_size = R_NilValue,
+                          Rcpp::Nullable<bool> paral = R_NilValue,
+                          Rcpp::Nullable<int> threads = R_NilValue,
+                          Rcpp::Nullable<std::string> outgroup = R_NilValue,
+                          Rcpp::Nullable<std::string> outdataset = R_NilValue,
+                          Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
-   
-   
-   std::string strsubgroupOut, strdataset;
-   std::string spMatrix("dgCMatrix");
-   
-   bool bexistgroup;
-   bool bsparseA, bsparseB;
-   int res;
-   
-   IntegerVector dsizeA, dsizeB;
-   
-   H5File* file = nullptr;
-   DataSet* dsA = nullptr; 
-   DataSet* dsB = nullptr;
-   
-   
-   
-   try{
-      
-      H5::Exception::dontPrint();  
-      
-      if( outgroup.isNull()) {
-         strsubgroupOut = "OUTPUT";
-      } else {
-         strsubgroupOut = Rcpp::as<std::string> (outgroup);
-      }
-      
-      //..// std::string strsubgroup = "Base.matrices/";
-      std::string strsubgroupIn = group + "/";
-
-      // Open file and get dataset
-      file = new H5File( filename, H5F_ACC_RDWR );
-
-      dsA = new DataSet(file->openDataSet(strsubgroupIn + A));
-      Rcpp::IntegerVector dsizeA = get_HDF5_dataset_size(*dsA);
-
-      dsB = new DataSet(file->openDataSet(strsubgroupIn + B));
-      Rcpp::IntegerVector dsizeB = get_HDF5_dataset_size(*dsB);
-      
      
-      bexistgroup = exists_HDF5_element_ptr(file,strsubgroupOut+ "/" );
-      strdataset = strsubgroupOut+ "/" + A + "_x_" + B;
-      
-      if(bexistgroup) {
-         if(exists_HDF5_element_ptr(file, strdataset )) {
-            remove_HDF5_element_ptr(file, strdataset);
-         }
-      }
-      
-      
+    
+    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsC = nullptr;
+    
+    
+
+    try
+    {
+
      
-
-      Eigen::MatrixXd A = GetCurrentBlock_hdf5_Original(file, dsA, 0, 0, dsizeA[0], dsizeA[1] );
-      Eigen::SparseMatrix<double> A_sp(dsizeA[0], dsizeA[1]);
-      bsparseA = is_sparse(A);
-      
-      if(bsparseA) {
-         A_sp = A.sparseView();
-         A.resize(0,0); }
-      
-      Eigen::MatrixXd B = GetCurrentBlock_hdf5_Original(file, dsB, 0, 0, dsizeB[0], dsizeB[1] );
-      Eigen::SparseMatrix<double> B_sp(dsizeB[0], dsizeB[1]);
-      
-      bsparseB = is_sparse(B);
-      
-      if(bsparseB) {
-         B_sp = B.sparseView();
-         B.resize(0,0); }
-      
-      dsA->close();
-      delete(dsA);
-      dsB->close();
-      delete(dsB);
-      
-      
-      Eigen::SparseMatrix<double> C_sp(dsizeA[0], dsizeB[1]);
-      
-      if(bsparseA || bsparseB) 
-      {
-         
-         if(!bsparseA){
-            Rcpp::Rcout<<"Matrix A isn't a sparse matrix";
-         } 
-         
-         if(!bsparseB){
-            Rcpp::Rcout<<"Matrix B isn't a sparse matrix";
+        H5::Exception::dontPrint();  
+        std::string strdataset;
+        std::string spMatrix("dgCMatrix");
+        
+        int iblock_size;
+        bool bparal, bforce;
+        
+        std::string strsubgroupOut,
+                    strdatasetOut, 
+                    strsubgroupIn,
+                    strsubgroupInB;
+        
+        int iblockfactor = 2;
+        
+        strsubgroupIn = group;
+        
+        if( outgroup.isNull()) { strsubgroupOut = "OUTPUT";
+        } else { strsubgroupOut = Rcpp::as<std::string> (outgroup); }
+        
+        if(groupB.isNotNull()){ strsubgroupInB =  Rcpp::as<std::string> (groupB) ; } 
+        else { strsubgroupInB =  group; }
+        
+        if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
+        else { strdatasetOut =  A + "_x_" + B; }
+        
+        if (paral.isNull()) { bparal = false; } 
+        else { bparal = Rcpp::as<bool> (paral); }
+        
+        if (overwrite.isNull()) { bforce = false; } 
+        else { bforce = Rcpp::as<bool> (overwrite); }
+        
+        
+        dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        dsA->openDataset();
+        dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        dsB->openDataset();
+        dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+        
+        if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
+            iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
+        } else {
+            checkClose_file(dsA, dsB, dsC);
+            Rcpp::Rcerr<<"c++ exception bdblockmult_sparse_hdf5 : error with "<<A<< " or "<<B<< " datset\n";
+            return void();
+        }
+     
+     
+     // if (block_size.isNotNull()) {
+     //     iblock_size = Rcpp::as<int> (block_size);
+     // } else {
+     //     iblock_size = std::min(  std::min(dsA->nrows(),dsA->ncols()),  std::min(dsB->nrows(), dsB->ncols()));
+     //     if (iblock_size>1024)
+     //         iblock_size = 1024;
+     // }
+     
+         if(bparal == true) { // parallel
+             
+             int memory_block; 
+             if(mixblock_size.isNotNull()) {
+                 memory_block = Rcpp::as<int> (mixblock_size);
+             } else {
+                 memory_block = iblock_size/2;
+             }
+             
+             dsC = BigDataStatMeth::multiplicationSparse(dsA, dsB, dsC, iblock_size, memory_block, bparal, true, threads);
+             
+         } else if (bparal == false) { // Not parallel
+             dsC = BigDataStatMeth::multiplicationSparse(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
          }
-         
-         res = create_HDF5_group_ptr(file, strsubgroupOut );
-         
-         C_sp = A_sp * B_sp;
-
-         write_HDF5_matrix_transposed_ptr(file, strdataset, wrap( Eigen::MatrixXd(C_sp)) );
-         
-      } else {
-         
-         Rf_error("No sparse matrix found");
-         file->close();
-         delete(file);
-         return(wrap(-1));
-      }
-      
-      
-      file->close();
-      delete(file);
-      return(wrap(C_sp));
-      
-   } catch( FileIException& error ) { // catch failure caused by the H5File operations
-      file->close();
-       delete(file);
-      ::Rf_error( "c++ exception bdblockmult_sparse_hdf5 (File IException)" );
-      return wrap(-1);
-   } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-      file->close();
-       delete(file);
-      ::Rf_error( "c++ exception bdblockmult_sparse_hdf5 (DataSet IException)" );
-      return wrap(-1);   
-   } catch(std::exception &ex) {
-       file->close();
-       delete(file);
-      Rcpp::Rcout<< ex.what();
-      return wrap(-1);
-   }
-   
-   
+     
+         delete dsA;   dsA = nullptr;
+         delete dsB;   dsB = nullptr;
+         delete dsC;   dsC = nullptr;
+     
+     
+    } catch( H5::FileIException& error ) { 
+        checkClose_file(dsA, dsB, dsC);
+        Rcpp::Rcerr<<"c++ exception bdblockmult_sparse_hdf5 (File IException)";
+        return void();
+    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        checkClose_file(dsA, dsB, dsC);
+        Rcpp::Rcerr<<"c++ exception bdblockmult_sparse_hdf5 (DataSet IException)";
+        return void();
+    } catch(std::exception &ex) {
+        checkClose_file(dsA, dsB, dsC);
+        Rcpp::Rcerr<<"c++ exception bdblockmult_sparse_hdf5";
+        return void();
+    } catch (...) {
+        checkClose_file(dsA, dsB, dsC);
+        Rcpp::Rcerr<<"C++ exception bdblockmult_sparse_hdf5 (unknown reason)";
+        return void();
+    }
+    
+    return void();
+     
+     
 }
 
 

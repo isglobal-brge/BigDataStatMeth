@@ -2,10 +2,10 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdSVD_hdf5}
 \alias{bdSVD_hdf5}
-\title{Block SVD decomposition for hdf5 files using an incremental algorithm.}
+\title{Singular Value Decomposition for HDF5-Stored Matrices}
 \usage{
 bdSVD_hdf5(
-  file,
+  filename,
   group = NULL,
   dataset = NULL,
   k = 2L,
@@ -13,41 +13,104 @@ bdSVD_hdf5(
   bcenter = TRUE,
   bscale = TRUE,
   rankthreshold = 0,
+  overwrite = NULL,
+  method = NULL,
   threads = NULL
 )
 }
 \arguments{
-\item{file}{a real nxp matrix in hdf5 file}
+\item{filename}{Character string. Path to the HDF5 file containing the input matrix.}
 
-\item{group}{group in hdf5 data file where dataset is located}
+\item{group}{Character string. Path to the group containing the input dataset.}
 
-\item{dataset}{matrix dataset with data to perform SVD}
+\item{dataset}{Character string. Name of the input dataset to decompose.}
 
-\item{k}{number of local SVDs to concatenate at each level}
+\item{k}{Integer. Number of local SVDs to concatenate at each level (default = 2).
+Controls the trade-off between memory usage and computation speed.}
 
-\item{q}{number of levels}
+\item{q}{Integer. Number of levels for SVD computation (default = 1).
+Higher values can improve accuracy but increase computation time.}
 
-\item{bcenter}{(optional, defalut = TRUE) . If center is TRUE then centering is done by subtracting the column means (omitting NAs) of x from their corresponding columns, and if center is FALSE, no centering is done.}
+\item{bcenter}{Logical. If TRUE (default), centers the data by subtracting column means.}
 
-\item{bscale}{(optional, defalut = TRUE) .  If scale is TRUE then scaling is done by dividing the (centered) columns of x by their standard deviations if center is TRUE, and the root mean square otherwise. If scale is FALSE, no scaling is done.}
+\item{bscale}{Logical. If TRUE (default), scales the centered columns by their
+standard deviations or root mean square.}
 
-\item{rankthreshold}{double, threshold used to determine the range of the array. The matrix rank is equal to the number of
-singular values different from the threshold. By default, threshold = 0 is used to get the matrix rank , but it can be
-changed to an approximation of 0.}
+\item{rankthreshold}{Numeric. Threshold for determining matrix rank (default = 0).
+Must be between 0 and 0.1. Used to approximate rank for nearly singular matrices.}
 
-\item{threads}{(optional) only used in some operations inside function. If threads is null then threads =  maximum number of threads available - 1.}
+\item{overwrite}{Logical. If TRUE, allows overwriting existing results.}
+
+\item{method}{Character string. Computation method:
+\itemize{
+\item "auto": Automatically selects between "full" and "blocks" based on matrix size
+\item "blocks": Uses block-based computation (recommended for large matrices)
+\item "full": Performs direct computation without partitioning
+}}
+
+\item{threads}{Integer. Number of threads for parallel computation.}
 }
 \value{
-a list of three components with the singular values and left and right singular vectors of the matrix
-
-A List with : 
-\itemize{
-  \item{"u"}{ eigenvectors of AA^t, mxn and column orthogonal matrix }
-  \item{"v"}{ eigenvectors of A^tA, nxn orthogonal matrix }
-  \item{"v"}{ singular values, nxn diagonal matrix (non-negative real values) }
+No direct return value. Results are written to the HDF5 file as:
+\describe{
+\item{u}{Left singular vectors (U matrix)}
+\item{d}{Singular values (diagonal of D matrix)}
+\item{v}{Right singular vectors (V matrix)}
 }
 }
 \description{
-Singular values and left singular vectors of a real nxp matrix 
-Block SVD decomposition using an incremental algorithm.
+Computes the Singular Value Decomposition (SVD) of a large matrix stored in an HDF5 file.
+The SVD decomposes a matrix A into a product A = UDV' where U and V are orthogonal
+matrices and D is a diagonal matrix containing the singular values.
+}
+\details{
+This function implements a block-based SVD algorithm suitable for large matrices
+that may not fit in memory. Key features include:
+\itemize{
+\item Automatic method selection based on matrix size
+\item Block-based computation for large matrices
+\item Data centering and scaling options
+\item Parallel processing support
+\item Rank approximation through threshold
+\item Memory-efficient incremental algorithm
+}
+
+The implementation uses an incremental algorithm with two key parameters:
+\itemize{
+\item k: number of local SVDs to concatenate at each level
+\item q: number of levels in the computation
+}
+}
+\examples{
+\dontrun{
+# Create a sample large matrix in HDF5
+library(rhdf5)
+A <- matrix(rnorm(10000), 1000, 10)
+h5createFile("large_matrix.h5")
+h5write(A, "large_matrix.h5", "data/matrix")
+
+# Compute SVD with default parameters
+bdSVD_hdf5("large_matrix.h5", "data", "matrix")
+
+# Compute SVD with custom parameters
+bdSVD_hdf5("large_matrix.h5", "data", "matrix",
+           k = 4, q = 2,
+           bcenter = TRUE, bscale = TRUE,
+           method = "blocks",
+           threads = 4)
+}
+
+}
+\references{
+\itemize{
+\item Halko, N., Martinsson, P. G., & Tropp, J. A. (2011). Finding structure with randomness:
+Probabilistic algorithms for constructing approximate matrix decompositions.
+SIAM Review, 53(2), 217-288.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdPCA_hdf5}} for Principal Component Analysis
+\item \code{\link{bdQR_hdf5}} for QR decomposition
+}
 }

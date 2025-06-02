@@ -1,2 +1,2 @@
-CC=/usr/local/clang8/bin/clang -fopenmp
+CC=ccache gcc
 CFLAGS=-Wall -g -O2

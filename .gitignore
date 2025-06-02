@@ -49,3 +49,13 @@ rsconnect/
 
 # Duplicated icloud files
 * 2*
+
+# temorary file
+inst/cc
+src/Makevars
+*.tmp
+*.old
+*.remove
+
+# check files
+*.hide

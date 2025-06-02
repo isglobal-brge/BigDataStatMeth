@@ -2,37 +2,74 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdRemove_hdf5_element}
 \alias{bdRemove_hdf5_element}
-\title{Remove element group or dataset from  hdf5 file}
+\title{Remove Elements from HDF5 File}
 \usage{
-bdRemove_hdf5_element(filename, element)
+bdRemove_hdf5_element(filename, elements)
 }
 \arguments{
-\item{filename, }{character array indicating the name of the file to create}
+\item{filename}{Character string. Path to the HDF5 file.}
 
-\item{element}{path to element, character array indicating the complete route to the element to be removed (folder or dataset).}
+\item{elements}{Character vector. Full paths to elements to remove
+(e.g., "group/dataset" or "group/subgroup").}
 }
 \value{
-none
+No return value, called for side effects (element removal).
 }
 \description{
-Remove group or dataset from  hdf5 file
+Removes specified groups or datasets from an HDF5 file.
+}
+\details{
+This function provides safe element removal capabilities with:
+\itemize{
+\item Removal options:
+\itemize{
+\item Single element removal
+\item Multiple element removal
+\item Groups and datasets removal
+}
+\item Implementation features:
+\itemize{
+\item Safe file operations
+\item Memory-efficient implementation
+\item Comprehensive error handling
+\item Path validation
+}
+}
+
+The function validates paths and performs safe removal operations.
 }
 \examples{
+\dontrun{
+library(BigDataStatMeth)
 
-matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-matB <- matrix(c(15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,5,3,4,5,2,6,2,3,4,
-                   42, 23, 23, 423,1,2), nrow = 3, byrow = TRUE)
-                   
-bdCreate_hdf5_matrix_file("BasicMatVect.hdf5", matA, "INPUT", "matA")
-bdAdd_hdf5_matrix(matB, "BasicMatVect.hdf5", "INPUT", "matB")
+# Create test matrices
+matA <- matrix(1:15, nrow = 3, byrow = TRUE)
+matB <- matrix(15:1, nrow = 3, byrow = TRUE)
 
-bdRemove_hdf5_element("BasicMatVect.hdf5", "INPUT/matA")
+# Save to HDF5
+fn <- "test.hdf5"
+bdCreate_hdf5_matrix(fn, matA, "data", "matrix1",
+                     overwriteFile = TRUE)
+bdCreate_hdf5_matrix(fn, matB, "data", "matrix2",
+                     overwriteFile = FALSE)
 
+# Remove elements
+bdRemove_hdf5_element(fn, c("data/matrix1", "data/matrix2"))
 
-# Remove file (used as example)
-  if (file.exists("BasicMatVect.hdf5")) {
-    # Delete file if it exist
-    file.remove("BasicMatVect.hdf5")
-  }
+# Cleanup
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+}
 
+}
+\references{
+\itemize{
+\item The HDF Group. (2000-2010). HDF5 User's Guide.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
+}
 }

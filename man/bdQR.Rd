@@ -2,20 +2,57 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdQR}
 \alias{bdQR}
-\title{QR Decomposition}
+\title{QR Decomposition for In-Memory Matrices}
 \usage{
-bdQR(X, thin = NULL)
+bdQR(X, thin = NULL, block_size = NULL, threads = NULL)
 }
 \arguments{
-\item{X}{a real square matrix}
+\item{X}{A real matrix or vector to be decomposed}
 
-\item{thin}{boolean thin, if thin = true returns Q thin  decomposition else returns Q full decomposition, default thin = false}
+\item{thin}{Logical. If TRUE, returns the reduced (thin) Q matrix. If FALSE (default),
+returns the full Q matrix. The thin decomposition is more memory efficient.}
+
+\item{block_size}{Integer. Optional block size for blocked computation. Larger blocks
+may improve performance but require more memory.}
+
+\item{threads}{Integer. Optional number of threads for parallel computation. If NULL,
+uses all available threads.}
 }
 \value{
-List with orthogonal matrix \code{Q}  and upper triangular matrix \code{R}
+A list containing:
+\itemize{
+\item Q: The orthogonal matrix Q
+\item R: The upper triangular matrix R
+}
 }
 \description{
-This function compute QR decomposition (also called a QR factorization) 
-of a matrix \code{A} into a product \code{A = QR} of an 
-orthogonal matrix Q and an upper triangular matrix R.
+Computes the QR decomposition (also called QR factorization) of a matrix A into
+a product A = QR where Q is an orthogonal matrix and R is an upper triangular matrix.
+This function operates on in-memory matrices.
+}
+\details{
+The QR decomposition is a fundamental matrix factorization that decomposes a matrix
+into an orthogonal matrix Q and an upper triangular matrix R. This implementation:
+\itemize{
+\item Supports both thin and full QR decomposition
+\item Can utilize parallel computation for better performance
+\item Handles both matrix and vector inputs
+}
+}
+\examples{
+\dontrun{
+# Create a random 100x50 matrix
+X <- matrix(rnorm(5000), 100, 50)
+
+# Compute thin QR decomposition
+result <- bdQR(X, thin = TRUE)
+
+# Verify the decomposition
+# Should be approximately zero
+max(abs(X - result$Q \%*\% result$R))
+}
+
+}
+\seealso{
+\code{\link{bdQR_hdf5}} for QR decomposition of HDF5-stored matrices
 }

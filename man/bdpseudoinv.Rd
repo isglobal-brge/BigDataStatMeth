@@ -2,16 +2,82 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdpseudoinv}
 \alias{bdpseudoinv}
-\title{Pseudo-Inverse}
+\title{Compute Matrix Pseudoinverse (In-Memory)}
 \usage{
-bdpseudoinv(X)
+bdpseudoinv(X, threads = NULL)
 }
 \arguments{
-\item{X}{Singular matrix (m x n)}
+\item{X}{Numeric matrix or vector to be pseudoinverted.}
+
+\item{threads}{Optional integer. Number of threads for parallel computation.
+If NULL, uses maximum available threads.}
 }
 \value{
-Pseudo-inverse matrix of A
+The pseudoinverse matrix of X.
 }
 \description{
-Compute the pseudo-inverse of a singular matrix
+Computes the Moore-Penrose pseudoinverse of a matrix using SVD decomposition.
+This implementation handles both square and rectangular matrices, and provides
+numerically stable results even for singular or near-singular matrices.
+}
+\details{
+The Moore-Penrose pseudoinverse A⁺ of a matrix A is computed using Singular
+Value Decomposition (SVD). For a matrix A = UΣV*, the pseudoinverse is
+A⁺ = VΣ⁺U* where Σ⁺ is obtained by reciprocating non-zero singular values.
+
+Key features:
+\itemize{
+\item Robust computation:
+\itemize{
+\item Handles singular and near-singular matrices
+\item Automatic threshold for small singular values
+\item Numerically stable implementation
+}
+\item Implementation details:
+\itemize{
+\item Uses efficient SVD algorithms
+\item Parallel processing support
+\item Memory-efficient computation
+\item Handles both dense and sparse inputs
+}
+}
+
+The pseudoinverse satisfies the Moore-Penrose conditions:
+\itemize{
+\item AA⁺A = A
+\item A⁺AA⁺ = A⁺
+\item (AA⁺)* = AA⁺
+\item (A⁺A)* = A⁺A
+}
+}
+\examples{
+library(BigDataStatMeth)
+
+# Create a singular matrix
+X <- matrix(c(1,2,3,2,4,6), 2, 3)  # rank-deficient matrix
+
+# Compute pseudoinverse
+X_pinv <- bdpseudoinv(X)
+
+# Verify Moore-Penrose conditions
+# 1. X \%*\% X_pinv \%*\% X = X
+all.equal(X \%*\% X_pinv \%*\% X, X)
+
+# 2. X_pinv \%*\% X \%*\% X_pinv = X_pinv
+all.equal(X_pinv \%*\% X \%*\% X_pinv, X_pinv)
+
+}
+\references{
+\itemize{
+\item Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+Johns Hopkins University Press.
+\item Ben-Israel, A., & Greville, T. N. E. (2003). Generalized Inverses:
+Theory and Applications, 2nd Edition. Springer.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdpseudoinv_hdf5}} for HDF5-stored matrices
+\item \code{\link{bdSVD_hdf5}} for singular value decomposition
+}
 }

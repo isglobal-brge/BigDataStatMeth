@@ -12,7 +12,7 @@ bdapply_Function_hdf5(
   func,
   b_group = NULL,
   b_datasets = NULL,
-  force = FALSE,
+  overwrite = FALSE,
   transp_dataset = FALSE,
   transp_bdataset = FALSE,
   fullMatrix = FALSE,
@@ -21,70 +21,103 @@ bdapply_Function_hdf5(
 )
 }
 \arguments{
-\item{filename, }{Character array, indicating the name of the file to create}
+\item{filename}{Character array, indicating the name of the file to create}
 
-\item{group, }{Character array, indicating the input group where the data set
-to be imputed is.}
+\item{group}{Character array, indicating the input group where the data set
+to be imputed is}
 
-\item{datasets, }{Character array, indicating the input datasets to be used}
+\item{datasets}{Character array, indicating the input datasets to be used}
 
-\item{outgroup, }{Character, array, indicating group where the data set will 
-be saved after imputation if `outgroup` is NULL, output dataset is stored 
-in the same input group.}
+\item{outgroup}{Character array, indicating group where the data set will
+be saved after imputation. If NULL, output dataset is stored
+in the same input group}
 
-\item{func, }{Character array, function to be applyed : 
-QR to apply bdQR() function to datasets
-CrossProd to apply bdCrossprod() function to datasets
-tCrossProd to apply bdtCrossprod() function to datasets
-invChol to apply bdInvCholesky() function to datasets
-blockmult to apply matrix multiplication, in that case, we need the datasets 
-to be used defined in b_datasets variable, datasets and b_datasets must be 
-of the same lenght, in that case, the operation is performed according to 
-index, for example, if we have datasets = {"A1", "A2", "A3} and 
-b_datasets = {"B1", "B2", "B3}, the functions performs : A1%*%B1, 
-A2%*%B2 and A3%*%B3 
-CrossProd_double to  performs crossprod using two matrices, see blockmult 
-tCrossProd_double to  performs transposed crossprod using two matrices, 
-see blockmult 
-solve to solve matrix equation system, see blockmult for parametrization 
-sdmean to get sd and mean from de datasets by cols or rows}
+\item{func}{Character array, function to be applied:
+- "QR": QR decomposition via bdQR()
+- "CrossProd": Cross product via bdCrossprod()
+- "tCrossProd": Transposed cross product via bdtCrossprod()
+- "invChol": Inverse via Cholesky decomposition
+- "blockmult": Matrix multiplication
+- "CrossProd_double": Cross product with two matrices
+- "tCrossProd_double": Transposed cross product with two matrices
+- "solve": Matrix equation solving
+- "sdmean": Standard deviation and mean computation}
 
-\item{b_group, }{optional Character array indicating the input group where 
-data are stored when we need a second dataset to operate, for example in 
-functions like matrix multiplication}
+\item{b_group}{Optional character array indicating the input group for
+secondary datasets (used in two-matrix operations)}
 
-\item{b_datasets, }{optional Character array indicating the input datasets 
-to be used when we need a second dataset in functions like matrix 
-multiplication}
+\item{b_datasets}{Optional character array indicating the secondary datasets
+for two-matrix operations}
 
-\item{force, }{optional Boolean if true, previous results in same location 
-inside hdf5 will be overwritten, by default force = false, data was not 
-overwritten.}
+\item{overwrite}{Optional boolean. If true, overwrites existing results}
 
-\item{transp_dataset}{optional parameter. Boolean if true we use the 
-transposed dataframe to perform calculus. By default transp_dataset = false, 
-we use the original dataset stored in hdf5 data file. Currently this option 
-is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"}
+\item{transp_dataset}{Optional boolean. If true, transposes first dataset}
 
-\item{transp_bdataset}{optional parameter. Boolean if true we use the 
-transposed dataframe to perform calculus.By default transp_bdataset = false, 
-we use the original dataset stored in hdf5 data file. Currently this option 
-is only valid with "blockmult", "CrossProd_double" and "tCrossProd_double"}
+\item{transp_bdataset}{Optional boolean. If true, transposes second dataset}
 
-\item{fullMatrix}{boolean, optional parameter used in Inverse Cholesky, by 
-default false. If fullMatrix = true, in the hdf5 file the complete matrix 
-is stored. If false, only the lower triangular matrix is saved}
+\item{fullMatrix}{Optional boolean for Cholesky operations. If true, stores
+complete matrix; if false, stores only lower triangular}
 
-\item{byrows}{boolean, optional parameter used in sd and mean calculus, by 
-default false. If byrows = true, the sd and mean is computed by columns. 
-If false, sd and mean is computed by rows.}
+\item{byrows}{Optional boolean for statistical operations. If true, computes
+by rows; if false, by columns}
 
-\item{threads}{optional parameter. Integer with numbers of threads to be used}
+\item{threads}{Optional integer specifying number of threads for parallel processing}
 }
 \value{
-Original hdf5 data file with results after apply function to 
-different datasets
+Modifies the HDF5 file in place, adding computed results
 }
 \description{
-Apply function to different datasets inside a group
+This function provides a unified interface for applying various mathematical
+operations to HDF5 datasets. It supports both single-dataset operations and
+operations between multiple datasets.
+}
+\details{
+//' For matrix multiplication operations (\code{blockmult}, \code{CrossProd_double}, \code{tCrossProd_double}),
+the \code{datasets} and \code{b_datasets} vectors must have the same length. Each operation is performed
+element-wise between the corresponding pairs of datasets. Specifically, the \code{b_datasets} vector
+defines the second operand for each matrix multiplication. For example, if
+\verb{datasets = \{"A1", "A2", "A3"\}} and \verb{b_datasets = \{"B1", "B2", "B3"\}}, the operations
+executed are: \code{A1 \%*\% B1}, \code{A2 \%*\% B2}, and \code{A3 \%*\% B3}.
+
+Example: If \verb{datasets = \{"A1", "A2", "A3"\}} and \verb{b_datasets = \{"B1", "B2", "B3"\}},
+the function computes: \code{A1 \%*\% B1}, \code{A2 \%*\% B2}, and \code{A3 \%*\% B3}
+}
+\note{
+Performance is optimized through:
+- Block-wise processing for large datasets
+- Parallel computation where applicable
+- Memory-efficient matrix operations
+}
+\examples{
+\dontrun{
+# Create a sample large matrix in HDF5
+# Create hdf5 datasets
+bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+                    object = Y, group = "data", dataset = "Y",
+                    transp = FALSE,
+                    overwriteFile = TRUE, overwriteDataset = TRUE, 
+                    unlimited = FALSE)
+
+bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+                    object = X,  group = "data",  dataset = "X",
+                    transp = FALSE,
+                    overwriteFile = FALSE, overwriteDataset = TRUE, 
+                    unlimited = FALSE)
+
+bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
+                    object = Z,  group = "data",  dataset = "Z",
+                    transp = FALSE,
+                    overwriteFile = FALSE, overwriteDataset = TRUE,
+                    unlimited = FALSE)
+
+dsets <- bdgetDatasetsList_hdf5("test_temp.hdf5", group = "data")
+dsets
+
+# Apply function :  QR Decomposition
+bdapply_Function_hdf5(filename = "test_temp.hdf5",
+                     group = "data",datasets = dsets,
+                     outgroup = "QR",func = "QR",
+                     overwrite = TRUE)
+}
+
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdInvCholesky_hdf5}
 \alias{bdInvCholesky_hdf5}
-\title{Compute inverse cholesky with hdf5 data files}
+\title{Matrix Inversion using Cholesky Decomposition for HDF5-Stored Matrices}
 \usage{
 bdInvCholesky_hdf5(
   filename,
@@ -11,57 +11,109 @@ bdInvCholesky_hdf5(
   outdataset,
   outgroup = NULL,
   fullMatrix = NULL,
-  force = NULL,
+  overwrite = NULL,
   threads = 2L,
   elementsBlock = 1000000L
 )
 }
 \arguments{
-\item{filename, }{character array with the name of an existin hdf5 data file containing the dataset to be modified}
+\item{filename}{Character string. Path to the HDF5 file containing the input matrix.}
 
-\item{group, }{character array indicating the input group where the data set to be modified.}
+\item{group}{Character string. Path to the group containing the input dataset.}
 
-\item{dataset, }{character array indicating the input dataset to be modified}
+\item{dataset}{Character string. Name of the input dataset to invert.}
 
-\item{outdataset}{character array with output dataset name where we want to store results}
+\item{outdataset}{Character string. Name for the output dataset.}
 
-\item{outgroup}{optional, character array with output group name where we want to 
-store results if not provided then results are stored in the same group as original dataset}
+\item{outgroup}{Character string. Optional output group path. If not provided,
+results are stored in the input group.}
 
-\item{fullMatrix}{boolean, optional parameter, by default false. 
-If fullMatrix = true, in the hdf5 file the complete matrix is stored. 
-If false, only the lower triangular matrix is saved}
+\item{fullMatrix}{Logical. If TRUE, stores the complete inverse matrix.
+If FALSE (default), stores only the lower triangular part to save space.}
 
-\item{force, }{optional boolean if true, previous results in same location inside 
-hdf5 will be overwritten, by default force = false, data was not overwritten.}
+\item{overwrite}{Logical. If TRUE, allows overwriting existing results.}
 
-\item{threads}{optional parameter. Integer with numbers of threads to be used}
+\item{threads}{Integer. Number of threads for parallel computation (default = 2).}
 
-\item{elementsBlock, }{optional integer defines de maximum number of elements 
-to read from hdf5 data file in each block. By default this value is set 
-to 10000. If matrix is bigger thant 5000x5000 then block is set to number 
-of rows or columns x 2}
+\item{elementsBlock}{Integer. Maximum number of elements to process in each block
+(default = 1,000,000). For matrices larger than 5000x5000, automatically adjusted
+to number of rows or columns * 2.}
 }
 \value{
-Original hdf5 data file with Inverse of Cholesky
+No direct return value. Results are written to the HDF5 file in the
+specified location with the following structure:
+\describe{
+\item{inverse}{The inverse matrix A^(-1)}
+}
 }
 \description{
-Compute inverse cholesky with datasets stored in hdf5 data files
+Computes the inverse of a symmetric positive-definite matrix stored in an HDF5 file
+using the Cholesky decomposition method. This approach is more efficient and
+numerically stable than general matrix inversion methods for symmetric
+positive-definite matrices.
+}
+\details{
+This function implements an efficient matrix inversion algorithm that leverages
+the special properties of symmetric positive-definite matrices. Key features:
+\itemize{
+\item Uses Cholesky decomposition for improved numerical stability
+\item Block-based computation for large matrices
+\item Optional storage formats (full or triangular)
+\item Parallel processing support
+\item Memory-efficient block algorithm
+}
+
+The algorithm proceeds in two main steps:
+\enumerate{
+\item Compute the Cholesky decomposition A = LL'
+\item Solve the system LL'X = I for X = A^(-1)
+}
+
+Advantages of this method:
+\itemize{
+\item More efficient than general matrix inversion
+\item Better numerical stability
+\item Preserves matrix symmetry
+\item Exploits positive-definiteness for efficiency
+}
 }
 \examples{
-
-library(BigDataStatMeth)
+\dontrun{
 library(rhdf5)
 
+# Create a symmetric positive-definite matrix
 set.seed(1234)
-A  <- matrix(sample.int(10, 10000, replace = TRUE), ncol = 100)
-A <- crossprod(A)
+X <- matrix(rnorm(100), 10, 10)
+A <- crossprod(X)  # A = X'X is symmetric positive-definite
 
-# Create hdf5 data file with  data (Y)
-bdCreate_hdf5_matrix_file("test_file2.hdf5", A, "data", "A", force = TRUE)
+# Save to HDF5
+h5createFile("matrix.h5")
+h5write(A, "matrix.h5", "data/matrix")
 
-# Get Inverse Cholesky
-res <- bdInvCholesky_hdf5("test_file.hdf5", "data", "A", "results", 
-                          "InverseA", force = TRUE)
+# Compute inverse using Cholesky decomposition
+bdInvCholesky_hdf5("matrix.h5", "data", "matrix",
+                   outdataset = "inverse",
+                   outgroup = "results",
+                   fullMatrix = TRUE,
+                   threads = 4)
 
+# Verify the inverse
+Ainv <- h5read("matrix.h5", "results/inverse")
+max(abs(A \%*\% Ainv - diag(nrow(A))))  # Should be very small
+}
+
+}
+\references{
+\itemize{
+\item Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+Johns Hopkins University Press.
+\item Higham, N. J. (2002). Accuracy and Stability of Numerical Algorithms,
+2nd Edition. SIAM.
+}
+}
+\seealso{
+\itemize{
+\item \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
+\item \code{\link{bdSolve_hdf5}} for solving linear systems
+}
 }
