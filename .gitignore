@@ -57,3 +57,5 @@ src/Makevars
 *.old
 *.remove
 
+# check files
+*.hide
