@@ -1,278 +1,232 @@
-#include "include/hdf5_removeMaf.h"
+#include <BigDataStatMeth.hpp>
+#include "hdf5Omics/hdf5RemoveMAF.hpp"
 
-// Removes row or column with high missing data percentage
-int Remove_MAF_HDF5( H5File* file, DataSet* dataset, bool bycols, std::string stroutdata, double pcent, int blocksize)
-{
-  
-  IntegerVector stride = IntegerVector::create(1, 1);
-  IntegerVector block = IntegerVector::create(1, 1);
-  IntegerVector offset = IntegerVector::create(0, 0);
-  IntegerVector newoffset = IntegerVector::create(0, 0);
-  IntegerVector count = IntegerVector::create(0, 0);
-  DataSet* unlimDataset = nullptr;
-  int ilimit;
-  // int blocksize = 100;
-  int itotrem = 0;
-  bool bcreated = false;
-  
-  
-  try{
-    
-    // Real data set dimension
-    IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
-    
-    // id bycols == true : read all rows by group of columns ; else : all columns by group of rows
-    if (bycols == true) {
-      ilimit = dims_out[0];
-      count[1] = dims_out[1];
-      offset[1] = 0;
-    } else {
-      ilimit = dims_out[1];
-      count[0] = dims_out[0];
-      offset[0] = 0;
-    };
-    
-    for( int i=0; i<=(ilimit/blocksize); i++) 
-    {
-      int iread;
-      int iblockrem = 0;
-      
-      if( (i+1)*blocksize < ilimit) iread = blocksize;
-      else iread = ilimit - (i*blocksize);
-      
-      if(bycols == true) {
-        count[0] = iread; 
-        offset[0] = i*blocksize;
-      } else {
-        count[1] = iread; 
-        offset[1] = i*blocksize;
-      }
-      
-      // read block
-      Eigen::MatrixXd data = GetCurrentBlock_hdf5(file, dataset, offset[0], offset[1], count[0], count[1]);
-      
-      if(bycols == true) // We have to do it by rows
-      {
-        int readedrows = data.rows();
+/**
+ * @file hdf5_removeMAF.cpp
+ * @brief Implementation of MAF-based SNP filtering for HDF5-stored genomic data
+ * @details This file provides functionality for filtering SNPs (Single Nucleotide
+ * Polymorphisms) based on Minor Allele Frequency (MAF) in genomic data stored
+ * in HDF5 format. The implementation supports:
+ * - MAF-based filtering
+ * - Row-wise and column-wise processing
+ * - Block-based processing
+ * - Memory-efficient operations
+ * 
+ * Key features:
+ * - Support for large genomic datasets
+ * - Configurable MAF threshold
+ * - Block-based processing
+ * - Memory-efficient implementation
+ * - Comprehensive error handling
+ */
 
-        for( int row = readedrows-1 ; row>=0; row--)
-        {
-          if( calc_freq(wrap(data.row(row))) <= pcent ) {
-            removeRow(data, row);
-            iblockrem = iblockrem + 1;
-          } 
-        }
-        
-      } else {
-        
-        int readedcols = data.cols();
-        
-        for( int col = readedcols-1 ; col>=0; col--)
-        { 
-          if( calc_freq(wrap(data.col(col))) <= pcent ) {
-            removeColumn(data, col);
-            iblockrem = iblockrem + 1;
-          } 
-          
-        }
-      }
-      
-      
-      int extendcols = data.cols();
-      int extendrows = data.rows();
-      
-      if( extendrows>0 && extendcols>0)
-      {
-        
-        if(bcreated == false) {
-          create_HDF5_unlimited_matrix_dataset_ptr(file, stroutdata, extendrows, extendcols, "numeric");
-          unlimDataset = new DataSet(file->openDataSet(stroutdata));
-          bcreated = true;
-        }else {
-          if(bycols == true){
-            extend_HDF5_matrix_subset_ptr(file, unlimDataset, extendrows, 0);
-          }else{
-            extend_HDF5_matrix_subset_ptr(file, unlimDataset, 0, extendcols);
-          }
-        }
-        
-        IntegerVector countblock = IntegerVector::create(extendrows, extendcols);
-        write_HDF5_matrix_subset_v2(file, unlimDataset, newoffset, countblock, stride, block, wrap(data) );
-        
-        if(bycols == true)
-          newoffset[0] =  newoffset[0] + extendrows;
-        else
-          newoffset[1] =  newoffset[1] + extendcols;
-      }
-      
-      
-      itotrem = itotrem - iblockrem;
-      
-    }
-    
-    if (bcreated == true) {
-      unlimDataset->close();
-    }
-    
-  } catch(FileIException& error) { // catch failure caused by the H5File operations
-    unlimDataset->close();
-    ::Rf_error( "c++ exception Remove_MAF_HDF5 (File IException)" );
-    return -1;
-  } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
-    unlimDataset->close();
-    ::Rf_error( "c++ exception Remove_MAF_HDF5 (DataSet IException)" );
-    return -1;
-  } catch(GroupIException& error) { // catch failure caused by the Group operations
-    unlimDataset->close();
-    ::Rf_error( "c++ exception Remove_MAF_HDF5 (Group IException)" );
-    return -1;
-  } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-    unlimDataset->close();
-    ::Rf_error( "c++ exception Remove_MAF_HDF5 (DataSpace IException)" );
-    return -1;
-  } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
-    unlimDataset->close();
-    ::Rf_error( "c++ exception Remove_MAF_HDF5 (Data TypeIException)" );
-    return -1;
-  }
-  
-  
-  return(itotrem);
-}
+/**
+ * @brief Removes SNPs based on Minor Allele Frequency
+ * 
+ * @details Implements efficient filtering of SNPs based on MAF in genomic data
+ * stored in HDF5 format. The function supports both row-wise and column-wise
+ * processing with block-based operations for memory efficiency.
+ * 
+ * Implementation features:
+ * - MAF threshold-based filtering
+ * - Block-based processing
+ * - Memory-efficient operations
+ * - Safe file operations
+ * - Comprehensive error handling
+ * 
+ * @param filename Path to HDF5 file
+ * @param group Input group containing dataset
+ * @param dataset Input dataset name
+ * @param outgroup Output group for results
+ * @param outdataset Output dataset name
+ * @param maf MAF threshold for filtering
+ * @param bycols Whether to process by columns
+ * @param blocksize Block size for processing
+ * @param overwrite Whether to overwrite existing dataset
+ * 
+ * @throws H5::FileIException for HDF5 file operation errors
+ * @throws H5::DataSetIException for HDF5 dataset operation errors
+ * @throws H5::DataSpaceIException for HDF5 dataspace errors
+ * @throws H5::DataTypeIException for HDF5 datatype errors
+ * @throws std::exception for other errors
+ */
 
-
-
-
-
-
-//' Remove SNPs in hdf5 omic dataset with low data
+//' Remove SNPs Based on Minor Allele Frequency
 //'
-//' Remove SNPs in hdf5 omic dataset with low data
+//' @description
+//' Filters SNPs (Single Nucleotide Polymorphisms) based on Minor Allele
+//' Frequency (MAF) in genomic data stored in HDF5 format.
+//'
+//' @details
+//' This function provides efficient MAF-based filtering capabilities with:
 //' 
-//' @param filename, character array indicating the name of the file to create
-//' @param group, character array indicating the input group where the data set to be imputed is. 
-//' @param dataset, character array indicating the input dataset to be imputed
-//' @param outgroup, character array indicating group where the data set will be saved after remove data with if `outgroup` is NULL, output dataset is stored in the same input group. 
-//' @param outdataset, character array indicating dataset to store the resulting data after imputation if `outdataset` is NULL, input dataset will be overwritten. 
-//' @param maf, by default maf = 0.05. Numeric indicating the percentage to be considered to remove SNPs, SNPS with higest MAF will be removed from data
-//' @param bycols, boolean by default = true, if true, indicates that SNPs are in cols, if SNPincols = false indicates that SNPs are in rows.
-//' @param blocksize, integer, block size dataset to read/write and calculate MAF, by default this operations is made in with 100 rows if byrows = true or 100 cols if byrows = false.
-//' @return Original hdf5 data file with imputed data
+//' * Filtering options:
+//'   - MAF threshold-based filtering
+//'   - Row-wise or column-wise processing
+//'   - Block-based processing
+//' 
+//' * Implementation features:
+//'   - Memory-efficient processing
+//'   - Block-based operations
+//'   - Safe file operations
+//'   - Progress reporting
+//'
+//' The function supports both in-place modification and creation of new datasets.
+//'
+//' @param filename Character string. Path to the HDF5 file.
+//' @param group Character string. Path to the group containing input dataset.
+//' @param dataset Character string. Name of the dataset to filter.
+//' @param outgroup Character string. Output group path for filtered data.
+//' @param outdataset Character string. Output dataset name for filtered data.
+//' @param maf Numeric (optional). MAF threshold for filtering (0-1).
+//'   Default is 0.05. SNPs with MAF above this threshold are removed.
+//' @param bycols Logical (optional). Whether to process by columns (TRUE) or
+//'   rows (FALSE). Default is FALSE.
+//' @param blocksize Integer (optional). Block size for processing. Default is 100.
+//'   Larger values use more memory but may be faster.
+//' @param overwrite Logical (optional). Whether to overwrite existing dataset.
+//'   Default is FALSE.
+//'
+//' @return No return value, called for side effects (data filtering).
+//'   Prints a warning message indicating the number of rows/columns removed.
+//'
+//' @examples
+//' \dontrun{
+//' library(BigDataStatMeth)
+//' 
+//' # Create test SNP data
+//' snps <- matrix(sample(c(0, 1, 2), 1000, replace = TRUE,
+//'                      prob = c(0.7, 0.2, 0.1)), 100, 10)
+//' 
+//' # Save to HDF5
+//' fn <- "snp_data.hdf5"
+//' bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
+//'                      overwriteFile = TRUE)
+//' 
+//' # Remove SNPs with high MAF
+//' bdRemoveMAF_hdf5(
+//'   filename = fn,
+//'   group = "genotype",
+//'   dataset = "raw_snps",
+//'   outgroup = "genotype_filtered",
+//'   outdataset = "filtered_snps",
+//'   maf = 0.1,
+//'   bycols = TRUE,
+//'   blocksize = 50
+//' )
+//' 
+//' # Cleanup
+//' if (file.exists(fn)) {
+//'   file.remove(fn)
+//' }
+//' }
+//'
+//' @references
+//' * The HDF Group. (2000-2010). HDF5 User's Guide.
+//' * Marees, A. T., et al. (2018). A tutorial on conducting genome‐wide
+//'   association studies: Quality control and statistical analysis. International
+//'   Journal of Methods in Psychiatric Research, 27(2), e1608.
+//'
+//' @seealso
+//' * \code{\link{bdRemovelowdata_hdf5}} for removing low-representation SNPs
+//' * \code{\link{bdImputeSNPs_hdf5}} for imputing missing SNP values
+//'
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdremove_maf_hdf5( std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, 
-                               Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<int> blocksize )
+void bdRemoveMAF_hdf5( std::string filename, std::string group, std::string dataset, 
+                       std::string outgroup, std::string outdataset, 
+                       Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> bycols, 
+                       Rcpp::Nullable<int> blocksize, Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
-  
-  H5File* file = nullptr;
-  int iremoved = 0;
-  int iblocksize = 100;
-  
-  try
-  {
-    bool bcols;
-    double dpcent;
-    
-    std::string stroutdata = outgroup +"/" + outdataset;
-    std::string strdataset = group +"/" + dataset;
-    
-    if(bycols.isNull()){  
-      bcols = false ;
-    }else{    
-      bcols = Rcpp::as<bool>(bycols);
-    }
-    
-    if(maf.isNull()){  
-      dpcent = 0.05 ;
-    }else{    
-      dpcent = Rcpp::as<double>(maf);
-    }
-    
-    if(!blocksize.isNull()){  
-      iblocksize = Rcpp::as<int>(blocksize);
-    }
     
     
-
-    if(!ResFileExist_filestream(filename)){
-      throw std::range_error("File not exits, create file before access to dataset");
-    }
     
+    BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+    BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
     
-    file = new H5File( filename, H5F_ACC_RDWR );
-    
-    if(exists_HDF5_element_ptr(file, strdataset)) 
+    try
     {
-      
-      DataSet* pdataset = nullptr;
-      
-      pdataset = new DataSet(file->openDataSet(strdataset));
-      
-      if( strdataset.compare(stroutdata)!= 0)
-      {
+        int iremoved = 0;    
+        bool bcols, bforce;
+        double dpcent;
+        int iblocksize = 100;
         
-        // If output is different from imput --> Remve possible existing dataset and create new
-        if(exists_HDF5_element_ptr(file, stroutdata))
-          remove_HDF5_element_ptr(file, stroutdata);
+        std::string stroutdata = outgroup +"/" + outdataset;
+        std::string strdataset = group +"/" + dataset;
         
-        // Create group if not exists
-        if(!exists_HDF5_element_ptr(file, outgroup))
-          file->createGroup(outgroup);
+        if(bycols.isNull()){  
+            bcols = false ;
+        }else{    
+            bcols = Rcpp::as<bool>(bycols);
+        }
         
-      } else {
-        throw std::range_error("Input and output dataset must be different");  
-      }
-      
-      iremoved = Remove_MAF_HDF5( file, pdataset, bcols, stroutdata, dpcent, iblocksize);
-      
-      Function warning("warning");
-      if (!bycols )
-        warning( std::to_string(iremoved) + " Rows have been removed");
-      else
-        warning( std::to_string(iremoved) + " Columns have been removed");
-      
-      pdataset->close();
-      
-    } else{
-      //.commented 20201120 - warning check().// pdataset->close();
-      file->close();
-      throw std::range_error("Dataset does not exits");  
+        if(maf.isNull()){ dpcent = 0.05 ; } 
+        else { dpcent = Rcpp::as<double>(maf); }
+        
+        if(!blocksize.isNull()){  
+            iblocksize = Rcpp::as<int>(blocksize);
+        }
+        
+        if(overwrite.isNull()) { bforce = false ; }
+        else { bforce = Rcpp::as<bool>(overwrite); }
+        
+            
+        if( strdataset.compare(stroutdata)!= 0)
+        {
+            dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+            dsIn->openDataset();
+            
+            dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, outdataset, bforce);
+            
+        } else {
+            throw std::range_error("Input and output dataset must be different");  
+            return void();
+        }
+        
+        if( dsIn->getDatasetptr() != nullptr) {
+            iremoved = Rcpp_Remove_MAF_hdf5( dsIn, dsOut, bcols, dpcent, iblocksize);
+        } else {
+            checkClose_file(dsIn, dsOut);
+            throw std::range_error("File does not exist");
+            return void();
+        }
+        
+        delete dsIn; dsIn = nullptr;
+        delete dsOut; dsOut = nullptr;
+        
+        Rcpp::Function warning("warning");
+        if (!bcols )
+            warning( std::to_string(iremoved) + " Rows have been removed");
+        else
+            warning( std::to_string(iremoved) + " Columns have been removed");
+        
+    } catch( H5::FileIException& error ){
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (File IException)";
+        return void();
+    } catch( H5::DataSetIException& error ) { 
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataSet IException)";
+        return void();
+    } catch( H5::DataSpaceIException& error ) { 
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataSpace IException)";
+        return void();
+    } catch( H5::DataTypeIException& error ) { 
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataType IException)";
+        return void();
+    } catch(std::exception &ex) {
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5: "<< ex.what();
+        return void();
+    }  catch (...) {
+        checkClose_file(dsIn, dsOut);
+        Rcpp::Rcerr<<"c++ exception bdRemoveMAF_hdf5 (unknown reason)";
+        return void();
     }
     
+    return void();
     
-  }catch( FileIException& error ){ // catch failure caused by the H5File operations
-    file->close();
-    ::Rf_error( "c++ exception bdremove_maf_hdf5 (File IException)" );
-    return(wrap(-1));
-  } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
-    file->close();
-    ::Rf_error( "c++ exception bdremove_maf_hdf5 (DataSet IException)" );
-    return(wrap(-1));
-  } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-    file->close();
-    ::Rf_error( "c++ exception bdremove_maf_hdf5 (DataSpace IException)" );
-    return(wrap(-1));
-  } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-    file->close();
-    ::Rf_error( "c++ exception bdremove_maf_hdf5 (DataType IException)" );
-    return(wrap(-1));
-  }catch(std::exception &ex) {
-    file->close();
-    Rcpp::Rcout<< ex.what();
-    return(wrap(-1));
-  }
-  
-  file->close();
-  return(wrap(iremoved));
-  
 }
 
-
-
-
-
-
-
-/***R
-
-*/
