@@ -81,30 +81,56 @@
 //'   * "full": Performs direct computation without partitioning
 //' @param threads Integer. Number of threads for parallel computation.
 //'
-//' @return No direct return value. Results are written to the HDF5 file as:
+//' @return A list with the following elements:
 //' \describe{
-//'   \item{u}{Left singular vectors (U matrix)}
-//'   \item{d}{Singular values (diagonal of D matrix)}
-//'   \item{v}{Right singular vectors (V matrix)}
+//'   \item{fn}{Path to the HDF5 file}
+//'   \item{ds_d}{Path to the dataset containing singular values}
+//'   \item{ds_u}{Path to the dataset containing left singular vectors}
+//'   \item{ds_v}{Path to the dataset containing right singular vectors}
 //' }
 //'
 //' @examples
 //' \dontrun{
 //' # Create a sample large matrix in HDF5
+//'
+//' library(BigDataStatMeth)
 //' library(rhdf5)
+//' 
+//' # Create a sample large matrix in HDF5
 //' A <- matrix(rnorm(10000), 1000, 10)
-//' h5createFile("large_matrix.h5")
-//' h5write(A, "large_matrix.h5", "data/matrix")
+//' 
+//' fn <- "test_temp.hdf5"
+//' bdCreate_hdf5_matrix(filename = fn, object = A, group = "data", dataset = "matrix")
 //'
 //' # Compute SVD with default parameters
-//' bdSVD_hdf5("large_matrix.h5", "data", "matrix")
+//' res <- bdSVD_hdf5(fn, "data", "matrix")
 //'
 //' # Compute SVD with custom parameters
-//' bdSVD_hdf5("large_matrix.h5", "data", "matrix",
+//' res <- bdSVD_hdf5(fn, "data", "matrix",
 //'            k = 4, q = 2,
 //'            bcenter = TRUE, bscale = TRUE,
 //'            method = "blocks",
 //'            threads = 4)
+//' 
+//' # list contents
+//' h5ls(res$fn)
+//' 
+//' # Extract the result from HDF5 (d)
+//' result_d_hdf5 <- h5read(res$fn, res$ds_d)
+//' result_d_hdf5
+//' 
+//' # Compute the same SVD in R
+//' result_d_r <- svd(A)$d
+//' result_d_r
+//' 
+//' # Compare both results (should be TRUE)
+//' all.equal(result_d_hdf5, result_d_r)
+//' 
+//' # Remove file
+//' if (file.exists(fn)) {
+//'   file.remove(fn)
+//' }
+//' 
 //' }
 //'
 //' @references
@@ -118,7 +144,7 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue,
+Rcpp::List bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group = R_NilValue,
                        Rcpp::Nullable<Rcpp::CharacterVector> dataset = R_NilValue,
                        Rcpp::Nullable<int> k=2, Rcpp::Nullable<int> q=1,
                        Rcpp::Nullable<bool> bcenter=true, Rcpp::Nullable<bool> bscale=true,
@@ -130,6 +156,11 @@ void bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> 
  
      std::string str_filename;
      double dthreshold;
+
+     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                                Rcpp::Named("ds_d") = "",
+                                                Rcpp::Named("ds_u") = ""
+                                                Rcpp::Named("df_v") = "");
      
      try {
          
@@ -163,7 +194,7 @@ void bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> 
          } else {
              Rcpp::Rcout<< "File name must be character string";
              // return Rcpp::List::create(Rcpp::Named("file") = "");
-             return void();
+             return lst_return;
          }
          
          if(rankthreshold.isNull()) {  
@@ -171,44 +202,44 @@ void bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> 
          } else {
              if( Rcpp::as<double>(rankthreshold) > 0.1 ) {
                  Rcpp::Rcout<< "Threshold to big, please set threshold with value lower than 0.1";
-                 return void();
+                 return lst_return;
                  // return Rcpp::List::create(Rcpp::Named("file") = str_filename);
              } else if( Rcpp::as<double>(rankthreshold) < 0 ) {
                  Rcpp::Rcout<< "Threshold must be a positive value near zero";
-                 return void();
+                 return lst_return;
                  // return Rcpp::List::create(Rcpp::Named("file") = str_filename);
              } else {
                  dthreshold = Rcpp::as<double>(rankthreshold);
              }
          }
          
-         // retsvd = BigDataStatMeth::RcppbdSVD_hdf5( filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, threads );
-         BigDataStatMeth::RcppbdSVD_hdf5( str_filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, bforce, bRowMajor, method, threads );
+        // retsvd = BigDataStatMeth::RcppbdSVD_hdf5( filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, threads );
+        BigDataStatMeth::RcppbdSVD_hdf5( str_filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, bforce, bRowMajor, method, threads );
+
+        lst_return["fn"] = str_filename;
+        lst_return["ds_d"] = strgroup + "/" + strdataset + "/d";
+        lst_return["ds_u"] = strgroup + "/" + strdataset + "/u";
+        lst_return["ds_v"] = strgroup + "/" + strdataset + "/v";
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
          Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (File IException)";
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
-         return void();
      } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
          Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (Group IException)";
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
-         return void();
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
          Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (DataSet IException)";
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
-         return void();
      } catch(std::exception& ex) {
          Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5" << ex.what();
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
-         return void();
      } catch (...) {
          Rcpp::Rcerr<<"\nC++ exception bdSVD_hdf5 (unknown reason)";
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
-         return void();
      }
      
      // return Rcpp::List::create(Rcpp::Named("file") = str_filename);
-     return void();
+     return lst_return;
  
 }
 
