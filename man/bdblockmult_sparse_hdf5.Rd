@@ -96,6 +96,7 @@ x_sparse <- sparseMatrix(
     j = sample(x = k, size = k),
     x = rnorm(n = k)
 )
+
 set.seed(2)
 y_sparse <- sparseMatrix(
     i = sample(x = k, size = k),

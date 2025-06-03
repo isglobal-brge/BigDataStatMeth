@@ -51,11 +51,12 @@ Must be between 0 and 0.1. Used to approximate rank for nearly singular matrices
 \item{threads}{Integer. Number of threads for parallel computation.}
 }
 \value{
-No direct return value. Results are written to the HDF5 file as:
+A list with the following elements:
 \describe{
-\item{u}{Left singular vectors (U matrix)}
-\item{d}{Singular values (diagonal of D matrix)}
-\item{v}{Right singular vectors (V matrix)}
+\item{fn}{Path to the HDF5 file}
+\item{ds_d}{Path to the dataset containing singular values}
+\item{ds_u}{Path to the dataset containing left singular vectors}
+\item{ds_v}{Path to the dataset containing right singular vectors}
 }
 }
 \description{
@@ -84,20 +85,45 @@ The implementation uses an incremental algorithm with two key parameters:
 \examples{
 \dontrun{
 # Create a sample large matrix in HDF5
+
+library(BigDataStatMeth)
 library(rhdf5)
+
+# Create a sample large matrix in HDF5
 A <- matrix(rnorm(10000), 1000, 10)
-h5createFile("large_matrix.h5")
-h5write(A, "large_matrix.h5", "data/matrix")
+
+fn <- "test_temp.hdf5"
+bdCreate_hdf5_matrix(filename = fn, object = A, group = "data", dataset = "matrix")
 
 # Compute SVD with default parameters
-bdSVD_hdf5("large_matrix.h5", "data", "matrix")
+res <- bdSVD_hdf5(fn, "data", "matrix")
 
 # Compute SVD with custom parameters
-bdSVD_hdf5("large_matrix.h5", "data", "matrix",
+res <- bdSVD_hdf5(fn, "data", "matrix",
            k = 4, q = 2,
            bcenter = TRUE, bscale = TRUE,
            method = "blocks",
            threads = 4)
+
+# list contents
+h5ls(res$fn)
+
+# Extract the result from HDF5 (d)
+result_d_hdf5 <- h5read(res$fn, res$ds_d)
+result_d_hdf5
+
+# Compute the same SVD in R
+result_d_r <- svd(A)$d
+result_d_r
+
+# Compare both results (should be TRUE)
+all.equal(result_d_hdf5, result_d_r)
+
+# Remove file
+if (file.exists(fn)) {
+  file.remove(fn)
+}
+
 }
 
 }

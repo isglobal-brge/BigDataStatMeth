@@ -89,7 +89,8 @@ set.seed(555)
 a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
 b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
 
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+fn <- "test_temp.hdf5"
+bdCreate_hdf5_matrix(filename = fn, 
                      object = a, group = "groupA", 
                      dataset = "datasetA",
                      transp = FALSE,
@@ -97,7 +98,7 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
                      overwriteDataset = FALSE, 
                      unlimited = FALSE)
                      
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+bdCreate_hdf5_matrix(filename = fn, 
                      object = t(b), 
                      group = "groupA", 
                      dataset = "datasetB",
@@ -107,12 +108,31 @@ bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
                      unlimited = FALSE)
                      
 # Multiply two matrix
-bdblockmult_hdf5(filename = "test_temp.hdf5", group = "groupA", 
+bdblockmult_hdf5(filename = fn, group = "groupA", 
     A = "datasetA", B = "datasetB", outgroup = "results", 
     outdataset = "res", overwrite = TRUE ) 
     
-bdblockmult_hdf5(filename = "test_temp.hdf5", group = "groupA", 
+bdblockmult_hdf5(filename = fn, group = "groupA", 
     A = "datasetA", B = "datasetB", outgroup = "results", 
     outdataset = "res", block_size = 1024, overwrite = TRUE ) 
+
+# list contents
+h5ls(fn)
+
+# Extract the result from HDF5
+result_hdf5 <- h5read(res$fn, res$ds)[1:3, 1:5]
+result_hdf5
+
+# Compute the same multiplication in R
+result_r <- (a \%*\% b)[1:3, 1:5]
+result_r
+
+# Compare both results (should be TRUE)
+all.equal(result_hdf5, result_r)
+
+# Remove file
+if (file.exists(fn)) {
+  file.remove(fn)
+}
 
 }
