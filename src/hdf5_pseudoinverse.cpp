@@ -235,7 +235,7 @@ Rcpp::RObject bdpseudoinv( Rcpp::RObject X,
 //'
 //' @export
 // [[Rcpp::export]]
-void bdpseudoinv_hdf5(std::string filename, std::string group, std::string dataset,
+Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string dataset,
                                Rcpp::Nullable<std::string> outgroup = R_NilValue, 
                                Rcpp::Nullable<std::string> outdataset = R_NilValue, 
                                Rcpp::Nullable<bool> overwrite = R_NilValue,
@@ -244,6 +244,9 @@ void bdpseudoinv_hdf5(std::string filename, std::string group, std::string datas
      
      BigDataStatMeth::hdf5Dataset* dsA = nullptr;
      BigDataStatMeth::hdf5Dataset* dsRes = nullptr;
+
+     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                                Rcpp::Named("ds") = "");
      
     try {
          
@@ -270,8 +273,11 @@ void bdpseudoinv_hdf5(std::string filename, std::string group, std::string datas
         } else {
             checkClose_file(dsA, dsRes);
             Rcpp::Rcerr << "c++ exception bdPseudoinv_hdf5: " << "Error opening dataset";
-            return void();
+            return(lst_return);
         }
+
+        lst_return = Rcpp::List::create(Rcpp::Named("fn") = filename,
+                                        Rcpp::Named("ds") = strOutgroup + "/" + strOutdataset);
         
         delete dsA; dsA = nullptr;
         delete dsRes; dsRes = nullptr;
@@ -279,20 +285,21 @@ void bdpseudoinv_hdf5(std::string filename, std::string group, std::string datas
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (File IException)";     
-        return void();  
+        // return void();  
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (Group IException)";
-        return void();
+        // return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (DataSet IException)";
-        return void();
+        // return void();
     } catch(std::exception& ex) {
         checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5" << ex.what();
-        return void();
+        // return void();
     }
     
-    return void();
+    // return void();
+    return(lst_return);
 }
