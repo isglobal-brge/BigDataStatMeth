@@ -652,8 +652,138 @@ all.equal(choldesc_hdf5, choldesc_r)
 
 ```
 
+## QR Decomposition
+
+The QR decomposition is a matrix factorization technique in which a matrix $A$ is decomposed into the product of an orthogonal matrix $Q$ and an upper triangular matrix $R$, such that:
+
+$$
+A = Q \cdot R
+$$
+
+This decomposition is widely used in numerical linear algebra for solving least squares problems, eigenvalue computations, and matrix inversion. In the context of large-scale data, computing the QR decomposition efficiently and in a memory-safe manner becomes essential.
+
+The `BigDataStatMeth` package implements two functions to compute the inverse of a matrix using QR decomposition:
+
+- `bdQR()` for in-memory matrices.
+- `bdQR_hdf5()` for matrices stored in HDF5 format.
+
+The computation is done in blocks, allowing it to scale to datasets that do not fit in memory. The result can be used in further downstream statistical procedures, such as CCA or regression.
+
+In this example, we apply the QR decomposition to the same matrix `data` inside the group `chol` that was created and stored in HDF5 format in the previous section.
 
 
+```{r QRdec}
+QRh5 <- bdQR_hdf5(filename = example_fn,
+                  group = "chol",
+                  dataset = "data",
+                  outgroup = "QR_Dec",thin = TRUE,
+                  overwrite = TRUE)
+
+# Result dataset
+QR_Q_hdf5 <-  h5read(QRh5$fn, QRh5$ds_Q)
+QR_R_hdf5 <-  h5read(QRh5$fn, QRh5$ds_R)
+
+# Q matrix
+QR_Q_hdf5[1:3,1:5]
+
+# R matrix
+QR_R_hdf5[1:3,1:5]
+
+# Q matrix in R
+QR_Q_r <- qr.Q(qr(Ycp))
+QR_Q_r[1:3,1:5]
+
+all.equal(QR_Q_hdf5, QR_Q_r)
+
+```
+
+In this example, we show how to control the block size used during the computation by setting the `block_size` parameter. Adjusting this value can help improve performance depending on the available memory and system architecture.
+
+```{r QRdec_blocksize}
+QRh5 <- bdQR_hdf5(filename = example_fn,
+                  group = "chol",
+                  dataset = "data",
+                  outgroup = "QR_Dec",
+                  block_size = 256,
+                  overwrite = TRUE)
+
+# Result dataset
+QR_Q_hdf5 <-  h5read(QRh5$fn, QRh5$ds_Q)
+QR_R_hdf5 <-  h5read(QRh5$fn, QRh5$ds_R)
+
+# Q matrix
+QR_Q_hdf5[1:3,1:5]
+
+# R matrix
+QR_R_hdf5[1:3,1:5]
+
+# Q matrix in R
+QR_Q_r <- qr.Q(qr(Ycp))
+QR_Q_r[1:3,1:5]
+
+all.equal(QR_Q_hdf5, QR_Q_r)
+
+```
+
+
+## Cholesky-based Matrix Inversion
+
+
+The Cholesky decomposition is a matrix factorization technique applicable to symmetric, positive-definite matrices. It expresses a matrix $A$ as the product of a lower triangular matrix $L$ and its transpose:
+
+$$
+A = L \cdot L^\top
+$$
+
+This decomposition is particularly useful for solving linear systems and computing matrix inverses in a numerically stable and efficient way.
+
+The `BigDataStatMeth` package implements two functions to compute the inverse of a matrix using Cholesky decomposition:
+
+- `bdInvCholesky()` for in-memory matrices.
+- `bdInvCholesky_hdf5()` for matrices stored in HDF5 format.
+
+These functions are especially useful when dealing with large covariance matrices in genomics or other high-dimensional applications.
+
+```{r CholInv}
+invCholh5 <- bdInvCholesky_hdf5( filename = example_fn,
+                                 group = "chol",
+                                 dataset = "data",
+                                 outdataset = "invmatrix", 
+                                 outgroup = "InvCholesky", 
+                                 fullMatrix = FALSE, 
+                                 overwrite = TRUE)
+
+# Result dataset
+invChol_hdf5 <-  h5read(invCholh5$fn, invCholh5$ds)
+invChol_hdf5[1:5,1:5]
+
+```
+
+The argument `fullMatrix` is a logical flag that controls how the inverse is stored:
+- If `fullMatrix = TRUE`, the entire inverse matrix is stored in the output file.
+- If `fullMatrix = FALSE` (default), only the lower triangular part is stored, which reduces disk usage and is sufficient when the matrix is symmetric.
+
+
+```{r CholInv_full}
+invCholh5 <- bdInvCholesky_hdf5( filename = example_fn,
+                                 group = "chol",
+                                 dataset = "data",
+                                 outdataset = "invmatrix", 
+                                 outgroup = "InvCholesky", 
+                                 fullMatrix = TRUE, 
+                                 overwrite = TRUE)
+
+# Result dataset
+invChol_hdf5 <-  h5read(invCholh5$fn, invCholh5$ds)
+invChol_hdf5[1:5,1:5]
+
+# Inverse Cholesky matrix in R
+invChol_r <- solve(Ycp)
+invChol_r[1:5,1:5]
+
+all.equal(invChol_hdf5, invChol_r)
+
+```
 
 # Session information
 ```{r sesinfo }
