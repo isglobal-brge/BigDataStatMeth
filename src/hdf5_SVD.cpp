@@ -217,9 +217,13 @@ Rcpp::List bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVe
         BigDataStatMeth::RcppbdSVD_hdf5( str_filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), ks, qs, nvs, bcent, bscal, dthreshold, bforce, bRowMajor, method, threads );
 
         lst_return["fn"] = str_filename;
-        lst_return["ds_d"] = Rcpp::as<std::string>(strgroup) + "/" + Rcpp::as<std::string>(strdataset) + "/d";
-        lst_return["ds_u"] = Rcpp::as<std::string>(strgroup) + "/" + Rcpp::as<std::string>(strdataset) + "/u";
-        lst_return["ds_v"] = Rcpp::as<std::string>(strgroup) + "/" + Rcpp::as<std::string>(strdataset) + "/v";
+        // lst_return["ds_d"] = Rcpp::as<std::string>(strgroup) + "/" + Rcpp::as<std::string>(strdataset) + "/d";
+        // lst_return["ds_u"] = Rcpp::as<std::string>(strgroup) + "/" + Rcpp::as<std::string>(strdataset) + "/u";
+        // lst_return["ds_v"] = Rcpp::as<std::string>(strgroup) + "/" + Rcpp::as<std::string>(strdataset) + "/v";
+         
+         lst_return["ds_d"] = "SVD/" + Rcpp::as<std::string>(strdataset) + "/d";
+         lst_return["ds_u"] = "SVD/" + Rcpp::as<std::string>(strdataset) + "/u";
+         lst_return["ds_v"] = "SVD/" + Rcpp::as<std::string>(strdataset) + "/v";
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
          Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (File IException)";

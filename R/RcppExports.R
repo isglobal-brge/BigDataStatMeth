@@ -88,7 +88,7 @@
 #' 
 #' @export
 bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = NULL, elementsBlock = 1000000L) {
-    invisible(.Call('_BigDataStatMeth_bdCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock))
+    .Call('_BigDataStatMeth_bdCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
 }
 
 #' QR Decomposition for In-Memory Matrices

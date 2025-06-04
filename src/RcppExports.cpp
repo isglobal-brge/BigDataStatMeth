@@ -12,9 +12,10 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // bdCholesky_hdf5
-void bdCholesky_hdf5(std::string filename, std::string group, std::string dataset, std::string outdataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> fullMatrix, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<int> threads, Rcpp::Nullable<long> elementsBlock);
+Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string dataset, std::string outdataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> fullMatrix, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<int> threads, Rcpp::Nullable<long> elementsBlock);
 RcppExport SEXP _BigDataStatMeth_bdCholesky_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outdatasetSEXP, SEXP outgroupSEXP, SEXP fullMatrixSEXP, SEXP overwriteSEXP, SEXP threadsSEXP, SEXP elementsBlockSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
@@ -25,8 +26,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<long> >::type elementsBlock(elementsBlockSEXP);
-    bdCholesky_hdf5(filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(bdCholesky_hdf5(filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock));
+    return rcpp_result_gen;
 END_RCPP
 }
 // bdQR
