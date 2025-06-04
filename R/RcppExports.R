@@ -193,7 +193,7 @@ bdQR <- function(X, thin = NULL, block_size = NULL, threads = NULL) {
 #'
 #' @export
 bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, thin = NULL, block_size = NULL, overwrite = NULL, threads = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdQR_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, thin, block_size, overwrite, threads))
+    .Call('_BigDataStatMeth_bdQR_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, thin, block_size, overwrite, threads)
 }
 
 #' Singular Value Decomposition for HDF5-Stored Matrices
@@ -1665,7 +1665,7 @@ bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdata
 #'
 #' @export
 bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
-    invisible(.Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock))
+    .Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
 }
 
 #' Get Matrix Diagonal from HDF5

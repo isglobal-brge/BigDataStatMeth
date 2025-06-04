@@ -125,7 +125,7 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdInvCholesky_hdf5(std::string filename, std::string group, std::string dataset,
+Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::string dataset,
                         std::string outdataset,
                         Rcpp::Nullable<std::string> outgroup = R_NilValue, 
                         Rcpp::Nullable<bool> fullMatrix = R_NilValue, 
@@ -137,6 +137,9 @@ void bdInvCholesky_hdf5(std::string filename, std::string group, std::string dat
     
     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
     BigDataStatMeth::hdf5DatasetInternal* dstmp = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
     
     try
     {
@@ -176,19 +179,22 @@ void bdInvCholesky_hdf5(std::string filename, std::string group, std::string dat
                 } else {
                     checkClose_file(dsA, dstmp);
                     Rcpp::Rcerr << "c++ exception bdInvCholesky_hdf5: " << "Error creating temporary dataset";
-                    return void();
+                    return(lst_return);
                 }
                 
             } else {
                 delete dsA; dsA = nullptr;
                 Rcpp::Rcout<<"\n Can't get inverse matrix for "<< group + "/" + dataset <<" using Cholesky decomposition \n";
-                return void();
+                return(lst_return);
             }    
         } else {
             delete dsA; dsA = nullptr;
             Rcpp::Rcerr << "c++ exception bdInvCholesky_hdf5: " << "Error opening dataset";
-            return void();
+            return(lst_return);
         }
+        
+        lst_return = Rcpp::List::create(Rcpp::Named("fn") = filename,
+                                        Rcpp::Named("ds") = strOutdataset);
         
         delete dsA; dsA = nullptr;
         delete dstmp; dstmp = nullptr;
@@ -196,24 +202,19 @@ void bdInvCholesky_hdf5(std::string filename, std::string group, std::string dat
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (File IException)";
-        return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (Group IException)";
-        return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (DataSet IException)";
-        return void();
     } catch(std::exception& ex) {
         checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5: " << ex.what();
-        return void();
     } catch (...) {
         checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nC++ exception bdInvCholesky_hdf5 (unknown reason)";
-        return void();
     }
     
-    return void();
+    return(lst_return);
 }
