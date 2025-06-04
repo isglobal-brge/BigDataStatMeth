@@ -169,12 +169,12 @@ m <- 12000
 B <- matrix(rnorm(n*m,mean=3,sd=0.5), n, m)
 
 # Path to HDF5 file
-fn_example <- "delayed.hdf5"
+example_fn <- "delayed.hdf5"
 
 # We create another data file (delayed.hdf5) with a matrix A.
 # The group is called INPUT, overwriteFile is set to true to 
 # overwrite a file if exists
-bdCreate_hdf5_matrix(filename = fn_example, 
+bdCreate_hdf5_matrix(filename = example_fn, 
                      object = A, 
                      group = "INPUT", 
                      dataset = "A", 
@@ -182,7 +182,7 @@ bdCreate_hdf5_matrix(filename = fn_example,
 
 # And them, we add another matrix B to the same group
 bdCreate_hdf5_matrix(object = B, 
-                filename = fn_example, 
+                filename = example_fn, 
                 group = "INPUT", 
                 dataset = "B")
 ```
@@ -192,18 +192,18 @@ bdCreate_hdf5_matrix(object = B,
 
 We can open an existing file show contents and access data using functions from `rhdf5` package. `rhdf5` is an R interface for HDF5. The file must always be opened before working with it.
 
-With `htls()` function we get the the list of an hdf5 content without the need of open the file.
+With `h5ls()` function we get the the list of an hdf5 content without the need of open the file.
 
 ```{r hdf5Show}
 # Examine hierarchy before open file
-h5ls(fn_example)
+h5ls(example_fn)
 ```
 
 Once opened, it can be seen just typing its name. In that case, we only get the current level in the hierarchical tree
 
 ```{r hdf5Open, cache=FALSE}
 # Open file
-h5fdelay <- H5Fopen(fn_example)
+h5fdelay <- H5Fopen(example_fn)
 # Show hdf5 hierarchy (groups)
 h5fdelay
 ```
@@ -245,7 +245,7 @@ If the `outgroup` is not specified, the result is written to the `"OUTPUT"` grou
 ```{r blockmult_hdf5_exec}
 
 # Perform blockwise matrix multiplication
-res <- bdblockmult_hdf5(filename = fn_example, group = "INPUT",
+res <- bdblockmult_hdf5(filename = example_fn, group = "INPUT",
                         A = "A", B = "B", outgroup = "HDF5_RES")
 
 # Show the content of the HDF5 file
@@ -299,28 +299,28 @@ B <- matrix(rnorm(1000 * 150), nrow = 1000, ncol = 150)
 C <- matrix(rnorm(800 * 200),  nrow = 800,  ncol = 200) 
 
 # Save matrices to HDF5 file using BigDataStatMeth
-fn_example <- "delayed.hdf5"
+example_fn <- "delayed.hdf5"
 
-bdCreate_hdf5_matrix(filename = fn_example, 
+bdCreate_hdf5_matrix(filename = example_fn, 
                      object = A,
                      group = "INPUT", 
                      dataset =  "A", 
                      overwriteFile = TRUE)
 
-bdCreate_hdf5_matrix(filename = fn_example,
+bdCreate_hdf5_matrix(filename = example_fn,
                      object = B,
                      group = "INPUT", 
                      dataset =  "B", 
                      overwriteFile = FALSE)
 
-bdCreate_hdf5_matrix(filename = fn_example,
+bdCreate_hdf5_matrix(filename = example_fn,
                      object = C,
                      group = "INPUT", 
                      dataset = "C", 
                      overwriteFile = FALSE)
 
 # Compute t(A) %*% A
-res_cross <- bdCrossprod_hdf5(filename = fn_example, 
+res_cross <- bdCrossprod_hdf5(filename = example_fn, 
                               group = "INPUT", 
                               A = "A")
 
@@ -338,7 +338,7 @@ all.equal(res_r, res_hdf5)
 **Crossproduct of two matrices**
 ```{r crossprod_dbl}
 # Compute t(A) %*% B
-res_cross2 <- bdCrossprod_hdf5(filename = fn_example, 
+res_cross2 <- bdCrossprod_hdf5(filename = example_fn, 
                                group = "INPUT", 
                                A = "A", 
                                B = "B")
@@ -354,7 +354,7 @@ all.equal(res_r, res_hdf5)
 
 ```{r tcrossprod_sing}
 # Compute A %*% t(A)
-res_tcross <- bdtCrossprod_hdf5(filename = fn_example, 
+res_tcross <- bdtCrossprod_hdf5(filename = example_fn, 
                                 group = "INPUT", 
                                 A = "A")
 
@@ -369,7 +369,7 @@ all.equal(res_r_t, res_hdf5_t)
 **Transposed Crossproduct of two matrices**
 ```{r tcrossprod_dbl}
 # Compute A %*% t(B)
-res_tcross2 <- bdtCrossprod_hdf5(filename = fn_example, 
+res_tcross2 <- bdtCrossprod_hdf5(filename = example_fn, 
                                  group = "INPUT", 
                                  A = "A", 
                                  B = "C")
@@ -398,7 +398,7 @@ The following table summarizes the types of crossproduct operations supported by
 These operations are executed efficiently using C++ backends and blockwise computation on HDF5 datasets, making them suitable for large-scale matrix operations.
 
 
-### Blockwise Matrix Subtraction in HDF5
+## Blockwise Matrix Subtraction in HDF5
 
 The `bdblockSubstract_hdf5()` function performs blockwise element-wise subtraction of two matrices stored in an HDF5 file. It computes $A - B$, writing the result back into the file, without requiring either matrix to be fully loaded into memory.
 
@@ -436,7 +436,7 @@ all.equal(result_r, result_hdf5)
 The result stored in HDF5 is numerically identical to the in-memory computation of $A - B$ in R, validating the blockwise approach.
 
 
-### Blockwise Matrix Addition in HDF5
+## Blockwise Matrix Addition in HDF5
 
 The `bdblockSum_hdf5()` function performs blockwise element-wise addition of two matrices stored in HDF5 format. This is useful for efficiently computing $A + B$ on large matrices.
 
@@ -473,6 +473,9 @@ all.equal(result_r, result_hdf5)
 Like subtraction, the addition operation yields identical results to standard R arithmetic but can scale to matrices stored on disk using the HDF5 format.
 
 
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+# Matrix Decompositions and Inverses
 
 ## Singular Value Decomposition (SVD)
 
@@ -510,75 +513,146 @@ We have to indicate the file to work with, the dataset name and the group where 
 set.seed(5234)
 n <- 100
 m <- 15000
-odata <- matrix(rnorm(n*m, mean=0, sd=1), n,m)
+omicdata <- matrix(rnorm(n*m, mean=0, sd=1), n,m)
 
-bdCreate_hdf5_matrix(filename = "delayed.hdf5", 
-                     object = odata, 
+bdCreate_hdf5_matrix(filename = example_fn, 
+                     object = omicdata, 
                      group = "OMICS", 
                      dataset = "data", 
                      overwriteDataset = TRUE)
 
-# # Direct from hdf5 data file
-# svdh5 <- bdSVD_hdf5("delayed.hdf5", "OMICS", "data", overwrite = TRUE)
-# 
-# # with R implementation from data in memory
-# test <- H5Fopen("delayed.hdf5")
-# # get results svd (d)
-# svd_hdf5_d <- test$SVD$data$d[1:7]
-# # get data
-# omdata <- test$OMICS$data
-# h5closeAll()
-# 
-# # Results in hdf5 file for d
-# svd_hdf5_d[1:7]
-# 
-# svd <- svd(scale(omdata))
-# svd$d[1:7]
+# Direct from hdf5 data file
+svdh5 <- bdSVD_hdf5( filename = example_fn, 
+                     group = "OMICS", 
+                     dataset = "data", 
+                     overwrite  = TRUE)
+
+# get results svd (d) from hdf5 data file
+svd_hdf5_d <- h5read(svdh5$fn, svdh5$ds_d)
+
+# Results in hdf5 file for d
+svd_hdf5_d[1:7]
+
+svd <- svd(scale(omicdata))
+svd$d[1:7]
+
 ```
 
 
 Like in Simple Singular Value Decomposition we can normalize, center or scale data before proceed with SVD decomposition with `bscale` and `bcenter` parameters, by default this parameter are TRUE, data is normalized before SVD decomposition. To proceed with SVD without normalization :
 
 ```{r BlockSVDNotNorm}
-# # Direct from hdf5 data file (using only one thread, serial execution)
-# svdh5 <- bdSVD_hdf5( "delayed.hdf5", "OMICS", "data", 
-#                      bcenter = FALSE, bscale = FALSE,
-#                      k = 2, q = 1, threads = 1)
+# Direct from hdf5 data file (using only one thread, serial execution)
+svdh5 <- bdSVD_hdf5( filename = example_fn, 
+                     group = "OMICS", 
+                     dataset = "data",
+                     bcenter = FALSE, 
+                     bscale = FALSE,
+                     overwrite  = TRUE)
 ```
 
 ```{r BlockSVDNotNormResults}
-# # get results svd (d)
-# test <- H5Fopen("delayed.hdf5")
-# svd_hdf5_d <- test$SVD$data$d[1:7] 
-# h5closeAll()
-# 
-# # SVD (d) from file - data not normalized
-# svd_hdf5_d
-# 
-# # with R implementation from data in memory
-# svd <- svd(omdata)
-# svd$d[1:7]
+# get results svd (d)
+svd_hdf5_d <- h5read(svdh5$fn, svdh5$ds_d)[1:7]
+# SVD (d) from file - data not normalized
+svd_hdf5_d
+
+# with R implementation from data in memory
+svd <- svd(omicdata)
+svd$d[1:7]
 ```
 
 In the SVD decomposition by blocks we can indicate the number of decomposition levels and number of local SVDs to concatenate at each level with parameters `q` and `k` respectively, by default `q = 1` one level with `k=2`.
 
 ```{r BlockSVDk4}
-# # Block decomposition with 1 level and 4 local SVDs at each level
-# svdh5 <- bdSVD_hdf5(file = "delayed.hdf5", group = "OMICS", dataset = "data",
-#                     threads = 2)
-# 
-# # get results svd (d)
-# fprova <- H5Fopen("delayed.hdf5")
-#   svd_hdf5_d <- fprova$SVD$data$d[1:7]
-# h5closeAll()
-# 
-# # SVD (d) from file - data not normalized
-# svd_hdf5_d
-# 
-# # with R implementation from data in memory
-# svd <- svd(scale(omdata))
-# svd$d[1:7]
+# Block decomposition with 1 level and 4 local SVDs at each level using 
+# two threads (as maximum)
+svdh5 <- bdSVD_hdf5( filename = example_fn, 
+                     group = "OMICS", 
+                     dataset = "data",
+                     q = 1, 
+                     k = 4, 
+                     threads = 2,
+                     overwrite  = TRUE)
+
+# get results svd (d)
+svd_hdf5_d <- h5read(svdh5$fn, svdh5$ds_d)[1:7]
+
+# SVD (d) from file - data not normalized
+svd_hdf5_d
+
+# with R implementation from data in memory
+svd <- svd(scale(omicdata))
+svd$d[1:7]
 ```
+
+## Cholesky Decomposition
+
+The Cholesky decomposition is a matrix factorization technique applicable to symmetric, positive-definite matrices. It decomposes a matrix $A$ into the product of a lower triangular matrix $L$ and its transpose, such that: 
+$$
+A = L \cdot L^\top
+$$
+This method is particularly useful for solving systems of linear equations, inverting matrices, and performing efficient numerical computations.
+
+The `BigDataStatMeth` package provides the function `bdInvCholesky_hdf5()` to compute the inverse of a symmetric, positive-definite matrix stored in HDF5 format using the Cholesky decomposition. This function operates directly on disk-stored data, minimizing memory usage while maintaining computational efficiency. If the input matrix meets the necessary conditions (Hermitian and positive-definite), the function performs the factorization and inversion in a blockwise manner, making it suitable for large-scale data.
+
+Here's how to use `bdInvCholesky_hdf5()`:
+
+
+```{r cholDesc}
+Y <- matrix(sample.int(10, 10000, replace = TRUE), ncol = 100)
+Ycp <- crossprod(Y)
+
+bdCreate_hdf5_matrix(filename = example_fn, 
+                     object = Ycp, 
+                     group = "chol", 
+                     dataset = "data",
+                     transp = FALSE,
+                     overwriteFile = TRUE, overwriteDataset = TRUE, 
+                     unlimited = FALSE)
+
+cholh5 <- bdCholesky_hdf5(filename = example_fn, 
+                          group = "chol", 
+                          dataset = "data",
+                          outdataset = "matrixDec", 
+                          outgroup = "Cholesky_Dec",
+                          overwrite = TRUE)
+choldesc_hdf5 <-  h5read(cholh5$fn, cholh5$ds)
+choldesc_hdf5[1:3,1:5]
+
+choldesc_r <- chol(Ycp)
+choldesc_r[1:3,1:5]
+
+all.equal(choldesc_hdf5, choldesc_r)
+
+```
+
+The computation can be further optimized by specifying the `elementsBlock` parameter, which determines the approximate number of elements to include in each processing block. For example, setting `elementsBlock = 50` instructs the function to process the matrix in chunks of approximately 50 elements, balancing speed and memory use.
+
+
+```{r cholDesc_50}
+cholh5 <- bdCholesky_hdf5(filename = example_fn, 
+                          group = "chol", 
+                          dataset = "data",
+                          outdataset = "matrixDec_50", 
+                          outgroup = "Cholesky_Dec",
+                          elementsBlock = 50,
+                          overwrite = TRUE)
+
+# Result dataset
+cholh5$ds
+
+choldesc_hdf5 <-  h5read(cholh5$fn, cholh5$ds)
+choldesc_hdf5[1:3,1:5]
+
+choldesc_r <- chol(Ycp)
+choldesc_r[1:3,1:5]
+
+all.equal(choldesc_hdf5, choldesc_r)
+
+```
+
+
 
 
 # Session information
