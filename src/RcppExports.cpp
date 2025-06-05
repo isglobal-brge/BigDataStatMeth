@@ -344,9 +344,10 @@ BEGIN_RCPP
 END_RCPP
 }
 // bdImportTextFile_hdf5
-void bdImportTextFile_hdf5(std::string filename, std::string outputfile, std::string outGroup, std::string outDataset, Rcpp::Nullable<std::string> sep, Rcpp::Nullable<bool> header, Rcpp::Nullable<bool> rownames, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> overwriteFile);
+Rcpp::List bdImportTextFile_hdf5(std::string filename, std::string outputfile, std::string outGroup, std::string outDataset, Rcpp::Nullable<std::string> sep, Rcpp::Nullable<bool> header, Rcpp::Nullable<bool> rownames, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> overwriteFile);
 RcppExport SEXP _BigDataStatMeth_bdImportTextFile_hdf5(SEXP filenameSEXP, SEXP outputfileSEXP, SEXP outGroupSEXP, SEXP outDatasetSEXP, SEXP sepSEXP, SEXP headerSEXP, SEXP rownamesSEXP, SEXP overwriteSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP overwriteFileSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type outputfile(outputfileSEXP);
@@ -359,8 +360,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwriteFile(overwriteFileSEXP);
-    bdImportTextFile_hdf5(filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads, overwriteFile);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(bdImportTextFile_hdf5(filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads, overwriteFile));
+    return rcpp_result_gen;
 END_RCPP
 }
 // bdImputeSNPs_hdf5

@@ -1495,7 +1495,7 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #'
 #' @export
 bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, sep = NULL, header = FALSE, rownames = FALSE, overwrite = FALSE, paral = NULL, threads = NULL, overwriteFile = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdImportTextFile_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads, overwriteFile))
+    .Call('_BigDataStatMeth_bdImportTextFile_hdf5', PACKAGE = 'BigDataStatMeth', filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads, overwriteFile)
 }
 
 #' Impute Missing SNP Values in HDF5 Dataset

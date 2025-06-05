@@ -122,19 +122,25 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdImportTextFile_hdf5( std::string filename,
-                            std::string outputfile, std::string outGroup, std::string outDataset,
-                            Rcpp::Nullable<std::string> sep = R_NilValue,
-                            Rcpp::Nullable<bool> header = false,
-                            Rcpp::Nullable<bool> rownames = false,
-                            Rcpp::Nullable<bool> overwrite = false,
-                            Rcpp::Nullable<bool> paral = R_NilValue,
-                            Rcpp::Nullable<int> threads = R_NilValue,
-                            Rcpp::Nullable<bool> overwriteFile = R_NilValue)
+Rcpp::List bdImportTextFile_hdf5( std::string filename,
+                                  std::string outputfile, 
+                                  std::string outGroup, std::string outDataset,
+                                  Rcpp::Nullable<std::string> sep = R_NilValue,
+                                  Rcpp::Nullable<bool> header = false,
+                                  Rcpp::Nullable<bool> rownames = false,
+                                  Rcpp::Nullable<bool> overwrite = false,
+                                  Rcpp::Nullable<bool> paral = R_NilValue,
+                                  Rcpp::Nullable<int> threads = R_NilValue,
+                                  Rcpp::Nullable<bool> overwriteFile = R_NilValue)
 {
 
     BigDataStatMeth::hdf5File* objFile = nullptr;
     BigDataStatMeth::hdf5Dataset* datasetOut = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "",
+                                               Rcpp::Named("ds_rows") = "",
+                                               Rcpp::Named("ds_cols") = "");
 
     try{
         
@@ -164,16 +170,28 @@ void bdImportTextFile_hdf5( std::string filename,
                 
                 Rcpp_Import_File_to_hdf5( filename, datasetOut, sep, header, rownames, paral, threads) ;
                 
+                
             } else {
                 Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5: " << "Error opening file";
                 delete objFile; objFile = nullptr;
-                return void();
+                return(lst_return);
             }
 
         } else {
             Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5: " << "File "<<filename<<" doesn't exists, please, review location";
             delete objFile; objFile = nullptr;
-            return void();
+            return(lst_return);
+        }
+        
+        lst_return["fn"] = outputfile;
+        lst_return["ds"] = outGroup + "/" + outDataset;
+        
+        if(Rcpp::as<bool>(header) == true) {
+            lst_return["ds_cols"] = outGroup + "/." + outDataset + "_dimnames/2";
+            
+        }
+        if(Rcpp::as<bool>(rownames) == true) {
+            lst_return["ds_rows"] = outGroup + "/." + outDataset + "_dimnames/1";
         }
 
         delete datasetOut; datasetOut = nullptr;
@@ -183,23 +201,22 @@ void bdImportTextFile_hdf5( std::string filename,
         checkClose_file(datasetOut);
         if(objFile != nullptr) { delete objFile; objFile = nullptr; }
         Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Runtime error: " << re.what() << std::endl;
-        return void();
+        return(lst_return);
     } catch(const std::exception& ex) {
         checkClose_file(datasetOut);
         if(objFile != nullptr) { delete objFile; objFile = nullptr; }
         Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Error occurred: " << ex.what() << std::endl;
-        return void();
+        return(lst_return);
     } catch(...) {
         // catch any other errors (that we have no information about)
         checkClose_file(datasetOut);
         if(objFile != nullptr) { delete objFile; objFile = nullptr; }
         Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Unknown failure occurred. Possible memory corruption" << std::endl;
-        return void();
+        return(lst_return);
     }
     
     Rcpp::message(Rcpp::wrap("The file has been imported"));
-    
-    
-    return void();
+    return(lst_return);
+    // return void();
 
 }
