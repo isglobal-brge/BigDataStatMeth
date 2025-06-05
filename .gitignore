@@ -60,3 +60,4 @@ src/Makevars
 # check files
 *.hide
 *.json
+src/Makevars

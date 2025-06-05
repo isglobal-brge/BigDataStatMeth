@@ -156,7 +156,7 @@ extern inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDatas
         if(res == 0)
         {
             Inverse_of_Cholesky_decomposition_hdf5( outDataset, nrows, ncols, dElementsBlock, threads);
-            Inverse_Matrix_Cholesky_parallel( outDataset, nrows, ncols, dElementsBlock, threads); 
+            Inverse_Matrix_Cholesky_parallel( outDataset, nrows, ncols, dElementsBlock, threads);
             
             if( bfull==true ) {
                 setUpperTriangularMatrix( outDataset, dElementsBlock);
@@ -294,6 +294,7 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
                 if( offset[0] != 0) {
                     offset[0] = offset[0] + 1;
                     count[0] = count[0] - 1;
+                    
                     outDataset->writeDatasetBlock( Rcpp::wrap(L.block(1, 0, L.rows()-1, L.cols())), offset, count, stride, block, false);
                     
                 } else {
@@ -336,7 +337,7 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
 
 
 
-extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf5Dataset* InOutDataset, 
+extern inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* InOutDataset, 
                                     int idim0, int idim1, long dElementsBlock, 
                                     Rcpp::Nullable<int> threads = R_NilValue)
 {
@@ -386,7 +387,6 @@ extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf
                 std::vector<double> vverticalData( count[0] * count[1] ); 
                 InOutDataset->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vverticalData.data() );
                 verticalData = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vverticalData.data(), count[0], count[1] );
-                
                 
                 for (int j = 1; j < dimensionSize - offset[0]; j++)
                 {
@@ -528,7 +528,8 @@ extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Datase
                 verticalData = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vverticalData.data(), count[0], count[1] );
                 
                 
-#pragma omp parallel for num_threads(ithreads) shared (verticalData, colstoRead, offset) schedule(dynamic)
+// #pragma omp parallel for num_threads(ithreads) shared (verticalData, colstoRead, offset) schedule(dynamic)
+#pragma omp parallel for num_threads(ithreads) shared (verticalData, colstoRead, offset) schedule(static) ordered
                 for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columns
                 {
                     int init;
@@ -549,12 +550,16 @@ extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Datase
                         }
                     }
                     
-                    for ( int j = init; j < colstoRead ; j++) { // Rows
-                        
-                        if( offset[0] + j < verticalData.cols()) {
-                            verticalData(j,i) = (verticalData.block( j, i , verticalData.rows() - j, 1).array() * verticalData.block( j, j + offset[0],  verticalData.rows() - j, 1).array()).sum();
+                    #pragma omp ordered
+                    {
+                        for ( int j = init; j < colstoRead ; j++) { // Rows
+                            
+                            if( offset[0] + j < verticalData.cols()) {
+                                verticalData(j,i) = (verticalData.block( j, i , verticalData.rows() - j, 1).array() * verticalData.block( j, j + offset[0],  verticalData.rows() - j, 1).array()).sum();
+                            }
                         }
                     }
+                   
                 }
                 
                 InOutDataset->writeDatasetBlock( Rcpp::wrap(verticalData), offset, count, stride, block, false);

@@ -600,7 +600,9 @@ Here's how to use `bdInvCholesky_hdf5()`:
 
 
 ```{r cholDesc}
-Y <- matrix(sample.int(10, 10000, replace = TRUE), ncol = 100)
+N <- 100
+set.seed(5234)
+Y <- matrix(rnorm(N*N), N, N)
 Ycp <- crossprod(Y)
 
 bdCreate_hdf5_matrix(filename = example_fn, 
