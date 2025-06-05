@@ -247,10 +247,15 @@ Rcpp::List  bdQR_hdf5( std::string filename, std::string group, std::string data
         
         if( dsA->getDatasetptr() != nullptr ) {
             RcppQRHdf5(dsA, dsQ, dsR, bthin, block_size, threads);
+
+
+        lst_return["fn"] = filename;
+        lst_return["ds_Q"] = strOutgroup + "/" + strOutdataset_Q;
+        lst_return["ds_R"] = strOutgroup + "/" + strOutdataset_R;
             
-            lst_return = Rcpp::List::create(Rcpp::Named("fn") = filename,
-                                            Rcpp::Named("ds_Q") = strOutgroup + "/" + strOutdataset_Q,
-                                            Rcpp::Named("ds_R") = strOutgroup + "/" + strOutdataset_R);
+            // lst_return = Rcpp::List::create(Rcpp::Named("fn") = filename,
+            //                                 Rcpp::Named("ds_Q") = strOutgroup + "/" + strOutdataset_Q,
+            //                                 Rcpp::Named("ds_R") = strOutgroup + "/" + strOutdataset_R);
             
         } else {
             checkClose_file(dsA, dsQ, dsR);

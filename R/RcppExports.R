@@ -906,6 +906,7 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' @return a dataset inside the hdf5 data file with A*B 
 #' @examples
 #' library("BigDataStatMeth")
+#' library("rhdf5")
 #' 
 #' N = 1500; M = 1500
 #' 
@@ -932,11 +933,11 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #'                      unlimited = FALSE)
 #'                      
 #' # Multiply two matrix
-#' bdblockmult_hdf5(filename = fn, group = "groupA", 
+#' res <- bdblockmult_hdf5(filename = fn, group = "groupA", 
 #'     A = "datasetA", B = "datasetB", outgroup = "results", 
 #'     outdataset = "res", overwrite = TRUE ) 
 #'     
-#' bdblockmult_hdf5(filename = fn, group = "groupA", 
+#' res <- bdblockmult_hdf5(filename = fn, group = "groupA", 
 #'     A = "datasetA", B = "datasetB", outgroup = "results", 
 #'     outdataset = "res", block_size = 1024, overwrite = TRUE ) 
 #' 
@@ -2028,7 +2029,7 @@ bdpseudoinv <- function(X, threads = NULL) {
 #'
 #' @export
 bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, overwrite = NULL, threads = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdpseudoinv_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, overwrite, threads))
+    .Call('_BigDataStatMeth_bdpseudoinv_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, overwrite, threads)
 }
 
 #' Reduce Multiple HDF5 Datasets

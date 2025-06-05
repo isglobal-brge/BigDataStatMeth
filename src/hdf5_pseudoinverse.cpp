@@ -276,8 +276,11 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
             return(lst_return);
         }
 
-        lst_return = Rcpp::List::create(Rcpp::Named("fn") = filename,
-                                        Rcpp::Named("ds") = strOutgroup + "/" + strOutdataset);
+        lst_return["fn"] = filename;
+        lst_return["ds"] = strOutgroup + "/" + strOutdataset;
+
+        // lst_return = Rcpp::List::create(Rcpp::Named("fn") = filename,
+        //                                 Rcpp::Named("ds") = strOutgroup + "/" + strOutdataset);
         
         delete dsA; dsA = nullptr;
         delete dsRes; dsRes = nullptr;

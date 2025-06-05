@@ -193,8 +193,8 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
             return(lst_return);
         }
         
-        lst_return = Rcpp::List::create(Rcpp::Named("fn") = filename,
-                                        Rcpp::Named("ds") = strOutdataset);
+        lst_return["fn"] = filename;
+        lst_return["ds"] = strOutdataset;
         
         delete dsA; dsA = nullptr;
         delete dstmp; dstmp = nullptr;

@@ -49,6 +49,7 @@
 //' @return a dataset inside the hdf5 data file with A*B 
 //' @examples
 //' library("BigDataStatMeth")
+//' library("rhdf5")
 //' 
 //' N = 1500; M = 1500
 //' 
@@ -75,11 +76,11 @@
 //'                      unlimited = FALSE)
 //'                      
 //' # Multiply two matrix
-//' bdblockmult_hdf5(filename = fn, group = "groupA", 
+//' res <- bdblockmult_hdf5(filename = fn, group = "groupA", 
 //'     A = "datasetA", B = "datasetB", outgroup = "results", 
 //'     outdataset = "res", overwrite = TRUE ) 
 //'     
-//' bdblockmult_hdf5(filename = fn, group = "groupA", 
+//' res <- bdblockmult_hdf5(filename = fn, group = "groupA", 
 //'     A = "datasetA", B = "datasetB", outgroup = "results", 
 //'     outdataset = "res", block_size = 1024, overwrite = TRUE ) 
 //' 
