@@ -37,4 +37,4 @@ CCACHE=ccache
 CXX_STD = $(CCACHE) CXX17
 
 # Optional: safe compiler-specific additions (commented by default)
-# PKG_CXXFLAGS += -g3 -O3 -std=c++17 -Wall
+PKG_CXXFLAGS += -g3 -O3 -std=c++17 -Wall
