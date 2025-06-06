@@ -44,7 +44,7 @@
 namespace BigDataStatMeth {
 
 
-    extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5( 
+    inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5( 
             BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
             hsize_t hdf5_block, hsize_t mem_block_size, bool bparal, Rcpp::Nullable<int> threads);
     
@@ -68,7 +68,7 @@ namespace BigDataStatMeth {
      * @param threads Number of threads for parallel processing (optional)
      * @return Pointer to result dataset
      */
-    extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5( 
+    inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_sum_hdf5( 
             BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
             hsize_t hdf5_block, bool bparal, Rcpp::Nullable<int> threads  = R_NilValue)
     {

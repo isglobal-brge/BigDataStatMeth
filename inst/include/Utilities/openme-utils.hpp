@@ -119,7 +119,7 @@ static inline int imax(int a, int b) { return a > b ? a : b; }
  *
  * @note Called at package startup and by setDTthreads()
  */
-extern inline void initDTthreads() {
+inline void initDTthreads() {
     // called at package startup from init.c
     // also called by setDTthreads(threads=NULL) (default) to reread environment variables; see setDTthreads below
     // No verbosity here in this setter. Verbosity is in getDTthreads(verbose=TRUE)
@@ -168,7 +168,7 @@ extern inline void initDTthreads() {
  * - Two threads for n ≤ 2*DTthrottle
  * - And so on up to DTthreads maximum
  */
-extern inline int getDTthreads(const int64_t n, const bool throttle) {
+inline int getDTthreads(const int64_t n, const bool throttle) {
     
     initDTthreads();
     
@@ -213,7 +213,7 @@ static const char *mygetenv(const char *name, const char *unset) {
  * - Lists all relevant environment variables
  * - Displays current thread settings
  */
-extern inline SEXP getDTthreads_R(SEXP verbose) {
+inline SEXP getDTthreads_R(SEXP verbose) {
     if(!IS_TRUE_OR_FALSE(verbose))
         Rf_error(("%s must be TRUE or FALSE"), "verbose");
     if (LOGICAL(verbose)[0]) {
@@ -245,7 +245,7 @@ extern inline SEXP getDTthreads_R(SEXP verbose) {
 
 #ifndef _WHENFORK
 #define _WHENFORK
-    extern inline void when_fork() {
+    inline void when_fork() {
         pre_fork_DTthreads = DTthreads;
         DTthreads = 1;
     }
@@ -253,7 +253,7 @@ extern inline SEXP getDTthreads_R(SEXP verbose) {
 
 #ifndef _AFTERFORK
 #define _AFTERFORK
-    extern inline void after_fork() {
+    inline void after_fork() {
         if (RestoreAfterFork) DTthreads = pre_fork_DTthreads;
     }
 #endif
@@ -261,7 +261,7 @@ extern inline SEXP getDTthreads_R(SEXP verbose) {
 
 #ifndef _AVOID_OPENMP_HANG
 #define _AVOID_OPENMP_HANG
-    extern inline void avoid_openmp_hang_within_fork() {
+    inline void avoid_openmp_hang_within_fork() {
         // Called once on loading BigDataStatMeth from init.c
     #ifdef _OPENMP
         pthread_atfork(&when_fork, &after_fork, NULL);
@@ -272,7 +272,7 @@ extern inline SEXP getDTthreads_R(SEXP verbose) {
     
 #ifndef _GET_FINAL_THREADS
 #define _GET_FINAL_THREADS
-    extern inline unsigned int get_number_threads(Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> bparal) {
+    inline unsigned int get_number_threads(Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> bparal) {
         
         unsigned int ithreads = std::thread::hardware_concurrency();
         

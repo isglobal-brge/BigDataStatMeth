@@ -73,7 +73,7 @@ namespace BigDataStatMeth {
  *
  * @see getOptimBlockSize for block size optimization
  */
-extern inline BigDataStatMeth::hdf5Dataset* crossprod( 
+inline BigDataStatMeth::hdf5Dataset* crossprod( 
         BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, 
         BigDataStatMeth::hdf5Dataset* dsC, hsize_t hdf5_block, hsize_t mem_block_size, 
         bool bparal, bool browmajor, Rcpp::Nullable<int> threads  = R_NilValue) 

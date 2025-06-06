@@ -89,7 +89,7 @@ namespace BigDataStatMeth {
      * 
      * @see RcppSolveHdf5 for HDF5-based version
      */
-    extern inline Eigen::MatrixXd RcppSolve(Eigen::Map<Eigen::MatrixXd> a, Eigen::Map<Eigen::MatrixXd> b)
+    inline Eigen::MatrixXd RcppSolve(Eigen::Map<Eigen::MatrixXd> a, Eigen::Map<Eigen::MatrixXd> b)
     {
         
         try {
@@ -154,7 +154,7 @@ namespace BigDataStatMeth {
      * 
      * @see RcppSolve for in-memory version
      */
-    extern inline void RcppSolveHdf5(BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsX )
+    inline void RcppSolveHdf5(BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsX )
     {
         
         try {

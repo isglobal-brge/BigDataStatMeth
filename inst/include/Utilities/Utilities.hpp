@@ -67,7 +67,7 @@ namespace BigDataStatMeth {
      *
      * @details Handles both forward and backward slashes for cross-platform compatibility
      */
-    extern inline fullpath SplitElementName (std::string str)
+    inline fullpath SplitElementName (std::string str)
     {
         fullpath currentpath;
         std::size_t found = str.find_last_of("/\\");
@@ -102,7 +102,7 @@ namespace BigDataStatMeth {
      *
      * @throws std::exception on type detection errors
      */
-    extern inline std::string getObjecDataType(Rcpp::RObject obj) 
+    inline std::string getObjecDataType(Rcpp::RObject obj) 
     {
         
         std::string strtype = "";
@@ -152,7 +152,7 @@ namespace BigDataStatMeth {
      *
      * @throws std::exception on dimension extraction errors
      */
-    extern inline Rcpp::IntegerVector getObjectDims(Rcpp::RObject obj, std::string strtype) 
+    inline Rcpp::IntegerVector getObjectDims(Rcpp::RObject obj, std::string strtype) 
     {
         
         Rcpp::IntegerVector dims(2);
@@ -224,7 +224,7 @@ namespace BigDataStatMeth {
      *
      * @throws std::exception on calculation errors
      */
-    extern inline int getMaxBlockSize ( int nRowsA, int nColsA, int nRowsB, int nColsB, int ifactor, Rcpp::Nullable<int> block_size = R_NilValue) 
+    inline int getMaxBlockSize ( int nRowsA, int nColsA, int nRowsB, int nColsB, int ifactor, Rcpp::Nullable<int> block_size = R_NilValue) 
     {
         
         int iblock_size;
@@ -272,7 +272,7 @@ namespace BigDataStatMeth {
      *
      * @throws std::exception on optimization errors
      */
-    extern inline size_t getOptimBlockSize( size_t fullSize, size_t blockSize, size_t iDesp, size_t currentSize ) 
+    inline size_t getOptimBlockSize( size_t fullSize, size_t blockSize, size_t iDesp, size_t currentSize ) 
     {
         
         try
@@ -311,7 +311,7 @@ namespace BigDataStatMeth {
      *
      * @note Considers both memory constraints and processing efficiency
      */
-    extern inline std::vector<hsize_t> getMatrixBlockSize( int nrows, int ncols ) 
+    inline std::vector<hsize_t> getMatrixBlockSize( int nrows, int ncols ) 
     {
         size_t  maxRows = nrows,
                 maxCols = ncols;
@@ -371,7 +371,7 @@ namespace BigDataStatMeth {
      *
      * @note Particularly useful for long vectors that don't fit in memory
      */
-    extern inline hsize_t getVectorBlockSize(int maxSize) 
+    inline hsize_t getVectorBlockSize(int maxSize) 
     {
         hsize_t blockSize = 0;
         
@@ -393,7 +393,7 @@ namespace BigDataStatMeth {
     
     
     
-    // extern inline Rcpp::IntegerVector getInitialPosition(bool transp, int desp )
+    // inline Rcpp::IntegerVector getInitialPosition(bool transp, int desp )
     // {
     //     Rcpp::IntegerVector voffset(2);
     //     
@@ -421,7 +421,7 @@ namespace BigDataStatMeth {
      * - Accounts for displacement
      * - Returns [row, col] coordinates
      */
-    extern inline std::vector<hsize_t> getInitialPosition(bool transp, int desp)
+    inline std::vector<hsize_t> getInitialPosition(bool transp, int desp)
     {
         std::vector<hsize_t> voffset = {0, 0};
         
@@ -447,7 +447,7 @@ namespace BigDataStatMeth {
      * - Handles both relative and absolute paths
      * - Thread-safe implementation
      */
-    extern inline bool Rcpp_FileExist(std::string fullPath) 
+    inline bool Rcpp_FileExist(std::string fullPath) 
     {
         bool exists = false;
         
@@ -478,7 +478,7 @@ namespace BigDataStatMeth {
      * - Optimizes for memory usage
      * - Returns [rows_to_read, cols_to_read]
      */
-    extern inline std::vector<hsize_t> getSizetoRead(bool transp, int count, int rows, int cols)
+    inline std::vector<hsize_t> getSizetoRead(bool transp, int count, int rows, int cols)
     {
         std::vector<hsize_t> vcount = {0, 0};
 
@@ -514,7 +514,7 @@ namespace BigDataStatMeth {
      *
      * @note Integrates with OpenMP thread management
      */
-    extern inline unsigned int get_threads(bool bparal, Rcpp::Nullable<int> threads = R_NilValue) 
+    inline unsigned int get_threads(bool bparal, Rcpp::Nullable<int> threads = R_NilValue) 
     {
         unsigned int ithreads = std::thread::hardware_concurrency();
         

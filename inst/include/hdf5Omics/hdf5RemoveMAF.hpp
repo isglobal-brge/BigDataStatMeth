@@ -78,7 +78,7 @@ namespace BigDataStatMeth {
      * @see calc_freq for MAF calculation
      * @see removeRow, removeColumn for filtering operations
      */
-    int Rcpp_Remove_MAF_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, 
+    inline int Rcpp_Remove_MAF_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, 
                             BigDataStatMeth::hdf5Dataset* dsOut, 
                             bool bycols, double pcent, int blocksize)
     {

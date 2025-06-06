@@ -58,7 +58,7 @@ namespace BigDataStatMeth {
  * @throws H5::DataSetIException on HDF5 dataset operation errors
  * @throws std::exception on general errors
  */
-extern inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,  BigDataStatMeth::hdf5DatasetInternal* outDataset, bool bfull, long dElementsBlock, Rcpp::Nullable<int> threads );
+inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,  BigDataStatMeth::hdf5DatasetInternal* outDataset, bool bfull, long dElementsBlock, Rcpp::Nullable<int> threads );
 
 /**
  * @brief Performs Cholesky decomposition on a matrix stored in HDF5 format
@@ -85,7 +85,7 @@ extern inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDatas
  * @throws H5::GroupIException on HDF5 group operation errors
  * @throws H5::DataSetIException on HDF5 dataset operation errors
  */
-extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  
+inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  
                                              BigDataStatMeth::hdf5Dataset* outDataset, 
                                              int idim0, int idim1, long dElementsBlock, 
                                              Rcpp::Nullable<int> threads );
@@ -110,7 +110,7 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
  * @throws H5::GroupIException on HDF5 group operation errors
  * @throws H5::DataSetIException on HDF5 dataset operation errors
  */
-extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf5Dataset* InOutDataset, 
+inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf5Dataset* InOutDataset, 
                                                          int idim0, int idim1, long dElementsBlock, 
                                                          Rcpp::Nullable<int> threads);
 
@@ -134,13 +134,13 @@ extern inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf
  * @throws H5::GroupIException on HDF5 group operation errors
  * @throws H5::DataSetIException on HDF5 dataset operation errors
  */
-extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOutDataset, 
+inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOutDataset, 
                                                    int idim0, int idim1, long dElementsBlock, 
                                                    Rcpp::Nullable<int> threads );
 
 
 
-extern inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset, 
+inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset, 
                            BigDataStatMeth::hdf5DatasetInternal* outDataset, 
                            bool bfull, long dElementsBlock, 
                            Rcpp::Nullable<int> threads = R_NilValue )
@@ -191,7 +191,7 @@ extern inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDatas
 
 
 
-extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  
+inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  
                            BigDataStatMeth::hdf5Dataset* outDataset, 
                            int idim0,  int idim1,  long dElementsBlock, 
                            Rcpp::Nullable<int> threads  = R_NilValue)
@@ -337,7 +337,7 @@ extern inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inD
 
 
 
-extern inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* InOutDataset, 
+inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* InOutDataset, 
                                     int idim0, int idim1, long dElementsBlock, 
                                     Rcpp::Nullable<int> threads = R_NilValue)
 {
@@ -475,7 +475,7 @@ extern inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5
 
 
 
-extern inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOutDataset, 
+inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOutDataset, 
                                      int idim0, int idim1, long dElementsBlock, 
                                      Rcpp::Nullable<int> threads = R_NilValue)
 {
