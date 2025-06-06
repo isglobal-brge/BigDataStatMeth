@@ -39,7 +39,7 @@
 #ifndef BIGDATASTATMETH_HDF5ALGEBRA_HPP
 #define BIGDATASTATMETH_HDF5ALGEBRA_HPP
 
-    #include "hdf5Algebra/matrixNormalization.hpp"
+    // #include "hdf5Algebra/matrixNormalization.hpp"
     #include "hdf5Algebra/matrixSdMean.hpp"
     #include "hdf5Algebra/multiplication.hpp"
     #include "hdf5Algebra/matrixPCA.hpp"

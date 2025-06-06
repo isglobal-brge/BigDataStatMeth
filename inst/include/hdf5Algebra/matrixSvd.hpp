@@ -39,9 +39,9 @@
 // #include <RcppEigen.h>
 // #include "H5Cpp.h"
 
-#include "hdf5Algebra/matrixNormalization.hpp"
+// #include "hdf5Algebra/matrixNormalization.hpp"
 #include "hdf5Algebra/matrixSvdBlock.hpp"
-#include "hdf5Algebra/multiplication.hpp"
+// #include "hdf5Algebra/multiplication.hpp"
 #include "memAlgebra/memOptimizedProducts.hpp"
 #include "memAlgebra/memMultiplication.hpp"
 
@@ -49,7 +49,7 @@
 #include "hdf5Utilities/hdf5Methods.hpp"
 
 #include "Utilities/Utilities.hpp"
-#include "spectra/SymEigsSolver.h"
+#include "Spectra/SymEigsSolver.h"
 
 // #include <Spectra/SymEigsSolver.h>
 
