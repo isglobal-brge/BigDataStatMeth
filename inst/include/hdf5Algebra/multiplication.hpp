@@ -216,7 +216,7 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
                     #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks, vstart, vsizetoRead)
                     {
                         
-                    #pragma omp for ordered 
+                    #pragma omp for schedule(dynamic) nowait
                         for (hsize_t ii = 0; ii < vstart.size(); ii++)
                         {
                             
@@ -277,19 +277,19 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ c++ exception multiplication (File IException)\n";
-            return void();
+            // return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
             checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception multiplication (DataSet IException)\n";
-            return void();
+            // return void();
         } catch(std::exception &ex) {
             checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception multiplication\n";
-            return void();
+            // return void();
         }  catch (...) {
             checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nC++ exception multiplication (unknown reason)";
-            return void();
+            // return void();
         }
 
         return void();
