@@ -378,12 +378,14 @@ private:
                 }
             } catch (const H5::FileIException& e) {
                 error_message = "c++ exception File access error: " + std::string(e.getCDetailMsg());
-                ::Rf_error( error_message.c_str() );
+                ::Rf_error( "%s", error_message.c_str() );
+                // ::Rf_error( error_message.c_str() );
                 // error_message = "File access error: " + std::string(e.getCDetailMsg());
                 // is_corrupt = true;
             } catch (const H5::Exception& e) {
                 error_message = "c++ exception HDF5 Exception during accessibility check: " + std::string(e.getCDetailMsg());
-                ::Rf_error( error_message.c_str() );
+                ::Rf_error( "%s", error_message.c_str() );
+                // ::Rf_error( error_message.c_str() );
                 // error_message = "HDF5 Exception during accessibility check: " + std::string(e.getCDetailMsg());
                 // is_corrupt = true;
             }
@@ -400,7 +402,7 @@ private:
                         H5::Group root_group = file->openGroup("/");
                         
                         // Get file info to check integrity
-                        hsize_t file_size = file->getFileSize();
+                        // hsize_t file_size = file->getFileSize();
                         // if (file_size > 0) {
                         //     // has_valid_structure = true;
                         // }
@@ -408,13 +410,15 @@ private:
                         root_group.close();
                         
                     } catch (const H5::GroupIException& e) {
-                        error_message =  "c++ exception Root group access failed: " + std::string(e.getCDetailMsg());
-                        ::Rf_error( error_message.c_str() );
+                        error_message =  "c++ exception (checkHDF5File) Root group access failed: " + std::string(e.getCDetailMsg());
+                        ::Rf_error( "%s", error_message.c_str() );
+                        // ::Rf_error( error_message.c_str() );
                         // error_message = "Root group access failed: " + std::string(e.getCDetailMsg());
                         // is_corrupt = true;
                     } catch (const H5::Exception& e) {
-                        error_message =  "c++ exception Structure validation failed: " + std::string(e.getCDetailMsg() );
-                        ::Rf_error( error_message.c_str() );
+                        error_message =  "c++ exception (checkHDF5File) Structure validation failed: " + std::string(e.getCDetailMsg() );
+                        ::Rf_error( "%s", error_message.c_str() );
+                        // ::Rf_error( error_message.c_str() );
                         // error_message = "Structure validation failed: " + std::string(e.getCDetailMsg());
                         // is_corrupt = true;
                     }
@@ -424,14 +428,16 @@ private:
                     delete file;
                     
                 } catch (const H5::FileIException& e) {
-                    error_message = "c++ exception Cannot open file: " + std::string(e.getCDetailMsg());
-                    ::Rf_error( error_message.c_str() );
+                    error_message = "c++ exception (checkHDF5File) Cannot open file: " + std::string(e.getCDetailMsg());
+                    ::Rf_error( "%s", error_message.c_str() );
+                    // ::Rf_error( error_message.c_str() );
                     // error_message = "Cannot open file: " + std::string(e.getCDetailMsg());
                     // is_corrupt = true;
                     // is_open = false;
                 } catch (const H5::Exception& e) {
                     error_message ="c++ exception HDF5 Exception during file opening: " + std::string(e.getCDetailMsg() );
-                    ::Rf_error( error_message.c_str() );
+                    ::Rf_error( "%s", error_message.c_str() );
+                    // ::Rf_error( error_message.c_str() );
                     // error_message = "HDF5 Exception during file opening: " + std::string(e.getCDetailMsg());
                     // is_corrupt = true;
                     // is_open = false;
@@ -439,14 +445,16 @@ private:
             }
             
         } catch (const std::exception& e) {
-            error_message = "c++ exception: " + std::string(e.what());
-            ::Rf_error( error_message.c_str() );
+            error_message = "c++ exception (checkHDF5File): " + std::string(e.what());
+            ::Rf_error( "%s", error_message.c_str() );
+            // ::Rf_error( error_message.c_str() );
             
             // error_message = "Standard exception: " + std::string(e.what());
             // is_corrupt = true;
         } catch (...) {
-            error_message = "c++ exception: Unknown exception occurred" ;
-            ::Rf_error( error_message.c_str() );
+            error_message = "c++ exception (checkHDF5File): Unknown exception occurred" ;
+            ::Rf_error( "%s", error_message.c_str() );
+            // ::Rf_error( error_message.c_str() );
             // error_message = "Unknown exception occurred";
             // is_corrupt = true;
         }
