@@ -19,7 +19,7 @@ PKG_LIBS = @PKG_LIBS@ @openmp_cflags@ @zlib_libs@
 # ..# PKG_LIBS = $(shell ${R_HOME}/bin/Rscript -e "RcppParallel::RcppParallelLibs()")
 
 # OpenMP
-PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) -g3 # -O2 -Wall
+PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) -g3 -O2 -Wall
 PKG_LIBS += $(SHLIB_OPENMP_CXXFLAGS)
 
 # Blas i Lapack
