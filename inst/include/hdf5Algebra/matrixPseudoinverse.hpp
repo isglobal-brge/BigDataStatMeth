@@ -84,7 +84,7 @@ inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A,
     
     char Schar='S';
     char Cchar='C';
-    int ione = 1; //, ithreads;
+    int ione = 1; 
     double done = 1.0;
     double dzero = 0.0;
     
@@ -102,7 +102,6 @@ inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A,
     Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
     Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
     
-    // ithreads = get_number_threads(threads, R_NilValue);
     
     // dgesvd_( char JOBU, char JOBVT, int M, int N, double* A, int LDA, double* S, double* U, int LDU, double* VT, int LDVT, double WORK, int LWORK, int INFO  );
     dgesvd_( &Schar, &Schar, &m, &n, A->data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
@@ -146,7 +145,7 @@ inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA,
     
     char Schar='S';
     char Cchar='C';
-    int ione = 1; // ithreads;
+    int ione = 1; 
     double done = 1.0;
     double dzero = 0.0;
     
@@ -167,8 +166,6 @@ inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA,
     Eigen::VectorXd s = Eigen::VectorXd::Zero(k);
     Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
     Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
-    
-    // ithreads = get_number_threads(threads, R_NilValue);
     
     {
         Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);

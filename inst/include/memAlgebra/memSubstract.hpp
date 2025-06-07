@@ -271,7 +271,7 @@ namespace BigDataStatMeth {
         
         try {
             
-            unsigned int ithreads;
+            // unsigned int ithreads;
             hsize_t block_size; 
             
             std::vector<hsize_t> vsizetoRead;
@@ -290,12 +290,12 @@ namespace BigDataStatMeth {
                 if( N == Y.rows() && M == Y.cols())
                 {
                     
-                    ithreads = get_number_threads(threads, R_NilValue);
+                    // ithreads = get_number_threads(threads, R_NilValue);
                     
                     getBlockPositionsSizes( N*M, block_size, vstart, vsizetoRead );
-                    int chunks = vstart.size()/ithreads;
+                    // int chunks = vstart.size()/ithreads;
                     
-                    #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
+                    #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C) //, chunks)
                     {
                     #pragma omp for schedule (dynamic)
                         for (hsize_t ii = 0; ii < vstart.size(); ii ++)
@@ -374,7 +374,7 @@ namespace BigDataStatMeth {
         
         try {
             
-            unsigned int ithreads;
+            // unsigned int ithreads;
             hsize_t block_size;
             
             if( K==N || K==M) {
@@ -393,7 +393,7 @@ namespace BigDataStatMeth {
                 std::vector<hsize_t> vsizetoRead;
                 std::vector<hsize_t> vstart;
                 
-                ithreads = get_number_threads(threads, bparal);
+                // ithreads = get_number_threads(threads, bparal);
                 
                 C = Rcpp::no_init( M, N);
                 
@@ -406,9 +406,9 @@ namespace BigDataStatMeth {
                 
                 // Mínimum block size: 2 columns
                 getBlockPositionsSizes( M*N, block_size, vstart, vsizetoRead );
-                int chunks = vstart.size()/ithreads;
+                // int chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
+                #pragma omp parallel num_threads( get_number_threads(threads, bparal) ) shared(A, B, C) //, chunks)
                 {
                 #pragma omp for schedule (dynamic) // collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)

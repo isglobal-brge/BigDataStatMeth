@@ -201,7 +201,7 @@ namespace BigDataStatMeth {
         
         Rcpp::NumericMatrix X = Rcpp::as<Rcpp::NumericMatrix>(A);
         Rcpp::NumericMatrix Y = Rcpp::as<Rcpp::NumericMatrix>(B);
-        unsigned int ithreads;
+        // unsigned int ithreads;
         
         hsize_t N = X.rows();
         hsize_t M = X.cols();
@@ -228,12 +228,12 @@ namespace BigDataStatMeth {
                 {
                     // hsize_t size = block_size + 1;
                     
-                    ithreads = get_number_threads(threads, R_NilValue);
+                    // ithreads = get_number_threads(threads, R_NilValue);
                     
                     getBlockPositionsSizes( N*M, block_size, vstart, vsizetoRead );
                     // int chunks = vstart.size()/ithreads;
                     
-                    #pragma omp parallel num_threads(ithreads) shared(A, B, C)
+                    #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C)
                     {
                     #pragma omp for schedule (dynamic)
                         for (hsize_t ii = 0; ii < vstart.size(); ii ++)
@@ -299,7 +299,7 @@ namespace BigDataStatMeth {
         //               "Error - type not allowed");
         
         bool btransposed = false;
-        unsigned int ithreads;
+        // unsigned int ithreads;
         hsize_t block_size;
         
         Rcpp::NumericMatrix X = Rcpp::as<Rcpp::NumericMatrix>(A);
@@ -331,7 +331,7 @@ namespace BigDataStatMeth {
                 std::vector<hsize_t> vsizetoRead;
                 std::vector<hsize_t> vstart;
                 
-                ithreads = get_number_threads(threads, bparal);
+                // ithreads = get_number_threads(threads, bparal);
                 
                 C = Rcpp::no_init( M, N);
                 
@@ -344,9 +344,9 @@ namespace BigDataStatMeth {
                 
                 // Mínimum block size: 2 columns
                 getBlockPositionsSizes( M*N, block_size, vstart, vsizetoRead );
-                int chunks = vstart.size()/ithreads;
+                // int chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
+                #pragma omp parallel num_threads( get_number_threads(threads, bparal) ) shared(A, B, C) //, chunks)
                 {
                     #pragma omp for schedule (dynamic) // collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)

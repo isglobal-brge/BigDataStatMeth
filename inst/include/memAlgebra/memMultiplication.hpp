@@ -243,7 +243,7 @@ namespace BigDataStatMeth {
                                  vsizetoReadM, vstartM,
                                  vsizetoReadK, vstartK;
             
-            unsigned int ithreads;
+            // unsigned int ithreads;
             hsize_t M = A.rows();
             hsize_t K = A.cols();
             hsize_t N = B.cols();
@@ -258,7 +258,7 @@ namespace BigDataStatMeth {
             if(block_size > std::min( N, std::min(M,K)) )
                 block_size = std::min( N, std::min(M,K)); 
             
-            ithreads = get_number_threads(threads, R_NilValue);
+            // ithreads = get_number_threads(threads, R_NilValue);
             
             getBlockPositionsSizes( N, block_size, vstartN, vsizetoReadN );
             getBlockPositionsSizes( M, block_size, vstartM, vsizetoReadM );
@@ -266,7 +266,7 @@ namespace BigDataStatMeth {
             
             // chunks = vstartM.size()/ithreads;
             
-            #pragma omp parallel num_threads(ithreads) shared(A, B, C)// chunks) // private(tid ) 
+            #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C)// chunks) // private(tid ) 
             {
                 
             #pragma omp for schedule (static) // collapse(3)
@@ -391,9 +391,9 @@ namespace BigDataStatMeth {
         // NOTA: Per defecte, multiplica per columnes tal i com raja.... 
 
         bool btransposed = false;
-        unsigned int ithreads;
+        // unsigned int ithreads;
         hsize_t block_size;
-        int chunks;
+        // int chunks;
         
         Rcpp::NumericMatrix X = Rcpp::as<Rcpp::NumericMatrix>(A);
         Rcpp::NumericVector Y = Rcpp::as<Rcpp::NumericVector>(B);
@@ -420,7 +420,7 @@ namespace BigDataStatMeth {
                 std::vector<hsize_t> vsizetoRead;
                 std::vector<hsize_t> vstart;
                 
-                ithreads = get_number_threads(threads, bparal);
+                // ithreads = get_number_threads(threads, bparal);
                 
                 C = Rcpp::no_init( M, N);
                 
@@ -438,9 +438,9 @@ namespace BigDataStatMeth {
                 // Mínimum block size: 2 columns
                 getBlockPositionsSizes( M*N, block_size, vstart, vsizetoRead );
                 
-                chunks = vstart.size()/ithreads;
+                // chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads(ithreads) shared(A, B, C, chunks)
+                #pragma omp parallel num_threads( get_number_threads(threads, bparal) ) shared(A, B, C) //, chunks)
                 {
                 #pragma omp for schedule (static)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)

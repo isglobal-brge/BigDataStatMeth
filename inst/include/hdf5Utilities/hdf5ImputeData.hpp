@@ -200,7 +200,6 @@ namespace BigDataStatMeth {
             
             dsOut->openDataset();
             
-            // int ithreads = get_number_threads(threads, R_NilValue);
             int chunks = (ilimit + (blocksize - 1)) / blocksize; //(ilimit/blocksize);
 
             #pragma omp parallel num_threads(get_number_threads(threads, R_NilValue)) shared(dsIn, dsOut, chunks)

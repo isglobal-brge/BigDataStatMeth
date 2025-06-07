@@ -81,21 +81,21 @@ namespace BigDataStatMeth {
             {
                 
                 // Parallellization and Block variables 
-                unsigned int ithreads;
+                // unsigned int ithreads;
                 std::vector<hsize_t> vstart, vsizetoRead;
                 std::vector<hsize_t> stride = {1, 1};
                 std::vector<hsize_t> block = {1, 1};
                 
                 dsC->createDataset( N, K, "real"); 
                 
-                ithreads = get_threads(bparal, threads);
+                // ithreads = get_threads(bparal, threads);
                 
                 if( K<=N ) {
                     
                     getBlockPositionsSizes( N, hdf5_block, vstart, vsizetoRead );
-                    int chunks = vstart.size()/ithreads;
+                    // int chunks = vstart.size()/ithreads;
                     
-                    #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
+                    #pragma omp parallel num_threads( get_threads(bparal, threads) ) shared(dsA, dsB, dsC) //, chunks)
                     {
                     #pragma omp for schedule (dynamic)
                         for (hsize_t ii = 0; ii < vstart.size(); ii ++)
@@ -127,9 +127,9 @@ namespace BigDataStatMeth {
                 } else {
                     
                     getBlockPositionsSizes( K, hdf5_block, vstart, vsizetoRead );
-                    int chunks = vstart.size()/ithreads;
+                    // int chunks = vstart.size()/ithreads;
                     
-                    #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
+                    #pragma omp parallel num_threads( get_threads(bparal, threads) ) shared(dsA, dsB, dsC) //, chunks)
                     {
                     #pragma omp for schedule (dynamic)
                         for (hsize_t ii = 0; ii < vstart.size(); ii++)
@@ -219,7 +219,7 @@ namespace BigDataStatMeth {
             hsize_t L = dsB->ncols();
             
             std::vector<hsize_t> vstart, vsizetoRead;
-            unsigned int ithreads;
+            // unsigned int ithreads;
     
             if(hdf5_block == 1) {
                 hdf5_block = ceil(MAXBLOCKSIZE/(K*N));
@@ -234,15 +234,15 @@ namespace BigDataStatMeth {
             std::vector<double> vdA( K * N );
             dsA->readDatasetBlock( {0, 0}, {K, N}, stride, block, vdA.data() );
             
-            ithreads = get_threads(bparal, threads);
+            // ithreads = get_threads(bparal, threads);
             
             if(  K == M )
             { // Sum vector to every col
                 
                 getBlockPositionsSizes( L, hdf5_block, vstart, vsizetoRead );
-                int chunks = vstart.size()/ithreads;
+                // int chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
+                #pragma omp parallel num_threads( get_threads(bparal, threads) ) shared(dsA, dsB, dsC) //, chunks)
                 {
                     #pragma omp for schedule (dynamic) // collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
@@ -281,9 +281,9 @@ namespace BigDataStatMeth {
             } else if(  K == L ) { // Sum vector to every row
                 
                 getBlockPositionsSizes( M, hdf5_block, vstart, vsizetoRead );
-                int chunks = vstart.size()/ithreads;
+                // int chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks)
+                #pragma omp parallel num_threads( get_threads(bparal, threads) ) shared(dsA, dsB, dsC) //, chunks)
                 {
                     #pragma omp for schedule (dynamic) // collapse(2)
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)

@@ -275,11 +275,11 @@ inline Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
 inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads = R_NilValue)
 {
     int n = X.rows();
-    unsigned int ithreads;
+    // unsigned int ithreads;
     Eigen::MatrixXd C = Eigen::MatrixXd::Zero(n,X.cols()) ; 
     
     
-    ithreads = get_number_threads(threads, R_NilValue);
+    // ithreads = get_number_threads(threads, R_NilValue);
     
     // if(threads.isNotNull()) {
     //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
@@ -296,15 +296,15 @@ inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::Vecto
     //.OpenMP.//omp_set_num_threads(ithreads);
     
     //.OpenMP.//#pragma omp parallel shared(X, w, C) 
-#pragma omp parallel num_threads(ithreads) shared(X, w, C) 
-{
-#pragma omp for schedule (dynamic)
-    for (int i=0; i<n; i++)
+    #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(X, w, C) 
     {
-        C.col(i) = X.col(i)*w(i);
-    }  
-}
-return(C);
+    #pragma omp for schedule (dynamic)
+        for (int i=0; i<n; i++)
+        {
+            C.col(i) = X.col(i)*w(i);
+        }  
+    }
+    return(C);
 }
 
 
@@ -312,10 +312,10 @@ return(C);
 inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads = R_NilValue)
 {
     int n = X.cols();
-    unsigned int ithreads;
+    // unsigned int ithreads;
     Eigen::MatrixXd C = Eigen::MatrixXd::Zero(X.rows(),n);
     
-    ithreads = get_number_threads(threads, R_NilValue);
+    // ithreads = get_number_threads(threads, R_NilValue);
     
     // if(threads.isNotNull()) {
     //     if (Rcpp::as<int> (threads) <= std::thread::hardware_concurrency()){
@@ -332,15 +332,15 @@ inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::Vecto
     //.OpenMP.// omp_set_num_threads(ithreads);
     
     //.OpenMP.//#pragma omp parallel shared(X, w, C) 
-#pragma omp parallel num_threads(ithreads) shared(X, w, C) 
-{
-#pragma omp for schedule (dynamic)
-    for (int i=0; i<n; i++)
+    #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(X, w, C) 
     {
-        C.row(i) = w(i)*X.row(i);
+        #pragma omp for schedule (dynamic)
+        for (int i=0; i<n; i++)
+        {
+            C.row(i) = w(i)*X.row(i);
+        }
     }
-}
-return(C);
+    return(C);
 }
 
 }

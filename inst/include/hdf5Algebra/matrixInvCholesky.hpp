@@ -196,19 +196,18 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
         
         int dimensionSize = idim0,
             readedRows = 0,
-            chunk = 1,
             rowstoRead,
             minimumBlockSize;
+            // chunk = 1,
+            
         bool bcancel = false;
         double sum = 0;
-        unsigned int ithreads;
         
         std::vector<hsize_t> offset = {0,0},
                              count = {1,1},
                              stride = {1,1},
                              block = {1,1};
         
-        ithreads = get_number_threads(threads, R_NilValue);
         
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
@@ -263,7 +262,7 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     }
                     
                     
-#pragma omp parallel for num_threads(ithreads) private(sum) shared (A,L,j) schedule(dynamic) if (j < readedRows - chunk)
+#pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) private(sum) shared (A,L,j) schedule(dynamic) if (j < readedRows - chunk)
                     for ( int i = j + 1; i < dimensionSize - offset[0]  ; i++ )
                     {
                         if(bcancel == false) {
@@ -339,7 +338,6 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
     
     try{
         
-        unsigned int ithreads;
         int dimensionSize = idim0, 
             readedCols = 0,
             colstoRead,
@@ -350,7 +348,6 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                              stride = {1,1},
                              block = {1,1};
 
-        ithreads = get_number_threads(threads, R_NilValue);
         
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
@@ -400,7 +397,7 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                     
                     vR = Eigen::VectorXd::Zero(offset[0] + ar_j.size());
                     
-#pragma omp parallel for num_threads(ithreads) shared (ar_j, j, verticalData, offset, colstoRead, vR) schedule(dynamic) 
+#pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) shared (ar_j, j, verticalData, offset, colstoRead, vR) schedule(dynamic) 
                     for (int i = 0; i < offset[0] + ar_j.size() ; i++) {
                         
                         Eigen::ArrayXd ar_i = verticalData.block( 0, i, size_j, 1).array();
@@ -483,14 +480,12 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
             minimumBlockSize;
         
         Eigen::VectorXd newDiag(idim0);
-        unsigned int ithreads;
         
         std::vector<hsize_t> offset = {0,0},
                              count = {1,1},
                              stride = {1,1},
                              block = {1,1};
         
-        ithreads = get_number_threads(threads, R_NilValue);
         
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
@@ -524,7 +519,7 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
                 
                 
 // #pragma omp parallel for num_threads(ithreads) shared (verticalData, colstoRead, offset) schedule(dynamic)
-#pragma omp parallel for num_threads(ithreads) shared (verticalData, colstoRead, offset) schedule(static) ordered
+#pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) shared (verticalData, colstoRead, offset) schedule(static) ordered
                 for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columns
                 {
                     int init;

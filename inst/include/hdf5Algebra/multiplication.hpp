@@ -136,10 +136,10 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                 getBlockPositionsSizes_hdf5( M, block_size, vstartM, vsizetoReadM );
                 getBlockPositionsSizes_hdf5( K, block_size, vstartK, vsizetoReadK );
                 
-                int ithreads = get_number_threads(threads, R_NilValue);
+                // int ithreads = get_number_threads(threads, R_NilValue);
                 // int chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads(ithreads) shared(A, B, C) //..// , chunk) private(tid ) 
+                #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C) //..// , chunk) private(tid ) 
                 {
                     
                     #pragma omp for schedule (static) // collapse(3)
@@ -208,10 +208,10 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                     getBlockPositionsSizes_hdf5( K, ihdf5_block, vstartK, vsizetoReadK );
                     
                     
-                    int ithreads = get_number_threads(threads, R_NilValue);
-                    int chunks = vstart.size()/ithreads;
+                    // int ithreads = get_number_threads(threads, R_NilValue);
+                    // int chunks = vstart.size()/ithreads;
                     
-                    #pragma omp parallel num_threads(ithreads) shared(dsA, dsB, dsC, chunks, vstart, vsizetoRead)
+                    #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(dsA, dsB, dsC, vstart, vsizetoRead) // chunks
                     {
                         
                     #pragma omp for schedule(dynamic) nowait

@@ -251,15 +251,14 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
         std::vector<svdPositions> paralPos;
         
         int  M, p, n, irows, icols, normalsize;
-        //int maxsizetoread, ithreads, cummoffset;
-        int ithreads;
+        // int ithreads;
         bool transp = false;
         Rcpp::Nullable<int> wsize = R_NilValue;
         
         irows = dsA->ncols();
         icols = dsA->nrows();
         
-        ithreads = get_number_threads(threads, R_NilValue);
+        // ithreads = get_number_threads(threads, R_NilValue);
         
         // Work with transposed matrix
         if( irows >= icols ) {
@@ -292,7 +291,7 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
         
         // Get all the offsets and counts inside the file to write and read
         paralPos = prepareForParallelization( dsA, M, k, transp, block_size, strGroupName + "/A");
-        #pragma omp parallel num_threads(ithreads) shared (normalizedData)
+        #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared (normalizedData)
         {
             
             // Get data from M blocks in initial matrix
@@ -486,8 +485,8 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
     
     try {
         
-        int cummoffset = 0,
-            ithreads,  M;
+        int cummoffset = 0, M;
+            // ithreads,  M;
         
         std::vector<hsize_t> stride = {1, 1},
             block = {1, 1},
@@ -503,9 +502,9 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
         Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, (std::string)strvmatnames[q-1], "");
         M = joindata.size();
         
-        ithreads = get_number_threads(threads, R_NilValue);
+        // ithreads = get_number_threads(threads, R_NilValue);
         
-        #pragma omp parallel num_threads(ithreads)
+        #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) )
 
         // Get data from M blocks in initial matrix
         #pragma omp for ordered schedule (dynamic)
