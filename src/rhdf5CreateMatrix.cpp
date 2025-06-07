@@ -144,20 +144,18 @@ void bdCreate_hdf5_matrix(std::string filename,
         if(objFile != nullptr) delete objFile;
         if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
-        Rcpp::Rcerr<<"\nc++ c++ exception bdCreate_hdf5_matrix (File IException)\n";
-        return void();
+        Rf_error("c++ c++ exception bdCreate_hdf5_matrix (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         if(objFile != nullptr) delete objFile;
         if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
-        Rcpp::Rcerr<<"\nc++ exception bdCreate_hdf5_matrix (DataSet IException)\n";
-        return void();
+        Rf_error( "c++ exception bdCreate_hdf5_matrix (DataSet IException)");
+        
     } catch(std::exception &ex) {
         if(objFile != nullptr) delete objFile;
         if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
-        Rcpp::Rcerr<<"\nc++ exception bdCreate_hdf5_matrix"<<ex.what()<< " \n";
-        return void();
+        Rf_error( "c++ exception bdCreate_hdf5_matrix %s", ex.what());
     } 
 
     return void();
