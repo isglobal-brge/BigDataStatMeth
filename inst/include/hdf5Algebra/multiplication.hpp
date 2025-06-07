@@ -36,10 +36,8 @@
 #ifndef BIGDATASTATMETH_HDF5_MULTIPLICATION_HPP
 #define BIGDATASTATMETH_HDF5_MULTIPLICATION_HPP
 
-// #include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-#include "memAlgebra/memMultiplication.hpp"
-// #include <thread>
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -56,7 +54,7 @@ namespace BigDataStatMeth {
  * @param hdf5_block Block size for HDF5 I/O operations
  * @param threads Number of threads for parallel processing
  */
-    extern inline void multiplication( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
+    inline void multiplication( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
                                        Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> hdf5_block, Rcpp::Nullable<int> threads);
 
 
@@ -71,7 +69,7 @@ namespace BigDataStatMeth {
  * @param[out] starts Vector to store starting positions of blocks
  * @param[out] sizes Vector to store sizes of blocks
  */
-extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
+inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
 
         hsize_t isize = blockSize + 1;
 
@@ -109,7 +107,7 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
      * @param threads Number of threads for parallel processing
      * @return Result of matrix multiplication
      */
-    extern inline Eigen::MatrixXd Bblock_matrix_mul_parallel( Eigen::MatrixXd A, Eigen::MatrixXd B, 
+    inline Eigen::MatrixXd Bblock_matrix_mul_parallel( Eigen::MatrixXd A, Eigen::MatrixXd B, 
                                                              int block_size, Rcpp::Nullable<int> threads  = R_NilValue)
     {
         
@@ -173,7 +171,7 @@ extern inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blo
     }
     
 
-    extern inline void multiplication( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
+    inline void multiplication( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
                                        Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> hdf5_block, Rcpp::Nullable<int> threads  = R_NilValue) 
     {
         

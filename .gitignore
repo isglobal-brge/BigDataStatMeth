@@ -62,3 +62,4 @@ src/Makevars
 *.json
 src/Makevars
 *.pufo
+*.backup

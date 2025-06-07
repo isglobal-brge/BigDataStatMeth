@@ -21,10 +21,9 @@
 #ifndef BIGDATASTATMETH_UTIL_SPLIT_DATASETS_HPP
 #define BIGDATASTATMETH_UTIL_SPLIT_DATASETS_HPP
 
-// #include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-// #include "memAlgebra/memMultiplication.hpp"
-// #include <thread>
+
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -63,7 +62,7 @@ namespace BigDataStatMeth {
  * @note This version is designed for R interface use and handles
  * transposition appropriately.
  */
-extern inline void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, bool bycols, 
+inline void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, bool bycols, 
                                 std::string stroutgroup, std::string stroutdataset, 
                                 int blocksize, int irows, int icols )
 {
@@ -196,7 +195,7 @@ extern inline void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstospl
  * @note This version is designed for internal C++ use and maintains
  * native data layout without transposition.
  */
-extern inline void RcppSplit_matrix_hdf5_internal ( BigDataStatMeth::hdf5Dataset* dstosplit,
+inline void RcppSplit_matrix_hdf5_internal ( BigDataStatMeth::hdf5Dataset* dstosplit,
                                    std::string stroutgroup, std::string stroutdataset,
                                    bool bycols, int nblocks, int iblocksize, 
                                    int irows, int icols )

@@ -22,8 +22,8 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXDIAGONAL_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXDIAGONAL_HPP
 
-// #include <RcppEigen.h>
-// #include "H5Cpp.h"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -43,7 +43,7 @@ namespace BigDataStatMeth {
  *
  * @throws std::exception on HDF5 read errors or memory allocation failures
  */
-extern inline Rcpp::NumericVector getDiagonalfromMatrix( BigDataStatMeth::hdf5Dataset* dsMat)
+inline Rcpp::NumericVector getDiagonalfromMatrix( BigDataStatMeth::hdf5Dataset* dsMat)
 {
     
     Rcpp::NumericVector intNewDiagonal;
@@ -91,7 +91,7 @@ extern inline Rcpp::NumericVector getDiagonalfromMatrix( BigDataStatMeth::hdf5Da
  *
  * @throws std::exception on HDF5 write errors or dimension mismatch
  */
-extern inline void setDiagonalMatrix( BigDataStatMeth::hdf5Dataset* dsMat, Rcpp::NumericVector intNewDiagonal)
+inline void setDiagonalMatrix( BigDataStatMeth::hdf5Dataset* dsMat, Rcpp::NumericVector intNewDiagonal)
 {
     
     try{

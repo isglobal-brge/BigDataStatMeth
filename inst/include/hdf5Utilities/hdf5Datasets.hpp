@@ -23,8 +23,11 @@
 #ifndef BIGDATASTATMETH_HDF5_DATASETS_HPP
 #define BIGDATASTATMETH_HDF5_DATASETS_HPP
 
-#include "Utilities/Utilities.hpp"
-#include <hdf5.h>
+// #include "Utilities/Utilities.hpp"
+// #include <hdf5.h>
+
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 
 namespace BigDataStatMeth {

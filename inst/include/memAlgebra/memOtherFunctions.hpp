@@ -8,9 +8,7 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_OTHER_FUNCTIONS_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_OTHER_FUNCTIONS_HPP
 
-// #include <RcppEigen.h>
-// #include "Utilities/openme-utils.hpp"
-// #include <thread>
+#include <RcppEigen.h>
 
 namespace BigDataStatMeth {
 
@@ -24,7 +22,7 @@ namespace BigDataStatMeth {
      * @param[out] starts Vector to store starting positions of blocks
      * @param[out] sizes Vector to store sizes of blocks
      */
-    extern inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
+    inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
         
         hsize_t isize = blockSize + 1;
         
@@ -54,7 +52,7 @@ namespace BigDataStatMeth {
      * @param x Input vector
      * @return Vector containing cumulative sums
      */
-    extern inline Eigen::VectorXd cumsum(Eigen::VectorXd x)
+    inline Eigen::VectorXd cumsum(Eigen::VectorXd x)
     {
         // initialize an accumulator variable
         double acc = 0;

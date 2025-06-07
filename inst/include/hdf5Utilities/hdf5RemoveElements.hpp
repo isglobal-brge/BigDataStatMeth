@@ -18,6 +18,9 @@
 #ifndef BIGDATASTATMETH_UTIL_REMOVE_ELEMENT_HPP
 #define BIGDATASTATMETH_UTIL_REMOVE_ELEMENT_HPP
 
+#include <RcppEigen.h>
+#include "H5Cpp.h"
+
 namespace BigDataStatMeth {
 
     /**
@@ -53,7 +56,7 @@ namespace BigDataStatMeth {
      * RcppRemove_hdf5_elements(file, elements);
      * @endcode
      */
-    extern inline void RcppRemove_hdf5_elements(BigDataStatMeth::hdf5File* file, std::vector<std::string> elements)
+    inline void RcppRemove_hdf5_elements(BigDataStatMeth::hdf5File* file, std::vector<std::string> elements)
     {
         
         try

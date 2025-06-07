@@ -30,7 +30,8 @@
 #ifndef BIGDATASTATMETH_HDF5_APPLY_HPP
 #define BIGDATASTATMETH_HDF5_APPLY_HPP
 
-#include <BigDataStatMeth.hpp>
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -94,7 +95,7 @@ namespace BigDataStatMeth {
      * @note Maximum block size is controlled by MAXELEMSINBLOCK
      * @warning Some operations require specific matrix dimensions or properties
      */
-    extern inline void RcppApplyFunctionHdf5( std::string filename, 
+    inline void RcppApplyFunctionHdf5( std::string filename, 
                                 std::string group, 
                                 Rcpp::StringVector datasets, 
                                 std::string outgroup, 

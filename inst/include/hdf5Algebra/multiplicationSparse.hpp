@@ -36,18 +36,17 @@
 #ifndef BIGDATASTATMETH_HDF5_MULTIPLICATIONSPARSE_HPP
 #define BIGDATASTATMETH_HDF5_MULTIPLICATIONSPARSE_HPP
 
-// #include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-// #include <thread>
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
 
 // Eigen not allow blocks 
-// extern inline Eigen::SparseMatrix<double> Bblock_matrix_mul_parallel_sparse(Eigen::SparseMatrix<double> A, Eigen::SparseMatrix<double> B,
+// inline Eigen::SparseMatrix<double> Bblock_matrix_mul_parallel_sparse(Eigen::SparseMatrix<double> A, Eigen::SparseMatrix<double> B,
 //                                                                             int block_size, Rcpp::Nullable<int> threads);
 
-// extern inline BigDataStatMeth::hdf5Dataset* multiplication( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
+// inline BigDataStatMeth::hdf5Dataset* multiplication( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
 //                                                             hsize_t hdf5_block, hsize_t mem_block_size, bool bparal, bool browmajor, Rcpp::Nullable<int> threads);
 
 /**
@@ -64,7 +63,7 @@ namespace BigDataStatMeth {
  * @param browmajor Whether matrices are stored in row-major order
  * @param threads Number of threads for parallel processing
  */
-extern inline BigDataStatMeth::hdf5Dataset* multiplicationSparse( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
+inline BigDataStatMeth::hdf5Dataset* multiplicationSparse( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
                                                                   hsize_t hdf5_block, hsize_t mem_block_size, bool bparal, bool browmajor, Rcpp::Nullable<int> threads  = R_NilValue) 
 {
 

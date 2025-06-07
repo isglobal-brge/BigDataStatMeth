@@ -23,7 +23,8 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_CROSSPROD_HPP
 #define BIGDATASTATMETH_ALGEBRA_CROSSPROD_HPP
 
-// #include "hdf5Algebra/multiplication.hpp"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 

@@ -21,8 +21,8 @@
 #ifndef BIGDATASTATMETH_HDF5_UTILITIES_HPP
 #define BIGDATASTATMETH_HDF5_UTILITIES_HPP
 
-// #include "BigDataStatMeth.hpp"
-
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -37,7 +37,7 @@ namespace BigDataStatMeth {
      * 
      * @throws H5::FileIException on file operation errors
      */
-    extern inline bool pathExists(hid_t id, const std::string& path)
+    inline bool pathExists(hid_t id, const std::string& path)
     {
         try {
             return H5Lexists( id, path.c_str(), H5P_DEFAULT ) > 0;    
@@ -65,7 +65,7 @@ namespace BigDataStatMeth {
      * 
      * @note Handles trailing slashes in group paths
      */
-    extern inline bool exists_HDF5_element(H5::H5File* file, std::string element)
+    inline bool exists_HDF5_element(H5::H5File* file, std::string element)
     {
         bool bexists = false;
         try
@@ -110,7 +110,7 @@ namespace BigDataStatMeth {
      * 
      * @note If elements vector is empty, removes the group itself
      */
-    extern inline bool remove_elements(H5::H5File* file, std::string strgroup, Rcpp::StringVector elements)
+    inline bool remove_elements(H5::H5File* file, std::string strgroup, Rcpp::StringVector elements)
     {
         
         bool bremok = true;
@@ -180,7 +180,7 @@ namespace BigDataStatMeth {
      * 
      * @note If element is not found, returns false
      */
-    extern inline bool remove_elements(H5::H5File* file, H5std_string element)
+    inline bool remove_elements(H5::H5File* file, H5std_string element)
     {
         
         bool bremok = true;
@@ -238,7 +238,7 @@ namespace BigDataStatMeth {
      * 
      * @warning This function is not fully tested
      */
-    extern inline void createHardLink( H5::H5File* file, std::string original, std::string link)
+    inline void createHardLink( H5::H5File* file, std::string original, std::string link)
     {
         
         try{
@@ -288,7 +288,7 @@ namespace BigDataStatMeth {
      * @throws H5::GroupIException on group operation errors
      * @throws std::exception on other errors
      */
-    extern inline void renameElement( H5::H5File* file, std::string original, std::string link)
+    inline void renameElement( H5::H5File* file, std::string original, std::string link)
     {
         
         try{
@@ -342,7 +342,7 @@ namespace BigDataStatMeth {
      * @note Modifies matrix in place
      * @note Uses efficient block operations
      */
-    extern inline void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
+    inline void removeRow(Eigen::MatrixXd& matrix, unsigned int rowToRemove)
     {
         unsigned int numRows = matrix.rows()-1;
         unsigned int numCols = matrix.cols();
@@ -366,7 +366,7 @@ namespace BigDataStatMeth {
      * @note Modifies matrix in place
      * @note Uses efficient block operations
      */
-    extern inline void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
+    inline void removeColumn(Eigen::MatrixXd& matrix, unsigned int colToRemove)
     {
         unsigned int numRows = matrix.rows();
         unsigned int numCols = matrix.cols()-1;

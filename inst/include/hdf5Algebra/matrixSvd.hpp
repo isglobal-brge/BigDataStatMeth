@@ -36,30 +36,16 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSVD_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSVD_HPP
 
-// #include <RcppEigen.h>
-// #include "H5Cpp.h"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
-// #include "hdf5Algebra/matrixNormalization.hpp"
-#include "hdf5Algebra/matrixSvdBlock.hpp"
-// #include "hdf5Algebra/multiplication.hpp"
-#include "memAlgebra/memOptimizedProducts.hpp"
-#include "memAlgebra/memMultiplication.hpp"
-
-#include "hdf5Utilities/hdf5Utilities.hpp"
-#include "hdf5Utilities/hdf5Methods.hpp"
-
-#include "Utilities/Utilities.hpp"
 #include "Spectra/SymEigsSolver.h"
-
-// #include <Spectra/SymEigsSolver.h>
-
-
 
 namespace BigDataStatMeth {
 
     
     // SVD decomposition 
-    extern inline svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale )
+    inline svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale )
     {
         
         svdeig retsvd;
@@ -127,7 +113,7 @@ namespace BigDataStatMeth {
     
     // ##' @param k number of local SVDs to concatenate at each level 
     // ##' @param q number of levels
-    extern inline void RcppbdSVD_hdf5_Block( BigDataStatMeth::hdf5Dataset* dsA, 
+    inline void RcppbdSVD_hdf5_Block( BigDataStatMeth::hdf5Dataset* dsA, 
                                         BigDataStatMeth::hdf5Dataset* dsu, BigDataStatMeth::hdf5Dataset* dsv, 
                                         BigDataStatMeth::hdf5Dataset* dsd, int k, int q, int nev, bool bcenter, bool bscale, 
                                         int irows, int icols, double dthreshold, Rcpp::Nullable<int> threads = R_NilValue )
@@ -305,7 +291,7 @@ namespace BigDataStatMeth {
     // extern svdeig RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::string strdataset,  
     //                        int k, int q, int nev, bool bcenter, bool bscale, double dthreshold, 
     //                        Rcpp::Nullable<int> ithreads = R_NilValue )
-    extern inline void RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::string strdataset,  
+    inline void RcppbdSVD_hdf5( std::string filename, std::string strsubgroup, std::string strdataset,  
                                 int k, int q, int nev, bool bcenter, bool bscale, double dthreshold, 
                                 bool bforce, bool asRowMajor, 
                                 Rcpp::Nullable<Rcpp::CharacterVector> method = R_NilValue,

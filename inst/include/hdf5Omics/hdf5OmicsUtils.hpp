@@ -58,7 +58,7 @@ namespace BigDataStatMeth {
      * - Time complexity: O(n) where n is vector length
      * - Space complexity: O(n) for vector copy
      */
-    double calc_freq(Rcpp::NumericVector x)
+    inline double calc_freq(Rcpp::NumericVector x)
     {
         
         int len = x.size();

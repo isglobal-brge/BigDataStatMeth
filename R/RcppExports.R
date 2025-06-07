@@ -91,6 +91,93 @@ bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NUL
     .Call('_BigDataStatMeth_bdCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
 }
 
+#' Matrix Inversion using Cholesky Decomposition for HDF5-Stored Matrices
+#'
+#' @description
+#' Computes the inverse of a symmetric positive-definite matrix stored in an HDF5 file
+#' using the Cholesky decomposition method. This approach is more efficient and
+#' numerically stable than general matrix inversion methods for symmetric
+#' positive-definite matrices.
+#' 
+#' @details
+#' This function implements an efficient matrix inversion algorithm that leverages
+#' the special properties of symmetric positive-definite matrices. Key features:
+#' * Uses Cholesky decomposition for improved numerical stability
+#' * Block-based computation for large matrices
+#' * Optional storage formats (full or triangular)
+#' * Parallel processing support
+#' * Memory-efficient block algorithm
+#'
+#' The algorithm proceeds in two main steps:
+#' 1. Compute the Cholesky decomposition A = LL'
+#' 2. Solve the system LL'X = I for X = A^(-1)
+#'
+#' Advantages of this method:
+#' * More efficient than general matrix inversion
+#' * Better numerical stability
+#' * Preserves matrix symmetry
+#' * Exploits positive-definiteness for efficiency
+#'
+#' @param filename Character string. Path to the HDF5 file containing the input matrix.
+#' @param group Character string. Path to the group containing the input dataset.
+#' @param dataset Character string. Name of the input dataset to invert.
+#' @param outdataset Character string. Name for the output dataset.
+#' @param outgroup Character string. Optional output group path. If not provided,
+#'   results are stored in the input group.
+#' @param fullMatrix Logical. If TRUE, stores the complete inverse matrix.
+#'   If FALSE (default), stores only the lower triangular part to save space.
+#' @param overwrite Logical. If TRUE, allows overwriting existing results.
+#' @param threads Integer. Number of threads for parallel computation (default = 2).
+#' @param elementsBlock Integer. Maximum number of elements to process in each block
+#'   (default = 1,000,000). For matrices larger than 5000x5000, automatically adjusted
+#'   to number of rows or columns * 2.
+#'
+#' @return No direct return value. Results are written to the HDF5 file in the
+#' specified location with the following structure:
+#' \describe{
+#'   \item{inverse}{The inverse matrix A^(-1)}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(rhdf5)
+#' 
+#' # Create a symmetric positive-definite matrix
+#' set.seed(1234)
+#' X <- matrix(rnorm(100), 10, 10)
+#' A <- crossprod(X)  # A = X'X is symmetric positive-definite
+#' 
+#' # Save to HDF5
+#' h5createFile("matrix.h5")
+#' h5write(A, "matrix.h5", "data/matrix")
+#' 
+#' # Compute inverse using Cholesky decomposition
+#' bdInvCholesky_hdf5("matrix.h5", "data", "matrix",
+#'                    outdataset = "inverse",
+#'                    outgroup = "results",
+#'                    fullMatrix = TRUE,
+#'                    threads = 4)
+#' 
+#' # Verify the inverse
+#' Ainv <- h5read("matrix.h5", "results/inverse")
+#' max(abs(A %*% Ainv - diag(nrow(A))))  # Should be very small
+#' }
+#'
+#' @references
+#' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+#'   Johns Hopkins University Press.
+#' * Higham, N. J. (2002). Accuracy and Stability of Numerical Algorithms,
+#'   2nd Edition. SIAM.
+#'
+#' @seealso
+#' * \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
+#' * \code{\link{bdSolve_hdf5}} for solving linear systems
+#'
+#' @export
+bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
+    .Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
+}
+
 #' QR Decomposition for In-Memory Matrices
 #' 
 #' @description
@@ -1580,93 +1667,6 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #' @export
 bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE, paral = NULL, threads = NULL, overwrite = NULL) {
     invisible(.Call('_BigDataStatMeth_bdImputeSNPs_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols, paral, threads, overwrite))
-}
-
-#' Matrix Inversion using Cholesky Decomposition for HDF5-Stored Matrices
-#'
-#' @description
-#' Computes the inverse of a symmetric positive-definite matrix stored in an HDF5 file
-#' using the Cholesky decomposition method. This approach is more efficient and
-#' numerically stable than general matrix inversion methods for symmetric
-#' positive-definite matrices.
-#' 
-#' @details
-#' This function implements an efficient matrix inversion algorithm that leverages
-#' the special properties of symmetric positive-definite matrices. Key features:
-#' * Uses Cholesky decomposition for improved numerical stability
-#' * Block-based computation for large matrices
-#' * Optional storage formats (full or triangular)
-#' * Parallel processing support
-#' * Memory-efficient block algorithm
-#'
-#' The algorithm proceeds in two main steps:
-#' 1. Compute the Cholesky decomposition A = LL'
-#' 2. Solve the system LL'X = I for X = A^(-1)
-#'
-#' Advantages of this method:
-#' * More efficient than general matrix inversion
-#' * Better numerical stability
-#' * Preserves matrix symmetry
-#' * Exploits positive-definiteness for efficiency
-#'
-#' @param filename Character string. Path to the HDF5 file containing the input matrix.
-#' @param group Character string. Path to the group containing the input dataset.
-#' @param dataset Character string. Name of the input dataset to invert.
-#' @param outdataset Character string. Name for the output dataset.
-#' @param outgroup Character string. Optional output group path. If not provided,
-#'   results are stored in the input group.
-#' @param fullMatrix Logical. If TRUE, stores the complete inverse matrix.
-#'   If FALSE (default), stores only the lower triangular part to save space.
-#' @param overwrite Logical. If TRUE, allows overwriting existing results.
-#' @param threads Integer. Number of threads for parallel computation (default = 2).
-#' @param elementsBlock Integer. Maximum number of elements to process in each block
-#'   (default = 1,000,000). For matrices larger than 5000x5000, automatically adjusted
-#'   to number of rows or columns * 2.
-#'
-#' @return No direct return value. Results are written to the HDF5 file in the
-#' specified location with the following structure:
-#' \describe{
-#'   \item{inverse}{The inverse matrix A^(-1)}
-#' }
-#'
-#' @examples
-#' \dontrun{
-#' library(rhdf5)
-#' 
-#' # Create a symmetric positive-definite matrix
-#' set.seed(1234)
-#' X <- matrix(rnorm(100), 10, 10)
-#' A <- crossprod(X)  # A = X'X is symmetric positive-definite
-#' 
-#' # Save to HDF5
-#' h5createFile("matrix.h5")
-#' h5write(A, "matrix.h5", "data/matrix")
-#' 
-#' # Compute inverse using Cholesky decomposition
-#' bdInvCholesky_hdf5("matrix.h5", "data", "matrix",
-#'                    outdataset = "inverse",
-#'                    outgroup = "results",
-#'                    fullMatrix = TRUE,
-#'                    threads = 4)
-#' 
-#' # Verify the inverse
-#' Ainv <- h5read("matrix.h5", "results/inverse")
-#' max(abs(A %*% Ainv - diag(nrow(A))))  # Should be very small
-#' }
-#'
-#' @references
-#' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
-#'   Johns Hopkins University Press.
-#' * Higham, N. J. (2002). Accuracy and Stability of Numerical Algorithms,
-#'   2nd Edition. SIAM.
-#'
-#' @seealso
-#' * \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
-#' * \code{\link{bdSolve_hdf5}} for solving linear systems
-#'
-#' @export
-bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
-    .Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
 }
 
 #' Get Matrix Diagonal from HDF5

@@ -24,13 +24,8 @@
 #ifndef BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 #define BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 
-// #include <RcppEigen.h>
-// #include "H5Cpp.h"
-
-#include "Utilities/openme-utils.hpp"
-#include "hdf5Algebra/matrixDiagonal.hpp"
-#include "hdf5Algebra/matrixTriangular.hpp"
-
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 

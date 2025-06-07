@@ -37,11 +37,9 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXPSEUDOINVERSE_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXPSEUDOINVERSE_HPP
 
-// #include <RcppEigen.h>
-// #include "H5Cpp.h"
 
-#include "Utilities/openme-utils.hpp"
-#include "Utilities/Utilities.hpp"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -80,13 +78,13 @@ extern "C" {
  * @param threads Number of threads for parallel processing (optional)
  * @return Pseudoinverse matrix
  */
-extern inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A, 
+inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A, 
                                             Rcpp::Nullable<int> threads = R_NilValue)
 {
     
     char Schar='S';
     char Cchar='C';
-    int ione = 1, ithreads;
+    int ione = 1; //, ithreads;
     double done = 1.0;
     double dzero = 0.0;
     
@@ -104,7 +102,7 @@ extern inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A,
     Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
     Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
     
-    ithreads = get_number_threads(threads, R_NilValue);
+    // ithreads = get_number_threads(threads, R_NilValue);
     
     // dgesvd_( char JOBU, char JOBVT, int M, int N, double* A, int LDA, double* S, double* U, int LDU, double* VT, int LDVT, double WORK, int LWORK, int INFO  );
     dgesvd_( &Schar, &Schar, &m, &n, A->data(), &lda, s.data(), u.data(), &ldu, vt.data(), &ldvt, work.data(), &lwork, &info);
@@ -112,7 +110,7 @@ extern inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A,
     
     //.OpenMP.// omp_set_dynamic(1);
     
-#pragma omp parallel for num_threads(ithreads)
+#pragma omp parallel for num_threads(get_number_threads(threads, R_NilValue))
     for (int i = 0; i < k; i++){
         double tempS;
         if(s[i] > 1.0e-9)
@@ -141,14 +139,14 @@ extern inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A,
  * @param dsR Output pseudoinverse dataset
  * @param threads Number of threads for parallel processing (optional)
  */
-extern inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA, 
+inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA, 
                                       BigDataStatMeth::hdf5Dataset* dsR, 
                                       Rcpp::Nullable<int> threads = R_NilValue )
 {
     
     char Schar='S';
     char Cchar='C';
-    int ione = 1, ithreads;
+    int ione = 1; // ithreads;
     double done = 1.0;
     double dzero = 0.0;
     
@@ -170,7 +168,7 @@ extern inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA,
     Eigen::MatrixXd u = Eigen::MatrixXd::Zero(ldu,k);
     Eigen::MatrixXd vt = Eigen::MatrixXd::Zero(ldvt,n);
     
-    ithreads = get_number_threads(threads, R_NilValue);
+    // ithreads = get_number_threads(threads, R_NilValue);
     
     {
         Eigen::VectorXd work = Eigen::VectorXd::Zero(lwork);
@@ -185,7 +183,7 @@ extern inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA,
     Eigen::MatrixXd pinv = Eigen::MatrixXd::Zero(n,m);
     dsR->createDataset( n, m, "real" );
     
-#pragma omp parallel for num_threads(ithreads)
+#pragma omp parallel for num_threads(get_number_threads(threads, R_NilValue))
     for (int i = 0; i < k; i++){
         double tempS;
         if(s[i] > 1.0e-9)

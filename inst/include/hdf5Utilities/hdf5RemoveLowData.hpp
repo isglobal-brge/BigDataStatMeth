@@ -20,7 +20,8 @@
 #ifndef BIGDATASTATMETH_UTIL_QC_BASICS_HPP
 #define BIGDATASTATMETH_UTIL_QC_BASICS_HPP
 
-#include "hdf5Utilities.hpp"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -68,7 +69,7 @@ namespace BigDataStatMeth {
      * int removed = Rcpp_Remove_Low_Data_hdf5(input, output, true, 0.5);
      * @endcode
      */
-    extern inline int Rcpp_Remove_Low_Data_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5Dataset* dsOut, bool bycols, double pcent)
+    inline int Rcpp_Remove_Low_Data_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5Dataset* dsOut, bool bycols, double pcent)
     {
         
         int itotrem = 0;

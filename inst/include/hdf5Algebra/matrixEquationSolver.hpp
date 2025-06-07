@@ -21,11 +21,8 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXEQUATIONSOLVER_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXEQUATIONSOLVER_HPP
 
-// #include <RcppEigen.h>
-// #include "H5Cpp.h"
-
-#include "Utilities/openme-utils.hpp"
-#include "Utilities/Utilities.hpp"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 

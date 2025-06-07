@@ -21,6 +21,9 @@
 #ifndef BIGDATASTATMETH_UTIL_BIND_DATASETS_HPP
 #define BIGDATASTATMETH_UTIL_BIND_DATASETS_HPP
 
+#include <RcppEigen.h>
+#include "H5Cpp.h"
+
 namespace BigDataStatMeth {
 
     /**
@@ -51,7 +54,7 @@ namespace BigDataStatMeth {
      * - Implements block-wise reading and writing
      * - Supports unlimited datasets for flexible growth
      */
-    extern inline void RcppBind_datasets_hdf5( std::string filename, std::string group, 
+    inline void RcppBind_datasets_hdf5( std::string filename, std::string group, 
                                  Rcpp::StringVector datasets, 
                                  BigDataStatMeth::hdf5Dataset* dsOut,  
                                  int func, bool binternal )
@@ -207,7 +210,7 @@ namespace BigDataStatMeth {
      * RcppBind_datasets_hdf5("data.h5", "/input", {"ds1", "ds2"}, "/output", "combined", "bindRows", false, true);
      * @endcode
      */
-    extern inline void RcppBind_datasets_hdf5( std::string filename, std::string group, Rcpp::StringVector datasets, 
+    inline void RcppBind_datasets_hdf5( std::string filename, std::string group, Rcpp::StringVector datasets, 
                                std::string outgroup, std::string outdataset, std::string func, 
                                bool binternal, Rcpp::Nullable<bool> overwrite = false )
     {

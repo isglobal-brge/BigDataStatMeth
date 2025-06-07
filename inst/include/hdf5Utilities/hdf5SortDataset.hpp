@@ -19,6 +19,9 @@
 #ifndef BIGDATASTATMETH_UTIL_SORT_DATASETS_HPP
 #define BIGDATASTATMETH_UTIL_SORT_DATASETS_HPP
 
+#include <RcppEigen.h>
+#include "H5Cpp.h"
+
 namespace BigDataStatMeth {
 
     /**
@@ -96,7 +99,7 @@ namespace BigDataStatMeth {
      * RcppSort_dataset_hdf5(input, output, sortSpec, "sortRows");
      * @endcode
      */
-    extern inline void RcppSort_dataset_hdf5(BigDataStatMeth::hdf5Dataset* dsIn,
+    inline void RcppSort_dataset_hdf5(BigDataStatMeth::hdf5Dataset* dsIn,
                                            BigDataStatMeth::hdf5Dataset* dsOut,
                                            Rcpp::List blockedSortlist,
                                            std::string func)

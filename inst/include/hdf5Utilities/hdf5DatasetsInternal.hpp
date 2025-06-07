@@ -16,7 +16,8 @@
 #ifndef BIGDATASTATMETH_HDF5_DATASETINTERNAL_HPP
 #define BIGDATASTATMETH_HDF5_DATASETINTERNAL_HPP
 
-// #include "BigDataStatMeth.hpp"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 

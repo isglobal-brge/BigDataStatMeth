@@ -36,9 +36,8 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_VECTORMATRIX_HPP
 #define BIGDATASTATMETH_ALGEBRA_VECTORMATRIX_HPP
 
-// #include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-// #include <thread>
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -50,7 +49,7 @@ namespace BigDataStatMeth {
  * @param v Input vector
  * @return Result of row-wise multiplication
  */
-extern inline Eigen::MatrixXd Rcpp_matrixVectorMultiplication_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
+inline Eigen::MatrixXd Rcpp_matrixVectorMultiplication_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().colwise() * v.array();
     return(X);
 }
@@ -63,7 +62,7 @@ extern inline Eigen::MatrixXd Rcpp_matrixVectorMultiplication_byRow(Eigen::Matri
  * @param v Input vector
  * @return Result of row-wise addition
  */
-extern inline Eigen::MatrixXd Rcpp_matrixVectorSum_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
+inline Eigen::MatrixXd Rcpp_matrixVectorSum_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().colwise() + v.array();
     return(X);
 }
@@ -76,7 +75,7 @@ extern inline Eigen::MatrixXd Rcpp_matrixVectorSum_byRow(Eigen::MatrixXd X, Eige
  * @param v Input vector
  * @return Result of row-wise subtraction
  */
-extern inline Eigen::MatrixXd Rcpp_matrixVectorSubstract_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
+inline Eigen::MatrixXd Rcpp_matrixVectorSubstract_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().colwise() - v.array();
     return(X);
 }
@@ -89,7 +88,7 @@ extern inline Eigen::MatrixXd Rcpp_matrixVectorSubstract_byRow(Eigen::MatrixXd X
  * @param v Input vector
  * @return Result of row-wise division
  */
-extern inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
+inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().colwise() / v.array();
     return(X);
 }
@@ -102,7 +101,7 @@ extern inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byRow(Eigen::MatrixXd X,
  * @param v Input vector
  * @return Result of column-wise multiplication
  */
-extern inline Eigen::MatrixXd Rcpp_matrixVectorMultiplication_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
+inline Eigen::MatrixXd Rcpp_matrixVectorMultiplication_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().rowwise() * v.transpose().array();    
     return(X);
 }
@@ -115,7 +114,7 @@ extern inline Eigen::MatrixXd Rcpp_matrixVectorMultiplication_byCol(Eigen::Matri
  * @param v Input vector
  * @return Result of column-wise addition
  */
-extern inline Eigen::MatrixXd Rcpp_matrixVectorSum_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
+inline Eigen::MatrixXd Rcpp_matrixVectorSum_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().rowwise() + v.transpose().array();    
     return(X);
 }
@@ -128,7 +127,7 @@ extern inline Eigen::MatrixXd Rcpp_matrixVectorSum_byCol(Eigen::MatrixXd X, Eige
  * @param v Input vector
  * @return Result of column-wise subtraction
  */
-extern inline Eigen::MatrixXd Rcpp_matrixVectorSubstract_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
+inline Eigen::MatrixXd Rcpp_matrixVectorSubstract_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().rowwise() - v.transpose().array();    
     return(X);
 }
@@ -141,7 +140,7 @@ extern inline Eigen::MatrixXd Rcpp_matrixVectorSubstract_byCol(Eigen::MatrixXd X
  * @param v Input vector
  * @return Result of column-wise division
  */
-extern inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
+inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
     X = X.array().rowwise() / v.transpose().array();    
     return(X);
 }
@@ -168,7 +167,7 @@ extern inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byCol(Eigen::MatrixXd X,
  * @param bparal Whether to use parallel processing
  * @param threads Number of threads for parallel processing
  */
-extern inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
+inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
         BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, 
         BigDataStatMeth::hdf5Dataset* dsC, int function, bool bbyrows, 
         bool bparal, Rcpp::Nullable<int> threads  = R_NilValue)

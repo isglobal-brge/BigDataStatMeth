@@ -38,8 +38,9 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXPCA_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXPCA_HPP
 
-#include "hdf5Algebra/matrixSvd.hpp"
-#include "hdf5Algebra/vectormatrix.hpp"
+
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -62,7 +63,7 @@ namespace BigDataStatMeth {
      * @param dsv Right singular vectors dataset
      * @param overwrite Whether to overwrite existing results
      */
-    extern inline void RcppGetPCAVariablesHdf5( std::string strPCAgroup, 
+    inline void RcppGetPCAVariablesHdf5( std::string strPCAgroup, 
                                   BigDataStatMeth::hdf5Dataset* dsd, 
                                   BigDataStatMeth::hdf5Dataset* dsv, 
                                   bool overwrite )
@@ -184,7 +185,7 @@ namespace BigDataStatMeth {
      * @param dsu Left singular vectors dataset
      * @param overwrite Whether to overwrite existing results
      */
-    extern inline void RcppGetPCAIndividualsHdf5( std::string strPCAgroup, 
+    inline void RcppGetPCAIndividualsHdf5( std::string strPCAgroup, 
                                     BigDataStatMeth::hdf5Dataset* dsX,
                                     BigDataStatMeth::hdf5Dataset* dsd, 
                                     BigDataStatMeth::hdf5Dataset* dsu, 
@@ -343,7 +344,7 @@ namespace BigDataStatMeth {
      * @param method Method selection (optional)
      * @param ithreads Number of threads (optional)
      */
-    extern inline void RcppPCAHdf5( std::string filename, std::string strgroup, std::string strdataset,  
+    inline void RcppPCAHdf5( std::string filename, std::string strgroup, std::string strdataset,  
                              std::string strSVDgroup, int k, int q, int nev, 
                              bool bcenter, bool bscale, double dthreshold, 
                              bool bforce, bool asRowMajor, 

@@ -22,6 +22,9 @@
 #ifndef BIGDATASTATMETH_HDF5_CHECK_CLOSE_FILE_HPP
 #define BIGDATASTATMETH_HDF5_CHECK_CLOSE_FILE_HPP
 
+#include <RcppEigen.h>
+#include "H5Cpp.h"
+
 namespace BigDataStatMeth {
 
     /**
@@ -35,7 +38,7 @@ namespace BigDataStatMeth {
      * 
      * @note Checks for null pointer before attempting to close
      */
-    extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1) 
+    inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1) 
     {
         try{
             
@@ -76,7 +79,7 @@ namespace BigDataStatMeth {
      * 
      * @note Checks each pointer for null before attempting to close
      */
-    extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
+    inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                          BigDataStatMeth::hdf5Dataset* ds2) 
     {
         try{
@@ -121,7 +124,7 @@ namespace BigDataStatMeth {
      * 
      * @note Checks each pointer for null before attempting to close
      */
-    extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
+    inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                          BigDataStatMeth::hdf5Dataset* ds2, 
                          BigDataStatMeth::hdf5Dataset* ds3) 
     {
@@ -169,7 +172,7 @@ namespace BigDataStatMeth {
      * 
      * @note Checks each pointer for null before attempting to close
      */
-    extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
+    inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                          BigDataStatMeth::hdf5Dataset* ds2, 
                          BigDataStatMeth::hdf5Dataset* ds3, 
                          BigDataStatMeth::hdf5Dataset* ds4) 
@@ -224,7 +227,7 @@ namespace BigDataStatMeth {
      * 
      * @note Checks each pointer for null before attempting to close
      */
-    extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
+    inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                                 BigDataStatMeth::hdf5Dataset* ds2, 
                                 BigDataStatMeth::hdf5Dataset* ds3, 
                                 BigDataStatMeth::hdf5Dataset* ds4, 
@@ -282,7 +285,7 @@ namespace BigDataStatMeth {
      * 
      * @note Checks each pointer for null before attempting to close
      */
-    extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
+    inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                                        BigDataStatMeth::hdf5Dataset* ds2, 
                                        BigDataStatMeth::hdf5Dataset* ds3, 
                                        BigDataStatMeth::hdf5Dataset* ds4, 
@@ -342,7 +345,7 @@ namespace BigDataStatMeth {
      * 
      * @note Checks each pointer for null before attempting to close
      */
-    extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
+    inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                                        BigDataStatMeth::hdf5Dataset* ds2, 
                                        BigDataStatMeth::hdf5Dataset* ds3, 
                                        BigDataStatMeth::hdf5Dataset* ds4, 
@@ -407,7 +410,7 @@ namespace BigDataStatMeth {
      * 
      * @note Checks each pointer for null before attempting to close
      */
-    extern inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
+    inline void checkClose_file(BigDataStatMeth::hdf5Dataset* ds1, 
                                        BigDataStatMeth::hdf5Dataset* ds2, 
                                        BigDataStatMeth::hdf5Dataset* ds3, 
                                        BigDataStatMeth::hdf5Dataset* ds4, 

@@ -20,8 +20,8 @@
 #ifndef BIGDATASTATMETH_HDF5_METHODS_HPP
 #define BIGDATASTATMETH_HDF5_METHODS_HPP
 
-#include "Utilities/openme-utils.hpp"
-#include "hdf5Utilities/hdf5Utilities.hpp"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 

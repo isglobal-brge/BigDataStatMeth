@@ -29,10 +29,7 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_SUBSTRACT_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_SUBSTRACT_HPP
 
-// #include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-#include "memAlgebra/memOtherFunctions.hpp"
-// #include <thread>
+#include <RcppEigen.h>
 
 namespace BigDataStatMeth {
 
@@ -47,7 +44,7 @@ namespace BigDataStatMeth {
      * @param B Second input matrix (subtracted from A)
      * @return Result of matrix subtraction (A - B)
      */
-    template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_substract ( T  A, T  B);
+    template< typename T>  inline Rcpp::RObject Rcpp_matrix_substract ( T  A, T  B);
     /**
      * @brief Matrix-vector subtraction
      * @details Subtracts a vector from each row or column of a matrix.
@@ -58,7 +55,7 @@ namespace BigDataStatMeth {
      * @param B Input vector (subtracted from A)
      * @return Result of matrix-vector subtraction
      */
-    template< typename T, typename U>  extern inline Rcpp::RObject Rcpp_matrix_vect_substract ( T  A, U  B);
+    template< typename T, typename U>  inline Rcpp::RObject Rcpp_matrix_vect_substract ( T  A, U  B);
     /**
      * @brief Vector subtraction
      * @details Subtracts two vectors element-wise.
@@ -68,7 +65,7 @@ namespace BigDataStatMeth {
      * @param B Second input vector (subtracted from A)
      * @return Result of vector subtraction (A - B)
      */
-    template< typename T>  extern inline Rcpp::RObject Rcpp_vector_substract ( T  A, T  B);
+    template< typename T>  inline Rcpp::RObject Rcpp_vector_substract ( T  A, T  B);
     
     /**
      * @brief Block-based matrix subtraction
@@ -80,7 +77,7 @@ namespace BigDataStatMeth {
      * @param threads Number of threads for parallel computation
      * @return Result of matrix subtraction (A - B)
      */
-    template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_blockSubstract ( T  A, T  B, Rcpp::Nullable<int> threads = R_NilValue);
+    template< typename T>  inline Rcpp::RObject Rcpp_matrix_blockSubstract ( T  A, T  B, Rcpp::Nullable<int> threads = R_NilValue);
     /**
      * @brief Block-based matrix-vector subtraction
      * @details Implements block-based matrix-vector subtraction with optional
@@ -93,7 +90,7 @@ namespace BigDataStatMeth {
      * @param threads Number of threads for parallel computation
      * @return Result of matrix-vector subtraction
      */
-    template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_vector_blockSubstract( T  A, T  B, Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads);
+    template< typename T>  inline Rcpp::RObject Rcpp_matrix_vector_blockSubstract( T  A, T  B, Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads);
     
     /**
      * @brief Low-level block-based matrix-vector subtraction
@@ -109,12 +106,12 @@ namespace BigDataStatMeth {
      * @return Result of matrix-vector subtraction
      */
     template< typename T>
-    extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_substract( T  A, T  B, hsize_t block_size, 
+    inline Eigen::MatrixXd Rcpp_block_matrix_vector_substract( T  A, T  B, hsize_t block_size, 
                                                                 bool bparal, Rcpp::Nullable<int> threads = R_NilValue);
     
     
     
-    // extern inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
+    // inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
     // 
     //     hsize_t isize = blockSize + 1;
     // 
@@ -146,7 +143,7 @@ namespace BigDataStatMeth {
      * @return Result of matrix subtraction (A - B)
      */
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_matrix_substract ( T  A, T  B)
+    inline Rcpp::RObject Rcpp_matrix_substract ( T  A, T  B)
     {
         
         
@@ -181,7 +178,7 @@ namespace BigDataStatMeth {
      * @return Result of matrix-vector subtraction
      */
     template< typename T, typename U>
-    extern inline Rcpp::RObject Rcpp_matrix_vect_substract ( T  A, U  B)
+    inline Rcpp::RObject Rcpp_matrix_vect_substract ( T  A, U  B)
     {
         
         Rcpp::NumericMatrix m = Rcpp::as<Rcpp::NumericMatrix>(A);
@@ -223,7 +220,7 @@ namespace BigDataStatMeth {
      * @return Result of vector subtraction (A - B)
      */
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_vector_substract ( T  A, T  B)
+    inline Rcpp::RObject Rcpp_vector_substract ( T  A, T  B)
     {
         
         Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(A);
@@ -256,7 +253,7 @@ namespace BigDataStatMeth {
      * @return Result of matrix subtraction (A - B)
      */
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_matrix_blockSubstract ( T  A, T  B, Rcpp::Nullable<int> threads)
+    inline Rcpp::RObject Rcpp_matrix_blockSubstract ( T  A, T  B, Rcpp::Nullable<int> threads)
     {
         
         // static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
@@ -351,7 +348,7 @@ namespace BigDataStatMeth {
      * @return Result of matrix-vector subtraction
      */
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_matrix_vector_blockSubstract( T  A, T  B,  
+    inline Rcpp::RObject Rcpp_matrix_vector_blockSubstract( T  A, T  B,  
                                 Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads)
     {
         

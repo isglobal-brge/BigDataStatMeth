@@ -37,10 +37,8 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSVDBLOCK_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSVDBLOCK_HPP
 
-#include "hdf5Utilities/hdf5Utilities.hpp"
-#include "hdf5Algebra/matrixSdMean.hpp"
-#include "hdf5Algebra/matrixNormalization.hpp"
-#include "memAlgebra/memMultiplication.hpp"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 
 namespace BigDataStatMeth {
@@ -72,7 +70,7 @@ struct svdPositions {
 
 // Lapack SVD decomposition - Optimized algorithm with dgesdd
 template <class T>
-extern inline svdeig RcppbdSVD_lapack( T X, bool bcenter, bool bscale, bool complete ) {
+inline svdeig RcppbdSVD_lapack( T X, bool bcenter, bool bscale, bool complete ) {
     
     svdeig retsvd;
     
@@ -237,7 +235,7 @@ std::vector<svdPositions> prepareForParallelization( T* dsA, int M, int k, bool 
 // each block,results are saved in hdf5 datasets under temporal group to be processed
 // if necessary
 template <class T>
-extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroupName, int k, int q, int nev, bool bcenter, bool bscale, 
+inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroupName, int k, int q, int nev, bool bcenter, bool bscale, 
                                              double dthreshold, Rcpp::Nullable<int> threads = R_NilValue)
 {
     
@@ -473,7 +471,7 @@ extern inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string 
 // Reads small datasets from hdf5 and perform a svd descomposition from each block,
 // results are saved in hdf5 datasets under temporal group to be processed if necessary
 template <class T>
-extern inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroupName, int k, int q, 
+inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroupName, int k, int q, 
                                                            double dthreshold, Rcpp::Nullable<int> threads = R_NilValue)
     {
     

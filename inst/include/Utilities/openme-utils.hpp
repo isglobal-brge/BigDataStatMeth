@@ -25,7 +25,9 @@
  * while respecting system and user-defined constraints.
  */
 
-#include "BigDataStatMeth.hpp"
+#include <Rcpp.h>
+#include "H5Cpp.h"
+
 #ifdef _OPENMP
 #include <pthread.h>
 #endif

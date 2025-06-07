@@ -36,20 +36,18 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_SUBSTRACT_HPP
 #define BIGDATASTATMETH_ALGEBRA_SUBSTRACT_HPP
 
-// #include <RcppEigen.h>
-// #include "Utilities/openme-utils.hpp"
-#include "memAlgebra/memSubstract.hpp"
-// #include <thread>
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
 
 
-    extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_substract_hdf5( 
+    inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_substract_hdf5( 
             BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
             hsize_t hdf5_block, bool bparal, Rcpp::Nullable<int> threads);
     
-    extern inline BigDataStatMeth::hdf5Dataset* Rcpp_block_matrix_vector_substract_hdf5( 
+    inline BigDataStatMeth::hdf5Dataset* Rcpp_block_matrix_vector_substract_hdf5( 
             BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
             hsize_t hdf5_block, bool bparal, Rcpp::Nullable<int> threads);
     
@@ -68,7 +66,7 @@ namespace BigDataStatMeth {
      * @param threads Number of threads for parallel processing (optional)
      * @return Pointer to result dataset
      */
-    extern inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_substract_hdf5( 
+    inline BigDataStatMeth::hdf5Dataset*  Rcpp_block_matrix_substract_hdf5( 
             BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
             hsize_t hdf5_block, bool bparal, Rcpp::Nullable<int> threads  = R_NilValue)
     {
@@ -205,7 +203,7 @@ namespace BigDataStatMeth {
      * @param threads Number of threads for parallel processing (optional)
      * @return Pointer to result dataset
      */
-    extern inline BigDataStatMeth::hdf5Dataset* Rcpp_block_matrix_vector_substract_hdf5( 
+    inline BigDataStatMeth::hdf5Dataset* Rcpp_block_matrix_vector_substract_hdf5( 
             BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, BigDataStatMeth::hdf5Dataset* dsC,
             hsize_t hdf5_block, bool bparal, Rcpp::Nullable<int> threads  = R_NilValue)
     {

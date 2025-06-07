@@ -35,19 +35,11 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_OPTIMIZED_PRODS_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_OPTIMIZED_PRODS_HPP
 
-// #include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-// #include <thread>
+#include <RcppEigen.h>
+
 
 namespace BigDataStatMeth {
 
-// extern inline Eigen::MatrixXd block_matrix_mul( Eigen::MatrixXd& A, Eigen::MatrixXd& B, int block_size);
-// extern inline Eigen::MatrixXd Bblock_matrix_mul_parallel( Eigen::MatrixXd& A, Eigen::MatrixXd& B, 
-//                                                                           int block_size, Rcpp::Nullable<int> threads  = R_NilValue);
-
-
-// extern inline Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& mat);
-// extern inline Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& mat);
 
 /**
  * @brief Compute matrix cross-product X'X
@@ -58,7 +50,7 @@ namespace BigDataStatMeth {
  * @param X Input matrix
  * @return Cross-product matrix X'X
  */
-template< typename T> extern inline Eigen::MatrixXd bdcrossproduct ( T X );
+template< typename T> inline Eigen::MatrixXd bdcrossproduct ( T X );
 
 /**
  * @brief Compute matrix transposed cross-product XX'
@@ -69,7 +61,7 @@ template< typename T> extern inline Eigen::MatrixXd bdcrossproduct ( T X );
  * @param X Input matrix
  * @return Transposed cross-product matrix XX'
  */
-template< typename T> extern inline Eigen::MatrixXd bdtcrossproduct ( T X );
+template< typename T> inline Eigen::MatrixXd bdtcrossproduct ( T X );
 
 /**
  * @brief Compute weighted cross-product XwX'
@@ -80,7 +72,7 @@ template< typename T> extern inline Eigen::MatrixXd bdtcrossproduct ( T X );
  * @param w Weight matrix
  * @return Weighted cross-product XwX'
  */
-extern inline Eigen::MatrixXd xwxt(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
+inline Eigen::MatrixXd xwxt(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
 
 /**
  * @brief Compute transposed weighted cross-product X'wX
@@ -91,7 +83,7 @@ extern inline Eigen::MatrixXd xwxt(const Eigen::MatrixXd& X, const Eigen::Matrix
  * @param w Weight matrix
  * @return Transposed weighted cross-product X'wX
  */
-extern inline Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
+inline Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
 
 /**
  * @brief Compute  matrix-diagonal product Xw
@@ -101,7 +93,7 @@ extern inline Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::Matrix
  * @param w Vector representing diagonal matrix
  * @return Matrix-diagonal product Xw
  */
-extern inline Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorXd& w);
+inline Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorXd& w);
 
 /**
  * @brief Compute matrix-diagonal product Xw
@@ -112,7 +104,7 @@ extern inline Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorX
  * @param w Matrix representing diagonal matrix
  * @return Matrix-diagonal product Xw
  */
-extern inline Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
+inline Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
 
 /**
  * @brief Compute diagonal-matrix product wX
@@ -122,7 +114,7 @@ extern inline Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd
  * @param w Matrix representing diagonal matrix
  * @return Diagonal-matrix product wX
  */
-extern inline Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
+inline Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w);
 
 /**
  * @brief Compute diagonal-matrix product wX
@@ -133,7 +125,7 @@ extern inline Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd
  * @param w Vector representing diagonal matrix
  * @return Diagonal-matrix product wX
  */
-extern inline Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorXd& w);
+inline Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorXd& w);
 
 /**
  * @brief Compute parallel matrix-diagonal product Xw
@@ -144,7 +136,7 @@ extern inline Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorX
  * @param threads Number of threads for parallel computation
  * @return Matrix-diagonal product Xw
  */
-extern inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads);
+inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads);
 
 /**
  * @brief Compute parallel diagonal-matrix product wX
@@ -155,11 +147,11 @@ extern inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen
  * @param threads Number of threads for parallel computation
  * @return Diagonal-matrix product wX
  */
-extern inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads);
+inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads);
 
 
 // Computes CrossProduct X'X
-// extern inline Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& X)
+// inline Eigen::MatrixXd bdcrossproduct (Eigen::MatrixXd& X)
 // {
 //     size_t nc(X.cols());
 //     Eigen::MatrixXd XtX(Eigen::MatrixXd(nc, nc).setZero().selfadjointView<Eigen::Lower>().rankUpdate(X.adjoint()));
@@ -167,7 +159,7 @@ extern inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen
 // }
 
 template< typename T>
-extern inline Eigen::MatrixXd bdcrossproduct ( T X )
+inline Eigen::MatrixXd bdcrossproduct ( T X )
 {
     
     static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
@@ -187,7 +179,7 @@ extern inline Eigen::MatrixXd bdcrossproduct ( T X )
 
 
 // Compute tCrossProduct XX'
-// extern inline Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& X)
+// inline Eigen::MatrixXd bdtcrossproduct (Eigen::MatrixXd& X)
 // {
 //     
 //     size_t nr(X.rows());
@@ -197,7 +189,7 @@ extern inline Eigen::MatrixXd bdcrossproduct ( T X )
 
 
 template< typename T>
-extern inline Eigen::MatrixXd bdtcrossproduct ( T X )
+inline Eigen::MatrixXd bdtcrossproduct ( T X )
 {
     
     static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
@@ -217,7 +209,7 @@ extern inline Eigen::MatrixXd bdtcrossproduct ( T X )
 
 
 // Compute weighted crossproduct XwX'
-extern inline Eigen::MatrixXd xwxt(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
+inline Eigen::MatrixXd xwxt(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
 {
     const int n(X.rows());
     Eigen::MatrixXd XwXt(Eigen::MatrixXd(n, n).setZero().
@@ -227,7 +219,7 @@ extern inline Eigen::MatrixXd xwxt(const Eigen::MatrixXd& X, const Eigen::Matrix
 
 
 // Compute transposed weighted crossproduct X'wX 
-extern inline Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w)
+inline Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w)
 {
     const int n(X.cols());
     Eigen::MatrixXd XtwX(Eigen::MatrixXd(n, n).setZero().
@@ -237,7 +229,7 @@ extern inline Eigen::MatrixXd xtwx(const Eigen::MatrixXd& X, const Eigen::Matrix
 
 
 // Compute weighted crossproduct Xw
-extern inline Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
+inline Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
 {
     Eigen::MatrixXd Xw = X * w.array().matrix().asDiagonal();
     return (Xw);
@@ -245,7 +237,7 @@ extern inline Eigen::MatrixXd Xw(const Eigen::MatrixXd& X, const Eigen::MatrixXd
 
 
 // Compute weighted crossproduct Xw
-extern inline Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
+inline Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd& w) 
 {
     Eigen::MatrixXd wX = w.array().matrix().asDiagonal()*X;
     return (wX);
@@ -254,7 +246,7 @@ extern inline Eigen::MatrixXd wX(const Eigen::MatrixXd& X, const Eigen::MatrixXd
 
 
 // Matirx - vector as diagonal matrix Multiplication
-extern inline Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
+inline Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
 {
     int n = X.rows();
     Eigen::MatrixXd C = Eigen::MatrixXd::Zero(n,X.cols()) ; 
@@ -267,7 +259,7 @@ extern inline Eigen::MatrixXd Xwd(const Eigen::MatrixXd& X, const Eigen::VectorX
 
 
 //vector as diagonal matrix -  Matirx Multiplication
-extern inline Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
+inline Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorXd& w)
 {
     int n = X.cols();
     Eigen::MatrixXd C = Eigen::MatrixXd::Zero(X.rows(),n) ; 
@@ -280,7 +272,7 @@ extern inline Eigen::MatrixXd wdX(const Eigen::MatrixXd& X, const Eigen::VectorX
 
 
 // Matirx - vector as diagonal matrix Multiplication (parallel)
-extern inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads = R_NilValue)
+inline Eigen::MatrixXd Xwd_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads = R_NilValue)
 {
     int n = X.rows();
     unsigned int ithreads;
@@ -317,7 +309,7 @@ return(C);
 
 
 //vector as diagonal matrix -  Matirx Multiplication (parallel)
-extern inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads = R_NilValue)
+inline Eigen::MatrixXd wdX_parallel(const Eigen::MatrixXd& X, const Eigen::VectorXd& w, Rcpp::Nullable<int> threads = R_NilValue)
 {
     int n = X.cols();
     unsigned int ithreads;

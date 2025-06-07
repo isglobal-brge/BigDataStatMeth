@@ -30,21 +30,18 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_SUM_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_SUM_HPP
 
-// #include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-#include "memAlgebra/memOtherFunctions.hpp"
-// #include <thread>
+#include <RcppEigen.h>
 
 namespace BigDataStatMeth {
 
 
 
-    template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_sum ( T  A, T  B);
-    template< typename T, typename U>  extern inline Rcpp::RObject Rcpp_matrix_vect_sum ( T  A, U  B);
-    template< typename T>  extern inline Rcpp::RObject Rcpp_vector_sum ( T  A, T  B);
+    template< typename T>  inline Rcpp::RObject Rcpp_matrix_sum ( T  A, T  B);
+    template< typename T, typename U>  inline Rcpp::RObject Rcpp_matrix_vect_sum ( T  A, U  B);
+    template< typename T>  inline Rcpp::RObject Rcpp_vector_sum ( T  A, T  B);
     
-    template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_blockSum ( T  A, T  B, Rcpp::Nullable<int> threads = R_NilValue);
-    template< typename T>  extern inline Rcpp::RObject Rcpp_matrix_vector_blockSum( T  A, T  B, Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads);
+    template< typename T>  inline Rcpp::RObject Rcpp_matrix_blockSum ( T  A, T  B, Rcpp::Nullable<int> threads = R_NilValue);
+    template< typename T>  inline Rcpp::RObject Rcpp_matrix_vector_blockSum( T  A, T  B, Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads);
 
     // /**
     //  * @brief Low-level block-based matrix-vector addition implementation
@@ -63,12 +60,12 @@ namespace BigDataStatMeth {
     //  * @return Eigen::MatrixXd containing the result
     //  */
     // template< typename T>
-    // extern inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t block_size, 
+    // inline Eigen::MatrixXd Rcpp_block_matrix_vector_sum( T  A, T  B, hsize_t block_size, 
     //                                               bool bparal, Rcpp::Nullable<int> threads = R_NilValue);
 
 
 
-    // extern inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
+    // inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
     //     
     //     hsize_t isize = blockSize + 1;
     //     
@@ -91,7 +88,7 @@ namespace BigDataStatMeth {
 
 
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_matrix_sum ( T  A, T  B)
+    inline Rcpp::RObject Rcpp_matrix_sum ( T  A, T  B)
     {
         
         // static_assert(std::is_same<T, Eigen::MatrixXd >::value ||
@@ -121,7 +118,7 @@ namespace BigDataStatMeth {
     // Suma per files o columnes depenent si la mida del vector es igual al nombre
     // de files o igual al nombre de columnes
     template< typename T, typename U>
-    extern inline Rcpp::RObject Rcpp_matrix_vect_sum ( T  A, U  B)
+    inline Rcpp::RObject Rcpp_matrix_vect_sum ( T  A, U  B)
     {
         
         Rcpp::NumericMatrix m = Rcpp::as<Rcpp::NumericMatrix>(A);
@@ -154,7 +151,7 @@ namespace BigDataStatMeth {
 
 
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_vector_sum ( T  A, T  B)
+    inline Rcpp::RObject Rcpp_vector_sum ( T  A, T  B)
     {
         
         Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(A);
@@ -194,7 +191,7 @@ namespace BigDataStatMeth {
      * @throws Runtime error if matrices are not conformable
      */
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_matrix_blockSum ( T  A, T  B, Rcpp::Nullable<int> threads)
+    inline Rcpp::RObject Rcpp_matrix_blockSum ( T  A, T  B, Rcpp::Nullable<int> threads)
     {
         
         // static_assert(std::is_same<T, Eigen::MatrixXd >::value || 
@@ -290,7 +287,7 @@ namespace BigDataStatMeth {
      * @return Rcpp::RObject containing the result
      */
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_matrix_vector_blockSum( T  A, T  B,  
+    inline Rcpp::RObject Rcpp_matrix_vector_blockSum( T  A, T  B,  
                                  Rcpp::Nullable<bool> bparal, Rcpp::Nullable<int> threads)
     {
         

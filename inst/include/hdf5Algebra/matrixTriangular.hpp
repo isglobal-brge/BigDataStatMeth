@@ -35,7 +35,7 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXTRIANGULAR_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXTRIANGULAR_HPP
 
-// #include <RcppEigen.h>
+#include <RcppEigen.h>
 #include "H5Cpp.h"
 
 namespace BigDataStatMeth {
@@ -47,7 +47,7 @@ namespace BigDataStatMeth {
  * @param dsMat The dataset to set the upper triangular matrix of
  * @param dElementsBlock The block size to use for the matrix
  */
-extern inline void setUpperTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
+inline void setUpperTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
 {
     
     try {
@@ -123,7 +123,7 @@ extern inline void setUpperTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat
  * @param dsMat The dataset to set the lower triangular matrix of
  * @param dElementsBlock The block size to use for the matrix
  */
-extern inline void setLowerTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
+inline void setLowerTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
 {
     
     try {

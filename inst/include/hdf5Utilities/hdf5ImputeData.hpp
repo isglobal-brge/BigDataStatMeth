@@ -21,7 +21,9 @@
 #ifndef BIGDATASTATMETH_UTIL_IMPUTE_DATA_HPP
 #define BIGDATASTATMETH_UTIL_IMPUTE_DATA_HPP
 
-#include "Utilities/openme-utils.hpp"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
+
 #include<random>
 
 namespace BigDataStatMeth {
@@ -44,7 +46,7 @@ namespace BigDataStatMeth {
      * @note Uses mt19937 random number generator
      * @note NA values (3) are excluded from probability calculation
      */
-    extern inline int get_value_to_impute_discrete(std::map<double, double> probMap)
+    inline int get_value_to_impute_discrete(std::map<double, double> probMap)
     {
         try
         {
@@ -95,7 +97,7 @@ namespace BigDataStatMeth {
      * 2. Counts occurrences of each unique value
      * 3. Creates ordered map of frequencies
      */
-    extern inline std::map<double, double> VectortoOrderedMap_SNP_counts( Eigen::VectorXd  vdata)
+    inline std::map<double, double> VectortoOrderedMap_SNP_counts( Eigen::VectorXd  vdata)
     {
         std::map<double, double> mapv;
         
@@ -170,7 +172,7 @@ namespace BigDataStatMeth {
      * Rcpp_Impute_snps_hdf5(input, output, true, "imputed_data", 4);
      * @endcode
      */
-    extern inline void Rcpp_Impute_snps_hdf5(BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5DatasetInternal* dsOut,
+    inline void Rcpp_Impute_snps_hdf5(BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5DatasetInternal* dsOut,
                          bool bycols, std::string stroutdataset, Rcpp::Nullable<int> threads  = R_NilValue)
     {
         
@@ -198,10 +200,10 @@ namespace BigDataStatMeth {
             
             dsOut->openDataset();
             
-            int ithreads = get_number_threads(threads, R_NilValue);
+            // int ithreads = get_number_threads(threads, R_NilValue);
             int chunks = (ilimit + (blocksize - 1)) / blocksize; //(ilimit/blocksize);
 
-            #pragma omp parallel num_threads(ithreads) shared(dsIn, dsOut, chunks)
+            #pragma omp parallel num_threads(get_number_threads(threads, R_NilValue)) shared(dsIn, dsOut, chunks)
             {
                 #pragma omp for schedule(auto)
                 for( int i=0; i < chunks; i++) 

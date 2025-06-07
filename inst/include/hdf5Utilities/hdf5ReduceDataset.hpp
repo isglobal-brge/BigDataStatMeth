@@ -21,6 +21,9 @@
 #ifndef BIGDATASTATMETH_UTIL_REDUCE_DATASETS_HPP
 #define BIGDATASTATMETH_UTIL_REDUCE_DATASETS_HPP
 
+#include <RcppEigen.h>
+#include "H5Cpp.h"
+
 namespace BigDataStatMeth {
 
     /**
@@ -80,7 +83,7 @@ namespace BigDataStatMeth {
      * @note When binternal is false (R interface), the result is transposed
      * to match R's column-major order expectation.
      */
-    extern inline void RcppReduce_dataset_hdf5(std::string filename,
+    inline void RcppReduce_dataset_hdf5(std::string filename,
                                             std::string stringroup,
                                             std::string stroutgroup,
                                             std::string stroutdataset,
@@ -95,7 +98,7 @@ namespace BigDataStatMeth {
     //          - binternal = true for internal calls, for example if we are
     //          performing a reduction as a intermediate step using C++ interface,
     //          - binternal = false only for R interface (get transposed results)
-    extern inline void RcppReduce_dataset_hdf5 ( std::string filename, 
+    inline void RcppReduce_dataset_hdf5 ( std::string filename, 
                                    std::string stringroup, 
                                    std::string stroutgroup, 
                                    std::string stroutdataset, 

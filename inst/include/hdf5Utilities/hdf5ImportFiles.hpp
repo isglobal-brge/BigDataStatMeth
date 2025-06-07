@@ -20,9 +20,8 @@
 #ifndef BIGDATASTATMETH_HDF5_IMPORTFILES_HPP
 #define BIGDATASTATMETH_HDF5_IMPORTFILES_HPP
 
-
-// #include <fstream>
-// #include <boost/algorithm/string.hpp>
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -38,7 +37,7 @@ namespace BigDataStatMeth {
      * @note Time complexity: O(rows * cols)
      * @note Space complexity: O(rows * cols) for the new matrix
      */
-    extern inline matrix transpose( const matrix &M )
+    inline matrix transpose( const matrix &M )
     {
         int rows = M.size();
         int cols = M[0].size();
@@ -62,7 +61,7 @@ namespace BigDataStatMeth {
      * 
      * @see get_data_as_Matrix() for numeric conversion of the split data
      */
-    extern inline std::vector<std::string> get_SplitData_in_vectorString(std::string line, std::regex reg_expres)
+    inline std::vector<std::string> get_SplitData_in_vectorString(std::string line, std::regex reg_expres)
     {
         std::vector<std::string> strValues;
 
@@ -89,7 +88,7 @@ namespace BigDataStatMeth {
      * 
      * @note Opens file in binary mode to ensure consistent behavior across platforms
      */
-    extern inline bool get_NewLineEnding(const char *filename) {
+    inline bool get_NewLineEnding(const char *filename) {
         const int LINE_FEED = '\x0A';
         FILE *f = fopen(filename, "rb");  /* binary mode */
         if (f == NULL) return false;
@@ -109,7 +108,7 @@ namespace BigDataStatMeth {
      * @note Handles both integer and floating-point representations
      * @note Also validates against overflow conditions
      */
-    extern inline bool is_number(const std::string& s)
+    inline bool is_number(const std::string& s)
     {
         char* end = nullptr;
         double val = strtod(s.c_str(), &end);
@@ -127,7 +126,7 @@ namespace BigDataStatMeth {
      * @throws Rcpp::stop If any value is not numeric or if empty fields are found
      * @note Handles end-of-line characters in the last column
      */
-    extern inline std::vector<double> get_data_as_Matrix(std::vector<std::string> strBlockValues)
+    inline std::vector<double> get_data_as_Matrix(std::vector<std::string> strBlockValues)
     {
         
         std::vector<double> doubleVector(strBlockValues.size());
@@ -169,7 +168,7 @@ namespace BigDataStatMeth {
      * 
      * @see hdf5Dataset for the dataset structure
      */
-    extern inline void Rcpp_Import_File_to_hdf5( Rcpp::CharacterVector filename,
+    inline void Rcpp_Import_File_to_hdf5( Rcpp::CharacterVector filename,
                                    BigDataStatMeth::hdf5Dataset* dsOut,
                                    Rcpp::Nullable<std::string> sep = R_NilValue,
                                    Rcpp::Nullable<bool> header = false,

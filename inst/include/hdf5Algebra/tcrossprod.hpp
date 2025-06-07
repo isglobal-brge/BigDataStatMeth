@@ -36,10 +36,8 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_TCROSSPROD_HPP
 #define BIGDATASTATMETH_ALGEBRA_TCROSSPROD_HPP
 
-// #include <RcppEigen.h>
-// #include "hdf5Algebra/multiplication.hpp"
-#include "Utilities/openme-utils.hpp"
-#include <thread>
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -57,7 +55,7 @@ namespace BigDataStatMeth {
  * @param browmajor Whether matrices are stored in row-major order
  * @param threads Number of threads for parallel processing
  */
-extern inline BigDataStatMeth::hdf5Dataset* tcrossprod( 
+inline BigDataStatMeth::hdf5Dataset* tcrossprod( 
         BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, 
         BigDataStatMeth::hdf5Dataset* dsC, hsize_t hdf5_block, hsize_t mem_block_size, 
         bool bparal, bool browmajor, Rcpp::Nullable<int> threads  = R_NilValue) 

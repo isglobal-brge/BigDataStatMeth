@@ -36,12 +36,8 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXQR_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXQR_HPP
 
-// #include <RcppEigen.h>
-// #include "H5Cpp.h"
-
-#include "Utilities/openme-utils.hpp"
-#include "Utilities/Utilities.hpp"
-#include "hdf5Algebra/multiplication.hpp"
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -56,7 +52,7 @@ namespace BigDataStatMeth {
  * @param bthin Whether to compute thin QR
  * @return Structure containing Q and R matrices
  */
-template< typename M> extern inline strQR RcppQR ( M X, bool bthin );
+template< typename M> inline strQR RcppQR ( M X, bool bthin );
 
 /**
  * @brief QR decomposition for HDF5 matrices
@@ -70,12 +66,12 @@ template< typename M> extern inline strQR RcppQR ( M X, bool bthin );
  * @param block_size Block size for processing (optional)
  * @param threads Number of threads for parallel processing (optional)
  */
-extern inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsQ, BigDataStatMeth::hdf5Dataset* dsR, 
+inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsQ, BigDataStatMeth::hdf5Dataset* dsR, 
                                bool bthin, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads );
 
 // Function definition
 template< typename M>
-extern inline strQR RcppQR ( M X, bool bthin )
+inline strQR RcppQR ( M X, bool bthin )
 {
     
     static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
@@ -157,7 +153,7 @@ extern inline strQR RcppQR ( M X, bool bthin )
 
 
 
-extern inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA, 
+inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA, 
                         BigDataStatMeth::hdf5Dataset* dsQ, 
                         BigDataStatMeth::hdf5Dataset* dsR, 
                         bool bthin,

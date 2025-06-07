@@ -20,9 +20,8 @@
 #ifndef BIGDATASTATMETH_UTILITIES_HPP
 #define BIGDATASTATMETH_UTILITIES_HPP
 
-// #include <RcppEigen.h>
-#include <BigDataStatMeth.hpp>
-
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 

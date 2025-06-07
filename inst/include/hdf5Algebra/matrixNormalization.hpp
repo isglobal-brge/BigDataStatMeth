@@ -36,24 +36,22 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
 
-// #include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-#include "hdf5Utilities/hdf5Utilities.hpp"
-#include "hdf5Algebra/matrixSdMean.hpp"
-// #include "H5Cpp.h"
+
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
 
     // Function declaration
-    template< typename M> extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata );
-    template< typename M> extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs);
+    template< typename M> inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata );
+    template< typename M> inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs);
     
-    template< typename M> extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata );
-    template< typename M> extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs );
+    template< typename M> inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata );
+    template< typename M> inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs );
     
-    template< typename M> extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata );
-    template< typename M> extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool bRowMajor );
+    template< typename M> inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata );
+    template< typename M> inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool bRowMajor );
     
     
     
@@ -76,7 +74,7 @@ namespace BigDataStatMeth {
      * @return Normalized matrix
      */
     template< typename M>
-    extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata )
+    inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool btransp, Eigen::MatrixXd normdata )
     {
         
         static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
@@ -110,7 +108,7 @@ namespace BigDataStatMeth {
      * @return Column-wise normalized matrix
      */
     template< typename M>
-    extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata )
+    inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata )
     {
         
         static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
@@ -142,7 +140,7 @@ namespace BigDataStatMeth {
     
     
     template< typename M>
-    extern inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs )
+    inline Eigen::MatrixXd RcppNormalizeColwise ( M  X, bool bc, bool bs )
     {
         
         static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
@@ -175,7 +173,7 @@ namespace BigDataStatMeth {
     
     
     template< typename M>
-    extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs )
+    inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs )
     {
         
         static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
@@ -205,7 +203,7 @@ namespace BigDataStatMeth {
     
     
     template< typename M>
-    extern inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata )
+    inline Eigen::MatrixXd RcppNormalizeRowwise ( M  X, bool bc, bool bs, Eigen::MatrixXd normdata )
     {
 
         static_assert(std::is_same<M, Eigen::MatrixXd >::value ||
@@ -239,7 +237,7 @@ namespace BigDataStatMeth {
     //   To be used when we don't have SD and Mean computed and we need
     //   to compute this data to get normalized matrix
     template< typename M>
-    extern inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool bRowMajor )
+    inline M RcppNormalize_Data ( M  X, bool bc, bool bs, bool bRowMajor )
     {
         static_assert(std::is_same<M, Eigen::MatrixXd >::value || 
                       std::is_same<M, Eigen::Map< Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> >::value || 
@@ -253,7 +251,7 @@ namespace BigDataStatMeth {
     };
 
 
-    extern inline Eigen::MatrixXd RcppNormalize_Data_R_hdf5( Eigen::MatrixXd  X, bool bc, bool bs,
+    inline Eigen::MatrixXd RcppNormalize_Data_R_hdf5( Eigen::MatrixXd  X, bool bc, bool bs,
                                                bool btransp, Eigen::MatrixXd normdata)
     {
         Eigen::MatrixXd rX;
@@ -295,7 +293,7 @@ namespace BigDataStatMeth {
      * @param bbyrows Whether to normalize by rows
      * @param bcorrected Whether to use corrected standard deviation
      */
-    extern inline void RcppNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
+    inline void RcppNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
                                           BigDataStatMeth::hdf5Dataset* dsNormal,
                                           Eigen::MatrixXd datanormal,
                                           Rcpp::Nullable<int> wsize, 
@@ -400,9 +398,9 @@ namespace BigDataStatMeth {
     
     
     
-    // extern inline void RcppTypifyNormalizeHdf5( std::string filename, std::string strgroup, std::string strdataset,
+    // inline void RcppTypifyNormalizeHdf5( std::string filename, std::string strgroup, std::string strdataset,
     //                                             bool bc, bool bs, bool bbyrows)
-    extern inline void RcppNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
+    inline void RcppNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
                                                 bool bc, bool bs, bool bbyrows)
     {
         
@@ -483,9 +481,9 @@ namespace BigDataStatMeth {
     
     
     
-    // extern inline void RcppTypifyNormalizeHdf5( std::string filename, std::string strgroup, std::string strdataset,
+    // inline void RcppTypifyNormalizeHdf5( std::string filename, std::string strgroup, std::string strdataset,
     //                                             bool bc, bool bs, bool bbyrows)
-    extern inline void RcppTypifyNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
+    inline void RcppTypifyNormalizeHdf5( BigDataStatMeth::hdf5Dataset* dsA,
                                                 bool bc, bool bs, bool bbyrows)
     {
         

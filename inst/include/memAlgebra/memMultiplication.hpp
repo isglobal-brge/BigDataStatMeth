@@ -29,12 +29,12 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_MULTIPLICATION_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_MULTIPLICATION_HPP
 
-#include "Utilities/openme-utils.hpp"
-#include "memAlgebra/memOtherFunctions.hpp"
+#include <RcppEigen.h>
+
 
 namespace BigDataStatMeth {
 
-    // extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size);
+    // inline Eigen::MatrixXd Rcpp_block_matrix_mul( Eigen::MatrixXd A, Eigen::MatrixXd B, Rcpp::Nullable<int>  iblock_size);
     /**
      * @brief Block-based matrix multiplication
      * @details Implements efficient block-based matrix multiplication using
@@ -47,10 +47,10 @@ namespace BigDataStatMeth {
      * @param iblock_size Block size for computation
      * @return Result of matrix multiplication
      */
-    template<typename T, typename U> extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( T X, U Y, Rcpp::Nullable<int>  iblock_size);
+    template<typename T, typename U> inline Eigen::MatrixXd Rcpp_block_matrix_mul( T X, U Y, Rcpp::Nullable<int>  iblock_size);
 
     
-    // extern inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
+    // inline void getBlockPositionsSizes( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
     //     
     //     hsize_t isize = blockSize + 1;
     //     
@@ -82,7 +82,7 @@ namespace BigDataStatMeth {
      * @param[out] starts Vector to store starting positions of blocks
      * @param[out] sizes Vector to store sizes of blocks
      */
-    extern inline void getBlockPositionsSizes_mat( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
+    inline void getBlockPositionsSizes_mat( hsize_t maxPosition, hsize_t blockSize, std::vector<hsize_t>& starts, std::vector<hsize_t>& sizes ){
         
         hsize_t isize = blockSize + 1;
         
@@ -106,7 +106,7 @@ namespace BigDataStatMeth {
    
    // In-memory execution - Serial version by Blocks
    template<typename T, typename U>
-   extern inline Eigen::MatrixXd Rcpp_block_matrix_mul( T X, U Y, Rcpp::Nullable<int>  iblock_size)
+   inline Eigen::MatrixXd Rcpp_block_matrix_mul( T X, U Y, Rcpp::Nullable<int>  iblock_size)
    {
        
        Eigen::MatrixXd C;
@@ -209,7 +209,7 @@ namespace BigDataStatMeth {
      * @return Result of matrix multiplication
      */
     template<typename T, typename U>
-    extern inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, U Y, 
+    inline Eigen::MatrixXd Rcpp_block_matrix_mul_parallel( T X, U Y, 
                                                                   bool transpX,
                                                                   bool transpY,
                                                                   Rcpp::Nullable<int>  iblock_size, 
@@ -303,7 +303,7 @@ namespace BigDataStatMeth {
      * @throws Runtime error if dimensions are not compatible
      */
     template< typename T, typename U>
-    extern inline Rcpp::RObject Rcpp_matrix_vect_mult ( T  A, U  B)
+    inline Rcpp::RObject Rcpp_matrix_vect_mult ( T  A, U  B)
     {
         
         Rcpp::NumericMatrix m = Rcpp::as<Rcpp::NumericMatrix>(A);
@@ -346,7 +346,7 @@ namespace BigDataStatMeth {
      * @throws Runtime error if vector dimensions don't match
      */
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_vector_mult ( T  A, T  B)
+    inline Rcpp::RObject Rcpp_vector_mult ( T  A, T  B)
     {
         
         Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(A);
@@ -384,7 +384,7 @@ namespace BigDataStatMeth {
      * @return Result of matrix-vector multiplication
      */
     template< typename T>
-    extern inline Rcpp::RObject Rcpp_matrix_vector_blockMult( T  A, T  B, Rcpp::Nullable<bool> bparal, 
+    inline Rcpp::RObject Rcpp_matrix_vector_blockMult( T  A, T  B, Rcpp::Nullable<bool> bparal, 
                             Rcpp::Nullable<int> iblock_size, Rcpp::Nullable<int> threads)
     {
         

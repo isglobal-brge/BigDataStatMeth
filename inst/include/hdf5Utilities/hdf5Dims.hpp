@@ -19,6 +19,9 @@
 #ifndef BIGDATASTATMETH_HDF5_DIMS_HPP
 #define BIGDATASTATMETH_HDF5_DIMS_HPP
 
+#include <RcppEigen.h>
+#include "H5Cpp.h"
+
 namespace BigDataStatMeth
 {
     /**

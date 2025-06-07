@@ -37,11 +37,9 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSDMEAN_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSDMEAN_HPP
 
-// #include <RcppEigen.h>
-#include "Utilities/openme-utils.hpp"
-#include "hdf5Utilities/hdf5Utilities.hpp"
-#include <cmath>
-// #include "H5Cpp.h"
+
+#include <RcppEigen.h>
+#include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -55,7 +53,7 @@ namespace BigDataStatMeth {
  * @param alternative_size Secondary dimension size
  * @return Optimal block size for processing
  */
-extern inline hsize_t get_block_size( Rcpp::Nullable<int> wsize, hsize_t reference_size, hsize_t alternative_size) {
+inline hsize_t get_block_size( Rcpp::Nullable<int> wsize, hsize_t reference_size, hsize_t alternative_size) {
     
     hsize_t bsize = 0;
     
@@ -87,7 +85,7 @@ extern inline hsize_t get_block_size( Rcpp::Nullable<int> wsize, hsize_t referen
  * @param normalize Output matrix for mean and std values
  * @param wsize Block size for processing
  */
-extern inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, Eigen::MatrixXd& normalize, Rcpp::Nullable<int> wsize )
+inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, Eigen::MatrixXd& normalize, Rcpp::Nullable<int> wsize )
 {
     
     try
@@ -163,7 +161,7 @@ extern inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, E
  * @param normalize Output matrix for mean and std values
  * @param wsize Block size for processing
  */
-extern inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA, Eigen::MatrixXd& normalize, Rcpp::Nullable<int> wsize )
+inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA, Eigen::MatrixXd& normalize, Rcpp::Nullable<int> wsize )
 {
     
     // IntegerVector dims_out = get_HDF5_dataset_size(*dataset);

@@ -1,0 +1,18 @@
+* installing *source* package ‘RcppEigen’ ...
+** this is package ‘RcppEigen’ version ‘0.3.4.0.2’
+** package ‘RcppEigen’ successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+using C++ compiler: ‘Apple clang version 17.0.0 (clang-1700.0.13.5)’
+using SDK: ‘MacOSX15.5.sdk’
+ccache g++ -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/Rcpp/include' -I/opt/R/arm64/include -I/usr/local/include -Xclang -fopenmp   -I../inst/include -fPIC  -falign-functions=64 -Wall -g -O2   -c RcppEigen.cpp -o RcppEigen.o
+In file included from RcppEigen.cpp:22:
+In file included from ../inst/include/RcppEigen.h:25:
+../inst/include/RcppEigenForward.h:25:10: fatal error: 'iterator' file not found
+   25 | #include <iterator>
+      |          ^~~~~~~~~~
+1 error generated.
+make: *** [RcppEigen.o] Error 1
+ERROR: compilation failed for package ‘RcppEigen’
+* removing ‘/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen’
+* restoring previous ‘/Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/library/RcppEigen’
