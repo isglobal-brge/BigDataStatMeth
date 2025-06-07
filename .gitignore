@@ -48,7 +48,7 @@ rsconnect/
 *.icloud
 
 # Duplicated icloud files
-* 2*
+*\ 2*
 
 # temorary file
 inst/cc
