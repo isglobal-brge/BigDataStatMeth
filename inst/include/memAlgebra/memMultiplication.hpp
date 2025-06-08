@@ -181,7 +181,7 @@ namespace BigDataStatMeth {
            return(C);
            
        } catch(...) { 
-           ::Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
+           Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
        }
        
        return(C);

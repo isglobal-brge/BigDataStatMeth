@@ -83,11 +83,18 @@ void bdCreate_hdf5_matrix(std::string filename,
         
         strdatatype = BigDataStatMeth::getObjecDataType(object);
         
-        if ( object.sexp_type()==0   )
-            throw std::range_error("Unknown data type");
+        if ( object.sexp_type()==0 ) {
+            // throw std::range_error("Unknown data type");
+            Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
+            return void();
+        }
         
-        if ( object.sexp_type()==0   )
-            throw std::range_error("Data matrix must exsits and mustn't be null");
+        if ( object.sexp_type()==0  ) {
+            // throw std::range_error("Data matrix must exsits and mustn't be null");
+            Rf_error("c++ exception bdCreate_hdf5_matrix - Data matrix must exsits and mustn't be null");
+            return void();
+        }
+            
         
         dims = BigDataStatMeth::getObjectDims(object, strdatatype);
         

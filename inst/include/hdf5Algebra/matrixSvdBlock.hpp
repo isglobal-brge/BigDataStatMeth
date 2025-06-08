@@ -120,7 +120,7 @@ inline svdeig RcppbdSVD_lapack( T X, bool bcenter, bool bscale, bool complete ) 
         Rcpp::Rcout<< "C++ exception RcppbdSVD_lapack : "<< ex.what();
         return retsvd;
     } catch (...) {
-        ::Rf_error("C++ exception RcppbdSVD_lapack (unknown reason)");
+        Rf_error("C++ exception RcppbdSVD_lapack (unknown reason)");
         return retsvd;
     }
     

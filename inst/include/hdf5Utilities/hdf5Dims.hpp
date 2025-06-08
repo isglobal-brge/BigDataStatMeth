@@ -135,19 +135,19 @@ namespace BigDataStatMeth
 
             } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
                 close_datasets();
-                ::Rf_error( "c++ exception writeDimnames (File IException)" );
+                Rf_error( "c++ exception writeDimnames (File IException)" );
             } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
                 close_datasets();
-                ::Rf_error( "c++ exception writeDimnames (DataSet IException)" );
+                Rf_error( "c++ exception writeDimnames (DataSet IException)" );
             } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
                 close_datasets();
-                ::Rf_error( "c++ exception writeDimnames (Group IException)" );
+                Rf_error( "c++ exception writeDimnames (Group IException)" );
             } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
                 close_datasets();
-                ::Rf_error( "c++ exception writeDimnames (DataSpace IException)" );
+                Rf_error( "c++ exception writeDimnames (DataSpace IException)" );
             } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
                 close_datasets();
-                ::Rf_error( "c++ exception writeDimnames (Data TypeIException)" );
+                Rf_error( "c++ exception writeDimnames (Data TypeIException)" );
             }
 
           return void();

@@ -137,14 +137,16 @@ inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, Eigen::M
         }
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        error.printErrorStack();
-        Rcpp::Rcerr<< "\nc++ exception get_HDF5_mean_sd_by_row (File IException)";
+        // error.printErrorStack();
+        checkClose_file(dsA);
+        Rf_error("c++ exception get_HDF5_mean_sd_by_row (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        error.printErrorStack();
-        Rcpp::Rcerr<< "\nc++ exception get_HDF5_mean_sd_by_row (DataSet IException)";
+        // error.printErrorStack();
+        checkClose_file(dsA);
+        Rf_error("c++ exception get_HDF5_mean_sd_by_row (DataSet IException)");
     } catch(std::exception& error) {
-        Rcpp::Rcout<< "c++ exception get_HDF5_mean_sd_by_row function: "<<error.what()<< " \n";
-        return void();
+        checkClose_file(dsA);
+        Rf_error("c++ exception get_HDF5_mean_sd_by_row function: %s",error.what());
     }
     
     return void(); 
@@ -211,14 +213,17 @@ inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA, Eigen
         }
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        error.printErrorStack();
-        Rcpp::Rcerr<< "\nc++ exception get_HDF5_mean_sd_by_column (File IException)";
+        // error.printErrorStack();
+        checkClose_file(dsA);
+        Rf_error("c++ exception get_HDF5_mean_sd_by_column (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        error.printErrorStack();
-        Rcpp::Rcerr<< "\nc++ exception get_HDF5_mean_sd_by_column (DataSet IException)";
+        // error.printErrorStack();
+        checkClose_file(dsA);
+        Rf_error("c++ exception get_HDF5_mean_sd_by_column (DataSet IException)");
     } catch(std::exception& error) {
-        Rcpp::Rcerr<< "c++ exception get_HDF5_mean_sd_by_column function: "<<error.what()<< " \n";
-        return void();
+        checkClose_file(dsA);
+        Rf_error("c++ exception get_HDF5_mean_sd_by_column function: %s",error.what());
+        // return void();
     }
     
     return void();  // successfully terminated

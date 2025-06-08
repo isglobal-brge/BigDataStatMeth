@@ -175,7 +175,7 @@ void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string data
             delete dsOut; dsOut = nullptr;
         } else {
             delete dsIn; dsIn = nullptr;
-            Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5: " << "Error opening dataset";
+            Rf_error("c++ exception bdImputeSNPs_hdf5: Error opening %s dataset ",dataset.c_str());
             return void();
         }
         
@@ -183,28 +183,22 @@ void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string data
         
     } catch( H5::FileIException& error ){
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (File IException)\n";
-        return void();
+        Rf_error("c++ exception bdImputeSNPs_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (DataSet IException)\n";
-        return void();
+        Rf_error("c++ exception bdImputeSNPs_hdf5 (DataSet IException)");
     } catch( H5::DataSpaceIException& error ) { 
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (DataSpace IException)\n";
-        return void();
+        Rf_error("c++ exception bdImputeSNPs_hdf5 (DataSpace IException)");
     } catch( H5::DataTypeIException&    error ) { 
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr<<"\nc++ c++ exception bdImputeSNPs_hdf5 (DataType IException)\n";
-        return void();
+        Rf_error("c++ c++ exception bdImputeSNPs_hdf5 (DataType IException)");
     } catch(std::exception &ex) {   
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5: " << ex.what()<<"\n";
-        return void();
+        Rf_error( "c++ exception bdImputeSNPs_hdf5 : %s", ex.what());
     }  catch (...) {
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdImputeSNPs_hdf5 (unknown reason)";
-        return void();
+        Rf_error("c++ exception bdImputeSNPs_hdf5 (unknown reason)");
     }
     
     // Rcpp::Rcout<<"SNPs with missing values has been imputed\n";

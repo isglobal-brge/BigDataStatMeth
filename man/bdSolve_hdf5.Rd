@@ -70,8 +70,8 @@ The function handles:
 library(BigDataStatMeth)
 
 # Create test matrices
-N <- 1800
-M <- 1800
+N <- 1000
+M <- 1000
 fn <- "test_temp.hdf5"
 
 set.seed(555)

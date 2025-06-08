@@ -262,7 +262,7 @@ public:
             status = H5Pset_chunk( cparms, RANK2, chunk_dims);
             
             if(status<0) {
-                ::Rf_error( "c++ exception createUnlimitedDataset (setting chunk IException)" );
+                Rf_error( "c++ exception createUnlimitedDataset (setting chunk IException)" );
                 return void();
             } 
             
@@ -294,11 +294,11 @@ public:
             addAttribute( "internal", Rcpp::wrap("1") );
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception createUnlimitedDataset_internal (File IException) " );
+            Rf_error( "c++ exception createUnlimitedDataset_internal (File IException) " );
         } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception createUnlimitedDataset_internal (Group IException) " );
+            Rf_error( "c++ exception createUnlimitedDataset_internal (Group IException) " );
         } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception createUnlimitedDataset_internal (Dataset IException) " );
+            Rf_error( "c++ exception createUnlimitedDataset_internal (Dataset IException) " );
         } 
         return void();
     }
@@ -338,9 +338,9 @@ public:
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            ::Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (File IException)" );
+            Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (File IException)" );
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            ::Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (DataSet IException)" );
+            Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (DataSet IException)" );
         }
         return void();
     }
@@ -404,7 +404,7 @@ public:
                 pdataset->write(convert_DataFrame_to_RangeList(DatasetValues, true), strtype);
                 
             } else {
-                ::Rf_error( "Matrix data type not allowed (writeDataset)" );
+                Rf_error( "Matrix data type not allowed (writeDataset)" );
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
@@ -680,7 +680,7 @@ public:
             if( type_class == H5T_INTEGER || type_class == H5T_FLOAT ) {
                 pdataset->read( rdatablock, H5::PredType::NATIVE_DOUBLE, memspace, dataspace );
             } else {
-                ::Rf_error( "c++ exception readDatasetBlock (Data type not allowed, maybe are trying to read string matrix?)" );
+                Rf_error( "c++ exception readDatasetBlock (Data type not allowed, maybe are trying to read string matrix?)" );
                 return(nullptr);
             }// else if (type_class == H5T_FLOAT) {
             //     pdataset->read( rdatablock, H5::PredType::NATIVE_DOUBLE, memspace, dataspace );
@@ -857,13 +857,13 @@ private:
             }
             
         } catch( H5::FileIException& error) { 
-            ::Rf_error( "c++ exception getDimensExistingDataset (File IException)" );
+            Rf_error( "c++ exception getDimensExistingDataset (File IException)" );
         } catch(H5::DataSetIException& error) { 
-            ::Rf_error( "c++ exception getDimensExistingDataset (DataSet IException)" );
+            Rf_error( "c++ exception getDimensExistingDataset (DataSet IException)" );
         } catch(H5::GroupIException& error) { 
-            ::Rf_error( "c++ exception getDimensExistingDataset (Group IException)" );
+            Rf_error( "c++ exception getDimensExistingDataset (Group IException)" );
         } catch(H5::DataSpaceIException& error) { 
-            ::Rf_error( "c++ exception getDimensExistingDataset (DataSpace IException)" );
+            Rf_error( "c++ exception getDimensExistingDataset (DataSpace IException)" );
         } 
         
         return void();

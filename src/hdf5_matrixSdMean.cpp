@@ -189,7 +189,7 @@ void bdgetSDandMean_hdf5( std::string filename,
                  dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
              } else {
                  checkClose_file(dsA, dsmean);
-                 Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5: " << "Error creating dataset";
+                 Rf_error("c++ exception bdgetSDandMean_hdf5: Error creating %s dataset", strdatasetmean.c_str());
                  return void();
              }
              
@@ -199,13 +199,13 @@ void bdgetSDandMean_hdf5( std::string filename,
                  dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
              } else {
                  checkClose_file(dsA, dssd, dsmean);
-                 Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5: " << "Error creating dataset";
+                 Rf_error("c++ exception bdgetSDandMean_hdf5: Error creating %s dataset", strdatasetsd.c_str());
                  return void();
              }
              
          } else {
              checkClose_file(dsA);
-             Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5: " << "Error opening dataset";
+             Rf_error("c++ exception bdgetSDandMean_hdf5: Error opening %s dataset", dataset.c_str());
              return void();
          }
          
@@ -216,20 +216,16 @@ void bdgetSDandMean_hdf5( std::string filename,
      
      } catch( H5::FileIException& error ) { 
          checkClose_file(dsA, dssd, dsmean);
-         Rcpp::Rcerr<<"c++ exception bdgetSDandMean_hdf5 (File IException)";
-         return void();
+         Rf_error("c++ exception bdgetSDandMean_hdf5 (File IException)");
      } catch( H5::DataSetIException& error ) { 
          checkClose_file(dsA, dssd, dsmean);
-         Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5 (DataSet IException)";
-         return void();
+         Rf_error("c++ exception bdgetSDandMean_hdf5 (DataSet IException)");
      } catch(std::exception& ex) {
          checkClose_file(dsA, dssd, dsmean);
-         Rcpp::Rcerr << "c++ exception bdgetSDandMean_hdf5" << ex.what();
-         return void();
+         Rf_error("c++ exception bdgetSDandMean_hdf5: %s", ex.what());
      } catch (...) {
          checkClose_file(dsA, dssd, dsmean);
-         Rcpp::Rcerr<<"\nC++ exception bdgetSDandMean_hdf5 (unknown reason)";
-         return void();
+         Rf_error("C++ exception bdgetSDandMean_hdf5 (unknown reason)");
      }
  
     return void();
