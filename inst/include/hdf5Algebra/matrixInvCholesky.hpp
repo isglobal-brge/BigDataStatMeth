@@ -262,7 +262,7 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     }
                     
                     
-#pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) private(sum) shared (A,L,j) schedule(dynamic) if (j < readedRows - chunk)
+#pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) private(sum) shared (A,L,j) schedule(dynamic) if (j < readedRows - 1)
                     for ( int i = j + 1; i < dimensionSize - offset[0]  ; i++ )
                     {
                         if(bcancel == false) {
