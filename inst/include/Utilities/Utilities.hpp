@@ -13,6 +13,10 @@
  * - Matrix block size optimization
  * - SVD and QR decomposition structures
  * - Memory-efficient block operations
+ * - System-aware thread optimization
+ * - HPC/Linux server specific configurations
+ * - Performance monitoring capabilities
+ * - Intelligent block size optimization
  *
  * @note This is a core utility file that many other components depend on.
  */
@@ -22,10 +26,12 @@
 
 #include <RcppEigen.h>
 #include "H5Cpp.h"
+#include <chrono> // For performance monitoring
 
 namespace BigDataStatMeth {
 
     // Structs
+    
     /**
      * @brief Structure for storing file path components
      */
@@ -33,7 +39,6 @@ namespace BigDataStatMeth {
         std::string path ;
         std::string filename ;
     };
-
 
     /**
      * @brief Structure for storing SVD decomposition results
@@ -55,7 +60,16 @@ namespace BigDataStatMeth {
         Eigen::MatrixXd R;
     };
 
+    // Performance monitoring struct
+    struct PerformanceInfo {
+        double execution_time;
+        int threads_used;
+        std::string system_type;
+        size_t memory_used;
+        bool was_optimized;
+    };
 
+    
     // Functions
     
     /**
@@ -103,7 +117,6 @@ namespace BigDataStatMeth {
      */
     inline std::string getObjecDataType(Rcpp::RObject obj) 
     {
-        
         std::string strtype = "";
         
         try 
@@ -135,7 +148,6 @@ namespace BigDataStatMeth {
     }
     
     
-    
     /**
      * @brief Gets dimensions of an R object
      *
@@ -151,9 +163,8 @@ namespace BigDataStatMeth {
      *
      * @throws std::exception on dimension extraction errors
      */
-    inline Rcpp::IntegerVector getObjectDims(Rcpp::RObject obj, std::string strtype) 
+    inline Rcpp::IntegerVector getObjectDims(Rcpp::RObject obj, std::string strtype = "") 
     {
-        
         Rcpp::IntegerVector dims(2);
         
         try 
@@ -196,7 +207,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getObjecDataType: "<<ex.what()<< " \n";
+            Rcpp::Rcout<< "c++ exception getObjectDims: "<<ex.what()<< " \n";
         }
         
         return(dims);
@@ -225,29 +236,38 @@ namespace BigDataStatMeth {
      */
     inline int getMaxBlockSize ( int nRowsA, int nColsA, int nRowsB, int nColsB, int ifactor, Rcpp::Nullable<int> block_size = R_NilValue) 
     {
-        
         int iblock_size;
         
         try
         {
+            // Get system information for intelligent optimization
+            const SystemInfo& sys_info = get_system_info();
             
             iblock_size = std::min( std::min( nRowsA, nColsA), std::min( nRowsB, nColsB) );
 
             if (block_size.isNotNull()) {
-                // if( Rcpp::as<int> (block_size) < iblock_size ) {
-                //     iblock_size = Rcpp::as<int> (block_size); }
                 iblock_size = Rcpp::as<int> (block_size);
                 if( (unsigned)iblock_size > (MAXBLOCKSIZE / ifactor) ) {
-                    Rcpp::warning("Warning: block size %i is bigger than the maximum recomended %i.", iblock_size, (MAXBLOCKSIZE / ifactor));
+                    Rcpp::warning("Warning: block size %i is bigger than the maximum recommended %i.", iblock_size, (MAXBLOCKSIZE / ifactor));
                 }
             } else {
-                //..// iblock_size = std::min(  std::min(dsA->nrows(),dsA->ncols()),  std::min(dsB->nrows(), dsB->ncols()));
-                if ((unsigned)iblock_size > (MAXBLOCKSIZE / ifactor))
+                // System-aware block size optimization
+                if ((unsigned)iblock_size > (MAXBLOCKSIZE / ifactor)) {
                     iblock_size = MAXBLOCKSIZE / ifactor;
+                }
+                
+                // Apply system-specific optimizations
+                if (sys_info.is_hpc) {
+                    // For HPC, use slightly smaller blocks for better cache efficiency
+                    iblock_size = std::min(iblock_size, (int)(MAXBLOCKSIZE / (ifactor * 1.2)));
+                } else if (sys_info.is_linux_server && sys_info.num_cores > 64) {
+                    // For large servers, optimize for NUMA
+                    iblock_size = std::min(iblock_size, (int)(MAXBLOCKSIZE / (ifactor * 1.1)));
+                }
             }
                 
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getObjecDataType: "<<ex.what()<< " \n";
+            Rcpp::Rcout<< "c++ exception getMaxBlockSize: "<<ex.what()<< " \n";
         }
         
         return(iblock_size);
@@ -273,7 +293,6 @@ namespace BigDataStatMeth {
      */
     inline size_t getOptimBlockSize( size_t fullSize, size_t blockSize, size_t iDesp, size_t currentSize ) 
     {
-        
         try
         {
             if( iDesp + blockSize == fullSize - 1) {
@@ -290,8 +309,9 @@ namespace BigDataStatMeth {
         
         return(currentSize);
     }
-    
 
+    
+    
     // Get the number of rows to read taking in to account the maximum elements per block
     // util when we have rectangular matrices, especially in omics data where we have
     // few samples and thousands of variables
@@ -319,7 +339,10 @@ namespace BigDataStatMeth {
         
         try
         {
-            // Calculem el mínim de files
+            // Get system information for optimization
+            const SystemInfo& sys_info = get_system_info();
+            
+            // Base calculation (existing logic)
             if( nrows < ncols ) {
                 if( maxRows < MAXBLOCKSIZE ){
                     maxRows = nrows;
@@ -341,8 +364,19 @@ namespace BigDataStatMeth {
                 if( maxRows> (unsigned)nrows || maxRows + 1 == (unsigned)nrows) {
                     maxRows = nrows;
                 }
-                
             }    
+
+            // Apply system-specific optimizations
+            if (sys_info.is_hpc) {
+                // HPC systems: optimize for cache efficiency
+                maxRows = std::min(maxRows, (size_t)(MAXBLOCKSIZE * 0.8));
+                maxCols = std::min(maxCols, (size_t)(MAXBLOCKSIZE * 0.8));
+            } else if (sys_info.is_linux_server && sys_info.num_cores > 64) {
+                // Large servers: NUMA-aware optimization
+                maxRows = std::min(maxRows, (size_t)(MAXBLOCKSIZE * 0.9));
+                maxCols = std::min(maxCols, (size_t)(MAXBLOCKSIZE * 0.9));
+            }
+            
             blockSize[0] = maxRows;
             blockSize[1] = maxCols;
             
@@ -352,6 +386,7 @@ namespace BigDataStatMeth {
         
         return(blockSize);
     }
+    
     
     
     // Get the number of rows to read taking in to account the maximum elements per block
@@ -376,10 +411,19 @@ namespace BigDataStatMeth {
         
         try
         {
+            const SystemInfo& sys_info = get_system_info();
+            
             if( (unsigned)maxSize > MAXELEMSINBLOCK) {
                 blockSize = MAXELEMSINBLOCK;
             } else {
                 blockSize = maxSize;
+            }
+            
+            // Apply system-specific limits
+            if (sys_info.is_hpc) {
+                blockSize = std::min(blockSize, (hsize_t)(MAXELEMSINBLOCK * 0.8));
+            } else if (sys_info.is_linux_server && sys_info.num_cores > 64) {
+                blockSize = std::min(blockSize, (hsize_t)(MAXELEMSINBLOCK * 0.9));
             }
             
         } catch(std::exception& ex) {
@@ -390,23 +434,6 @@ namespace BigDataStatMeth {
     }
     
     
-    
-    
-    // inline Rcpp::IntegerVector getInitialPosition(bool transp, int desp )
-    // {
-    //     Rcpp::IntegerVector voffset(2);
-    //     
-    //     if(transp == true)
-    //     {
-    //         voffset[0] = 0;
-    //         voffset[1] = desp;
-    //     } else {
-    //         voffset[0] = desp;
-    //         voffset[1] = 0;
-    //     }
-    //     
-    //     return(voffset);
-    // }
     
     /**
      * @brief Determines initial position for matrix operations
@@ -462,6 +489,7 @@ namespace BigDataStatMeth {
     }
     
     
+    
     /**
      * @brief Calculates dimensions for reading matrix blocks
      *
@@ -496,44 +524,149 @@ namespace BigDataStatMeth {
     
     
     
-    
-    // Return the numbers of threads to be used in parallel processes
     /**
-     * @brief Determines number of threads for parallel operations
-     *
-     * @param bparal Whether to use parallel processing
-     * @param threads Optional number of threads to use
-     * @return unsigned int Number of threads to use
-     *
-     * @details Thread determination:
-     * - Considers hardware concurrency
-     * - Respects user-specified thread count
-     * - Falls back to single thread if parallel disabled
-     * - Optimizes for system resources
-     *
-     * @note Integrates with OpenMP thread management
+     * @brief Intelligent thread determination with system awareness
      */
     inline unsigned int get_threads(bool bparal, Rcpp::Nullable<int> threads = R_NilValue) 
     {
-        unsigned int ithreads = std::thread::hardware_concurrency();
-        
         if(bparal == false) {
-            ithreads = 1;
-        } else {
-            if(threads.isNotNull()) {
-                
-                if ((unsigned)Rcpp::as<int> (threads) <= ithreads){
-                    ithreads = Rcpp::as<int> (threads);
-                } 
-            
-            } else {
-                ithreads =  getDTthreads(ithreads, false);
-            }    
+            return 1;
         }
         
-        return(ithreads);
+        // Use the smart thread detection
+        return get_optimal_threads(threads);
+    }
+
+    
+    
+    /**
+     * @brief Start performance monitoring for an operation
+     * @return PerformanceInfo Structure to track performance
+     */
+    inline PerformanceInfo start_performance_monitoring() {
+        PerformanceInfo perf;
+        const SystemInfo& sys_info = get_system_info();
+        
+        perf.execution_time = 0.0;
+        perf.threads_used = getDTthreads(INT_MAX, false);
+        perf.system_type = sys_info.system_type;
+        perf.memory_used = 0;
+        perf.was_optimized = sys_info.is_hpc || sys_info.is_linux_server;
+        
+        return perf;
     }
     
+    /**
+     * @brief Check if current system should use HPC optimizations
+     * @return bool True if HPC optimizations should be used
+     */
+    inline bool should_use_hpc_optimizations() {
+        const SystemInfo& sys_info = get_system_info();
+        return sys_info.is_hpc || sys_info.is_linux_server;
+    }
+    
+    /**
+     * @brief Get recommended OpenMP schedule for current system
+     * @return std::string OpenMP schedule recommendation
+     */
+    inline std::string get_recommended_omp_schedule() {
+        const SystemInfo& sys_info = get_system_info();
+        
+        if (sys_info.is_hpc || sys_info.is_linux_server) {
+            return "static";  // Better for HPC/servers
+        } else {
+            return "dynamic"; // Better for desktops
+        }
+    }
+    
+    /**
+     * @brief Apply system-optimized OpenMP pragma settings
+     * @param num_threads Number of threads to use
+     */
+    inline void apply_omp_settings(int num_threads) {
+        #ifdef _OPENMP
+                apply_hpc_optimized_settings(num_threads);
+        #endif
+    }
+    
+    /**
+     * @brief Test OpenMP performance with current settings
+     * @return double Time taken for a simple parallel operation
+     */
+    inline double test_openmp_performance() {
+        const int test_size = 10000;
+        std::vector<double> test_data(test_size, 1.0);
+        double sum = 0.0;
+        
+        auto start = std::chrono::high_resolution_clock::now();
+        
+        #ifdef _OPENMP
+                #pragma omp parallel for reduction(+:sum)
+                for (int i = 0; i < test_size; ++i) {
+                    sum += test_data[i] * test_data[i];
+                }
+        #else
+                for (int i = 0; i < test_size; ++i) {
+                    sum += test_data[i] * test_data[i];
+                }
+        #endif
+        
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        
+        return duration.count() / 1000.0; // Return milliseconds
+    }
+
+    /**
+     * @brief Print system diagnostic information
+     */
+    inline void print_system_diagnostics() {
+        const SystemInfo& sys_info = get_system_info();
+        
+        Rcpp::Rcout << "\n=== BigDataStatMeth System Diagnostics ===\n";
+        Rcpp::Rcout << "System Type: " << sys_info.system_type << "\n";
+        Rcpp::Rcout << "OS: " << sys_info.os_name << "\n";
+        Rcpp::Rcout << "Cores: " << sys_info.num_cores << "\n";
+        Rcpp::Rcout << "Detection: " << sys_info.detection_method << "\n";
+        Rcpp::Rcout << "Conservative Mode: " << (sys_info.is_conservative_mode ? "YES" : "NO") << "\n";
+        Rcpp::Rcout << "HPC Environment: " << (sys_info.is_hpc ? "YES" : "NO") << "\n";
+        Rcpp::Rcout << "Linux Server: " << (sys_info.is_linux_server ? "YES" : "NO") << "\n";
+        Rcpp::Rcout << "Recommended Threads: " << sys_info.recommended_threads << "\n";
+        Rcpp::Rcout << "Current Threads: " << getDTthreads(INT_MAX, false) << "\n";
+        Rcpp::Rcout << "Recommended Schedule: " << get_recommended_omp_schedule() << "\n";
+        
+        if (sys_info.is_hpc) {
+            Rcpp::Rcout << "\nHPC OPTIMIZATION: Smart settings applied\n";
+            Rcpp::Rcout << "- Uses all allocated threads\n";
+            Rcpp::Rcout << "- Static scheduling\n";
+            Rcpp::Rcout << "- Optimized block sizes\n";
+            
+            // Show job info if available
+            const char* job_id = std::getenv("SLURM_JOB_ID");
+            if (!job_id) job_id = std::getenv("PBS_JOBID");
+            if (job_id) {
+                Rcpp::Rcout << "- Job ID: " << job_id << "\n";
+            }
+            
+            const char* slurm_cpus = std::getenv("SLURM_CPUS_PER_TASK");
+            const char* pbs_cpus = std::getenv("PBS_NCPUS");
+            if (slurm_cpus) {
+                Rcpp::Rcout << "- SLURM allocation: " << slurm_cpus << " CPUs\n";
+            }
+            if (pbs_cpus) {
+                Rcpp::Rcout << "- PBS allocation: " << pbs_cpus << " CPUs\n";
+            }
+            
+        } else if (sys_info.is_linux_server) {
+            Rcpp::Rcout << "\nLINUX SERVER OPTIMIZATION: Smart settings applied\n";
+            Rcpp::Rcout << "- Uses all available threads\n";
+            Rcpp::Rcout << "- Static scheduling\n";
+            Rcpp::Rcout << "- NUMA-aware optimizations\n";
+        }
+        
+        Rcpp::Rcout << "==========================================\n\n";
+    }
+
 }
 
 #endif // BIGDATASTATMETH_UTILITIES_HPP
