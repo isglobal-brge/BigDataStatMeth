@@ -50,7 +50,7 @@
     
     // Common headers - multi-threading
     #include <thread>
-    // #include "Utilities/pkg_omp.h" // first for clang-13-omp, #5122
+    #include "Utilities/pkg_omp.h" // first for clang-13-omp, #5122
     
     #include <R.h>
     #include <Rversion.h>
@@ -182,17 +182,11 @@
     const int EXEC_WARNING = 2; /**< Execution warning */
     /** @} */
     
-
     
-// =============================================================================
-// OMP UTILITIES 
-// =============================================================================
-    #include "Utilities/openme-utils.hpp"    
-
-
 // =============================================================================
 // MAIN UTILITIES (HDF5 AND ON-MEMORY)
 // =============================================================================
+    #include "Utilities/openme-utils.hpp"
     #include "Utilities/Utilities.hpp"
     #include "hdf5Utilities/hdf5Utilities.hpp"
     #include "hdf5Omics/hdf5OmicsUtils.hpp"
