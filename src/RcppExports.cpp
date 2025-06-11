@@ -605,6 +605,65 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// bdDiagnoseIO
+void bdDiagnoseIO(int matrix_rows, int matrix_cols, std::string operation_type);
+RcppExport SEXP _BigDataStatMeth_bdDiagnoseIO(SEXP matrix_rowsSEXP, SEXP matrix_colsSEXP, SEXP operation_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type matrix_rows(matrix_rowsSEXP);
+    Rcpp::traits::input_parameter< int >::type matrix_cols(matrix_colsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type operation_type(operation_typeSEXP);
+    bdDiagnoseIO(matrix_rows, matrix_cols, operation_type);
+    return R_NilValue;
+END_RCPP
+}
+// bdGetOptimalThreads
+int bdGetOptimalThreads(int matrix_rows, int matrix_cols, std::string operation_type, Rcpp::Nullable<int> max_threads);
+RcppExport SEXP _BigDataStatMeth_bdGetOptimalThreads(SEXP matrix_rowsSEXP, SEXP matrix_colsSEXP, SEXP operation_typeSEXP, SEXP max_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type matrix_rows(matrix_rowsSEXP);
+    Rcpp::traits::input_parameter< int >::type matrix_cols(matrix_colsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type operation_type(operation_typeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type max_threads(max_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdGetOptimalThreads(matrix_rows, matrix_cols, operation_type, max_threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bdConfigureIO
+void bdConfigureIO(int matrix_rows, int matrix_cols, std::string operation_type);
+RcppExport SEXP _BigDataStatMeth_bdConfigureIO(SEXP matrix_rowsSEXP, SEXP matrix_colsSEXP, SEXP operation_typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type matrix_rows(matrix_rowsSEXP);
+    Rcpp::traits::input_parameter< int >::type matrix_cols(matrix_colsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type operation_type(operation_typeSEXP);
+    bdConfigureIO(matrix_rows, matrix_cols, operation_type);
+    return R_NilValue;
+END_RCPP
+}
+// bdCheckConfig
+Rcpp::List bdCheckConfig();
+RcppExport SEXP _BigDataStatMeth_bdCheckConfig() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(bdCheckConfig());
+    return rcpp_result_gen;
+END_RCPP
+}
+// bdTestPerformance
+double bdTestPerformance(int test_size);
+RcppExport SEXP _BigDataStatMeth_bdTestPerformance(SEXP test_sizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type test_size(test_sizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdTestPerformance(test_size));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdblockMult
 Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<bool> byBlocks, Rcpp::Nullable<int> threads);
 RcppExport SEXP _BigDataStatMeth_bdblockMult(SEXP ASEXP, SEXP BSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP byBlocksSEXP, SEXP threadsSEXP) {
@@ -831,6 +890,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdSplit_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSplit_matrix_hdf5, 9},
     {"_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5, 5},
     {"_BigDataStatMeth_bdcomputeMatrixVector_hdf5", (DL_FUNC) &_BigDataStatMeth_bdcomputeMatrixVector_hdf5, 12},
+    {"_BigDataStatMeth_bdDiagnoseIO", (DL_FUNC) &_BigDataStatMeth_bdDiagnoseIO, 3},
+    {"_BigDataStatMeth_bdGetOptimalThreads", (DL_FUNC) &_BigDataStatMeth_bdGetOptimalThreads, 4},
+    {"_BigDataStatMeth_bdConfigureIO", (DL_FUNC) &_BigDataStatMeth_bdConfigureIO, 3},
+    {"_BigDataStatMeth_bdCheckConfig", (DL_FUNC) &_BigDataStatMeth_bdCheckConfig, 0},
+    {"_BigDataStatMeth_bdTestPerformance", (DL_FUNC) &_BigDataStatMeth_bdTestPerformance, 1},
     {"_BigDataStatMeth_bdblockMult", (DL_FUNC) &_BigDataStatMeth_bdblockMult, 6},
     {"_BigDataStatMeth_bdblockSubstract", (DL_FUNC) &_BigDataStatMeth_bdblockSubstract, 6},
     {"_BigDataStatMeth_bdblockSum", (DL_FUNC) &_BigDataStatMeth_bdblockSum, 6},

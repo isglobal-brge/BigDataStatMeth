@@ -152,7 +152,8 @@ namespace BigDataStatMeth {
                 getBlockPositionsSizes_hdf5( K, block_size, vstartK, vsizetoReadK );
                 
                 // System-aware thread configuration
-                int optimal_threads = get_optimal_threads(threads);
+                //..// int optimal_threads = get_optimal_threads(threads);
+                int optimal_threads = get_io_aware_threads(threads, A.rows(), B.cols(), "multiplication");
                 
                 // Apply system-specific OpenMP settings
                 apply_hpc_optimized_settings(optimal_threads);
@@ -255,7 +256,8 @@ namespace BigDataStatMeth {
                     getBlockPositionsSizes_hdf5( K, ihdf5_block, vstartK, vsizetoReadK );
                     
                     // System-aware thread configuration
-                    int optimal_threads = get_optimal_threads(threads);
+                    // int optimal_threads = get_optimal_threads(threads);
+                    int optimal_threads = get_io_aware_threads(threads, N, M, "multiplication");
                     
                     // Apply system-specific OpenMP settings
                     apply_hpc_optimized_settings(optimal_threads);
