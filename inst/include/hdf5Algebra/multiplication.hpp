@@ -116,6 +116,8 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
         
         try {
 
+            const std::string op = "multiplication";
+            
             int M = A.rows();
             int K = A.cols();
             int N = B.cols();
@@ -139,7 +141,10 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                 // int ithreads = get_number_threads(threads, R_NilValue);
                 // int chunks = vstart.size()/ithreads;
                 
-                #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C) //..// , chunk) private(tid ) 
+                int threads = integrate_io_optimization( M, N, op);
+                
+                //..// #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C) //..// , chunk) private(tid ) 
+                #pragma omp parallel num_threads( threads ) shared(A, B, C) //..// , chunk) private(tid ) 
                 {
                     
                     #pragma omp for schedule (static) // collapse(3)
@@ -177,11 +182,16 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
         
         try {
         
+            const std::string op = "multiplication";
+            
             int ihdf5_block;
             hsize_t K = dsA->nrows();
             hsize_t N = dsA->ncols();
             hsize_t L = dsB->ncols();
             hsize_t M = dsB->nrows();
+            
+            int rows = N,
+                cols = M;
             
              
              if( hdf5_block.isNotNull()) {
@@ -211,7 +221,9 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                     // int ithreads = get_number_threads(threads, R_NilValue);
                     // int chunks = vstart.size()/ithreads;
                     
-                    #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(dsA, dsB, dsC, vstart, vsizetoRead) // chunks
+                    int threads = integrate_io_optimization(rows, cols, op);
+                    //..// #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(dsA, dsB, dsC, vstart, vsizetoRead) // chunks
+                    #pragma omp parallel num_threads( threads ) shared(dsA, dsB, dsC, vstart, vsizetoRead) // chunks
                     {
                         
                     #pragma omp for schedule(dynamic) nowait

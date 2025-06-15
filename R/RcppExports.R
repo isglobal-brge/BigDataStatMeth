@@ -91,93 +91,6 @@ bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NUL
     .Call('_BigDataStatMeth_bdCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
 }
 
-#' Matrix Inversion using Cholesky Decomposition for HDF5-Stored Matrices
-#'
-#' @description
-#' Computes the inverse of a symmetric positive-definite matrix stored in an HDF5 file
-#' using the Cholesky decomposition method. This approach is more efficient and
-#' numerically stable than general matrix inversion methods for symmetric
-#' positive-definite matrices.
-#' 
-#' @details
-#' This function implements an efficient matrix inversion algorithm that leverages
-#' the special properties of symmetric positive-definite matrices. Key features:
-#' * Uses Cholesky decomposition for improved numerical stability
-#' * Block-based computation for large matrices
-#' * Optional storage formats (full or triangular)
-#' * Parallel processing support
-#' * Memory-efficient block algorithm
-#'
-#' The algorithm proceeds in two main steps:
-#' 1. Compute the Cholesky decomposition A = LL'
-#' 2. Solve the system LL'X = I for X = A^(-1)
-#'
-#' Advantages of this method:
-#' * More efficient than general matrix inversion
-#' * Better numerical stability
-#' * Preserves matrix symmetry
-#' * Exploits positive-definiteness for efficiency
-#'
-#' @param filename Character string. Path to the HDF5 file containing the input matrix.
-#' @param group Character string. Path to the group containing the input dataset.
-#' @param dataset Character string. Name of the input dataset to invert.
-#' @param outdataset Character string. Name for the output dataset.
-#' @param outgroup Character string. Optional output group path. If not provided,
-#'   results are stored in the input group.
-#' @param fullMatrix Logical. If TRUE, stores the complete inverse matrix.
-#'   If FALSE (default), stores only the lower triangular part to save space.
-#' @param overwrite Logical. If TRUE, allows overwriting existing results.
-#' @param threads Integer. Number of threads for parallel computation (default = 2).
-#' @param elementsBlock Integer. Maximum number of elements to process in each block
-#'   (default = 1,000,000). For matrices larger than 5000x5000, automatically adjusted
-#'   to number of rows or columns * 2.
-#'
-#' @return No direct return value. Results are written to the HDF5 file in the
-#' specified location with the following structure:
-#' \describe{
-#'   \item{inverse}{The inverse matrix A^(-1)}
-#' }
-#'
-#' @examples
-#' \dontrun{
-#' library(rhdf5)
-#' 
-#' # Create a symmetric positive-definite matrix
-#' set.seed(1234)
-#' X <- matrix(rnorm(100), 10, 10)
-#' A <- crossprod(X)  # A = X'X is symmetric positive-definite
-#' 
-#' # Save to HDF5
-#' h5createFile("matrix.h5")
-#' h5write(A, "matrix.h5", "data/matrix")
-#' 
-#' # Compute inverse using Cholesky decomposition
-#' bdInvCholesky_hdf5("matrix.h5", "data", "matrix",
-#'                    outdataset = "inverse",
-#'                    outgroup = "results",
-#'                    fullMatrix = TRUE,
-#'                    threads = 4)
-#' 
-#' # Verify the inverse
-#' Ainv <- h5read("matrix.h5", "results/inverse")
-#' max(abs(A %*% Ainv - diag(nrow(A))))  # Should be very small
-#' }
-#'
-#' @references
-#' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
-#'   Johns Hopkins University Press.
-#' * Higham, N. J. (2002). Accuracy and Stability of Numerical Algorithms,
-#'   2nd Edition. SIAM.
-#'
-#' @seealso
-#' * \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
-#' * \code{\link{bdSolve_hdf5}} for solving linear systems
-#'
-#' @export
-bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
-    .Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
-}
-
 #' QR Decomposition for In-Memory Matrices
 #' 
 #' @description
@@ -945,6 +858,86 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
     invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, byrows, wsize, overwrite))
 }
 
+#' HDF5 dataset addition
+#'
+#' Performs optimized block-wise addition between two datasets stored in HDF5
+#' format. Supports both matrix-matrix and matrix-vector operations with
+#' memory-efficient block processing.
+#' 
+#' @param filename String indicating the HDF5 file path
+#' @param group String indicating the group containing matrix A
+#' @param A String specifying the dataset name for matrix A
+#' @param B String specifying the dataset name for matrix B
+#' @param groupB Optional string indicating group containing matrix B.
+#'        If NULL, uses same group as A
+#' @param block_size Optional integer specifying block size for processing.
+#'        If NULL, automatically determined based on matrix dimensions
+#' @param paral Optional boolean indicating whether to use parallel processing.
+#'        Default is false
+#' @param threads Optional integer specifying number of threads for parallel processing.
+#'        If NULL, uses maximum available threads
+#' @param outgroup Optional string specifying output group.
+#'        Default is "OUTPUT"
+#' @param outdataset Optional string specifying output dataset name.
+#'        Default is "A_+_B"
+#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+#'        Default is false
+#' 
+#' @return Modifies the HDF5 file in place, adding the addition result
+#' 
+#' @details
+#' The function implements optimized addition through:
+#' 
+#' Operation modes:
+#' - Matrix-matrix addition (A + B)
+#' - Matrix-vector addition
+#' - Vector-matrix addition
+#' 
+#' Block processing:
+#' - Automatic block size selection
+#' - Memory-efficient operations
+#' - Parallel computation support
+#' 
+#' Block size optimization based on:
+#' - Matrix dimensions
+#' - Available memory
+#' - Operation type (matrix/vector)
+#' 
+#' Error handling:
+#' - Dimension validation
+#' - Resource management
+#' - Exception handling
+#' 
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' 
+#' # Create test matrices
+#' N <- 1500
+#' M <- 1500
+#' set.seed(555)
+#' a <- matrix(rnorm(N*M), N, M)
+#' b <- matrix(rnorm(N*M), N, M)
+#' 
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+#'                      overwriteFile = TRUE)
+#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+#'                      overwriteFile = FALSE)
+#' 
+#' # Perform addition
+#' bdblockSum_hdf5("test.hdf5", "data", "A", "B",
+#'                 outgroup = "results",
+#'                 outdataset = "sum",
+#'                 block_size = 1024,
+#'                 paral = TRUE)
+#' }
+#' 
+#' @export
+bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    .Call('_BigDataStatMeth_bdblockSum_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite)
+}
+
 #' Hdf5 datasets multiplication
 #'
 #' The bdblockmult_hdf5 function performs block-wise matrix multiplication 
@@ -1213,86 +1206,6 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, groupB = NULL, block_
 #' @export
 bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
     .Call('_BigDataStatMeth_bdblockSubstract_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite)
-}
-
-#' HDF5 dataset addition
-#'
-#' Performs optimized block-wise addition between two datasets stored in HDF5
-#' format. Supports both matrix-matrix and matrix-vector operations with
-#' memory-efficient block processing.
-#' 
-#' @param filename String indicating the HDF5 file path
-#' @param group String indicating the group containing matrix A
-#' @param A String specifying the dataset name for matrix A
-#' @param B String specifying the dataset name for matrix B
-#' @param groupB Optional string indicating group containing matrix B.
-#'        If NULL, uses same group as A
-#' @param block_size Optional integer specifying block size for processing.
-#'        If NULL, automatically determined based on matrix dimensions
-#' @param paral Optional boolean indicating whether to use parallel processing.
-#'        Default is false
-#' @param threads Optional integer specifying number of threads for parallel processing.
-#'        If NULL, uses maximum available threads
-#' @param outgroup Optional string specifying output group.
-#'        Default is "OUTPUT"
-#' @param outdataset Optional string specifying output dataset name.
-#'        Default is "A_+_B"
-#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
-#'        Default is false
-#' 
-#' @return Modifies the HDF5 file in place, adding the addition result
-#' 
-#' @details
-#' The function implements optimized addition through:
-#' 
-#' Operation modes:
-#' - Matrix-matrix addition (A + B)
-#' - Matrix-vector addition
-#' - Vector-matrix addition
-#' 
-#' Block processing:
-#' - Automatic block size selection
-#' - Memory-efficient operations
-#' - Parallel computation support
-#' 
-#' Block size optimization based on:
-#' - Matrix dimensions
-#' - Available memory
-#' - Operation type (matrix/vector)
-#' 
-#' Error handling:
-#' - Dimension validation
-#' - Resource management
-#' - Exception handling
-#' 
-#' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
-#' 
-#' # Create test matrices
-#' N <- 1500
-#' M <- 1500
-#' set.seed(555)
-#' a <- matrix(rnorm(N*M), N, M)
-#' b <- matrix(rnorm(N*M), N, M)
-#' 
-#' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
-#'                      overwriteFile = TRUE)
-#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
-#'                      overwriteFile = FALSE)
-#' 
-#' # Perform addition
-#' bdblockSum_hdf5("test.hdf5", "data", "A", "B",
-#'                 outgroup = "results",
-#'                 outdataset = "sum",
-#'                 block_size = 1024,
-#'                 paral = TRUE)
-#' }
-#' 
-#' @export
-bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
-    .Call('_BigDataStatMeth_bdblockSum_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite)
 }
 
 #' Transposed cross product with HDF5 matrices
@@ -1667,6 +1580,93 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #' @export
 bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE, paral = NULL, threads = NULL, overwrite = NULL) {
     invisible(.Call('_BigDataStatMeth_bdImputeSNPs_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols, paral, threads, overwrite))
+}
+
+#' Matrix Inversion using Cholesky Decomposition for HDF5-Stored Matrices
+#'
+#' @description
+#' Computes the inverse of a symmetric positive-definite matrix stored in an HDF5 file
+#' using the Cholesky decomposition method. This approach is more efficient and
+#' numerically stable than general matrix inversion methods for symmetric
+#' positive-definite matrices.
+#' 
+#' @details
+#' This function implements an efficient matrix inversion algorithm that leverages
+#' the special properties of symmetric positive-definite matrices. Key features:
+#' * Uses Cholesky decomposition for improved numerical stability
+#' * Block-based computation for large matrices
+#' * Optional storage formats (full or triangular)
+#' * Parallel processing support
+#' * Memory-efficient block algorithm
+#'
+#' The algorithm proceeds in two main steps:
+#' 1. Compute the Cholesky decomposition A = LL'
+#' 2. Solve the system LL'X = I for X = A^(-1)
+#'
+#' Advantages of this method:
+#' * More efficient than general matrix inversion
+#' * Better numerical stability
+#' * Preserves matrix symmetry
+#' * Exploits positive-definiteness for efficiency
+#'
+#' @param filename Character string. Path to the HDF5 file containing the input matrix.
+#' @param group Character string. Path to the group containing the input dataset.
+#' @param dataset Character string. Name of the input dataset to invert.
+#' @param outdataset Character string. Name for the output dataset.
+#' @param outgroup Character string. Optional output group path. If not provided,
+#'   results are stored in the input group.
+#' @param fullMatrix Logical. If TRUE, stores the complete inverse matrix.
+#'   If FALSE (default), stores only the lower triangular part to save space.
+#' @param overwrite Logical. If TRUE, allows overwriting existing results.
+#' @param threads Integer. Number of threads for parallel computation (default = 2).
+#' @param elementsBlock Integer. Maximum number of elements to process in each block
+#'   (default = 1,000,000). For matrices larger than 5000x5000, automatically adjusted
+#'   to number of rows or columns * 2.
+#'
+#' @return No direct return value. Results are written to the HDF5 file in the
+#' specified location with the following structure:
+#' \describe{
+#'   \item{inverse}{The inverse matrix A^(-1)}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(rhdf5)
+#' 
+#' # Create a symmetric positive-definite matrix
+#' set.seed(1234)
+#' X <- matrix(rnorm(100), 10, 10)
+#' A <- crossprod(X)  # A = X'X is symmetric positive-definite
+#' 
+#' # Save to HDF5
+#' h5createFile("matrix.h5")
+#' h5write(A, "matrix.h5", "data/matrix")
+#' 
+#' # Compute inverse using Cholesky decomposition
+#' bdInvCholesky_hdf5("matrix.h5", "data", "matrix",
+#'                    outdataset = "inverse",
+#'                    outgroup = "results",
+#'                    fullMatrix = TRUE,
+#'                    threads = 4)
+#' 
+#' # Verify the inverse
+#' Ainv <- h5read("matrix.h5", "results/inverse")
+#' max(abs(A %*% Ainv - diag(nrow(A))))  # Should be very small
+#' }
+#'
+#' @references
+#' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+#'   Johns Hopkins University Press.
+#' * Higham, N. J. (2002). Accuracy and Stability of Numerical Algorithms,
+#'   2nd Edition. SIAM.
+#'
+#' @seealso
+#' * \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
+#' * \code{\link{bdSolve_hdf5}} for solving linear systems
+#'
+#' @export
+bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
+    .Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
 }
 
 #' Get Matrix Diagonal from HDF5
@@ -2780,6 +2780,308 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #' @export
 bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup = NULL, byrows = NULL, paral = NULL, threads = NULL, overwrite = FALSE) {
     invisible(.Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, paral, threads, overwrite))
+}
+
+#' Diagnose I/O performance for BigDataStatMeth operations
+#'
+#' Analyzes your matrix size and operation to show the I/O-aware 
+#' thread optimization strategy and expected performance impact.
+#' This function provides detailed system analysis including storage
+#' detection, I/O intensity calculation, and optimization reasoning.
+#'
+#' @param matrix_rows Number of rows in your matrix
+#' @param matrix_cols Number of columns in your matrix
+#' @param operation_type Type of BigDataStatMeth operation
+#' @param enable_storage_benchmark Enable I/O benchmarking for accurate storage detection
+#' @details
+#' Supported operation types:
+#' \itemize{
+#'   \item "multiplication", "bdblockmult" - Matrix multiplication (A \%*\% B)
+#'   \item "svd", "bdSVD" - Singular Value Decomposition
+#'   \item "crossprod", "bdCrossprod" - Cross-product (t(A) \%*\% A)
+#'   \item "tcrossprod", "bdtCrossprod" - Transpose cross-product (A \%*\% t(A))
+#'   \item "pca", "bdPCA" - Principal Component Analysis
+#'   \item "qr", "bdQR" - QR decomposition
+#'   \item "eigen", "bdEigen" - Eigenvalue decomposition
+#' }
+#' 
+#' The analysis includes:
+#' \itemize{
+#'   \item Storage type detection (HDD/SSD/NVMe/Network)
+#'   \item I/O intensity ratio calculation
+#'   \item System type identification (HPC/Server/Desktop/Container)
+#'   \item Memory constraint analysis
+#'   \item Thread recommendation with detailed reasoning
+#'   \item Expected performance improvement estimates
+#' }
+#' @examples
+#' # Diagnose your specific workload
+#' bdDiagnoseIO(5000, 5000, "multiplication")
+#' 
+#' # Check different operations
+#' bdDiagnoseIO(10000, 8000, "svd")
+#' bdDiagnoseIO(5000, 5000, "crossprod")
+#' 
+#' # Enable storage benchmarking for accurate detection
+#' bdDiagnoseIO(5000, 5000, "multiplication", enable_storage_benchmark = TRUE)
+#' @export
+bdDiagnoseIO <- function(matrix_rows, matrix_cols, operation_type = "multiplication", enable_storage_benchmark = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdDiagnoseIO', PACKAGE = 'BigDataStatMeth', matrix_rows, matrix_cols, operation_type, enable_storage_benchmark))
+}
+
+#' Get I/O-aware thread recommendation
+#'
+#' Returns the optimal number of threads for your specific matrix size
+#' and operation, considering I/O bottlenecks, storage characteristics,
+#' and system constraints. This function performs the same analysis as
+#' the internal optimization but returns the result without applying it.
+#'
+#' @param matrix_rows Number of rows in your matrix
+#' @param matrix_cols Number of columns in your matrix
+#' @param operation_type Type of operation (default: "multiplication")
+#' @param max_threads Maximum threads to consider (optional)
+#' @param enable_storage_benchmark Enable storage benchmarking for accurate detection
+#' @return Integer with recommended thread count
+#' @details
+#' The recommendation considers:
+#' \itemize{
+#'   \item Storage I/O capacity (1 for HDD, 4 for SSD, 8 for NVMe)
+#'   \item I/O to computation ratio for the specific operation
+#'   \item System type (HPC cluster, server, desktop, container)
+#'   \item Memory constraints on large systems (>64 cores)
+#'   \item Job scheduler allocations (SLURM_CPUS_PER_TASK, PBS_NCPUS)
+#'   \item CRAN compliance requirements
+#'   \item Container resource limits (Docker, Singularity)
+#' }
+#' @note This function does not modify any OpenMP settings,
+#'       use bdConfigureIO() to apply the recommendations
+#' @examples
+#' # Get recommendation for your workload
+#' threads <- bdGetOptimalThreads(5000, 5000, "multiplication")
+#' cat("Recommended threads:", threads, "\n")
+#' 
+#' # Limit maximum threads
+#' threads <- bdGetOptimalThreads(10000, 10000, "svd", max_threads = 16)
+#' 
+#' # Enable accurate storage detection
+#' threads <- bdGetOptimalThreads(5000, 5000, "multiplication", 
+#'                               enable_storage_benchmark = TRUE)
+#' 
+#' # Use recommendation in manual configuration
+#' # omp_set_num_threads(threads)
+#' @export
+bdGetOptimalThreads <- function(matrix_rows, matrix_cols, operation_type = "multiplication", max_threads = NULL, enable_storage_benchmark = FALSE) {
+    .Call('_BigDataStatMeth_bdGetOptimalThreads', PACKAGE = 'BigDataStatMeth', matrix_rows, matrix_cols, operation_type, max_threads, enable_storage_benchmark)
+}
+
+#' Configure BigDataStatMeth with I/O-aware optimization
+#'
+#' Applies optimal OpenMP configuration for your typical workload.
+#' This sets the thread count and OpenMP parameters for the current R session
+#' based on intelligent analysis of your matrix size, operation type,
+#' storage characteristics, and system capabilities.
+#'
+#' @param matrix_rows Typical number of rows in your matrices
+#' @param matrix_cols Typical number of columns in your matrices  
+#' @param operation_type Primary operation type you'll be using (default: "multiplication")
+#' @param enable_storage_benchmark Enable storage benchmarking for accurate detection
+#' @param verbose Print detailed configuration information
+#' @details
+#' This function:
+#' \itemize{
+#'   \item Calculates optimal thread count using I/O-aware analysis
+#'   \item Applies OpenMP thread configuration (omp_set_num_threads)
+#'   \item Sets appropriate OpenMP scheduling policy
+#'   \item Disables dynamic thread adjustment for consistent performance
+#'   \item Configures thread affinity settings when beneficial
+#'   \item Provides detailed feedback about applied settings
+#' }
+#' 
+#' The configuration persists for the current R session and affects
+#' all subsequent BigDataStatMeth operations and other OpenMP code.
+#' @note Call this function once at the beginning of your analysis session
+#' This modifies global OpenMP settings which may affect
+#'          other packages using OpenMP in the same R session
+#' @examples
+#' # Configure for matrix multiplication workload
+#' bdConfigureIO(5000, 5000, "multiplication")
+#' 
+#' # Configure for SVD operations with detailed output
+#' bdConfigureIO(10000, 8000, "svd", verbose = TRUE)
+#' 
+#' # Configure with accurate storage detection
+#' bdConfigureIO(5000, 5000, "multiplication", enable_storage_benchmark = TRUE)
+#' 
+#' # Now your BigDataStatMeth operations will use optimal settings
+#' result <- bdblockmult_hdf5("data.h5", "matrices", "A", "B")
+#' @export
+bdConfigureIO <- function(matrix_rows, matrix_cols, operation_type = "multiplication", enable_storage_benchmark = FALSE, verbose = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdConfigureIO', PACKAGE = 'BigDataStatMeth', matrix_rows, matrix_cols, operation_type, enable_storage_benchmark, verbose))
+}
+
+#' Check current BigDataStatMeth thread configuration
+#'
+#' Shows the current OpenMP thread configuration and system information.
+#' Useful for verifying that optimization has been applied correctly,
+#' understanding system characteristics, and debugging performance issues.
+#'
+#' @return List with current configuration details
+#' @details
+#' Returned list contains:
+#' \itemize{
+#'   \item version - BigDataStatMeth version
+#'   \item current_threads - Currently configured OpenMP threads
+#'   \item available_cores - Total CPU cores available
+#'   \item system_type - Detected system type (HPC/Server/Desktop/CRAN/Container)
+#'   \item storage_type - Detected storage type (HDD/SSD/NVMe/Network/Unknown)
+#'   \item is_hpc - Whether HPC environment was detected
+#'   \item is_cran - Whether CRAN compliance mode is active
+#'   \item is_container - Whether container environment was detected
+#'   \item optimization_active - Whether I/O-aware optimization appears active
+#'   \item thread_efficiency - Ratio of current threads to available cores
+#'   \item memory_info - Available memory information (if detectable)
+#'   \item environment_vars - Relevant environment variables
+#' }
+#' @note This function only reads current settings and does not
+#'       modify any configuration
+#' @examples
+#' # Check current configuration
+#' config <- bdCheckConfig()
+#' print(config)
+#' 
+#' # See if optimization is active
+#' if (config$optimization_active) {
+#'   message("I/O-aware optimization is active")
+#' } else {
+#'   message("Consider running bdConfigureIO() for optimization")
+#' }
+#' 
+#' # Check thread efficiency
+#' if (config$thread_efficiency < 0.5) {
+#'   message("Conservative threading detected - likely I/O optimized")
+#' }
+#' @export
+bdCheckConfig <- function() {
+    .Call('_BigDataStatMeth_bdCheckConfig', PACKAGE = 'BigDataStatMeth')
+}
+
+#' Quick performance test for current thread configuration
+#'
+#' Performs a simple matrix operation to test the performance
+#' of the current thread configuration. Useful for measuring
+#' the impact of I/O-aware optimization and comparing different
+#' configurations.
+#'
+#' @param test_size Size of test matrix (default: 2000)
+#' @param operation_type Type of operation to test (default: "multiplication")
+#' @param iterations Number of iterations to average (default: 3)
+#' @return List with timing results and performance metrics
+#' @details
+#' The test performs matrix operations using the current OpenMP configuration
+#' and provides benchmarks for computational performance. Available test types:
+#' \itemize{
+#'   \item "multiplication" - Matrix multiplication benchmark
+#'   \item "crossprod" - Cross-product benchmark  
+#'   \item "svd" - SVD decomposition benchmark (smaller matrices recommended)
+#' }
+#' 
+#' Results include timing statistics, thread efficiency metrics, and
+#' recommendations for optimization.
+#' @note 
+#' - Larger test sizes provide more stable timing but take longer
+#' - Results may vary between runs due to system load
+#' - This test uses in-memory matrices, not HDF5 I/O
+#' - SVD tests should use smaller matrices (test_size < 1000)
+#' @examples
+#' # Test current performance
+#' results <- bdTestPerformance()
+#' print(results)
+#' 
+#' # Compare different configurations
+#' before <- bdTestPerformance()
+#' bdConfigureIO(5000, 5000, "multiplication")
+#' after <- bdTestPerformance()
+#' 
+#' # Compare results
+#' improvement <- before$mean_time_ms / after$mean_time_ms
+#' cat("Performance improvement:", improvement, "x\n")
+#' 
+#' # Test with different operations
+#' mult_test <- bdTestPerformance(test_size = 2000, operation_type = "multiplication")
+#' crossprod_test <- bdTestPerformance(test_size = 2000, operation_type = "crossprod")
+#' svd_test <- bdTestPerformance(test_size = 500, operation_type = "svd")
+#' @export
+bdTestPerformance <- function(test_size = 2000L, operation_type = "multiplication", iterations = 3L) {
+    .Call('_BigDataStatMeth_bdTestPerformance', PACKAGE = 'BigDataStatMeth', test_size, operation_type, iterations)
+}
+
+#' Auto-tune I/O optimization for specific dataset
+#'
+#' Automatically determines optimal thread configuration by analyzing
+#' a sample of your actual data. This provides more accurate optimization
+#' than estimates based on matrix size alone.
+#'
+#' @param sample_rows Number of rows to use for testing (default: 1000)
+#' @param sample_cols Number of columns to use for testing (default: 1000)
+#' @param operation_type Primary operation type to optimize for
+#' @param max_threads Maximum threads to test (default: all available)
+#' @param test_iterations Number of iterations per thread count (default: 2)
+#' @return List with optimal configuration and benchmarking results
+#' @details
+#' This function performs empirical testing with different thread counts
+#' to find the optimal configuration for your specific workload and system.
+#' The testing process:
+#' \itemize{
+#'   \item Tests thread counts from 1 to max_threads
+#'   \item Measures actual performance for each configuration
+#'   \item Identifies the optimal thread count based on throughput
+#'   \item Applies the optimal configuration automatically
+#'   \item Returns detailed benchmarking results
+#' }
+#' @note This function modifies global OpenMP settings and may take
+#'       several minutes to complete depending on the test parameters
+#' @examples
+#' # Auto-tune for matrix multiplication
+#' results <- bdAutoTune(operation_type = "multiplication")
+#' 
+#' # Auto-tune with specific constraints
+#' results <- bdAutoTune(sample_rows = 2000, sample_cols = 2000,
+#'                      operation_type = "svd", max_threads = 16)
+#' 
+#' # View results
+#' print(results$optimal_threads)
+#' plot(results$thread_counts, results$performance_scores)
+#' @export
+bdAutoTune <- function(sample_rows = 1000L, sample_cols = 1000L, operation_type = "multiplication", max_threads = NULL, test_iterations = 2L) {
+    .Call('_BigDataStatMeth_bdAutoTune', PACKAGE = 'BigDataStatMeth', sample_rows, sample_cols, operation_type, max_threads, test_iterations)
+}
+
+#' Get system information and capabilities
+#'
+#' Returns comprehensive information about the system hardware,
+#' software environment, and BigDataStatMeth capabilities.
+#'
+#' @param include_benchmark Include storage benchmark in the analysis
+#' @return List with detailed system information
+#' @details
+#' This function provides a complete overview of:
+#' \itemize{
+#'   \item Hardware: CPU cores, memory, storage type
+#'   \item Software: OpenMP support, BigDataStatMeth version, R environment
+#'   \item Environment: HPC scheduler, container detection, CRAN compliance
+#'   \item Capabilities: Available features and optimization options
+#'   \item Performance: Storage I/O capacity and memory constraints
+#' }
+#' @examples
+#' # Get basic system information
+#' info <- bdSystemInfo()
+#' print(info)
+#' 
+#' # Include storage benchmarking
+#' info <- bdSystemInfo(include_benchmark = TRUE)
+#' @export
+bdSystemInfo <- function(include_benchmark = FALSE) {
+    .Call('_BigDataStatMeth_bdSystemInfo', PACKAGE = 'BigDataStatMeth', include_benchmark)
 }
 
 #' Block-Based Matrix Multiplication
