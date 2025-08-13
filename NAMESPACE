@@ -2,6 +2,7 @@
 
 export(bdBind_hdf5_datasets)
 export(bdCholesky_hdf5)
+export(bdCreate_hdf5_group)
 export(bdCreate_hdf5_matrix)
 export(bdCrossprod)
 export(bdCrossprod_hdf5)

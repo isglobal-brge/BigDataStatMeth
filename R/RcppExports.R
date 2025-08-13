@@ -91,93 +91,6 @@ bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NUL
     .Call('_BigDataStatMeth_bdCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
 }
 
-#' Matrix Inversion using Cholesky Decomposition for HDF5-Stored Matrices
-#'
-#' @description
-#' Computes the inverse of a symmetric positive-definite matrix stored in an HDF5 file
-#' using the Cholesky decomposition method. This approach is more efficient and
-#' numerically stable than general matrix inversion methods for symmetric
-#' positive-definite matrices.
-#' 
-#' @details
-#' This function implements an efficient matrix inversion algorithm that leverages
-#' the special properties of symmetric positive-definite matrices. Key features:
-#' * Uses Cholesky decomposition for improved numerical stability
-#' * Block-based computation for large matrices
-#' * Optional storage formats (full or triangular)
-#' * Parallel processing support
-#' * Memory-efficient block algorithm
-#'
-#' The algorithm proceeds in two main steps:
-#' 1. Compute the Cholesky decomposition A = LL'
-#' 2. Solve the system LL'X = I for X = A^(-1)
-#'
-#' Advantages of this method:
-#' * More efficient than general matrix inversion
-#' * Better numerical stability
-#' * Preserves matrix symmetry
-#' * Exploits positive-definiteness for efficiency
-#'
-#' @param filename Character string. Path to the HDF5 file containing the input matrix.
-#' @param group Character string. Path to the group containing the input dataset.
-#' @param dataset Character string. Name of the input dataset to invert.
-#' @param outdataset Character string. Name for the output dataset.
-#' @param outgroup Character string. Optional output group path. If not provided,
-#'   results are stored in the input group.
-#' @param fullMatrix Logical. If TRUE, stores the complete inverse matrix.
-#'   If FALSE (default), stores only the lower triangular part to save space.
-#' @param overwrite Logical. If TRUE, allows overwriting existing results.
-#' @param threads Integer. Number of threads for parallel computation (default = 2).
-#' @param elementsBlock Integer. Maximum number of elements to process in each block
-#'   (default = 1,000,000). For matrices larger than 5000x5000, automatically adjusted
-#'   to number of rows or columns * 2.
-#'
-#' @return No direct return value. Results are written to the HDF5 file in the
-#' specified location with the following structure:
-#' \describe{
-#'   \item{inverse}{The inverse matrix A^(-1)}
-#' }
-#'
-#' @examples
-#' \dontrun{
-#' library(rhdf5)
-#' 
-#' # Create a symmetric positive-definite matrix
-#' set.seed(1234)
-#' X <- matrix(rnorm(100), 10, 10)
-#' A <- crossprod(X)  # A = X'X is symmetric positive-definite
-#' 
-#' # Save to HDF5
-#' h5createFile("matrix.h5")
-#' h5write(A, "matrix.h5", "data/matrix")
-#' 
-#' # Compute inverse using Cholesky decomposition
-#' bdInvCholesky_hdf5("matrix.h5", "data", "matrix",
-#'                    outdataset = "inverse",
-#'                    outgroup = "results",
-#'                    fullMatrix = TRUE,
-#'                    threads = 4)
-#' 
-#' # Verify the inverse
-#' Ainv <- h5read("matrix.h5", "results/inverse")
-#' max(abs(A %*% Ainv - diag(nrow(A))))  # Should be very small
-#' }
-#'
-#' @references
-#' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
-#'   Johns Hopkins University Press.
-#' * Higham, N. J. (2002). Accuracy and Stability of Numerical Algorithms,
-#'   2nd Edition. SIAM.
-#'
-#' @seealso
-#' * \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
-#' * \code{\link{bdSolve_hdf5}} for solving linear systems
-#'
-#' @export
-bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
-    .Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
-}
-
 #' QR Decomposition for In-Memory Matrices
 #' 
 #' @description
@@ -945,6 +858,86 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
     invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, byrows, wsize, overwrite))
 }
 
+#' HDF5 dataset addition
+#'
+#' Performs optimized block-wise addition between two datasets stored in HDF5
+#' format. Supports both matrix-matrix and matrix-vector operations with
+#' memory-efficient block processing.
+#' 
+#' @param filename String indicating the HDF5 file path
+#' @param group String indicating the group containing matrix A
+#' @param A String specifying the dataset name for matrix A
+#' @param B String specifying the dataset name for matrix B
+#' @param groupB Optional string indicating group containing matrix B.
+#'        If NULL, uses same group as A
+#' @param block_size Optional integer specifying block size for processing.
+#'        If NULL, automatically determined based on matrix dimensions
+#' @param paral Optional boolean indicating whether to use parallel processing.
+#'        Default is false
+#' @param threads Optional integer specifying number of threads for parallel processing.
+#'        If NULL, uses maximum available threads
+#' @param outgroup Optional string specifying output group.
+#'        Default is "OUTPUT"
+#' @param outdataset Optional string specifying output dataset name.
+#'        Default is "A_+_B"
+#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
+#'        Default is false
+#' 
+#' @return Modifies the HDF5 file in place, adding the addition result
+#' 
+#' @details
+#' The function implements optimized addition through:
+#' 
+#' Operation modes:
+#' - Matrix-matrix addition (A + B)
+#' - Matrix-vector addition
+#' - Vector-matrix addition
+#' 
+#' Block processing:
+#' - Automatic block size selection
+#' - Memory-efficient operations
+#' - Parallel computation support
+#' 
+#' Block size optimization based on:
+#' - Matrix dimensions
+#' - Available memory
+#' - Operation type (matrix/vector)
+#' 
+#' Error handling:
+#' - Dimension validation
+#' - Resource management
+#' - Exception handling
+#' 
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' 
+#' # Create test matrices
+#' N <- 1500
+#' M <- 1500
+#' set.seed(555)
+#' a <- matrix(rnorm(N*M), N, M)
+#' b <- matrix(rnorm(N*M), N, M)
+#' 
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+#'                      overwriteFile = TRUE)
+#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+#'                      overwriteFile = FALSE)
+#' 
+#' # Perform addition
+#' bdblockSum_hdf5("test.hdf5", "data", "A", "B",
+#'                 outgroup = "results",
+#'                 outdataset = "sum",
+#'                 block_size = 1024,
+#'                 paral = TRUE)
+#' }
+#' 
+#' @export
+bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    .Call('_BigDataStatMeth_bdblockSum_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite)
+}
+
 #' Hdf5 datasets multiplication
 #'
 #' The bdblockmult_hdf5 function performs block-wise matrix multiplication 
@@ -1215,86 +1208,6 @@ bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_si
     .Call('_BigDataStatMeth_bdblockSubstract_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite)
 }
 
-#' HDF5 dataset addition
-#'
-#' Performs optimized block-wise addition between two datasets stored in HDF5
-#' format. Supports both matrix-matrix and matrix-vector operations with
-#' memory-efficient block processing.
-#' 
-#' @param filename String indicating the HDF5 file path
-#' @param group String indicating the group containing matrix A
-#' @param A String specifying the dataset name for matrix A
-#' @param B String specifying the dataset name for matrix B
-#' @param groupB Optional string indicating group containing matrix B.
-#'        If NULL, uses same group as A
-#' @param block_size Optional integer specifying block size for processing.
-#'        If NULL, automatically determined based on matrix dimensions
-#' @param paral Optional boolean indicating whether to use parallel processing.
-#'        Default is false
-#' @param threads Optional integer specifying number of threads for parallel processing.
-#'        If NULL, uses maximum available threads
-#' @param outgroup Optional string specifying output group.
-#'        Default is "OUTPUT"
-#' @param outdataset Optional string specifying output dataset name.
-#'        Default is "A_+_B"
-#' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
-#'        Default is false
-#' 
-#' @return Modifies the HDF5 file in place, adding the addition result
-#' 
-#' @details
-#' The function implements optimized addition through:
-#' 
-#' Operation modes:
-#' - Matrix-matrix addition (A + B)
-#' - Matrix-vector addition
-#' - Vector-matrix addition
-#' 
-#' Block processing:
-#' - Automatic block size selection
-#' - Memory-efficient operations
-#' - Parallel computation support
-#' 
-#' Block size optimization based on:
-#' - Matrix dimensions
-#' - Available memory
-#' - Operation type (matrix/vector)
-#' 
-#' Error handling:
-#' - Dimension validation
-#' - Resource management
-#' - Exception handling
-#' 
-#' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
-#' 
-#' # Create test matrices
-#' N <- 1500
-#' M <- 1500
-#' set.seed(555)
-#' a <- matrix(rnorm(N*M), N, M)
-#' b <- matrix(rnorm(N*M), N, M)
-#' 
-#' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
-#'                      overwriteFile = TRUE)
-#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
-#'                      overwriteFile = FALSE)
-#' 
-#' # Perform addition
-#' bdblockSum_hdf5("test.hdf5", "data", "A", "B",
-#'                 outgroup = "results",
-#'                 outdataset = "sum",
-#'                 block_size = 1024,
-#'                 paral = TRUE)
-#' }
-#' 
-#' @export
-bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
-    .Call('_BigDataStatMeth_bdblockSum_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite)
-}
-
 #' Transposed cross product with HDF5 matrices
 #' 
 #' Performs optimized transposed cross product operations on matrices stored in
@@ -1373,6 +1286,47 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #' @export
 bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_size = NULL, mixblock_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
     .Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite)
+}
+
+#' Create Group in an HDF5 File
+#'
+#' @description
+#' Create a (nested) group inside an HDF5 file. The operation is
+#' idempotent: if the group already exists, no error is raised.
+#'
+#' @details
+#' Intermediate groups are created when needed. The HDF5 file must
+#' exist prior to the call (create it with a writer function).
+#'
+#' @param filename Character string. Path to the HDF5 file.
+#' @param group Character string. Group path to create
+#'   (e.g., `"MGCCA_OUT/scores"`).
+#'
+#' @return No return value, called for side effects (group creation).
+#'
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' fn <- "test.hdf5"
+#'
+#' # Ensure file exists (e.g., by creating an empty dataset or via a helper)
+#' mat <- matrix(0, nrow = 1, ncol = 1)
+#' bdCreate_hdf5_matrix(fn, mat, group = "tmp", dataset = "seed",
+#'                      overwriteFile = TRUE)
+#'
+#' # Create nested group
+#' bdCreate_hdf5_group(fn, "MGCCA_OUT/scores")
+#' }
+#'
+#' @references
+#' The HDF Group. HDF5 User's Guide.
+#'
+#' @seealso
+#' \code{\link{bdCreate_hdf5_matrix}}, \code{\link{bdRemove_hdf5_element}}
+#'
+#' @export
+bdCreate_hdf5_group <- function(filename, group) {
+    invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_group', PACKAGE = 'BigDataStatMeth', filename, group))
 }
 
 #' Get HDF5 Dataset Dimensions
@@ -1667,6 +1621,93 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #' @export
 bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE, paral = NULL, threads = NULL, overwrite = NULL) {
     invisible(.Call('_BigDataStatMeth_bdImputeSNPs_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols, paral, threads, overwrite))
+}
+
+#' Matrix Inversion using Cholesky Decomposition for HDF5-Stored Matrices
+#'
+#' @description
+#' Computes the inverse of a symmetric positive-definite matrix stored in an HDF5 file
+#' using the Cholesky decomposition method. This approach is more efficient and
+#' numerically stable than general matrix inversion methods for symmetric
+#' positive-definite matrices.
+#' 
+#' @details
+#' This function implements an efficient matrix inversion algorithm that leverages
+#' the special properties of symmetric positive-definite matrices. Key features:
+#' * Uses Cholesky decomposition for improved numerical stability
+#' * Block-based computation for large matrices
+#' * Optional storage formats (full or triangular)
+#' * Parallel processing support
+#' * Memory-efficient block algorithm
+#'
+#' The algorithm proceeds in two main steps:
+#' 1. Compute the Cholesky decomposition A = LL'
+#' 2. Solve the system LL'X = I for X = A^(-1)
+#'
+#' Advantages of this method:
+#' * More efficient than general matrix inversion
+#' * Better numerical stability
+#' * Preserves matrix symmetry
+#' * Exploits positive-definiteness for efficiency
+#'
+#' @param filename Character string. Path to the HDF5 file containing the input matrix.
+#' @param group Character string. Path to the group containing the input dataset.
+#' @param dataset Character string. Name of the input dataset to invert.
+#' @param outdataset Character string. Name for the output dataset.
+#' @param outgroup Character string. Optional output group path. If not provided,
+#'   results are stored in the input group.
+#' @param fullMatrix Logical. If TRUE, stores the complete inverse matrix.
+#'   If FALSE (default), stores only the lower triangular part to save space.
+#' @param overwrite Logical. If TRUE, allows overwriting existing results.
+#' @param threads Integer. Number of threads for parallel computation (default = 2).
+#' @param elementsBlock Integer. Maximum number of elements to process in each block
+#'   (default = 1,000,000). For matrices larger than 5000x5000, automatically adjusted
+#'   to number of rows or columns * 2.
+#'
+#' @return No direct return value. Results are written to the HDF5 file in the
+#' specified location with the following structure:
+#' \describe{
+#'   \item{inverse}{The inverse matrix A^(-1)}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(rhdf5)
+#' 
+#' # Create a symmetric positive-definite matrix
+#' set.seed(1234)
+#' X <- matrix(rnorm(100), 10, 10)
+#' A <- crossprod(X)  # A = X'X is symmetric positive-definite
+#' 
+#' # Save to HDF5
+#' h5createFile("matrix.h5")
+#' h5write(A, "matrix.h5", "data/matrix")
+#' 
+#' # Compute inverse using Cholesky decomposition
+#' bdInvCholesky_hdf5("matrix.h5", "data", "matrix",
+#'                    outdataset = "inverse",
+#'                    outgroup = "results",
+#'                    fullMatrix = TRUE,
+#'                    threads = 4)
+#' 
+#' # Verify the inverse
+#' Ainv <- h5read("matrix.h5", "results/inverse")
+#' max(abs(A %*% Ainv - diag(nrow(A))))  # Should be very small
+#' }
+#'
+#' @references
+#' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
+#'   Johns Hopkins University Press.
+#' * Higham, N. J. (2002). Accuracy and Stability of Numerical Algorithms,
+#'   2nd Edition. SIAM.
+#'
+#' @seealso
+#' * \code{\link{bdCholesky_hdf5}} for the underlying Cholesky decomposition
+#' * \code{\link{bdSolve_hdf5}} for solving linear systems
+#'
+#' @export
+bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NULL, fullMatrix = NULL, overwrite = NULL, threads = 2L, elementsBlock = 1000000L) {
+    .Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
 }
 
 #' Get Matrix Diagonal from HDF5
