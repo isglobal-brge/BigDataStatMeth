@@ -160,22 +160,27 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
         
     } catch( H5::FileIException& error ) { 
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr<<"c++ exception Rcpp_InvCholesky_hdf5 (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { 
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Rcpp_InvCholesky_hdf5 (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Rcpp_InvCholesky_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Rcpp_InvCholesky_hdf5" << ex.what();
         return void();
     } catch (...) {
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr<<"\nC++ exception Rcpp_InvCholesky_hdf5 (unknown reason)";
         return void();
     }
@@ -305,22 +310,27 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
         
     } catch( H5::FileIException& error ) { 
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr<<"c++ exception Cholesky_decomposition_hdf5 (File IException)";
         return(2);
     } catch( H5::GroupIException & error ) { 
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Cholesky_decomposition_hdf5 (Group IException)";
         return(2);
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Cholesky_decomposition_hdf5 (DataSet IException)";
         return(2);
     } catch(std::exception& ex) {
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Cholesky_decomposition_hdf5" << ex.what();
         return(2);
     } catch (...) {
         checkClose_file(inDataset, outDataset);
+        inDataset = outDataset = nullptr;
         Rcpp::Rcerr<<"\nC++ exception Rcpp_InvCholesky_hdf5 (unknown reason)";
         return(2);
     }
@@ -441,22 +451,27 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
         
     } catch( H5::FileIException& error ) { 
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr<<"c++ exception Inverse_of_Cholesky_decomposition_hdf5 (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { 
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_hdf5 (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_hdf5" << ex.what();
         return void();
     } catch (...) {
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr<<"\nC++ exception Inverse_of_Cholesky_decomposition_hdf5 (unknown reason)";
         return void();
     }
@@ -565,22 +580,27 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
         
     } catch( H5::FileIException& error ) { 
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr<<"c++ exception Inverse_Matrix_Cholesky_parallel (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { 
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_parallel (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_parallel (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_parallel: " << ex.what();
         return void();
     } catch (...) {
         checkClose_file(InOutDataset);
+        InOutDataset = nullptr;
         Rcpp::Rcerr<<"\nC++ exception Inverse_Matrix_Cholesky_parallel (unknown reason)";
         return void();
     }

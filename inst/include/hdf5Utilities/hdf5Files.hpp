@@ -123,8 +123,13 @@ public:
         try
         {
             H5::Exception::dontPrint();
+            
+            enable_hdf5_locking_once();
+            
             bool bFileOpened = false;
             bool bFileExists = ResFileExist_filestream();
+            bool bInUse = bFileExists ? lockedByOtherProcess() : false;
+            
             
             if(bFileExists) {
                 bFileOpened = isHDF5FileOpen();
@@ -132,12 +137,18 @@ public:
             
             // if(!bFileOpened) {
             if( !bFileExists || ( bFileExists && boverwrite) ) {
-                if(!bFileOpened) {
-                    pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC ); 
-                } else {
-                    Rcpp::Rcerr<<"\nThe file is being used, close it before proceed.\n";
-                    iExec = EXEC_ERROR;
+                
+                if (bInUse) {
+                    Rcpp::stop("HDF5 file is in use by another process; cannot overwrite.");
                 }
+                
+                //.. 2025/08/13 ..// if(!bFileOpened) {
+                pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC ); 
+                iExec = EXEC_OK; //.. 2025/08/13 ..//
+                //.. 2025/08/13 ..// } else {
+                //.. 2025/08/13 ..//    Rcpp::Rcerr<<"\nThe file is being used, close it before proceed.\n";
+                //.. 2025/08/13 ..//    iExec = EXEC_ERROR;
+                //.. 2025/08/13 ..// }
             } else if ( bFileExists && !boverwrite){
                 iExec = EXEC_WARNING;
             } else {
@@ -169,6 +180,9 @@ public:
         {
             H5::Exception::dontPrint();
             
+            enable_hdf5_locking_once();
+            
+            
             // bool bFileExists = ResFileExist_filestream();
             // checkHDF5File
             // if( bFileExists ) {
@@ -176,18 +190,35 @@ public:
                 if(opentype == "r") {
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
                 } else {
+                    if (lockedByOtherProcess()) {
+                        Rcpp::stop("HDF5 file is in use by another process.");
+                    }
+                    
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
                 }
             } else {
-                Rcpp::Rcerr<<"\n File does not exists, please create it before open it";
-                pfile = nullptr;
-                return(pfile);
+                
+                if (opentype == "r") {        //..2025/08/13..//
+                    Rcpp::stop("HDF5 file not found."); //..2025/08/13..//
+                }         //..2025/08/13..//
+                pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC); //..2025/08/13..//
+                
+                //..2025/08/13..// Rcpp::Rcerr<<"\n File does not exists, please create it before open it";
+                //..2025/08/13..// pfile = nullptr;
+                //..2025/08/13..// return(pfile);
             }
             
-        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC);
-            // Rf_error("c++ exception hdf5File (File IException) " );
-        } 
+        } catch (const H5::Exception& e) {
+            pfile = nullptr;
+            Rcpp::stop(std::string("openFile HDF5 error: ") + e.getDetailMsg());
+        } catch (const std::exception& e) {
+            pfile = nullptr;
+            Rcpp::stop(std::string("openFile error: ") + e.what());
+        }
+        //..2025/08/14..// catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+        //..2025/08/14..//      pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC);
+        //..2025/08/14..//      // Rf_error("c++ exception hdf5File (File IException) " );
+        //..2025/08/14..//  } 
         
         return(pfile);
     }
@@ -271,6 +302,31 @@ public:
     }
     
     
+    /**
+     * @brief Test whether an HDF5 file is locked / in use.
+     *
+     * @param filename Path to the HDF5 file (relative or absolute).
+     *
+     * @return true if the file appears locked (i.e., cannot be opened in
+     *         read/write mode under HDF5 locking); false otherwise. If the
+     *         file does not exist, returns false.
+     *
+     * @details Constructs a lightweight temporary @c hdf5File and delegates
+     *          to @c lockedByOtherProcess(). It does not create, truncate,
+     *          or keep the file open; no state is persisted.
+     *
+     * @note On systems without HDF5 file locking (or if disabled), the
+     *       result may be conservative. Lack of write permissions may also
+     *       yield @c true (indistinguishable from "locked").
+     *
+     * @since 0.99.0
+     */
+    static bool isLocked(const std::string& filename) noexcept {
+        hdf5File tmp(filename, /*overwrite=*/false);
+        return tmp.lockedByOtherProcess();
+    }
+    
+    
     
     /**
      * @brief Destructor
@@ -296,6 +352,21 @@ private:
     std::string fullPath;
     bool boverwrite;
     
+    // hdf5 lock file
+    
+    #ifdef _WIN32
+    #include <cstdlib>
+        static inline void enable_hdf5_locking_once() {
+            static bool done = (_putenv_s("HDF5_USE_FILE_LOCKING","TRUE"), true);
+            (void)done;
+        }
+    #else
+    #include <cstdlib>
+        static inline void enable_hdf5_locking_once() {
+            static bool done = (setenv("HDF5_USE_FILE_LOCKING","TRUE",1), true);
+            (void)done;
+        }
+    #endif
     
     // Function
     
@@ -470,6 +541,34 @@ private:
     }
     
     
+    /**
+     * @brief Return true if existing HDF5 file appears locked/busy.
+     * @note Requires HDF5 file locking enabled (env var set above).
+     */
+    bool lockedByOtherProcess() {
+        
+        if (!ResFileExist_filestream()) {
+            return false;    
+        }
+        
+        H5::Exception::dontPrint();
+        enable_hdf5_locking_once();
+        hid_t fapl = H5Pcreate(H5P_FILE_ACCESS);
+        
+        #if H5_VERSION_GE(1,12,0)
+                H5Pset_file_locking(fapl, 1 , 0 );
+        #endif
+                
+        hid_t fid = H5Fopen(fullPath.c_str(), H5F_ACC_RDWR, fapl);
+        H5Pclose(fapl);
+        
+        if (fid < 0) {
+            return true;       
+        }
+        
+        H5Fclose(fid);
+        return false;
+    }
     
     
     

@@ -115,7 +115,7 @@
          
          delete objFile; objFile = nullptr;
          
-     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+     } catch( H5::FileIException& error ) { 
          delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group (File IException)";
          return void();
