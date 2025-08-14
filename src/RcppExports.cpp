@@ -318,6 +318,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bdCreate_hdf5_emptyDataset
+void bdCreate_hdf5_emptyDataset(std::string filename, std::string group, std::string dataset, int nrows, int ncols, Rcpp::Nullable<bool> overwriteFile, Rcpp::Nullable<bool> overwriteDataset, Rcpp::Nullable<bool> unlimited, Rcpp::Nullable<std::string> datatype);
+RcppExport SEXP _BigDataStatMeth_bdCreate_hdf5_emptyDataset(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP overwriteFileSEXP, SEXP overwriteDatasetSEXP, SEXP unlimitedSEXP, SEXP datatypeSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
+    Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwriteFile(overwriteFileSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwriteDataset(overwriteDatasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type unlimited(unlimitedSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type datatype(datatypeSEXP);
+    bdCreate_hdf5_emptyDataset(filename, group, dataset, nrows, ncols, overwriteFile, overwriteDataset, unlimited, datatype);
+    return R_NilValue;
+END_RCPP
+}
 // bdCreate_hdf5_group
 void bdCreate_hdf5_group(std::string filename, std::string group);
 RcppExport SEXP _BigDataStatMeth_bdCreate_hdf5_group(SEXP filenameSEXP, SEXP groupSEXP) {
@@ -327,6 +345,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
     bdCreate_hdf5_group(filename, group);
     return R_NilValue;
+END_RCPP
+}
+// bdIsLocked_hdf5
+bool bdIsLocked_hdf5(std::string filename);
+RcppExport SEXP _BigDataStatMeth_bdIsLocked_hdf5(SEXP filenameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdIsLocked_hdf5(filename));
+    return rcpp_result_gen;
 END_RCPP
 }
 // bdgetDim_hdf5
@@ -731,7 +760,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdblockmult_sparse_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockmult_sparse_hdf5, 12},
     {"_BigDataStatMeth_bdblockSubstract_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockSubstract_hdf5, 11},
     {"_BigDataStatMeth_bdtCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_hdf5, 12},
+    {"_BigDataStatMeth_bdCreate_hdf5_emptyDataset", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_emptyDataset, 9},
     {"_BigDataStatMeth_bdCreate_hdf5_group", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_group, 2},
+    {"_BigDataStatMeth_bdIsLocked_hdf5", (DL_FUNC) &_BigDataStatMeth_bdIsLocked_hdf5, 1},
     {"_BigDataStatMeth_bdgetDim_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDim_hdf5, 2},
     {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
     {"_BigDataStatMeth_bdImportTextFile_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImportTextFile_hdf5, 11},

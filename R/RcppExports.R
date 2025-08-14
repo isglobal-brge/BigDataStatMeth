@@ -1288,6 +1288,42 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
     .Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite)
 }
 
+#' Create an empty HDF5 dataset (no data written)
+#'
+#' @description
+#' Creates an HDF5 dataset of size \code{nrows × ncols} inside \code{group}
+#' with name \code{dataset}, without writing data (allocation only).
+#' Honors file/dataset overwrite flags and supports unlimited datasets.
+#'
+#' @param filename Character. Path to the HDF5 file.
+#' @param group Character. Group path.
+#' @param dataset Character. Dataset name.
+#' @param nrows Integer (>= 1). Number of rows.
+#' @param ncols Integer (>= 1). Number of columns.
+#' @param overwriteFile Logical. If \code{TRUE}, allow file recreate 
+#' default value \code{FALSE}.
+#' @param overwriteDataset Logical. If \code{TRUE}, replace dataset 
+#' default value \code{FALSE}.
+#' @param unlimited Logical. If \code{TRUE}, create unlimited dataset 
+#' default value \code{FALSE}.
+#' @param datatype Character. Element type (e.g., "real").
+#'
+#' @return No return value, called for side effects (dataset creation).
+#'
+#' @examples
+#' \dontrun{
+#' bdCreate_hdf5_emptyDataset("test.h5", "MGCCA_IN", "X", 1000, 500,
+#'                           overwriteFile = FALSE,
+#'                           overwriteDataset = TRUE,
+#'                           unlimited = FALSE,
+#'                           datatype = "real")
+#' }
+#'
+#' @export
+bdCreate_hdf5_emptyDataset <- function(filename, group, dataset, nrows = 0L, ncols = 0L, overwriteFile = NULL, overwriteDataset = NULL, unlimited = NULL, datatype = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_emptyDataset', PACKAGE = 'BigDataStatMeth', filename, group, dataset, nrows, ncols, overwriteFile, overwriteDataset, unlimited, datatype))
+}
+
 #' Create Group in an HDF5 File
 #'
 #' @description
@@ -1327,6 +1363,27 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
 #' @export
 bdCreate_hdf5_group <- function(filename, group) {
     invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_group', PACKAGE = 'BigDataStatMeth', filename, group))
+}
+
+#' Test whether an HDF5 file is locked (in use)
+#'
+#' @description
+#' Uses HDF5 file locking to check if \code{filename} can be opened in
+#' read/write mode. If opening fails under locking, the file is treated
+#' as "in use" and \code{TRUE} is returned. Non-existent files return
+#' \code{FALSE}.
+#'
+#' @param filename Character. Path to the HDF5 file.
+#' @return Logical scalar: \code{TRUE} if locked/in use, \code{FALSE} otherwise.
+#' @details Requires HDF5 file locking (HDF5 >= 1.12 recommended). The
+#'   function sets \code{HDF5_USE_FILE_LOCKING=TRUE} for the process.
+#' @examples
+#' \dontrun{
+#' if (bdIsFileLocked("data.h5")) stop("File in use")
+#' }
+#' @export
+bdIsLocked_hdf5 <- function(filename) {
+    .Call('_BigDataStatMeth_bdIsLocked_hdf5', PACKAGE = 'BigDataStatMeth', filename)
 }
 
 #' Get HDF5 Dataset Dimensions
