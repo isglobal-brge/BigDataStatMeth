@@ -111,7 +111,6 @@
                  if (j == std::string::npos) break;
                  i = j + 1;
              }
-             
          }
          
          delete objFile; objFile = nullptr;

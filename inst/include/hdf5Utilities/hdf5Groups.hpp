@@ -58,13 +58,17 @@ public:
     hdf5Group(H5::H5File* file, std::string group) : 
     hdf5File(file)
     {
-        Rcpp::Rcout<<"\nPassa per 2";
-        if( pfile != nullptr ){
-            openFile("rw");
-            groupname = group;
-        } else {
-            Rf_error("c++ exception Please create or close the file before proceeding");
-        }
+        // Rcpp::Rcout<<"\nPassa per 2";
+        
+        if (pfile == nullptr) openFile("rw");  //..2025/08/13..// 
+        groupname = group;          //..2025/08/13..// 
+        
+        //..2025/08/13..// if( pfile != nullptr ){
+        //..2025/08/13..//     openFile("rw");
+        //..2025/08/13..//     groupname = group;
+        //..2025/08/13..// } else {
+        //..2025/08/13..//     Rf_error("c++ exception Please create or close the file before proceeding");
+        //..2025/08/13..// }
     }
     
     /**
