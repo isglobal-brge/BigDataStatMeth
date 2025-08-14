@@ -1213,10 +1213,16 @@ public:
      * @brief Destructor
      * @details Closes the dataset and releases resources
      */
-    virtual ~hdf5Dataset(){
-        if(pdataset){
-            pdataset->close();
-        }
+    virtual ~hdf5Dataset() noexcept {
+        try {
+            if (pdataset) {
+                pdataset->close();
+                #ifdef OWNS_PDATASET
+                    delete pdataset;
+                #endif
+                pdataset = nullptr;
+            }
+        } catch (...) {}
     }
     
     
