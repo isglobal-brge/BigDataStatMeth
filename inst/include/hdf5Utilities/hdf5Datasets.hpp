@@ -164,7 +164,7 @@ public:
                     if(bRemoved == true) {
                         writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDatasetinFile[0], dimDatasetinFile[1]) ));
                     }
-                } else if( type == "numeric" || type == "real") {
+                } else if( type == "numeric" || type == "real" || type == "dataframe") {
                     H5::IntType datatype( H5::PredType::NATIVE_DOUBLE ); 
                     pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace ));
                     if(bRemoved == true) {
@@ -425,6 +425,7 @@ public:
                 hsize_t nrowRObject = Rcpp::as<Rcpp::NumericMatrix>(DatasetValues).nrow();
                 
                 if( (nrowRObject == dimDataset[1] && ncolRObject == dimDataset[0]) || ncolRObject == 1 || nrowRObject == 1 ) {
+                    
                     if( nrowRObject * ncolRObject > dimDataset[0] * dimDataset[1]) {
                         Rcpp::Rcout<<"\n Data you are trying to write is bigger than existing hdf5 dataset size\n";
                         return void();
@@ -452,6 +453,7 @@ public:
                     std::vector<double> vectHiCValues = Rcpp::as<std::vector<double> >(DatasetValues);
                     pdataset->write( vectHiCValues.data() , H5::PredType::NATIVE_DOUBLE);
                 } 
+                
                 dataspace.close();
             } else if(Rcpp::is<Rcpp::StringVector >(DatasetValues) || Rcpp::is<Rcpp::StringMatrix >(DatasetValues)) {
                 
@@ -481,6 +483,7 @@ public:
             close_dataset_file();
             Rf_error("c++ exception writeDataset (Data TypeIException)");
         }
+        
         return void();
     }
     

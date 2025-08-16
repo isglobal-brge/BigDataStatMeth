@@ -94,7 +94,6 @@ void bdCreate_hdf5_matrix(std::string filename,
             Rf_error("c++ exception bdCreate_hdf5_matrix - Data matrix must exsits and mustn't be null");
             return void();
         }
-            
         
         dims = BigDataStatMeth::getObjectDims(object, strdatatype);
         
@@ -108,13 +107,22 @@ void bdCreate_hdf5_matrix(std::string filename,
             }
             
             objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforceDataset );
-            
             if( bunlimited == false){
                 objDataset->createDataset(dims[0], dims[1], strdatatype);
             } else{
                 objDataset->createUnlimitedDataset(dims[0], dims[1], strdatatype);
             }
-            objDataset->writeDataset(object); 
+            
+            if(Rf_inherits(object, "data.frame")){
+                SEXP mat = Rcpp::Language("as.matrix", object).eval();
+                if ( Rf_isMatrix(mat) ){
+                    objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(mat));
+                } else{
+                    Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
+                }
+            } else{
+                objDataset->writeDataset(object); 
+            }
             
             Rcpp::List dimnames = object.attr( "dimnames" );
             
@@ -139,7 +147,6 @@ void bdCreate_hdf5_matrix(std::string filename,
                 } else {
                     dsdims->writeDimnames( svrows, svrcols);
                 }
-                
             }
             
             delete dsdims; dsdims = nullptr;
