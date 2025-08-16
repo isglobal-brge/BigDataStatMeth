@@ -2880,6 +2880,49 @@ bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, ve
     invisible(.Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, paral, threads, overwrite))
 }
 
+#' Write dimnames to an HDF5 dataset
+#'
+#' @description
+#' Write row and/or column names metadata for an existing dataset in an
+#' HDF5 file. Empty vectors skip the corresponding dimnames.
+#'
+#' @param filename Character string. Path to the HDF5 file.
+#' @param group Character string. Group containing the dataset.
+#' @param dataset Character string. Dataset name inside \code{group}.
+#' @param rownames Character vector of row names. Use \code{character(0)}
+#'   to skip writing row names. If provided, length must equal nrow.
+#' @param colnames Character vector of column names. Use
+#'   \code{character(0)} to skip writing column names. If provided,
+#'   length must equal ncol.
+#'
+#' @details
+#' The dataset \code{group/dataset} must already exist. When non-empty,
+#' \code{rownames} and \code{colnames} lengths are validated against the
+#' dataset dimensions.
+#'
+#' @return No return value, called for side effects (metadata write).
+#'
+#' @examples
+#' \dontrun{
+#' bdWrite_hdf5_dimnames(
+#'   filename = "test.h5",
+#'   group = "MGCCA_IN",
+#'   dataset = "X",
+#'   rownames = paste0("r", seq_len(100)),
+#'   colnames = paste0("c", seq_len(50))
+#' )
+#'
+#' # Skip column names:
+#' bdWrite_hdf5_dimnames("test.h5", "MGCCA_IN", "X",
+#'                       rownames = paste0("r", 1:100),
+#'                       colnames = character(0))
+#' }
+#'
+#' @export
+bdWrite_hdf5_dimnames <- function(filename, group, dataset, rownames, colnames) {
+    invisible(.Call('_BigDataStatMeth_bdWrite_hdf5_dimnames', PACKAGE = 'BigDataStatMeth', filename, group, dataset, rownames, colnames))
+}
+
 #' Block-Based Matrix Multiplication
 #'
 #' @description

@@ -645,6 +645,20 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// bdWrite_hdf5_dimnames
+void bdWrite_hdf5_dimnames(std::string filename, std::string group, std::string dataset, Rcpp::StringVector rownames, Rcpp::StringVector colnames);
+RcppExport SEXP _BigDataStatMeth_bdWrite_hdf5_dimnames(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP rownamesSEXP, SEXP colnamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type rownames(rownamesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type colnames(colnamesSEXP);
+    bdWrite_hdf5_dimnames(filename, group, dataset, rownames, colnames);
+    return R_NilValue;
+END_RCPP
+}
 // bdblockMult
 Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<bool> byBlocks, Rcpp::Nullable<int> threads);
 RcppExport SEXP _BigDataStatMeth_bdblockMult(SEXP ASEXP, SEXP BSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP byBlocksSEXP, SEXP threadsSEXP) {
@@ -781,6 +795,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdSplit_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSplit_matrix_hdf5, 9},
     {"_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5, 5},
     {"_BigDataStatMeth_bdcomputeMatrixVector_hdf5", (DL_FUNC) &_BigDataStatMeth_bdcomputeMatrixVector_hdf5, 12},
+    {"_BigDataStatMeth_bdWrite_hdf5_dimnames", (DL_FUNC) &_BigDataStatMeth_bdWrite_hdf5_dimnames, 5},
     {"_BigDataStatMeth_bdblockMult", (DL_FUNC) &_BigDataStatMeth_bdblockMult, 6},
     {"_BigDataStatMeth_bdblockSubstract", (DL_FUNC) &_BigDataStatMeth_bdblockSubstract, 6},
     {"_BigDataStatMeth_bdblockSum", (DL_FUNC) &_BigDataStatMeth_bdblockSum, 6},
