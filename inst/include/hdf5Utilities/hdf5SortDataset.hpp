@@ -121,20 +121,18 @@ namespace BigDataStatMeth {
             for( int i = 0; i < blockedSortlist.length(); i++) {
                 
                 Rcpp::DataFrame df(blockedSortlist[i]);
-                std::vector<double> order = df[1];
-                std::vector<double> neworder = df[3];
-                std::vector<double> diagonal = df[2];
+                std::vector<double> order = df[0];
+                std::vector<double> neworder = df[2];
+                std::vector<double> diagonal = df[1];
                 
                 auto indices_0 = find_all(diagonal.begin(), diagonal.end(), 0);
                 
                 if( indices_0.size() > 0) {
-                    
                     // for(int t=0; t<indices_0.size(); t++){
                     //     Rcpp::Rcout<<"Indices val : " <<&indices_0[t]<<"\n";    
                     // }
                     
                 } else {
-                    
                     if( oper.findName( func ) == 0 ) {
                         offset[0] = order[0] - 1;
                         count[0] = order.size();

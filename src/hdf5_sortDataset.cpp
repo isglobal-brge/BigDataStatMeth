@@ -219,7 +219,6 @@ void bdSort_hdf5_dataset( std::string filename, std::string group,
             Rcpp::DataFrame df(blockedSortlist[i]);
             nrows = nrows + df.nrow();
         } 
-        
         dsOut = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, outdataset, boverwrite);
         dsOut->createDataset( ncols, nrows, "real");
         
