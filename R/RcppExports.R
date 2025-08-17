@@ -2482,14 +2482,14 @@ bdRemoveMAF_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf
 #' TCGA-OR-A5J4 TCGA-OR-A5J4     4        4        1
 #'
 #' Block 2 (reordering with new identifiers):
-#'                       chr order newOrder
+#'                       chr order newOrder Diagonal
 #' TCGA-OR-A5J5 TCGA-OR-A5JA    10        5        1
 #' TCGA-OR-A5J6 TCGA-OR-A5JB    11        6        1
 #' TCGA-OR-A5J7 TCGA-OR-A5JC    12        7        0
 #' TCGA-OR-A5J8 TCGA-OR-A5JD    13        8        1
 #'
 #' Block 3 (reordering with identifier swaps):
-#'                       chr order newOrder
+#'                       chr order newOrder Diagonal
 #' TCGA-OR-A5J9 TCGA-OR-A5J5     5        9        1
 #' TCGA-OR-A5JA TCGA-OR-A5J6     6       10        1
 #' TCGA-OR-A5JB TCGA-OR-A5J7     7       11        1
