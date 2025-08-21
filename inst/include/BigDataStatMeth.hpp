@@ -246,6 +246,7 @@
     #include "hdf5Algebra/matrixSvdBlock.hpp"
     #include "hdf5Algebra/matrixSvd.hpp"
     #include "hdf5Algebra/matrixPCA.hpp"
+    #include "hdf5Algebra/matrixEigenDecomposition.hpp"
     
     
     #include "hdf5Algebra/multiplicationSparse.hpp"

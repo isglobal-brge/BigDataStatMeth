@@ -22,7 +22,7 @@ License: MIT + file LICENSE
 Depends: R (>= 3.6.0)
 Imports: data.table, Rcpp (>= 1.0.6), RCurl,
         rhdf5, utils
-LinkingTo: Rcpp, RcppEigen, Rhdf5lib, RSpectra, BH
+LinkingTo: Rcpp, RcppEigen, Rhdf5lib, BH
 Suggests: HDF5Array, Matrix, BiocStyle, knitr, rmarkdown,
         ggplot2, microbenchmark
 SystemRequirements: GNU make, C++17

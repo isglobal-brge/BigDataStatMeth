@@ -131,9 +131,9 @@ public:
             bool bInUse = bFileExists ? lockedByOtherProcess() : false;
             
             
-            if(bFileExists) {
-                bFileOpened = isHDF5FileOpen();
-            }
+            // if(bFileExists) {
+            //     bFileOpened = isHDF5FileOpen();
+            // }
             
             // if(!bFileOpened) {
             if( !bFileExists || ( bFileExists && boverwrite) ) {

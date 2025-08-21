@@ -294,13 +294,21 @@ void bdapply_Function_hdf5( std::string filename,
                     
                     if(nrows == ncols) {
                         
-                        BigDataStatMeth::hdf5DatasetInternal* dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
+                        std::string strOutdataset = outgroup + "/" +  Rcpp::as<std::string>(datasets(i));
+                        //..// BigDataStatMeth::hdf5DatasetInternal* dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
+                        BigDataStatMeth::hdf5DatasetInternal* dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, bforce);
                         dsOut->createDataset(nrows, ncols, "real");
                         
                         if(oper(oper.findName( func )) == 3 ) {
-                            BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA, dsOut, bfullMatrix, dElementsBlock, threads);    
+                            if( dsOut->getDatasetptr() != nullptr ) {
+                                Rcpp::Rcout<<"\nAbans inv Cholesky";
+                                BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA, dsOut, bfullMatrix, dElementsBlock, threads);    
+                                Rcpp::Rcout<<"\nDesprès inv Cholesky";
+                            }
+                            
                         } else {
-                            int res [[maybe_unused]] = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
+                            int res = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
+                            //..// int res [[maybe_unused]] = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
                         }
                         
                         delete dsA; dsA = nullptr;

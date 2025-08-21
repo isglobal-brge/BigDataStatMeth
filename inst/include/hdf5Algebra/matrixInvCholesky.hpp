@@ -213,7 +213,6 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                              stride = {1,1},
                              block = {1,1};
         
-        
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
             minimumBlockSize = dimensionSize * 2;
@@ -224,9 +223,14 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
         // Poso el codi per llegir els blocks aquí i desprès a dins hauria d'anar-hi la j
         if( idim0 == idim1)
         {
+            
             while ( readedRows < dimensionSize ) {
                 
                 rowstoRead = ( -2 * readedRows - 1 + std::sqrt( pow(2*readedRows, 2) - 4 * readedRows + 8 * minimumBlockSize + 1) ) / 2;
+                
+                if (rowstoRead <= 0) {
+                    rowstoRead = minimumBlockSize; // Minimum progress to avoid infinite loop
+                }
                 
                 if( readedRows + rowstoRead > idim0) { // Max size bigger than data to read ?
                     rowstoRead = idim0 - readedRows;
@@ -308,6 +312,7 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
             throw std::range_error("non-conformable arguments");
         }
         
+        
     } catch( H5::FileIException& error ) { 
         checkClose_file(inDataset, outDataset);
         inDataset = outDataset = nullptr;
@@ -358,7 +363,6 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                              stride = {1,1},
                              block = {1,1};
 
-        
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
             minimumBlockSize = dimensionSize * 2;
@@ -370,11 +374,16 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
         // Set the new diagonal in the result matrix
         setDiagonalMatrix( InOutDataset, Rcpp::wrap(Diagonal.cwiseInverse()) );
         
+        
         if( idim0 == idim1) {
             
             while ( readedCols < dimensionSize ) {
                 
                 colstoRead = ( -2 * readedCols - 1 + std::sqrt( pow(2*readedCols, 2) - 4 * readedCols + 8 * minimumBlockSize + 1) ) / 2;
+                
+                if (colstoRead <= 0) {
+                    colstoRead = minimumBlockSize; // Minimum progress to avoid infinite loop
+                }
                 
                 if( readedCols + colstoRead > idim0) { // Max size bigger than data to read ?
                     colstoRead = idim0 - readedCols;
@@ -441,7 +450,6 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                 }
                 
                 InOutDataset->writeDatasetBlock( Rcpp::wrap(verticalData), offset, count, stride, block, false);
-                
                 readedCols = readedCols + colstoRead; // Ho preparem perquè desprès necessitarem llegir a partir de la línea anterior
                 
             }
@@ -513,7 +521,26 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
         {
             while ( readedCols < dimensionSize ) {
                 
-                colstoRead = ( -2 * readedCols - 1 + std::sqrt( pow(2*readedCols, 2) - 4 * readedCols + 8 * minimumBlockSize + 1) ) / 2;
+                // Set minimum elements in block - prevent overflow and optimize for any matrix size
+                minimumBlockSize = std::min(static_cast<long>(dElementsBlock), static_cast<long>(std::max(2000L, dimensionSize * 2L)));
+                
+                // Adaptive block size calculation for any matrix dimensions
+                // Target: ~50MB blocks for optimal cache usage and memory efficiency
+                const int targetElements = 6250000; // ~50MB / 8 bytes per double
+                const int minCols = std::max(1, std::min(16, dimensionSize / 100)); // 1-16 or 1% of matrix
+                const int maxCols = std::min(dimensionSize, static_cast<int>(std::sqrt(targetElements / dimensionSize))); // Cache-friendly limit
+                
+                colstoRead = std::max(minCols, std::min(maxCols, (dimensionSize - readedCols + 2) / 3));
+                
+                // Ensure we don't exceed remaining columns
+                colstoRead = std::min(colstoRead, dimensionSize - readedCols);
+                
+                // Final safety check
+                if (colstoRead <= 0) colstoRead = 1;
+                
+                
+                
+                // colstoRead = ( -2 * readedCols - 1 + std::sqrt( pow(2*readedCols, 2) - 4 * readedCols + 8 * minimumBlockSize + 1) ) / 2;
                 if(colstoRead ==1) {
                     colstoRead = 2;
                 }

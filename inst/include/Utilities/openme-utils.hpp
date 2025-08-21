@@ -286,7 +286,7 @@ inline SEXP getDTthreads_R(SEXP verbose) {
         }
         
         if(threads.isNotNull()) {
-            if (Rcpp::as<int> (threads) <= ithreads){
+            if (Rcpp::as<int> (threads) <= (int)ithreads){
                 ithreads = Rcpp::as<int> (threads);
             }
         } else {

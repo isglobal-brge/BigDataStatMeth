@@ -1365,6 +1365,148 @@ bdCreate_hdf5_group <- function(filename, group) {
     invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_group', PACKAGE = 'BigDataStatMeth', filename, group))
 }
 
+#' Create hdf5 data file and write data to it
+#'
+#' Creates a hdf5 file with numerical data matrix,
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param object numerical data matrix
+#' @param group, character array indicating folder name to put the matrix in hdf5 file
+#' @param dataset, character array indicating the dataset name to store the matix data
+#' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
+#' @param overwriteFile, optional boolean by default overwriteFile = false, if true and file exists, removes old file and creates a new file with de dataset data.
+#' @param overwriteDataset, optional boolean by default overwriteDataset = false,  if true and dataset exists, removes old dataset and creates a new dataset.
+#' @param unlimited, optional boolean by default unlimited = false, if true creates a dataset that can growth.
+#' @return none
+#' 
+#' @examples
+#' 
+#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#'                     object = matA, group = "datasets", 
+#'                     dataset = "datasetA", transp = FALSE, 
+#'                     overwriteFile = TRUE, 
+#'                     overwriteDataset = TRUE,
+#'                     unlimited = FALSE)
+#' 
+#' # Remove file (used as example)
+#'   if (file.exists("test_temp.hdf5")) {
+#'     # Delete file if it exist
+#'     file.remove("test_temp.hdf5")
+#'   }
+#' 
+#' @export
+bdCreate_hdf5_matrix <- function(filename, object, group = NULL, dataset = NULL, transp = NULL, overwriteFile = NULL, overwriteDataset = NULL, unlimited = NULL) {
+    invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_matrix', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp, overwriteFile, overwriteDataset, unlimited))
+}
+
+#' Eigenvalue Decomposition for HDF5-Stored Matrices using Spectra
+#'
+#' @description
+#' Computes the eigenvalue decomposition of a large matrix stored in an HDF5 file using
+#' the Spectra library. This provides consistent results with the RSpectra package and
+#' can handle both symmetric and non-symmetric matrices.
+#' 
+#' @details
+#' This function uses the Spectra library (same as RSpectra) for eigenvalue computation,
+#' ensuring consistent results. Key features include:
+#' * Automatic detection of symmetric vs non-symmetric matrices
+#' * Support for both real and complex eigenvalues/eigenvectors
+#' * Memory-efficient block-based processing for large matrices
+#' * Parallel processing support
+#' * Various eigenvalue selection criteria
+#' * Consistent interface with RSpectra::eigs()
+#'
+#' The implementation automatically:
+#' * Detects matrix symmetry and uses appropriate solver (SymEigsSolver vs GenEigsSolver)
+#' * Handles complex eigenvalues for non-symmetric matrices
+#' * Saves imaginary parts separately when non-zero
+#' * Provides the same results as RSpectra::eigs() function
+#'
+#' @param filename Character string. Path to the HDF5 file containing the input matrix.
+#' @param group Character string. Path to the group containing the input dataset.
+#' @param dataset Character string. Name of the input dataset to decompose.
+#' @param k Integer. Number of eigenvalues to compute (default = 6, following Spectra convention).
+#' @param which Character string. Which eigenvalues to compute (default = "LM"):
+#'   * "LM": Largest magnitude
+#'   * "SM": Smallest magnitude  
+#'   * "LR": Largest real part (non-symmetric matrices)
+#'   * "SR": Smallest real part (non-symmetric matrices)
+#'   * "LI": Largest imaginary part (non-symmetric matrices)
+#'   * "SI": Smallest imaginary part (non-symmetric matrices)
+#'   * "LA": Largest algebraic (symmetric matrices)
+#'   * "SA": Smallest algebraic (symmetric matrices)
+#' @param ncv Integer. Number of Arnoldi vectors (default = 0, auto-selected as max(2*k+1, 20)).
+#' @param bcenter Logical. If TRUE, centers the data by subtracting column means (default = FALSE).
+#' @param bscale Logical. If TRUE, scales the centered columns by their standard deviations (default = FALSE).
+#' @param tolerance Numeric. Convergence tolerance for Spectra algorithms (default = 1e-10).
+#' @param max_iter Integer. Maximum number of iterations for Spectra algorithms (default = 1000).
+#' @param compute_vectors Logical. If TRUE (default), computes both eigenvalues and eigenvectors.
+#' @param overwrite Logical. If TRUE, allows overwriting existing results (default = FALSE).
+#' @param threads Integer. Number of threads for parallel computation (default = NULL, uses available cores).
+#'
+#' @return A list with the following elements:
+#' \describe{
+#'   \item{fn}{Path to the HDF5 file}
+#'   \item{values}{Path to the dataset containing eigenvalues (real part)}
+#'   \item{vectors}{Path to the dataset containing eigenvectors (real part)}
+#'   \item{values_imag}{Path to the dataset containing eigenvalues (imaginary part, if non-zero)}
+#'   \item{vectors_imag}{Path to the dataset containing eigenvectors (imaginary part, if non-zero)}
+#'   \item{is_symmetric}{Logical indicating if the matrix was detected as symmetric}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' library(rhdf5)
+#' library(RSpectra)
+#' 
+#' # Create a sample matrix (can be non-symmetric)
+#' set.seed(123)
+#' A <- matrix(rnorm(2500), 50, 50)
+#' 
+#' fn <- "test_eigen.hdf5"
+#' bdCreate_hdf5_matrix_file(filename = fn, object = A, group = "data", dataset = "matrix")
+#'
+#' # Compute eigendecomposition with BigDataStatMeth
+#' res <- bdEigen_hdf5(fn, "data", "matrix", k = 6, which = "LM")
+#'
+#' # Compare with RSpectra (should give same results)
+#' rspectra_result <- eigs(A, k = 6, which = "LM")
+#' 
+#' # Extract results from HDF5
+#' eigenvals_bd <- h5read(res$fn, res$values)
+#' eigenvecs_bd <- h5read(res$fn, res$vectors)
+#' 
+#' # Compare eigenvalues (should be identical)
+#' all.equal(eigenvals_bd, Re(rspectra_result$values), tolerance = 1e-12)
+#' 
+#' # For non-symmetric matrices, check imaginary parts
+#' if (!is.null(res$values_imag)) {
+#'   eigenvals_imag <- h5read(res$fn, res$values_imag)
+#'   all.equal(eigenvals_imag, Im(rspectra_result$values), tolerance = 1e-12)
+#' }
+#' 
+#' # Remove file
+#' if (file.exists(fn)) {
+#'   file.remove(fn)
+#' }
+#' }
+#'
+#' @references
+#' * Qiu, Y., & Mei, J. (2022). RSpectra: Solvers for Large-Scale Eigenvalue and SVD Problems.
+#' * Li, R. (2021). Spectra: C++ Library For Large Scale Eigenvalue Problems.
+#'
+#' @seealso
+#' * \code{\link{bdSVD_hdf5}} for Singular Value Decomposition
+#' * \code{\link{bdPCA_hdf5}} for Principal Component Analysis
+#' * \code{RSpectra::eigs} for the R equivalent function
+#'
+#' @export
+bdEigen_hdf5 <- function(filename, group = NULL, dataset = NULL, k = NULL, which = NULL, ncv = NULL, bcenter = NULL, bscale = NULL, tolerance = NULL, max_iter = NULL, compute_vectors = NULL, overwrite = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdEigen_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, k, which, ncv, bcenter, bscale, tolerance, max_iter, compute_vectors, overwrite, threads)
+}
+
 #' Test whether an HDF5 file is locked (in use)
 #'
 #' @description
@@ -1519,6 +1661,44 @@ bdgetDim_hdf5 <- function(filename, dataset) {
 #' @export
 bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
     .Call('_BigDataStatMeth_bdgetDatasetsList_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, prefix)
+}
+
+#' Check Matrix Suitability for Eigenvalue Decomposition with Spectra
+#'
+#' @description
+#' Checks whether a matrix stored in HDF5 format is suitable for eigenvalue decomposition
+#' using Spectra. The function verifies that the matrix is square and optionally checks
+#' for symmetry to recommend the best solver type.
+#'
+#' @param filename Character string. Path to the HDF5 file containing the matrix.
+#' @param group Character string. Path to the group containing the dataset.
+#' @param dataset Character string. Name of the dataset to check.
+#' @param check_symmetry Logical. Whether to check if the matrix is symmetric (default = TRUE).
+#' @param tolerance Numeric. Tolerance for symmetry checking (default = 1e-12).
+#' @param sample_size Integer. Number of elements to sample for large matrices (default = 1000).
+#'
+#' @return A list with matrix properties and suitability assessment.
+#'
+#' @examples
+#' \dontrun{
+#' # Check matrix suitability
+#' check_result <- bdEigen_check_matrix("data.h5", "matrices", "my_matrix")
+#' 
+#' if (check_result$suitable_for_eigen) {
+#'   # Use appropriate solver based on recommendation
+#'   if (check_result$recommended_solver == "symmetric") {
+#'     result <- bdEigen_hdf5("data.h5", "matrices", "my_matrix", which = "LA")
+#'   } else {
+#'     result <- bdEigen_hdf5("data.h5", "matrices", "my_matrix", which = "LM")
+#'   }
+#' } else {
+#'   cat("Matrix is not suitable for eigendecomposition\n")
+#' }
+#' }
+#'
+#' @export
+bdCheckMatrix_hdf5 <- function(filename, group = NULL, dataset = NULL, check_symmetry = NULL, tolerance = NULL, sample_size = NULL) {
+    .Call('_BigDataStatMeth_bdCheckMatrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, check_symmetry, tolerance, sample_size)
 }
 
 #' Import Text File to HDF5
@@ -3230,6 +3410,30 @@ bdCrossprod <- function(A, B = NULL, transposed = NULL, block_size = NULL, paral
     .Call('_BigDataStatMeth_bdCrossprod', PACKAGE = 'BigDataStatMeth', A, B, transposed, block_size, paral, threads)
 }
 
+#' Matrix–scalar weighted product
+#'
+#' @description
+#' Multiplies a numeric matrix \code{A} by a scalar weight \code{w},
+#' returning \eqn{w * A}. The input must be a base R numeric matrix (or
+#' convertible to one). 
+#'
+#' @param A Numeric matrix (or object convertible to a dense numeric matrix).
+#' @param w Numeric scalar weight.
+#'
+#' @return A numeric matrix with the same dimensions as \code{A}.
+#'
+#' @examples
+#' set.seed(1234)
+#' n <- 5; p <- 3
+#' X <- matrix(rnorm(n * p), n, p)
+#' w <- 0.75
+#' bdScalarwproduct(X, w)
+#'
+#' @export
+bdScalarwproduct <- function(A, w) {
+    .Call('_BigDataStatMeth_bdScalarwproduct', PACKAGE = 'BigDataStatMeth', A, w)
+}
+
 #' Efficient Matrix Transposed Cross-Product Computation
 #'
 #' @description
@@ -3305,38 +3509,44 @@ bdtCrossprod <- function(A, B = NULL, transposed = NULL, block_size = NULL, para
     .Call('_BigDataStatMeth_bdtCrossprod', PACKAGE = 'BigDataStatMeth', A, B, transposed, block_size, paral, threads)
 }
 
-#' Create hdf5 data file and write data to it
+#' Weighted matrix–vector products and cross-products
 #'
-#' Creates a hdf5 file with numerical data matrix,
-#' 
-#' @param filename, character array indicating the name of the file to create
-#' @param object numerical data matrix
-#' @param group, character array indicating folder name to put the matrix in hdf5 file
-#' @param dataset, character array indicating the dataset name to store the matix data
-#' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
-#' @param overwriteFile, optional boolean by default overwriteFile = false, if true and file exists, removes old file and creates a new file with de dataset data.
-#' @param overwriteDataset, optional boolean by default overwriteDataset = false,  if true and dataset exists, removes old dataset and creates a new dataset.
-#' @param unlimited, optional boolean by default unlimited = false, if true creates a dataset that can growth.
-#' @return none
-#' 
+#' @description
+#' Compute weighted operations using a diagonal weight from \code{w}:
+#' \itemize{
+#' \item \code{"xtwx"}: \eqn{X' diag(w) X}  (row weights; \code{length(w) = nrow(X)})
+#' \item \code{"xwxt"}: \eqn{X diag(w) X'}  (column weights; \code{length(w) = ncol(X)})
+#' \item \code{"xw"}  : \eqn{X diag(w)}     (column scaling; \code{length(w) = ncol(X)})
+#' \item \code{"wx"}  : \eqn{diag(w) X}     (row scaling;    \code{length(w) = nrow(X)})
+#' }
+#' Inputs may be base numeric matrices .
+#'
+#' @param X Numeric matrix (n x p).
+#' @param w Numeric weight vector (length \code{n} or \code{p}), or a 1D matrix coerced to a vector.
+#' @param op Character string (case-insensitive): one of
+#'   \code{"XtwX"/"xtwx"}, \code{"XwXt"/"xwxt"}, \code{"Xw"/"xw"}, \code{"wX"/"wx"}.
+#'
+#' @return Numeric matrix with dimensions depending on \code{op}:
+#' \code{p x p} for \code{"xtwx"}, \code{n x n} for \code{"xwxt"}, and \code{n x p} for \code{"xw"}/\code{"wx"}.
+#'
+#' @details
+#' \code{w} is interpreted as the diagonal of a weight matrix; its required length depends on the operation:
+#' rows for \code{"xtwx"} and \code{"wx"}, columns for \code{"xwxt"} and \code{"xw"}.
+#'
 #' @examples
-#' 
-#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-#'                     object = matA, group = "datasets", 
-#'                     dataset = "datasetA", transp = FALSE, 
-#'                     overwriteFile = TRUE, 
-#'                     overwriteDataset = TRUE,
-#'                     unlimited = FALSE)
-#' 
-#' # Remove file (used as example)
-#'   if (file.exists("test_temp.hdf5")) {
-#'     # Delete file if it exist
-#'     file.remove("test_temp.hdf5")
-#'   }
-#' 
+#' set.seed(1)
+#' n <- 10; p <- 5
+#' X <- matrix(rnorm(n * p), n, p)
+#' u <- runif(n); w <- u * (1 - u)
+#' bd_wproduct(X, w, "xtwx")  # p x p
+#' bd_wproduct(X, w, "wx")    # n x p (row scaling)
+#'
+#' v <- runif(p)
+#' bd_wproduct(X, v, "xw")    # n x p (col scaling)
+#' bd_wproduct(X, v, "xwxt")  # n x n
+#'
 #' @export
-bdCreate_hdf5_matrix <- function(filename, object, group = NULL, dataset = NULL, transp = NULL, overwriteFile = NULL, overwriteDataset = NULL, unlimited = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_matrix', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp, overwriteFile, overwriteDataset, unlimited))
+bd_wproduct <- function(X, w, op) {
+    .Call('_BigDataStatMeth_bd_wproduct', PACKAGE = 'BigDataStatMeth', X, w, op)
 }
 
