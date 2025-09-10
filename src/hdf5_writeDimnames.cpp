@@ -97,22 +97,18 @@ void bdWrite_hdf5_dimnames( std::string filename,
          
          // if(dimnames.size()>0 ) {
              
-        Rcpp::Rcout<<"\nDimensions: "<< dims[0] <<" x "<<dims[1];
          dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
          
          
          if( rownames.size() < dims[1]){
-             Rcpp::Rcout<<"\nHme entrat dins if";
              Rcpp::CharacterVector svrownames(1);
              // dsdims->writeDimnames( Rcpp::wrap(svrownames), Rcpp::wrap(colnames));
              dsdims->writeDimnames( Rcpp::wrap(colnames), Rcpp::wrap(svrownames) );
          } else if(colnames.size() < dims[0]){
-             Rcpp::Rcout<<"\nHme entrat dins elseif";
              Rcpp::CharacterVector svrcolnames(1);
              // dsdims->writeDimnames( rownames, svrcolnames);
              dsdims->writeDimnames( svrcolnames, rownames );
          } else {
-             Rcpp::Rcout<<"\nHme entrat dins else";
              // dsdims->writeDimnames( rownames, colnames);
              dsdims->writeDimnames( colnames, rownames);
          }

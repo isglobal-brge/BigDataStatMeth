@@ -401,11 +401,11 @@ void bdapply_Function_hdf5( std::string filename,
                     
                     if( bbyrows == false) {
                         datanormal = Eigen::MatrixXd::Zero( 2, (int)dims_out[0]);
-                        get_HDF5_mean_sd_by_column( dsA, datanormal, R_NilValue );
+                        get_HDF5_mean_sd_by_column( dsA, datanormal, true, true, R_NilValue );
                         
                     } else {
                         datanormal = Eigen::MatrixXd::Zero( 2, (int)dims_out[1]);
-                        get_HDF5_mean_sd_by_row( dsA, datanormal, R_NilValue );
+                        get_HDF5_mean_sd_by_row( dsA, datanormal, true, true, R_NilValue );
                         
                     }
                     

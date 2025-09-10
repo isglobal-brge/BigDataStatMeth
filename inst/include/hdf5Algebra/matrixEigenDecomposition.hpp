@@ -29,7 +29,37 @@
 
 
 namespace BigDataStatMeth {
-
+    
+    /**
+     * @brief Convert 'which' string to Spectra SortRule for symmetric matrices
+     * @param which String indicating which eigenvalues to compute
+     * @return Corresponding Spectra SortRule for symmetric eigenproblems
+     */
+    inline Spectra::SortRule getSymmetricSortRule(const std::string& which) {
+        if (which == "LA") return Spectra::SortRule::LargestAlge;
+        if (which == "SA") return Spectra::SortRule::SmallestAlge;
+        if (which == "LM") return Spectra::SortRule::LargestMagn;
+        if (which == "SM") return Spectra::SortRule::SmallestMagn;
+        // Default to largest magnitude for symmetric matrices
+        return Spectra::SortRule::LargestMagn;
+    }
+    
+    /**
+     * @brief Convert 'which' string to Spectra SortRule for general matrices
+     * @param which String indicating which eigenvalues to compute
+     * @return Corresponding Spectra SortRule for general eigenproblems
+     */
+    inline Spectra::SortRule getGeneralSortRule(const std::string& which) {
+        if (which == "LM") return Spectra::SortRule::LargestMagn;
+        if (which == "SM") return Spectra::SortRule::SmallestMagn;
+        if (which == "LR") return Spectra::SortRule::LargestReal;
+        if (which == "SR") return Spectra::SortRule::SmallestReal;
+        if (which == "LI") return Spectra::SortRule::LargestImag;
+        if (which == "SI") return Spectra::SortRule::SmallestImag;
+        // Default to largest magnitude for general matrices
+        return Spectra::SortRule::LargestMagn;
+    }
+    
     /**
      * @brief Validate and adjust Spectra parameters for convergence
      * @param n Matrix size
@@ -60,18 +90,68 @@ namespace BigDataStatMeth {
     }
     
     /**
+     * @brief Improved matrix symmetry detection for big-omics data
+     * @param X Input matrix to check for symmetry
+     * @param sample_size Number of elements to sample for symmetry check (default 100)
+     * @return True if matrix is approximately symmetric within tolerance
+     * @note Optimized for large biological matrices with potential noise
+     */
+    inline bool isMatrixSymmetric(const Eigen::MatrixXd& X, int sample_size = 100) {
+        if (X.rows() != X.cols()) return false;
+        
+        int n = X.rows();
+        if (n <= 3) return true; // Too small to meaningfully check
+        
+        // For small matrices, check all elements
+        if (n <= 50) {
+            double max_diff = (X - X.transpose()).cwiseAbs().maxCoeff();
+            double matrix_scale = X.cwiseAbs().maxCoeff();
+            return max_diff <= 1e-12 * std::max(1.0, matrix_scale);
+        }
+        
+        // For large matrices, use optimized sampling with vectorized operations
+        sample_size = std::min(sample_size, n * n / 4);
+        
+        // Sample diagonal and off-diagonal elements efficiently
+        Eigen::VectorXd diffs(sample_size);
+        int count = 0;
+        
+        // Random sampling with good coverage
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, n - 1);
+        
+        for (int s = 0; s < sample_size && count < sample_size; ++s) {
+            int i = dis(gen);
+            int j = dis(gen);
+            if (i != j) {
+                diffs(count++) = std::abs(X(i, j) - X(j, i));
+            }
+        }
+        
+        if (count == 0) return true;
+        
+        // Use vectorized operations to compute statistics
+        double max_diff = diffs.head(count).maxCoeff();
+        double matrix_scale = X.cwiseAbs().maxCoeff();
+        double tolerance = 1e-12 * std::max(1.0, matrix_scale);
+        
+        return max_diff <= tolerance;
+    }
+    
+    /**
      * @brief Structure to hold eigendecomposition results
      * @details Similar to svdeig structure used in SVD, this structure holds
      * the results of eigenvalue decomposition for consistent interface.
      */
     struct eigdecomp {
         Eigen::VectorXd eigenvalues_real;      /**< Real part of eigenvalues */
-        Eigen::VectorXd eigenvalues_imag;      /**< Imaginary part of eigenvalues */
-        Eigen::MatrixXd eigenvectors_real;     /**< Real part of eigenvectors */
-        Eigen::MatrixXd eigenvectors_imag;     /**< Imaginary part of eigenvectors */
-        bool bcomputevectors = true;           /**< Whether eigenvectors were computed */
-        bool bconv = false;                    /**< Convergence status */
-        bool is_symmetric = false;             /**< Whether input matrix was symmetric */
+    Eigen::VectorXd eigenvalues_imag;      /**< Imaginary part of eigenvalues */
+    Eigen::MatrixXd eigenvectors_real;     /**< Real part of eigenvectors */
+    Eigen::MatrixXd eigenvectors_imag;     /**< Imaginary part of eigenvectors */
+    bool bcomputevectors = true;           /**< Whether eigenvectors were computed */
+    bool bconv = false;                    /**< Convergence status */
+    bool is_symmetric = false;             /**< Whether input matrix was symmetric */
     };
     
     /**
@@ -82,17 +162,21 @@ namespace BigDataStatMeth {
      * 
      * @param X Input matrix
      * @param k Number of eigenvalues to compute
-     * @param ncv Number of Arnoldi vectors (if 0, uses k+1)
+     * @param which Which eigenvalues to compute (LM, SM, LR, SR, LI, SI, LA, SA)
+     * @param ncv Number of Arnoldi vectors (if 0, uses auto-selection)
      * @param bcenter Whether to center the data
      * @param bscale Whether to scale the data
+     * @param tol Convergence tolerance for Spectra
+     * @param max_iter Maximum iterations for Spectra
      * 
      * @return eigdecomp structure containing results
      * 
      * @note This follows the same pattern as RcppbdSVD in matrixSvd.hpp
      * @note Updated for Spectra 1.0.1 API compatibility
      */
-    inline eigdecomp RcppbdEigen_spectra(const Eigen::MatrixXd& X, int k, int ncv = 0,
-                                         bool bcenter = false, bool bscale = false) {
+    inline eigdecomp RcppbdEigen_spectra(const Eigen::MatrixXd& X, int k, const std::string& which = "LM", 
+                                         int ncv = 0, bool bcenter = false, bool bscale = false,
+                                         double tol = 1e-10, int max_iter = 1000) {
         
         eigdecomp reteig;
         Eigen::MatrixXd nX;
@@ -109,16 +193,8 @@ namespace BigDataStatMeth {
             // Better parameter selection following RSpectra defaults
             std::tie(k, ncv) = validateSpectraParams(n, k, ncv);
             
-            // Check if matrix is approximately symmetric
-            double max_asymmetry = 0.0;
-            int check_size = std::min(20, n);
-            for (int i = 0; i < check_size; ++i) {
-                for (int j = i + 1; j < check_size; ++j) {
-                    max_asymmetry = std::max(max_asymmetry, std::abs(X(i,j) - X(j,i)));
-                }
-            }
-            
-            reteig.is_symmetric = (max_asymmetry < 1e-12);
+            // Improved symmetry detection
+            reteig.is_symmetric = isMatrixSymmetric(X);
             
             if (reteig.is_symmetric) {
                 // Use symmetric solver - following SVD pattern
@@ -131,20 +207,21 @@ namespace BigDataStatMeth {
                 }
                 
                 Spectra::DenseSymMatProd<double> op(Xcp);
-                // Updated for Spectra 1.0.1: removed template parameters, pass object by reference
                 Spectra::SymEigsSolver<Spectra::DenseSymMatProd<double>> eigs(op, k, ncv);
                 
-                // Initialize and compute
+                // // Set tolerance and max iterations
+                // eigs.set_max_iter(max_iter);
+                
+                // Initialize and compute with appropriate sort rule
                 eigs.init();
-                // Updated for Spectra 1.0.1: SortRule as runtime parameter from local Spectra
-                nconv = eigs.compute(Spectra::SortRule::LargestAlge);
+                Spectra::SortRule sort_rule = getSymmetricSortRule(which);
+                nconv = eigs.compute(sort_rule, max_iter, tol);
                 
                 // Retrieve results
-                // Updated for Spectra 1.0.1: enum class for status check from local Spectra
                 if (eigs.info() == Spectra::CompInfo::Successful) {
-                    reteig.eigenvalues_real = eigs.eigenvalues().reverse();  // Largest first
+                    reteig.eigenvalues_real = eigs.eigenvalues();
                     reteig.eigenvalues_imag = Eigen::VectorXd::Zero(k);
-                    reteig.eigenvectors_real = eigs.eigenvectors().rowwise().reverse();
+                    reteig.eigenvectors_real = eigs.eigenvectors();
                     reteig.eigenvectors_imag = Eigen::MatrixXd::Zero(n, k);
                     reteig.bconv = true;
                 } else {
@@ -162,16 +239,17 @@ namespace BigDataStatMeth {
                 }
                 
                 Spectra::DenseGenMatProd<double> op(Xcp);
-                // Updated for Spectra 1.0.1: removed template parameters, pass object by reference
                 Spectra::GenEigsSolver<Spectra::DenseGenMatProd<double>> eigs(op, k, ncv);
                 
-                // Initialize and compute
+                // // Set tolerance and max iterations
+                // eigs.set_max_iter(max_iter);
+                
+                // Initialize and compute with appropriate sort rule
                 eigs.init();
-                // Updated for Spectra 1.0.1: SortRule as runtime parameter from local Spectra
-                nconv = eigs.compute(Spectra::SortRule::LargestMagn);
+                Spectra::SortRule sort_rule = getGeneralSortRule(which);
+                nconv = eigs.compute(sort_rule, max_iter, tol);
                 
                 // Retrieve results
-                // Updated for Spectra 1.0.1: enum class for status check from local Spectra
                 if (eigs.info() == Spectra::CompInfo::Successful) {
                     Eigen::VectorXcd eigenvals = eigs.eigenvalues();
                     Eigen::MatrixXcd eigenvecs = eigs.eigenvectors();
@@ -209,22 +287,28 @@ namespace BigDataStatMeth {
      * @param dsd Output hdf5Dataset for eigenvalues
      * @param dsu Output hdf5Dataset for eigenvectors  
      * @param k Number of eigenvalues to compute
+     * @param which Which eigenvalues to compute
+     * @param ncv Number of Arnoldi vectors
      * @param bcenter Whether to center the data
      * @param bscale Whether to scale the data
+     * @param tol Convergence tolerance
+     * @param max_iter Maximum iterations
+     * @param compute_vectors Whether to compute eigenvectors
      * @param threads Number of parallel threads
      * 
      * @throws H5::FileIException for HDF5 file operation errors
      * @throws H5::DataSetIException for HDF5 dataset operation errors
      * @throws std::exception for computation errors
      * 
-     * @note Updated for Spectra 1.0.1 compatibility
+     * @note Updated for Spectra 1.0.1 compatibility with improved parameter handling
      */
     template <class T>
     inline void RcppbdEigen_hdf5_Block(T* dsA, 
                                        BigDataStatMeth::hdf5Dataset* dsd,
                                        BigDataStatMeth::hdf5Dataset* dsu, 
-                                       int k, bool bcenter, bool bscale,
-                                       Rcpp::Nullable<int> threads = R_NilValue) {
+                                       int k, const std::string& which, int ncv,
+                                       bool bcenter, bool bscale, double tol, int max_iter,
+                                       bool compute_vectors, Rcpp::Nullable<int> threads = R_NilValue) {
         
         static_assert(std::is_same<T*, BigDataStatMeth::hdf5Dataset*>::value ||
                       std::is_same<T*, BigDataStatMeth::hdf5DatasetInternal*>::value,
@@ -250,8 +334,7 @@ namespace BigDataStatMeth {
             hsize_t n = n_rows;
             
             // Use parameter validation function
-            int ncv = 0; 
-            std::tie(k, ncv) = validateSpectraParams((int)n, k, 0);
+            std::tie(k, ncv) = validateSpectraParams((int)n, k, ncv);
             
             // Read matrix data
             Eigen::MatrixXd X;
@@ -275,7 +358,7 @@ namespace BigDataStatMeth {
             }
             
             // Use Spectra for eigendecomposition - same pattern as SVD
-            reteig = RcppbdEigen_spectra(X, k, ncv, false, false);
+            reteig = RcppbdEigen_spectra(X, k, which, ncv, false, false, tol, max_iter);
             
             if (!reteig.bconv) {
                 Rf_error("Eigendecomposition failed to converge");
@@ -287,7 +370,7 @@ namespace BigDataStatMeth {
             dsd->writeDataset(Rcpp::wrap(reteig.eigenvalues_real));
             
             // Write eigenvectors to HDF5 if computed
-            if (reteig.bcomputevectors) {
+            if (compute_vectors && reteig.bcomputevectors) {
                 dsu->createDataset(reteig.eigenvectors_real.rows(), reteig.eigenvectors_real.cols(), "real");
                 dsu->writeDataset(Rcpp::wrap(reteig.eigenvectors_real));
             }
@@ -302,7 +385,7 @@ namespace BigDataStatMeth {
                 dsd_imag->writeDataset(Rcpp::wrap(reteig.eigenvalues_imag));
                 delete dsd_imag;
                 
-                if (reteig.bcomputevectors && reteig.eigenvectors_imag.cwiseAbs().maxCoeff() > 1e-14) {
+                if (compute_vectors && reteig.bcomputevectors && reteig.eigenvectors_imag.cwiseAbs().maxCoeff() > 1e-14) {
                     BigDataStatMeth::hdf5Dataset* dsu_imag = new BigDataStatMeth::hdf5Dataset(
                         dsA->getFileName(), "EIGEN/" + dsA->getDatasetName(), "vectors_imag", true);
                     dsu_imag->createDataset(reteig.eigenvectors_imag.rows(), reteig.eigenvectors_imag.cols(), "real");
@@ -345,6 +428,8 @@ namespace BigDataStatMeth {
      * @param strsubgroup Group path within the HDF5 file
      * @param strdataset Dataset name containing the matrix
      * @param k Number of eigenvalues to compute (0 = auto-select based on matrix size)
+     * @param which Which eigenvalues to compute (LM, SM, LR, SR, LI, SI, LA, SA)
+     * @param ncv Number of Arnoldi vectors (0 = auto-select)
      * @param bcenter Whether to center the data before decomposition
      * @param bscale Whether to scale the data before decomposition
      * @param tolerance Convergence tolerance for Spectra algorithms
@@ -358,14 +443,15 @@ namespace BigDataStatMeth {
      * @throws std::exception for computation errors
      * 
      * @note Results are written to HDF5 datasets under "EIGEN/<dataset_name>/"
-     *       - eigenvalues (real): "EIGEN/<dataset_name>/d"
-     *       - eigenvalues (imag): "EIGEN/<dataset_name>/d_imag" (if non-zero)
-     *       - eigenvectors (real): "EIGEN/<dataset_name>/u"
-     *       - eigenvectors (imag): "EIGEN/<dataset_name>/u_imag" (if non-zero)
-     * @note Updated for Spectra 1.0.1 compatibility
+     *       - eigenvalues (real): "EIGEN/<dataset_name>/values"
+     *       - eigenvalues (imag): "EIGEN/<dataset_name>/values_imag" (if non-zero)
+     *       - eigenvectors (real): "EIGEN/<dataset_name>/vectors"
+     *       - eigenvectors (imag): "EIGEN/<dataset_name>/vectors_imag" (if non-zero)
+     * @note Updated for Spectra 1.0.1 compatibility with enhanced parameter handling
      */
     inline void RcppbdEigen_hdf5(std::string filename, std::string strsubgroup, std::string strdataset,
-                                 int k = 0, bool bcenter = false, bool bscale = false,
+                                 int k = 0, const std::string& which = "LM", int ncv = 0,
+                                 bool bcenter = false, bool bscale = false,
                                  double tolerance = 1e-10, int max_iter = 1000, 
                                  bool compute_vectors = true, bool bforce = false,
                                  Rcpp::Nullable<int> threads = R_NilValue) {
@@ -398,8 +484,7 @@ namespace BigDataStatMeth {
                 hsize_t n = dims_out[0];
                 
                 // Use parameter validation function
-                int ncv = 0; 
-                std::tie(k, ncv) = validateSpectraParams((int)n, k, 0);
+                std::tie(k, ncv) = validateSpectraParams((int)n, k, ncv);
                 
                 // Create output datasets
                 dsd = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "values", bforce);
@@ -419,7 +504,7 @@ namespace BigDataStatMeth {
                     X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(
                         vdA.data(), count[0], count[1]);
                     
-                    reteig = RcppbdEigen_spectra(X, k, ncv, bcenter, bscale);
+                    reteig = RcppbdEigen_spectra(X, k, which, ncv, bcenter, bscale, tolerance, max_iter);
                     
                     if (!reteig.bconv) {
                         Rf_error("Eigendecomposition failed to converge");
@@ -429,7 +514,7 @@ namespace BigDataStatMeth {
                     // Write real eigenvalues
                     dsd->createDataset(1, reteig.eigenvalues_real.size(), "real");
                     dsd->writeDataset(Rcpp::wrap(reteig.eigenvalues_real));
-
+                    
                     // Write real eigenvectors if computed
                     if (compute_vectors && reteig.bcomputevectors) {
                         dsu->createDataset(reteig.eigenvectors_real.rows(), reteig.eigenvectors_real.cols(), "real");
@@ -455,7 +540,7 @@ namespace BigDataStatMeth {
                 } else {
                     // Large matrices => Block-based approach with Spectra  
                     if (dsA->getDatasetptr() != nullptr) {
-                        RcppbdEigen_hdf5_Block(dsA, dsd, dsu, k, bcenter, bscale, threads);
+                        RcppbdEigen_hdf5_Block(dsA, dsd, dsu, k, which, ncv, bcenter, bscale, tolerance, max_iter, compute_vectors, threads);
                     }
                 }
             }

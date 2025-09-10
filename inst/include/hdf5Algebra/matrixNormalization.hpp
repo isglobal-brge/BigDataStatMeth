@@ -37,9 +37,6 @@
 #define BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
 
 
-#include <RcppEigen.h>
-#include "H5Cpp.h"
-
 namespace BigDataStatMeth {
 
 
@@ -426,10 +423,10 @@ namespace BigDataStatMeth {
             // Define blocksize atending number of elements in rows and cols
             if( bbyrows == false) {
                 datanormal = Eigen::MatrixXd::Zero( 2, nrows);
-                get_HDF5_mean_sd_by_column( dsA, datanormal, wsize);
+                get_HDF5_mean_sd_by_column( dsA, datanormal, true, true, wsize);
             } else {
                 datanormal = Eigen::MatrixXd::Zero( 2, ncols);
-                get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
+                get_HDF5_mean_sd_by_row( dsA, datanormal, true, true, wsize);
             }
             
             dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout, strdatasetmean, true);
@@ -510,10 +507,10 @@ namespace BigDataStatMeth {
             // Define blocksize atending number of elements in rows and cols
             if( bbyrows == false) {
                 datanormal = Eigen::MatrixXd::Zero(2,nrows);
-                get_HDF5_mean_sd_by_column( dsA, datanormal, wsize);
+                get_HDF5_mean_sd_by_column( dsA, datanormal, true, true, wsize);
             } else {
                 datanormal = Eigen::MatrixXd::Zero(2,ncols);
-                get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
+                get_HDF5_mean_sd_by_row( dsA, datanormal, true, true, wsize);
             }
             
             dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout_ms, strdatasetmean, true);

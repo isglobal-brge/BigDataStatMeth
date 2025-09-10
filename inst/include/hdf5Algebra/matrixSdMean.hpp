@@ -85,7 +85,10 @@ inline hsize_t get_block_size( Rcpp::Nullable<int> wsize, hsize_t reference_size
  * @param normalize Output matrix for mean and std values
  * @param wsize Block size for processing
  */
-inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, Eigen::MatrixXd& normalize, Rcpp::Nullable<int> wsize )
+inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, 
+                                     Eigen::MatrixXd& normalize, 
+                                     bool bsd, bool bmean, 
+                                     Rcpp::Nullable<int> wsize )
 {
     
     try
@@ -127,10 +130,14 @@ inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, Eigen::M
             Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdA.data(), count[0], count[1] );
 
             Eigen::RowVectorXd mean = X.colwise().mean();
-            Eigen::RowVectorXd sd = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
-            
             normalize.block( 0, offset[1], 1, mean.size()) = mean;
-            normalize.block( 1, offset[1], 1, sd.size()) = sd;
+            
+            if(bsd){
+                Eigen::RowVectorXd sd = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+                normalize.block( 1, offset[1], 1, sd.size()) = sd;
+            }
+            
+            
             
             offset[1] = offset[1] + block_size;
 
@@ -161,9 +168,14 @@ inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA, Eigen::M
  * 
  * @param dsA Input matrix dataset
  * @param normalize Output matrix for mean and std values
+ * @param bsd compute sd
+ * @param bmean compute mean
  * @param wsize Block size for processing
  */
-inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA, Eigen::MatrixXd& normalize, Rcpp::Nullable<int> wsize )
+inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA,
+                                        Eigen::MatrixXd& normalize, 
+                                        bool bsd, bool bmean, 
+                                        Rcpp::Nullable<int> wsize )
 {
     
     // IntegerVector dims_out = get_HDF5_dataset_size(*dataset);
@@ -203,10 +215,12 @@ inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA, Eigen
             Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdA.data(), count[0], count[1] );
 
             Eigen::VectorXd mean = X.rowwise().mean();
-            Eigen::VectorXd sd = ((X.colwise() - mean).array().square().rowwise().sum() / (X.cols() - 1)).sqrt();
-
             normalize.block( 0, offset[0], 1, mean.size()) = mean.transpose();
-            normalize.block( 1, offset[0], 1, sd.size()) = sd.transpose();
+            
+            if(bsd) {
+                Eigen::VectorXd sd = ((X.colwise() - mean).array().square().rowwise().sum() / (X.cols() - 1)).sqrt();
+                normalize.block( 1, offset[0], 1, sd.size()) = sd.transpose();
+            }
             
             offset[0] = offset[0] + block_size;
 

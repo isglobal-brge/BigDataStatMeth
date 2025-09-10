@@ -8,9 +8,12 @@ bdgetSDandMean_hdf5(
   filename,
   group,
   dataset,
+  outgroup,
+  outdataset,
   sd = NULL,
   mean = NULL,
   byrows = NULL,
+  onmemory = NULL,
   wsize = NULL,
   overwrite = FALSE
 )
@@ -22,6 +25,12 @@ bdgetSDandMean_hdf5(
 
 \item{dataset}{Character string. Name of the dataset to analyze.}
 
+\item{outgroup}{Character string, custom output group name
+(default: mean_sd)}
+
+\item{outdataset}{Character string, custom correlation dataset
+name (default: mean.dataset_original_name and sd.dataset_original_name)}
+
 \item{sd}{Logical (optional). Whether to compute standard deviation.
 Default is TRUE.}
 
@@ -29,6 +38,10 @@ Default is TRUE.}
 
 \item{byrows}{Logical (optional). Whether to compute by rows (TRUE) or
 columns (FALSE). Default is FALSE.}
+
+\item{onmemory}{logical (default = FALSE). If TRUE, results are kept in
+memory and returned as a matrix; nothing is written to disk. If FALSE,
+results are written to disk.}
 
 \item{wsize}{Integer (optional). Block size for processing. Default is 1000.}
 

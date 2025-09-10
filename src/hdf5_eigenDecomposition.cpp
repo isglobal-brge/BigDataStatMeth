@@ -208,11 +208,11 @@
              return lst_return;
          }
          
-         // Call the main eigendecomposition function (simplified for old Spectra version)
+         // Call the main eigendecomposition function with all parameters
          BigDataStatMeth::RcppbdEigen_hdf5(str_filename, 
                                            Rcpp::as<std::string>(strgroup), 
                                            Rcpp::as<std::string>(strdataset), 
-                                           ks, bcent, bscal, 
+                                           ks, which_str, ncvs, bcent, bscal, 
                                            tol, max_iters, bcompute_vecs, bforce, threads);
          
          // Set return values
@@ -230,19 +230,19 @@
              objFile = new BigDataStatMeth::hdf5File(str_filename, false);
              objFile->openFile("r");
              
-             if( objFile->getFileptr()!=nullptr && BigDataStatMeth::exists_HDF5_element( objFile->getFileptr(), "values_imag")) {
+             if( objFile->getFileptr()!=nullptr && BigDataStatMeth::exists_HDF5_element( objFile->getFileptr(), "EIGEN/" + Rcpp::as<std::string>(strdataset) + "/values_imag")) {
                  lst_return["values_imag"] = "EIGEN/" + Rcpp::as<std::string>(strdataset) + "/values_imag";
              }
              
              if (bcompute_vecs) {
-                 if( objFile->getFileptr()!=nullptr && BigDataStatMeth::exists_HDF5_element( objFile->getFileptr(), "values_imag")){
-                    lst_return["vectors_imag"] = "EIGEN/" + Rcpp::as<std::string>(strdataset) + "/vectors_imag";
+                 if( objFile->getFileptr()!=nullptr && BigDataStatMeth::exists_HDF5_element( objFile->getFileptr(), "EIGEN/" + Rcpp::as<std::string>(strdataset) + "/vectors_imag")){
+                     lst_return["vectors_imag"] = "EIGEN/" + Rcpp::as<std::string>(strdataset) + "/vectors_imag";
                  }
              }
              delete objFile; objFile = nullptr;
              
          } catch (...) {
-             // d_imag doesn't exist, matrix was symmetric
+             // imag datasets don't exist, matrix was symmetric
          }
          
          // Determine if matrix was symmetric based on existence of imaginary parts
@@ -262,4 +262,3 @@
      
      return lst_return;
  }
- 

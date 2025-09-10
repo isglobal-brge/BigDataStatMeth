@@ -42,11 +42,19 @@
     // Common headers
     #include "H5Cpp.h" //1.8.18
     #include <iostream>
+    #include <sstream>
     #include <boost/algorithm/string.hpp>
     #include <fstream>
     #include <sys/stat.h>
     #include <string>
     #include <regex>
+    #include <algorithm>
+    #include <vector>
+    #include <cmath>
+    #include <numeric>
+    #include <random>
+
+
     
     // Common headers - multi-threading
     #include <thread>
@@ -260,6 +268,7 @@
     #include "hdf5Algebra/matrixPseudoinverse.hpp"
     
     #include "hdf5Algebra/crossprod.hpp"
+    #include "hdf5Algebra/matrixCorrelation.hpp"
     
     
 // =============================================================================
@@ -270,6 +279,8 @@
     #include "hdf5Utilities/hdf5ReduceDataset.hpp"
     #include "hdf5Utilities/hdf5SortDataset.hpp"
     #include "hdf5Utilities/hdf5ApplytoDatasets.hpp"
+    // #include "hdf5Utilities/hdf5MoveDatasets.hpp"
+    
 
 
 // =============================================================================

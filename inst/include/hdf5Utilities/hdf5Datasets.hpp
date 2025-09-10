@@ -179,6 +179,7 @@ public:
             dataspace.close();
             
             addAttribute( "internal", Rcpp::wrap("0") );
+            addAttribute( "type", Rcpp::wrap(type) );
             
         } catch(H5::FileIException& error) { 
             close_file();
@@ -347,10 +348,10 @@ public:
             
         } catch(H5::FileIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception extend_HDF5_matrix_subset_ptr (File IException)");
+            Rf_error("c++ exception extendUnlimitedDataset (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception extend_HDF5_matrix_subset_ptr (DataSet IException)");
+            Rf_error("c++ exception extendUnlimitedDataset (DataSet IException)");
         }
         return void();
     }
@@ -373,8 +374,23 @@ public:
                     if ((pdataset == NULL) == TRUE) {
                         pdataset = new H5::DataSet(pfile->openDataSet(fullPath));    
                     }
+                    
+                    try {
+                        H5T_class_t type_class = pdataset->getTypeClass();
+                        if (type_class == H5T_INTEGER || type_class == H5T_FLOAT) {
+                            type = "real";
+                        } else if (type_class == H5T_STRING) {
+                            type = "string";
+                        } else {
+                            type = "unknown";
+                        }
+                    } catch (const H5::Exception& e) {
+                        type = "unknown";
+                    }
+                    
                     getDimensExistingDataset();
                     getAttribute("internal");
+                    
                 } else {
                     close_file();
                     // std::cerr<<"\nc++ exception, please create Dataset before proceed\n";
@@ -883,6 +899,218 @@ public:
     }
     
 
+    /**
+     * @brief Create subset dataset with selected rows/columns (memory efficient)
+     * @details Creates a new dataset containing only the specified rows or columns
+     * using HDF5's hyperslab selection for direct disk-to-disk copy without loading
+     * data into memory. Ideal for big datasets.
+     * 
+     * @param indices Vector of row/column indices to include (0-based)
+     * @param select_rows If true, selects rows; if false, selects columns
+     * @param new_group Target group for the new dataset (default: same group)
+     * @param new_name Name for the new dataset (default: original_name + "_subset")
+     * 
+     * @since 0.99.0
+     */
+    virtual void createSubsetDataset(const std::vector<int>& indices, 
+                                     bool select_rows = true,
+                                     const std::string& new_group = "",
+                                     const std::string& new_name = "")
+    {
+        try {
+            H5::Exception::dontPrint();
+            
+            if (!pdataset || indices.empty()) {
+                Rf_error("Dataset not open or indices empty");
+                return void();
+            }
+            
+            // Get dimensions from R perspective (siguiendo lógica de la clase)
+            hsize_t rows_from_r = nrows_r();  // dimDatasetinFile[1] - filas como las ve R
+            hsize_t cols_from_r = ncols_r();  // dimDatasetinFile[0] - columnas como las ve R
+            
+            // Get actual file dimensions for hyperslab operations
+            hsize_t file_rows = nrows_file();  // dimDatasetinFile[0]
+            hsize_t file_cols = ncols_file();  // dimDatasetinFile[1]
+            
+            // Validate indices against R perspective
+            hsize_t max_index = select_rows ? rows_from_r : cols_from_r;
+            for (int idx : indices) {
+                if (idx < 0 || idx >= max_index) {
+                    Rf_error("Index %d out of bounds", idx);
+                    return void();
+                }
+            }
+            
+            // Set target group and name
+            std::string target_group = new_group.empty() ? groupname : new_group;
+            std::string target_name = new_name.empty() ? name + "_subset" : new_name;
+            
+            // Calculate new dimensions from R perspective
+            hsize_t new_rows_r = select_rows ? indices.size() : rows_from_r;
+            hsize_t new_cols_r = select_rows ? cols_from_r : indices.size();
+            
+            // Create destination dataset (usando dimensiones como las espera R)
+            BigDataStatMeth::hdf5Dataset dest_dataset(pfile, target_group, target_name, true);
+            dest_dataset.createDataset(new_rows_r, new_cols_r, type);
+            
+            // Get source and destination dataspaces
+            H5::DataSpace src_space = pdataset->getSpace();
+            H5::DataSpace dest_space = dest_dataset.getDatasetptr()->getSpace();
+            
+            if (select_rows) {
+                // Usuario quiere filas de R = columnas en archivo HDF5
+                for (size_t i = 0; i < indices.size(); ++i) {
+                    // Select source column in file (filas de R son columnas en archivo)
+                    hsize_t src_offset[2] = {0, static_cast<hsize_t>(indices[i])};
+                    hsize_t count[2] = {file_rows, 1};
+                    src_space.selectHyperslab(H5S_SELECT_SET, count, src_offset);
+                    // Select destination column
+                    hsize_t dest_offset[2] = {0, i};
+                    dest_space.selectHyperslab(H5S_SELECT_SET, count, dest_offset);
+                    // Create memory space and copy
+                    H5::DataSpace mem_space(2, count);
+                    std::vector<double> buffer(file_rows);
+                    pdataset->read(buffer.data(), H5::PredType::NATIVE_DOUBLE, mem_space, src_space);
+                    dest_dataset.getDatasetptr()->write(buffer.data(), H5::PredType::NATIVE_DOUBLE, mem_space, dest_space);
+                }
+            } else {
+                // Usuario quiere columnas de R = filas en archivo HDF5
+                for (size_t i = 0; i < indices.size(); ++i) {
+                    // Select source row in file (columnas de R son filas en archivo)
+                    hsize_t src_offset[2] = {static_cast<hsize_t>(indices[i]), 0};
+                    hsize_t count[2] = {1, file_cols};
+                    src_space.selectHyperslab(H5S_SELECT_SET, count, src_offset);
+                    
+                    // Select destination row
+                    hsize_t dest_offset[2] = {i, 0};
+                    dest_space.selectHyperslab(H5S_SELECT_SET, count, dest_offset);
+                    
+                    // Create memory space and copy
+                    H5::DataSpace mem_space(2, count);
+                    std::vector<double> buffer(file_cols);
+                    pdataset->read(buffer.data(), H5::PredType::NATIVE_DOUBLE, mem_space, src_space);
+                    dest_dataset.getDatasetptr()->write(buffer.data(), H5::PredType::NATIVE_DOUBLE, mem_space, dest_space);
+                }
+            }
+            
+            // Rcpp::Rcout << "Created subset dataset: " << target_group << "/" << target_name 
+            //             << " (" << new_rows_r << "x" << new_cols_r << " from R perspective)" << std::endl;
+            
+        } catch (H5::DataSetIException& error) {
+            close_dataset_file();
+            Rf_error("c++ exception createSubsetDataset (DataSet IException)");
+        }
+        
+        return void();
+    }
+    // virtual void createSubsetDataset(const std::vector<int>& indices, 
+    //                                  bool select_rows = true,
+    //                                  const std::string& new_group = "",
+    //                                  const std::string& new_name = "")
+    // {
+    //     
+    //     BigDataStatMeth::hdf5Dataset* dest_dataset = nullptr;
+    //     try {
+    //         H5::Exception::dontPrint();
+    //         
+    //         if (!pdataset || indices.empty()) {
+    //             Rf_error("Dataset not open or indices empty");
+    //             return void();
+    //         }
+    //         
+    //         // Get current dimensions
+    //         hsize_t current_rows = nrows_file();
+    //         hsize_t current_cols = ncols_file();
+    //         
+    //         // Validate indices
+    //         hsize_t max_index = select_rows ? current_rows : current_cols;
+    //         for (int idx : indices) {
+    //             if (idx < 0 || idx >= max_index) {
+    //                 Rf_error("Index %d out of bounds", idx);
+    //                 return void();
+    //             }
+    //         }
+    //         Rcpp::Rcout<<"\n substet - 01\n";
+    //         // Set target group and name
+    //         std::string target_group = new_group.empty() ? groupname : new_group;
+    //         std::string target_name = new_name.empty() ? name + "_subset" : new_name;
+    //         
+    //         // Calculate new dimensions
+    //         hsize_t new_rows = select_rows ? indices.size() : current_rows;
+    //         hsize_t new_cols = select_rows ? current_cols : indices.size();
+    //         
+    //         // Create destination dataset
+    //         dest_dataset = new BigDataStatMeth::hdf5Dataset(pfile, target_group, target_name, true);
+    //         dest_dataset->createDataset(new_rows, new_cols, "real");
+    //         dest_dataset->openDataset();
+    //         Rcpp::Rcout<<"\n substet - 02\n";
+    //         // Get source and destination dataspaces
+    //         H5::DataSpace src_space = pdataset->getSpace();
+    //         H5::DataSpace dest_space = dest_dataset->getDatasetptr()->getSpace();
+    //         Rcpp::Rcout<<"\n substet - 03\n";
+    //         if (select_rows) {
+    //             Rcpp::Rcout<<"\n substet - 04\n";
+    //             // Copy selected rows
+    //             for (size_t i = 0; i < indices.size(); ++i) {
+    //                 // Select source row
+    //                 hsize_t src_offset[2] = {static_cast<hsize_t>(indices[i]), 0};
+    //                 hsize_t count[2] = {1, current_cols};
+    //                 src_space.selectHyperslab(H5S_SELECT_SET, count, src_offset);
+    //                 
+    //                 // Select destination row
+    //                 hsize_t dest_offset[2] = {i, 0};
+    //                 dest_space.selectHyperslab(H5S_SELECT_SET, count, dest_offset);
+    //                 
+    //                 // Create memory space for one row
+    //                 H5::DataSpace mem_space(2, count);
+    //                 
+    //                 // Direct copy: source -> memory -> destination
+    //                 std::vector<double> row_buffer(current_cols);
+    //                 pdataset->read(row_buffer.data(), H5::PredType::NATIVE_DOUBLE, mem_space, src_space);
+    //                 dest_dataset->getDatasetptr()->write(row_buffer.data(), H5::PredType::NATIVE_DOUBLE, mem_space, dest_space);
+    //             }
+    //             Rcpp::Rcout<<"\n substet - 05\n";
+    //         } else {
+    //             Rcpp::Rcout<<"\n substet - 04b\n";
+    //             // Copy selected columnsc
+    //             for (size_t i = 0; i < indices.size(); ++i) {
+    //                 // Select source column
+    //                 hsize_t src_offset[2] = {0, static_cast<hsize_t>(indices[i])};
+    //                 hsize_t count[2] = {current_rows, 1};
+    //                 src_space.selectHyperslab(H5S_SELECT_SET, count, src_offset);
+    //                 
+    //                 // Select destination column
+    //                 hsize_t dest_offset[2] = {0, i};
+    //                 dest_space.selectHyperslab(H5S_SELECT_SET, count, dest_offset);
+    //                 
+    //                 // Create memory space for one column
+    //                 H5::DataSpace mem_space(2, count);
+    //                 
+    //                 // Direct copy: source -> memory -> destination
+    //                 std::vector<double> col_buffer(current_rows);
+    //                 pdataset->read(col_buffer.data(), H5::PredType::NATIVE_DOUBLE, mem_space, src_space);
+    //                 dest_dataset->getDatasetptr()->write(col_buffer.data(), H5::PredType::NATIVE_DOUBLE, mem_space, dest_space);
+    //             }
+    //             Rcpp::Rcout<<"\n substet - 05b\n";
+    //         }
+    //         
+    //         Rcpp::Rcout<<"\n substet - 06b\n";
+    //         delete dest_dataset; dest_dataset = nullptr; 
+    //         // Rcpp::Rcout << "Created subset dataset: " << target_group << "/" << target_name 
+    //         //             << " (" << new_rows << "x" << new_cols << ")" << std::endl;
+    //         
+    //     } catch (H5::DataSetIException& error) {
+    //         close_dataset_file();
+    //         Rf_error("c++ exception createSubsetDataset (DataSet IException)");
+    //     }
+    //     Rcpp::Rcout<<"\n substet - 047\n";
+    //     return void();
+    // }
+    
+    
+    
+    
     
     // Read rhdf5 data matrix subset, 
     // input : 
@@ -1066,7 +1294,7 @@ public:
         {
             // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
             H5::Exception::dontPrint();
-            
+
             if(  strAtribute == "internal" && !exists_HDF5_element(pfile, strAtribute)) {
                 internalDataset = false;
             } else {
@@ -1115,6 +1343,188 @@ public:
             close_dataset_file();
             Rf_error("c++ exception getAttribute (Data TypeIException)");
         }
+        return void();
+    }
+    
+    
+    /**
+     * @brief Move dataset to a new location within the HDF5 file
+     * @details Moves the dataset and its associated rownames/colnames datasets to a new
+     * location within the same HDF5 file. The operation also updates the internal class
+     * variables to reflect the new location and reopens the dataset at the new path.
+     * 
+     * Features:
+     * - Moves main dataset using H5Lmove for efficiency
+     * - Automatically moves associated rownames and colnames datasets
+     * - Creates parent groups automatically if they don't exist
+     * - Updates internal class variables (name, groupname)
+     * - Reopens dataset at new location
+     * - Optional overwrite of destination
+     * - Preserves all dataset attributes and properties
+     * 
+     * @param new_path New complete path for the dataset (e.g., "/new_group/new_name")
+     * @param overwrite Whether to overwrite destination if it exists (default: false)
+     * 
+     * @throws H5::Exception if HDF5 operations fail
+     * @throws H5::DataSetIException if dataset operations fail
+     * @throws H5::GroupIException if group operations fail
+     * 
+     * @note The dataset must be currently open
+     * @note Parent groups will be created automatically if they don't exist
+     * @note Associated rownames/colnames datasets are moved to the same new group
+     * @note All internal class variables are updated to reflect the new location
+     * 
+     * @example
+     * ```cpp
+     * dataset.moveDataset("/new_group/renamed_dataset", true);
+     * ```
+     * 
+     * @since 0.99.0
+     */
+    virtual void moveDataset(const std::string& new_path, bool overwrite = false)
+    {
+        try {
+            H5::Exception::dontPrint();
+            
+            // Validate input
+            if (new_path.empty()) {
+                Rf_error("New path cannot be empty");
+                return void();
+            }
+            
+            if (!pdataset) {
+                Rf_error("Dataset is not open");
+                return void();
+            }
+            
+            // Parse new path to extract group and dataset name
+            fullpath newLocation = SplitElementName(new_path);
+            std::string new_group = newLocation.path;
+            std::string new_name = newLocation.filename;
+            
+            // Build current and destination paths
+            std::string current_path = groupname + "/" + name;
+            std::string dest_path = new_group + "/" + new_name;
+            
+            // Check if moving to same location
+            if (current_path == dest_path) {
+                Rcpp::Rcout << "Dataset is already at the specified location" << std::endl;
+                return void();
+            }
+            
+            // Create parent groups if they don't exist
+            if (new_group != "/" && !exists_HDF5_element(pfile, new_group)) {
+                create_HDF5_groups(new_group);
+            }
+            
+            // Check if destination exists
+            bool dest_exists = exists_HDF5_element(pfile, dest_path);
+            
+            if (dest_exists && !overwrite) {
+                Rcpp::Rcout << "Destination dataset already exists: " << dest_path 
+                            << ". Set overwrite = TRUE to replace it." << std::endl;
+                return void();
+            }
+            
+            // Remove destination if it exists and overwrite is true
+            if (dest_exists && overwrite) {
+                // Parse destination path to extract group and element name for remove_elements
+                std::string dest_group = "/";
+                std::string dest_element = dest_path;
+                
+                size_t last_slash = dest_path.find_last_of('/');
+                if (last_slash != std::string::npos && last_slash > 0) {
+                    dest_group = dest_path.substr(0, last_slash);
+                    dest_element = dest_path.substr(last_slash + 1);
+                } else if (last_slash == 0) {
+                    dest_group = "/";
+                    dest_element = dest_path.substr(1);
+                }
+                
+                remove_elements(pfile, dest_group, {dest_element});
+            }
+            
+            // Close current dataset before moving
+            if (pdataset) {
+                pdataset->close();
+                delete pdataset;
+                pdataset = nullptr;
+            }
+            
+            // Get file ID for H5Lmove operations
+            hid_t file_id = pfile->getId();
+            
+            // Move main dataset
+            herr_t move_status = H5Lmove(file_id, current_path.c_str(), 
+                                         file_id, dest_path.c_str(), 
+                                         H5P_DEFAULT, H5P_DEFAULT);
+            
+            if (move_status < 0) {
+                Rf_error("Failed to move dataset from %s to %s", current_path.c_str(), dest_path.c_str());
+                return void();
+            }
+            
+            // Move associated rownames dataset if it exists
+            if (!rownamesDataset.empty()) {
+                std::string current_rownames = groupname + "/" + rownamesDataset;
+                std::string new_rownames = new_group + "/" + rownamesDataset;
+                
+                if (exists_HDF5_element(pfile, current_rownames)) {
+                    herr_t rownames_status = H5Lmove(file_id, current_rownames.c_str(), 
+                                                     file_id, new_rownames.c_str(), 
+                                                     H5P_DEFAULT, H5P_DEFAULT);
+                    if (rownames_status < 0) {
+                        Rcpp::Rcerr << "Warning: Failed to move rownames dataset" << std::endl;
+                    }
+                } else {
+                    Rcpp::Rcout<<"\nNo rownames to move";
+                }
+            }
+            
+            // Move associated colnames dataset if it exists
+            if (!colnamesDataset.empty()) {
+                std::string current_colnames = groupname + "/" + colnamesDataset;
+                std::string new_colnames = new_group + "/" + colnamesDataset;
+                
+                if (exists_HDF5_element(pfile, current_colnames)) {
+                    herr_t colnames_status = H5Lmove(file_id, current_colnames.c_str(), 
+                                                     file_id, new_colnames.c_str(), 
+                                                     H5P_DEFAULT, H5P_DEFAULT);
+                    if (colnames_status < 0) {
+                        Rcpp::Rcerr << "Warning: Failed to move colnames dataset" << std::endl;
+                    }
+                }else {
+                    Rcpp::Rcout<<"\nNo colnames to move";
+                }
+            }
+            
+            // Update internal class variables
+            groupname = new_group;
+            name = new_name;
+            
+            // Reopen dataset at new location
+            pdataset = new H5::DataSet(pfile->openDataSet(dest_path));
+            
+            // Update dimensions in case they need refresh
+            getDimensExistingDataset();
+            
+        } catch (H5::FileIException& error) {
+            close_dataset_file();
+            Rf_error("c++ exception moveDataset (File IException)");
+        } catch (H5::DataSetIException& error) {
+            close_dataset_file();
+            Rf_error("c++ exception moveDataset (DataSet IException)");
+        } catch (H5::GroupIException& error) {
+            close_dataset_file();
+            Rf_error("c++ exception moveDataset (Group IException)");
+        } catch (H5::DataSpaceIException& error) {
+            close_dataset_file();
+            Rf_error("c++ exception moveDataset (DataSpace IException)");
+        } catch (H5::DataTypeIException& error) {
+            close_dataset_file();
+            Rf_error("c++ exception moveDataset (Data TypeIException)");
+        }
+        
         return void();
     }
     
@@ -1208,6 +1618,18 @@ public:
      * @return True if dataset is currently open
      */
     bool isOpen() { return( isDatasetOpen()); } // Return if dataset is open and exists or not
+    
+    /**
+     * @brief Set rownames path inside hdf5 data file
+     * @return void
+     */
+    void setRownamesDatasetPath(std::string fullpath) { rownamesDataset = fullpath; } // set rownames route 
+    
+    /**
+     * @brief Set colnames path inside hdf5 data file
+     * @return void
+     */
+    void setColnamesDatasetPath(std::string fullpath) { colnamesDataset = fullpath; } // set colnames route
     
     
     // Destructor

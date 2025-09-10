@@ -172,10 +172,10 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
          if( dsA->getDatasetptr() != nullptr) {
              if( bbyrows == false) {
                  datanormal = Eigen::MatrixXd::Zero(2,nrows);
-                 get_HDF5_mean_sd_by_column( dsA, datanormal, wsize);
+                 get_HDF5_mean_sd_by_column( dsA, datanormal, true, true, wsize);
              } else {
                  datanormal = Eigen::MatrixXd::Zero(2,ncols);
-                 get_HDF5_mean_sd_by_row( dsA, datanormal, wsize);
+                 get_HDF5_mean_sd_by_row( dsA, datanormal, true, true, wsize);
              }    
          } else {
              checkClose_file(dsA, dsmean, dssd, dsNormal);

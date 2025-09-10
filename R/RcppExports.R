@@ -1947,6 +1947,104 @@ bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = 
     .Call('_BigDataStatMeth_bdInvCholesky_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock)
 }
 
+#' @title Compute correlation matrix for matrices stored in HDF5 format
+#' @description This function computes Pearson or Spearman correlation matrix 
+#' for matrices 
+#' stored in HDF5 format. It automatically detects whether to compute:
+#' \itemize{
+#'   \item Single matrix correlation cor(X) - when only dataset_x is provided
+#'   \item Cross-matrix correlation cor(X,Y) - when both dataset_x and 
+#'   dataset_y are provided
+#' }
+#' It automatically selects between direct computation for small matrices and 
+#' block-wise processing for large matrices to optimize memory usage and 
+#' performance.
+#' 
+#' Correlation types supported:
+#' \itemize{
+#'   \item Single matrix: cor(X) when only dataset_x provided
+#'   \item Single matrix transposed: cor(t(X)) when trans_x=TRUE
+#'   \item Cross-correlation: cor(X,Y) when both datasets provided
+#'   \item Cross with transpose: cor(t(X),Y), cor(X,t(Y)), cor(t(X),t(Y))
+#' }
+#' 
+#' For omics data analysis:
+#' \itemize{
+#'   \item trans_x=FALSE, trans_y=FALSE: Variables vs Variables 
+#'   (genes vs genes, CpGs vs CpGs)
+#'   \item trans_x=TRUE, trans_y=FALSE: Samples vs Variables 
+#'   (individuals vs genes)
+#'   \item trans_x=FALSE, trans_y=TRUE: Variables vs Samples 
+#'   (genes vs individuals)
+#'   \item trans_x=TRUE, trans_y=TRUE: Samples vs Samples 
+#'   (individuals vs individuals) - optimized to cor(X,Y)
+#' }
+#' 
+#' @param filename_x Character string with the path to the HDF5 file containing 
+#' matrix X
+#' @param group_x Character string indicating the group containing matrix X
+#' @param dataset_x Character string indicating the dataset name of matrix X
+#' @param filename_y Character string with the path to the HDF5 file 
+#' containing matrix Y (optional, default: "")
+#' @param group_y Character string indicating the group containing matrix Y 
+#' (optional, default: "")
+#' @param dataset_y Character string indicating the dataset name of matrix Y 
+#' (optional, default: "")
+#' @param trans_x Logical, whether to transpose matrix X (default: FALSE)
+#' @param trans_y Logical, whether to transpose matrix Y (default: FALSE, 
+#' ignored for single matrix)
+#' @param method Character string indicating correlation method 
+#' ("pearson" or "spearman", default: "pearson")
+#' @param use_complete_obs Logical, whether to use only complete observations 
+#' (default: TRUE)
+#' @param compute_pvalues Logical, whether to compute p-values for correlations 
+#' (default: TRUE)
+#' @param block_size Integer, block size for large matrix processing 
+#' (default: 1000)
+#' @param overwrite Logical, whether to overwrite existing results 
+#' (default: FALSE)
+#' @param output_filename Character string, output HDF5 file 
+#' (default: same as filename_x)
+#' @param output_group Character string, custom output group name 
+#' (default: auto-generated)
+#' @param output_dataset_corr Character string, custom correlation dataset 
+#' name (default: "correlation")
+#' @param output_dataset_pval Character string, custom p-values dataset 
+#' name (default: "pvalues")
+#' @param threads Integer, number of threads for parallel computation 
+#' (optional, default: auto)
+#' 
+#' @return A list containing dataset locations and metadata including 
+#' transpose information
+#' 
+#' @examples
+#' \dontrun{
+#' # Backward compatible - existing code works unchanged
+#' result_original <- bdCorr_hdf5("data.h5", "expression", "genes")
+#' 
+#' # New transpose functionality
+#' # Gene-gene correlations (variables)
+#' gene_corr <- bdCorr_hdf5("omics.h5", "expression", "genes", trans_x = FALSE)
+#' 
+#' # Sample-sample correlations (individuals) 
+#' sample_corr <- bdCorr_hdf5("omics.h5", "expression", "genes", trans_x = TRUE)
+#' 
+#' # Cross-correlation: genes vs methylation sites (variables vs variables)
+#' cross_vars <- bdCorr_hdf5("omics.h5", "expression", "genes", 
+#'                          "omics.h5", "methylation", "cpg_sites",
+#'                          trans_x = FALSE, trans_y = FALSE)
+#' 
+#' # Cross-correlation: samples vs methylation sites (samples vs variables)
+#' samples_vs_cpg <- bdCorr_hdf5("omics.h5", "expression", "genes",
+#'                              "omics.h5", "methylation", "cpg_sites", 
+#'                              trans_x = TRUE, trans_y = FALSE)
+#' }
+#' 
+#' @export
+bdCorr_hdf5 <- function(filename_x, group_x, dataset_x, filename_y = "", group_y = "", dataset_y = "", trans_x = FALSE, trans_y = FALSE, method = "pearson", use_complete_obs = TRUE, compute_pvalues = TRUE, block_size = 1000L, overwrite = FALSE, output_filename = "", output_group = "", output_dataset_corr = "", output_dataset_pval = "", threads = -1L) {
+    .Call('_BigDataStatMeth_bdCorr_hdf5', PACKAGE = 'BigDataStatMeth', filename_x, group_x, dataset_x, filename_y, group_y, dataset_y, trans_x, trans_y, method, use_complete_obs, compute_pvalues, block_size, overwrite, output_filename, output_group, output_dataset_corr, output_dataset_pval, threads)
+}
+
 #' Get Matrix Diagonal from HDF5
 #'
 #' @description
@@ -2106,10 +2204,18 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' @param dataset Character string. Name of the dataset to analyze.
 #' @param sd Logical (optional). Whether to compute standard deviation.
 #'   Default is TRUE.
+#' @param outgroup Character string, custom output group name 
+#' (default: mean_sd)
+#' @param outdataset Character string, custom correlation dataset 
+#' name (default: mean.dataset_original_name and sd.dataset_original_name)
+#' @param sd Logical (optional). Whether to compute sd. Default is TRUE.
 #' @param mean Logical (optional). Whether to compute mean. Default is TRUE.
 #' @param byrows Logical (optional). Whether to compute by rows (TRUE) or
 #'   columns (FALSE). Default is FALSE.
 #' @param wsize Integer (optional). Block size for processing. Default is 1000.
+#' @param onmemory logical (default = FALSE). If TRUE, results are kept in
+#' memory and returned as a matrix; nothing is written to disk. If FALSE,
+#'  results are written to disk.
 #' @param overwrite Logical (optional). Whether to overwrite existing results.
 #'   Default is FALSE.
 #'
@@ -2159,8 +2265,84 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
 #'
 #' @export
-bdgetSDandMean_hdf5 <- function(filename, group, dataset, sd = NULL, mean = NULL, byrows = NULL, wsize = NULL, overwrite = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdgetSDandMean_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, sd, mean, byrows, wsize, overwrite))
+bdgetSDandMean_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, sd = NULL, mean = NULL, byrows = NULL, onmemory = NULL, wsize = NULL, overwrite = FALSE) {
+    .Call('_BigDataStatMeth_bdgetSDandMean_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, sd, mean, byrows, onmemory, wsize, overwrite)
+}
+
+#' Move HDF5 Dataset
+#'
+#' @description
+#' Moves an HDF5 dataset from one location to another within the same HDF5 file.
+#' This function automatically handles moving associated rownames and colnames 
+#' datasets, creates parent groups if needed, and updates all internal references.
+#'
+#' @param filename Character string. Path to the HDF5 file
+#' @param source_path Character string. Current path to the dataset (e.g., "/group1/dataset1")
+#' @param dest_path Character string. New path for the dataset (e.g., "/group2/new_name")
+#' @param overwrite Logical. Whether to overwrite destination if it exists (default: FALSE)
+#'
+#' @return Logical. TRUE on success, FALSE on failure
+#'
+#' @details
+#' This function provides a high-level interface for moving datasets within HDF5 files.
+#' The operation is efficient as it uses HDF5's native linking mechanism without 
+#' copying actual data.
+#'
+#' Key features:
+#' \itemize{
+#'   \item Moves main dataset and associated rownames/colnames datasets
+#'   \item Creates parent directory structure automatically
+#'   \item Preserves all dataset attributes and properties
+#'   \item Updates internal dataset references
+#'   \item Efficient metadata-only operation
+#'   \item Comprehensive error handling
+#' }
+#'
+#' @section Behavior:
+#' \itemize{
+#'   \item If the destination parent groups don't exist, they will be created automatically
+#'   \item Associated rownames and colnames datasets are moved to the same new group
+#'   \item All dataset attributes and properties are preserved during the move
+#'   \item The operation is atomic - either all elements move successfully or none do
+#' }
+#'
+#' @section Requirements:
+#' \itemize{
+#'   \item The HDF5 file must exist and be accessible
+#'   \item The source dataset must exist
+#'   \item The file must not be locked by another process
+#'   \item User must have read-write permissions on the file
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' # Move dataset to a different group
+#' success <- bdmove_hdf5_dataset("data.h5", 
+#'                          source_path = "/old_group/my_dataset",
+#'                          dest_path = "/new_group/my_dataset")
+#'
+#' # Rename dataset within the same group
+#' success <- bdmove_hdf5_dataset("data.h5",
+#'                          source_path = "/data/old_name", 
+#'                          dest_path = "/data/new_name",
+#'                          overwrite = TRUE)
+#'
+#' # Move dataset to root level
+#' success <- bdmove_hdf5_dataset("data.h5",
+#'                          source_path = "/deep/nested/dataset",
+#'                          dest_path = "/dataset")
+#'
+#' # Move with automatic group creation
+#' success <- bdmove_hdf5_dataset("data.h5",
+#'                          source_path = "/old_location/dataset",
+#'                          dest_path = "/new/deep/structure/dataset")
+#' }
+#'
+#' @family BigDataStatMeth HDF5 utilities
+#' @author BigDataStatMeth package authors
+#' @export
+bdmove_hdf5_dataset <- function(filename, source_path, dest_path, overwrite = FALSE) {
+    invisible(.Call('_BigDataStatMeth_bdmove_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, source_path, dest_path, overwrite))
 }
 
 #' Compute Matrix Pseudoinverse (In-Memory)
@@ -2849,6 +3031,97 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
     invisible(.Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, overwrite))
 }
 
+#' Create Subset of HDF5 Dataset
+#'
+#' @description
+#' Creates a new HDF5 dataset containing only the specified rows or columns
+#' from an existing dataset. This operation is memory efficient as it uses
+#' HDF5's hyperslab selection for direct disk-to-disk copying without loading
+#' the entire dataset into memory.
+#'
+#' @param filename Character string. Path to the HDF5 file
+#' @param dataset_path Character string. Path to the source dataset (e.g., "/group1/dataset1")
+#' @param indices Integer vector. Row or column indices to include (1-based, as per R convention)
+#' @param select_rows Logical. If TRUE, selects rows; if FALSE, selects columns (default: TRUE)
+#' @param new_group Character string. Target group for the new dataset (default: same as source)
+#' @param new_name Character string. Name for the new dataset (default: original_name + "_subset")
+#' @param overwrite Logical. Whether to overwrite destination if it exists (default: FALSE)
+#'
+#' @return Logical. TRUE on success, FALSE on failure
+#'
+#' @details
+#' This function provides an efficient way to create subsets of large HDF5 datasets
+#' without loading all data into memory. It uses HDF5's native hyperslab selection
+#' mechanism for optimal performance with big data.
+#'
+#' Key features:
+#' \itemize{
+#'   \item Memory efficient - processes one row/column at a time
+#'   \item Direct disk-to-disk copying using HDF5 hyperslab selection
+#'   \item Preserves all dataset attributes and properties
+#'   \item Works with datasets of any size
+#'   \item Automatic creation of parent groups if needed
+#'   \item Support for both row and column selection
+#' }
+#'
+#' @section Index Convention:
+#' Indices follow R's 1-based convention (first element is index 1), but are
+#' automatically converted to HDF5's 0-based indexing internally.
+#'
+#' @section Performance:
+#' This function is designed for big data scenarios. Memory usage is minimal
+#' regardless of source dataset size, making it suitable for datasets that
+#' don't fit in memory.
+#'
+#' @section Requirements:
+#' \itemize{
+#'   \item The HDF5 file must exist and be accessible
+#'   \item The source dataset must exist and contain numeric data
+#'   \item Indices must be valid (within dataset dimensions)
+#'   \item User must have read-write permissions on the file
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' # Select specific rows (e.g., rows 1, 3, 5, 10-15)
+#' success <- bdsubset_dataset("data.h5", 
+#'                            dataset_path = "/matrix/data",
+#'                            indices = c(1, 3, 5, 10:15),
+#'                            select_rows = TRUE,
+#'                            new_name = "selected_rows")
+#'
+#' # Select specific columns
+#' success <- bdsubset_dataset("data.h5",
+#'                            dataset_path = "/matrix/data", 
+#'                            indices = c(2, 4, 6:10),
+#'                            select_rows = FALSE,
+#'                            new_group = "/filtered",
+#'                            new_name = "selected_cols")
+#'
+#' # Create subset in different group
+#' success <- bdsubset_dataset("data.h5",
+#'                            dataset_path = "/raw_data/matrix",
+#'                            indices = 1:100,  # First 100 rows
+#'                            select_rows = TRUE,
+#'                            new_group = "/processed",
+#'                            new_name = "top_100_rows")
+#'
+#' # Extract specific samples for analysis
+#' interesting_samples <- c(15, 23, 45, 67, 89, 123)
+#' success <- bdsubset_dataset("data.h5",
+#'                            dataset_path = "/experiments/results",
+#'                            indices = interesting_samples,
+#'                            select_rows = TRUE,
+#'                            new_name = "analysis_subset")
+#' }
+#'
+#' @family BigDataStatMeth HDF5 utilities
+#' @author BigDataStatMeth package authors
+#' @export
+bdsubset_hdf5_dataset <- function(filename, dataset_path, indices, select_rows = TRUE, new_group = "", new_name = "", overwrite = FALSE) {
+    .Call('_BigDataStatMeth_bdsubset_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, dataset_path, indices, select_rows, new_group, new_name, overwrite)
+}
+
 #' Write Upper/Lower Triangular Matrix
 #'
 #' @description
@@ -3334,6 +3607,58 @@ bdblockSubstract <- function(A, B, block_size = NULL, paral = NULL, byBlocks = T
 #' @export
 bdblockSum <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, threads = NULL) {
     .Call('_BigDataStatMeth_bdblockSum', PACKAGE = 'BigDataStatMeth', A, B, block_size, paral, byBlocks, threads)
+}
+
+#' @title Compute correlation matrix for in-memory matrices (unified function)
+#' @description Compute Pearson or Spearman correlation matrix for matrices that fit in memory.
+#' This function automatically detects whether to compute:
+#' \itemize{
+#'   \item Single matrix correlation cor(X) - when only matrix X is provided
+#'   \item Cross-correlation cor(X,Y) - when both matrices X and Y are provided
+#' }
+#' 
+#' @param X First numeric matrix (observations in rows, variables in columns)
+#' @param Y Second numeric matrix (optional, observations in rows, variables in columns)
+#' @param trans_x Logical, whether to transpose matrix X (default: FALSE) 
+#' @param trans_y Logical, whether to transpose matrix Y (default: FALSE, ignored if Y not provided)
+#' @param method Character string indicating correlation method ("pearson" or "spearman", default: "pearson")
+#' @param use_complete_obs Logical, whether to use only complete observations (default: TRUE)
+#' @param compute_pvalues Logical, whether to compute p-values for correlations (default: TRUE)
+#' @param threads Integer, number of threads for parallel computation (optional, default: -1 for auto)
+#' 
+#' @return A list containing correlation results
+#' 
+#' @examples
+#' \dontrun{
+#' # Backward compatible - existing code unchanged
+#' set.seed(123)
+#' X <- matrix(rnorm(1000), ncol = 10)
+#' result_original <- bdCorr_matrix(X)
+#' 
+#' # Create omics-style data
+#' gene_expr <- matrix(rnorm(5000), nrow = 100, ncol = 50)  # 100 samples × 50 genes
+#' 
+#' # Gene-gene correlations (variables)
+#' gene_corr <- bdCorr_matrix(gene_expr, trans_x = FALSE)
+#' 
+#' # Sample-sample correlations (individuals)  
+#' sample_corr <- bdCorr_matrix(gene_expr, trans_x = TRUE)
+#' 
+#' # Cross-correlation examples
+#' methylation <- matrix(rnorm(4000), nrow = 100, ncol = 40)  # 100 samples × 40 CpGs
+#' 
+#' # Variables vs variables (genes vs CpGs)
+#' vars_vs_vars <- bdCorr_matrix(gene_expr, methylation, 
+#'                              trans_x = FALSE, trans_y = FALSE)
+#' 
+#' # Samples vs variables (individuals vs CpGs)
+#' samples_vs_vars <- bdCorr_matrix(gene_expr, methylation,
+#'                                 trans_x = TRUE, trans_y = FALSE)
+#' }
+#' 
+#' @export
+bdCorr_matrix <- function(X, Y = NULL, trans_x = NULL, trans_y = NULL, method = NULL, use_complete_obs = NULL, compute_pvalues = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdCorr_matrix', PACKAGE = 'BigDataStatMeth', X, Y, trans_x, trans_y, method, use_complete_obs, compute_pvalues, threads)
 }
 
 #' Efficient Matrix Cross-Product Computation

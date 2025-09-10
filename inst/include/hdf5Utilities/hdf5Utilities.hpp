@@ -376,7 +376,6 @@ namespace BigDataStatMeth {
         
         matrix.conservativeResize(numRows,numCols);
     }
-    
 
 }
 

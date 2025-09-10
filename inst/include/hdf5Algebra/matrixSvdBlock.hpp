@@ -273,7 +273,7 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
         }
         
         Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2, normalsize);
-        get_HDF5_mean_sd_by_column(dsA, datanormal, wsize);
+        get_HDF5_mean_sd_by_column(dsA, datanormal, true, true, wsize);
         
         M = pow(k, q);
         if(M>p)

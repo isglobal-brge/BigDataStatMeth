@@ -111,6 +111,7 @@ namespace BigDataStatMeth
                             remove_elements(pmaindataset->getFileptr(), groupname, {strrows} );
                         }
                         
+                        pmaindataset->setRownamesDatasetPath( fullDatasetPath );
                         writeStringVector( pdsrownames, fullDatasetPath, rownames );
                     }
 
@@ -127,7 +128,7 @@ namespace BigDataStatMeth
                             Rcpp::warning ("Rownames already exits and will be overwritten");
                             remove_elements(pmaindataset->getFileptr(), groupname, {strcols} );
                         }
-                        
+                        pmaindataset->setColnamesDatasetPath( fullDatasetPath );
                         writeStringVector( pdscolnames, fullDatasetPath, colnames );
 
                     }
