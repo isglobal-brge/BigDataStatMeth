@@ -163,7 +163,7 @@ Rcpp::List bdCrossprod_hdf5( std::string filename,
 
         int iblock_size;
         int iblockfactor = 2;
-        bool bparal, bforce;
+        bool bparal, bforce, bisSymetric = false;
 
         std::string strsubgroupOut, 
         strdatasetOut, 
@@ -177,7 +177,10 @@ Rcpp::List bdCrossprod_hdf5( std::string filename,
         } else { strsubgroupOut = Rcpp::as<std::string> (outgroup); }
         
         if(B.isNotNull()){ matB =  Rcpp::as<std::string> (B) ; } 
-        else { matB =  A; }
+        else { 
+            matB =  A; 
+            bisSymetric = true;
+        }
         
         if(groupB.isNotNull()){ strsubgroupInB =  Rcpp::as<std::string> (groupB) ; } 
         else { strsubgroupInB =  group; }
@@ -190,7 +193,6 @@ Rcpp::List bdCrossprod_hdf5( std::string filename,
         
         if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
         else { strdatasetOut = "CrossProd_" + A + "_x_" + matB; }
-        
         
         dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
         dsA->openDataset();
@@ -212,10 +214,11 @@ Rcpp::List bdCrossprod_hdf5( std::string filename,
                     memory_block = iblock_size/2;
                 }
                 
-                dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, iblock_size, memory_block, bparal, true, threads);
+                dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, bisSymetric, iblock_size, memory_block, bparal, true, threads);
                 
             } else if (bparal == false) { // Not parallel
-                dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
+                
+                dsC = BigDataStatMeth::crossprod(dsA, dsB, dsC, bisSymetric, iblock_size, 0, bparal, true, threads);
             }
             
             lst_return["fn"] = filename;

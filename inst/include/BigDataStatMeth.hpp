@@ -47,12 +47,12 @@
     #include <fstream>
     #include <sys/stat.h>
     #include <string>
-    #include <regex>
-    #include <algorithm>
+    // #include <regex>
+    // #include <algorithm>
     #include <vector>
-    #include <cmath>
-    #include <numeric>
-    #include <random>
+    // #include <cmath>
+    // #include <numeric>
+    // #include <random>
 
 
     
@@ -182,6 +182,19 @@
     const hsize_t MAXMULTBLOCKSIZE = 1 << 13;
     
     /**
+     * @brief Block size for efficient diagonal element processing in HDF5
+     * @details Processes diagonal elements in chunks of 256x256 to minimize I/O operations
+     * while maintaining reasonable memory usage (~500KB per block)
+     */
+    const hsize_t DIAG_BLOCK_SIZE = 256;
+    
+    /**
+     * @brief Maximum block size for Cholesky  operations
+     */
+    const hsize_t MAXCHOLBLOCKSIZE = 250000000;
+    // const hsize_t MAXCHOLBLOCKSIZE = 50000000;
+    
+    /**
      * @brief Execution status codes
      * @{
      */
@@ -192,31 +205,33 @@
     
     
 // =============================================================================
-// MAIN UTILITIES (HDF5 AND ON-MEMORY)
+// LEVEL 0 - MAIN UTILITIES (HDF5 AND ON-MEMORY)
 // =============================================================================
     #include "Utilities/openme-utils.hpp"
     #include "Utilities/Utilities.hpp"
     #include "hdf5Utilities/hdf5Utilities.hpp"
-    #include "hdf5Omics/hdf5OmicsUtils.hpp"
+    
+    // #include "hdf5Omics/hdf5OmicsUtils.hpp"
     
 
     
 // =============================================================================
-// CORE UTILITIES - Classes and related to classes
+// LEVEL 0 - CORE UTILITIES - Classes and related to classes
 // =============================================================================
     #include "hdf5Utilities/hdf5Files.hpp"
     #include "hdf5Utilities/hdf5Groups.hpp"
     #include "hdf5Utilities/hdf5Datasets.hpp"
     #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
-    #include "hdf5Utilities/hdf5Dims.hpp"
     #include "hdf5Utilities/hdf5CheckClose.hpp"
+    #include "hdf5Utilities/hdf5Dims.hpp"
     
-        
-    
+    // #include "hdf5Utilities/hdf5DiagonalOperations.hpp"
+
+    // #include "hdf5Utilities/hdf5Diagonal.hpp"
     
     
 // =============================================================================
-// ON-MEMORY ALBEGRA AND OTHER FUNCTIONS
+// LEVEL 0 - ON-MEMORY ALBEGRA AND OTHER FUNCTIONS
 // =============================================================================
     #include "memAlgebra/memOtherFunctions.hpp"
     #include "memAlgebra/memOptimizedProducts.hpp"
@@ -224,26 +239,23 @@
     #include "memAlgebra/memSubstract.hpp"
     #include "memAlgebra/memSum.hpp"
     
-
 // =============================================================================
-// HDF5  UTILITIES
+// LEVEL 0 -  HDF5  UTILITIES
 // =============================================================================
     #include "hdf5Utilities/hdf5Methods.hpp"
     #include "hdf5Utilities/hdf5ImportFiles.hpp"
     #include "hdf5Utilities/hdf5RemoveElements.hpp"
-
-    
     
 // =============================================================================
-// HDF5 ALBEGRA
+// LEVEL 0 -  HDF5 ALBEGRA
 // =============================================================================
     #include "hdf5Algebra/matrixTriangular.hpp"
     #include "hdf5Algebra/matrixDiagonal.hpp"
 
     #include "hdf5Algebra/vectormatrix.hpp"
+    #include "hdf5Algebra/vectorOperations.hpp"
     #include "hdf5Algebra/matrixSdMean.hpp"
     #include "hdf5Algebra/matrixNormalization.hpp"
-
 
     
     #include "hdf5Algebra/multiplication.hpp"
@@ -270,26 +282,35 @@
     #include "hdf5Algebra/crossprod.hpp"
     #include "hdf5Algebra/matrixCorrelation.hpp"
     
-    
 // =============================================================================
-// HDF5 DATASET UTILITIES
+// LEVEL 0 - HDF5 DATASET UTILITIES
 // =============================================================================
-    #include "hdf5Utilities/hdf5SplitDataset.hpp"
-    #include "hdf5Utilities/hdf5BindDatasets.hpp"
-    #include "hdf5Utilities/hdf5ReduceDataset.hpp"
-    #include "hdf5Utilities/hdf5SortDataset.hpp"
-    #include "hdf5Utilities/hdf5ApplytoDatasets.hpp"
+#include "hdf5Utilities/hdf5SplitDataset.hpp"
+    // #include "hdf5Utilities/hdf5BindDatasets.hpp"
+#include "hdf5Utilities/hdf5ReduceDataset.hpp"
+    // #include "hdf5Utilities/hdf5SortDataset.hpp"
+#include "hdf5Utilities/hdf5ApplytoDatasets.hpp"
     // #include "hdf5Utilities/hdf5MoveDatasets.hpp"
+        
+// =============================================================================
+// LEVEL 1 - CORE UTILITIES - Classes and related to classes
+// =============================================================================
+    #include "hdf5Utilities/hdf5DiagonalMethods.hpp"
+    #include "hdf5Utilities/hdf5Diagonal.hpp"
+    
+
+// =============================================================================
+// LEVEL 1 -  HDF5 ALBEGRA
+// =============================================================================
     
 
 
 // =============================================================================
 // HDF5 OMIC UTILITIES
 // =============================================================================
-    #include "hdf5Omics/hdf5RemoveMAF.hpp"
-    
-    #include "hdf5Utilities/hdf5ImputeData.hpp"
-    #include "hdf5Utilities/hdf5RemoveLowData.hpp"
+    // #include "hdf5Omics/hdf5RemoveMAF.hpp"
+    // #include "hdf5Utilities/hdf5ImputeData.hpp"
+    // #include "hdf5Utilities/hdf5RemoveLowData.hpp"
 
 
 

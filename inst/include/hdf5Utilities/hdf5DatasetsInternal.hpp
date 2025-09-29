@@ -104,28 +104,24 @@ public:
         internalDataset = true;
     }
     
+ 
+    
     /**
-     * @brief Create a new internal dataset
-     * @details Creates a new HDF5 dataset with specified dimensions and data type.
-     * The dataset is marked as internal for specialized handling.
-     * 
-     * Supported data types:
-     * - "int": Integer dataset
-     * - "numeric" or "real": Double dataset
-     * - "string": String dataset
+     * @brief Create a new internal dataset with optional compression
+     * @details Creates a new HDF5 internal dataset with specified dimensions, data type, and compression.
+     * Internal datasets are marked with internal="1" attribute for specialized handling.
      * 
      * @param rows Number of rows
      * @param cols Number of columns
      * @param strdatatype Data type ("int", "numeric", "real", or "string")
+     * @param compression_level Compression level (0=none, 1-9=gzip level, 6=balanced default)
      */
-    void createDataset(size_t rows, size_t cols, std::string strdatatype) 
+    void createDataset(size_t rows, size_t cols, std::string strdatatype, int compression_level = 6) 
     {
-        
         try
         {
-
             H5::Exception::dontPrint();
-            std::string fullDatasetPath =   groupname + "/" + name;
+            std::string fullDatasetPath = groupname + "/" + name;
             bool bRemoved = false;
             
             // dataset dimensions
@@ -154,81 +150,124 @@ public:
                 
                 type = strdatatype;
                 
+                // Configure compression and chunking
+                hid_t cparms = H5P_DEFAULT;
+                if (compression_level > 0) {
+                    cparms = H5Pcreate(H5P_DATASET_CREATE);
+                    
+                    // Configure chunking (required for compression)
+                    hsize_t chunk_dims[2] = {
+                        std::min((hsize_t)1024, dimDataset[0]),
+                        std::min((hsize_t)1024, dimDataset[1])
+                    };
+                    H5Pset_chunk(cparms, RANK2, chunk_dims);
+                    
+                    // Configure compression
+                    H5Pset_deflate(cparms, compression_level);  // gzip compression
+                    H5Pset_shuffle(cparms);                     // shuffle filter for better compression
+                }
+                
                 if( type == "string") {
                     // Create the memory datatype.
                     H5::CompType strtype(sizeof(names));
                     strtype.insertMember("chr", HOFFSET(names, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
-                    pdataset = new H5::DataSet(pfile->createDataSet(fullDatasetPath, strtype, dataspace));
+                    pdataset = new H5::DataSet(pfile->createDataSet(fullDatasetPath, strtype, dataspace, cparms));
                 } else if( type == "int" || type == "logic" || type == "factor") {
                     H5::IntType datatype( H5::PredType::NATIVE_INT );
-                    pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace ));
+                    pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace, cparms ));
                     if(bRemoved == true) {
                         writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDataset[0], dimDataset[1]) ));    
                     }
                 } else if( type == "numeric" || type == "real") {
-                    H5::IntType datatype( H5::PredType::NATIVE_DOUBLE ); 
-                    pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace ));
+                    H5::FloatType datatype( H5::PredType::NATIVE_DOUBLE ); 
+                    pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace, cparms ));
                     if(bRemoved == true) {
                         writeDataset(Rcpp::wrap(Eigen::MatrixXd::Zero(dimDataset[0], dimDataset[1]) ));
                     }
                 } else {
+                    if (cparms != H5P_DEFAULT) H5Pclose(cparms);
                     Rcpp::Rcerr<<"\nDataset data type not allowed or no matrix defined (createDataset)";
+                    return void();
                 }
+                
+                // Clean up compression properties
+                if (cparms != H5P_DEFAULT) H5Pclose(cparms);
             }
             
             dataspace.close();
             addAttribute( "internal", Rcpp::wrap("1") );
             
-        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::FileIException& error) {
             Rcpp::Rcerr<<"\nc++ exception createDataset_int (File IException)";
-        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) {
             Rcpp::Rcerr<<"\nc++ exception createDataset_int (Group IException)";
-        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) {
             Rcpp::Rcerr<<"\nc++ exception createDataset_int (DataSet IException)";
         } 
         return void();
     }
     
+    // /**
+    //  * @brief Create a dataset based on another internal dataset
+    //  * @details Creates a new internal dataset with the same dimensions as the
+    //  * reference dataset but with a specified data type.
+    //  * 
+    //  * @param dsLike Reference internal dataset to copy dimensions from
+    //  * @param strdatatype Data type for the new dataset
+    //  */
+    // void createDataset(BigDataStatMeth::hdf5DatasetInternal* dsLike, std::string strdatatype) 
+    // {
+    //     try{
+    //         
+    //         createDataset( dsLike->nrows(), dsLike->ncols(), strdatatype);
+    //         
+    //     } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+    //         Rcpp::Rcerr<<"\nc++ exception createDataset (File IException)";
+    //     } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
+    //         Rcpp::Rcerr<<"\nc++ exception createDataset (Group IException)";
+    //     } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
+    //         Rcpp::Rcerr<<"\nc++ exception createDataset (DataSet IException)";
+    //     } 
+    //     
+    //     return void();
+    // }
+    
     /**
-     * @brief Create a dataset based on another internal dataset
-     * @details Creates a new internal dataset with the same dimensions as the
-     * reference dataset but with a specified data type.
+     * @brief Create an internal dataset based on another internal dataset's dimensions with compression
+     * @details Creates a new internal dataset with the same dimensions as the reference dataset
+     * but with a specified data type and compression settings.
      * 
      * @param dsLike Reference internal dataset to copy dimensions from
      * @param strdatatype Data type for the new dataset
+     * @param compression_level Compression level (0=none, 1-9=gzip level, 6=balanced default)
      */
-    void createDataset(BigDataStatMeth::hdf5DatasetInternal* dsLike, std::string strdatatype) 
+    void createDataset(BigDataStatMeth::hdf5DatasetInternal* dsLike, std::string strdatatype, int compression_level = 6) 
     {
         try{
-            
-            createDataset( dsLike->nrows(), dsLike->ncols(), strdatatype);
-            
-        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+            createDataset( dsLike->nrows(), dsLike->ncols(), strdatatype, compression_level);
+        } catch(H5::FileIException& error) {
             Rcpp::Rcerr<<"\nc++ exception createDataset (File IException)";
-        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) {
             Rcpp::Rcerr<<"\nc++ exception createDataset (Group IException)";
-        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) {
             Rcpp::Rcerr<<"\nc++ exception createDataset (DataSet IException)";
         } 
         
         return void();
     }
     
+
     /**
-     * @brief Create an unlimited internal dataset
+     * @brief Create an unlimited internal dataset with optional compression
      * @details Creates a new internal HDF5 dataset with unlimited dimensions.
      * The dataset is marked as internal and unlimited and can grow in size.
-     * 
-     * Features:
-     * - Unlimited dimensions in both directions
-     * - Chunked storage for efficiency
-     * - Internal dataset marking
      * 
      * @param rows Initial number of rows
      * @param cols Initial number of columns
      * @param strdatatype Data type for the dataset
+     * @param compression_level Compression level (0=none, 1-9=gzip level, 6=balanced default)
      */
-    void createUnlimitedDataset(size_t rows, size_t cols, std::string strdatatype) 
+    void createUnlimitedDataset(size_t rows, size_t cols, std::string strdatatype, int compression_level = 6) 
     {
         try
         {
@@ -264,12 +303,17 @@ public:
             if(status<0) {
                 Rf_error( "c++ exception createUnlimitedDataset (setting chunk IException)" );
                 return void();
-            } 
+            }
+            
+            // Configure compression
+            if (compression_level > 0) {
+                H5Pset_deflate(cparms, compression_level);  // gzip compression
+                H5Pset_shuffle(cparms);                     // shuffle filter for better compression
+            }
             
             if( !exists_HDF5_element(pfile, groupname) ) {
                 create_HDF5_groups(groupname);
             }
-            
             
             bool bexists = exists_HDF5_element(pfile, fullDatasetPath);
             if( bexists == true && boverwrite == false) {
@@ -285,7 +329,7 @@ public:
                     H5::IntType datatype( H5::PredType::NATIVE_INT );
                     pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace, cparms));
                 } else {
-                    H5::IntType datatype( H5::PredType::NATIVE_DOUBLE ); 
+                    H5::FloatType datatype( H5::PredType::NATIVE_DOUBLE ); 
                     pdataset = new H5::DataSet(pfile->createDataSet( fullDatasetPath, datatype, dataspace, cparms));
                 }
             }
@@ -293,15 +337,16 @@ public:
             dataspace.close();
             addAttribute( "internal", Rcpp::wrap("1") );
             
-        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::FileIException& error) {
             Rf_error( "c++ exception createUnlimitedDataset_internal (File IException) " );
-        } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::GroupIException& error) {
             Rf_error( "c++ exception createUnlimitedDataset_internal (Group IException) " );
-        } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
+        } catch(H5::DataSetIException& error) {
             Rf_error( "c++ exception createUnlimitedDataset_internal (Dataset IException) " );
         } 
         return void();
     }
+    
     
     /**
      * @brief Extend an unlimited internal dataset
@@ -317,6 +362,10 @@ public:
         try
         {
             if(unlimited == true) {
+#ifdef _OPENMP
+                HDF5ThreadSafety::LockGuard lock_guard;
+#endif
+                
                 H5::Exception::dontPrint();
                 
                 // Extend dataset size to:  oldDims + newDims
@@ -364,7 +413,8 @@ public:
         
         try
         {
-            H5::Exception::dontPrint();
+            
+            // H5::Exception::dontPrint();
             std::vector<int> dims;
             
             if(Rcpp::is<Rcpp::NumericMatrix>(DatasetValues) || Rcpp::is<Rcpp::IntegerMatrix>(DatasetValues) ) {
@@ -372,6 +422,12 @@ public:
                 hsize_t nrowRObject = Rcpp::as<Rcpp::NumericMatrix>(DatasetValues).nrow();
                 
                 if( (nrowRObject == dimDataset[0] && ncolRObject == dimDataset[1]) || ncolRObject == 1 || nrowRObject == 1 ) {
+                    
+                    // Thread-safe HDF5 I/O operations
+#ifdef _OPENMP
+                    HDF5ThreadSafety::LockGuard lock_guard;
+#endif
+                    
                     H5::DataSpace dataspace(RANK2, dimDataset);
                     
                     std::vector<double> matHiCValues = Rcpp::as<std::vector<double> >(Rcpp::as<Rcpp::NumericMatrix>(DatasetValues));
@@ -385,6 +441,12 @@ public:
             } else if(Rcpp::is<Rcpp::NumericVector>(DatasetValues) || Rcpp::is<Rcpp::IntegerVector>(DatasetValues)) {
                 
                 hsize_t dims[] = {dimDataset[1]};
+                
+                // Thread-safe HDF5 I/O operations
+#ifdef _OPENMP
+                HDF5ThreadSafety::LockGuard lock_guard;
+#endif
+                
                 H5::DataSpace dataspace(RANK1, dims);
                 
                 if(Rcpp::is<Rcpp::IntegerVector>(DatasetValues) || Rcpp::is<Rcpp::LogicalVector>(DatasetValues) ) {
@@ -396,6 +458,11 @@ public:
                 } 
                 dataspace.close();
             } else if(Rcpp::is<Rcpp::StringVector >(DatasetValues) || Rcpp::is<Rcpp::StringMatrix >(DatasetValues)) {
+                
+                // Thread-safe HDF5 I/O operations
+#ifdef _OPENMP
+                HDF5ThreadSafety::LockGuard lock_guard;
+#endif
                 
                 // Create the memory datatype.
                 H5::CompType strtype(sizeof(names));
@@ -478,6 +545,12 @@ public:
                 }
 
                 if(vOffset[0] + hsCount[0] <= dimDataset[0] || vOffset[1] + hsCount[1] <= dimDataset[1]) {
+                    
+                    // Thread-safe HDF5 I/O operations
+#ifdef _OPENMP
+                    HDF5ThreadSafety::LockGuard lock_guard;
+#endif
+                    
                     H5::DataSpace dataspace(RANK2, hsCount);
                     H5::DataSpace memspace(RANK2, hsCount, NULL);
                     
@@ -503,7 +576,7 @@ public:
                         dataspace.close();
                     }
                 } else {
-                    Rcpp::Rcerr<<"\nIt is not possible to write block in current position (writeDatasetBlock)";
+                    Rcpp::stop("\nIt is not possible to write block in current position (writeDatasetBlock)");
                 }
 
             } else if(Rcpp::is<Rcpp::StringMatrix>(DatasetValues) || Rcpp::is<Rcpp::StringVector>(DatasetValues) ) {
@@ -518,6 +591,12 @@ public:
 
                 if(vOffset[0] + hsCount[0] <= dimDataset[0] || vOffset[1] + hsCount[1] <= dimDataset[1]) {
 
+                    
+                    // Thread-safe HDF5 I/O operations
+#ifdef _OPENMP
+                    HDF5ThreadSafety::LockGuard lock_guard;
+#endif
+                    
                     // Create the memory datatype.
                     H5::CompType strtype(sizeof(names));
                     strtype.insertMember("chr", HOFFSET(names, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
@@ -533,32 +612,32 @@ public:
                     dataspace.close();
 
                 } else {
-                    Rcpp::Rcerr<<"\nIt is not possible to write block in current position (writeDatasetBlock_internal)";
+                    Rcpp::stop("\nIt is not possible to write block in current position (writeDatasetBlock_internal)");
                 }
             } else {
-                Rcpp::Rcerr<<"\nMatrix data type not allowed (writeDatasetBlock_internal)";
+                Rcpp::stop("\nMatrix data type not allowed (writeDatasetBlock_internal)");
             }
 
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_Internal (File IException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_Internal (DataSet IException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (DataSet IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_Internal (Group IException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (Group IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_Internal (DataSpace IException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_Internal (Data TypeIException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (Data TypeIException)");
         }
         return void();
     }
@@ -596,6 +675,11 @@ public:
             if(vOffset[0] + hsCount[0] <= dimDataset[0] && vOffset[1] + hsCount[1] <= dimDataset[1] && 
                DatasetValues.size()<= dimDatasetinFile[0] * dimDatasetinFile[1]) {
                 
+                // Thread-safe HDF5 I/O operations
+#ifdef _OPENMP
+                HDF5ThreadSafety::LockGuard lock_guard;
+#endif
+                
                 H5::DataSpace dataspace(RANK2, hsCount);
                 H5::DataSpace memspace(RANK2, hsCount, NULL);
                 
@@ -608,29 +692,29 @@ public:
                 
             } else {
                 
-                Rcpp::Rcerr<<"\nIt is not possible to write block in current position (writeDatasetBlock_int)";
+                Rcpp::stop("\nIt is not possible to write block in current position (writeDatasetBlock_int)");
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_internal std::vector (File IException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_internal std::vector (DataSet IException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (DataSet IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_internal std::vector (Group IException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (Group IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_internal std::vector (DataSpace IException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             close_dataset();
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDatasetBlock_internal std::vector (Data TypeIException)";
+            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (Data TypeIException)");
         }
         return void();
     }
@@ -654,7 +738,7 @@ public:
         
         try
         {
-            H5::Exception::dontPrint();
+            // H5::Exception::dontPrint();
             
             hsize_t offset[2], count[2], stride[2], block[2];
             
@@ -667,6 +751,10 @@ public:
             hsize_t dimsm[2];
             dimsm[0] = count[0]; 
             dimsm[1] = count[1];
+            // Thread-safe HDF5 I/O operations
+#ifdef _OPENMP
+            HDF5ThreadSafety::LockGuard lock_guard;
+#endif
             
             H5::DataSpace memspace(RANK2, dimsm, NULL);
             
@@ -691,27 +779,27 @@ public:
             
         } catch( H5::FileIException& error) { 
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception readDatasetBlock_Internal (File IException)";
+            Rf_error("\nc++ exception readDatasetBlock_Internal (File IException)");
             return(nullptr);
             // return void();
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception readDatasetBlock_Internal (DataSet IException)";
+            Rf_error("\nc++ exception readDatasetBlock_Internal (DataSet IException)");
             return(nullptr);
             // return void();
         } catch(H5::GroupIException& error) { 
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception readDatasetBlock_Internal (Group IException)";
+            Rf_error("\nc++ exception readDatasetBlock_Internal (Group IException)");
             return(nullptr);
             // return void();
         } catch(H5::DataSpaceIException& error) { 
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception readDatasetBlock_Internal (DataSpace IException)";
+            Rf_error("\nc++ exception readDatasetBlock_Internal (DataSpace IException)");
             return(nullptr);
             // return void();
         } catch(H5::DataTypeIException& error) { 
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception readDatasetBlock_Internal (Data TypeIException)";
+            Rf_error("\nc++ exception readDatasetBlock_Internal (Data TypeIException)");
             return(nullptr);
             // return void();
         }

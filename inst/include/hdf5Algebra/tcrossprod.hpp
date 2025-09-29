@@ -40,65 +40,126 @@
 #include "H5Cpp.h"
 
 namespace BigDataStatMeth {
-
-/**
- * @brief Transposed cross-product for HDF5 matrices
- * @details Computes the transposed cross-product of matrices stored in HDF5 format.
- * Supports both A'A and AA' computations with block-based processing.
- * 
- * @param dsA Input matrix dataset
- * @param dsB Input matrix dataset
- * @param dsC Output matrix dataset
- * @param hdf5_block Block size for HDF5 I/O operations
- * @param mem_block_size Block size for in-memory operations
- * @param bparal Whether to use parallel processing
- * @param browmajor Whether matrices are stored in row-major order
- * @param threads Number of threads for parallel processing
- */
-inline BigDataStatMeth::hdf5Dataset* tcrossprod( 
-        BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, 
-        BigDataStatMeth::hdf5Dataset* dsC, hsize_t hdf5_block, hsize_t mem_block_size, 
-        bool bparal, bool browmajor, Rcpp::Nullable<int> threads  = R_NilValue) 
-
-{
     
-    try {
+    /**
+     * @brief Transposed cross-product for HDF5 matrices
+     * @details Computes the transposed cross-product of matrices stored in HDF5 format.
+     * Supports both A'A and AA' computations with block-based processing.
+     * 
+     * @param dsA Input matrix dataset
+     * @param dsB Input matrix dataset
+     * @param dsC Output matrix dataset
+     * @param hdf5_block Block size for HDF5 I/O operations
+     * @param mem_block_size Block size for in-memory operations
+     * @param bparal Whether to use parallel processing
+     * @param browmajor Whether matrices are stored in row-major order
+     * @param threads Number of threads for parallel processing
+     */
+    inline BigDataStatMeth::hdf5Dataset* tcrossprod( 
+            BigDataStatMeth::hdf5Dataset* dsA, BigDataStatMeth::hdf5Dataset* dsB, 
+            BigDataStatMeth::hdf5Dataset* dsC, bool isSymmetric, hsize_t hdf5_block, 
+            hsize_t mem_block_size, bool bparal, bool browmajor, 
+            Rcpp::Nullable<int> threads = R_NilValue) 
 
-        hsize_t N = dsA->ncols();
-        hsize_t K = dsA->nrows();
-        hsize_t M = dsB->ncols();
-        hsize_t L = dsB->nrows();
-
-        if( K == L)
-        {
-            hsize_t isize = hdf5_block + 1,
-                    ksize = hdf5_block + 1,
-                    jsize = hdf5_block + 1;
-
-            std::vector<hsize_t> stride = {1, 1};
-            std::vector<hsize_t> block = {1, 1};
-
-            dsC->createDataset( N, M, "real");
-
-            for (hsize_t ii = 0; ii < N; ii += hdf5_block)
+    {
+        
+        try {
+            
+            hsize_t N = dsA->ncols();  
+            hsize_t K = dsA->nrows();  
+            hsize_t M = dsB->ncols();  
+            hsize_t L = dsB->nrows();  
+            
+            if (K != L) {
+                throw std::range_error("non-conformable arguments");
+            }
+            
+            if( K == L)
             {
-                hsize_t Nii = getOptimBlockSize( N, hdf5_block, ii, isize);
+                if (isSymmetric) {
+                    if (N != M) {
+                        throw std::range_error("Symmetric tcrossprod requires square result matrix");
+                    }
+                    if (dsA->getFileName() != dsB->getFileName() || 
+                        dsA->getGroup() != dsB->getGroup() || 
+                        dsA->getDatasetName() != dsB->getDatasetName()) {
+                        Rcpp::warning("isSymmetric=TRUE but different datasets provided. Results may be incorrect.");
+                    }
+                }
                 
-                if( ii + hdf5_block > N ) isize = N - ii;
+                // Configure parallel processing
+                int num_threads = 1;
+                if (bparal) {
+                    num_threads = get_number_threads(threads, Rcpp::wrap(bparal));
+#ifdef _OPENMP
+                    omp_set_num_threads(num_threads);
+#endif
+                }
                 
-                for (hsize_t jj = 0; jj < M; jj += hdf5_block)
+                // Calculate total blocks for parallelization
+                hsize_t blocks_i = (N + hdf5_block - 1) / hdf5_block;
+                hsize_t blocks_j = isSymmetric ? blocks_i : (M + hdf5_block - 1) / hdf5_block;
+                hsize_t total_blocks;
+                
+                if (isSymmetric) {
+                    // For symmetric case: only upper triangle blocks
+                    total_blocks = (blocks_i * (blocks_i + 1)) / 2;
+                } else {
+                    // For general case: all blocks
+                    total_blocks = blocks_i * blocks_j;
+                }
+                
+                dsC->createDataset( N, M, "real");
+                
+#ifdef _OPENMP
+#pragma omp parallel for if(bparal) schedule(dynamic)
+#endif
+                for (hsize_t block_idx = 0; block_idx < total_blocks; ++block_idx)
                 {
-                    hsize_t Mjj = getOptimBlockSize( M, hdf5_block, jj, jsize);
+                    // Convert linear index to (ii_idx, jj_idx)
+                    hsize_t ii_idx, jj_idx;
                     
-                    if( jj + hdf5_block > M) jsize = M - jj;
+                    if (isSymmetric) {
+                        // Convert to upper triangle coordinates
+                        hsize_t remaining = block_idx;
+                        for (hsize_t i = 0; i < blocks_i; ++i) {
+                            hsize_t blocks_in_row = blocks_i - i;
+                            if (remaining < blocks_in_row) {
+                                ii_idx = i;
+                                jj_idx = i + remaining;
+                                break;
+                            }
+                            remaining -= blocks_in_row;
+                        }
+                    } else {
+                        // Convert to regular coordinates
+                        ii_idx = block_idx / blocks_j;
+                        jj_idx = block_idx % blocks_j;
+                    }
+                    
+                    // Convert block indices to matrix indices
+                    hsize_t ii = ii_idx * hdf5_block;
+                    hsize_t jj = jj_idx * hdf5_block;
+                    
+                    // Boundary checks
+                    if (ii >= N || jj >= M) continue;
+                    
+                    hsize_t Nii = std::min(hdf5_block, N - ii);
+                    hsize_t Mjj = std::min(hdf5_block, M - jj);
+                    
+                    // Thread-local variables
+                    std::vector<hsize_t> stride = {1, 1};
+                    std::vector<hsize_t> block = {1, 1};
+                    
+                    Eigen::MatrixXd C_accum = Eigen::MatrixXd::Zero(Nii, Mjj);
+                    
+                    std::vector<hsize_t> offset = {jj, ii};
+                    std::vector<hsize_t> count = {Mjj, Nii};
                     
                     for(hsize_t kk = 0; kk < K; kk += hdf5_block)
                     {
-                        if( kk + hdf5_block > K ) ksize = K - kk;
-
-                        hsize_t Kkk = getOptimBlockSize( K, hdf5_block, kk, ksize);
+                        hsize_t Kkk = std::min(hdf5_block, K - kk); 
                         
-                        Eigen::MatrixXd C;
                         Eigen::MatrixXd A;
                         
                         {
@@ -112,51 +173,30 @@ inline BigDataStatMeth::hdf5Dataset* tcrossprod(
                         dsB->readDatasetBlock( {kk, jj}, { Kkk, Mjj}, stride, block, vdB.data() );
                         Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), Kkk, Mjj);   
                         
-                        {
-                            std::vector<double> vdC( Mjj * Nii);
-                            dsC->readDatasetBlock( {jj, ii}, {Mjj, Nii}, stride, block, vdC.data() );
-                            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> tmp_C (vdC.data(), Mjj, Nii);
-                            C = tmp_C.transpose();
-                        }
-
-                        // if( bparal == false) {
-                            C = C + (A * B);
-                        // } else{
-                        //     C = C + BigDataStatMeth::Bblock_matrix_mul_parallel(A, B, mem_block_size, threads);
-                        // }
-
-                        std::vector<hsize_t> offset = {jj, ii};
-                        std::vector<hsize_t> count = {Mjj, Nii};
-                        
-                        dsC->writeDatasetBlock(Rcpp::wrap(C), offset, count, stride, block, false);
-
-                        // Readjust counters
-                        if( kk + hdf5_block > K ) ksize = hdf5_block + 1;
-                        if( Kkk > hdf5_block ) {
-                            kk = kk - hdf5_block + Kkk; }
+                        C_accum.noalias() += A * B;
                     }
-
-                    if( jj + hdf5_block > M ) jsize = hdf5_block + 1;
-                    if( Mjj > hdf5_block ) {
-                        jj = jj - hdf5_block + Mjj; }
+                    
+                    dsC->writeDatasetBlock(Rcpp::wrap(C_accum), offset, count, stride, block, false);
+                    
+                    // Symetric matrices
+                    if (isSymmetric && ii != jj) {
+                        std::vector<hsize_t> offset_sym = {ii, jj};
+                        std::vector<hsize_t> count_sym = {Nii, Mjj};
+                        dsC->writeDatasetBlock(Rcpp::wrap(C_accum.transpose()), offset_sym, count_sym, stride, block, false);
+                    }
                 }
-
-                if( ii + hdf5_block > N ) isize = hdf5_block + 1;
-                if( Nii > hdf5_block ) {
-                    ii = ii - hdf5_block + Nii; }
+                
+            } else {
+                throw std::range_error("non-conformable arguments");
             }
-
-        } else {
-            throw std::range_error("non-conformable arguments");
+            
+        } catch(std::exception& ex) {
+            Rcpp::Rcout<< "c++ exception tcrossprod: "<<ex.what()<< " \n";
+            return(dsC);
         }
-
-    } catch(std::exception& ex) {
-        Rcpp::Rcout<< "c++ exception tcrossprod: "<<ex.what()<< " \n";
+        
         return(dsC);
     }
-
-    return(dsC);
-}
 
 }
 

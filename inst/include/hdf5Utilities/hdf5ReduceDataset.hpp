@@ -188,6 +188,7 @@ namespace BigDataStatMeth {
                     } else if (strreducefunction.compare("-")==0) {
                         fullReduced = fullReduced - newRead;
                     } 
+                    
                 }
                 
                 if( bremove == true){
@@ -201,23 +202,34 @@ namespace BigDataStatMeth {
             
             if(binternal == true) {
                 dsOut->createDataset( fullReduced.rows() , fullReduced.cols(), "real");
-                if( dsOut->getDatasetptr() != nullptr) {
-                    dsOut->writeDataset(Rcpp::wrap(fullReduced));
-                } else {
-                    checkClose_file(dsOut);
-                    Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
-                    return void();
-                }
+                // if( dsOut->getDatasetptr() != nullptr) {
+                //     dsOut->writeDataset(Rcpp::wrap(fullReduced));
+                // } else {
+                //     checkClose_file(dsOut);
+                //     Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
+                //     return void();
+                // }
             } else {
                 dsOut->createDataset( fullReduced.cols() , fullReduced.rows(), "real");
+                fullReduced.transposeInPlace();
                 
-                if( dsOut->getDatasetptr() != nullptr) {
-                    dsOut->writeDataset(Rcpp::wrap(fullReduced.transpose()));
-                } else {
-                    checkClose_file(dsOut);
-                    Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
-                    return void();
-                }
+                // if( dsOut->getDatasetptr() != nullptr) {
+                //     fullReduced.transposeInPlace();
+                //     dsOut->writeDataset(Rcpp::wrap(fullReduced));
+                // } else {
+                //     checkClose_file(dsOut);
+                //     Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
+                //     return void();
+                // }
+            }
+            
+            
+            if( dsOut->getDatasetptr() != nullptr) {
+                dsOut->writeDataset(Rcpp::wrap(fullReduced));
+            } else {
+                checkClose_file(dsOut);
+                Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
+                return void();
             }
             
             delete dsOut; dsOut = nullptr;

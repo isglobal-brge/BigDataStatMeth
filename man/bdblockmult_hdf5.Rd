@@ -10,6 +10,8 @@ bdblockmult_hdf5(
   A,
   B,
   groupB = NULL,
+  transpose_A = NULL,
+  transpose_B = NULL,
   block_size = NULL,
   paral = NULL,
   threads = NULL,
@@ -31,6 +33,10 @@ the data matrix to be used in calculus}
 
 \item{groupB}{string, (optional), An optional string specifying the group
 for matrix B. Defaults to the value of \code{group} if not provided.}
+
+\item{transpose_A}{Whether to transpose matrix A}
+
+\item{transpose_B}{Whether to transpose matrix B}
 
 \item{block_size}{integer (optional), an optional parameter specifying the
 block size for processing the matrices. If not provided, a default block

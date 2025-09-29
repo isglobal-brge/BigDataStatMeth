@@ -59,7 +59,7 @@
 //'
 //' @description
 //' Performs element-wise operations between a matrix and a vector stored in HDF5
-//' format. The function supports addition, subtraction, multiplication, and division
+//' format. The function supports addition, subtraction, multiplication, division and power
 //' operations, with options for row-wise or column-wise application and parallel
 //' processing.
 //'
@@ -72,6 +72,7 @@
 //'   - Subtraction (-): Subtracts vector elements from matrix rows/columns
 //'   - Multiplication (*): Multiplies matrix rows/columns by vector elements
 //'   - Division (/): Divides matrix rows/columns by vector elements
+//'   - Power (pow): power matrix rows/columns by vector elements
 //' 
 //' * Processing options:
 //'   - Row-wise or column-wise operations
@@ -91,7 +92,7 @@
 //' @param vectorgroup String. Path to the group containing the vector dataset.
 //' @param vectordataset String. Name of the vector dataset.
 //' @param outdataset String. Name for the output dataset.
-//' @param func String. Operation to perform: "+", "-", "*", or "/".
+//' @param func String. Operation to perform: "+", "-", "*", "/", or "pow".
 //' @param outgroup Optional string. Output group path. If not provided,
 //'   results are stored in the same group as the input matrix.
 //' @param byrows Logical. If TRUE, applies operation by rows. If FALSE (default),
@@ -101,8 +102,12 @@
 //'   Ignored if paral is FALSE.
 //' @param overwrite Logical. If TRUE, allows overwriting existing datasets.
 //'
-//' @return No direct return value. Results are written to the HDF5 file in the
-//' specified location.
+//' @return List with components:
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{gr}{Character string with the HDF5 group}
+//'   \item{ds}{Character string with the full dataset path (group/dataset)}
+//' }
 //'
 //' @examples
 //' library(BigDataStatMeth)
@@ -170,7 +175,7 @@
 //'
 //' @export
 // [[Rcpp::export]]
- void bdcomputeMatrixVector_hdf5( std::string filename, std::string group, 
+Rcpp::List  bdcomputeMatrixVector_hdf5( std::string filename, std::string group, 
                                   std::string dataset,
                                   std::string vectorgroup, std::string vectordataset,
                                   std::string outdataset, 
@@ -187,14 +192,18 @@
      BigDataStatMeth::hdf5Dataset* dsB = nullptr;
      BigDataStatMeth::hdf5Dataset* dsC = nullptr;
      
+     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                                Rcpp::Named("gr") = "",
+                                                Rcpp::Named("ds") = "");
+     
      try{
         
         bool bbyrows, bparal, bforce;
         std::string strgroupout;
         bool bError=false;
         
-        Rcpp::NumericVector oper = {0, 1, 2, 3};
-        oper.names() = Rcpp::CharacterVector({"+", "-", "*", "/"});
+        Rcpp::NumericVector oper = {0, 1, 2, 3, 4};
+        oper.names() = Rcpp::CharacterVector({"+", "-", "*", "/", "pow"});
          
          if( byrows.isNull()) { bbyrows = false; } 
          else { bbyrows = Rcpp::as<bool> (byrows); }
@@ -211,8 +220,8 @@
          // Function exists?
          if( oper(oper.findName(func)) != 0 && oper(oper.findName(func)) != 1 &&
              oper(oper.findName(func)) != 2 && oper(oper.findName(func)) != 3)  {
-             Rcpp::Rcout<<"Function does not exists, please use one of the following : '+', '-', '*', '/' ";
-             return void();
+             Rcpp::Rcout<<"Function does not exists, please use one of the following : '+', '-', '*', '/', 'pow' ";
+             return lst_return;
          } 
 
          dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
@@ -248,27 +257,31 @@
                      dsC = hdf5_matrixVector_calculus( dsA, dsB, dsC, oper(oper.findName(func)), bbyrows, bparal, threads);
                  }
                  
+                 lst_return["fn"] = filename;
+                 lst_return["gr"] = strgroupout;
+                 lst_return["ds"] = outdataset;
+                 
                  delete dsC; dsC = nullptr;
              }    
              
+         } else {
+             checkClose_file(dsA, dsB);
+             Rf_error("c++ exception bdcomputeMatrixVector_hdf5 (DataSet IException)");
          }
          
          delete dsA; dsA = nullptr;
          delete dsB; dsB = nullptr;
          
      } catch( H5::FileIException& error ) {     
-        checkClose_file(dsA, dsB);
-        Rcpp::Rcerr << "c++ exception bdcomputeMatrixVector_hdf5 (File IException)";
-        return void();
+        checkClose_file(dsA, dsB, dsC);
+        Rcpp::stop ( "c++ exception bdcomputeMatrixVector_hdf5 (File IException)");
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsA, dsB);
-        Rcpp::Rcerr << "c++ exception bdcomputeMatrixVector_hdf5 (DataSet IException)";
-        return void();
+         checkClose_file(dsA, dsB, dsC);
+         Rcpp::stop ("c++ exception bdcomputeMatrixVector_hdf5 (DataSet IException)");
      } catch(std::exception &ex) {
-        checkClose_file(dsA, dsB);
-        Rcpp::Rcerr << "c++ exception bdcomputeMatrixVector_hdf5 (std::exception)" << ex.what();
-        return void();
+         checkClose_file(dsA, dsB, dsC);
+         Rcpp::stop ("c++ exception bdcomputeMatrixVector_hdf5 (std::exception): %s",  ex.what());
      }
      
-     return void();
+     return lst_return;
  }

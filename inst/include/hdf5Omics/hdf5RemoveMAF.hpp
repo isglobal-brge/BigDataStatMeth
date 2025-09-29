@@ -24,8 +24,10 @@
 #ifndef BIGDATASTATMETH_OMICS_RM_MAF_HPP
 #define BIGDATASTATMETH_OMICS_RM_MAF_HPP
 
-#include <RcppEigen.h>
-#include "H5Cpp.h"
+// #include <RcppEigen.h>
+// #include "H5Cpp.h"
+
+#include "hdf5Omics/hdf5OmicsUtils.hpp"
 
 namespace BigDataStatMeth {
 

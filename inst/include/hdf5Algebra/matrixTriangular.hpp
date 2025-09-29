@@ -40,156 +40,192 @@
 
 namespace BigDataStatMeth {
 
-/**
- * @brief Set the upper triangular matrix
- * @details Set the upper triangular matrix of a dataset
- * 
- * @param dsMat The dataset to set the upper triangular matrix of
- * @param dElementsBlock The block size to use for the matrix
- */
-inline void setUpperTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
-{
-    
-    try {
+    /**
+     * @brief Set the upper triangular matrix using block-based approach
+     * @details Reads blocks, modifies them in memory to create upper triangular structure,
+     * and writes complete modified blocks instead of individual elements
+     * 
+     * @param dsMat The dataset to set the upper triangular matrix of
+     * @param dElementsBlock The block size to use for the matrix
+     */
+    inline void setUpperTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
+    {
         
-        std::vector<hsize_t> count = {1, 1},
-                             stride = {1, 1},
-                             block = {1, 1},
-                             offset = {0, 0};
-        
-        hsize_t readedRows = 0,
+        try {
+            
+            std::vector<hsize_t> stride = {1, 1},
+                block = {1, 1};
+            
+            hsize_t readedRows = 0,
                 rowstoRead,
                 minimumBlockSize;
-        
-        if( dElementsBlock < dsMat->nrows() * 2 ) {
-            minimumBlockSize = dsMat->nrows() * 2;
-        } else {
-            minimumBlockSize = dElementsBlock;
-        }
-        
-        while ( readedRows < dsMat->nrows() ) {
             
-            rowstoRead = ( -2 * readedRows - 1 + std::sqrt( pow(2*readedRows, 2) - 4 * readedRows + 8 * minimumBlockSize + 1) ) / 2;
+            // Optimized block size calculation
+            minimumBlockSize = std::max(static_cast<hsize_t>(1024), 
+                                        std::min(dElementsBlock, dsMat->nrows()));
             
-            if( readedRows + rowstoRead > dsMat->nrows()) { // Max size bigger than data to read ?
-                rowstoRead = dsMat->nrows() - readedRows;
-            }
-            
-            if( readedRows == 0) { // Read complete cols
-                count[0] = dsMat->nrows();
-                count[1] = rowstoRead;
-            } else {
-                count[1] = rowstoRead;
-                count[0] = dsMat->nrows() - readedRows;
-            }
-            
-            offset[1] = readedRows;
-            offset[0] = offset[1];
-            
-            std::vector<double> vdA( count[0] * count[1]);
-            dsMat->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
-            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), count[0], count[1] );
-            
-            // #pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(sum) shared (A,L,j) schedule(static) if (j < readedRows - chunk)
-            for ( hsize_t i = 0; i < rowstoRead; i++ ) {
-                std::vector<hsize_t> tcount = { dsMat->nrows()-readedRows-i-1, 1 };
-                std::vector<hsize_t> toffset = {readedRows+i, readedRows+i+1 };
+            while ( readedRows < dsMat->nrows() ) {
                 
-                dsMat->writeDatasetBlock( Rcpp::wrap( A.block(i+1, i, dsMat->nrows()-readedRows-i-1, 1 ).transpose() ), toffset, tcount, stride, block, true);
+                rowstoRead = ( -2 * readedRows - 1 + std::sqrt( pow(2*readedRows, 2) - 4 * readedRows + 8 * minimumBlockSize + 1) ) / 2;
+                
+                if( readedRows + rowstoRead > dsMat->nrows()) {
+                    rowstoRead = dsMat->nrows() - readedRows;
+                }
+                
+                // Read square block from diagonal position
+                std::vector<hsize_t> offset = {readedRows, readedRows};
+                std::vector<hsize_t> count = {rowstoRead, rowstoRead};
+                
+                // Read the current square block
+                std::vector<double> block_data(rowstoRead * rowstoRead);
+                dsMat->readDatasetBlock(offset, count, stride, block, block_data.data());
+                
+                // Map to Eigen matrix for easier manipulation
+                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> 
+                    block_matrix(block_data.data(), rowstoRead, rowstoRead);
+                
+                // Create upper triangular: copy lower triangle to upper triangle
+                for (hsize_t i = 0; i < rowstoRead; i++) {
+                    for (hsize_t j = i + 1; j < rowstoRead; j++) {
+                        block_matrix(i, j) = block_matrix(j, i);  // Copy lower to upper
+                    }
+                }
+                
+                // Write the complete modified block back - SINGLE WRITE OPERATION
+                dsMat->writeDatasetBlock(Rcpp::wrap(block_matrix), offset, count, stride, block, false);
+                
+                // Handle rectangular regions outside the diagonal blocks
+                if (readedRows + rowstoRead < dsMat->nrows()) {
+                    // Write lower-right rectangular region (below diagonal block)
+                    hsize_t remaining_rows = dsMat->nrows() - readedRows - rowstoRead;
+                    std::vector<hsize_t> rect_offset = {readedRows + rowstoRead, readedRows};
+                    std::vector<hsize_t> rect_count = {remaining_rows, rowstoRead};
+                    
+                    // Read lower-left block (source for transpose)
+                    std::vector<double> rect_data(remaining_rows * rowstoRead);
+                    dsMat->readDatasetBlock(rect_offset, rect_count, stride, block, rect_data.data());
+                    
+                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> 
+                        rect_matrix(rect_data.data(), remaining_rows, rowstoRead);
+                    
+                    // Write transposed data to upper-right position
+                    std::vector<hsize_t> upper_offset = {readedRows, readedRows + rowstoRead};
+                    std::vector<hsize_t> upper_count = {rowstoRead, remaining_rows};
+                    
+                    Eigen::MatrixXd transposed = rect_matrix.transpose();
+                    dsMat->writeDatasetBlock(Rcpp::wrap(transposed), upper_offset, upper_count, stride, block, false);
+                }
+                
+                readedRows = readedRows + rowstoRead; 
             }
             
-            readedRows = readedRows + rowstoRead; 
+        }
+        catch( H5::FileIException& error ) {
+            Rcpp::Rcout<<"c++ exception setUpperTriangularMatrix (File IException)";
+            return void();
+        } catch( H5::DataSetIException& error ) {
+            Rcpp::Rcout << "c++ exception setUpperTriangularMatrix (DataSet IException)";
+            return void();
+        } catch(std::exception& ex) {
+            Rcpp::Rcout << "c++ exception setUpperTriangularMatrix: " << ex.what();
+            return void();
         }
         
-    }
-    catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcout<<"c++ exception Rcpp_setUpperTriangularMatrix (File IException)";
-        return void();
-    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception Rcpp_setUpperTriangularMatrix (DataSet IException)";
-        return void();
-    } catch(std::exception& ex) {
-        Rcpp::Rcout << "c++ exception Rcpp_setUpperTriangularMatrix" << ex.what();
         return void();
     }
     
-    return void();
-}
-
-/**
- * @brief Set the lower triangular matrix
- * @details Set the lower triangular matrix of a dataset
- * 
- * @param dsMat The dataset to set the lower triangular matrix of
- * @param dElementsBlock The block size to use for the matrix
- */
-inline void setLowerTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
-{
-    
-    try {
+    /**
+     * @brief Set the lower triangular matrix using block-based approach
+     * @details Reads blocks, modifies them in memory to create lower triangular structure,
+     * and writes complete modified blocks instead of individual elements
+     * 
+     * @param dsMat The dataset to set the lower triangular matrix of
+     * @param dElementsBlock The block size to use for the matrix
+     */
+    inline void setLowerTriangularMatrix( BigDataStatMeth::hdf5Dataset* dsMat, hsize_t dElementsBlock)
+    {
         
-        std::vector<hsize_t> count = {1, 1},
-                            stride = {1, 1},
-                            block = {1, 1},
-                            offset = {0, 0};
-        
-        hsize_t readedRows = 0,
+        try {
+            
+            std::vector<hsize_t> stride = {1, 1},
+                block = {1, 1};
+            
+            hsize_t readedRows = 0,
                 rowstoRead,
                 minimumBlockSize;
-        
-        if( dElementsBlock < dsMat->nrows() * 2 ) {
-            minimumBlockSize = dsMat->nrows() * 2;
-        } else {
-            minimumBlockSize = dElementsBlock;
-        }
-        
-        while ( readedRows < dsMat->nrows() ) {
             
-            rowstoRead = ( -2 * readedRows - 1 + std::sqrt( pow(2*readedRows, 2) - 4 * readedRows + 8 * minimumBlockSize + 1) ) / 2;
+            // Optimized block size calculation
+            minimumBlockSize = std::max(static_cast<hsize_t>(1024), 
+                                        std::min(dElementsBlock, dsMat->nrows()));
             
-            if( readedRows + rowstoRead > dsMat->nrows()) { // Max size bigger than data to read ?
-                rowstoRead = dsMat->nrows() - readedRows;
-            }
-            
-            if( readedRows == 0) { // Read complete cols
-                count[0] = rowstoRead;
-                count[1] = dsMat->nrows();
-            } else {
-                count[1] = dsMat->nrows() - readedRows;
-                count[0] = rowstoRead;
-            }
-            
-            offset[1] = readedRows;
-            offset[0] = offset[1];
-            
-            std::vector<double> vdA( count[0] * count[1]);
-            dsMat->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
-            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), count[0], count[1] );
-            
-            // #pragma omp parallel for num_threads(getDTthreads(ithreads, true)) private(sum) shared (A,L,j) schedule(static) if (j < readedRows - chunk)
-            for ( hsize_t i = 0; i < rowstoRead; i++ ) {
-                std::vector<hsize_t> tcount = { 1, dsMat->nrows()-readedRows-i-1 };
-                std::vector<hsize_t> toffset = { readedRows+i+1, readedRows+i };
+            while ( readedRows < dsMat->nrows() ) {
                 
-                dsMat->writeDatasetBlock( Rcpp::wrap( A.block(i, i+1, 1, dsMat->nrows()-readedRows-i-1 ).transpose() ), toffset, tcount, stride, block, true);
+                rowstoRead = ( -2 * readedRows - 1 + std::sqrt( pow(2*readedRows, 2) - 4 * readedRows + 8 * minimumBlockSize + 1) ) / 2;
+                
+                if( readedRows + rowstoRead > dsMat->nrows()) {
+                    rowstoRead = dsMat->nrows() - readedRows;
+                }
+                
+                // Read square block from diagonal position
+                std::vector<hsize_t> offset = {readedRows, readedRows};
+                std::vector<hsize_t> count = {rowstoRead, rowstoRead};
+                
+                // Read the current square block
+                std::vector<double> block_data(rowstoRead * rowstoRead);
+                dsMat->readDatasetBlock(offset, count, stride, block, block_data.data());
+                
+                // Map to Eigen matrix for easier manipulation
+                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> 
+                    block_matrix(block_data.data(), rowstoRead, rowstoRead);
+                
+                // Create lower triangular: copy upper triangle to lower triangle
+                for (hsize_t i = 0; i < rowstoRead; i++) {
+                    for (hsize_t j = i + 1; j < rowstoRead; j++) {
+                        block_matrix(j, i) = block_matrix(i, j);  // Copy upper to lower
+                    }
+                }
+                
+                // Write the complete modified block back - SINGLE WRITE OPERATION
+                dsMat->writeDatasetBlock(Rcpp::wrap(block_matrix), offset, count, stride, block, false);
+                
+                // Handle rectangular regions outside the diagonal blocks
+                if (readedRows + rowstoRead < dsMat->nrows()) {
+                    // Write upper-right rectangular region (above diagonal block)
+                    hsize_t remaining_cols = dsMat->nrows() - readedRows - rowstoRead;
+                    std::vector<hsize_t> rect_offset = {readedRows, readedRows + rowstoRead};
+                    std::vector<hsize_t> rect_count = {rowstoRead, remaining_cols};
+                    
+                    // Read upper-right block (source for transpose)
+                    std::vector<double> rect_data(rowstoRead * remaining_cols);
+                    dsMat->readDatasetBlock(rect_offset, rect_count, stride, block, rect_data.data());
+                    
+                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> 
+                        rect_matrix(rect_data.data(), rowstoRead, remaining_cols);
+                    
+                    // Write transposed data to lower-left position
+                    std::vector<hsize_t> lower_offset = {readedRows + rowstoRead, readedRows};
+                    std::vector<hsize_t> lower_count = {remaining_cols, rowstoRead};
+                    
+                    Eigen::MatrixXd transposed = rect_matrix.transpose();
+                    dsMat->writeDatasetBlock(Rcpp::wrap(transposed), lower_offset, lower_count, stride, block, false);
+                }
+                
+                readedRows = readedRows + rowstoRead; 
             }
-            
-            readedRows = readedRows + rowstoRead; 
         }
+        catch( H5::FileIException& error ) {
+            Rcpp::Rcout<<"c++ exception setLowerTriangularMatrix (File IException)";
+            return void();
+        } catch( H5::DataSetIException& error ) {
+            Rcpp::Rcout << "c++ exception setLowerTriangularMatrix (DataSet IException)";
+            return void();
+        } catch(std::exception& ex) {
+            Rcpp::Rcout << "c++ exception setLowerTriangularMatrix: " << ex.what();
+            return void();
+        }
+        
+        return void();
     }
-    catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcout<<"c++ exception Rcpp_setLowerTriangularMatrix (File IException)";
-        return void();
-    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcout << "c++ exception Rcpp_setLowerTriangularMatrix (DataSet IException)";
-        return void();
-    } catch(std::exception& ex) {
-        Rcpp::Rcout << "c++ exception Rcpp_setLowerTriangularMatrix" << ex.what();
-        return void();
-    }
-    
-    return void();
-}
 
 
 }

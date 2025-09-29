@@ -27,6 +27,8 @@
 #include "Spectra/MatOp/DenseSymMatProd.h"
 #include "Spectra/MatOp/DenseGenMatProd.h"
 
+#include <random>
+
 
 namespace BigDataStatMeth {
     

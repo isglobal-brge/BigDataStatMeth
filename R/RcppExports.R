@@ -952,6 +952,8 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #' @param B string specifying the dataset name for matrix B.
 #' @param groupB string, (optional), An optional string specifying the group 
 #' for matrix B. Defaults to the value of `group` if not provided.
+#' @param transpose_A Whether to transpose matrix A
+#' @param transpose_B Whether to transpose matrix B
 #' @param block_size integer (optional), an optional parameter specifying the 
 #' block size for processing the matrices. If not provided, a default block 
 #' size is used. The block size should be chosen based on the available memory 
@@ -1041,8 +1043,8 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #' }
 #' 
 #' @export
-bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
-    .Call('_BigDataStatMeth_bdblockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite)
+bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, transpose_A = NULL, transpose_B = NULL, block_size = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    .Call('_BigDataStatMeth_bdblockmult_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, transpose_A, transpose_B, block_size, paral, threads, outgroup, outdataset, overwrite)
 }
 
 #' Block matrix multiplication for sparse matrices
@@ -1288,6 +1290,86 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
     .Call('_BigDataStatMeth_bdtCrossprod_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite)
 }
 
+#' Create Diagonal Matrix or Vector in HDF5 File
+#'
+#' @description
+#' Creates a diagonal matrix or vector directly in an HDF5 file using
+#' block-wise processing to minimize memory usage. This unified function
+#' replaces separate diagonal and identity matrix creation functions,
+#' providing flexible diagonal creation with automatic parameter detection.
+#'
+#' @details
+#' This function provides flexible diagonal creation with two main modes:
+#' 
+#' * Vector mode: Provide custom diagonal values
+#'   - Size is automatically detected from vector length
+#'   - Scalar acts as additional multiplier
+#'   - Ideal for custom diagonal patterns
+#' 
+#' * Scalar mode: Provide size and scalar value  
+#'   - Creates uniform diagonal with specified scalar
+#'   - scalar=1.0 creates identity matrix/vector
+#'   - Ideal for identity or uniform diagonal matrices
+#' 
+#' * Output formats:
+#'   - "matrix": Creates full N×N matrix (sparse, only diagonal populated)
+#'   - "vector": Creates efficient 1×N vector with diagonal values only
+#' 
+#' * Performance features:
+#'   - Block-wise processing for memory efficiency
+#'   - Optional compression with configurable levels
+#'   - Parallel processing support for large datasets
+#'   - Automatic block size optimization
+#'
+#' @param filename Character. Path to HDF5 file
+#' @param group Character. Group path in HDF5 file (default: "/")
+#' @param dataset Character. Name of dataset to create
+#' @param size Integer. Size of diagonal (auto-detected if diagonal_values provided)
+#' @param scalar Numeric. Scalar multiplier for diagonal elements (default: 1.0)
+#' @param diagonal_values Numeric vector. Custom diagonal values (optional)
+#' @param output_type Character. Output format: "matrix" or "vector" (default: "matrix")
+#' @param block_size Integer. Block size for processing (default: auto-estimate)
+#' @param compression Integer. Compression level 0-9 (default: 6)
+#' @param overwriteFile Logical. Overwrite file if exists (default: FALSE)
+#' @param overwriteDataset Logical. Overwrite dataset if exists (default: FALSE)  
+#' @param threads Integer. Number of threads to use (default: auto-detect)
+#'
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' 
+#' # Create identity matrix (1M x 1M)
+#' bdCreate_diagonal_hdf5("identity.h5", "/", "I_matrix", 
+#'                       size = 1000000, scalar = 1.0)
+#' 
+#' # Create scaled identity vector (more efficient)
+#' bdCreate_diagonal_hdf5("scaled_id.h5", "/", "scaled_I", 
+#'                       size = 500000, scalar = 3.14, 
+#'                       output_type = "vector")
+#' 
+#' # Create custom diagonal matrix
+#' custom_diag <- runif(10000)
+#' bdCreate_diagonal_hdf5("custom.h5", "/", "my_diag",
+#'                       diagonal_values = custom_diag,
+#'                       scalar = 2.0, output_type = "matrix")
+#' 
+#' # Create custom diagonal vector (most efficient)
+#' bdCreate_diagonal_hdf5("custom_vec.h5", "/", "my_diag_vec",
+#'                       diagonal_values = custom_diag,
+#'                       output_type = "vector")
+#' }
+#'
+#' @export
+bdCreate_diagonal_hdf5 <- function(filename, group, dataset, size = NULL, scalar = 1.0, diagonal_values = numericVector(), output_type = "matrix", block_size = 0L, compression = 6L, overwriteFile = NULL, overwriteDataset = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_bdCreate_diagonal_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, size, scalar, diagonal_values, output_type, block_size, compression, overwriteFile, overwriteDataset, threads)
+}
+
 #' Create an empty HDF5 dataset (no data written)
 #'
 #' @description
@@ -1398,6 +1480,343 @@ bdCreate_hdf5_group <- function(filename, group) {
 #' @export
 bdCreate_hdf5_matrix <- function(filename, object, group = NULL, dataset = NULL, transp = NULL, overwriteFile = NULL, overwriteDataset = NULL, unlimited = NULL) {
     invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_matrix', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp, overwriteFile, overwriteDataset, unlimited))
+}
+
+#' Add Diagonal Elements from HDF5 Matrices or Vectors
+#'
+#' @description
+#' Performs optimized diagonal addition between two datasets stored in HDF5 format.
+#' Automatically detects whether inputs are matrices (extracts diagonals) or vectors
+#' (direct operation) and uses the most efficient approach.
+#'
+#' @param filename String. Path to the HDF5 file containing the datasets.
+#' @param group String. Group path containing the first dataset (A).
+#' @param A String. Name of the first dataset (matrix or vector).
+#' @param B String. Name of the second dataset (matrix or vector).
+#' @param groupB Optional string. Group path containing dataset B.
+#' @param target Optional string. Where to write result: "A", "B", or "new" (default: "new").
+#' @param outgroup Optional string. Output group path (only used if target="new").
+#' @param outdataset Optional string. Output dataset name (only used if target="new").
+#' @param paral Optional logical. Whether to use parallel processing.
+#' @param threads Optional integer. Number of threads for parallel processing.
+#' @param overwrite Optional logical. Whether to overwrite existing datasets.
+#'
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#' }
+#'
+#' @export
+bdDiag_add_hdf5 <- function(filename, group, A, B, groupB = NULL, target = NULL, outgroup = NULL, outdataset = NULL, paral = NULL, threads = NULL, overwrite = NULL) {
+    .Call('_BigDataStatMeth_bdDiag_add_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, target, outgroup, outdataset, paral, threads, overwrite)
+}
+
+#' Subtract Diagonal Elements from HDF5 Matrices or Vectors
+#'
+#' @description
+#' Performs optimized diagonal subtraction between two datasets stored in HDF5 format.
+#' Automatically detects whether inputs are matrices (extracts diagonals) or vectors
+#' (direct operation) and uses the most efficient approach. This function is ~50-250x
+#' faster than traditional matrix operations for diagonal computations.
+#'
+#' @details
+#' This function provides flexible diagonal subtraction with automatic optimization:
+#' 
+#' * Operation modes:
+#'   - Matrix - Matrix: Extract diagonals → vector subtraction → save as vector
+#'   - Matrix - Vector: Extract diagonal → vector subtraction → save as vector  
+#'   - Vector - Vector: Direct vector subtraction (most efficient)
+#' 
+#' * Performance features:
+#'   - Uses optimized vector operations for maximum efficiency
+#'   - Automatic type detection and dimension validation
+#'   - Memory-efficient processing for large datasets
+#'   - Parallel processing support for improved performance
+#'
+#' * Validation checks:
+#'   - Matrix inputs must be square (N×N)
+#'   - Vector inputs must have compatible dimensions
+#'   - Automatic dimension matching between operands
+#'
+#' @param filename String. Path to the HDF5 file containing the datasets.
+#' @param group String. Group path containing the first dataset (A, minuend).
+#' @param A String. Name of the first dataset (minuend).
+#' @param B String. Name of the second dataset (subtrahend).
+#' @param groupB Optional string. Group path containing dataset B.
+#'   If NULL, uses same group as A.
+#' @param target Optional string. Where to write result: "A", "B", or "new" (default: "new").
+#' @param outgroup Optional string. Output group path.
+#'   Default is "OUTPUT".
+#' @param outdataset Optional string. Output dataset name.
+#'   Default is "A_-_B" with .diag suffix if appropriate.
+#' @param paral Optional logical. Whether to use parallel processing.
+#'   Default is FALSE.
+#' @param threads Optional integer. Number of threads for parallel processing.
+#'   If NULL, uses maximum available threads.
+#' @param overwrite Optional logical. Whether to overwrite existing datasets.
+#'   Default is FALSE.
+#'
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' 
+#' # Create test matrices
+#' N <- 1000
+#' set.seed(123)
+#' A <- matrix(rnorm(N*N), N, N)
+#' B <- matrix(rnorm(N*N), N, N)
+#' 
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+#'                      overwriteFile = TRUE)
+#' bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+#'                      overwriteFile = FALSE)
+#' 
+#' # Subtract diagonals
+#' result <- bdDiag_subtract_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+#'                               outgroup = "results",
+#'                               outdataset = "diagonal_diff",
+#'                               paral = TRUE)
+#' }
+#'
+#' @export
+bdDiag_subtract_hdf5 <- function(filename, group, A, B, groupB = NULL, target = NULL, outgroup = NULL, outdataset = NULL, paral = NULL, threads = NULL, overwrite = NULL) {
+    .Call('_BigDataStatMeth_bdDiag_subtract_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, target, outgroup, outdataset, paral, threads, overwrite)
+}
+
+#' Multiply Diagonal Elements from HDF5 Matrices or Vectors
+#'
+#' @description
+#' Performs optimized diagonal multiplication between two datasets stored in HDF5 format.
+#' Automatically detects whether inputs are matrices (extracts diagonals) or vectors
+#' (direct operation) and uses the most efficient approach. This function performs
+#' element-wise multiplication and is ~50-250x faster than traditional matrix operations.
+#'
+#' @details
+#' This function provides flexible diagonal multiplication with automatic optimization:
+#' 
+#' * Operation modes:
+#'   - Matrix * Matrix: Extract diagonals → vector multiplication → save as vector
+#'   - Matrix * Vector: Extract diagonal → vector multiplication → save as vector  
+#'   - Vector * Vector: Direct vector multiplication (most efficient)
+#' 
+#' * Performance features:
+#'   - Uses optimized vector operations for maximum efficiency
+#'   - Automatic type detection and dimension validation
+#'   - Memory-efficient processing for large datasets
+#'   - Parallel processing support for improved performance
+#'
+#' * Mathematical properties:
+#'   - Element-wise multiplication (not matrix multiplication)
+#'   - Commutative operation: A * B = B * A
+#'   - Handles overflow according to IEEE 754 standards
+#'   - Preserves sign information correctly
+#'
+#' @param filename String. Path to the HDF5 file containing the datasets.
+#' @param group String. Group path containing the first dataset (A).
+#' @param A String. Name of the first dataset (matrix or vector).
+#' @param B String. Name of the second dataset (matrix or vector).
+#' @param groupB Optional string. Group path containing dataset B.
+#'   If NULL, uses same group as A.
+#' @param target Optional string. Where to write result: "A", "B", or "new" (default: "new").
+#' @param outgroup Optional string. Output group path.
+#'   Default is "OUTPUT".
+#' @param outdataset Optional string. Output dataset name.
+#'   Default is "A_*_B" with .diag suffix if appropriate.
+#' @param paral Optional logical. Whether to use parallel processing.
+#'   Default is FALSE.
+#' @param threads Optional integer. Number of threads for parallel processing.
+#'   If NULL, uses maximum available threads.
+#' @param overwrite Optional logical. Whether to overwrite existing datasets.
+#'   Default is FALSE.
+#'
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' 
+#' # Create test matrices
+#' N <- 1000
+#' set.seed(123)
+#' A <- matrix(rnorm(N*N), N, N)
+#' B <- matrix(rnorm(N*N), N, N)
+#' 
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+#'                      overwriteFile = TRUE)
+#' bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+#'                      overwriteFile = FALSE)
+#' 
+#' # Multiply diagonals (element-wise)
+#' result <- bdDiag_multiply_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+#'                               outgroup = "results",
+#'                               outdataset = "diagonal_product",
+#'                               paral = TRUE)
+#' }
+#'
+#' @export
+bdDiag_multiply_hdf5 <- function(filename, group, A, B, groupB = NULL, target = NULL, outgroup = NULL, outdataset = NULL, paral = NULL, threads = NULL, overwrite = NULL) {
+    .Call('_BigDataStatMeth_bdDiag_multiply_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, target, outgroup, outdataset, paral, threads, overwrite)
+}
+
+#' Divide Diagonal Elements from HDF5 Matrices or Vectors
+#'
+#' @description
+#' Performs optimized diagonal division between two datasets stored in HDF5 format.
+#' Automatically detects whether inputs are matrices (extracts diagonals) or vectors
+#' (direct operation) and uses the most efficient approach. This function is ~50-250x
+#' faster than traditional matrix operations for diagonal computations.
+#'
+#' @details
+#' This function provides flexible diagonal division with automatic optimization:
+#' 
+#' * Operation modes:
+#'   - Matrix / Matrix: Extract diagonals → vector division → save as vector
+#'   - Matrix / Vector: Extract diagonal → vector division → save as vector  
+#'   - Vector / Vector: Direct vector division (most efficient)
+#' 
+#' * Performance features:
+#'   - Uses optimized vector operations for maximum efficiency
+#'   - Automatic type detection and dimension validation
+#'   - Memory-efficient processing for large datasets
+#'   - Parallel processing support for improved performance
+#'
+#' * Mathematical properties:
+#'   - Element-wise division: result[i] = A[i] / B[i]
+#'   - Division by zero results in infinity (IEEE 754 standard)
+#'   - Handles special cases: ±inf, NaN, and subnormal numbers
+#'   - Order matters: A / B ≠ B / A
+#'
+#' @param filename String. Path to the HDF5 file containing the datasets.
+#' @param group String. Group path containing the first dataset (A, dividend).
+#' @param A String. Name of the first dataset (dividend).
+#' @param B String. Name of the second dataset (divisor).
+#' @param groupB Optional string. Group path containing dataset B.
+#'   If NULL, uses same group as A.
+#' @param target Optional string. Where to write result: "A", "B", or "new" (default: "new").
+#' @param outgroup Optional string. Output group path.
+#'   Default is "OUTPUT".
+#' @param outdataset Optional string. Output dataset name.
+#'   Default is "A_/_B" with .diag suffix if appropriate.
+#' @param paral Optional logical. Whether to use parallel processing.
+#'   Default is FALSE.
+#' @param threads Optional integer. Number of threads for parallel processing.
+#'   If NULL, uses maximum available threads.
+#' @param overwrite Optional logical. Whether to overwrite existing datasets.
+#'   Default is FALSE.
+#'
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' 
+#' # Create test matrices
+#' N <- 1000
+#' set.seed(123)
+#' A <- matrix(rnorm(N*N), N, N)
+#' B <- matrix(rnorm(N*N, mean=1), N, N)  # Avoid division by zero
+#' 
+#' # Save to HDF5
+#' bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+#'                      overwriteFile = TRUE)
+#' bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+#'                      overwriteFile = FALSE)
+#' 
+#' # Divide diagonals
+#' result <- bdDiag_divide_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+#'                             outgroup = "results",
+#'                             outdataset = "diagonal_ratio",
+#'                             paral = TRUE)
+#' }
+#'
+#' @export
+bdDiag_divide_hdf5 <- function(filename, group, A, B, groupB = NULL, target = NULL, outgroup = NULL, outdataset = NULL, paral = NULL, threads = NULL, overwrite = NULL) {
+    .Call('_BigDataStatMeth_bdDiag_divide_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, target, outgroup, outdataset, paral, threads, overwrite)
+}
+
+#' Apply Scalar Operations to Diagonal Elements
+#'
+#' @description
+#' Performs optimized scalar operations on diagonal elements of matrices or vectors
+#' stored in HDF5 format. Automatically detects whether input is a matrix (extracts
+#' diagonal) or vector (direct operation) and applies the specified scalar operation.
+#'
+#' @details
+#' This function provides flexible scalar operations on diagonals:
+#' 
+#' * Supported operations:
+#'   - "+": diagonal[i] + scalar
+#'   - "-": diagonal[i] - scalar  
+#'   - "*": diagonal[i] * scalar
+#'   - "/": diagonal[i] / scalar
+#'   - "pow": diagonal[i] ^ scalar
+#' 
+#' * Input types:
+#'   - Matrix input: Extracts diagonal automatically
+#'   - Vector input: Operates directly (most efficient)
+#' 
+#' * Target options:
+#'   - "input": Modifies original dataset in-place
+#'   - "new": Creates new dataset with result
+#'
+#' @param filename String. Path to the HDF5 file containing the dataset.
+#' @param group String. Group path containing the input dataset.
+#' @param dataset String. Name of the input dataset (matrix or vector).
+#' @param scalar Numeric. Scalar value for the operation.
+#' @param operation String. Operation to perform: "add", "subtract", "multiply", "divide".
+#' @param target Optional string. Where to write result: "input" or "new" (default: "new").
+#' @param paral Optional logical. Whether to use parallel processing (default: FALSE).
+#' @param threads Optional integer. Number of threads for parallel processing.
+#' @param outgroup Optional string. Output group path (only used if target="new").
+#' @param outdataset Optional string. Output dataset name (only used if target="new").
+#' @param overwrite Optional logical. Whether to overwrite existing datasets (default: FALSE).
+#'
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{gr}{Character string with the HDF5 group}
+#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' library(BigDataStatMeth)
+#' 
+#' # Create test matrix
+#' A <- matrix(rnorm(100), 10, 10)
+#' bdCreate_hdf5_matrix("test.h5", A, "data", "matrix_A", overwriteFile = TRUE)
+#' 
+#' # Add scalar to diagonal (creates new dataset)
+#' result <- bdDiag_scalar_hdf5("test.h5", "data", "matrix_A",
+#'                             scalar = 5.0, operation = "+",
+#'                             target = "new", outdataset = "diag_plus_5")
+#' 
+#' # Multiply diagonal in-place
+#' result2 <- bdDiag_scalar_hdf5("test.h5", "data", "matrix_A", 
+#'                              scalar = 2.0, operation = "*",
+#'                              target = "input")
+#' }
+#'
+#' @export
+bdDiag_scalar_hdf5 <- function(filename, group, dataset, scalar, operation, target = NULL, paral = NULL, threads = NULL, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
+    .Call('_BigDataStatMeth_bdDiag_scalar_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, scalar, operation, target, paral, threads, outgroup, outdataset, overwrite)
 }
 
 #' Eigenvalue Decomposition for HDF5-Stored Matrices using Spectra
@@ -3219,7 +3638,7 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'
 #' @description
 #' Performs element-wise operations between a matrix and a vector stored in HDF5
-#' format. The function supports addition, subtraction, multiplication, and division
+#' format. The function supports addition, subtraction, multiplication, division and power
 #' operations, with options for row-wise or column-wise application and parallel
 #' processing.
 #'
@@ -3232,6 +3651,7 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'   - Subtraction (-): Subtracts vector elements from matrix rows/columns
 #'   - Multiplication (*): Multiplies matrix rows/columns by vector elements
 #'   - Division (/): Divides matrix rows/columns by vector elements
+#'   - Power (pow): power matrix rows/columns by vector elements
 #' 
 #' * Processing options:
 #'   - Row-wise or column-wise operations
@@ -3251,7 +3671,7 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #' @param vectorgroup String. Path to the group containing the vector dataset.
 #' @param vectordataset String. Name of the vector dataset.
 #' @param outdataset String. Name for the output dataset.
-#' @param func String. Operation to perform: "+", "-", "*", or "/".
+#' @param func String. Operation to perform: "+", "-", "*", "/", or "pow".
 #' @param outgroup Optional string. Output group path. If not provided,
 #'   results are stored in the same group as the input matrix.
 #' @param byrows Logical. If TRUE, applies operation by rows. If FALSE (default),
@@ -3261,8 +3681,12 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'   Ignored if paral is FALSE.
 #' @param overwrite Logical. If TRUE, allows overwriting existing datasets.
 #'
-#' @return No direct return value. Results are written to the HDF5 file in the
-#' specified location.
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{gr}{Character string with the HDF5 group}
+#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#' }
 #'
 #' @examples
 #' library(BigDataStatMeth)
@@ -3330,7 +3754,7 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'
 #' @export
 bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup = NULL, byrows = NULL, paral = NULL, threads = NULL, overwrite = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, paral, threads, overwrite))
+    .Call('_BigDataStatMeth_bdcomputeMatrixVector_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, paral, threads, overwrite)
 }
 
 #' Write dimnames to an HDF5 dataset

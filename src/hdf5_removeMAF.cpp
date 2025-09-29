@@ -1,5 +1,5 @@
 #include <BigDataStatMeth.hpp>
-// #include "hdf5Omics/hdf5RemoveMAF.hpp"
+#include "hdf5Omics/hdf5RemoveMAF.hpp"
 
 /**
  * @file hdf5_removeMAF.cpp

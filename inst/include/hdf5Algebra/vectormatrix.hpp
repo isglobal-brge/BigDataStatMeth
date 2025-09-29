@@ -93,6 +93,25 @@ inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byRow(Eigen::MatrixXd X, Eigen:
     return(X);
 }
 
+
+/**
+ * @brief Matrix-vector power by rows
+ * @details Divides each row of a matrix by a vector element-wise.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of row-wise power
+ */
+inline Eigen::MatrixXd Rcpp_matrixVectorPow_byRow(Eigen::MatrixXd X, Eigen::VectorXd v) {
+    for (int col = 0; col < X.cols(); ++col) {
+        X.col(col) = X.col(col).array().unaryExpr(
+            [&v, col](double x) { return std::pow(x, v(col)); }
+        );
+    }
+    return(X);
+}
+
+
 /**
  * @brief Matrix-vector multiplication by columns
  * @details Multiplies each column of a matrix by a vector element-wise.
@@ -146,6 +165,24 @@ inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byCol(Eigen::MatrixXd X, Eigen:
 }
 
 
+/**
+ * @brief Matrix-vector power by columns
+ * @details Power each column of a matrix by a vector element-wise.
+ * 
+ * @param X Input matrix
+ * @param v Input vector
+ * @return Result of column-wise power
+ */
+inline Eigen::MatrixXd Rcpp_matrixVectorPower_byCol(Eigen::MatrixXd X, Eigen::VectorXd v) {
+    for (int row = 0; row < X.rows(); ++row) {
+        X.row(row) = X.row(row).array().unaryExpr(
+            [&v, row](double x) { return std::pow(x, v(row)); }
+        );
+    }
+    return(X);
+}
+
+
 /*
     Annotation: 
         * Function:
@@ -153,6 +190,7 @@ inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byCol(Eigen::MatrixXd X, Eigen:
         *  2: '-'
         *  3: '*'
         *  4: '/'
+        *  5: 'pow'
 */
 /**
  * @brief Vector-matrix operations for HDF5 matrices
@@ -162,7 +200,7 @@ inline Eigen::MatrixXd Rcpp_matrixVectorDivision_byCol(Eigen::MatrixXd X, Eigen:
  * @param dsA Input matrix dataset
  * @param dsB Input vector dataset
  * @param dsC Output matrix dataset
- * @param function Operation type (multiplication, addition, subtraction, division)
+ * @param function Operation type (multiplication, addition, subtraction, division, power)
  * @param bbyrows Whether to operate by rows or columns
  * @param bparal Whether to use parallel processing
  * @param threads Number of threads for parallel processing
@@ -230,10 +268,12 @@ inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
                     X = Rcpp_matrixVectorSum_byCol(X, vWeights); 
                 } else if( function == 1 ) {
                     X = Rcpp_matrixVectorSubstract_byCol(X, vWeights);
-                }else if( function == 2 ) {
+                } else if( function == 2 ) {
                     X = Rcpp_matrixVectorMultiplication_byCol(X, vWeights);
-                }else if( function == 3 ) {
+                } else if( function == 3 ) {
                     X = Rcpp_matrixVectorDivision_byCol(X, vWeights);
+                } else if( function == 4 ) {
+                    Rcpp_matrixVectorPower_byCol(X, vWeights);
                 }
                 
                 dsC->writeDatasetBlock(Rcpp::wrap(X.transpose()), offset, count, stride, block, false);
@@ -262,10 +302,12 @@ inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
                     X = Rcpp_matrixVectorSum_byRow(X, vWeights); 
                 } else if( function == 1 ) {
                     X = Rcpp_matrixVectorSubstract_byRow(X, vWeights);
-                }else if( function == 2 ) {
+                } else if( function == 2 ) {
                     X = Rcpp_matrixVectorMultiplication_byRow(X, vWeights);
-                }else if( function == 3 ) {
+                } else if( function == 3 ) {
                     X = Rcpp_matrixVectorDivision_byRow(X, vWeights);
+                } else if( function == 4 ) {
+                    X = Rcpp_matrixVectorPow_byRow(X, vWeights);
                 }
                 
                 offset = {i*blocksize, 0};
@@ -277,11 +319,11 @@ inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         // error.printErrorStack();
         checkClose_file(dsA, dsB, dsC);
-        Rf_error( "c++ exception hdf5_matrixVector_calculus (File IException)" );
+        Rcpp::Rcerr<< "c++ exception hdf5_matrixVector_calculus (File IException)" ;
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         // error.printErrorStack();
         checkClose_file(dsA, dsB, dsC);
-        Rf_error( "c++ exception hdf5_matrixVector_calculus (DataSet IException)" );
+        Rcpp::Rcerr<<"c++ exception hdf5_matrixVector_calculus (DataSet IException)";
     } catch(std::exception& error) {
         checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcout<< "c++ exception vector-matrix functions: "<<error.what()<< " \n";

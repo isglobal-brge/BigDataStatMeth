@@ -54,6 +54,31 @@ namespace BigDataStatMeth {
         Eigen::MatrixXd Q;
         Eigen::MatrixXd R;
     };
+    
+    /**
+     * @brief Matrix type classification for optimization strategies
+     * @details Enumeration used to classify matrices based on their dimensional characteristics
+     * to apply appropriate optimization algorithms. The classification considers both matrix
+     * size and aspect ratios to determine the most efficient computational approach.
+     */
+    enum MatrixType {
+        RECTANGULAR_EXTREME,  // min < 1000 && ratio > 100 (80×860,000)
+        SQUARE_SMALL,         // max < 10,000 && ratio < 5  (5,000×5,000)  
+        SQUARE_LARGE,         // 10K ≤ max < 100K && ratio < 5 (50,000×50,000)
+        SQUARE_EXTREME        // max ≥ 100K && ratio < 5 (500,000×500,000)
+    };
+    
+    
+    /**
+     * @brief Block size configuration for dual-block algorithms
+     * @details Structure containing optimized block sizes for different computational
+     * phases of the transposed cross-product operation.
+     */
+    struct BlockSizes {
+        hsize_t inner_block;
+        hsize_t output_block;
+        MatrixType type;
+    };
 
 
     // Functions
@@ -532,6 +557,42 @@ namespace BigDataStatMeth {
         }
         
         return(ithreads);
+    }
+    
+    /**
+     * @brief Classify matrix type based on dimensional characteristics
+     * @details Analyzes matrix dimensions to determine the optimal computational strategy.
+     * Classification considers both absolute size and aspect ratios to identify
+     * rectangular vs. square-like matrices and their relative sizes.
+     * 
+     * @param N Number of rows in result matrix
+     * @param M Number of columns in result matrix  
+     * @param K Inner dimension for matrix multiplication
+     * @return MatrixType Classification result for optimization strategy selection
+     * 
+     * @note Classification logic:
+     * - RECTANGULAR_EXTREME: min_dim < 1000 && ratio > 100
+     * - SQUARE_SMALL: max_dim < 10000 && ratio < 5
+     * - SQUARE_LARGE: 10000 ≤ max_dim < 100000 && ratio < 5
+     * - SQUARE_EXTREME: max_dim ≥ 100000 && ratio < 5
+     * - Default fallback: RECTANGULAR_EXTREME for other cases
+     */
+    inline MatrixType classify_matrix_type(hsize_t N, hsize_t M, hsize_t K) {
+        hsize_t min_dim = std::min({N, M, K});
+        hsize_t max_dim = std::max({N, M, K});
+        double ratio = (double)max_dim / min_dim;
+        
+        if (min_dim < 1000 && ratio > 100) {
+            return RECTANGULAR_EXTREME;
+        } else if (max_dim < 10000 && ratio < 5) {
+            return SQUARE_SMALL;
+        } else if (max_dim < 100000 && ratio < 5) {
+            return SQUARE_LARGE;  
+        } else if (ratio < 5) {
+            return SQUARE_EXTREME;
+        } else {
+            return RECTANGULAR_EXTREME;  // Default for other rectangular cases
+        }
     }
     
 }

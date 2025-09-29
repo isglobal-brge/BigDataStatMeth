@@ -112,19 +112,19 @@
      } catch (H5::FileIException&) {
          if (objFile)    { delete objFile; objFile = nullptr; }
          checkClose_file(objDataset);    // null-safe
-         Rf_error("c++ exception bdCreate_hdf5_emptyDataset (File IException)");
+         Rcpp::stop("c++ exception bdCreate_hdf5_emptyDataset (File IException)");
          return;
          
      } catch (H5::DataSetIException&) {
          if (objFile)    { delete objFile; objFile = nullptr; }
          checkClose_file(objDataset);
-         Rf_error("c++ exception bdCreate_hdf5_emptyDataset (DataSet IException)");
+         Rcpp::stop("c++ exception bdCreate_hdf5_emptyDataset (DataSet IException)");
          return;
          
      } catch (std::exception& ex) {
          if (objFile)    { delete objFile; objFile = nullptr; }
          checkClose_file(objDataset);
-         Rf_error("c++ exception bdCreate_hdf5_emptyDataset %s", ex.what());
+         Rcpp::stop("c++ exception bdCreate_hdf5_emptyDataset %s", ex.what());
          return;
      }
      

@@ -30,8 +30,8 @@
 #ifndef BIGDATASTATMETH_HDF5_APPLY_HPP
 #define BIGDATASTATMETH_HDF5_APPLY_HPP
 
-#include <RcppEigen.h>
-#include "H5Cpp.h"
+// #include <RcppEigen.h>
+// #include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 

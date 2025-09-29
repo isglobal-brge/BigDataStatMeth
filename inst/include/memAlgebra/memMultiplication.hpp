@@ -29,7 +29,7 @@
 #ifndef BIGDATASTATMETH_ALGEBRA_MEM_MULTIPLICATION_HPP
 #define BIGDATASTATMETH_ALGEBRA_MEM_MULTIPLICATION_HPP
 
-#include <RcppEigen.h>
+// #include <RcppEigen.h>
 
 
 namespace BigDataStatMeth {
@@ -231,7 +231,7 @@ namespace BigDataStatMeth {
                           "Error - type not allowed");
             
             Eigen::MatrixXd A = X,
-                            B = Y;
+                B = Y;
             
             if(transpX == true){ A = X.transpose(); }
             if(transpY == true){ B = Y.transpose(); }
@@ -240,8 +240,8 @@ namespace BigDataStatMeth {
             hsize_t block_size;
             
             std::vector<hsize_t> vsizetoReadN, vstartN,
-                                 vsizetoReadM, vstartM,
-                                 vsizetoReadK, vstartK;
+            vsizetoReadM, vstartM,
+            vsizetoReadK, vstartK;
             
             // unsigned int ithreads;
             hsize_t M = A.rows();
@@ -258,31 +258,38 @@ namespace BigDataStatMeth {
             if(block_size > std::min( N, std::min(M,K)) )
                 block_size = std::min( N, std::min(M,K)); 
             
-            // ithreads = get_number_threads(threads, R_NilValue);
-            
             getBlockPositionsSizes( N, block_size, vstartN, vsizetoReadN );
             getBlockPositionsSizes( M, block_size, vstartM, vsizetoReadM );
             getBlockPositionsSizes( K, block_size, vstartK, vsizetoReadK );
             
-            // chunks = vstartM.size()/ithreads;
+            // CAMBIO 1: Eliminar collapse(2) para compatibilidad
+            const int total_blocks = static_cast<int>(vstartM.size() * vstartN.size());
             
-            #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C)// chunks) // private(tid ) 
+            #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C)
             {
-                
-            #pragma omp for schedule (static) // collapse(3)
-                for (int ii = 0; ii < vstartM.size(); ii++)
+                // CAMBIO 2: Usar bucle plano en lugar de collapse(2)
+            #pragma omp for schedule(dynamic)
+                for (int block_idx = 0; block_idx < total_blocks; block_idx++)
                 {
-                    for (int jj = 0; jj < vstartN.size(); jj++)
+                    // Convertir índice plano a coordenadas (ii, jj)
+                    const int ii = block_idx / static_cast<int>(vstartN.size());
+                    const int jj = block_idx % static_cast<int>(vstartN.size());
+                    
+                    // CAMBIO 3: Buffer local para evitar race condition (CLAVE para eliminar NaN)
+                    Eigen::MatrixXd C_local = Eigen::MatrixXd::Zero(vsizetoReadM[ii], vsizetoReadN[jj]);
+                    
+                    // CAMBIO 4: Bucle k secuencial dentro del hilo (elimina race condition)
+                    for(int kk = 0; kk < static_cast<int>(vstartK.size()); kk++)
                     {
-                        for(int kk = 0; kk < vstartK.size(); kk++)
-                        {
-                            C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) =  C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) + 
-                                (A.block(vstartM[ii], vstartK[kk], vsizetoReadM[ii], vsizetoReadK[kk]) * B.block(vstartK[kk], vstartN[jj], vsizetoReadK[kk], vsizetoReadN[jj]));
-                        }
+                        // Acumulamos en buffer local (sin race condition)
+                        C_local += (A.block(vstartM[ii], vstartK[kk], vsizetoReadM[ii], vsizetoReadK[kk]) * 
+                            B.block(vstartK[kk], vstartN[jj], vsizetoReadK[kk], vsizetoReadN[jj]));
                     }
+                    
+                    // CAMBIO 5: Una sola escritura al final (sin race condition)
+                    C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) = C_local;
                 }
             }
-
         } catch(std::exception& ex) {
             Rcpp::Rcout<< "c++ exception Rcpp_block_matrix_mul_parallel: "<<ex.what()<< " \n";
         }

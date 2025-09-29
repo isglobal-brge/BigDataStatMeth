@@ -8,8 +8,8 @@ bdgetSDandMean_hdf5(
   filename,
   group,
   dataset,
-  outgroup,
-  outdataset,
+  outgroup = NULL,
+  outdataset = NULL,
   sd = NULL,
   mean = NULL,
   byrows = NULL,
@@ -31,8 +31,7 @@ bdgetSDandMean_hdf5(
 \item{outdataset}{Character string, custom correlation dataset
 name (default: mean.dataset_original_name and sd.dataset_original_name)}
 
-\item{sd}{Logical (optional). Whether to compute standard deviation.
-Default is TRUE.}
+\item{sd}{Logical (optional). Whether to compute sd. Default is TRUE.}
 
 \item{mean}{Logical (optional). Whether to compute mean. Default is TRUE.}
 

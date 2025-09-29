@@ -15,6 +15,8 @@
 //' @param B string specifying the dataset name for matrix B.
 //' @param groupB string, (optional), An optional string specifying the group 
 //' for matrix B. Defaults to the value of `group` if not provided.
+//' @param transpose_A Whether to transpose matrix A
+//' @param transpose_B Whether to transpose matrix B
 //' @param block_size integer (optional), an optional parameter specifying the 
 //' block size for processing the matrices. If not provided, a default block 
 //' size is used. The block size should be chosen based on the available memory 
@@ -110,6 +112,8 @@ Rcpp::List bdblockmult_hdf5(std::string filename,
                     std::string A, 
                     std::string B,
                     Rcpp::Nullable<std::string> groupB = R_NilValue, 
+                    Rcpp::Nullable<bool> transpose_A = R_NilValue,
+                    Rcpp::Nullable<bool> transpose_B = R_NilValue,
                     Rcpp::Nullable<int> block_size = R_NilValue,
                     Rcpp::Nullable<bool> paral = R_NilValue,
                     Rcpp::Nullable<int> threads = R_NilValue,
@@ -130,7 +134,7 @@ Rcpp::List bdblockmult_hdf5(std::string filename,
         
         H5::Exception::dontPrint();  
         
-        bool bforce;
+        bool bforce, btransA, btransB;
         
         std::string strsubgroupOut, 
         strdatasetOut, 
@@ -139,6 +143,12 @@ Rcpp::List bdblockmult_hdf5(std::string filename,
         
         strsubgroupIn = group;
         
+        if (transpose_A.isNull()) { btransA = false; } 
+        else { btransA = Rcpp::as<bool> (transpose_A); }
+        
+        if (transpose_B.isNull()) { btransB = false; } 
+        else { btransB = Rcpp::as<bool> (transpose_B); }
+        
         if( outgroup.isNull()) { strsubgroupOut = "OUTPUT";
         } else { strsubgroupOut = Rcpp::as<std::string> (outgroup); }
         
@@ -146,7 +156,13 @@ Rcpp::List bdblockmult_hdf5(std::string filename,
         else { strsubgroupInB =  group; }
         
         if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
-        else { strdatasetOut =  A + "_x_" + B; }
+        else { 
+            strdatasetOut = "";
+            if(btransA == true) { strdatasetOut = strdatasetOut + "t_"; }
+            strdatasetOut = strdatasetOut + A + "_x_";
+            if(btransB == true) { strdatasetOut = strdatasetOut + "t_"; }
+            strdatasetOut =  strdatasetOut + B; 
+        }
         
         if (overwrite.isNull()) { bforce = false; } 
         else { bforce = Rcpp::as<bool> (overwrite); }
@@ -159,7 +175,7 @@ Rcpp::List bdblockmult_hdf5(std::string filename,
         
         if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
             dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
-            BigDataStatMeth::multiplication(dsA, dsB, dsC, paral, block_size, threads); 
+            BigDataStatMeth::multiplication(dsA, dsB, dsC, btransA, btransB, paral, block_size, threads); 
             
             lst_return["fn"] = filename;
             lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;

@@ -135,6 +135,8 @@
                                                 Rcpp::Named("vectors_imag") = R_NilValue,
                                                 Rcpp::Named("is_symmetric") = R_NilValue);
      
+     BigDataStatMeth::hdf5File* objFile = nullptr;
+     
      try {
          
          int ks, max_iters, ncvs;
@@ -226,7 +228,6 @@
          // Check if imaginary parts exist (for non-symmetric matrices)
          try {
              
-             BigDataStatMeth::hdf5File* objFile = nullptr;
              objFile = new BigDataStatMeth::hdf5File(str_filename, false);
              objFile->openFile("r");
              
@@ -242,6 +243,7 @@
              delete objFile; objFile = nullptr;
              
          } catch (...) {
+             
              // imag datasets don't exist, matrix was symmetric
          }
          
@@ -249,14 +251,19 @@
          lst_return["is_symmetric"] = (lst_return["values_imag"] == R_NilValue);
          
      } catch (H5::FileIException& error) {
+         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5 (File IException)";
      } catch (H5::GroupIException& error) {
+         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5 (Group IException)";
      } catch (H5::DataSetIException& error) {
+         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5 (DataSet IException)";
      } catch (std::exception& ex) {
+         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5: " << ex.what();
      } catch (...) {
+         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nC++ exception bdEigen_hdf5 (unknown reason)";
      }
      

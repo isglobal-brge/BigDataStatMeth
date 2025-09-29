@@ -1,5 +1,5 @@
 #include <BigDataStatMeth.hpp>
-// #include "hdf5Utilities/hdf5SortDataset.hpp"
+#include "hdf5Utilities/hdf5SortDataset.hpp"
 
 /**
  * @file hdf5_sortDataset.cpp

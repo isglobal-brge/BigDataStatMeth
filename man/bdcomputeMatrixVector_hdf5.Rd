@@ -32,7 +32,7 @@ bdcomputeMatrixVector_hdf5(
 
 \item{outdataset}{String. Name for the output dataset.}
 
-\item{func}{String. Operation to perform: "+", "-", "*", or "/".}
+\item{func}{String. Operation to perform: "+", "-", "*", "/", or "pow".}
 
 \item{outgroup}{Optional string. Output group path. If not provided,
 results are stored in the same group as the input matrix.}
@@ -48,12 +48,16 @@ Ignored if paral is FALSE.}
 \item{overwrite}{Logical. If TRUE, allows overwriting existing datasets.}
 }
 \value{
-No direct return value. Results are written to the HDF5 file in the
-specified location.
+List with components:
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{gr}{Character string with the HDF5 group}
+\item{ds}{Character string with the full dataset path (group/dataset)}
+}
 }
 \description{
 Performs element-wise operations between a matrix and a vector stored in HDF5
-format. The function supports addition, subtraction, multiplication, and division
+format. The function supports addition, subtraction, multiplication, division and power
 operations, with options for row-wise or column-wise application and parallel
 processing.
 }
@@ -67,6 +71,7 @@ between matrices and vectors stored in HDF5 format. It supports:
 \item Subtraction (-): Subtracts vector elements from matrix rows/columns
 \item Multiplication (*): Multiplies matrix rows/columns by vector elements
 \item Division (/): Divides matrix rows/columns by vector elements
+\item Power (pow): power matrix rows/columns by vector elements
 }
 \item Processing options:
 \itemize{

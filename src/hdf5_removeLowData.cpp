@@ -1,5 +1,5 @@
 #include <BigDataStatMeth.hpp>
-// #include "hdf5Utilities/hdf5RemoveLowData.hpp"
+#include "hdf5Utilities/hdf5RemoveLowData.hpp"
 
 /**
  * @file hdf5_removeLowData.cpp
@@ -187,27 +187,27 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
         
     } catch( H5::FileIException& error ){  
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (File IException)";
+        Rcpp::stop ("c++ exception bdRemovelowdata_hdf5 (File IException)");
         return void();
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (DataSet IException)";
+        Rcpp::stop ("c++ exception bdRemovelowdata_hdf5 (DataSet IException)");
         return void();
     } catch( H5::DataSpaceIException& error ) { 
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (DataSpace IException)";
+        Rcpp::stop ("c++ exception bdRemovelowdata_hdf5 (DataSpace IException)");
         return void();
     } catch( H5::DataTypeIException& error ) { 
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (DataType IException)";
+        Rcpp::stop( "c++ exception bdRemovelowdata_hdf5 (DataType IException)");
         return void();
     } catch(std::exception &ex) {
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5" << ex.what();
+        Rcpp::stop ("c++ exception bdRemovelowdata_hdf5: %s",ex.what());
         return void();
     } catch (...) {
         checkClose_file(dsIn, dsOut);
-        Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5 (unknown reason)";
+        Rcpp::stop ("c++ exception bdRemovelowdata_hdf5 (unknown reason)");
         return void();
     }
     

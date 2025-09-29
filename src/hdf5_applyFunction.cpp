@@ -24,12 +24,6 @@
  */
 
 #include <BigDataStatMeth.hpp>
-// #include "memAlgebra/memOptimizedProducts.hpp"
-// #include "hdf5Algebra/matrixQR.hpp"
-// #include "hdf5Algebra/multiplication.hpp"
-// #include "hdf5Algebra/matrixInvCholesky.hpp"
-// #include "hdf5Algebra/matrixEquationSolver.hpp"
-// #include "hdf5Algebra/matrixSdMean.hpp"
 
 /**
  * @brief Apply mathematical functions to HDF5 datasets
@@ -261,36 +255,70 @@ void bdapply_Function_hdf5( std::string filename,
                     
                 } else if( oper(oper.findName( func )) == 1 || oper(oper.findName( func )) == 2) {
                     // ==> CrossProd and transposed CrossProd
-
+                    
                     hsize_t* dims_out = dsA->dim();
                     
-                    std::vector<double> vdA( dims_out[0] * dims_out[1] ); 
-                    dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
-                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> original (vdA.data(), dims_out[1], dims_out[0] );
+                    
+                    if((dims_out[0] * dims_out[1]) > (MAXELEMSINBLOCK / 1024)) {
+                        dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
+                        
+                        // int iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsA->nrows(), dsA->ncols(), 4, R_NilValue);
+                        // int memory_block = iblock_size/2;
+                        int iblock_size = 0,
+                            memory_block = 0;
+                        
+                        bool bparal = true,
+                             isSymetric = true;
+                        
+                        if(  oper(oper.findName( func )) == 1 ) {
+                            // results = BigDataStatMeth::bdcrossproduct(original);
+                            // dsOut = BigDataStatMeth::crossprod(dsA, dsA, dsOut, iblock_size, memory_block, bparal, true, isSymetric, threads);
+                            dsOut = BigDataStatMeth::crossprod(dsA, dsA, dsOut, isSymetric, iblock_size, memory_block, bparal, true, threads);
+                        } else {
+                            // results = BigDataStatMeth::bdtcrossproduct(original);
+                            dsOut = BigDataStatMeth::tcrossprod(dsA, dsA, dsOut, isSymetric, iblock_size, memory_block, bparal, true, threads);
+                        }
+                        
+                        
+                        // delete dsOut; dsOut = nullptr;
+                        
+                    } else {
+                        
+                        std::vector<double> vdA( dims_out[0] * dims_out[1] ); 
+                        dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
+                        Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> original (vdA.data(), dims_out[1], dims_out[0] );
+                        
+                        // delete dsA; dsA = nullptr;
+                        
+                        Eigen::MatrixXd results;
+                        dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
+                        
+                        if(  oper(oper.findName( func )) == 1 ) {
+                            results = BigDataStatMeth::bdcrossproduct(original);
+                        } else {
+                            results = BigDataStatMeth::bdtcrossproduct(original);
+                        }
+                        
+                        dsOut->createDataset(results.rows(), results.cols(), "numeric"); 
+                        dsOut->openDataset(); 
+                        if( dsOut->getDatasetptr() != nullptr )  {
+                            dsOut->writeDataset(Rcpp::wrap(results));    
+                        }
+                        
+                    }
                     
                     delete dsA; dsA = nullptr;
-                    
-                    Eigen::MatrixXd results;
-                    dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
-                    
-                    if(  oper(oper.findName( func )) == 1 ) {
-                        results = BigDataStatMeth::bdcrossproduct(original);
-                    } else {
-                        results = BigDataStatMeth::bdtcrossproduct(original);
-                    }
-                    
-                    dsOut->createDataset(results.rows(), results.cols(), "numeric"); 
-                    dsOut->openDataset(); 
-                    if( dsOut->getDatasetptr() != nullptr )  {
-                        dsOut->writeDataset(Rcpp::wrap(results));    
-                    }
                     delete dsOut; dsOut = nullptr;
+                    
+                    
                     
                 } else if( oper(oper.findName( func )) == 3 || oper(oper.findName( func )) == 8) {
                     // ==> Inverse Cholesky and Cholesky decomposition
                     
                     int nrows = dsA->nrows();
                     int ncols = dsA->ncols();
+                    
+                    Rcpp::Rcout<<"\n Estem processant el dataset: "<<datasets[i];
                     
                     if(nrows == ncols) {
                         
@@ -301,9 +329,7 @@ void bdapply_Function_hdf5( std::string filename,
                         
                         if(oper(oper.findName( func )) == 3 ) {
                             if( dsOut->getDatasetptr() != nullptr ) {
-                                Rcpp::Rcout<<"\nAbans inv Cholesky";
                                 BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA, dsOut, bfullMatrix, dElementsBlock, threads);    
-                                Rcpp::Rcout<<"\nDesprès inv Cholesky";
                             }
                             
                         } else {
@@ -328,53 +354,74 @@ void bdapply_Function_hdf5( std::string filename,
                     dsB->openDataset();
                     
                     if( dsB->getDatasetptr() != nullptr )  {
-                        // Real data set dimension
-                        hsize_t* dims_outB = dsB->dim();
+                        
+                        // Real data set dimension                        
                         hsize_t* dims_out = dsA->dim();
-                        
-                        std::vector<double> vdA( dims_out[0] * dims_out[1] ); 
-                        dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
-                        
-                        std::vector<double> vdB( dims_outB[0] * dims_outB[1] ); 
-                        dsB->readDatasetBlock( {0, 0}, {dims_outB[0], dims_outB[1]}, stride, block, vdB.data() );
-                        
-                        Eigen::MatrixXd original;
-                        Eigen::MatrixXd originalB;
+                        hsize_t* dims_outB = dsB->dim();
                         
                         if( oper(oper.findName( func )) == 4 ) {
-                            original = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdA.data(), dims_out[1], dims_out[0] );
-                            originalB = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdB.data(), dims_outB[1], dims_outB[0] );
                             outputdataset = Rcpp::as<std::string>(datasets(i)) + "_" + str_bdatasets(i);
                         } else if  (oper(oper.findName( func )) == 11) {
-                            original = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdA.data(), dims_out[0], dims_out[1] );
-                            originalB = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdB.data(), dims_outB[1], dims_outB[0] );
                             outputdataset = "Cross_" + datasets(i) + "_" + str_bdatasets(i);
                         } else if ( oper(oper.findName( func )) == 22) {
-                            original = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdA.data(), dims_out[1], dims_out[0] );
-                            originalB = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdB.data(), dims_outB[0], dims_outB[1] );
                             outputdataset =  "tCross_" + datasets(i) + "_" + str_bdatasets(i);
                         }
-                        
-                        Eigen::MatrixXd  results = BigDataStatMeth::Rcpp_block_matrix_mul_parallel(original, originalB, btransdataA, btransdataB, R_NilValue, R_NilValue);
-                        
-                        if( results != Eigen::MatrixXd::Zero(original.rows(),originalB.cols()) ) {
+
+                                                
+                        if( ((dims_out[0] * dims_out[1]) > (MAXELEMSINBLOCK / 1024) || (dims_outB[0] * dims_outB[1]) > (MAXELEMSINBLOCK / 1024)) && oper(oper.findName( func )) == 4 ) {
                             
                             dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce);
-                            dsOut->createDataset(results.rows(), results.cols(), "real");
-                            dsOut->writeDataset(Rcpp::wrap(results));
+                            BigDataStatMeth::multiplication(dsA, dsB, dsOut, btransdataA, btransdataB, R_NilValue, R_NilValue, threads); 
                             
+                            delete dsA; dsA = nullptr;
+                            delete dsB; dsB = nullptr;
                             delete dsOut; dsOut = nullptr;
                             
                         } else {
-                            Rcpp::Rcout<<"Multiplication: "<< group<<"/"<< Rcpp::as<std::string>(datasets(i))<< " x "<< str_bgroup<<"/"<< Rcpp::as<std::string>(str_bdatasets(i)) <<" can not be computed \n";
+                            
+                            // hsize_t* dims_outB = dsB->dim();
+                            // hsize_t* dims_out = dsA->dim();
+                            
+                            std::vector<double> vdA( dims_out[0] * dims_out[1] ); 
+                            dsA->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
+                            
+                            std::vector<double> vdB( dims_outB[0] * dims_outB[1] ); 
+                            dsB->readDatasetBlock( {0, 0}, {dims_outB[0], dims_outB[1]}, stride, block, vdB.data() );
+                            
+                            Eigen::MatrixXd original;
+                            Eigen::MatrixXd originalB;
+                            
+                            if( oper(oper.findName( func )) == 4 ) {
+                                original = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdA.data(), dims_out[1], dims_out[0] );
+                                originalB = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdB.data(), dims_outB[1], dims_outB[0] );
+                                // outputdataset = Rcpp::as<std::string>(datasets(i)) + "_" + str_bdatasets(i);
+                            } else if  (oper(oper.findName( func )) == 11) {
+                                original = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdA.data(), dims_out[0], dims_out[1] );
+                                originalB = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdB.data(), dims_outB[1], dims_outB[0] );
+                                // outputdataset = "Cross_" + datasets(i) + "_" + str_bdatasets(i);
+                            } else if ( oper(oper.findName( func )) == 22) {
+                                original = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdA.data(), dims_out[1], dims_out[0] );
+                                originalB = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdB.data(), dims_outB[0], dims_outB[1] );
+                                // outputdataset =  "tCross_" + datasets(i) + "_" + str_bdatasets(i);
+                            }
+                            
+                            Eigen::MatrixXd  results = BigDataStatMeth::Rcpp_block_matrix_mul_parallel(original, originalB, btransdataA, btransdataB, R_NilValue, R_NilValue);
+                            
+                            if( results != Eigen::MatrixXd::Zero(original.rows(),originalB.cols()) ) {
+                                
+                                dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce);
+                                dsOut->createDataset(results.rows(), results.cols(), "real");
+                                dsOut->writeDataset(Rcpp::wrap(results));
+                                
+                                delete dsA; dsA = nullptr;
+                                delete dsB; dsB = nullptr;
+                                delete dsOut; dsOut = nullptr;
+                                
+                            } else {
+                                Rcpp::Rcout<<"Multiplication: "<< group<<"/"<< Rcpp::as<std::string>(datasets(i))<< " x "<< str_bgroup<<"/"<< Rcpp::as<std::string>(str_bdatasets(i)) <<" can not be computed \n";
+                            }
                         }
-                        
-                        delete dsA; dsA = nullptr;
-                        delete dsB; dsB = nullptr;
-                        
                     }
-                    
-                    
                     
                 } else if( oper(oper.findName( func )) == 5) {
                     // ==> Solve matrix equation Ax = B

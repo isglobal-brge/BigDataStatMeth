@@ -24,7 +24,7 @@
  */
 
 #include <BigDataStatMeth.hpp>
-// #include "hdf5Utilities/hdf5BindDatasets.hpp"
+#include "hdf5Utilities/hdf5BindDatasets.hpp"
 
 /**
  * @brief Bind HDF5 datasets by rows or columns
@@ -146,23 +146,23 @@ void bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::String
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsOut);
-        Rcpp::Rcerr<<"c++ exception bdBind_hdf5_datasets (File IException)";
+        Rcpp::stop("c++ exception bdBind_hdf5_datasets (File IException)");
         return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsOut);
-        Rcpp::Rcerr << "c++ exception bdBind_hdf5_datasets (Group IException)";
+        Rcpp::stop ("c++ exception bdBind_hdf5_datasets (Group IException)");
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsOut);
-        Rcpp::Rcerr << "c++ exception bdBind_hdf5_datasets (DataSet IException)";
+        Rcpp::stop ("c++ exception bdBind_hdf5_datasets (DataSet IException)");
         return void();
     } catch(std::exception& ex) {
         checkClose_file(dsOut);
-        Rcpp::Rcerr << "c++ exception bdBind_hdf5_datasets" << ex.what();
+        Rcpp::stop ("c++ exception bdBind_hdf5_datasets %s", ex.what());
         return void();
     } catch (...) {
         checkClose_file(dsOut);
-        Rcpp::Rcerr<<"C++ exception bdBind_hdf5_datasets (unknown reason)";
+        Rcpp::stop("c++ exception bdBind_hdf5_datasets (unknown reason)");
         return void();
     }
     

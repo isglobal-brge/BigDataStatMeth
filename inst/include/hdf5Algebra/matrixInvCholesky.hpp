@@ -24,8 +24,8 @@
 #ifndef BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 #define BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 
-#include <RcppEigen.h>
-#include "H5Cpp.h"
+// #include <RcppEigen.h>
+// #include "H5Cpp.h"
 
 namespace BigDataStatMeth {
 
@@ -53,7 +53,9 @@ namespace BigDataStatMeth {
  * @throws H5::DataSetIException on HDF5 dataset operation errors
  * @throws std::exception on general errors
  */
-inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,  BigDataStatMeth::hdf5DatasetInternal* outDataset, bool bfull, long dElementsBlock, Rcpp::Nullable<int> threads );
+inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,  
+                                    BigDataStatMeth::hdf5DatasetInternal* outDataset, 
+                                    bool bfull, long dElementsBlock, Rcpp::Nullable<int> threads );
 
 /**
  * @brief Performs Cholesky decomposition on a matrix stored in HDF5 format
@@ -146,11 +148,14 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
         int nrows = inDataset->nrows();
         int ncols = inDataset->ncols();
         
+        // Rcpp::Rcout<<"\nIniciem cholesky";
         int res = Cholesky_decomposition_hdf5(inDataset, outDataset, nrows, ncols, dElementsBlock, threads);
         
         if(res == 0)
         {
+            // Rcpp::Rcout<<"\nDins res==0 -> anem Inverse_of_Cholesky_decomposition_hdf5...";
             Inverse_of_Cholesky_decomposition_hdf5( outDataset, nrows, ncols, dElementsBlock, threads);
+            // Rcpp::Rcout<<"\nDins res==0 -> anem Inverse_Matrix_Cholesky_parallel...";
             Inverse_Matrix_Cholesky_parallel( outDataset, nrows, ncols, dElementsBlock, threads);
             
             if( bfull==true ) {
@@ -213,6 +218,10 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                              stride = {1,1},
                              block = {1,1};
         
+        Rcpp::Rcout<<"\nDins Cholesky_decomposition -> Hi...";
+        
+        Rcpp::Rcout<<"\nDebug 1: dimensionSize=" << dimensionSize << ", dElementsBlock=" << dElementsBlock;
+        
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
             minimumBlockSize = dimensionSize * 2;
@@ -220,20 +229,47 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
             minimumBlockSize = dElementsBlock;
         }
         
+        Rcpp::Rcout<<"\nDebug 2: minimumBlockSize=" << minimumBlockSize;
         // Poso el codi per llegir els blocks aquí i desprès a dins hauria d'anar-hi la j
         if( idim0 == idim1)
         {
             
+            Rcpp::Rcout<<"\nDebug 3: Entrando al while";
+            
+            // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> idim0 == idim1";
             while ( readedRows < dimensionSize ) {
                 
+                Rcpp::Rcout<<"\nDebug 4: readedRows=" << readedRows;
+                
                 rowstoRead = ( -2 * readedRows - 1 + std::sqrt( pow(2*readedRows, 2) - 4 * readedRows + 8 * minimumBlockSize + 1) ) / 2;
+                
+                Rcpp::Rcout<<"\nDebug 5: rowstoRead calculado=" << rowstoRead;
                 
                 if (rowstoRead <= 0) {
                     rowstoRead = minimumBlockSize; // Minimum progress to avoid infinite loop
                 }
-                
+
                 if( readedRows + rowstoRead > idim0) { // Max size bigger than data to read ?
                     rowstoRead = idim0 - readedRows;
+                }
+                
+                Rcpp::Rcout<<"\nDebug 6: rowstoRead final=" << rowstoRead;
+                
+                if (readedRows == 0) {
+                    // Primer bloque: count[0] = dimensionSize, count[1] = rowstoRead
+                    size_t potential_elements = static_cast<size_t>(dimensionSize) * static_cast<size_t>(rowstoRead);
+                    if (potential_elements > MAXCHOLBLOCKSIZE) {
+                        rowstoRead = static_cast<int>(MAXCHOLBLOCKSIZE / dimensionSize);
+                        if (rowstoRead < 1) rowstoRead = 1;
+                    }
+                } else {
+                    // Bloques siguientes: count[0] = dimensionSize - readedRows + 1, count[1] = readedRows + rowstoRead
+                    size_t potential_elements = static_cast<size_t>(dimensionSize - readedRows + 1) * static_cast<size_t>(readedRows + rowstoRead);
+                    if (potential_elements > MAXCHOLBLOCKSIZE) {
+                        int max_cols = static_cast<int>(MAXCHOLBLOCKSIZE / (dimensionSize - readedRows + 1));
+                        rowstoRead = max_cols - readedRows;
+                        if (rowstoRead < 1) rowstoRead = 1;
+                    }
                 }
                 
                 offset[0] = readedRows;
@@ -251,6 +287,30 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                 
                 Eigen::MatrixXd A, L;
                 
+                // Rcpp::Rcout<<"\nDebug 7: A L";
+                
+                // CAMBIO QUIRÚRGICO: Verificar tamaño de bloque para big-matrix
+                size_t block_elements = static_cast<size_t>(count[0]) * static_cast<size_t>(count[1]);
+                // size_t max_elements = MAXCHOLBLOCKSIZE; // ~400 MB por vector, 800 MB total
+                
+                if (block_elements > MAXCHOLBLOCKSIZE) {
+                    // Recalcular rowstoRead para bloque más pequeño
+                    rowstoRead = static_cast<int>(MAXCHOLBLOCKSIZE / count[0]);
+                    if (rowstoRead < 1) rowstoRead = 1;
+                    
+                    // Recalcular count[1]
+                    if( readedRows == 0) {
+                        count[1] = rowstoRead;
+                    } else {
+                        count[1] = readedRows + rowstoRead;
+                    }
+                    
+                    // Actualizar readedRows
+                    readedRows = (readedRows > rowstoRead) ? (readedRows - rowstoRead + rowstoRead) : readedRows + rowstoRead;
+                }
+                
+                // Rcpp::Rcout<<"\nDebug 8";
+                
                 std::vector<double> vdA( count[0] * count[1] ); 
                 inDataset->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
                 A = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdA.data(), count[0], count[1] );
@@ -259,11 +319,26 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                 outDataset->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdL.data() );
                 L = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdL.data(), count[0], count[1] );
                 
+                // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> despres lectura ";
+                
+                // Rcpp::Rcout<<"\nDebug 9";
+                
                 if( offset[0] != 0 )
                     rowstoRead = rowstoRead + 1;
                 
-                for (int j = 0; j < rowstoRead; j++)  {
+                if( rowstoRead > static_cast<int>(count[1]) ) {
+                    rowstoRead = count[1];
+                }
+                
+                // Rcpp::Rcout<<"\nDebug 10";
+                
+                // !!!!!!!!!!!! for (int j = 0; j < rowstoRead; j++)  {
+                for (int j = 0; j < rowstoRead && (j + offset[0]) < static_cast<int>(count[1]); j++)  {
+                // for (int j = 0; j < rowstoRead && j < static_cast<int>(count[0]) && (j + offset[0]) < static_cast<int>(count[1]); j++)  {
                     
+                    // Rcpp::Rcout<<"\nDebug 11 - j = "<< j;
+                    
+                    // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> j < rowstoRead ";
                     if( j + offset[0] == 0) {
                         L(j, j) = std::sqrt(A(j,j));
                     } else {
@@ -271,7 +346,7 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     }
                     
                     
-#pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) private(sum) shared (A,L,j) schedule(dynamic) if (j < readedRows - 1)
+                    #pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) private(sum) shared (A,L,j) schedule(dynamic) if (j < readedRows - 1)
                     for ( int i = j + 1; i < dimensionSize - offset[0]  ; i++ )
                     {
                         if(bcancel == false) {
@@ -294,6 +369,8 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     return(1);
                 }
                 
+                // Rcpp::Rcout<<"\nDebug 12";
+                
                 if( offset[0] != 0) {
                     offset[0] = offset[0] + 1;
                     count[0] = count[0] - 1;
@@ -304,13 +381,18 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     outDataset->writeDatasetBlock( Rcpp::wrap(L), offset, count, stride, block, false);
                 }
                 
+                Rcpp::Rcout<<"\nDebug 13";
+                
                 offset[0] = offset[0] + count[0] - 1;
                 
+                // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> Despres escriptura ";
             }
             
         } else {
             throw std::range_error("non-conformable arguments");
         }
+        
+        // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> Bye Bye...";
         
         
     } catch( H5::FileIException& error ) { 
@@ -363,21 +445,30 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                              stride = {1,1},
                              block = {1,1};
 
+        Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> Inici";
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
+            // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> if(dElementsBlock < dimensionSize * 2)";
             minimumBlockSize = dimensionSize * 2;
         } else {
+            // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> else";
             minimumBlockSize = dElementsBlock;
         }
         
+        // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> getDiagonalfromMatrix(InOutDataset)";
         Eigen::VectorXd Diagonal = Rcpp::as<Eigen::VectorXd>(getDiagonalfromMatrix(InOutDataset));
         // Set the new diagonal in the result matrix
         setDiagonalMatrix( InOutDataset, Rcpp::wrap(Diagonal.cwiseInverse()) );
         
+        // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> Despres setDiagonal";
         
         if( idim0 == idim1) {
             
+            // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> idim0 == idim1";
+            
             while ( readedCols < dimensionSize ) {
+                
+                // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> readedCols < dimensionSize";
                 
                 colstoRead = ( -2 * readedCols - 1 + std::sqrt( pow(2*readedCols, 2) - 4 * readedCols + 8 * minimumBlockSize + 1) ) / 2;
                 
@@ -387,6 +478,13 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                 
                 if( readedCols + colstoRead > idim0) { // Max size bigger than data to read ?
                     colstoRead = idim0 - readedCols;
+                }
+                
+                size_t potential_elements = static_cast<size_t>(dimensionSize - readedCols) * static_cast<size_t>(readedCols + colstoRead);
+                if (potential_elements > MAXCHOLBLOCKSIZE) {
+                    int max_cols = static_cast<int>(MAXCHOLBLOCKSIZE / (dimensionSize - readedCols));
+                    colstoRead = max_cols - readedCols;
+                    if (colstoRead < 1) colstoRead = 1;
                 }
                 
                 offset[0] = readedCols;
@@ -399,8 +497,10 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                 InOutDataset->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vverticalData.data() );
                 verticalData = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vverticalData.data(), count[0], count[1] );
                 
-                for (int j = 1; j < dimensionSize - offset[0]; j++)
+                //!!!!!!!!!!!! for (int j = 1; j < dimensionSize - offset[0]; j++)
+                for (int j = 1; j < dimensionSize - offset[0] && j < static_cast<int>(count[0]); j++)
                 {
+                    // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> j < dimensionSize - offset[0]";
                     
                     Eigen::VectorXd vR = Eigen::VectorXd::Zero(j+offset[0]);
                     Eigen::ArrayXd ar_j;
@@ -457,6 +557,8 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
             throw std::range_error("non-conformable arguments");
         }
         
+        // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> Bye Bye...";
+        
     } catch( H5::FileIException& error ) { 
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
@@ -509,7 +611,7 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
                              stride = {1,1},
                              block = {1,1};
         
-        
+        Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel -> Hi...";
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
             minimumBlockSize = dimensionSize * 2;
@@ -519,14 +621,17 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
         
         if( idim0 == idim1 )
         {
+            // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel -> idim0 == idim1";
             while ( readedCols < dimensionSize ) {
                 
+                // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel ->  readedCols < dimensionSize";
                 // Set minimum elements in block - prevent overflow and optimize for any matrix size
                 minimumBlockSize = std::min(static_cast<long>(dElementsBlock), static_cast<long>(std::max(2000L, dimensionSize * 2L)));
                 
                 // Adaptive block size calculation for any matrix dimensions
                 // Target: ~50MB blocks for optimal cache usage and memory efficiency
-                const int targetElements = 6250000; // ~50MB / 8 bytes per double
+                // const int targetElements = 6250000; // ~50MB / 8 bytes per double
+                const int targetElements = (dimensionSize > 10000) ? 25000000 : 6250000;
                 const int minCols = std::max(1, std::min(16, dimensionSize / 100)); // 1-16 or 1% of matrix
                 const int maxCols = std::min(dimensionSize, static_cast<int>(std::sqrt(targetElements / dimensionSize))); // Cache-friendly limit
                 
@@ -549,6 +654,13 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
                     colstoRead = idim0 - readedCols;
                 }
                 
+                size_t potential_elements = static_cast<size_t>(dimensionSize - readedCols) * static_cast<size_t>(readedCols + colstoRead);
+                if (potential_elements > MAXCHOLBLOCKSIZE) {
+                    int max_cols = static_cast<int>(MAXCHOLBLOCKSIZE / (dimensionSize - readedCols));
+                    colstoRead = max_cols - readedCols;
+                    if (colstoRead < 2) colstoRead = 2; // Esta función necesita mínimo 2
+                }
+                
                 offset[0] = readedCols;
                 count[0] =  dimensionSize - readedCols;
                 count[1] = readedCols + colstoRead;
@@ -559,10 +671,13 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
                 InOutDataset->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vverticalData.data() );
                 verticalData = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vverticalData.data(), count[0], count[1] );
                 
+                // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel ->  Anem a per el for parallel";
                 
+                //!!!!! for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columns
 // #pragma omp parallel for num_threads(ithreads) shared (verticalData, colstoRead, offset) schedule(dynamic)
-#pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) shared (verticalData, colstoRead, offset) schedule(static) ordered
-                for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columns
+                int max_i = std::min(static_cast<int>(colstoRead + offset[0]), static_cast<int>(count[1]));
+                #pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) shared (verticalData, colstoRead, offset, max_i) schedule(static) ordered
+                for ( int i = 0; i < max_i; i++)   // Columns
                 {
                     int init;
                     
@@ -594,6 +709,7 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
                    
                 }
                 
+                // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel ->  Fi volta, anem a escriure";
                 InOutDataset->writeDatasetBlock( Rcpp::wrap(verticalData), offset, count, stride, block, false);
                 
                 readedCols = readedCols + colstoRead; 
@@ -604,6 +720,8 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
         } else {
             throw std::range_error("non-conformable arguments");
         }
+        
+        // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel -> Bye Bye...";
         
     } catch( H5::FileIException& error ) { 
         checkClose_file(InOutDataset);
