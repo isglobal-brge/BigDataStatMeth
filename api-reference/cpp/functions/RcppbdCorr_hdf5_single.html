@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>RcppbdCorr_hdf5_single – BigDataStatMeth</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../assets/favicon.png" rel="icon" type="image/png">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-69e22614feb0789a4b1e69368fd0350a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../../../assets/custom.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">BigDataStatMeth</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../../../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../get-started/index.html"> 
+<span class="menu-text">Get Started</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-api-reference" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">API Reference</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-api-reference">    
+        <li>
+    <a class="dropdown-item" href="../../../api-reference/r/index.html">
+ <span class="dropdown-text">R Functions</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../api-reference/cpp/index.html">
+ <span class="dropdown-text">C++ API</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides--examples" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Guides &amp; Examples</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-guides--examples">    
+        <li>
+    <a class="dropdown-item" href="../../../guides/index.html">
+ <span class="dropdown-text">Guides</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../examples/index.html">
+ <span class="dropdown-text">Examples</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/isglobal-brge/BigDataStatMeth"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/cpp/functions/index.html">Functions</a></li><li class="breadcrumb-item"><a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_single.html">RcppbdCorr_hdf5_single</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../../../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">C++ API Reference</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../api-reference/cpp/classes/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Classes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BigDataStatMeth::hdf5Dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BigDataStatMeth::hdf5DatasetInternal</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BigDataStatMeth::hdf5DiagonalMatrix</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BigDataStatMeth::hdf5Dims</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5File.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BigDataStatMeth::hdf5File</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Group.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BigDataStatMeth::hdf5Group</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../api-reference/cpp/functions/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Functions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/addDiagonals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">addDiagonals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/after_fork.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">after_fork</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/avoid_openmp_hang_within_fork.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">avoid_openmp_hang_within_fork</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Bblock_matrix_mul_parallel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bblock_matrix_mul_parallel</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/bdcrossproduct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdcrossproduct</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/bdtcrossproduct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdtcrossproduct</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/calc_freq.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">calc_freq</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/calculate_multiplication_blocks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">calculate_multiplication_blocks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/checkClose_file.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">checkClose_file</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Cholesky_decomposition_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cholesky_decomposition_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Cholesky_decomposition_intermediate_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cholesky_decomposition_intermediate_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Cholesky_decomposition_outofcore_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cholesky_decomposition_outofcore_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/classify_matrix_type.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">classify_matrix_type</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/cleanup_temp_datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">cleanup_temp_datasets</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/compute_pvalues_optimized.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">compute_pvalues_optimized</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/correlation_pvalue.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">correlation_pvalue</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/createHardLink.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">createHardLink</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/crossprod.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">crossprod</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/cumsum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">cumsum</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/dgemm_.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">dgemm_</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/dgesdd_.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">dgesdd_</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/dgesv_.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">dgesv_</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/dgesvd_.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">dgesvd_</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/divideDiagonals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">divideDiagonals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/dscal_.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">dscal_</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/dsysv_.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">dsysv_</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/estimateOptimalBlockSize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">estimateOptimalBlockSize</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/exists_HDF5_element.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">exists_HDF5_element</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/extractDiagonalToVector.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">extractDiagonalToVector</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/find_all.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">find_all</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/First_level_SvdBlock_decomposition_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">First_level_SvdBlock_decomposition_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/get_block_size.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">get_block_size</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/get_data_as_Matrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">get_data_as_Matrix</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/get_HDF5_mean_sd_by_column.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">get_HDF5_mean_sd_by_column</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/get_HDF5_mean_sd_by_row.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">get_HDF5_mean_sd_by_row</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/get_NewLineEnding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">get_NewLineEnding</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/get_number_threads.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">get_number_threads</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/get_SplitData_in_vectorString.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">get_SplitData_in_vectorString</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/get_threads.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">get_threads</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/get_value_to_impute_discrete.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">get_value_to_impute_discrete</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getAvailableMemoryMB.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getAvailableMemoryMB</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getBlockPositionsSizes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getBlockPositionsSizes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getBlockPositionsSizes_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getBlockPositionsSizes_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getBlockPositionsSizes_mat.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getBlockPositionsSizes_mat</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getDiagonalfromMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getDiagonalfromMatrix</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getDTthreads.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getDTthreads</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getDTthreads_R.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getDTthreads_R</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getGeneralSortRule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getGeneralSortRule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getInitialPosition.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getInitialPosition</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getIntEnv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getIntEnv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getMatrixBlockSize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getMatrixBlockSize</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getMaxBlockSize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getMaxBlockSize</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getObjecDataType.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getObjecDataType</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getObjectDims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getObjectDims</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getOptimalBlockElements.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getOptimalBlockElements</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getOptimBlockSize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getOptimBlockSize</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getSizetoRead.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getSizetoRead</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getSymmetricSortRule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getSymmetricSortRule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/getVectorBlockSize.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">getVectorBlockSize</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/hdf5_matrixVector_calculus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5_matrixVector_calculus</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/imax.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">imax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/imin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">imin</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/initDTthreads.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">initDTthreads</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Inverse_Matrix_Cholesky_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inverse_Matrix_Cholesky_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Inverse_Matrix_Cholesky_intermediate_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inverse_Matrix_Cholesky_intermediate_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Inverse_Matrix_Cholesky_outofcore_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inverse_Matrix_Cholesky_outofcore_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Inverse_of_Cholesky_decomposition_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inverse_of_Cholesky_decomposition_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Inverse_of_Cholesky_decomposition_intermediate_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inverse_of_Cholesky_decomposition_intermediate_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Inverse_of_Cholesky_decomposition_outofcore_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inverse_of_Cholesky_decomposition_outofcore_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/is_number.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">is_number</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/isDiagonalVector.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">isDiagonalVector</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/isMatrixSymmetric.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">isMatrixSymmetric</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/join_datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">join_datasets</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/multiplication.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">multiplication</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/multiplicationSparse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">multiplicationSparse</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/multiplyDiagonals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">multiplyDiagonals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/mygetenv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">mygetenv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Next_level_SvdBlock_decomposition_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Next_level_SvdBlock_decomposition_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/pathExists.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">pathExists</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/pearson_correlation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">pearson_correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/performMatrixDiagonalOperation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">performMatrixDiagonalOperation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/powerDiagonals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">powerDiagonals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/prepareForParallelization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">prepareForParallelization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_mul.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_block_matrix_mul</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_mul_parallel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_block_matrix_mul_parallel</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_substract_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_block_matrix_substract_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_sum_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_block_matrix_sum_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_vector_substract.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_block_matrix_vector_substract</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_vector_substract_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_block_matrix_vector_substract_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_vector_sum_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_block_matrix_vector_sum_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_FileExist.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_FileExist</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_Import_File_to_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_Import_File_to_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_Impute_snps_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_Impute_snps_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_InvCholesky_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_InvCholesky_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_blockSubstract.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_blockSubstract</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_blockSum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_blockSum</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_substract.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_substract</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_sum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_sum</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vect_mult.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_vect_mult</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vect_substract.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_vect_substract</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vect_sum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_vect_sum</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vector_blockMult.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_vector_blockMult</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vector_blockSubstract.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_vector_blockSubstract</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vector_blockSum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrix_vector_blockSum</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorDivision_byCol.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorDivision_byCol</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorDivision_byRow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorDivision_byRow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorMultiplication_byCol.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorMultiplication_byCol</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorMultiplication_byRow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorMultiplication_byRow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorPow_byRow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorPow_byRow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorPower_byCol.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorPower_byCol</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorSubstract_byCol.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorSubstract_byCol</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorSubstract_byRow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorSubstract_byRow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorSum_byCol.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorSum_byCol</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorSum_byRow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_matrixVectorSum_byRow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_Remove_Low_Data_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_Remove_Low_Data_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_Remove_MAF_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_Remove_MAF_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_vector_add_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_vector_add_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_vector_divide_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_vector_divide_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_vector_mult.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_vector_mult</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_vector_multiply_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_vector_multiply_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_vector_power_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_vector_power_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_vector_substract.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_vector_substract</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_vector_subtract_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_vector_subtract_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Rcpp_vector_sum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rcpp_vector_sum</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppApplyFunctionHdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppApplyFunctionHdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_Block_cross.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdCorr_hdf5_Block_cross</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_Block_single.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdCorr_hdf5_Block_single</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_cross.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdCorr_hdf5_cross</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_single.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">RcppbdCorr_hdf5_single</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdCorr_matrix_cross.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdCorr_matrix_cross</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdCorr_matrix_single.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdCorr_matrix_single</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdEigen_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdEigen_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdEigen_hdf5_Block.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdEigen_hdf5_Block</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdEigen_spectra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdEigen_spectra</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdSVD.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdSVD</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdSVD_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdSVD_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdSVD_hdf5_Block.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdSVD_hdf5_Block</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppbdSVD_lapack.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppbdSVD_lapack</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppBind_datasets_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppBind_datasets_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppGetPCAIndividualsHdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppGetPCAIndividualsHdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppGetPCAVariablesHdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppGetPCAVariablesHdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppNormalize_Data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppNormalize_Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppNormalize_Data_R_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppNormalize_Data_R_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppNormalizeColwise.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppNormalizeColwise</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppNormalizeHdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppNormalizeHdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppNormalizeRowwise.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppNormalizeRowwise</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppPCAHdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppPCAHdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppPseudoinv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppPseudoinv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppPseudoinvHdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppPseudoinvHdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppQR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppQR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppQRHdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppQRHdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppReduce_dataset_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppReduce_dataset_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppRemove_hdf5_elements.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppRemove_hdf5_elements</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppSolve.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppSolve</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppSolveHdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppSolveHdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppSort_dataset_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppSort_dataset_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppSplit_matrix_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppSplit_matrix_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppSplit_matrix_hdf5_internal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppSplit_matrix_hdf5_internal</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/RcppTypifyNormalizeHdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">RcppTypifyNormalizeHdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/remove_elements.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">remove_elements</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/removeColumn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">removeColumn</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/removeRow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">removeRow</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/renameElement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">renameElement</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/scalarOperation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">scalarOperation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/setDiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">setDiagonalMatrix</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/setLowerTriangularMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">setLowerTriangularMatrix</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/setUpperTriangularMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">setUpperTriangularMatrix</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/spearman_correlation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">spearman_correlation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/SplitElementName.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SplitElementName</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/subtractDiagonals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">subtractDiagonals</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/t_distribution_cdf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">t_distribution_cdf</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/tcrossprod.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">tcrossprod</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/transpose.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">transpose</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/validateSpectraParams.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">validateSpectraParams</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/validateVector.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">validateVector</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/validateVectorDataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">validateVectorDataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/VectortoOrderedMap_SNP_counts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">VectortoOrderedMap_SNP_counts</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/wdX.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">wdX</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/wdX_parallel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">wdX_parallel</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/when_fork.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">when_fork</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/writeDiagonalFromVector.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">writeDiagonalFromVector</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/wX.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">wX</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/xtwx.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">xtwx</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Xw.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Xw</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Xwd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Xwd</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/Xwd_parallel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Xwd_parallel</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/cpp/functions/xwxt.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">xwxt</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#signature" id="toc-signature" class="nav-link active" data-scroll-target="#signature">Signature</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link" data-scroll-target="#description">Description</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#returns" id="toc-returns" class="nav-link" data-scroll-target="#returns">Returns</a></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
+  <li><a href="#call-graph" id="toc-call-graph" class="nav-link" data-scroll-target="#call-graph">Call Graph</a></li>
+  <li><a href="#source-code" id="toc-source-code" class="nav-link" data-scroll-target="#source-code">Source Code</a></li>
+  <li><a href="#usage-example" id="toc-usage-example" class="nav-link" data-scroll-target="#usage-example">Usage Example</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/cpp/functions/index.html">Functions</a></li><li class="breadcrumb-item"><a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_single.html">RcppbdCorr_hdf5_single</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">RcppbdCorr_hdf5_single</h1>
+<p class="subtitle lead">C++ Function Reference</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="signature" class="level2">
+<h2 class="anchored" data-anchor-id="signature">Signature</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Rcpp<span class="op">::</span>List BigDataStatMeth<span class="op">::</span>RcppbdCorr_hdf5_single<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>filename<span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>strsubgroup<span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>strdataset<span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>method<span class="op">,</span> <span class="dt">bool</span> use_complete_obs<span class="op">,</span> <span class="dt">bool</span> compute_pvalues<span class="op">,</span> <span class="dt">int</span> block_size<span class="op">,</span> <span class="dt">bool</span> bforce<span class="op">,</span> <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span> Rcpp<span class="op">::</span>CharacterVector <span class="op">&gt;</span> <span class="op">&amp;</span>output_group<span class="op">,</span> <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span> Rcpp<span class="op">::</span>CharacterVector <span class="op">&gt;</span> <span class="op">&amp;</span>output_dataset_corr<span class="op">,</span> <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span> Rcpp<span class="op">::</span>CharacterVector <span class="op">&gt;</span> <span class="op">&amp;</span>output_dataset_pval<span class="op">,</span> <span class="dt">bool</span> trans_x<span class="op">,</span> <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span> <span class="dt">int</span> <span class="op">&gt;</span> <span class="op">&amp;</span>threads<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Implementation of single matrix correlation computation for HDF5 matrices - OPTIMIZED.</p>
+</section>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<ul>
+<li><code>filename</code> (<code>const std::string &amp;</code>): Path to HDF5 file containing the matrix</li>
+<li><code>strsubgroup</code> (<code>const std::string &amp;</code>): Group path within HDF5 file</li>
+<li><code>strdataset</code> (<code>const std::string &amp;</code>): Dataset name within the group</li>
+<li><code>method</code> (<code>const std::string &amp;</code>): Correlation method (“pearson” or “spearman”)</li>
+<li><code>use_complete_obs</code> (<code>bool</code>): Whether to use only complete observations</li>
+<li><code>compute_pvalues</code> (<code>bool</code>): Whether to compute p-values (performance impact)</li>
+<li><code>block_size</code> (<code>int</code>): Block size for large matrix processing (default: 1000)</li>
+<li><code>bforce</code> (<code>bool</code>): Whether to overwrite existing results</li>
+<li><code>output_group</code> (<code>const Rcpp::Nullable&lt; Rcpp::CharacterVector &gt; &amp;</code>): Custom output group name (nullable)</li>
+<li><code>output_dataset_corr</code> (<code>const Rcpp::Nullable&lt; Rcpp::CharacterVector &gt; &amp;</code>): Custom correlation dataset name (nullable)</li>
+<li><code>output_dataset_pval</code> (<code>const Rcpp::Nullable&lt; Rcpp::CharacterVector &gt; &amp;</code>): Custom p-values dataset name (nullable)</li>
+<li><code>trans_x</code> (<code>bool</code>): Whether to transpose the matrix (samples vs variables correlation)</li>
+<li><code>threads</code> (<code>const Rcpp::Nullable&lt; int &gt; &amp;</code>): Number of threads for parallel computation (nullable)</li>
+</ul>
+</section>
+<section id="returns" class="level2">
+<h2 class="anchored" data-anchor-id="returns">Returns</h2>
+<p>Rcpp::List containing dataset locations and computation metadata</p>
+</section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>Optimized implementation that computes correlation matrix for a single HDF5 dataset. Uses intelligent method selection between direct computation and block-wise processing based on matrix size and available memory.</p>
+</section>
+<section id="call-graph" class="level2">
+<h2 class="anchored" data-anchor-id="call-graph">Call Graph</h2>
+<div class="diagram-section">
+<object type="image/svg+xml" data="images/namespace_big_data_stat_meth_ae21b46d571f53416eedeb2d80f9b83ac_cgraph.svg" class="class-diagram">
+<img src="images/namespace_big_data_stat_meth_ae21b46d571f53416eedeb2d80f9b83ac_cgraph.svg" alt="Function dependencies">
+</object>
+</div>
+</section>
+<section id="source-code" class="level2">
+<h2 class="anchored" data-anchor-id="source-code">Source Code</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Implementation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>File:</strong> <code>inst/include/hdf5Algebra/matrixCorrelation.hpp</code> • <strong>Lines 1401-1560</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> Rcpp<span class="op">::</span>List RcppbdCorr_hdf5_single<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> filename<span class="op">,</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> strsubgroup<span class="op">,</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> strdataset<span class="op">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> method<span class="op">,</span> </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                                             <span class="dt">bool</span> use_complete_obs<span class="op">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                                             <span class="dt">bool</span> compute_pvalues<span class="op">,</span> </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                                             <span class="dt">int</span> block_size<span class="op">,</span> </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                                             <span class="dt">bool</span> bforce<span class="op">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;&amp;</span> output_group<span class="op">,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;&amp;</span> output_dataset_corr<span class="op">,</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;&amp;</span> output_dataset_pval<span class="op">,</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                                             <span class="dt">bool</span> trans_x<span class="op">,</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                                             <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&amp;</span> threads<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">*</span> dsA <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">*</span> dsCorr <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">*</span> dsPval <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>            <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">hsize_t</span><span class="op">&gt;</span> stride <span class="op">=</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> <span class="dv">1</span><span class="op">},</span> block <span class="op">=</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> <span class="dv">1</span><span class="op">},</span> offset <span class="op">=</span> <span class="op">{</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">},</span> count <span class="op">=</span> <span class="op">{</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">};</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Open input dataset</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            dsA <span class="op">=</span> <span class="kw">new</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">(</span>filename<span class="op">,</span> strsubgroup<span class="op">,</span> strdataset<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>            dsA<span class="op">-&gt;</span>openDataset<span class="op">();</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>dsA<span class="op">-&gt;</span>getDatasetptr<span class="op">()</span> <span class="op">==</span> <span class="kw">nullptr</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>                checkClose_file<span class="op">(</span>dsA<span class="op">);</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>                <span class="cf">throw</span> <span class="bu">std::</span>runtime_error<span class="op">(</span><span class="st">"Failed to open input dataset"</span><span class="op">);</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Determine output group and dataset names</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            <span class="bu">std::</span>string stroutgroup<span class="op">;</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            <span class="bu">std::</span>string corr_dataset_name<span class="op">;</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>            <span class="bu">std::</span>string pval_dataset_name<span class="op">;</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>output_group<span class="op">.</span>isNull<span class="op">())</span> <span class="op">{</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>                stroutgroup <span class="op">=</span> <span class="st">"CORR/"</span> <span class="op">+</span> strdataset<span class="op">;</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>CharacterVector group_vec <span class="op">=</span> Rcpp<span class="op">::</span>as<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;(</span>output_group<span class="op">);</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                stroutgroup <span class="op">=</span> Rcpp<span class="op">::</span>as<span class="op">&lt;</span><span class="bu">std::</span>string<span class="op">&gt;(</span>group_vec<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>output_dataset_corr<span class="op">.</span>isNull<span class="op">())</span> <span class="op">{</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>                corr_dataset_name <span class="op">=</span> <span class="st">"correlation"</span><span class="op">;</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>CharacterVector corr_vec <span class="op">=</span> Rcpp<span class="op">::</span>as<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;(</span>output_dataset_corr<span class="op">);</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>                corr_dataset_name <span class="op">=</span> Rcpp<span class="op">::</span>as<span class="op">&lt;</span><span class="bu">std::</span>string<span class="op">&gt;(</span>corr_vec<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>output_dataset_pval<span class="op">.</span>isNull<span class="op">())</span> <span class="op">{</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>                pval_dataset_name <span class="op">=</span> <span class="st">"pvalues"</span><span class="op">;</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>CharacterVector pval_vec <span class="op">=</span> Rcpp<span class="op">::</span>as<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;(</span>output_dataset_pval<span class="op">);</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                pval_dataset_name <span class="op">=</span> Rcpp<span class="op">::</span>as<span class="op">&lt;</span><span class="bu">std::</span>string<span class="op">&gt;(</span>pval_vec<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Get matrix dimensions</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>            <span class="dt">hsize_t</span> n_rows_orig <span class="op">=</span> dsA<span class="op">-&gt;</span>nrows<span class="op">();</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>            <span class="dt">hsize_t</span> n_cols_orig <span class="op">=</span> dsA<span class="op">-&gt;</span>ncols<span class="op">();</span></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Effective dimensions after transposition</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>            <span class="dt">hsize_t</span> n_rows <span class="op">=</span> trans_x <span class="op">?</span> n_cols_orig <span class="op">:</span> n_rows_orig<span class="op">;</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>            <span class="dt">hsize_t</span> n_cols <span class="op">=</span> trans_x <span class="op">?</span> n_rows_orig <span class="op">:</span> n_cols_orig<span class="op">;</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>            count <span class="op">=</span> <span class="op">{</span>n_rows_orig<span class="op">,</span> n_cols_orig<span class="op">};</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Create output datasets</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>                dsCorr <span class="op">=</span> <span class="kw">new</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">(</span>filename<span class="op">,</span> stroutgroup<span class="op">,</span> corr_dataset_name<span class="op">,</span> bforce<span class="op">);</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>compute_pvalues<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                    dsPval <span class="op">=</span> <span class="kw">new</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">(</span>filename<span class="op">,</span> stroutgroup<span class="op">,</span> pval_dataset_name<span class="op">,</span> bforce<span class="op">);</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>exception<span class="op">&amp;</span> e<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"Error creating output datasets: "</span> <span class="op">&lt;&lt;</span> e<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>                checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsCorr<span class="op">,</span> dsPval<span class="op">);</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> R_NilValue<span class="op">;</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Automatic method selection based on matrix size</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>            <span class="at">const</span> <span class="dt">hsize_t</span> DIRECT_COMPUTATION_THRESHOLD <span class="op">=</span> MAXELEMSINBLOCK <span class="op">/</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>n_rows <span class="op">*</span> n_cols <span class="op">&lt;</span> DIRECT_COMPUTATION_THRESHOLD<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Direct computation for small matrices</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>                <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> vdA<span class="op">(</span>count<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">*</span> count<span class="op">[</span><span class="dv">1</span><span class="op">]);</span></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>                dsA<span class="op">-&gt;</span>readDatasetBlock<span class="op">({</span>offset<span class="op">[</span><span class="dv">0</span><span class="op">],</span> offset<span class="op">[</span><span class="dv">1</span><span class="op">]},</span> <span class="op">{</span>count<span class="op">[</span><span class="dv">0</span><span class="op">],</span> count<span class="op">[</span><span class="dv">1</span><span class="op">]},</span> stride<span class="op">,</span> block<span class="op">,</span> vdA<span class="op">.</span>data<span class="op">());</span></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Convert to Eigen matrix (row-major)</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>                Eigen<span class="op">::</span>MatrixXd X <span class="op">=</span> Eigen<span class="op">::</span>Map<span class="op">&lt;</span>Eigen<span class="op">::</span>Matrix<span class="op">&lt;</span><span class="dt">double</span><span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>RowMajor<span class="op">&gt;&gt;(</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>                    vdA<span class="op">.</span>data<span class="op">(),</span> count<span class="op">[</span><span class="dv">0</span><span class="op">],</span> count<span class="op">[</span><span class="dv">1</span><span class="op">]);</span></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Compute correlation</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>                corr_result result <span class="op">=</span> RcppbdCorr_matrix_single<span class="op">(</span>X<span class="op">,</span> method<span class="op">,</span> use_complete_obs<span class="op">,</span> compute_pvalues<span class="op">,</span> trans_x<span class="op">,</span> threads<span class="op">);</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(!</span>result<span class="op">.</span>bcomputed<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>                    checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsCorr<span class="op">,</span> dsPval<span class="op">);</span></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">throw</span> <span class="bu">std::</span>runtime_error<span class="op">(</span><span class="st">"Single matrix correlation computation failed"</span><span class="op">);</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Write correlation matrix</span></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>dsCorr<span class="op">-&gt;</span>getDatasetptr<span class="op">()</span> <span class="op">==</span> <span class="kw">nullptr</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>                    dsCorr<span class="op">-&gt;</span>createDataset<span class="op">(</span>result<span class="op">.</span>correlation_matrix<span class="op">.</span>rows<span class="op">(),</span> result<span class="op">.</span>correlation_matrix<span class="op">.</span>cols<span class="op">(),</span> <span class="st">"real"</span><span class="op">);</span></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>                dsCorr<span class="op">-&gt;</span>writeDataset<span class="op">(</span>Rcpp<span class="op">::</span>wrap<span class="op">(</span>result<span class="op">.</span>correlation_matrix<span class="op">));</span></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Write p-values matrix if computed</span></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>compute_pvalues <span class="op">&amp;&amp;</span> result<span class="op">.</span>has_pvalues <span class="op">&amp;&amp;</span> dsPval <span class="op">&amp;&amp;</span> result<span class="op">.</span>pvalues<span class="op">.</span>rows<span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> result<span class="op">.</span>pvalues<span class="op">.</span>cols<span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>dsPval<span class="op">-&gt;</span>getDatasetptr<span class="op">()</span> <span class="op">==</span> <span class="kw">nullptr</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>                        dsPval<span class="op">-&gt;</span>createDataset<span class="op">(</span>result<span class="op">.</span>pvalues<span class="op">.</span>rows<span class="op">(),</span> result<span class="op">.</span>pvalues<span class="op">.</span>cols<span class="op">(),</span> <span class="st">"real"</span><span class="op">);</span></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>                    dsPval<span class="op">-&gt;</span>writeDataset<span class="op">(</span>Rcpp<span class="op">::</span>wrap<span class="op">(</span>result<span class="op">.</span>pvalues<span class="op">));</span></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span>                </span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Block-wise computation for large matrices - CRITICAL path for big-omics</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>dsA<span class="op">-&gt;</span>getDatasetptr<span class="op">()</span> <span class="op">!=</span> <span class="kw">nullptr</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>                    RcppbdCorr_hdf5_Block_single<span class="op">(</span>dsA<span class="op">,</span> dsCorr<span class="op">,</span> dsPval<span class="op">,</span> method<span class="op">,</span> use_complete_obs<span class="op">,</span> </span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>                                                           compute_pvalues<span class="op">,</span> trans_x<span class="op">,</span> block_size<span class="op">,</span> threads<span class="op">);</span></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Clean up datasets</span></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>            <span class="kw">delete</span> dsA<span class="op">;</span> dsA <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>            <span class="kw">delete</span> dsCorr<span class="op">;</span> dsCorr <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>            <span class="kw">delete</span> dsPval<span class="op">;</span> dsPval <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Return comprehensive result list</span></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> Rcpp<span class="op">::</span>List<span class="op">::</span>create<span class="op">(</span></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"filename"</span><span class="op">)</span> <span class="op">=</span> filename<span class="op">,</span></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"group"</span><span class="op">)</span> <span class="op">=</span> stroutgroup<span class="op">,</span></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"correlation"</span><span class="op">)</span> <span class="op">=</span> corr_dataset_name<span class="op">,</span></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"method"</span><span class="op">)</span> <span class="op">=</span> method<span class="op">,</span></span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"correlation_type"</span><span class="op">)</span> <span class="op">=</span> <span class="st">"single"</span><span class="op">,</span></span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"n_variables"</span><span class="op">)</span> <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>n_cols<span class="op">,</span></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"n_observations"</span><span class="op">)</span> <span class="op">=</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>n_rows<span class="op">,</span></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"use_complete_obs"</span><span class="op">)</span> <span class="op">=</span> use_complete_obs<span class="op">,</span></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"pvalues"</span><span class="op">)</span> <span class="op">=</span> compute_pvalues <span class="op">?</span> pval_dataset_name <span class="op">:</span> <span class="st">""</span><span class="op">,</span></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Named<span class="op">(</span><span class="st">"has_pvalues"</span><span class="op">)</span> <span class="op">=</span> compute_pvalues</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>            <span class="op">);</span></span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>FileIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>            checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsCorr<span class="op">,</span> dsPval<span class="op">);</span></span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">C++ exception RcppbdCorr_hdf5_single (File IException): "</span> <span class="op">&lt;&lt;</span> error<span class="op">.</span>getDetailMsg<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> R_NilValue<span class="op">;</span></span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>DataSetIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>            checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsCorr<span class="op">,</span> dsPval<span class="op">);</span></span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">C++ exception RcppbdCorr_hdf5_single (DataSet IException): "</span> <span class="op">&lt;&lt;</span> error<span class="op">.</span>getDetailMsg<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> R_NilValue<span class="op">;</span></span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>            checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsCorr<span class="op">,</span> dsPval<span class="op">);</span></span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"C++ exception RcppbdCorr_hdf5_single: "</span> <span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> R_NilValue<span class="op">;</span></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span> <span class="op">(...)</span> <span class="op">{</span></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>            checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsCorr<span class="op">,</span> dsPval<span class="op">);</span></span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">C++ exception RcppbdCorr_hdf5_single (unknown reason)"</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> R_NilValue<span class="op">;</span></span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</section>
+<section id="usage-example" class="level2">
+<h2 class="anchored" data-anchor-id="usage-example">Usage Example</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"BigDataStatMeth.hpp"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Example usage</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> RcppbdCorr_hdf5_single<span class="op">(...);</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>BigDataStatMeth - ISGlobal Bioinformatics Research Group</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
