@@ -138,6 +138,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Get Started</span></a>
   </li>  
   <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-learn" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Learn</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-learn">    
+        <li class="dropdown-header">─── Theory ───</li>
+        <li>
+    <a class="dropdown-item" href="../../../fundamentals/index.html">
+ <span class="dropdown-text">Fundamentals</span></a>
+  </li>  
+        <li class="dropdown-header">─── Practice ───</li>
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/index.html">
+ <span class="dropdown-text">Tutorials</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../practical-workflows/index.html">
+ <span class="dropdown-text">Practical Workflows</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-api-reference" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">API Reference</span>
     </a>
@@ -153,17 +174,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides--examples" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Guides &amp; Examples</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developers" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Developers</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-guides--examples">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-developers">    
         <li>
-    <a class="dropdown-item" href="../../../guides/index.html">
- <span class="dropdown-text">Guides</span></a>
+    <a class="dropdown-item" href="../../../developer-guide/index.html">
+ <span class="dropdown-text">Developer Guide</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../examples/index.html">
- <span class="dropdown-text">Examples</span></a>
+    <a class="dropdown-item" href="../../../developer-guide/contributing/index.qmd">
+ <span class="dropdown-text">Contributing</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Resources</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li>
+    <a class="dropdown-item" href="../../../best-practices/index.html">
+ <span class="dropdown-text">Best Practices</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../resources/index.html">
+ <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -185,7 +221,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/r/other/bd_wproduct.html">Other Functions</a></li><li class="breadcrumb-item"><a href="../../../api-reference/r/other/bdblockMult.html">bdblockMult</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/r/other/bdblockMult.html">Other Functions</a></li><li class="breadcrumb-item"><a href="../../../api-reference/r/other/bdblockMult.html">bdblockMult</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -209,7 +245,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../../api-reference/r/algebra/index.html" class="sidebar-item-text sidebar-link">
+            <a href="../../../api-reference/r/linear_algebra/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Linear Algebra</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
@@ -218,13 +254,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/algebra/bdCrossprod.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/linear_algebra/bd_wproduct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bd_wproduct</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/linear_algebra/bdCorr_matrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdCorr_matrix</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/linear_algebra/bdCrossprod.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdCrossprod</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/algebra/bdtCrossprod.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/linear_algebra/bdpseudoinv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdpseudoinv</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/linear_algebra/bdQR.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdQR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/linear_algebra/bdScalarwproduct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdScalarwproduct</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/linear_algebra/bdSolve.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdSolve</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/linear_algebra/bdtCrossprod.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdtCrossprod</span></a>
   </div>
 </li>
@@ -232,8 +304,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../../../api-reference/r/statistics/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Statistical Methods</span></a>
+            <a href="../../../api-reference/r/hdf5_algebra/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HDF5 Algebra</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -241,20 +313,177 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/statistics/bdPCA_hdf5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_algebra/bdCholesky_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdCholesky_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdCreate_diagonal_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdCreate_diagonal_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdCrossprod_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdCrossprod_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdDiag_add_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdDiag_add_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdDiag_divide_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdDiag_divide_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdDiag_multiply_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdDiag_multiply_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdDiag_scalar_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdDiag_scalar_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdDiag_subtract_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdDiag_subtract_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdEigen_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdEigen_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdgetDiagonal_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdgetDiagonal_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdInvCholesky_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdInvCholesky_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdPCA_hdf5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdPCA_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdpseudoinv_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdpseudoinv_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdQR_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdQR_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdSolve_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdSolve_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdSVD_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdSVD_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdtCrossprod_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdtCrossprod_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdWriteDiagonal_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdWriteDiagonal_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_algebra/bdWriteOppsiteTriangularMatrix_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdWriteOppsiteTriangularMatrix_hdf5</span></a>
   </div>
 </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-      <span class="sidebar-item-text sidebar-link text-start">
- <span class="menu-text">HDF5 Utilities</span></span>
+      <div class="sidebar-item-container"> 
+            <a href="../../../api-reference/r/blockwise_ops/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Block-wise Operations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/blockwise_ops/bdblockmult_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdblockmult_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/blockwise_ops/bdblockmult_sparse_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdblockmult_sparse_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/blockwise_ops/bdblockSubstract.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdblockSubstract</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/blockwise_ops/bdblockSubstract_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdblockSubstract_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/blockwise_ops/bdblockSum.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdblockSum</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/blockwise_ops/bdblockSum_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdblockSum_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/blockwise_ops/bdcomputeMatrixVector_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdcomputeMatrixVector_hdf5</span></a>
+  </div>
+</li>
+      </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Other Functions</span></a>
+            <a href="../../../api-reference/r/hdf5_statistics/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HDF5 Statistics</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -262,338 +491,174 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bd_wproduct.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bd_wproduct</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdapply_Function_hdf5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_statistics/bdapply_Function_hdf5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdapply_Function_hdf5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdBind_hdf5_datasets.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdBind_hdf5_datasets</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdblockMult.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">bdblockMult</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdblockmult_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdblockmult_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdblockmult_sparse_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdblockmult_sparse_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdblockSubstract.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdblockSubstract</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdblockSubstract_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdblockSubstract_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdblockSum.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdblockSum</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdblockSum_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdblockSum_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdCheckMatrix_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdCheckMatrix_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdCholesky_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdCholesky_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdcomputeMatrixVector_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdcomputeMatrixVector_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdCorr_hdf5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_statistics/bdCorr_hdf5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdCorr_hdf5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdCorr_matrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdCorr_matrix</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdCreate_diagonal_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdCreate_diagonal_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdCreate_hdf5_emptyDataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdCreate_hdf5_emptyDataset</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdCreate_hdf5_group.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdCreate_hdf5_group</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdCreate_hdf5_matrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdCreate_hdf5_matrix</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdCrossprod_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdCrossprod_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdDiag_add_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdDiag_add_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdDiag_divide_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdDiag_divide_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdDiag_multiply_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdDiag_multiply_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdDiag_scalar_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdDiag_scalar_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdDiag_subtract_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdDiag_subtract_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdEigen_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdEigen_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdgetDatasetsList_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdgetDatasetsList_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdgetDiagonal_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdgetDiagonal_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdgetDim_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdgetDim_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdgetSDandMean_hdf5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_statistics/bdgetSDandMean_hdf5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdgetSDandMean_hdf5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdImportData_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdImportData_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdImportTextFile_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdImportTextFile_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdImputeSNPs_hdf5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_statistics/bdImputeSNPs_hdf5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdImputeSNPs_hdf5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdInvCholesky_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdInvCholesky_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdIsLocked_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdIsLocked_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdmove_hdf5_dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdmove_hdf5_dataset</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdNormalize_hdf5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_statistics/bdNormalize_hdf5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdNormalize_hdf5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdpseudoinv.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdpseudoinv</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdpseudoinv_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdpseudoinv_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdQR.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdQR</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdQR_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdQR_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdReduce_hdf5_dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdReduce_hdf5_dataset</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdRemove_hdf5_element.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdRemove_hdf5_element</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdRemovelowdata_hdf5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_statistics/bdRemovelowdata_hdf5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdRemovelowdata_hdf5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdRemoveMAF_hdf5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_statistics/bdRemoveMAF_hdf5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdRemoveMAF_hdf5</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../../../api-reference/r/hdf5_io_management/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HDF5 I/O &amp; Management</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdScalarwproduct.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdScalarwproduct</span></a>
+  <a href="../../../api-reference/r/hdf5_io_management/bdBind_hdf5_datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdBind_hdf5_datasets</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdSolve.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdSolve</span></a>
+  <a href="../../../api-reference/r/hdf5_io_management/bdCheckMatrix_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdCheckMatrix_hdf5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdSolve_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdSolve_hdf5</span></a>
+  <a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_emptyDataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdCreate_hdf5_emptyDataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdSort_hdf5_dataset.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_group.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdCreate_hdf5_group</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_matrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdCreate_hdf5_matrix</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdgetDatasetsList_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdgetDatasetsList_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdgetDim_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdgetDim_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdImportData_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdImportData_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdImportTextFile_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdImportTextFile_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdIsLocked_hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdIsLocked_hdf5</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdmove_hdf5_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdmove_hdf5_dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdReduce_hdf5_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdReduce_hdf5_dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdRemove_hdf5_element.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">bdRemove_hdf5_element</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../api-reference/r/hdf5_io_management/bdSort_hdf5_dataset.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdSort_hdf5_dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdSplit_matrix_hdf5.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_io_management/bdSplit_matrix_hdf5.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdSplit_matrix_hdf5</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdsubset_hdf5_dataset.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_io_management/bdsubset_hdf5_dataset.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdsubset_hdf5_dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdSVD_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdSVD_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdtCrossprod_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdtCrossprod_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdWrite_hdf5_dimnames.html" class="sidebar-item-text sidebar-link">
+  <a href="../../../api-reference/r/hdf5_io_management/bdWrite_hdf5_dimnames.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">bdWrite_hdf5_dimnames</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Other Functions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdWriteDiagonal_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdWriteDiagonal_hdf5</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/r/other/bdWriteOppsiteTriangularMatrix_hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">bdWriteOppsiteTriangularMatrix_hdf5</span></a>
+  <a href="../../../api-reference/r/other/bdblockMult.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">bdblockMult</span></a>
   </div>
 </li>
       </ul>
@@ -621,7 +686,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/r/other/bd_wproduct.html">Other Functions</a></li><li class="breadcrumb-item"><a href="../../../api-reference/r/other/bdblockMult.html">bdblockMult</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/r/other/bdblockMult.html">Other Functions</a></li><li class="breadcrumb-item"><a href="../../../api-reference/r/other/bdblockMult.html">bdblockMult</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">bdblockMult</h1>
 <p class="subtitle lead">bdblockMult</p>

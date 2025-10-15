@@ -138,6 +138,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Get Started</span></a>
   </li>  
   <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-learn" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Learn</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-learn">    
+        <li class="dropdown-header">─── Theory ───</li>
+        <li>
+    <a class="dropdown-item" href="./fundamentals/index.html">
+ <span class="dropdown-text">Fundamentals</span></a>
+  </li>  
+        <li class="dropdown-header">─── Practice ───</li>
+        <li>
+    <a class="dropdown-item" href="./tutorials/index.html">
+ <span class="dropdown-text">Tutorials</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./practical-workflows/index.html">
+ <span class="dropdown-text">Practical Workflows</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-api-reference" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">API Reference</span>
     </a>
@@ -153,17 +174,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides--examples" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Guides &amp; Examples</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developers" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Developers</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-guides--examples">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-developers">    
         <li>
-    <a class="dropdown-item" href="./guides/index.html">
- <span class="dropdown-text">Guides</span></a>
+    <a class="dropdown-item" href="./developer-guide/index.html">
+ <span class="dropdown-text">Developer Guide</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./examples/index.html">
- <span class="dropdown-text">Examples</span></a>
+    <a class="dropdown-item" href="./developer-guide/contributing/index.qmd">
+ <span class="dropdown-text">Contributing</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Resources</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li>
+    <a class="dropdown-item" href="./best-practices/index.html">
+ <span class="dropdown-text">Best Practices</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./resources/index.html">
+ <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -232,12 +268,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="key-features" class="level2">
 <h2 class="anchored" data-anchor-id="key-features">Key Features</h2>
 <ul>
-<li><strong>Linear Algebra Operations</strong>: Matrix multiplication, SVD, QR decomposition, and more</li>
-<li><strong>Statistical Methods</strong>: PCA, regression models, penalized methods (Lasso, Elastic Net)</li>
-<li><strong>Big Data Support</strong>: Efficient block-wise processing for large matrices</li>
-<li><strong>HDF5 Integration</strong>: Native support for HDF5 file format</li>
+<li><strong>Linear Algebra Operations</strong>: In-memory matrix operations</li>
+<li><strong>HDF5 Algebra</strong>: Matrix factorizations (PCA, SVD, QR) for HDF5 datasets</li>
+<li><strong>Block-wise Operations</strong>: Efficient block-wise processing for large matrices</li>
+<li><strong>HDF5 Statistics</strong>: Statistical methods and preprocessing for HDF5 data</li>
+<li><strong>HDF5 Integration</strong>: Native I/O and management for HDF5 file format</li>
 <li><strong>Parallel Computing</strong>: Built-in parallelization for computationally intensive operations</li>
-<li><strong>R and C++ APIs</strong>: Use from R or directly from C++ code</li>
 </ul>
 </section>
 <section id="quick-start" class="level2">
@@ -252,7 +288,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Complete documentation for R functions and C++ API.</p>
 </section>
 <section id="guides-examples" class="level3 g-col-4">
-<h3 class="anchored" data-anchor-id="guides-examples"><a href="./guides/index.html">Guides &amp; Examples</a></h3>
+<h3 class="anchored" data-anchor-id="guides-examples"><a href="guides/index.qmd">Guides &amp; Examples</a></h3>
 <p>Practical guides and usage examples.</p>
 </section>
 </div>

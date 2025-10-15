@@ -396,7 +396,7 @@ svg.class-diagram,
 }
 
 /* ============================================
-   Código Fuente (Source Code)
+   Source Code
    ============================================ */
 
 // Tab size en bloques de código
@@ -411,4 +411,45 @@ pre code {
     font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
     font-size: 0.9em;
     line-height: 1.5;
+}
+
+
+/* ============================================
+   Category badges
+   ============================================ */
+
+.category-badge {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    font-size: 0.75em;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 3px;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.category-badge.linear_algebra {
+    background-color: #3498db;  /* Blue */
+}
+
+.category-badge.hdf5_algebra {
+    background-color: #9b59b6;  /* Purple */
+}
+
+.category-badge.blockwise_ops {
+    background-color: #2ecc71;  /* Green */
+}
+
+.category-badge.hdf5_statistics {
+    background-color: #e67e22;  /* Orange */
+}
+
+.category-badge.hdf5_io_management {
+    background-color: #f1c40f;  /* Yellow with darker text */
+    color: #333;
+}
+
+.category-badge.other {
+    background-color: #95a5a6;  /* Gray */
 }
