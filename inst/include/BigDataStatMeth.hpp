@@ -194,6 +194,13 @@
     const hsize_t MAXCHOLBLOCKSIZE = 250000000;
     // const hsize_t MAXCHOLBLOCKSIZE = 50000000;
     
+    
+    /**
+     * @brief Threshold for switching to out-of-core algorithm
+     */
+    const int CHOLESKY_OUTOFCORE_THRESHOLD = 250;
+    // const int CHOLESKY_OUTOFCORE_THRESHOLD = 250000;
+    
     /**
      * @brief Execution status codes
      * @{

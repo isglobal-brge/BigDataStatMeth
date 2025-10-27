@@ -63,3 +63,5 @@ src/Makevars
 src/Makevars
 *.pufo
 *.backup
+*.bck
+*.nofunciona

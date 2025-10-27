@@ -1366,7 +1366,7 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
 #' }
 #'
 #' @export
-bdCreate_diagonal_hdf5 <- function(filename, group, dataset, size = NULL, scalar = 1.0, diagonal_values = numericVector(), output_type = "matrix", block_size = 0L, compression = 6L, overwriteFile = NULL, overwriteDataset = NULL, threads = NULL) {
+bdCreate_diagonal_hdf5 <- function(filename, group, dataset, size = NULL, scalar = 1.0, diagonal_values = NULL, output_type = "matrix", block_size = 0L, compression = 6L, overwriteFile = NULL, overwriteDataset = NULL, threads = NULL) {
     .Call('_BigDataStatMeth_bdCreate_diagonal_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, size, scalar, diagonal_values, output_type, block_size, compression, overwriteFile, overwriteDataset, threads)
 }
 
@@ -1694,7 +1694,7 @@ bdDiag_multiply_hdf5 <- function(filename, group, A, B, groupB = NULL, target = 
 #'   - Parallel processing support for improved performance
 #'
 #' * Mathematical properties:
-#'   - Element-wise division: result[i] = A[i] / B[i]
+#'   - Element-wise division: result\[i\] = A\[i\] / B\[i\]
 #'   - Division by zero results in infinity (IEEE 754 standard)
 #'   - Handles special cases: ±inf, NaN, and subnormal numbers
 #'   - Order matters: A / B ≠ B / A
@@ -1762,11 +1762,11 @@ bdDiag_divide_hdf5 <- function(filename, group, A, B, groupB = NULL, target = NU
 #' This function provides flexible scalar operations on diagonals:
 #' 
 #' * Supported operations:
-#'   - "+": diagonal[i] + scalar
-#'   - "-": diagonal[i] - scalar  
-#'   - "*": diagonal[i] * scalar
-#'   - "/": diagonal[i] / scalar
-#'   - "pow": diagonal[i] ^ scalar
+#'   - "+": diagonal\[i\] + scalar
+#'   - "-": diagonal\[i\] - scalar  
+#'   - "*": diagonal\[i\] * scalar
+#'   - "/": diagonal\[i\] / scalar
+#'   - "pow": diagonal\[i\] ^ scalar
 #' 
 #' * Input types:
 #'   - Matrix input: Extracts diagonal automatically

@@ -91,9 +91,9 @@ namespace BigDataStatMeth {
             
             if( K == L)
             {
-                hsize_t isize = hdf5_block + 1,
-                    ksize = hdf5_block + 1,
-                    jsize = hdf5_block + 1;
+                // hsize_t isize = hdf5_block + 1,
+                //     ksize = hdf5_block + 1,
+                //     jsize = hdf5_block + 1;
                 
                 std::vector<hsize_t> stride = {1, 1};
                 std::vector<hsize_t> block = {1, 1};

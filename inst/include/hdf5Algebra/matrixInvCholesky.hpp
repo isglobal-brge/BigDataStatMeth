@@ -21,6 +21,8 @@
  * @see BigDataStatMeth::hdf5DatasetInternal
  */
 
+#include "Utilities/system-utils.hpp"
+
 #ifndef BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 #define BIGDATASTATMETH_HDF5_INVCHOLESKY_HPP
 
@@ -57,6 +59,64 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
                                     BigDataStatMeth::hdf5DatasetInternal* outDataset, 
                                     bool bfull, long dElementsBlock, Rcpp::Nullable<int> threads );
 
+
+/**
+ * @brief Performs Cholesky decomposition with automatic algorithm selection
+ *
+ * @param inDataset Input matrix dataset (must be symmetric positive-definite)
+ * @param outDataset Output dataset for the Cholesky factor L
+ * @param idim0 Number of rows
+ * @param idim1 Number of columns
+ * @param dElementsBlock Block size for processing
+ * @param threads Number of threads for parallel processing (optional)
+ * @return int 0 on success, 1 if not positive definite, 2 on errors
+ *
+ * @details Automatically selects appropriate algorithm based on matrix size:
+ * - Matrices < CHOLESKY_OUTOFCORE_THRESHOLD: uses intermediate algorithm
+ * - Matrices ≥ CHOLESKY_OUTOFCORE_THRESHOLD: uses out-of-core tiled algorithm
+ * 
+ * @note Threshold defined in BigDataStatMeth.hpp
+ */
+inline int Cholesky_decomposition_hdf5(BigDataStatMeth::hdf5Dataset* inDataset,  
+                                       BigDataStatMeth::hdf5Dataset* outDataset, 
+                                       int idim0, int idim1, long dElementsBlock, 
+                                       Rcpp::Nullable<int> threads);
+
+/**
+ * @brief Computes inverse of Cholesky factor with automatic algorithm selection
+ *
+ * @param InOutDataset Dataset containing Cholesky factor L (will be overwritten with L^-1)
+ * @param idim0 Number of rows
+ * @param idim1 Number of columns
+ * @param dElementsBlock Block size for processing
+ * @param threads Number of threads for parallel processing (optional)
+ *
+ * @details Automatically selects appropriate algorithm based on matrix size:
+ * - Matrices < CHOLESKY_OUTOFCORE_THRESHOLD: uses intermediate algorithm
+ * - Matrices ≥ CHOLESKY_OUTOFCORE_THRESHOLD: uses out-of-core tiled algorithm
+ */
+inline void Inverse_of_Cholesky_decomposition_hdf5(BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                                   int idim0, int idim1, long dElementsBlock, 
+                                                   Rcpp::Nullable<int> threads);
+
+/**
+ * @brief Computes final matrix inverse with automatic algorithm selection
+ *
+ * @param InOutDataset Dataset containing L^-1 (will be overwritten with A^-1)
+ * @param idim0 Number of rows
+ * @param idim1 Number of columns
+ * @param dElementsBlock Block size for processing
+ * @param threads Number of threads for parallel processing (optional)
+ *
+ * @details Computes A^-1 = L^-T L^-1 from inverted Cholesky factor.
+ * Automatically selects algorithm based on matrix size.
+ */
+inline void Inverse_Matrix_Cholesky_hdf5(BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                             int idim0, int idim1, long dElementsBlock, 
+                                             Rcpp::Nullable<int> threads);
+
+
+
 /**
  * @brief Performs Cholesky decomposition on a matrix stored in HDF5 format
  *
@@ -82,10 +142,10 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
  * @throws H5::GroupIException on HDF5 group operation errors
  * @throws H5::DataSetIException on HDF5 dataset operation errors
  */
-inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  
-                                             BigDataStatMeth::hdf5Dataset* outDataset, 
-                                             int idim0, int idim1, long dElementsBlock, 
-                                             Rcpp::Nullable<int> threads );
+inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
+                                                     BigDataStatMeth::hdf5Dataset* outDataset, 
+                                                     int idim0, int idim1, long dElementsBlock, 
+                                                     Rcpp::Nullable<int> threads );
 
 /**
  * @brief Computes inverse of Cholesky factor in-place
@@ -107,9 +167,9 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
  * @throws H5::GroupIException on HDF5 group operation errors
  * @throws H5::DataSetIException on HDF5 dataset operation errors
  */
-inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf5Dataset* InOutDataset, 
-                                                         int idim0, int idim1, long dElementsBlock, 
-                                                         Rcpp::Nullable<int> threads);
+inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5(  BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                                                  int idim0, int idim1, long dElementsBlock, 
+                                                                  Rcpp::Nullable<int> threads);
 
 /**
  * @brief Computes final matrix inverse using inverted Cholesky factors
@@ -131,9 +191,69 @@ inline void Inverse_of_Cholesky_decomposition_hdf5(  BigDataStatMeth::hdf5Datase
  * @throws H5::GroupIException on HDF5 group operation errors
  * @throws H5::DataSetIException on HDF5 dataset operation errors
  */
-inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOutDataset, 
+inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                                           int idim0, int idim1, long dElementsBlock, 
+                                                           Rcpp::Nullable<int> threads );
+
+
+/**
+ * @brief Out-of-core Cholesky decomposition for large matrices using tiled algorithm
+ *
+ * @param inDataset Input matrix dataset
+ * @param outDataset Output dataset for Cholesky factor L
+ * @param idim0 Number of rows
+ * @param idim1 Number of columns
+ * @param dElementsBlock Block size (not used, tiles are fixed)
+ * @param threads Number of threads for parallel processing (optional)
+ * @return int 0 on success, 1 if not positive definite, 2 on errors
+ *
+ * @details Fixed-tile algorithm for constant memory usage:
+ * - Processes matrix in 10k×10k tiles
+ * - Memory usage: ~800 MB constant regardless of matrix size
+ * - Suitable for matrices >250k dimensions
+ * - Three-step process: diagonal factorization, column solve, submatrix update
+ */
+inline int Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* inDataset,  
+                                                 BigDataStatMeth::hdf5Dataset* outDataset, 
+                                                 int idim0, int idim1, long dElementsBlock, 
+                                                 Rcpp::Nullable<int> threads);
+
+/**
+ * @brief Out-of-core inverse of Cholesky factor using tiled back-substitution
+ *
+ * @param InOutDataset Dataset containing Cholesky factor L (overwritten with L^-1)
+ * @param idim0 Number of rows
+ * @param idim1 Number of columns
+ * @param dElementsBlock Block size (not used, tiles are fixed)
+ * @param threads Number of threads for parallel processing (optional)
+ *
+ * @details Inverts lower triangular matrix using fixed tiles:
+ * - Processes backward from last tile to first
+ * - Each tile inversion updates dependent tiles
+ * - Memory usage: ~800 MB constant
+ */
+inline void Inverse_of_Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                                             int idim0, int idim1, long dElementsBlock, 
+                                                             Rcpp::Nullable<int> threads);
+
+/**
+ * @brief Out-of-core computation of A^-1 = L^-T L^-1 using tiles
+ *
+ * @param InOutDataset Dataset containing L^-1 (overwritten with A^-1)
+ * @param idim0 Number of rows
+ * @param idim1 Number of columns
+ * @param dElementsBlock Block size (not used, tiles are fixed)
+ * @param threads Number of threads for parallel processing (optional)
+ *
+ * @details Computes final inverse from inverted Cholesky factor:
+ * - Accumulates triple-nested tile products
+ * - Exploits symmetry (only lower triangle computed)
+ * - Memory usage: ~1.6 GB constant
+ */
+inline void Inverse_Matrix_Cholesky_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* InOutDataset, 
                                                    int idim0, int idim1, long dElementsBlock, 
-                                                   Rcpp::Nullable<int> threads );
+                                                   Rcpp::Nullable<int> threads);
+
 
 
 
@@ -156,7 +276,7 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
             // Rcpp::Rcout<<"\nDins res==0 -> anem Inverse_of_Cholesky_decomposition_hdf5...";
             Inverse_of_Cholesky_decomposition_hdf5( outDataset, nrows, ncols, dElementsBlock, threads);
             // Rcpp::Rcout<<"\nDins res==0 -> anem Inverse_Matrix_Cholesky_parallel...";
-            Inverse_Matrix_Cholesky_parallel( outDataset, nrows, ncols, dElementsBlock, threads);
+            Inverse_Matrix_Cholesky_hdf5( outDataset, nrows, ncols, dElementsBlock, threads);
             
             if( bfull==true ) {
                 setUpperTriangularMatrix( outDataset, dElementsBlock);
@@ -196,7 +316,23 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
 
 
 
-inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  
+
+inline int Cholesky_decomposition_hdf5(BigDataStatMeth::hdf5Dataset* inDataset,  
+                                       BigDataStatMeth::hdf5Dataset* outDataset, 
+                                       int idim0, int idim1, long dElementsBlock, 
+                                       Rcpp::Nullable<int> threads = R_NilValue)
+{
+    // Detect matrix size and select algorithm
+    if (idim0 >= CHOLESKY_OUTOFCORE_THRESHOLD) {
+        Rcpp::Rcout << "\nUsing out-of-core Cholesky for large matrix (" << idim0 << "x" << idim1 << ")\n";
+        return Cholesky_decomposition_outofcore_hdf5(inDataset, outDataset, idim0, idim1, dElementsBlock, threads);
+    } else {
+        return Cholesky_decomposition_intermediate_hdf5(inDataset, outDataset, idim0, idim1, dElementsBlock, threads);
+    }
+}
+
+
+inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,  
                            BigDataStatMeth::hdf5Dataset* outDataset, 
                            int idim0,  int idim1,  long dElementsBlock, 
                            Rcpp::Nullable<int> threads  = R_NilValue)
@@ -218,10 +354,6 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                              stride = {1,1},
                              block = {1,1};
         
-        Rcpp::Rcout<<"\nDins Cholesky_decomposition -> Hi...";
-        
-        Rcpp::Rcout<<"\nDebug 1: dimensionSize=" << dimensionSize << ", dElementsBlock=" << dElementsBlock;
-        
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
             minimumBlockSize = dimensionSize * 2;
@@ -229,21 +361,15 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
             minimumBlockSize = dElementsBlock;
         }
         
-        Rcpp::Rcout<<"\nDebug 2: minimumBlockSize=" << minimumBlockSize;
+        // Rcpp::Rcout<<"\nDebug 2: minimumBlockSize=" << minimumBlockSize;
         // Poso el codi per llegir els blocks aquí i desprès a dins hauria d'anar-hi la j
         if( idim0 == idim1)
         {
             
-            Rcpp::Rcout<<"\nDebug 3: Entrando al while";
-            
             // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> idim0 == idim1";
             while ( readedRows < dimensionSize ) {
                 
-                Rcpp::Rcout<<"\nDebug 4: readedRows=" << readedRows;
-                
                 rowstoRead = ( -2 * readedRows - 1 + std::sqrt( pow(2*readedRows, 2) - 4 * readedRows + 8 * minimumBlockSize + 1) ) / 2;
-                
-                Rcpp::Rcout<<"\nDebug 5: rowstoRead calculado=" << rowstoRead;
                 
                 if (rowstoRead <= 0) {
                     rowstoRead = minimumBlockSize; // Minimum progress to avoid infinite loop
@@ -253,19 +379,19 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     rowstoRead = idim0 - readedRows;
                 }
                 
-                Rcpp::Rcout<<"\nDebug 6: rowstoRead final=" << rowstoRead;
-                
                 if (readedRows == 0) {
                     // Primer bloque: count[0] = dimensionSize, count[1] = rowstoRead
                     size_t potential_elements = static_cast<size_t>(dimensionSize) * static_cast<size_t>(rowstoRead);
-                    if (potential_elements > MAXCHOLBLOCKSIZE) {
+                    size_t optimalSize = getOptimalBlockElements();
+                    if (potential_elements > optimalSize) {
                         rowstoRead = static_cast<int>(MAXCHOLBLOCKSIZE / dimensionSize);
                         if (rowstoRead < 1) rowstoRead = 1;
                     }
                 } else {
                     // Bloques siguientes: count[0] = dimensionSize - readedRows + 1, count[1] = readedRows + rowstoRead
                     size_t potential_elements = static_cast<size_t>(dimensionSize - readedRows + 1) * static_cast<size_t>(readedRows + rowstoRead);
-                    if (potential_elements > MAXCHOLBLOCKSIZE) {
+                    size_t optimalSize = getOptimalBlockElements();
+                    if (potential_elements > optimalSize) {
                         int max_cols = static_cast<int>(MAXCHOLBLOCKSIZE / (dimensionSize - readedRows + 1));
                         rowstoRead = max_cols - readedRows;
                         if (rowstoRead < 1) rowstoRead = 1;
@@ -309,8 +435,6 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     readedRows = (readedRows > rowstoRead) ? (readedRows - rowstoRead + rowstoRead) : readedRows + rowstoRead;
                 }
                 
-                // Rcpp::Rcout<<"\nDebug 8";
-                
                 std::vector<double> vdA( count[0] * count[1] ); 
                 inDataset->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
                 A = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdA.data(), count[0], count[1] );
@@ -319,10 +443,6 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                 outDataset->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdL.data() );
                 L = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdL.data(), count[0], count[1] );
                 
-                // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> despres lectura ";
-                
-                // Rcpp::Rcout<<"\nDebug 9";
-                
                 if( offset[0] != 0 )
                     rowstoRead = rowstoRead + 1;
                 
@@ -330,15 +450,8 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     rowstoRead = count[1];
                 }
                 
-                // Rcpp::Rcout<<"\nDebug 10";
-                
-                // !!!!!!!!!!!! for (int j = 0; j < rowstoRead; j++)  {
-                for (int j = 0; j < rowstoRead && (j + offset[0]) < static_cast<int>(count[1]); j++)  {
-                // for (int j = 0; j < rowstoRead && j < static_cast<int>(count[0]) && (j + offset[0]) < static_cast<int>(count[1]); j++)  {
-                    
-                    // Rcpp::Rcout<<"\nDebug 11 - j = "<< j;
-                    
-                    // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> j < rowstoRead ";
+                for (int j = 0; j < rowstoRead; j++)  {
+
                     if( j + offset[0] == 0) {
                         L(j, j) = std::sqrt(A(j,j));
                     } else {
@@ -369,8 +482,6 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     return(1);
                 }
                 
-                // Rcpp::Rcout<<"\nDebug 12";
-                
                 if( offset[0] != 0) {
                     offset[0] = offset[0] + 1;
                     count[0] = count[0] - 1;
@@ -381,7 +492,7 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
                     outDataset->writeDatasetBlock( Rcpp::wrap(L), offset, count, stride, block, false);
                 }
                 
-                Rcpp::Rcout<<"\nDebug 13";
+                // Rcpp::Rcout<<"\nDebug 13";
                 
                 offset[0] = offset[0] + count[0] - 1;
                 
@@ -398,27 +509,27 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
     } catch( H5::FileIException& error ) { 
         checkClose_file(inDataset, outDataset);
         inDataset = outDataset = nullptr;
-        Rcpp::Rcerr<<"c++ exception Cholesky_decomposition_hdf5 (File IException)";
+        Rcpp::Rcerr<<"c++ exception Cholesky_decomposition_intermediate_hdf5 (File IException)";
         return(2);
     } catch( H5::GroupIException & error ) { 
         checkClose_file(inDataset, outDataset);
         inDataset = outDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_hdf5 (Group IException)";
+        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_intermediate_hdf5 (Group IException)";
         return(2);
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(inDataset, outDataset);
         inDataset = outDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_hdf5 (DataSet IException)";
+        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_intermediate_hdf5 (DataSet IException)";
         return(2);
     } catch(std::exception& ex) {
         checkClose_file(inDataset, outDataset);
         inDataset = outDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_hdf5" << ex.what();
+        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_intermediate_hdf5" << ex.what();
         return(2);
     } catch (...) {
         checkClose_file(inDataset, outDataset);
         inDataset = outDataset = nullptr;
-        Rcpp::Rcerr<<"\nC++ exception Rcpp_InvCholesky_hdf5 (unknown reason)";
+        Rcpp::Rcerr<<"\nC++ exception Cholesky_decomposition_intermediate_hdf5 (unknown reason)";
         return(2);
     }
     return(0);
@@ -426,9 +537,177 @@ inline int Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* inDataset,
 }
 
 
+/**
+ * @brief Out-of-core Cholesky decomposition for large matrices using tiled algorithm
+ * @details Fixed-tile algorithm for constant memory usage with complete matrix handling
+ */
+inline int Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* inDataset,  
+                                                 BigDataStatMeth::hdf5Dataset* outDataset, 
+                                                 int idim0, int idim1, long dElementsBlock, 
+                                                 Rcpp::Nullable<int> threads = R_NilValue)
+{
+    
+    // BigDataStatMeth::hdf5DatasetInternal* tmpA = nullptr;
+    
+    try {
+        int dimensionSize = idim0;
+        int tileSize = 10000; // Fixed tile size for predictable memory usage
+        int numTiles = (dimensionSize + tileSize - 1) / tileSize;
+        
+        std::vector<hsize_t> stride = {1,1}, block = {1,1};
+        
+        // Create temporary working copy of input matrix
+        // Block-wise algorithm requires modification of A during computation
+        std::string tempAPath = inDataset->getGroup() + "/.tmp_chol_A_" + inDataset->getDatasetName();
+        BigDataStatMeth::hdf5DatasetInternal tempA(inDataset->getFileName(), tempAPath, true);
+        
+        tempA.createDataset(idim0, idim1, "real");
+
+        // Copy complete symmetric matrix to temporary working dataset
+        // Need full matrix for proper block-wise updates
+        for (int i = 0; i < numTiles; i++) {
+            
+            hsize_t iStart = i * tileSize;
+            hsize_t iSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - iStart));
+            
+            for (int j = 0; j < numTiles; j++) {  // Complete matrix, not just lower triangle
+                hsize_t jStart = j * tileSize;
+                hsize_t jSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - jStart));
+                
+                Eigen::MatrixXd Aij(iSize, jSize);
+                std::vector<double> vAij(iSize * jSize);
+                
+                if (j <= i) {
+                    // Read from lower triangle of input matrix
+                    inDataset->readDatasetBlock({iStart, jStart}, {iSize, jSize}, stride, block, vAij.data());
+                    Aij = Eigen::Map<Eigen::MatrixXd>(vAij.data(), iSize, jSize);
+                } else {
+                    // Use symmetry: A(i,j) = A(j,i)^T for upper triangle tiles
+                    std::vector<double> vAji(jSize * iSize);
+                    inDataset->readDatasetBlock({jStart, iStart}, {jSize, iSize}, stride, block, vAji.data());
+                    Eigen::MatrixXd Aji = Eigen::Map<Eigen::MatrixXd>(vAji.data(), jSize, iSize);
+                    Aij = Aji.transpose();
+                }
+                
+                tempA.writeDatasetBlock(Rcpp::wrap(Aij), {iStart, jStart}, {iSize, jSize}, stride, block, false);
+            }
+        }
+        
+        // Block-wise Cholesky algorithm: A = L * L^T where L is lower triangular
+        // Process tiles in order: diagonal factorization -> column solve -> submatrix update
+        for (int k = 0; k < numTiles; k++) {
+            
+            hsize_t kStart = k * tileSize;
+            hsize_t kSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - kStart));
+            
+            // Step 1: Diagonal factorization - L(k,k) = cholesky(A(k,k))
+            Eigen::MatrixXd Akk(kSize, kSize);
+            std::vector<double> vAkk(kSize * kSize);
+            tempA.readDatasetBlock({kStart, kStart}, {kSize, kSize}, stride, block, vAkk.data());
+            Akk = Eigen::Map<Eigen::MatrixXd>(vAkk.data(), kSize, kSize);
+            
+            // In-place Cholesky factorization of diagonal tile
+            Eigen::LLT<Eigen::MatrixXd> llt(Akk);
+            if (llt.info() != Eigen::Success) {
+                tempA.remove();
+                Rcpp::Rcout << "\nMatrix not positive definite at tile " << k << "\n";
+                return 1;
+            }
+            Eigen::MatrixXd Lkk = llt.matrixL();
+            
+            // Write diagonal Cholesky factor to output
+            outDataset->writeDatasetBlock(Rcpp::wrap(Lkk), {kStart, kStart}, {kSize, kSize}, stride, block, false);
+            
+            // Step 2: Column solve - L(i,k) = A(i,k) * inv(L(k,k)^T)
+            // Columns are independent, can be parallelized
+            #pragma omp parallel for num_threads(get_number_threads(threads, R_NilValue)) schedule(dynamic)
+            for (int i = k + 1; i < numTiles; i++) {
+                
+                hsize_t iStart = i * tileSize;
+                hsize_t iSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - iStart));
+                
+                Eigen::MatrixXd Aik(iSize, kSize);
+                std::vector<double> vAik(iSize * kSize);
+                tempA.readDatasetBlock({iStart, kStart}, {iSize, kSize}, stride, block, vAik.data());
+                Aik = Eigen::Map<Eigen::MatrixXd>(vAik.data(), iSize, kSize);
+                
+                // Solve triangular system: Lkk^T * Lik^T = Aik^T
+                Eigen::MatrixXd Lik = Lkk.triangularView<Eigen::Lower>().solve(Aik.transpose()).transpose();
+                
+                // Write column factor to output
+                outDataset->writeDatasetBlock(Rcpp::wrap(Lik), {iStart, kStart}, {iSize, kSize}, stride, block, false);
+            }
+            
+            // Step 3: Submatrix update - A(i,j) -= L(i,k) * L(j,k)^T
+            // Outer loop over tiles can be parallelized (tiles are independent)
+            #pragma omp parallel for num_threads(get_number_threads(threads, R_NilValue)) schedule(dynamic)
+            for (int i = k + 1; i < numTiles; i++) {
+                
+                hsize_t iStart = i * tileSize;
+                hsize_t iSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - iStart));
+                
+                // Load computed L(i,k) factor
+                Eigen::MatrixXd Lik(iSize, kSize);
+                std::vector<double> vLik(iSize * kSize);
+                outDataset->readDatasetBlock({iStart, kStart}, {iSize, kSize}, stride, block, vLik.data());
+                Lik = Eigen::Map<Eigen::MatrixXd>(vLik.data(), iSize, kSize);
+                
+                // Update tiles in current row (inner loop cannot be parallelized due to dependencies)
+                for (int j = k + 1; j <= i; j++) {
+                    
+                    hsize_t jStart = j * tileSize;
+                    hsize_t jSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - jStart));
+                    
+                    // Load computed L(j,k) factor
+                    Eigen::MatrixXd Ljk(jSize, kSize);
+                    std::vector<double> vLjk(jSize * kSize);
+                    outDataset->readDatasetBlock({jStart, kStart}, {jSize, kSize}, stride, block, vLjk.data());
+                    Ljk = Eigen::Map<Eigen::MatrixXd>(vLjk.data(), jSize, kSize);
+                    
+                    // Load current A(i,j) tile for update
+                    Eigen::MatrixXd Aij(iSize, jSize);
+                    std::vector<double> vAij(iSize * jSize);
+                    tempA.readDatasetBlock({iStart, jStart}, {iSize, jSize}, stride, block, vAij.data());
+                    Aij = Eigen::Map<Eigen::MatrixXd>(vAij.data(), iSize, jSize);
+                    
+                    // Apply rank-k update: A(i,j) -= L(i,k) * L(j,k)^T
+                    Aij -= Lik * Ljk.transpose();
+                    
+                    // Write updated tile back to working matrix
+                    tempA.writeDatasetBlock(Rcpp::wrap(Aij), {iStart, jStart}, {iSize, jSize}, stride, block, false);
+                }
+            }
+        }
+        
+        // Clean up temporary working dataset
+        tempA.remove();
+        
+    } catch(std::exception& ex) {
+        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_outofcore_hdf5: " << ex.what();
+        return 2;
+    }
+    
+    return 0;
+}
 
 
-inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset* InOutDataset, 
+
+inline void Inverse_of_Cholesky_decomposition_hdf5(BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                                   int idim0, int idim1, long dElementsBlock, 
+                                                   Rcpp::Nullable<int> threads = R_NilValue)
+{
+    // Detect matrix size and select algorithm
+    if (idim0 >= CHOLESKY_OUTOFCORE_THRESHOLD) {
+        Rcpp::Rcout << "\nUsing out-of-core inverse Cholesky for large matrix (" << idim0 << "x" << idim1 << ")\n";
+        Inverse_of_Cholesky_decomposition_outofcore_hdf5(InOutDataset, idim0, idim1, dElementsBlock, threads);
+    } else {
+        Inverse_of_Cholesky_decomposition_intermediate_hdf5(InOutDataset, idim0, idim1, dElementsBlock, threads);
+    }
+}
+
+
+
+inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Dataset* InOutDataset, 
                                     int idim0, int idim1, long dElementsBlock, 
                                     Rcpp::Nullable<int> threads = R_NilValue)
 {
@@ -445,7 +724,7 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                              stride = {1,1},
                              block = {1,1};
 
-        Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> Inici";
+        // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky_decomposition_intermediate_hdf5 -> Inici";
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
             // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> if(dElementsBlock < dimensionSize * 2)";
@@ -481,7 +760,8 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                 }
                 
                 size_t potential_elements = static_cast<size_t>(dimensionSize - readedCols) * static_cast<size_t>(readedCols + colstoRead);
-                if (potential_elements > MAXCHOLBLOCKSIZE) {
+                size_t optimalSize = getOptimalBlockElements();
+                if (potential_elements > optimalSize) {
                     int max_cols = static_cast<int>(MAXCHOLBLOCKSIZE / (dimensionSize - readedCols));
                     colstoRead = max_cols - readedCols;
                     if (colstoRead < 1) colstoRead = 1;
@@ -497,8 +777,8 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
                 InOutDataset->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vverticalData.data() );
                 verticalData = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vverticalData.data(), count[0], count[1] );
                 
-                //!!!!!!!!!!!! for (int j = 1; j < dimensionSize - offset[0]; j++)
-                for (int j = 1; j < dimensionSize - offset[0] && j < static_cast<int>(count[0]); j++)
+                for (int j = 1; j < dimensionSize - offset[0]; j++)
+                    //!!!!!!!!!!!! for (int j = 1; j < dimensionSize - offset[0] && j < static_cast<int>(count[0]); j++)
                 {
                     // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> j < dimensionSize - offset[0]";
                     
@@ -562,27 +842,27 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
     } catch( H5::FileIException& error ) { 
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr<<"c++ exception Inverse_of_Cholesky_decomposition_hdf5 (File IException)";
+        Rcpp::Rcerr<<"c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { 
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_hdf5 (Group IException)";
+        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_hdf5 (DataSet IException)";
+        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_hdf5" << ex.what();
+        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5" << ex.what();
         return void();
     } catch (...) {
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr<<"\nC++ exception Inverse_of_Cholesky_decomposition_hdf5 (unknown reason)";
+        Rcpp::Rcerr<<"\nC++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (unknown reason)";
         return void();
     }
     
@@ -592,7 +872,92 @@ inline void Inverse_of_Cholesky_decomposition_hdf5( BigDataStatMeth::hdf5Dataset
 
 
 
-inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOutDataset, 
+/**
+ * @brief Out-of-core inverse of Cholesky factor using tiled back-substitution
+ * @details Inverts lower triangular matrix L in-place using tiles
+ */
+inline void Inverse_of_Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                                             int idim0, int idim1, long dElementsBlock, 
+                                                             Rcpp::Nullable<int> threads = R_NilValue)
+{
+    
+    try {
+        int dimensionSize = idim0;
+        int tileSize = 10000;
+        int numTiles = (dimensionSize + tileSize - 1) / tileSize;
+        
+        std::vector<hsize_t> stride = {1,1}, block = {1,1};
+        
+        // Process tiles backward for inverse: last diagonal to first
+        for (int k = numTiles - 1; k >= 0; k--) {
+            
+            hsize_t kStart = k * tileSize;
+            hsize_t kSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - kStart));
+            
+            // 1. Invert diagonal tile L(k,k) in-place
+            Eigen::MatrixXd Lkk(kSize, kSize);
+            std::vector<double> vLkk(kSize * kSize);
+            InOutDataset->readDatasetBlock({kStart, kStart}, {kSize, kSize}, stride, block, vLkk.data());
+            Lkk = Eigen::Map<Eigen::MatrixXd>(vLkk.data(), kSize, kSize);
+            
+            // Invert lower triangular tile
+            Lkk = Lkk.triangularView<Eigen::Lower>().solve(Eigen::MatrixXd::Identity(kSize, kSize));
+            
+            // Write inverted diagonal tile
+            InOutDataset->writeDatasetBlock(Rcpp::wrap(Lkk), {kStart, kStart}, {kSize, kSize}, stride, block, false);
+            
+            // 2. Update column tiles below diagonal: L(i,k) = -L(i,i) * L_old(i,k) * L(k,k)
+            #pragma omp parallel for num_threads(get_number_threads(threads, R_NilValue)) schedule(dynamic)
+            for (int i = k + 1; i < numTiles; i++) {
+                
+                hsize_t iStart = i * tileSize;
+                hsize_t iSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - iStart));
+                
+                // Load L(i,k) - old value
+                Eigen::MatrixXd Lik_old(iSize, kSize);
+                std::vector<double> vLik(iSize * kSize);
+                InOutDataset->readDatasetBlock({iStart, kStart}, {iSize, kSize}, stride, block, vLik.data());
+                Lik_old = Eigen::Map<Eigen::MatrixXd>(vLik.data(), iSize, kSize);
+                
+                // Load L(i,i) - already inverted
+                Eigen::MatrixXd Lii(iSize, iSize);
+                std::vector<double> vLii(iSize * iSize);
+                InOutDataset->readDatasetBlock({iStart, iStart}, {iSize, iSize}, stride, block, vLii.data());
+                Lii = Eigen::Map<Eigen::MatrixXd>(vLii.data(), iSize, iSize);
+                
+                // Update: L(i,k) = -L(i,i) * L_old(i,k) * L(k,k)
+                Eigen::MatrixXd Lik_new = -Lii * Lik_old * Lkk;
+                
+                // Write updated column tile
+                InOutDataset->writeDatasetBlock(Rcpp::wrap(Lik_new), {iStart, kStart}, {iSize, kSize}, stride, block, false);
+            }
+        }
+        
+    } catch(std::exception& ex) {
+        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_outofcore_hdf5: " << ex.what();
+        return void();
+    }
+    
+    return void();
+}
+
+
+
+inline void Inverse_Matrix_Cholesky_hdf5(BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                             int idim0, int idim1, long dElementsBlock, 
+                                             Rcpp::Nullable<int> threads = R_NilValue)
+{
+    // Detect matrix size and select algorithm
+    if (idim0 >= CHOLESKY_OUTOFCORE_THRESHOLD) {
+        Rcpp::Rcout << "\nUsing out-of-core matrix inverse for large matrix (" << idim0 << "x" << idim1 << ")\n";
+        Inverse_Matrix_Cholesky_outofcore_hdf5(InOutDataset, idim0, idim1, dElementsBlock, threads);
+    } else {
+        Inverse_Matrix_Cholesky_intermediate_hdf5(InOutDataset, idim0, idim1, dElementsBlock, threads);
+    }
+}
+
+
+inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Dataset* InOutDataset, 
                                      int idim0, int idim1, long dElementsBlock, 
                                      Rcpp::Nullable<int> threads = R_NilValue)
 {
@@ -611,7 +976,7 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
                              stride = {1,1},
                              block = {1,1};
         
-        Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel -> Hi...";
+        // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_intermediate_hdf5 -> Hi...";
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
             minimumBlockSize = dimensionSize * 2;
@@ -655,7 +1020,8 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
                 }
                 
                 size_t potential_elements = static_cast<size_t>(dimensionSize - readedCols) * static_cast<size_t>(readedCols + colstoRead);
-                if (potential_elements > MAXCHOLBLOCKSIZE) {
+                size_t optimalSize = getOptimalBlockElements();
+                if (potential_elements > optimalSize) {
                     int max_cols = static_cast<int>(MAXCHOLBLOCKSIZE / (dimensionSize - readedCols));
                     colstoRead = max_cols - readedCols;
                     if (colstoRead < 2) colstoRead = 2; // Esta función necesita mínimo 2
@@ -675,9 +1041,10 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
                 
                 //!!!!! for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columns
 // #pragma omp parallel for num_threads(ithreads) shared (verticalData, colstoRead, offset) schedule(dynamic)
-                int max_i = std::min(static_cast<int>(colstoRead + offset[0]), static_cast<int>(count[1]));
-                #pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) shared (verticalData, colstoRead, offset, max_i) schedule(static) ordered
-                for ( int i = 0; i < max_i; i++)   // Columns
+                // int max_i = std::min(static_cast<int>(colstoRead + offset[0]), static_cast<int>(count[1]));
+                #pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) shared (verticalData, colstoRead, offset) schedule(static) ordered
+                for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columns
+                // for ( int i = 0; i < max_i; i++)   // Columns
                 {
                     int init;
                     
@@ -726,27 +1093,27 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
     } catch( H5::FileIException& error ) { 
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr<<"c++ exception Inverse_Matrix_Cholesky_parallel (File IException)";
+        Rcpp::Rcerr<<"c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (File IException)";
         return void();
     } catch( H5::GroupIException & error ) { 
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_parallel (Group IException)";
+        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (Group IException)";
         return void();
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_parallel (DataSet IException)";
+        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception& ex) {
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_parallel: " << ex.what();
+        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5: " << ex.what();
         return void();
     } catch (...) {
         checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr<<"\nC++ exception Inverse_Matrix_Cholesky_parallel (unknown reason)";
+        Rcpp::Rcerr<<"\nC++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (unknown reason)";
         return void();
     }
     
@@ -754,6 +1121,113 @@ inline void Inverse_Matrix_Cholesky_parallel( BigDataStatMeth::hdf5Dataset* InOu
 }
 
 
+/**
+ * @brief Out-of-core computation of A^-1 = L^-T L^-1 using tiles
+ * @details Computes final inverse from inverted Cholesky factor
+ * Formula: A^-1(i,j) = sum_k L^-1(k,i) * L^-1(k,j)
+ * Reads column tiles vertically to compute dot products
+ */
+inline void Inverse_Matrix_Cholesky_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* InOutDataset, 
+                                                   int idim0, int idim1, long dElementsBlock, 
+                                                   Rcpp::Nullable<int> threads = R_NilValue)
+{
+    
+    //  BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    
+    try {
+        int dimensionSize = idim0;
+        int tileSize = 10000; // Fixed tile size for memory control
+        int numTiles = (dimensionSize + tileSize - 1) / tileSize;
+        
+        std::vector<hsize_t> stride = {1,1}, block = {1,1};
+        
+        // Create temporary dataset to avoid overwriting L^-1 during computation
+        std::string tempDatasetPath = InOutDataset->getGroup() + "/.tmp_inverse_" + InOutDataset->getDatasetName();
+        BigDataStatMeth::hdf5DatasetInternal tempDataset(InOutDataset->getFileName(), tempDatasetPath, true);
+        tempDataset.createDataset(idim0, idim1, "real");
+        
+        // Parallel computation over result tiles (i,j)
+        // Result is symmetric, only compute lower triangle
+#pragma omp parallel for num_threads(get_number_threads(threads, R_NilValue)) schedule(dynamic)
+        for (int i = 0; i < numTiles; i++) {
+            
+            hsize_t iStart = i * tileSize;
+            hsize_t iSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - iStart));
+            
+            // Only compute j <= i (lower triangle)
+            for (int j = 0; j <= i; j++) {
+                
+                hsize_t jStart = j * tileSize;
+                hsize_t jSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - jStart));
+                
+                // Initialize result tile
+                Eigen::MatrixXd Rij = Eigen::MatrixXd::Zero(iSize, jSize);
+                
+                // Sum over k: A^-1(i,j) = sum_k L^-1(k,i) * L^-1(k,j)
+                // L^-1 is lower triangular, so L^-1(k,i) = 0 for k < i
+                // Start from max(i,j) to skip zero products
+                int k_start = (i > j) ? i : j;
+                
+                for (int k = k_start; k < numTiles; k++) {
+                    
+                    hsize_t kStart = k * tileSize;
+                    hsize_t kSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - kStart));
+                    
+                    // Read column tile i: rows k, columns i
+                    // This gives L^-1(k,i) which we need for the product
+                    Eigen::MatrixXd Lki(kSize, iSize);
+                    std::vector<double> vLki(kSize * iSize);
+                    InOutDataset->readDatasetBlock({kStart, iStart}, {kSize, iSize}, stride, block, vLki.data());
+                    Lki = Eigen::Map<Eigen::MatrixXd>(vLki.data(), kSize, iSize);
+                    
+                    // Read column tile j: rows k, columns j  
+                    // This gives L^-1(k,j)
+                    Eigen::MatrixXd Lkj(kSize, jSize);
+                    std::vector<double> vLkj(kSize * jSize);
+                    InOutDataset->readDatasetBlock({kStart, jStart}, {kSize, jSize}, stride, block, vLkj.data());
+                    Lkj = Eigen::Map<Eigen::MatrixXd>(vLkj.data(), kSize, jSize);
+                    
+                    // Accumulate: R(i,j) += L^-1(k,i)^T * L^-1(k,j)
+                    // Lki has rows k, cols i → transpose gives rows i, cols k
+                    // Result: (i × k) × (k × j) = (i × j)
+                    Rij += Lki.transpose() * Lkj;
+                }
+                
+                // Write result tile to temporary dataset
+                tempDataset.writeDatasetBlock(Rcpp::wrap(Rij), {iStart, jStart}, {iSize, jSize}, stride, block, false);
+            }
+        }
+        
+        // Copy result from temporary to original dataset
+        for (int i = 0; i < numTiles; i++) {
+            hsize_t iStart = i * tileSize;
+            hsize_t iSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - iStart));
+            
+            for (int j = 0; j <= i; j++) {
+                hsize_t jStart = j * tileSize;
+                hsize_t jSize = std::min(static_cast<hsize_t>(tileSize), static_cast<hsize_t>(dimensionSize - jStart));
+                
+                // Read tile from temporary dataset
+                Eigen::MatrixXd Rij(iSize, jSize);
+                std::vector<double> vRij(iSize * jSize);
+                tempDataset.readDatasetBlock({iStart, jStart}, {iSize, jSize}, stride, block, vRij.data());
+                Rij = Eigen::Map<Eigen::MatrixXd>(vRij.data(), iSize, jSize);
+                
+                // Write to original dataset
+                InOutDataset->writeDatasetBlock(Rcpp::wrap(Rij), {iStart, jStart}, {iSize, jSize}, stride, block, false);
+            }
+        }
+        
+        // Clean up temporary dataset
+        tempDataset.remove();
+        
+    } catch(std::exception& ex) {
+        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_outofcore_hdf5: " << ex.what();
+        return void();
+    }
+    
+    return void();
+}
 
 }
 

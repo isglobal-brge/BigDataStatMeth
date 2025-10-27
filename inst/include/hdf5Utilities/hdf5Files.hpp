@@ -126,7 +126,7 @@ public:
             
             enable_hdf5_locking_once();
             
-            bool bFileOpened = false;
+            // bool bFileOpened = false;
             bool bFileExists = ResFileExist_filestream();
             bool bInUse = bFileExists ? lockedByOtherProcess() : false;
             
