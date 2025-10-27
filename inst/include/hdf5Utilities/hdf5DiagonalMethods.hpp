@@ -203,7 +203,7 @@ namespace BigDataStatMeth {
                 }
                 
                 if (vector_size != matrix_size) {
-                    Rf_error("writeDiagonalFromVector: Vector size (%d) must match matrix diagonal size (%d)", 
+                    Rf_error("writeDiagonalFromVector: Vector size (%llu) must match matrix diagonal size (%llu)", 
                              vector_size, matrix_size);
                     return;
                 }
@@ -304,7 +304,7 @@ namespace BigDataStatMeth {
                 
                 if (sizeA == 0 || sizeB == 0 || sizeA != sizeB) {
                     checkClose_file(tempA, tempB, tempResult);
-                    Rf_error("Invalid or incompatible diagonal dimensions: %d vs %d", sizeA, sizeB);
+                    Rf_error("Invalid or incompatible diagonal dimensions: %llu vs %llu", sizeA, sizeB);
                     cleanup_temp_datasets(tempA, tempB);
                     return;
                 }

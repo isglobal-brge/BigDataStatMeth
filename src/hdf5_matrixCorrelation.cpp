@@ -121,6 +121,10 @@ using namespace BigDataStatMeth;
                   std::string output_group = "", std::string output_dataset_corr = "",
                   std::string output_dataset_pval = "", int threads = -1) {
      
+     
+     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                                Rcpp::Named("ds") = "");
+     
      try {
          // Validate method parameter
          if (method != "pearson" && method != "spearman") {
@@ -205,7 +209,9 @@ using namespace BigDataStatMeth;
          
      } catch(std::exception &ex) {
          forward_exception_to_r(ex);
+         return(lst_return);
      } catch(...) {
          ::Rf_error("C++ exception bdCorr_hdf5 (unknown reason)");
      }
+     return(lst_return);
  }

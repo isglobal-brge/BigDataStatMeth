@@ -87,7 +87,7 @@
                                    std::string dataset,
                                    Rcpp::Nullable<int> size = R_NilValue,
                                    double scalar = 1.0,
-                                   Rcpp::NumericVector diagonal_values = Rcpp::NumericVector(),
+                                   Rcpp::NumericVector diagonal_values = R_NilValue,
                                    std::string output_type = "matrix",
                                    int block_size = 0,
                                    int compression = 6,
@@ -153,7 +153,7 @@
          objFile = new BigDataStatMeth::hdf5File(filename, bforceFile);
          iRes = objFile->createFile();
          
-         if( iRes == EXEC_OK | iRes == EXEC_WARNING) {
+         if( (iRes == EXEC_OK) | (iRes == EXEC_WARNING)) {
              
              if(iRes == EXEC_WARNING) {
                  objFile->openFile("rw");
@@ -176,16 +176,19 @@
          if(objFile != nullptr) delete objFile;
          checkClose_file(dsDiag);
          Rcpp::stop("c++ exception bdCreate_diagonal_hdf5 (File IException)");
+         return(lst_return);
          
      } catch (H5::DataSetIException&) {
          if(objFile != nullptr) delete objFile;
          checkClose_file(dsDiag);
          Rcpp::stop("c++ exception bdCreate_diagonal_hdf5 (DataSet IException)");
+         return(lst_return);
          
      } catch (std::exception& ex) {
          if(objFile != nullptr) delete objFile;
          checkClose_file(dsDiag);
          Rcpp::stop("c++ exception bdCreate_diagonal_hdf5 %s", ex.what());
+         return(lst_return);
      }
      
      return(lst_return);

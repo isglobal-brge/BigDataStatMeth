@@ -753,7 +753,7 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
 //'   - Parallel processing support for improved performance
 //'
 //' * Mathematical properties:
-//'   - Element-wise division: result[i] = A[i] / B[i]
+//'   - Element-wise division: result\[i\] = A\[i\] / B\[i\]
 //'   - Division by zero results in infinity (IEEE 754 standard)
 //'   - Handles special cases: ±inf, NaN, and subnormal numbers
 //'   - Order matters: A / B ≠ B / A
@@ -921,11 +921,11 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
 //' This function provides flexible scalar operations on diagonals:
 //' 
 //' * Supported operations:
-//'   - "+": diagonal[i] + scalar
-//'   - "-": diagonal[i] - scalar  
-//'   - "*": diagonal[i] * scalar
-//'   - "/": diagonal[i] / scalar
-//'   - "pow": diagonal[i] ^ scalar
+//'   - "+": diagonal\[i\] + scalar
+//'   - "-": diagonal\[i\] - scalar  
+//'   - "*": diagonal\[i\] * scalar
+//'   - "/": diagonal\[i\] / scalar
+//'   - "pow": diagonal\[i\] ^ scalar
 //' 
 //' * Input types:
 //'   - Matrix input: Extracts diagonal automatically

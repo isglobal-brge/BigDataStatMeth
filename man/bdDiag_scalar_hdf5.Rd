@@ -59,11 +59,11 @@ This function provides flexible scalar operations on diagonals:
 \itemize{
 \item Supported operations:
 \itemize{
-\item "+": diagonal\link{i} + scalar
-\item "-": diagonal\link{i} - scalar
-\item "*": diagonal\link{i} * scalar
-\item "/": diagonal\link{i} / scalar
-\item "pow": diagonal\link{i} ^ scalar
+\item "+": diagonal[i] + scalar
+\item "-": diagonal[i] - scalar
+\item "*": diagonal[i] * scalar
+\item "/": diagonal[i] / scalar
+\item "pow": diagonal[i] ^ scalar
 }
 \item Input types:
 \itemize{

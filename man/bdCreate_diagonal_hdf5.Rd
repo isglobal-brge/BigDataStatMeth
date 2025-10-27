@@ -10,7 +10,7 @@ bdCreate_diagonal_hdf5(
   dataset,
   size = NULL,
   scalar = 1,
-  diagonal_values = numericVector(),
+  diagonal_values = NULL,
   output_type = "matrix",
   block_size = 0L,
   compression = 6L,

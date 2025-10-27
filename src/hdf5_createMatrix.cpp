@@ -100,7 +100,7 @@ void bdCreate_hdf5_matrix(std::string filename,
         objFile = new BigDataStatMeth::hdf5File(filename, bforceFile);
         iRes = objFile->createFile();
         
-        if( iRes == EXEC_OK | iRes == EXEC_WARNING) {
+        if( (iRes == EXEC_OK) | (iRes == EXEC_WARNING)) {
             
             if(iRes == EXEC_WARNING) {
                 objFile->openFile("rw");
