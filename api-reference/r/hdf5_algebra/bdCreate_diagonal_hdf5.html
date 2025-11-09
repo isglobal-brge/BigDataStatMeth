@@ -147,6 +147,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../../fundamentals/index.html">
  <span class="dropdown-text">Fundamentals</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../../design-implementation/index.html">
+ <span class="dropdown-text">Design &amp; Implementation</span></a>
+  </li>  
         <li class="dropdown-header">─── Practice ───</li>
         <li>
     <a class="dropdown-item" href="../../../tutorials/index.html">
@@ -186,20 +190,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../../developer-guide/contributing/index.qmd">
  <span class="dropdown-text">Contributing</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Resources</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li><hr class="dropdown-divider"></li>
         <li>
     <a class="dropdown-item" href="../../../best-practices/index.html">
  <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../../resources/index.html">
- <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -709,7 +703,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><span class="category-badge hdf5_algebra">HDF5_ALGEBRA</span></p>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_diagonal_hdf5</span>(filename, group, dataset, <span class="at">size =</span> <span class="cn">NULL</span>, <span class="at">scalar =</span> <span class="fl">1.0</span>, <span class="at">diagonal_values =</span> <span class="fu">numericVector</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_diagonal_hdf5</span>(filename, group, dataset, <span class="at">size =</span> <span class="cn">NULL</span>, <span class="at">scalar =</span> <span class="fl">1.0</span>, <span class="at">diagonal_values =</span> <span class="cn">NULL</span>, <span class="at">output_type =</span> <span class="st">"matrix"</span>, <span class="at">block_size =</span> <span class="dv">0</span>L, <span class="at">compression =</span> <span class="dv">6</span>L, <span class="at">overwriteFile =</span> <span class="cn">NULL</span>, <span class="at">overwriteDataset =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="arguments" class="level2">
 <h2 class="anchored" data-anchor-id="arguments">Arguments</h2>

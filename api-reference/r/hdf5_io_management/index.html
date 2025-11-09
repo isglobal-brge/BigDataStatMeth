@@ -112,6 +112,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../../fundamentals/index.html">
  <span class="dropdown-text">Fundamentals</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../../design-implementation/index.html">
+ <span class="dropdown-text">Design &amp; Implementation</span></a>
+  </li>  
         <li class="dropdown-header">─── Practice ───</li>
         <li>
     <a class="dropdown-item" href="../../../tutorials/index.html">
@@ -151,20 +155,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../../developer-guide/contributing/index.qmd">
  <span class="dropdown-text">Contributing</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Resources</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li><hr class="dropdown-divider"></li>
         <li>
     <a class="dropdown-item" href="../../../best-practices/index.html">
  <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../../resources/index.html">
- <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -642,6 +636,22 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a>
   <ul class="collapse">
   <li><a href="#bdimportdata_hdf5" id="toc-bdimportdata_hdf5" class="nav-link" data-scroll-target="#bdimportdata_hdf5">bdImportData_hdf5</a></li>
+  <li><a href="#bdbind_hdf5_datasets" id="toc-bdbind_hdf5_datasets" class="nav-link" data-scroll-target="#bdbind_hdf5_datasets">bdBind_hdf5_datasets</a></li>
+  <li><a href="#bdcreate_hdf5_emptydataset" id="toc-bdcreate_hdf5_emptydataset" class="nav-link" data-scroll-target="#bdcreate_hdf5_emptydataset">bdCreate_hdf5_emptyDataset</a></li>
+  <li><a href="#bdcreate_hdf5_group" id="toc-bdcreate_hdf5_group" class="nav-link" data-scroll-target="#bdcreate_hdf5_group">bdCreate_hdf5_group</a></li>
+  <li><a href="#bdcreate_hdf5_matrix" id="toc-bdcreate_hdf5_matrix" class="nav-link" data-scroll-target="#bdcreate_hdf5_matrix">bdCreate_hdf5_matrix</a></li>
+  <li><a href="#bdislocked_hdf5" id="toc-bdislocked_hdf5" class="nav-link" data-scroll-target="#bdislocked_hdf5">bdIsLocked_hdf5</a></li>
+  <li><a href="#bdgetdim_hdf5" id="toc-bdgetdim_hdf5" class="nav-link" data-scroll-target="#bdgetdim_hdf5">bdgetDim_hdf5</a></li>
+  <li><a href="#bdgetdatasetslist_hdf5" id="toc-bdgetdatasetslist_hdf5" class="nav-link" data-scroll-target="#bdgetdatasetslist_hdf5">bdgetDatasetsList_hdf5</a></li>
+  <li><a href="#bdcheckmatrix_hdf5" id="toc-bdcheckmatrix_hdf5" class="nav-link" data-scroll-target="#bdcheckmatrix_hdf5">bdCheckMatrix_hdf5</a></li>
+  <li><a href="#bdimporttextfile_hdf5" id="toc-bdimporttextfile_hdf5" class="nav-link" data-scroll-target="#bdimporttextfile_hdf5">bdImportTextFile_hdf5</a></li>
+  <li><a href="#bdmove_hdf5_dataset" id="toc-bdmove_hdf5_dataset" class="nav-link" data-scroll-target="#bdmove_hdf5_dataset">bdmove_hdf5_dataset</a></li>
+  <li><a href="#bdreduce_hdf5_dataset" id="toc-bdreduce_hdf5_dataset" class="nav-link" data-scroll-target="#bdreduce_hdf5_dataset">bdReduce_hdf5_dataset</a></li>
+  <li><a href="#bdremove_hdf5_element" id="toc-bdremove_hdf5_element" class="nav-link" data-scroll-target="#bdremove_hdf5_element">bdRemove_hdf5_element</a></li>
+  <li><a href="#bdsort_hdf5_dataset" id="toc-bdsort_hdf5_dataset" class="nav-link" data-scroll-target="#bdsort_hdf5_dataset">bdSort_hdf5_dataset</a></li>
+  <li><a href="#bdsplit_matrix_hdf5" id="toc-bdsplit_matrix_hdf5" class="nav-link" data-scroll-target="#bdsplit_matrix_hdf5">bdSplit_matrix_hdf5</a></li>
+  <li><a href="#bdsubset_hdf5_dataset" id="toc-bdsubset_hdf5_dataset" class="nav-link" data-scroll-target="#bdsubset_hdf5_dataset">bdsubset_hdf5_dataset</a></li>
+  <li><a href="#bdwrite_hdf5_dimnames" id="toc-bdwrite_hdf5_dimnames" class="nav-link" data-scroll-target="#bdwrite_hdf5_dimnames">bdWrite_hdf5_dimnames</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -676,22 +686,70 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="functions">Functions</h2>
 <section id="bdimportdata_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdimportdata_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdImportData_hdf5.html">bdImportData_hdf5</a></h3>
-<p>bdImportData_hdf5### <a href="../../../api-reference/r/hdf5_io_management/bdBind_hdf5_datasets.html">bdBind_hdf5_datasets</a></p>
-<p>bdBind_hdf5_datasets### <a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_emptyDataset.html">bdCreate_hdf5_emptyDataset</a></p>
-<p>bdCreate_hdf5_emptyDataset### <a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_group.html">bdCreate_hdf5_group</a></p>
-<p>bdCreate_hdf5_group### <a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_matrix.html">bdCreate_hdf5_matrix</a></p>
-<p>bdCreate_hdf5_matrix### <a href="../../../api-reference/r/hdf5_io_management/bdIsLocked_hdf5.html">bdIsLocked_hdf5</a></p>
-<p>bdIsLocked_hdf5### <a href="../../../api-reference/r/hdf5_io_management/bdgetDim_hdf5.html">bdgetDim_hdf5</a></p>
-<p>bdgetDim_hdf5### <a href="../../../api-reference/r/hdf5_io_management/bdgetDatasetsList_hdf5.html">bdgetDatasetsList_hdf5</a></p>
-<p>bdgetDatasetsList_hdf5### <a href="../../../api-reference/r/hdf5_io_management/bdCheckMatrix_hdf5.html">bdCheckMatrix_hdf5</a></p>
-<p>bdCheckMatrix_hdf5### <a href="../../../api-reference/r/hdf5_io_management/bdImportTextFile_hdf5.html">bdImportTextFile_hdf5</a></p>
-<p>bdImportTextFile_hdf5### <a href="../../../api-reference/r/hdf5_io_management/bdmove_hdf5_dataset.html">bdmove_hdf5_dataset</a></p>
-<p>bdmove_hdf5_dataset### <a href="../../../api-reference/r/hdf5_io_management/bdReduce_hdf5_dataset.html">bdReduce_hdf5_dataset</a></p>
-<p>bdReduce_hdf5_dataset### <a href="../../../api-reference/r/hdf5_io_management/bdRemove_hdf5_element.html">bdRemove_hdf5_element</a></p>
-<p>bdRemove_hdf5_element### <a href="../../../api-reference/r/hdf5_io_management/bdSort_hdf5_dataset.html">bdSort_hdf5_dataset</a></p>
-<p>bdSort_hdf5_dataset### <a href="../../../api-reference/r/hdf5_io_management/bdSplit_matrix_hdf5.html">bdSplit_matrix_hdf5</a></p>
-<p>bdSplit_matrix_hdf5### <a href="../../../api-reference/r/hdf5_io_management/bdsubset_hdf5_dataset.html">bdsubset_hdf5_dataset</a></p>
-<p>bdsubset_hdf5_dataset### <a href="../../../api-reference/r/hdf5_io_management/bdWrite_hdf5_dimnames.html">bdWrite_hdf5_dimnames</a></p>
+<p>bdImportData_hdf5</p>
+</section>
+<section id="bdbind_hdf5_datasets" class="level3">
+<h3 class="anchored" data-anchor-id="bdbind_hdf5_datasets"><a href="../../../api-reference/r/hdf5_io_management/bdBind_hdf5_datasets.html">bdBind_hdf5_datasets</a></h3>
+<p>bdBind_hdf5_datasets</p>
+</section>
+<section id="bdcreate_hdf5_emptydataset" class="level3">
+<h3 class="anchored" data-anchor-id="bdcreate_hdf5_emptydataset"><a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_emptyDataset.html">bdCreate_hdf5_emptyDataset</a></h3>
+<p>bdCreate_hdf5_emptyDataset</p>
+</section>
+<section id="bdcreate_hdf5_group" class="level3">
+<h3 class="anchored" data-anchor-id="bdcreate_hdf5_group"><a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_group.html">bdCreate_hdf5_group</a></h3>
+<p>bdCreate_hdf5_group</p>
+</section>
+<section id="bdcreate_hdf5_matrix" class="level3">
+<h3 class="anchored" data-anchor-id="bdcreate_hdf5_matrix"><a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_matrix.html">bdCreate_hdf5_matrix</a></h3>
+<p>bdCreate_hdf5_matrix</p>
+</section>
+<section id="bdislocked_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdislocked_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdIsLocked_hdf5.html">bdIsLocked_hdf5</a></h3>
+<p>bdIsLocked_hdf5</p>
+</section>
+<section id="bdgetdim_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdgetdim_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdgetDim_hdf5.html">bdgetDim_hdf5</a></h3>
+<p>bdgetDim_hdf5</p>
+</section>
+<section id="bdgetdatasetslist_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdgetdatasetslist_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdgetDatasetsList_hdf5.html">bdgetDatasetsList_hdf5</a></h3>
+<p>bdgetDatasetsList_hdf5</p>
+</section>
+<section id="bdcheckmatrix_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdcheckmatrix_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdCheckMatrix_hdf5.html">bdCheckMatrix_hdf5</a></h3>
+<p>bdCheckMatrix_hdf5</p>
+</section>
+<section id="bdimporttextfile_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdimporttextfile_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdImportTextFile_hdf5.html">bdImportTextFile_hdf5</a></h3>
+<p>bdImportTextFile_hdf5</p>
+</section>
+<section id="bdmove_hdf5_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="bdmove_hdf5_dataset"><a href="../../../api-reference/r/hdf5_io_management/bdmove_hdf5_dataset.html">bdmove_hdf5_dataset</a></h3>
+<p>bdmove_hdf5_dataset</p>
+</section>
+<section id="bdreduce_hdf5_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="bdreduce_hdf5_dataset"><a href="../../../api-reference/r/hdf5_io_management/bdReduce_hdf5_dataset.html">bdReduce_hdf5_dataset</a></h3>
+<p>bdReduce_hdf5_dataset</p>
+</section>
+<section id="bdremove_hdf5_element" class="level3">
+<h3 class="anchored" data-anchor-id="bdremove_hdf5_element"><a href="../../../api-reference/r/hdf5_io_management/bdRemove_hdf5_element.html">bdRemove_hdf5_element</a></h3>
+<p>bdRemove_hdf5_element</p>
+</section>
+<section id="bdsort_hdf5_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="bdsort_hdf5_dataset"><a href="../../../api-reference/r/hdf5_io_management/bdSort_hdf5_dataset.html">bdSort_hdf5_dataset</a></h3>
+<p>bdSort_hdf5_dataset</p>
+</section>
+<section id="bdsplit_matrix_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdsplit_matrix_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdSplit_matrix_hdf5.html">bdSplit_matrix_hdf5</a></h3>
+<p>bdSplit_matrix_hdf5</p>
+</section>
+<section id="bdsubset_hdf5_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="bdsubset_hdf5_dataset"><a href="../../../api-reference/r/hdf5_io_management/bdsubset_hdf5_dataset.html">bdsubset_hdf5_dataset</a></h3>
+<p>bdsubset_hdf5_dataset</p>
+</section>
+<section id="bdwrite_hdf5_dimnames" class="level3">
+<h3 class="anchored" data-anchor-id="bdwrite_hdf5_dimnames"><a href="../../../api-reference/r/hdf5_io_management/bdWrite_hdf5_dimnames.html">bdWrite_hdf5_dimnames</a></h3>
 <p>bdWrite_hdf5_dimnames</p>
 
 

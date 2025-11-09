@@ -112,6 +112,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../../fundamentals/index.html">
  <span class="dropdown-text">Fundamentals</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../../design-implementation/index.html">
+ <span class="dropdown-text">Design &amp; Implementation</span></a>
+  </li>  
         <li class="dropdown-header">─── Practice ───</li>
         <li>
     <a class="dropdown-item" href="../../../tutorials/index.html">
@@ -151,20 +155,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../../developer-guide/contributing/index.qmd">
  <span class="dropdown-text">Contributing</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Resources</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li><hr class="dropdown-divider"></li>
         <li>
     <a class="dropdown-item" href="../../../best-practices/index.html">
  <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../../resources/index.html">
- <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -642,6 +636,24 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a>
   <ul class="collapse">
   <li><a href="#bdcholesky_hdf5" id="toc-bdcholesky_hdf5" class="nav-link" data-scroll-target="#bdcholesky_hdf5">bdCholesky_hdf5</a></li>
+  <li><a href="#bdqr_hdf5" id="toc-bdqr_hdf5" class="nav-link" data-scroll-target="#bdqr_hdf5">bdQR_hdf5</a></li>
+  <li><a href="#bdsvd_hdf5" id="toc-bdsvd_hdf5" class="nav-link" data-scroll-target="#bdsvd_hdf5">bdSVD_hdf5</a></li>
+  <li><a href="#bdsolve_hdf5" id="toc-bdsolve_hdf5" class="nav-link" data-scroll-target="#bdsolve_hdf5">bdSolve_hdf5</a></li>
+  <li><a href="#bdpca_hdf5" id="toc-bdpca_hdf5" class="nav-link" data-scroll-target="#bdpca_hdf5">bdPCA_hdf5</a></li>
+  <li><a href="#bdcrossprod_hdf5" id="toc-bdcrossprod_hdf5" class="nav-link" data-scroll-target="#bdcrossprod_hdf5">bdCrossprod_hdf5</a></li>
+  <li><a href="#bdtcrossprod_hdf5" id="toc-bdtcrossprod_hdf5" class="nav-link" data-scroll-target="#bdtcrossprod_hdf5">bdtCrossprod_hdf5</a></li>
+  <li><a href="#bdcreate_diagonal_hdf5" id="toc-bdcreate_diagonal_hdf5" class="nav-link" data-scroll-target="#bdcreate_diagonal_hdf5">bdCreate_diagonal_hdf5</a></li>
+  <li><a href="#bddiag_add_hdf5" id="toc-bddiag_add_hdf5" class="nav-link" data-scroll-target="#bddiag_add_hdf5">bdDiag_add_hdf5</a></li>
+  <li><a href="#bddiag_subtract_hdf5" id="toc-bddiag_subtract_hdf5" class="nav-link" data-scroll-target="#bddiag_subtract_hdf5">bdDiag_subtract_hdf5</a></li>
+  <li><a href="#bddiag_multiply_hdf5" id="toc-bddiag_multiply_hdf5" class="nav-link" data-scroll-target="#bddiag_multiply_hdf5">bdDiag_multiply_hdf5</a></li>
+  <li><a href="#bddiag_divide_hdf5" id="toc-bddiag_divide_hdf5" class="nav-link" data-scroll-target="#bddiag_divide_hdf5">bdDiag_divide_hdf5</a></li>
+  <li><a href="#bddiag_scalar_hdf5" id="toc-bddiag_scalar_hdf5" class="nav-link" data-scroll-target="#bddiag_scalar_hdf5">bdDiag_scalar_hdf5</a></li>
+  <li><a href="#bdeigen_hdf5" id="toc-bdeigen_hdf5" class="nav-link" data-scroll-target="#bdeigen_hdf5">bdEigen_hdf5</a></li>
+  <li><a href="#bdinvcholesky_hdf5" id="toc-bdinvcholesky_hdf5" class="nav-link" data-scroll-target="#bdinvcholesky_hdf5">bdInvCholesky_hdf5</a></li>
+  <li><a href="#bdgetdiagonal_hdf5" id="toc-bdgetdiagonal_hdf5" class="nav-link" data-scroll-target="#bdgetdiagonal_hdf5">bdgetDiagonal_hdf5</a></li>
+  <li><a href="#bdwritediagonal_hdf5" id="toc-bdwritediagonal_hdf5" class="nav-link" data-scroll-target="#bdwritediagonal_hdf5">bdWriteDiagonal_hdf5</a></li>
+  <li><a href="#bdpseudoinv_hdf5" id="toc-bdpseudoinv_hdf5" class="nav-link" data-scroll-target="#bdpseudoinv_hdf5">bdpseudoinv_hdf5</a></li>
+  <li><a href="#bdwriteoppsitetriangularmatrix_hdf5" id="toc-bdwriteoppsitetriangularmatrix_hdf5" class="nav-link" data-scroll-target="#bdwriteoppsitetriangularmatrix_hdf5">bdWriteOppsiteTriangularMatrix_hdf5</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -676,24 +688,78 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="functions">Functions</h2>
 <section id="bdcholesky_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdcholesky_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdCholesky_hdf5.html">bdCholesky_hdf5</a></h3>
-<p>bdCholesky_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdQR_hdf5.html">bdQR_hdf5</a></p>
-<p>bdQR_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdSVD_hdf5.html">bdSVD_hdf5</a></p>
-<p>bdSVD_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdSolve_hdf5.html">bdSolve_hdf5</a></p>
-<p>bdSolve_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdPCA_hdf5.html">bdPCA_hdf5</a></p>
-<p>bdPCA_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdCrossprod_hdf5.html">bdCrossprod_hdf5</a></p>
-<p>bdCrossprod_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdtCrossprod_hdf5.html">bdtCrossprod_hdf5</a></p>
-<p>bdtCrossprod_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdCreate_diagonal_hdf5.html">bdCreate_diagonal_hdf5</a></p>
-<p>bdCreate_diagonal_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdDiag_add_hdf5.html">bdDiag_add_hdf5</a></p>
-<p>bdDiag_add_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdDiag_subtract_hdf5.html">bdDiag_subtract_hdf5</a></p>
-<p>bdDiag_subtract_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdDiag_multiply_hdf5.html">bdDiag_multiply_hdf5</a></p>
-<p>bdDiag_multiply_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdDiag_divide_hdf5.html">bdDiag_divide_hdf5</a></p>
-<p>bdDiag_divide_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdDiag_scalar_hdf5.html">bdDiag_scalar_hdf5</a></p>
-<p>bdDiag_scalar_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdEigen_hdf5.html">bdEigen_hdf5</a></p>
-<p>bdEigen_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdInvCholesky_hdf5.html">bdInvCholesky_hdf5</a></p>
-<p>bdInvCholesky_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdgetDiagonal_hdf5.html">bdgetDiagonal_hdf5</a></p>
-<p>bdgetDiagonal_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdWriteDiagonal_hdf5.html">bdWriteDiagonal_hdf5</a></p>
-<p>bdWriteDiagonal_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdpseudoinv_hdf5.html">bdpseudoinv_hdf5</a></p>
-<p>bdpseudoinv_hdf5### <a href="../../../api-reference/r/hdf5_algebra/bdWriteOppsiteTriangularMatrix_hdf5.html">bdWriteOppsiteTriangularMatrix_hdf5</a></p>
+<p>bdCholesky_hdf5</p>
+</section>
+<section id="bdqr_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdqr_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdQR_hdf5.html">bdQR_hdf5</a></h3>
+<p>bdQR_hdf5</p>
+</section>
+<section id="bdsvd_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdsvd_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdSVD_hdf5.html">bdSVD_hdf5</a></h3>
+<p>bdSVD_hdf5</p>
+</section>
+<section id="bdsolve_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdsolve_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdSolve_hdf5.html">bdSolve_hdf5</a></h3>
+<p>bdSolve_hdf5</p>
+</section>
+<section id="bdpca_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdpca_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdPCA_hdf5.html">bdPCA_hdf5</a></h3>
+<p>bdPCA_hdf5</p>
+</section>
+<section id="bdcrossprod_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdcrossprod_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdCrossprod_hdf5.html">bdCrossprod_hdf5</a></h3>
+<p>bdCrossprod_hdf5</p>
+</section>
+<section id="bdtcrossprod_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdtcrossprod_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdtCrossprod_hdf5.html">bdtCrossprod_hdf5</a></h3>
+<p>bdtCrossprod_hdf5</p>
+</section>
+<section id="bdcreate_diagonal_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdcreate_diagonal_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdCreate_diagonal_hdf5.html">bdCreate_diagonal_hdf5</a></h3>
+<p>bdCreate_diagonal_hdf5</p>
+</section>
+<section id="bddiag_add_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bddiag_add_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_add_hdf5.html">bdDiag_add_hdf5</a></h3>
+<p>bdDiag_add_hdf5</p>
+</section>
+<section id="bddiag_subtract_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bddiag_subtract_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_subtract_hdf5.html">bdDiag_subtract_hdf5</a></h3>
+<p>bdDiag_subtract_hdf5</p>
+</section>
+<section id="bddiag_multiply_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bddiag_multiply_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_multiply_hdf5.html">bdDiag_multiply_hdf5</a></h3>
+<p>bdDiag_multiply_hdf5</p>
+</section>
+<section id="bddiag_divide_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bddiag_divide_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_divide_hdf5.html">bdDiag_divide_hdf5</a></h3>
+<p>bdDiag_divide_hdf5</p>
+</section>
+<section id="bddiag_scalar_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bddiag_scalar_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_scalar_hdf5.html">bdDiag_scalar_hdf5</a></h3>
+<p>bdDiag_scalar_hdf5</p>
+</section>
+<section id="bdeigen_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdeigen_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdEigen_hdf5.html">bdEigen_hdf5</a></h3>
+<p>bdEigen_hdf5</p>
+</section>
+<section id="bdinvcholesky_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdinvcholesky_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdInvCholesky_hdf5.html">bdInvCholesky_hdf5</a></h3>
+<p>bdInvCholesky_hdf5</p>
+</section>
+<section id="bdgetdiagonal_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdgetdiagonal_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdgetDiagonal_hdf5.html">bdgetDiagonal_hdf5</a></h3>
+<p>bdgetDiagonal_hdf5</p>
+</section>
+<section id="bdwritediagonal_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdwritediagonal_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdWriteDiagonal_hdf5.html">bdWriteDiagonal_hdf5</a></h3>
+<p>bdWriteDiagonal_hdf5</p>
+</section>
+<section id="bdpseudoinv_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdpseudoinv_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdpseudoinv_hdf5.html">bdpseudoinv_hdf5</a></h3>
+<p>bdpseudoinv_hdf5</p>
+</section>
+<section id="bdwriteoppsitetriangularmatrix_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdwriteoppsitetriangularmatrix_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdWriteOppsiteTriangularMatrix_hdf5.html">bdWriteOppsiteTriangularMatrix_hdf5</a></h3>
 <p>bdWriteOppsiteTriangularMatrix_hdf5</p>
 
 

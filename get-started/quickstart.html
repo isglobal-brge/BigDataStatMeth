@@ -147,6 +147,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../fundamentals/index.html">
  <span class="dropdown-text">Fundamentals</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../design-implementation/index.html">
+ <span class="dropdown-text">Design &amp; Implementation</span></a>
+  </li>  
         <li class="dropdown-header">─── Practice ───</li>
         <li>
     <a class="dropdown-item" href="../tutorials/index.html">
@@ -186,20 +190,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../developer-guide/contributing/index.qmd">
  <span class="dropdown-text">Contributing</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Resources</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li><hr class="dropdown-divider"></li>
         <li>
     <a class="dropdown-item" href="../best-practices/index.html">
  <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../resources/index.html">
- <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -265,26 +259,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#your-first-analysis" id="toc-your-first-analysis" class="nav-link active" data-scroll-target="#your-first-analysis">Your First Analysis</a></li>
-  <li><a href="#load-the-package" id="toc-load-the-package" class="nav-link" data-scroll-target="#load-the-package">Load the Package</a></li>
-  <li><a href="#basic-matrix-operations" id="toc-basic-matrix-operations" class="nav-link" data-scroll-target="#basic-matrix-operations">Basic Matrix Operations</a>
+  <li><a href="#what-youll-learn" id="toc-what-youll-learn" class="nav-link active" data-scroll-target="#what-youll-learn">What You’ll Learn</a></li>
+  <li><a href="#three-ways-to-use-bigdatastatmeth" id="toc-three-ways-to-use-bigdatastatmeth" class="nav-link" data-scroll-target="#three-ways-to-use-bigdatastatmeth">Three Ways to Use BigDataStatMeth</a>
+  <ul class="collapse">
+  <li><a href="#way-1-use-existing-methods" id="toc-way-1-use-existing-methods" class="nav-link" data-scroll-target="#way-1-use-existing-methods">🎯 Way 1: Use Existing Methods</a></li>
+  <li><a href="#way-2-develop-methods-in-r" id="toc-way-2-develop-methods-in-r" class="nav-link" data-scroll-target="#way-2-develop-methods-in-r">🔧 Way 2: Develop Methods in R</a></li>
+  <li><a href="#way-3-develop-methods-in-c" id="toc-way-3-develop-methods-in-c" class="nav-link" data-scroll-target="#way-3-develop-methods-in-c">⚡ Way 3: Develop Methods in C++</a></li>
+  </ul></li>
+  <li><a href="#quick-comparison" id="toc-quick-comparison" class="nav-link" data-scroll-target="#quick-comparison">Quick Comparison</a></li>
+  <li><a href="#your-first-example" id="toc-your-first-example" class="nav-link" data-scroll-target="#your-first-example">Your First Example</a>
+  <ul class="collapse">
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#in-memory-mode" id="toc-in-memory-mode" class="nav-link" data-scroll-target="#in-memory-mode">In-Memory Mode</a></li>
+  <li><a href="#hdf5-mode" id="toc-hdf5-mode" class="nav-link" data-scroll-target="#hdf5-mode">HDF5 Mode</a></li>
+  </ul></li>
+  <li><a href="#when-to-use-each-mode" id="toc-when-to-use-each-mode" class="nav-link" data-scroll-target="#when-to-use-each-mode">When to Use Each Mode</a></li>
+  <li><a href="#common-operations" id="toc-common-operations" class="nav-link" data-scroll-target="#common-operations">Common Operations</a>
   <ul class="collapse">
   <li><a href="#matrix-multiplication" id="toc-matrix-multiplication" class="nav-link" data-scroll-target="#matrix-multiplication">Matrix Multiplication</a></li>
   <li><a href="#cross-products" id="toc-cross-products" class="nav-link" data-scroll-target="#cross-products">Cross Products</a></li>
-  </ul></li>
-  <li><a href="#working-with-hdf5-files" id="toc-working-with-hdf5-files" class="nav-link" data-scroll-target="#working-with-hdf5-files">Working with HDF5 Files</a></li>
-  <li><a href="#statistical-analysis" id="toc-statistical-analysis" class="nav-link" data-scroll-target="#statistical-analysis">Statistical Analysis</a>
-  <ul class="collapse">
+  <li><a href="#normalization" id="toc-normalization" class="nav-link" data-scroll-target="#normalization">Normalization</a></li>
   <li><a href="#principal-component-analysis" id="toc-principal-component-analysis" class="nav-link" data-scroll-target="#principal-component-analysis">Principal Component Analysis</a></li>
   </ul></li>
   <li><a href="#parallel-computing" id="toc-parallel-computing" class="nav-link" data-scroll-target="#parallel-computing">Parallel Computing</a></li>
-  <li><a href="#best-practices" id="toc-best-practices" class="nav-link" data-scroll-target="#best-practices">Best Practices</a></li>
-  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next Steps</a></li>
-  <li><a href="#common-patterns" id="toc-common-patterns" class="nav-link" data-scroll-target="#common-patterns">Common Patterns</a>
+  <li><a href="#choosing-block-size" id="toc-choosing-block-size" class="nav-link" data-scroll-target="#choosing-block-size">Choosing Block Size</a></li>
+  <li><a href="#complete-example" id="toc-complete-example" class="nav-link" data-scroll-target="#complete-example">Complete Example</a></li>
+  <li><a href="#where-to-go-next" id="toc-where-to-go-next" class="nav-link" data-scroll-target="#where-to-go-next">Where to Go Next</a>
   <ul class="collapse">
-  <li><a href="#pattern-1-processing-large-files" id="toc-pattern-1-processing-large-files" class="nav-link" data-scroll-target="#pattern-1-processing-large-files">Pattern 1: Processing Large Files</a></li>
-  <li><a href="#pattern-2-block-wise-operations" id="toc-pattern-2-block-wise-operations" class="nav-link" data-scroll-target="#pattern-2-block-wise-operations">Pattern 2: Block-wise Operations</a></li>
+  <li><a href="#i-want-to-analyze-data" id="toc-i-want-to-analyze-data" class="nav-link" data-scroll-target="#i-want-to-analyze-data">📊 <strong>I want to analyze data</strong></a></li>
+  <li><a href="#i-want-to-develop-methods" id="toc-i-want-to-develop-methods" class="nav-link" data-scroll-target="#i-want-to-develop-methods">🔧 <strong>I want to develop methods</strong></a></li>
+  <li><a href="#i-want-maximum-performance" id="toc-i-want-maximum-performance" class="nav-link" data-scroll-target="#i-want-maximum-performance">⚡ <strong>I want maximum performance</strong></a></li>
+  <li><a href="#i-want-to-understand-concepts" id="toc-i-want-to-understand-concepts" class="nav-link" data-scroll-target="#i-want-to-understand-concepts">📚 <strong>I want to understand concepts</strong></a></li>
   </ul></li>
+  <li><a href="#quick-reference" id="toc-quick-reference" class="nav-link" data-scroll-target="#quick-reference">Quick Reference</a></li>
+  <li><a href="#getting-help" id="toc-getting-help" class="nav-link" data-scroll-target="#getting-help">Getting Help</a></li>
   </ul>
 </nav>
     </div>
@@ -294,6 +302,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Quick Start</h1>
+<p class="subtitle lead">Learn BigDataStatMeth in 5 Minutes</p>
 </div>
 
 
@@ -310,165 +319,427 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="your-first-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="your-first-analysis">Your First Analysis</h2>
-<p>This guide walks you through basic usage of BigDataStatMeth.</p>
+<section id="what-youll-learn" class="level2">
+<h2 class="anchored" data-anchor-id="what-youll-learn">What You’ll Learn</h2>
+<p>In the next few minutes, you’ll understand:</p>
+<ul>
+<li><strong>Three ways</strong> to use BigDataStatMeth</li>
+<li>How to choose between <strong>in-memory</strong> and <strong>HDF5</strong> modes</li>
+<li>Your <strong>first analysis</strong> with example code</li>
+</ul>
+<p>Let’s get started!</p>
+<hr>
 </section>
-<section id="load-the-package" class="level2">
-<h2 class="anchored" data-anchor-id="load-the-package">Load the Package</h2>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<section id="three-ways-to-use-bigdatastatmeth" class="level2">
+<h2 class="anchored" data-anchor-id="three-ways-to-use-bigdatastatmeth">Three Ways to Use BigDataStatMeth</h2>
+<p>BigDataStatMeth offers three approaches depending on your needs:</p>
+<section id="way-1-use-existing-methods" class="level3">
+<h3 class="anchored" data-anchor-id="way-1-use-existing-methods">🎯 Way 1: Use Existing Methods</h3>
+<p><strong>Who</strong>: Researchers, data analysts<br>
+<strong>What</strong>: Call ready-made statistical functions</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform PCA on large dataset</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bdPCA_hdf5</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"data.h5"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"X"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">10</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">bcenter =</span> <span class="cn">TRUE</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Best for</strong>: Standard analyses, getting results quickly.</p>
+<hr>
 </section>
-<section id="basic-matrix-operations" class="level2">
-<h2 class="anchored" data-anchor-id="basic-matrix-operations">Basic Matrix Operations</h2>
+<section id="way-2-develop-methods-in-r" class="level3">
+<h3 class="anchored" data-anchor-id="way-2-develop-methods-in-r">🔧 Way 2: Develop Methods in R</h3>
+<p><strong>Who</strong>: Statisticians, method developers<br>
+<strong>What</strong>: Combine BigDataStatMeth functions to create new methods</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Custom preprocessing workflow</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>my_analysis <span class="ot">&lt;-</span> <span class="cf">function</span>(filename, dataset) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 1: Normalize</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdNormalize_hdf5</span>(filename, <span class="st">"data"</span>, dataset, <span class="at">bcenter =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 2: Split into blocks</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdSplit_matrix_hdf5</span>(filename, <span class="st">"NORMALIZED/data"</span>, dataset, <span class="at">nblocks =</span> <span class="dv">10</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 3: Apply QR to each block</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    blocks <span class="ot">&lt;-</span> <span class="fu">bdgetDatasetsList_hdf5</span>(filename, <span class="st">"NORMALIZED/data"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdapply_Function_hdf5</span>(filename, <span class="st">"NORMALIZED/data"</span>, blocks, <span class="at">func =</span> <span class="st">"QR"</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Step 4: Combine results</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdBind_hdf5_datasets</span>(filename, <span class="st">"results"</span>, blocks, <span class="at">func =</span> <span class="st">"bindRows"</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Best for</strong>: Custom algorithms, domain-specific methods, prototyping.</p>
+<p><strong>→</strong> <a href="../practical-workflows/cca-implementation/02-r-implementation.html">See complete CCA example</a></p>
+<hr>
+</section>
+<section id="way-3-develop-methods-in-c" class="level3">
+<h3 class="anchored" data-anchor-id="way-3-develop-methods-in-c">⚡ Way 3: Develop Methods in C++</h3>
+<p><strong>Who</strong>: Developers needing maximum performance<br>
+<strong>What</strong>: Use BigDataStatMeth’s <strong>header-only C++ API</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::depends(BigDataStatMeth)]]</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"BigDataStatMeth.hpp"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">// [[Rcpp::export]]</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>Rcpp<span class="op">::</span>NumericVector my_fast_method<span class="op">(</span><span class="bu">std::</span>string filename<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Use C++ classes instead of raw HDF5 C API</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    hdf5Dataset ds<span class="op">(</span>filename<span class="op">,</span> <span class="st">"/data/matrix"</span><span class="op">);</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Easy block reading</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    Eigen<span class="op">::</span>MatrixXd block <span class="op">=</span> ds<span class="op">.</span>readBlock<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1000</span><span class="op">,</span> <span class="dv">100</span><span class="op">);</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Your algorithm here...</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    Eigen<span class="op">::</span>VectorXd result <span class="op">=</span> block<span class="op">.</span>colwise<span class="op">().</span>sum<span class="op">();</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Rcpp<span class="op">::</span>wrap<span class="op">(</span>result<span class="op">);</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Why this matters</strong>: You avoid writing 50+ lines of verbose HDF5 C API code. BigDataStatMeth provides clean, high-level classes.</p>
+<p><strong>Best for</strong>: Performance-critical code, iterative algorithms, production systems.</p>
+<p><strong>→</strong> <a href="../practical-workflows/cca-implementation/03-cpp-implementation.html">See complete CCA example</a><br>
+<strong>→</strong> <a href="../tutorials/advanced/01-using-cpp-api.qmd">Learn C++ API</a></p>
+<hr>
+</section>
+</section>
+<section id="quick-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="quick-comparison">Quick Comparison</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Approach</th>
+<th>Speed</th>
+<th>Dev Time</th>
+<th>Use When</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Way 1</strong></td>
+<td>Good</td>
+<td>Minutes</td>
+<td>Standard analysis</td>
+</tr>
+<tr class="even">
+<td><strong>Way 2</strong></td>
+<td>Good</td>
+<td>Hours</td>
+<td>Custom method in R</td>
+</tr>
+<tr class="odd">
+<td><strong>Way 3</strong></td>
+<td>Excellent</td>
+<td>Days</td>
+<td>Need max performance</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="your-first-example" class="level2">
+<h2 class="anchored" data-anchor-id="your-first-example">Your First Example</h2>
+<p>Let’s walk through a simple analysis using both in-memory and HDF5 modes.</p>
+<section id="setup" class="level3">
+<h3 class="anchored" data-anchor-id="setup">Setup</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create test data</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span> <span class="sc">*</span> <span class="dv">500</span>), <span class="at">nrow =</span> <span class="dv">1000</span>, <span class="at">ncol =</span> <span class="dv">500</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span> <span class="sc">*</span> <span class="dv">500</span>), <span class="at">nrow =</span> <span class="dv">1000</span>, <span class="at">ncol =</span> <span class="dv">500</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="in-memory-mode" class="level3">
+<h3 class="anchored" data-anchor-id="in-memory-mode">In-Memory Mode</h3>
+<p>For data that fits in RAM:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix multiplication</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult</span>(X, Y, <span class="at">blocksize =</span> <span class="dv">128</span>, <span class="at">paral =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Cross product: t(X) %*% X</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>XtX <span class="ot">&lt;-</span> <span class="fu">bdCrossprod</span>(X, <span class="at">blocksize =</span> <span class="dv">128</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Transpose product: X %*% t(X)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>XXt <span class="ot">&lt;-</span> <span class="fu">bdtCrossprod</span>(X, <span class="at">blocksize =</span> <span class="dv">128</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="hdf5-mode" class="level3">
+<h3 class="anchored" data-anchor-id="hdf5-mode">HDF5 Mode</h3>
+<p>For large datasets on disk:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Create HDF5 file</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>filename <span class="ot">&lt;-</span> <span class="st">"mydata.h5"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> X,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"X"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> Y,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"Y"</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Operations on disk (same syntax!)</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>result_hdf5 <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"X"</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">B =</span> <span class="st">"Y"</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Cross products</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCrossprod_hdf5</span>(</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"X"</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Key insight</strong>: Almost identical syntax. Just add <code>_hdf5</code> and pass file paths instead of matrices.</p>
+<hr>
+</section>
+</section>
+<section id="when-to-use-each-mode" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-each-mode">When to Use Each Mode</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Criterion</th>
+<th>In-Memory</th>
+<th>HDF5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Data size</strong></td>
+<td>&lt; 5 GB</td>
+<td>&gt; 5 GB</td>
+</tr>
+<tr class="even">
+<td><strong>Available RAM</strong></td>
+<td>&gt; 2× data size</td>
+<td>Any</td>
+</tr>
+<tr class="odd">
+<td><strong>Speed</strong></td>
+<td>Fastest</td>
+<td>Very fast</td>
+</tr>
+<tr class="even">
+<td><strong>Workflow</strong></td>
+<td>Simple</td>
+<td>Multi-step pipelines</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule of thumb</strong>: If your matrix is larger than half your available RAM, use HDF5 mode.</p>
+<hr>
+</section>
+<section id="common-operations" class="level2">
+<h2 class="anchored" data-anchor-id="common-operations">Common Operations</h2>
 <section id="matrix-multiplication" class="level3">
 <h3 class="anchored" data-anchor-id="matrix-multiplication">Matrix Multiplication</h3>
-<p>Perform efficient block-wise matrix multiplication:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sample matrices</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">10000</span>), <span class="at">nrow=</span><span class="dv">100</span>, <span class="at">ncol=</span><span class="dv">100</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">10000</span>), <span class="at">nrow=</span><span class="dv">100</span>, <span class="at">ncol=</span><span class="dv">100</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard matrix multiplication</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>result1 <span class="ot">&lt;-</span> X <span class="sc">%*%</span> Y</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Block matrix multiplication (more efficient for large matrices)</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>result2 <span class="ot">&lt;-</span> <span class="fu">bdblockmult</span>(X, Y, <span class="at">blocksize=</span><span class="dv">128</span>, <span class="at">paral=</span><span class="cn">TRUE</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Results should be identical (within numerical precision)</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(result1, result2)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In-memory</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">bdblockmult</span>(A, B, <span class="at">blocksize =</span> <span class="dv">128</span>, <span class="at">paral =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># HDF5</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">bdblockmult_hdf5</span>(filename, <span class="st">"data"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
 </section>
 <section id="cross-products" class="level3">
 <h3 class="anchored" data-anchor-id="cross-products">Cross Products</h3>
-<p>Compute cross products efficiently:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># X'X (transpose cross product)</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>XtX <span class="ot">&lt;-</span> <span class="fu">bdtCrossprod</span>(X, <span class="at">blocksize=</span><span class="dv">128</span>, <span class="at">paral=</span><span class="cn">TRUE</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># XX' (cross product)</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>XXt <span class="ot">&lt;-</span> <span class="fu">bdCrossprod</span>(X, <span class="at">blocksize=</span><span class="dv">128</span>, <span class="at">paral=</span><span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<p>Cross products are fundamental for many statistical methods:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># t(X) %*% X (covariance-like structure)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>XtX <span class="ot">&lt;-</span> <span class="fu">bdCrossprod_hdf5</span>(filename, <span class="st">"data"</span>, <span class="st">"X"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># X %*% t(X) (Gram matrix)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>XXt <span class="ot">&lt;-</span> <span class="fu">bdtCrossprod_hdf5</span>(filename, <span class="st">"data"</span>, <span class="st">"X"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Used in</strong>: Covariance matrices, correlation, linear regression, PCA.</p>
+<hr>
 </section>
+<section id="normalization" class="level3">
+<h3 class="anchored" data-anchor-id="normalization">Normalization</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Center and scale data</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bdNormalize_hdf5</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"X"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">bcenter =</span> <span class="cn">TRUE</span>,   <span class="co"># Subtract column means</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">bscale =</span> <span class="cn">TRUE</span>     <span class="co"># Divide by standard deviation</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
 </section>
-<section id="working-with-hdf5-files" class="level2">
-<h2 class="anchored" data-anchor-id="working-with-hdf5-files">Working with HDF5 Files</h2>
-<p>For large datasets that don’t fit in memory, use HDF5 format:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a large matrix</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>big_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100000</span>), <span class="at">nrow=</span><span class="dv">1000</span>, <span class="at">ncol=</span><span class="dv">100</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Save to HDF5</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix_file</span>(</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"mydata.h5"</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"mymatrix"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> big_matrix,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">chunk =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">100</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform operations directly on HDF5 file</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">file1 =</span> <span class="st">"mydata.h5"</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset1 =</span> <span class="st">"mymatrix"</span>,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">file2 =</span> <span class="st">"mydata.h5"</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset2 =</span> <span class="st">"mymatrix"</span>,</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">blocksize =</span> <span class="dv">128</span>,</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">paral =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="statistical-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="statistical-analysis">Statistical Analysis</h2>
 <section id="principal-component-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="principal-component-analysis">Principal Component Analysis</h3>
-<p>Perform PCA on large datasets:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA with HDF5 backend</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">bdPCA_hdf5</span>(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"mydata.h5"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"mymatrix"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">10</span>,  <span class="co"># number of components</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">blocksize =</span> <span class="dv">128</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Access results</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>loadings <span class="ot">&lt;-</span> pca_result<span class="sc">$</span>loadings</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">&lt;-</span> pca_result<span class="sc">$</span>scores</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>variance <span class="ot">&lt;-</span> pca_result<span class="sc">$</span>variance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform PCA</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">bdPCA_hdf5</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"X"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">10</span>,           <span class="co"># Number of components</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">bcenter =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">bscale =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">4</span>       <span class="co"># Parallel threads</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Results stored in HDF5 file</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rhdf5)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(filename)  <span class="co"># See what was created</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Access results</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>loadings <span class="ot">&lt;-</span> <span class="fu">h5read</span>(filename, <span class="st">"/PCA/X/v"</span>)  <span class="co"># Eigenvectors</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">&lt;-</span> <span class="fu">h5read</span>(filename, <span class="st">"/PCA/X/u"</span>)    <span class="co"># Principal components</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>variance <span class="ot">&lt;-</span> <span class="fu">h5read</span>(filename, <span class="st">"/PCA/X/d"</span>)  <span class="co"># Singular values</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
 </section>
 </section>
 <section id="parallel-computing" class="level2">
 <h2 class="anchored" data-anchor-id="parallel-computing">Parallel Computing</h2>
-<p>Enable parallel processing for faster computation:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Most functions support parallel execution</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  X, Y,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">blocksize =</span> <span class="dv">128</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">paral =</span> <span class="cn">TRUE</span>,        <span class="co"># Enable parallelization</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">4</span>          <span class="co"># Number of threads (NULL = auto-detect)</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<p>Most functions support parallelization:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable parallel processing</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  X, Y,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">blocksize =</span> <span class="dv">128</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">paral =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">4</span>      <span class="co"># Or NULL to auto-detect</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Check available cores</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>parallel<span class="sc">::</span><span class="fu">detectCores</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Performance tip</strong>: Parallelization helps most with large matrices (&gt; 5000 × 5000) and computationally intensive operations (SVD, PCA).</p>
+<hr>
 </section>
-<section id="best-practices" class="level2">
-<h2 class="anchored" data-anchor-id="best-practices">Best Practices</h2>
-<ol type="1">
-<li><strong>Choose appropriate block size</strong>: Larger blocks = less overhead, but more memory</li>
-<li><strong>Use HDF5 for large data</strong>: When data exceeds available RAM</li>
-<li><strong>Enable parallelization</strong>: Set <code>paral=TRUE</code> for compute-intensive operations</li>
-<li><strong>Monitor memory usage</strong>: Use <code>pryr::mem_used()</code> to track memory consumption</li>
-</ol>
+<section id="choosing-block-size" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-block-size">Choosing Block Size</h2>
+<p>Block size affects performance and memory usage:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Small blocks: less memory, more overhead</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bdblockmult</span>(X, Y, <span class="at">blocksize =</span> <span class="dv">64</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Large blocks: more memory, less overhead</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">bdblockmult</span>(X, Y, <span class="at">blocksize =</span> <span class="dv">512</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Default (recommended)</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">bdblockmult</span>(X, Y, <span class="at">blocksize =</span> <span class="dv">128</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Guidelines</strong>: - RAM abundant: Use larger blocks (512, 1024) - RAM limited: Use smaller blocks (64, 128) - Unsure: Start with 128</p>
+<hr>
 </section>
-<section id="next-steps" class="level2">
-<h2 class="anchored" data-anchor-id="next-steps">Next Steps</h2>
+<section id="complete-example" class="level2">
+<h2 class="anchored" data-anchor-id="complete-example">Complete Example</h2>
+<p>From start to finish:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Prepare data</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>data_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">10000</span>), <span class="at">nrow =</span> <span class="dv">1000</span>, <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Create HDF5 file</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>filename <span class="ot">&lt;-</span> <span class="st">"analysis.h5"</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  filename, data_matrix, </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data"</span>, <span class="st">"X"</span>, </span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Run PCA</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="fu">bdPCA_hdf5</span>(filename, <span class="st">"data"</span>, <span class="st">"X"</span>, <span class="at">k =</span> <span class="dv">5</span>, <span class="at">bcenter =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Visualize results</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rhdf5)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">&lt;-</span> <span class="fu">h5read</span>(filename, <span class="st">"/PCA/X/u"</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(scores[, <span class="dv">1</span>], scores[, <span class="dv">2</span>],</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"PC1"</span>, <span class="at">ylab =</span> <span class="st">"PC2"</span>,</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"PCA Results"</span>,</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"steelblue"</span>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Cleanup</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="fu">h5closeAll</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="where-to-go-next" class="level2">
+<h2 class="anchored" data-anchor-id="where-to-go-next">Where to Go Next</h2>
+<p>Now you understand the basics. Choose your path:</p>
+<section id="i-want-to-analyze-data" class="level3">
+<h3 class="anchored" data-anchor-id="i-want-to-analyze-data">📊 <strong>I want to analyze data</strong></h3>
+<p>→ <a href="../practical-workflows/index.html">Practical Workflows</a>: Complete real-world examples</p>
+</section>
+<section id="i-want-to-develop-methods" class="level3">
+<h3 class="anchored" data-anchor-id="i-want-to-develop-methods">🔧 <strong>I want to develop methods</strong></h3>
+<p>→ <a href="../tutorials/basic/index.html">Tutorials: Basic</a>: Learn atomic operations<br>
+→ <a href="../tutorials/intermediate/index.html">Tutorials: Intermediate</a>: Compose methods</p>
+</section>
+<section id="i-want-maximum-performance" class="level3">
+<h3 class="anchored" data-anchor-id="i-want-maximum-performance">⚡ <strong>I want maximum performance</strong></h3>
+<p>→ <a href="../tutorials/advanced/01-using-cpp-api.qmd">Tutorials: Advanced</a>: Use C++ API</p>
+</section>
+<section id="i-want-to-understand-concepts" class="level3">
+<h3 class="anchored" data-anchor-id="i-want-to-understand-concepts">📚 <strong>I want to understand concepts</strong></h3>
+<p>→ <a href="../fundamentals/hdf5/what-is-hdf5.html">Fundamentals: HDF5</a>: Learn about storage<br>
+→ <a href="../fundamentals/big-data-concepts/blockwise-processing.qmd">Fundamentals: Block-wise Processing</a>: Learn algorithms</p>
+<hr>
+</section>
+</section>
+<section id="quick-reference" class="level2">
+<h2 class="anchored" data-anchor-id="quick-reference">Quick Reference</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 39%">
+<col style="width: 39%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operation</th>
+<th>In-Memory</th>
+<th>HDF5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Multiply</td>
+<td><code>bdblockmult(A, B)</code></td>
+<td><code>bdblockmult_hdf5(file, "A", "B")</code></td>
+</tr>
+<tr class="even">
+<td>t(A) %*% B</td>
+<td><code>bdCrossprod(A, B)</code></td>
+<td><code>bdCrossprod_hdf5(file, "A", "B")</code></td>
+</tr>
+<tr class="odd">
+<td>A %*% t(B)</td>
+<td><code>bdtCrossprod(A, B)</code></td>
+<td><code>bdtCrossprod_hdf5(file, "A", "B")</code></td>
+</tr>
+<tr class="even">
+<td>Normalize</td>
+<td><code>scale(X)</code></td>
+<td><code>bdNormalize_hdf5(file, "X")</code></td>
+</tr>
+<tr class="odd">
+<td>PCA</td>
+<td>Use HDF5</td>
+<td><code>bdPCA_hdf5(file, "X", k)</code></td>
+</tr>
+<tr class="even">
+<td>SVD</td>
+<td>Use HDF5</td>
+<td><code>bdSVD_hdf5(file, "X", k)</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="getting-help" class="level2">
+<h2 class="anchored" data-anchor-id="getting-help">Getting Help</h2>
 <ul>
-<li>Explore <a href="../guides/index.qmd">Guides</a> for specific use cases</li>
-<li>Check <a href="../examples/index.qmd">Examples</a> for complete workflows</li>
-<li>Browse <a href="../api-reference/r/index.html">API Reference</a> for detailed function documentation</li>
+<li><strong>Function docs</strong>: Type <code>?function_name</code> in R console</li>
+<li><strong>API Reference</strong>: <a href="../api-reference/r/index.html">R Functions</a> | <a href="../api-reference/cpp/index.html">C++ API</a></li>
+<li><strong>Examples</strong>: <a href="../practical-workflows/index.html">Practical Workflows</a></li>
+<li><strong>Issues</strong>: <a href="https://github.com/isglobal-brge/BigDataStatMeth/issues">GitHub</a></li>
 </ul>
-</section>
-<section id="common-patterns" class="level2">
-<h2 class="anchored" data-anchor-id="common-patterns">Common Patterns</h2>
-<section id="pattern-1-processing-large-files" class="level3">
-<h3 class="anchored" data-anchor-id="pattern-1-processing-large-files">Pattern 1: Processing Large Files</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Create HDF5 file</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix_file</span>(<span class="st">"large_data.h5"</span>, <span class="st">"dataset1"</span>, your_matrix)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Normalize data</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">bdNormalize_hdf5</span>(<span class="st">"large_data.h5"</span>, <span class="st">"dataset1"</span>, <span class="st">"dataset1_normalized"</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Perform analysis</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">bdPCA_hdf5</span>(<span class="st">"large_data.h5"</span>, <span class="st">"dataset1_normalized"</span>, <span class="at">k=</span><span class="dv">20</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Export results</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(pca<span class="sc">$</span>scores, <span class="st">"pca_scores.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</section>
-<section id="pattern-2-block-wise-operations" class="level3">
-<h3 class="anchored" data-anchor-id="pattern-2-block-wise-operations">Pattern 2: Block-wise Operations</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process data in manageable chunks</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>process_in_blocks <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">blocksize=</span><span class="dv">1000</span>) {</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  n_blocks <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(<span class="fu">nrow</span>(data) <span class="sc">/</span> blocksize)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_blocks) {</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    start_row <span class="ot">&lt;-</span> (i<span class="dv">-1</span>) <span class="sc">*</span> blocksize <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    end_row <span class="ot">&lt;-</span> <span class="fu">min</span>(i <span class="sc">*</span> blocksize, <span class="fu">nrow</span>(data))</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    block <span class="ot">&lt;-</span> data[start_row<span class="sc">:</span>end_row, ]</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    results[[i]] <span class="ot">&lt;-</span> <span class="fu">process_block</span>(block)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">do.call</span>(rbind, results))</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<p><strong>Congratulations!</strong> You’re now ready to use BigDataStatMeth. 🎉</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

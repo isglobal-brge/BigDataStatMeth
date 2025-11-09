@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>HDF5 Performance Optimization – BigDataStatMeth</title>
+<title>Performance and Optimization – BigDataStatMeth</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -105,6 +105,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../../assets/custom.css">
@@ -147,6 +150,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../fundamentals/index.html">
  <span class="dropdown-text">Fundamentals</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../design-implementation/index.html">
+ <span class="dropdown-text">Design &amp; Implementation</span></a>
+  </li>  
         <li class="dropdown-header">─── Practice ───</li>
         <li>
     <a class="dropdown-item" href="../../tutorials/index.html">
@@ -186,20 +193,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../developer-guide/contributing/index.qmd">
  <span class="dropdown-text">Contributing</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Resources</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li><hr class="dropdown-divider"></li>
         <li>
     <a class="dropdown-item" href="../../best-practices/index.html">
  <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../resources/index.html">
- <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -221,7 +218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/index.html">HDF5 Data Format</a></li><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/performance.html">HDF5 Performance Optimization</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/index.html">HDF5 Data Format</a></li><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/performance.html">Performance and Optimization</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -255,7 +252,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../fundamentals/hdf5/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">HDF5 Data Format</span></a>
+ <span class="menu-text">HDF5 Fundamentals</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -266,8 +263,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../fundamentals/hdf5/why-hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why HDF5?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../fundamentals/hdf5/structure.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">HDF5 Structure and Organization</span></a>
+ <span class="menu-text">HDF5 Structure</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -279,13 +282,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../fundamentals/hdf5/performance.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">HDF5 Performance Optimization</span></a>
+ <span class="menu-text">Performance and Optimization</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../fundamentals/hdf5/best-practices.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">HDF5 Best Practices</span></a>
+  <a href="../../fundamentals/hdf5/parallelism.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Parallelism in BigDataStatMeth</span></a>
   </div>
 </li>
       </ul>
@@ -351,43 +354,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#quick-overview" id="toc-quick-overview" class="nav-link active" data-scroll-target="#quick-overview">Quick Overview</a></li>
-  <li><a href="#conceptual-understanding" id="toc-conceptual-understanding" class="nav-link" data-scroll-target="#conceptual-understanding">Conceptual Understanding</a>
+  <li><a href="#why-performance-matters" id="toc-why-performance-matters" class="nav-link active" data-scroll-target="#why-performance-matters">Why performance matters</a></li>
+  <li><a href="#how-block-size-affects-speed" id="toc-how-block-size-affects-speed" class="nav-link" data-scroll-target="#how-block-size-affects-speed">How block size affects speed</a></li>
+  <li><a href="#parallel-processing-and-cores" id="toc-parallel-processing-and-cores" class="nav-link" data-scroll-target="#parallel-processing-and-cores">Parallel processing and cores</a>
   <ul class="collapse">
-  <li><a href="#the-performance-triangle" id="toc-the-performance-triangle" class="nav-link" data-scroll-target="#the-performance-triangle">The Performance Triangle</a></li>
-  <li><a href="#what-is-chunking" id="toc-what-is-chunking" class="nav-link" data-scroll-target="#what-is-chunking">What is Chunking?</a></li>
-  <li><a href="#why-chunking-matters" id="toc-why-chunking-matters" class="nav-link" data-scroll-target="#why-chunking-matters">Why Chunking Matters</a></li>
-  <li><a href="#compression-benefits" id="toc-compression-benefits" class="nav-link" data-scroll-target="#compression-benefits">Compression Benefits</a></li>
-  <li><a href="#bigdatastatmeths-approach" id="toc-bigdatastatmeths-approach" class="nav-link" data-scroll-target="#bigdatastatmeths-approach">BigDataStatMeth’s Approach</a></li>
+  <li><a href="#visual-overview-of-parallelism" id="toc-visual-overview-of-parallelism" class="nav-link" data-scroll-target="#visual-overview-of-parallelism">Visual overview of parallelism</a></li>
   </ul></li>
-  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
-  <li><a href="#optimization-with-bigdatastatmeth" id="toc-optimization-with-bigdatastatmeth" class="nav-link" data-scroll-target="#optimization-with-bigdatastatmeth">Optimization with BigDataStatMeth</a>
+  <li><a href="#compression-and-performance-trade-off" id="toc-compression-and-performance-trade-off" class="nav-link" data-scroll-target="#compression-and-performance-trade-off">Compression and performance trade-off</a>
   <ul class="collapse">
-  <li><a href="#automatic-optimization" id="toc-automatic-optimization" class="nav-link" data-scroll-target="#automatic-optimization">Automatic Optimization</a></li>
-  <li><a href="#manual-block-size-tuning" id="toc-manual-block-size-tuning" class="nav-link" data-scroll-target="#manual-block-size-tuning">Manual Block Size Tuning</a></li>
-  <li><a href="#parallel-processing" id="toc-parallel-processing" class="nav-link" data-scroll-target="#parallel-processing">Parallel Processing</a></li>
-  <li><a href="#hierarchical-decomposition" id="toc-hierarchical-decomposition" class="nav-link" data-scroll-target="#hierarchical-decomposition">Hierarchical Decomposition</a></li>
-  <li><a href="#monitoring-performance" id="toc-monitoring-performance" class="nav-link" data-scroll-target="#monitoring-performance">Monitoring Performance</a></li>
-  <li><a href="#memory-efficient-processing" id="toc-memory-efficient-processing" class="nav-link" data-scroll-target="#memory-efficient-processing">Memory-Efficient Processing</a></li>
-  <li><a href="#best-practices-for-performance" id="toc-best-practices-for-performance" class="nav-link" data-scroll-target="#best-practices-for-performance">Best Practices for Performance</a></li>
-  <li><a href="#real-world-performance-examples" id="toc-real-world-performance-examples" class="nav-link" data-scroll-target="#real-world-performance-examples">Real-World Performance Examples</a></li>
+  <li><a href="#practical-implications" id="toc-practical-implications" class="nav-link" data-scroll-target="#practical-implications">Practical implications</a></li>
   </ul></li>
+  <li><a href="#practical-guidelines" id="toc-practical-guidelines" class="nav-link" data-scroll-target="#practical-guidelines">Practical guidelines</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
-  <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional Resources</a>
-  <ul class="collapse">
-  <li><a href="#bigdatastatmeth" id="toc-bigdatastatmeth" class="nav-link" data-scroll-target="#bigdatastatmeth">BigDataStatMeth</a></li>
-  <li><a href="#performance-references" id="toc-performance-references" class="nav-link" data-scroll-target="#performance-references">Performance References</a></li>
-  </ul></li>
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/index.html">HDF5 Data Format</a></li><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/performance.html">HDF5 Performance Optimization</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/index.html">HDF5 Data Format</a></li><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/performance.html">Performance and Optimization</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">HDF5 Performance Optimization</h1>
-<p class="subtitle lead">Chunking, Compression, and Efficient Processing</p>
+<h1 class="title">Performance and Optimization</h1>
 </div>
 
 
@@ -404,532 +392,250 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div class="content-guide">
-<p><strong>Choose your path:</strong></p>
-<ul>
-<li>🎯 <a href="#quick-overview">Quick Overview</a> - 2 min read</li>
-<li>💡 <a href="#conceptual-understanding">Conceptual Understanding</a> - 15 min read</li>
-<li>🔢 <a href="#technical-details">Technical Details</a> - 20 min read (advanced)</li>
-<li>💻 <a href="#optimization-with-bigdatastatmeth">Optimization with BigDataStatMeth</a> - 15 min read</li>
-</ul>
-</div>
-<hr>
-<section id="quick-overview" class="level2">
-<h2 class="anchored" data-anchor-id="quick-overview">Quick Overview</h2>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
+<section id="why-performance-matters" class="level2">
+<h2 class="anchored" data-anchor-id="why-performance-matters">Why performance matters</h2>
+<p>When operating with large matrices stored in HDF5 files, performance depends on how data are <strong>read, processed, and written by blocks</strong>. Choosing a good balance between <strong>block size</strong>, <strong>number of cores</strong>, and <strong>I/O throughput</strong> is key to achieve efficiency.</p>
+<div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>📋 TL;DR - Performance Essentials
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Three pillars of HDF5 performance:</strong></p>
-<ol type="1">
-<li><strong>Chunking</strong>: Determines I/O efficiency</li>
-<li><strong>Compression</strong>: Reduces file size and I/O time</li>
-<li><strong>Access patterns</strong>: Match operations to data layout</li>
-</ol>
-<p><strong>Quick wins:</strong> - Use chunk size 10 KB - 1 MB - Enable compression (level 4-6 for balance) - Use BigDataStatMeth’s automatic block sizing - Enable parallel processing (<code>paral=TRUE</code>)</p>
-<p><strong>Performance gains:</strong> - Good chunking: <strong>10-100x</strong> faster I/O - Compression: <strong>3-10x</strong> smaller files - Block processing: <strong>Unlimited</strong> data size - Parallelization: <strong>Near-linear</strong> speedup</p>
-</div>
-</div>
-<hr>
-</section>
-<section id="conceptual-understanding" class="level2">
-<h2 class="anchored" data-anchor-id="conceptual-understanding">Conceptual Understanding</h2>
-<section id="the-performance-triangle" class="level3">
-<h3 class="anchored" data-anchor-id="the-performance-triangle">The Performance Triangle</h3>
-<p>HDF5 performance depends on three interrelated factors:</p>
-<pre><code>        Chunking
-          /  \
-         /    \
-        /      \
-  Compression - Access Pattern</code></pre>
-<p><strong>BigDataStatMeth optimizes all three automatically</strong></p>
-</section>
-<section id="what-is-chunking" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-chunking">What is Chunking?</h3>
-<p>Think of a matrix as a <strong>bookshelf</strong>:</p>
-<p><strong>Without chunking (contiguous):</strong></p>
-<pre><code>[Book spanning entire shelf]
-- Must move entire book to read one page
-- Cannot add pages once placed</code></pre>
-<p><strong>With chunking:</strong></p>
-<pre><code>[Many smaller books on shelf]
-- Read only the book you need
-- Can rearrange or add books
-- Access any section quickly</code></pre>
-<p><strong>HDF5 chunks</strong> are independent blocks:</p>
-<pre><code>Matrix [1000 × 1000]
-│
-├─ Chunk [100 × 100]  ← 100 chunks total
-├─ Chunk [100 × 100]
-├─ Chunk [100 × 100]
-└─ ...</code></pre>
-</section>
-<section id="why-chunking-matters" class="level3">
-<h3 class="anchored" data-anchor-id="why-chunking-matters">Why Chunking Matters</h3>
-<section id="example-reading-columns" class="level4">
-<h4 class="anchored" data-anchor-id="example-reading-columns">Example: Reading columns</h4>
-<p><strong>Bad chunking</strong> (row-oriented):</p>
-<pre><code>Chunks:  [Row 1-100, All Cols]
-         [Row 101-200, All Cols]
-         
-To read column 1:
-→ Read ALL chunks (100% of file!)</code></pre>
-<p><strong>Good chunking</strong> (square blocks):</p>
-<pre><code>Chunks:  [100×100] blocks
-         
-To read column 1:
-→ Read only 10 chunks (10% of file)</code></pre>
-<p><strong>Performance difference: 10x faster!</strong></p>
-</section>
-</section>
-<section id="compression-benefits" class="level3">
-<h3 class="anchored" data-anchor-id="compression-benefits">Compression Benefits</h3>
-<p>Compression provides two benefits:</p>
-<section id="smaller-files-obvious" class="level4">
-<h4 class="anchored" data-anchor-id="smaller-files-obvious">1. <strong>Smaller files</strong> (obvious)</h4>
-<pre><code>Uncompressed:  1 GB
-Compressed:    200 MB  (5x smaller)</code></pre>
-</section>
-<section id="faster-io-surprising" class="level4">
-<h4 class="anchored" data-anchor-id="faster-io-surprising">2. <strong>Faster I/O</strong> (surprising!)</h4>
-<pre><code>Read 1 GB from disk:     100 ms
-Read 200 MB + decompress: 40 ms + 20 ms = 60 ms
-
-Result: 40% faster!</code></pre>
-<p><strong>Why?</strong> Disk I/O is slower than CPU decompression.</p>
-</section>
-</section>
-<section id="bigdatastatmeths-approach" class="level3">
-<h3 class="anchored" data-anchor-id="bigdatastatmeths-approach">BigDataStatMeth’s Approach</h3>
-<p>BigDataStatMeth handles performance optimization automatically:</p>
-<p><strong>What it does:</strong> 1. <strong>Analyzes</strong> dataset dimensions 2. <strong>Calculates</strong> optimal block size 3. <strong>Aligns</strong> blocks with HDF5 chunks 4. <strong>Processes</strong> data in efficient blocks 5. <strong>Parallelizes</strong> when beneficial</p>
-<p><strong>You control:</strong> - <code>blocksize</code> parameter (optional) - <code>paral</code> flag (enable/disable parallelization) - <code>threads</code> count (number of parallel workers)</p>
-<hr>
-</section>
-</section>
-<section id="technical-details" class="level2">
-<h2 class="anchored" data-anchor-id="technical-details">Technical Details</h2>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>🔢 Performance Specifications (click to expand)
+Important
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<section id="chunk-size-guidelines" class="level3">
-<h3 class="anchored" data-anchor-id="chunk-size-guidelines">Chunk Size Guidelines</h3>
-<p><strong>Optimal chunk size:</strong> 10 KB to 1 MB</p>
-<p><strong>Too small (&lt; 1 KB):</strong> - High overhead (many chunk lookups) - Inefficient caching - Slow iteration</p>
-<p><strong>Too large (&gt; 10 MB):</strong> - Defeats partial I/O purpose - Memory pressure - Slow single-element access</p>
-<p><strong>Formula for chunk size:</strong></p>
-<pre><code>chunk_size = chunk_dims[1] × chunk_dims[2] × element_size
+<p><strong>Key idea</strong> — Working with data on disk allows you to scale beyond RAM, but performance will depend on disk speed and how effectively the computation overlaps I/O and CPU work.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="how-block-size-affects-speed" class="level2">
+<h2 class="anchored" data-anchor-id="how-block-size-affects-speed">How block size affects speed</h2>
+<p>Every matrix operation in <code>BigDataStatMeth</code> that runs on HDF5 works by reading chunks (blocks) of the data, processing them in memory, and writing results back to disk. The <code>block_size</code> parameter determines how much data is read in each iteration.</p>
+<p>Too small → more I/O overhead.<br>
+Too large → memory exhaustion and slower due to paging.</p>
+<p>Let’s explore the effect of <code>block_size</code>.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Conceptual flow (pseudocode)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Synthetic test data</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="fl">1e4</span>), <span class="at">nrow =</span> <span class="dv">100</span>, <span class="at">ncol =</span> <span class="dv">100</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="fl">1e4</span>), <span class="at">nrow =</span> <span class="dv">100</span>, <span class="at">ncol =</span> <span class="dv">100</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Write to HDF5</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"perf_demo.h5"</span>, A, <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">dataset =</span> <span class="st">"A"</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"perf_demo.h5"</span>, B, <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to measure time for a given block size</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>run_bench <span class="ot">&lt;-</span> <span class="cf">function</span>(block_size) {</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">system.time</span>({</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdblockmult_hdf5</span>(<span class="st">"perf_demo.h5"</span>,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">A =</span> <span class="st">"A"</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">groupB =</span> <span class="st">"bench"</span>, <span class="at">B =</span> <span class="st">"B"</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">block_size =</span> block_size)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  })[<span class="dv">3</span>]</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(t)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>block_sizes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">sapply</span>(block_sizes, run_bench)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">BlockSize =</span> block_sizes, <span class="at">TimeSec =</span> <span class="fu">round</span>(times, <span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  BlockSize TimeSec
+1        64   0.004
+2       128   0.004
+3       256   0.003
+4       512   0.003</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<pre><code>FOR each block in dataset:
+    READ block from HDF5 → memory
+    COMPUTE result using CPU
+    WRITE result block → HDF5
+END FOR</code></pre>
+</div>
+</div>
+</div>
+<p>The optimal block size depends on your hardware (memory, I/O speed) and the size of your data. Typical efficient values are in the range <strong>1024–4096</strong>, but users are encouraged to experiment on their system.</p>
+<hr>
+</section>
+<section id="parallel-processing-and-cores" class="level2">
+<h2 class="anchored" data-anchor-id="parallel-processing-and-cores">Parallel processing and cores</h2>
+<p>Many functions in <code>BigDataStatMeth</code> can distribute block operations across multiple CPU cores. However, if the number of blocks per level (<code>k</code>) is smaller than the number of cores (<code>nCores</code>), some threads will remain idle. Parallel efficiency improves as the number of available blocks increases.</p>
+<section id="visual-overview-of-parallelism" class="level3">
+<h3 class="anchored" data-anchor-id="visual-overview-of-parallelism">Visual overview of parallelism</h3>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    subgraph H5["HDF5 File (split into blocks)"]
+        A1["Block 1"]
+        A2["Block 2"]
+        A3["Block 3"]
+        A4["Block 4"]
+    end
 
-Example:
-chunk = [100, 100]
-element_size = 8 bytes (double)
-chunk_size = 100 × 100 × 8 = 80 KB  ✓ Good!</code></pre>
+    A1 --&gt; T1["Thread 1"]
+    A2 --&gt; T2["Thread 2"]
+    A3 --&gt; T3["Thread 3"]
+    A4 --&gt; T4["Thread 4"]
+
+    T1 --&gt; C1["Result Block 1"]
+    T2 --&gt; C2["Result Block 2"]
+    T3 --&gt; C3["Result Block 3"]
+    T4 --&gt; C4["Result Block 4"]
+
+    style H5 fill:#cce5ff,stroke:#0066cc,stroke-width:1px
+    style T1 fill:#f5f5dc,stroke:#999999,stroke-width:1px
+    style T2 fill:#f5f5dc,stroke:#999999,stroke-width:1px
+    style T3 fill:#f5f5dc,stroke:#999999,stroke-width:1px
+    style T4 fill:#f5f5dc,stroke:#999999,stroke-width:1px
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>This diagram illustrates how multiple threads independently process different data blocks. Each thread loads, computes, and writes back its own portion of the dataset. Disk I/O remains the limiting factor, so parallel efficiency rarely scales linearly with the number of cores.</p>
+<hr>
 </section>
-<section id="block-size-selection" class="level3">
-<h3 class="anchored" data-anchor-id="block-size-selection">Block Size Selection</h3>
-<p>BigDataStatMeth uses intelligent block sizing:</p>
-<p><strong>Factors considered:</strong> 1. <strong>Available memory</strong>: Avoid swapping 2. <strong>Dataset dimensions</strong>: Match to data shape 3. <strong>Chunk layout</strong>: Align with chunks 4. <strong>Cache size</strong>: Maximize hit ratio 5. <strong>Operation type</strong>: Different for PCA vs multiplication</p>
-<p><strong>Automatic selection:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BigDataStatMeth chooses automatically</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bdPCA_hdf5</span>(file, group, dataset)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Typical selections:</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Small data (&lt; 1 GB):     Load all</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Medium data (1-10 GB):   blocksize ~ 1000</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Large data (&gt; 10 GB):    blocksize ~ 256-512</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Manual override:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Advanced users can override</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bdblockmult_hdf5</span>(file, group, A, B,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">blocksize =</span> <span class="dv">128</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="compression-algorithms" class="level3">
-<h3 class="anchored" data-anchor-id="compression-algorithms">Compression Algorithms</h3>
-<p><strong>Available compressors:</strong></p>
+<section id="compression-and-performance-trade-off" class="level2">
+<h2 class="anchored" data-anchor-id="compression-and-performance-trade-off">Compression and performance trade-off</h2>
+<p><code>BigDataStatMeth</code> uses <strong>zlib compression</strong> by default when creating HDF5 datasets. Compression level can range from <strong>0 to 9</strong>, with <code>6</code> being the default.</p>
+<p>Higher compression reduces file size but increases CPU time during read/write. Lower compression speeds up I/O but requires more storage.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Recommended settings
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <table class="caption-top table">
 <thead>
 <tr class="header">
-<th>Algorithm</th>
-<th>Ratio</th>
-<th>Speed</th>
-<th>CPU</th>
-<th>Best For</th>
+<th>Compression</th>
+<th>File size</th>
+<th>Read/Write speed</th>
+<th>Recommended for</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>None</strong></td>
-<td>1.0x</td>
-<td>Fastest</td>
-<td>None</td>
-<td>Pre-compressed data</td>
+<td>0</td>
+<td>Large</td>
+<td>Fast</td>
+<td>Temporary or intermediate files</td>
 </tr>
 <tr class="even">
-<td><strong>GZIP 1</strong></td>
-<td>2-4x</td>
-<td>Fast</td>
-<td>Low</td>
-<td>Quick compression</td>
+<td>6 <em>(default)</em></td>
+<td>Balanced</td>
+<td>Balanced</td>
+<td>Most analyses</td>
 </tr>
 <tr class="odd">
-<td><strong>GZIP 4-6</strong></td>
-<td>3-5x</td>
-<td>Medium</td>
-<td>Medium</td>
-<td><strong>Recommended balance</strong></td>
-</tr>
-<tr class="even">
-<td><strong>GZIP 9</strong></td>
-<td>4-7x</td>
-<td>Slow</td>
-<td>High</td>
-<td>Archival storage</td>
+<td>9</td>
+<td>Smallest</td>
+<td>Slowest</td>
+<td>Long-term archival storage</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Compression effectiveness by data type:</strong></p>
-<pre><code>Random floats:        1.1x  (poor)
-Natural images:       2-3x  (OK)
-Genomic data (SNPs):  3-5x  (good)
-Sparse matrices:     10-50x (excellent)
-Integer sequences:    5-10x (very good)</code></pre>
-<p><strong>BigDataStatMeth default:</strong> GZIP level 6 (good balance)</p>
-</section>
-<section id="cache-performance" class="level3">
-<h3 class="anchored" data-anchor-id="cache-performance">Cache Performance</h3>
-<p><strong>HDF5 chunk cache:</strong></p>
-<pre><code>Default: 1 MB cache, 521 slots
-Optimal: 10-50 MB cache, prime number slots</code></pre>
-<p><strong>Cache hit ratio:</strong></p>
-<pre><code>Good:  &gt; 90% hits
-OK:    70-90% hits
-Bad:   &lt; 70% hits (increase cache or adjust chunks)</code></pre>
-<p>BigDataStatMeth operations are designed for high cache efficiency.</p>
-</section>
-<section id="parallel-io-performance" class="level3">
-<h3 class="anchored" data-anchor-id="parallel-io-performance">Parallel I/O Performance</h3>
-<p><strong>Thread-level scaling:</strong></p>
-<pre><code>1 thread:   100 MB/s baseline
-2 threads:  180 MB/s (90% efficiency)
-4 threads:  320 MB/s (80% efficiency)
-8 threads:  560 MB/s (70% efficiency)</code></pre>
-<p><strong>Scaling factors:</strong> - Dataset size (larger = better scaling) - Operation complexity - I/O vs CPU ratio - Memory bandwidth</p>
-</section>
-<section id="io-performance-model" class="level3">
-<h3 class="anchored" data-anchor-id="io-performance-model">I/O Performance Model</h3>
-<p><strong>Without compression:</strong></p>
-<pre><code>Time = n_blocks × seek_time + (data_size / bandwidth)
-     = 10 × 10 ms + (100 MB / 200 MB/s)
-     = 100 ms + 500 ms = 600 ms</code></pre>
-<p><strong>With compression:</strong></p>
-<pre><code>Time = n_blocks × seek_time + (compressed_size / bandwidth) + decompress_time
-     = 10 × 10 ms + (20 MB / 200 MB/s) + 50 ms
-     = 100 ms + 100 ms + 50 ms = 250 ms  (2.4x faster!)</code></pre>
-</section>
 </div>
 </div>
-</div>
+<section id="practical-implications" class="level3">
+<h3 class="anchored" data-anchor-id="practical-implications">Practical implications</h3>
+<ul>
+<li>The best compression level depends on your storage type and workflow.</li>
+<li>On SSDs or HPC systems, higher compression may still be efficient.</li>
+<li>For repeated reads/writes, prefer moderate levels (4–6).</li>
+<li>Disabling compression (<code>0</code>) is faster but increases disk usage.</li>
+</ul>
 <hr>
 </section>
-<section id="optimization-with-bigdatastatmeth" class="level2">
-<h2 class="anchored" data-anchor-id="optimization-with-bigdatastatmeth">Optimization with BigDataStatMeth</h2>
-<section id="automatic-optimization" class="level3">
-<h3 class="anchored" data-anchor-id="automatic-optimization">Automatic Optimization</h3>
-<p>BigDataStatMeth functions optimize performance automatically:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Automatic optimization (recommended)</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">bdPCA_hdf5</span>(</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"data.hdf5"</span>,</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"analysis"</span>,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"large_matrix"</span>,</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">20</span>,</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">bcenter =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">4</span>  <span class="co"># Only specify parallelization</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co"># BigDataStatMeth automatically:</span></span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co"># - Analyzes data dimensions</span></span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co"># - Calculates optimal block size</span></span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co"># - Aligns with HDF5 chunks</span></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="co"># - Manages memory efficiently</span></span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="co"># - Distributes work across threads</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="manual-block-size-tuning" class="level3">
-<h3 class="anchored" data-anchor-id="manual-block-size-tuning">Manual Block Size Tuning</h3>
-<p>For advanced users, block size can be tuned:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Default: automatic</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>result1 <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"data.hdf5"</span>,</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"matrix_a"</span>,</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">B =</span> <span class="st">"matrix_b"</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Manual tuning for specific hardware</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>result2 <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"data.hdf5"</span>,</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"matrix_a"</span>,</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">B =</span> <span class="st">"matrix_b"</span>,</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">blocksize =</span> <span class="dv">256</span>  <span class="co"># Tune for your system</span></span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Guidelines for manual tuning:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Small matrices (&lt; 1000 × 1000)</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>blocksize <span class="ot">=</span> <span class="dv">512</span>  <span class="co"># Larger blocks</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Medium matrices (1000-10000 × 1000-10000)</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>blocksize <span class="ot">=</span> <span class="dv">256</span>  <span class="co"># Default, good balance</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Large matrices (&gt; 10000 × 10000)</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>blocksize <span class="ot">=</span> <span class="dv">128</span>  <span class="co"># Smaller blocks, better memory</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Very large matrices (&gt; 100000 × 100000)</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>blocksize <span class="ot">=</span> <span class="dv">64</span>   <span class="co"># Minimal memory footprint</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="parallel-processing" class="level3">
-<h3 class="anchored" data-anchor-id="parallel-processing">Parallel Processing</h3>
-<p>Enable parallelization for CPU-intensive operations:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enable parallel processing</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">bdPCA_hdf5</span>(</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"data.hdf5"</span>,</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data"</span>,</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"matrix"</span>,</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">20</span>,</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">paral =</span> <span class="cn">TRUE</span>,     <span class="co"># Enable parallelization</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">4</span>       <span class="co"># Number of threads</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix multiplication with parallelization</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"data.hdf5"</span>,</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"matrix_a"</span>,</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">B =</span> <span class="st">"matrix_b"</span>,</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">paral =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="cn">NULL</span>    <span class="co"># NULL = use all available cores</span></span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>When to use parallelization:</strong></p>
-<p>✅ <strong>Use parallel:</strong> - Large datasets (&gt; 10 GB) - CPU-intensive operations (PCA, SVD) - Multiple cores available - Operations that scale well (matrix mult)</p>
-<p>❌ <strong>Don’t use parallel:</strong> - Small datasets (&lt; 100 MB) - I/O-bound operations - Single core system - Operations with high overhead</p>
-</section>
-<section id="hierarchical-decomposition" class="level3">
-<h3 class="anchored" data-anchor-id="hierarchical-decomposition">Hierarchical Decomposition</h3>
-<p>For extremely large datasets, use hierarchical processing:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># PCA with hierarchical decomposition</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Divides problem into smaller subproblems</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">bdPCA_hdf5</span>(</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"huge_data.hdf5"</span>,</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"genomics"</span>,</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"snp_matrix"</span>,</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">20</span>,</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">q =</span> <span class="dv">2</span>,        <span class="co"># Hierarchy levels (1-3)</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">8</span>   <span class="co"># Parallel at each level</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># q = 1: Single level (default)</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co"># q = 2: Two-level hierarchy (recommended for &gt; 100 GB)</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co"># q = 3: Three-level hierarchy (for &gt; 1 TB)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Performance gain:</strong></p>
-<pre><code>Single level (q=1):  Handles up to ~100 GB
-Two levels (q=2):    Handles up to ~1 TB
-Three levels (q=3):  Handles any size</code></pre>
-</section>
-<section id="monitoring-performance" class="level3">
-<h3 class="anchored" data-anchor-id="monitoring-performance">Monitoring Performance</h3>
-<p>Track performance with simple benchmarking:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Benchmark operation</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>({</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">bdPCA_hdf5</span>(</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">filename =</span> <span class="st">"data.hdf5"</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> <span class="st">"test"</span>,</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">dataset =</span> <span class="st">"matrix"</span>,</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">k =</span> <span class="dv">20</span>,</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">threads =</span> <span class="dv">4</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare different configurations</span></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>configs <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>),</span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">blocksize =</span> <span class="fu">c</span>(<span class="dv">512</span>, <span class="dv">256</span>, <span class="dv">128</span>, <span class="dv">64</span>)</span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(configs), <span class="cf">function</span>(i) {</span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">system.time</span>({</span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdPCA_hdf5</span>(<span class="st">"data.hdf5"</span>, <span class="st">"test"</span>, <span class="st">"matrix"</span>,</span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>               <span class="at">k =</span> <span class="dv">20</span>,</span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>               <span class="at">threads =</span> configs<span class="sc">$</span>threads[i])</span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>  })[<span class="dv">3</span>]</span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Find best configuration</span></span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>best_config <span class="ot">&lt;-</span> configs[<span class="fu">which.min</span>(times), ]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="memory-efficient-processing" class="level3">
-<h3 class="anchored" data-anchor-id="memory-efficient-processing">Memory-Efficient Processing</h3>
-<p>BigDataStatMeth operations are memory-efficient:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process 100 GB dataset with 8 GB RAM</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># BigDataStatMeth handles automatically</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>large_result <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"huge.hdf5"</span>,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data"</span>,</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"matrix_100gb_a"</span>,  <span class="co"># 100 GB matrix</span></span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">B =</span> <span class="st">"matrix_100gb_b"</span>,  <span class="co"># 100 GB matrix</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">blocksize =</span> <span class="dv">128</span>,       <span class="co"># Processes in small blocks</span></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">paral =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">4</span></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Result stored directly in HDF5</span></span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Peak memory usage: &lt; 2 GB</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Memory usage formula:</strong></p>
-<pre><code>peak_memory ≈ blocksize² × element_size × threads
-
-Example:
-blocksize = 128
-threads = 4
-element_size = 8 bytes
-peak_memory = 128² × 8 × 4 = 512 KB × 4 = 2 MB per thread
-Total = 8 MB</code></pre>
-</section>
-<section id="best-practices-for-performance" class="level3">
-<h3 class="anchored" data-anchor-id="best-practices-for-performance">Best Practices for Performance</h3>
-<div class="callout callout-style-default callout-warning callout-titled">
+<section id="practical-guidelines" class="level2">
+<h2 class="anchored" data-anchor-id="practical-guidelines">Practical guidelines</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>⚠️ Performance Optimization Checklist
+<span class="screen-reader-only">Tip</span>How to choose parameters
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Do:</strong> - ✅ Use automatic block sizing (default) - ✅ Enable parallelization for large data - ✅ Set <code>threads</code> based on available cores - ✅ Use hierarchical decomposition (q &gt; 1) for huge data - ✅ Monitor and benchmark your specific workflow - ✅ Align block sizes with HDF5 chunks when possible</p>
-<p><strong>Don’t:</strong> - ❌ Use very small block sizes (&lt; 64) - ❌ Over-parallelize (threads &gt; 2× cores) - ❌ Mix parallel and sequential inappropriately - ❌ Process tiny datasets with huge blocks - ❌ Ignore memory constraints - ❌ Forget to close file handles after inspection</p>
+<ul>
+<li>Start with <code>block_size</code> around 512–2048.<br>
+</li>
+<li>Increase gradually until performance stops improving.<br>
+</li>
+<li>Monitor memory usage to ensure stability.<br>
+</li>
+<li>Match <code>nCores</code> to physical cores, not threads.<br>
+</li>
+<li>On shared systems, leave 1–2 cores free for I/O operations.</li>
+</ul>
 </div>
 </div>
-</section>
-<section id="real-world-performance-examples" class="level3">
-<h3 class="anchored" data-anchor-id="real-world-performance-examples">Real-World Performance Examples</h3>
-<section id="example-1-genomic-pca" class="level4">
-<h4 class="anchored" data-anchor-id="example-1-genomic-pca">Example 1: Genomic PCA</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dataset: 50,000 samples × 500,000 SNPs</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># File size: ~200 GB</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># RAM available: 32 GB</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimized approach</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">bdPCA_hdf5</span>(</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"gwas.hdf5"</span>,</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"genotypes"</span>,</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"snps"</span>,</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">20</span>,</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">q =</span> <span class="dv">2</span>,          <span class="co"># Two-level hierarchy</span></span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">bcenter =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">16</span>    <span class="co"># 16-core system</span></span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Performance:</span></span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Time: ~30 minutes</span></span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Peak memory: ~8 GB</span></span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Speedup vs single-thread: ~12x</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="example-2-matrix-multiplication" class="level4">
-<h4 class="anchored" data-anchor-id="example-2-matrix-multiplication">Example 2: Matrix Multiplication</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrices: 10,000 × 10,000 each</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># File size: ~1.5 GB total</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimized approach</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"matrices.hdf5"</span>,</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data"</span>,</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"matrix_a"</span>,</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">B =</span> <span class="st">"matrix_b"</span>,</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">blocksize =</span> <span class="dv">256</span>,</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">paral =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">8</span></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Performance:</span></span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Time: ~2 minutes</span></span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Peak memory: ~256 MB</span></span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Speedup vs naive approach: ~50x</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="example-3-correlation-matrix" class="level4">
-<h4 class="anchored" data-anchor-id="example-3-correlation-matrix">Example 3: Correlation Matrix</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dataset: 1,000,000 × 100 features</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Computing 100×100 correlation matrix</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimized approach</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>corr <span class="ot">&lt;-</span> <span class="fu">bdCorr_hdf5</span>(</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"data.hdf5"</span>,</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"features"</span>,</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"measurements"</span></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Performance:</span></span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Time: ~5 minutes</span></span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Peak memory: ~500 MB</span></span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Result: 100×100 correlation matrix</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Common bottlenecks
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Disk latency (especially on HDDs).<br>
+</li>
+<li>Excessive block fragmentation (too small blocks).<br>
+</li>
+<li>Insufficient parallelism for large data.<br>
+</li>
+<li>Network latency if using remote storage.</li>
+</ul>
+</div>
+</div>
 <hr>
-</section>
-</section>
 </section>
 <section id="summary" class="level2">
 <h2 class="anchored" data-anchor-id="summary">Summary</h2>
-<p>BigDataStatMeth provides automatic performance optimization:</p>
 <ul>
-<li><strong>Intelligent block sizing</strong>: Adapts to data and hardware</li>
-<li><strong>Efficient parallelization</strong>: Near-linear speedup</li>
-<li><strong>Memory efficiency</strong>: Process unlimited data sizes</li>
-<li><strong>Hierarchical processing</strong>: Handle petabyte-scale data</li>
-</ul>
-<p><strong>Key strategies:</strong> 1. <strong>Use defaults</strong> for most cases (already optimized) 2. <strong>Enable parallelization</strong> for large datasets 3. <strong>Tune block size</strong> only if needed 4. <strong>Use hierarchical</strong> approach for huge data 5. <strong>Benchmark</strong> your specific use case</p>
-<p><strong>Performance gains:</strong> - 10-100x faster than naive approaches - Process data larger than RAM - Scale to multiple cores efficiently - Minimal memory footprint</p>
-<p><strong>Next steps:</strong></p>
-<ul>
-<li>Follow <a href="../../fundamentals/hdf5/best-practices.html">best practices</a> for production</li>
-<li>Explore <a href="../../practical-workflows/index.html">practical workflows</a></li>
-<li>Check <a href="../../api-reference/r/">API reference</a> for specific functions</li>
-<li>Try <a href="../../tutorials/index.html">tutorial examples</a></li>
+<li>Performance in HDF5 computations depends on how data blocks are read, processed, and written.<br>
+</li>
+<li>Block size, compression level, and number of cores are key parameters to tune.<br>
+</li>
+<li>Disk I/O is often the main bottleneck — optimize access patterns.<br>
+</li>
+<li>Experimentation on your system is the best way to find the balance between <strong>speed, scalability, and memory use</strong>.</li>
 </ul>
 <hr>
 </section>
-<section id="additional-resources" class="level2">
-<h2 class="anchored" data-anchor-id="additional-resources">Additional Resources</h2>
-<section id="bigdatastatmeth" class="level3">
-<h3 class="anchored" data-anchor-id="bigdatastatmeth">BigDataStatMeth</h3>
-<ul>
-<li><a href="https://github.com/isglobal-brge/BigDataStatMeth">GitHub Repository</a></li>
-<li><a href="../../api-reference/r/">R Functions API</a></li>
-<li><a href="../../api-reference/cpp/">C++ API</a></li>
-</ul>
-</section>
-<section id="performance-references" class="level3">
-<h3 class="anchored" data-anchor-id="performance-references">Performance References</h3>
-<ul>
-<li><a href="https://portal.hdfgroup.org/display/HDF5/HDF5+Performance">HDF5 Performance Guide</a></li>
-<li><a href="https://portal.hdfgroup.org/display/HDF5/Chunking+in+HDF5">Chunking in HDF5</a></li>
-<li><a href="https://portal.hdfgroup.org/display/HDF5/Parallel+HDF5">Parallel HDF5</a></li>
-</ul>
+<section id="next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
+<p>Continue exploring how <code>BigDataStatMeth</code> combines R and C++ APIs for advanced analyses, or see the performance benchmarks comparing both interfaces in the next sections.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

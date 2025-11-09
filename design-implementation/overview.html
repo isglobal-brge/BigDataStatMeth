@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Guides – BigDataStatMeth</title>
+<title>Overview – BigDataStatMeth</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -70,6 +105,9 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../assets/custom.css">
@@ -103,6 +141,31 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Get Started</span></a>
   </li>  
   <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-learn" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Learn</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-learn">    
+        <li class="dropdown-header">─── Theory ───</li>
+        <li>
+    <a class="dropdown-item" href="../fundamentals/index.html">
+ <span class="dropdown-text">Fundamentals</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../design-implementation/index.html">
+ <span class="dropdown-text">Design &amp; Implementation</span></a>
+  </li>  
+        <li class="dropdown-header">─── Practice ───</li>
+        <li>
+    <a class="dropdown-item" href="../tutorials/index.html">
+ <span class="dropdown-text">Tutorials</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../practical-workflows/index.html">
+ <span class="dropdown-text">Practical Workflows</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-api-reference" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">API Reference</span>
     </a>
@@ -118,17 +181,22 @@ ul.task-list li input[type="checkbox"] {
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-guides--examples" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Guides &amp; Examples</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developers" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Developers</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-guides--examples">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-developers">    
         <li>
-    <a class="dropdown-item" href="../guides/index.html">
- <span class="dropdown-text">Guides</span></a>
+    <a class="dropdown-item" href="../developer-guide/index.html">
+ <span class="dropdown-text">Developer Guide</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../examples/index.html">
- <span class="dropdown-text">Examples</span></a>
+    <a class="dropdown-item" href="../developer-guide/contributing/index.qmd">
+ <span class="dropdown-text">Contributing</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li>
+    <a class="dropdown-item" href="../best-practices/index.html">
+ <span class="dropdown-text">Best Practices</span></a>
   </li>  
     </ul>
   </li>
@@ -150,7 +218,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../guides/index.html">Guides</a></li><li class="breadcrumb-item"><a href="../guides/index.html">Guides</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../design-implementation/overview.html">Overview</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -166,64 +234,42 @@ ul.task-list li input[type="checkbox"] {
       </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Guides</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../guides/index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Guides</span></a>
+  <a href="../design-implementation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Design and Implementation</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../guides/working-with-hdf5.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Working with HDF5</span></a>
+  <a href="../design-implementation/overview.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Overview</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../guides/parallel-computing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Parallel Computing</span></a>
+  <a href="../design-implementation/architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Internal Architecture</span></a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Examples</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../examples/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Examples</span></a>
+  <a href="../design-implementation/block-algorithms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Block Algorithms</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../examples/pca-analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">PCA Analysis Example</span></a>
+  <a href="../design-implementation/memory-management.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Memory Management</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../examples/matrix-operations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Matrix Operations Example</span></a>
+  <a href="../design-implementation/performance-tuning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Performance Tuning</span></a>
   </div>
 </li>
-      </ul>
-  </li>
     </ul>
     </div>
 </nav>
@@ -234,23 +280,23 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#comprehensive-guides" id="toc-comprehensive-guides" class="nav-link active" data-scroll-target="#comprehensive-guides">Comprehensive Guides</a></li>
-  <li><a href="#available-guides" id="toc-available-guides" class="nav-link" data-scroll-target="#available-guides">Available Guides</a>
-  <ul class="collapse">
-  <li><a href="#working-with-hdf5" id="toc-working-with-hdf5" class="nav-link" data-scroll-target="#working-with-hdf5">Working with HDF5</a></li>
-  <li><a href="#parallel-computing" id="toc-parallel-computing" class="nav-link" data-scroll-target="#parallel-computing">Parallel Computing</a></li>
-  </ul></li>
-  <li><a href="#coming-soon" id="toc-coming-soon" class="nav-link" data-scroll-target="#coming-soon">Coming Soon</a></li>
-  <li><a href="#contributing" id="toc-contributing" class="nav-link" data-scroll-target="#contributing">Contributing</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#design-philosophy" id="toc-design-philosophy" class="nav-link" data-scroll-target="#design-philosophy">Design philosophy</a></li>
+  <li><a href="#integration-of-r-and-c" id="toc-integration-of-r-and-c" class="nav-link" data-scroll-target="#integration-of-r-and-c">Integration of R and C++</a></li>
+  <li><a href="#why-block-wise-algorithms" id="toc-why-block-wise-algorithms" class="nav-link" data-scroll-target="#why-block-wise-algorithms">Why block-wise algorithms</a></li>
+  <li><a href="#example-from-r-call-to-hdf5-output" id="toc-example-from-r-call-to-hdf5-output" class="nav-link" data-scroll-target="#example-from-r-call-to-hdf5-output">Example: from R call to HDF5 output</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../guides/index.html">Guides</a></li><li class="breadcrumb-item"><a href="../guides/index.html">Guides</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Guides</h1>
+<h1 class="title">Overview</h1>
 </div>
 
 
@@ -267,46 +313,204 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="comprehensive-guides" class="level2">
-<h2 class="anchored" data-anchor-id="comprehensive-guides">Comprehensive Guides</h2>
-<p>Detailed guides for specific topics and workflows.</p>
-</section>
-<section id="available-guides" class="level2">
-<h2 class="anchored" data-anchor-id="available-guides">Available Guides</h2>
-<section id="working-with-hdf5" class="level3">
-<h3 class="anchored" data-anchor-id="working-with-hdf5"><a href="../guides/working-with-hdf5.html">Working with HDF5</a></h3>
-<p>Learn how to efficiently work with large datasets using HDF5 format:</p>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p><code>BigDataStatMeth</code> is designed to bring <strong>scalability</strong> and <strong>efficiency</strong> to statistical computing in R by combining the expressiveness of R with the performance of C++ and the persistence of HDF5.</p>
+<p>Its architecture is based on three complementary layers:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A[User in R] --&gt; B[R Interface]
+    B --&gt; C[Rcpp Bridge]
+    C --&gt; D[C++ Core Engine]
+    D --&gt; E[HDF5 File System]
+
+    style A fill:#e6f0ff,stroke:#0066cc
+    style B fill:#f0f9ff,stroke:#0099cc
+    style C fill:#f5f5dc,stroke:#999999
+    style D fill:#fff5cc,stroke:#b38f00
+    style E fill:#cce5ff,stroke:#0066cc
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <ul>
-<li>Creating and managing HDF5 files</li>
-<li>Reading and writing data in chunks</li>
-<li>Best practices for HDF5 operations</li>
-<li>Performance optimization</li>
+<li><strong>R Interface:</strong> user-friendly functions (<code>bdblockMult</code>, <code>bdSVD_hdf5</code>, …).<br>
+</li>
+<li><strong>Rcpp Bridge</strong> — implemented using the open-source <a href="https://doi.org/10.18637/jss.v040.i08"><code>Rcpp</code> package</a> (Eddelbuettel and François, 2011), which provides the seamless interface between R and C++.</li>
+<li><strong>C++ Core Engine:</strong> performs intensive computations efficiently.<br>
+</li>
+<li><strong>HDF5 File System:</strong> manages storage and I/O of large datasets.</li>
 </ul>
+<p>This layered design ensures that computations scale smoothly from in-memory operations to on-disk processing of terabyte-scale matrices.</p>
+<hr>
 </section>
-<section id="parallel-computing" class="level3">
-<h3 class="anchored" data-anchor-id="parallel-computing"><a href="../guides/parallel-computing.html">Parallel Computing</a></h3>
-<p>Maximize performance with parallel processing:</p>
+<section id="design-philosophy" class="level2">
+<h2 class="anchored" data-anchor-id="design-philosophy">Design philosophy</h2>
+<p>The implementation of BigDataStatMeth follows three main principles:</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>1. Modularity
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Each functionality (I/O, linear algebra, decomposition, etc.) is encapsulated in dedicated modules and C++ classes. This makes the code maintainable and extendable.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>2. Block-wise computation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Operations are performed <strong>by blocks</strong> instead of loading entire matrices into memory. This design allows analyses that exceed RAM capacity and fits naturally with parallel processing.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>3. Interoperability
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>All data are stored in <strong>HDF5</strong>, a standard supported by R, Python, MATLAB, and C++. This guarantees reproducibility and seamless integration across platforms and programming languages.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="integration-of-r-and-c" class="level2">
+<h2 class="anchored" data-anchor-id="integration-of-r-and-c">Integration of R and C++</h2>
+<p>BigDataStatMeth uses the <strong>Rcpp</strong> interface to expose C++ functions to R. The R layer acts mainly as a controller, handling user inputs and parameter validation, while the heavy computations occur in C++.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Example R call</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">C++ counterpart (simplified)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockMult</span>(A, B, <span class="at">threads =</span> <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>void <span class="fu">bdblockMult_rcpp</span>(const NumericMatrix<span class="sc">&amp;</span> A,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                      const NumericMatrix<span class="sc">&amp;</span> B,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                      int threads) {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="sc">/</span><span class="er">/</span> Dispatch to parallel C<span class="sc">++</span> multiplication kernel</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    BigDataStatMeth<span class="sc">::</span>MatrixOps<span class="sc">::</span><span class="fu">blockMultiply</span>(A, B, threads);</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<p>This separation ensures that R users interact with a simple interface, while developers and advanced users can extend the core behavior in C++.</p>
+<hr>
+</section>
+<section id="why-block-wise-algorithms" class="level2">
+<h2 class="anchored" data-anchor-id="why-block-wise-algorithms">Why block-wise algorithms</h2>
+<p>Unlike traditional R operations that load entire matrices into memory, BigDataStatMeth divides matrices into smaller <strong>blocks</strong>. Each block is processed individually, allowing: - computations that exceed system RAM,<br>
+- parallel execution across threads,<br>
+- reduced I/O overhead when combined with HDF5 chunking.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TB
+    A["Matrix A (HDF5)"] --&gt; B[Block A1]
+    A --&gt; C[Block A2]
+    A --&gt; D[Block A3]
+
+    subgraph CPU["Parallel computation"]
+        B1["Thread 1 → A1 × B"] 
+        B2["Thread 2 → A2 × B"]
+        B3["Thread 3 → A3 × B"]
+    end
+
+    B1 --&gt; E[Partial Results]
+    B2 --&gt; E
+    B3 --&gt; E
+
+    E --&gt; F[Combined Result → HDF5 Output]
+
+    style A fill:#cce5ff,stroke:#0066cc
+    style CPU fill:#f5f5dc,stroke:#999999
+    style F fill:#e6f0ff,stroke:#0066cc
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>This approach makes BigDataStatMeth <strong>scalable by design</strong>.</p>
+<hr>
+</section>
+<section id="example-from-r-call-to-hdf5-output" class="level2">
+<h2 class="anchored" data-anchor-id="example-from-r-call-to-hdf5-output">Example: from R call to HDF5 output</h2>
+<p>A typical workflow combines all three layers:</p>
+<ol type="1">
+<li>The user calls an R function such as <code>bdSVD_hdf5()</code>.<br>
+</li>
+<li>The R function passes parameters to the C++ backend via Rcpp.<br>
+</li>
+<li>The C++ engine reads blocks of data from HDF5.<br>
+</li>
+<li>Each block is processed (possibly in parallel).<br>
+</li>
+<li>Results are written back to the same or a new HDF5 file.</li>
+</ol>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Key advantage:</strong> Each layer has a specific role, minimizing data movement between R and C++ and allowing computations on datasets larger than RAM.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
 <ul>
-<li>Understanding parallelization in BigDataStatMeth</li>
-<li>Configuring thread count</li>
-<li>When to use parallel processing</li>
-<li>Benchmarking and optimization</li>
+<li>BigDataStatMeth integrates <strong>R, C++ and HDF5</strong> in a modular design.<br>
+</li>
+<li>Computations are executed <strong>by blocks</strong>, enabling scalability.<br>
+</li>
+<li>The <strong>Rcpp bridge</strong> connects user-level functions with optimized C++ routines.<br>
+</li>
+<li>The system achieves performance and interoperability without sacrificing usability.</li>
 </ul>
+<hr>
 </section>
+<section id="reference" class="level2">
+<h2 class="anchored" data-anchor-id="reference">Reference</h2>
+<blockquote class="blockquote">
+<p>Eddelbuettel, D. and François, R. (2011). <em>Rcpp: Seamless R and C++ Integration</em>. Journal of Statistical Software, 40(8), 1–18. <a href="https://doi.org/10.18637/jss.v040.i08">https://doi.org/10.18637/jss.v040.i08</a></p>
+</blockquote>
+<hr>
 </section>
-<section id="coming-soon" class="level2">
-<h2 class="anchored" data-anchor-id="coming-soon">Coming Soon</h2>
-<p>Additional guides are in development:</p>
-<ul>
-<li><strong>Advanced Linear Algebra</strong>: In-depth coverage of matrix decompositions</li>
-<li><strong>Statistical Workflows</strong>: Complete analysis pipelines</li>
-<li><strong>Data Integration</strong>: Combining multiple data sources</li>
-<li><strong>Memory Management</strong>: Strategies for handling very large datasets</li>
-</ul>
-</section>
-<section id="contributing" class="level2">
-<h2 class="anchored" data-anchor-id="contributing">Contributing</h2>
-<p>Have ideas for new guides? Open an issue on <a href="https://github.com/isglobal-brge/BigDataStatMeth/issues">GitHub</a>.</p>
+<section id="next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
+<p>In the next section, we will explore the <strong>internal architecture</strong> of BigDataStatMeth, including its main C++ classes and how they interact to manage data, operations, and parallelism.</p>
 
 
 </section>

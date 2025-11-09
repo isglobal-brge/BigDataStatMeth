@@ -112,6 +112,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../../fundamentals/index.html">
  <span class="dropdown-text">Fundamentals</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../../design-implementation/index.html">
+ <span class="dropdown-text">Design &amp; Implementation</span></a>
+  </li>  
         <li class="dropdown-header">─── Practice ───</li>
         <li>
     <a class="dropdown-item" href="../../../tutorials/index.html">
@@ -151,20 +155,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../../../developer-guide/contributing/index.qmd">
  <span class="dropdown-text">Contributing</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Resources</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li><hr class="dropdown-divider"></li>
         <li>
     <a class="dropdown-item" href="../../../best-practices/index.html">
  <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../../resources/index.html">
- <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -642,6 +636,12 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a>
   <ul class="collapse">
   <li><a href="#bdapply_function_hdf5" id="toc-bdapply_function_hdf5" class="nav-link" data-scroll-target="#bdapply_function_hdf5">bdapply_Function_hdf5</a></li>
+  <li><a href="#bdnormalize_hdf5" id="toc-bdnormalize_hdf5" class="nav-link" data-scroll-target="#bdnormalize_hdf5">bdNormalize_hdf5</a></li>
+  <li><a href="#bdimputesnps_hdf5" id="toc-bdimputesnps_hdf5" class="nav-link" data-scroll-target="#bdimputesnps_hdf5">bdImputeSNPs_hdf5</a></li>
+  <li><a href="#bdcorr_hdf5" id="toc-bdcorr_hdf5" class="nav-link" data-scroll-target="#bdcorr_hdf5">bdCorr_hdf5</a></li>
+  <li><a href="#bdgetsdandmean_hdf5" id="toc-bdgetsdandmean_hdf5" class="nav-link" data-scroll-target="#bdgetsdandmean_hdf5">bdgetSDandMean_hdf5</a></li>
+  <li><a href="#bdremovelowdata_hdf5" id="toc-bdremovelowdata_hdf5" class="nav-link" data-scroll-target="#bdremovelowdata_hdf5">bdRemovelowdata_hdf5</a></li>
+  <li><a href="#bdremovemaf_hdf5" id="toc-bdremovemaf_hdf5" class="nav-link" data-scroll-target="#bdremovemaf_hdf5">bdRemoveMAF_hdf5</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -676,14 +676,32 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="functions">Functions</h2>
 <section id="bdapply_function_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdapply_function_hdf5"><a href="../../../api-reference/r/hdf5_statistics/bdapply_Function_hdf5.html">bdapply_Function_hdf5</a></h3>
-<p>bdapply_Function_hdf5### <a href="../../../api-reference/r/hdf5_statistics/bdNormalize_hdf5.html">bdNormalize_hdf5</a></p>
-<p>bdNormalize_hdf5### <a href="../../../api-reference/r/hdf5_statistics/bdImputeSNPs_hdf5.html">bdImputeSNPs_hdf5</a></p>
-<p>bdImputeSNPs_hdf5### <a href="../../../api-reference/r/hdf5_statistics/bdCorr_hdf5.html">bdCorr_hdf5</a></p>
+<p>bdapply_Function_hdf5</p>
+</section>
+<section id="bdnormalize_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdnormalize_hdf5"><a href="../../../api-reference/r/hdf5_statistics/bdNormalize_hdf5.html">bdNormalize_hdf5</a></h3>
+<p>bdNormalize_hdf5</p>
+</section>
+<section id="bdimputesnps_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdimputesnps_hdf5"><a href="../../../api-reference/r/hdf5_statistics/bdImputeSNPs_hdf5.html">bdImputeSNPs_hdf5</a></h3>
+<p>bdImputeSNPs_hdf5</p>
+</section>
+<section id="bdcorr_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdcorr_hdf5"><a href="../../../api-reference/r/hdf5_statistics/bdCorr_hdf5.html">bdCorr_hdf5</a></h3>
 <p>This function computes Pearson or Spearman correlation matrix for matrices stored in HDF5 format. It automatically detects whether to compute: It automatically selects between direct computation for small matrices and block-wise processing for large matrices to optimize memory usage and performance.</p>
 <p>Correlation types supported: </p>
-<p>For omics data analysis: ### <a href="../../../api-reference/r/hdf5_statistics/bdgetSDandMean_hdf5.html">bdgetSDandMean_hdf5</a></p>
-<p>bdgetSDandMean_hdf5### <a href="../../../api-reference/r/hdf5_statistics/bdRemovelowdata_hdf5.html">bdRemovelowdata_hdf5</a></p>
-<p>bdRemovelowdata_hdf5### <a href="../../../api-reference/r/hdf5_statistics/bdRemoveMAF_hdf5.html">bdRemoveMAF_hdf5</a></p>
+<p>For omics data analysis: </p>
+</section>
+<section id="bdgetsdandmean_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdgetsdandmean_hdf5"><a href="../../../api-reference/r/hdf5_statistics/bdgetSDandMean_hdf5.html">bdgetSDandMean_hdf5</a></h3>
+<p>bdgetSDandMean_hdf5</p>
+</section>
+<section id="bdremovelowdata_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdremovelowdata_hdf5"><a href="../../../api-reference/r/hdf5_statistics/bdRemovelowdata_hdf5.html">bdRemovelowdata_hdf5</a></h3>
+<p>bdRemovelowdata_hdf5</p>
+</section>
+<section id="bdremovemaf_hdf5" class="level3">
+<h3 class="anchored" data-anchor-id="bdremovemaf_hdf5"><a href="../../../api-reference/r/hdf5_statistics/bdRemoveMAF_hdf5.html">bdRemoveMAF_hdf5</a></h3>
 <p>bdRemoveMAF_hdf5</p>
 
 

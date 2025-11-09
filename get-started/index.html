@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -112,6 +147,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../fundamentals/index.html">
  <span class="dropdown-text">Fundamentals</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../design-implementation/index.html">
+ <span class="dropdown-text">Design &amp; Implementation</span></a>
+  </li>  
         <li class="dropdown-header">─── Practice ───</li>
         <li>
     <a class="dropdown-item" href="../tutorials/index.html">
@@ -151,20 +190,10 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../developer-guide/contributing/index.qmd">
  <span class="dropdown-text">Contributing</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Resources</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li><hr class="dropdown-divider"></li>
         <li>
     <a class="dropdown-item" href="../best-practices/index.html">
  <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../resources/index.html">
- <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -230,11 +259,65 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#what-youll-learn" id="toc-what-youll-learn" class="nav-link" data-scroll-target="#what-youll-learn">What You’ll Learn</a></li>
-  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
-  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next Steps</a></li>
+  <li><a href="#welcome-to-bigdatastatmeth" id="toc-welcome-to-bigdatastatmeth" class="nav-link active" data-scroll-target="#welcome-to-bigdatastatmeth">Welcome to BigDataStatMeth</a></li>
+  <li><a href="#what-makes-bigdatastatmeth-different" id="toc-what-makes-bigdatastatmeth-different" class="nav-link" data-scroll-target="#what-makes-bigdatastatmeth-different">What Makes BigDataStatMeth Different?</a>
+  <ul class="collapse">
+  <li><a href="#building-block-architecture" id="toc-building-block-architecture" class="nav-link" data-scroll-target="#building-block-architecture">🧱 Building Block Architecture</a></li>
+  <li><a href="#two-modes-of-operation" id="toc-two-modes-of-operation" class="nav-link" data-scroll-target="#two-modes-of-operation">💾 Two Modes of Operation</a></li>
+  <li><a href="#performance-optimized" id="toc-performance-optimized" class="nav-link" data-scroll-target="#performance-optimized">⚡ Performance Optimized</a></li>
+  </ul></li>
+  <li><a href="#who-should-use-bigdatastatmeth" id="toc-who-should-use-bigdatastatmeth" class="nav-link" data-scroll-target="#who-should-use-bigdatastatmeth">Who Should Use BigDataStatMeth?</a>
+  <ul class="collapse">
+  <li><a href="#researchers-and-data-analysts" id="toc-researchers-and-data-analysts" class="nav-link" data-scroll-target="#researchers-and-data-analysts">👨‍🔬 Researchers and Data Analysts</a></li>
+  <li><a href="#statisticians-and-method-developers" id="toc-statisticians-and-method-developers" class="nav-link" data-scroll-target="#statisticians-and-method-developers">📊 Statisticians and Method Developers</a></li>
+  <li><a href="#software-developers" id="toc-software-developers" class="nav-link" data-scroll-target="#software-developers">👨‍💻 Software Developers</a></li>
+  </ul></li>
+  <li><a href="#key-features" id="toc-key-features" class="nav-link" data-scroll-target="#key-features">Key Features</a>
+  <ul class="collapse">
+  <li><a href="#matrix-operations" id="toc-matrix-operations" class="nav-link" data-scroll-target="#matrix-operations">Matrix Operations</a></li>
+  <li><a href="#matrix-decompositions" id="toc-matrix-decompositions" class="nav-link" data-scroll-target="#matrix-decompositions">Matrix Decompositions</a></li>
+  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing">Data Preprocessing</a></li>
+  <li><a href="#hdf5-integration" id="toc-hdf5-integration" class="nav-link" data-scroll-target="#hdf5-integration">HDF5 Integration</a></li>
+  <li><a href="#parallel-computing" id="toc-parallel-computing" class="nav-link" data-scroll-target="#parallel-computing">Parallel Computing</a></li>
+  </ul></li>
+  <li><a href="#getting-started-paths" id="toc-getting-started-paths" class="nav-link" data-scroll-target="#getting-started-paths">Getting Started Paths</a>
+  <ul class="collapse">
+  <li><a href="#fast-track-30-minutes" id="toc-fast-track-30-minutes" class="nav-link" data-scroll-target="#fast-track-30-minutes">🚀 Fast Track (30 minutes)</a></li>
+  <li><a href="#complete-path-2-3-hours" id="toc-complete-path-2-3-hours" class="nav-link" data-scroll-target="#complete-path-2-3-hours">📚 Complete Path (2-3 hours)</a></li>
+  <li><a href="#developer-path-4-6-hours" id="toc-developer-path-4-6-hours" class="nav-link" data-scroll-target="#developer-path-4-6-hours">💻 Developer Path (4-6 hours)</a></li>
+  </ul></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#example-end-to-end-analysis" id="toc-example-end-to-end-analysis" class="nav-link" data-scroll-target="#example-end-to-end-analysis">Example: End-to-End Analysis</a></li>
+  <li><a href="#real-world-applications" id="toc-real-world-applications" class="nav-link" data-scroll-target="#real-world-applications">Real-World Applications</a>
+  <ul class="collapse">
+  <li><a href="#genomics" id="toc-genomics" class="nav-link" data-scroll-target="#genomics">Genomics</a></li>
+  <li><a href="#bioinformatics" id="toc-bioinformatics" class="nav-link" data-scroll-target="#bioinformatics">Bioinformatics</a></li>
+  <li><a href="#statistics" id="toc-statistics" class="nav-link" data-scroll-target="#statistics">Statistics</a></li>
+  </ul></li>
+  <li><a href="#documentation-structure" id="toc-documentation-structure" class="nav-link" data-scroll-target="#documentation-structure">Documentation Structure</a>
+  <ul class="collapse">
+  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">📘 Reference</a></li>
+  <li><a href="#learning" id="toc-learning" class="nav-link" data-scroll-target="#learning">📖 Learning</a></li>
+  <li><a href="#development" id="toc-development" class="nav-link" data-scroll-target="#development">👨‍💻 Development</a></li>
+  </ul></li>
+  <li><a href="#community-and-support" id="toc-community-and-support" class="nav-link" data-scroll-target="#community-and-support">Community and Support</a>
+  <ul class="collapse">
   <li><a href="#getting-help" id="toc-getting-help" class="nav-link" data-scroll-target="#getting-help">Getting Help</a></li>
+  <li><a href="#contributing" id="toc-contributing" class="nav-link" data-scroll-target="#contributing">Contributing</a></li>
+  </ul></li>
+  <li><a href="#package-philosophy" id="toc-package-philosophy" class="nav-link" data-scroll-target="#package-philosophy">Package Philosophy</a>
+  <ul class="collapse">
+  <li><a href="#design-principles" id="toc-design-principles" class="nav-link" data-scroll-target="#design-principles">Design Principles</a></li>
+  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters">Why This Matters</a></li>
+  </ul></li>
+  <li><a href="#whats-next" id="toc-whats-next" class="nav-link" data-scroll-target="#whats-next">What’s Next?</a>
+  <ul class="collapse">
+  <li><a href="#ready-to-start" id="toc-ready-to-start" class="nav-link" data-scroll-target="#ready-to-start">✅ Ready to Start?</a></li>
+  <li><a href="#want-to-learn-more" id="toc-want-to-learn-more" class="nav-link" data-scroll-target="#want-to-learn-more">📚 Want to Learn More?</a></li>
+  <li><a href="#ready-to-develop" id="toc-ready-to-develop" class="nav-link" data-scroll-target="#ready-to-develop">🔧 Ready to Develop?</a></li>
+  </ul></li>
+  <li><a href="#license-and-citation" id="toc-license-and-citation" class="nav-link" data-scroll-target="#license-and-citation">License and Citation</a></li>
+  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments">Acknowledgments</a></li>
   </ul>
 </nav>
     </div>
@@ -260,43 +343,389 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>BigDataStatMeth is designed for statistical analysis of large-scale datasets. This guide will help you get up and running quickly.</p>
+<section id="welcome-to-bigdatastatmeth" class="level2">
+<h2 class="anchored" data-anchor-id="welcome-to-bigdatastatmeth">Welcome to BigDataStatMeth</h2>
+<p>BigDataStatMeth is an R package for <strong>statistical analysis and method development</strong> with large-scale datasets. Whether you’re analyzing genomic data, developing new statistical methods, or working with datasets too large for memory, BigDataStatMeth provides the tools you need.</p>
+<hr>
 </section>
-<section id="what-youll-learn" class="level2">
-<h2 class="anchored" data-anchor-id="what-youll-learn">What You’ll Learn</h2>
+<section id="what-makes-bigdatastatmeth-different" class="level2">
+<h2 class="anchored" data-anchor-id="what-makes-bigdatastatmeth-different">What Makes BigDataStatMeth Different?</h2>
+<section id="building-block-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="building-block-architecture">🧱 Building Block Architecture</h3>
+<p>BigDataStatMeth isn’t just a collection of analysis functions—it’s a <strong>development platform</strong> with three levels:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 47%">
+<col style="width: 34%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Level</th>
+<th>What It Provides</th>
+<th>Who Uses It</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Atomic Operations</strong></td>
+<td>Optimized primitives</td>
+<td>Method developers</td>
+</tr>
+<tr class="even">
+<td><strong>Composable Functions</strong></td>
+<td>Build custom workflows</td>
+<td>Statisticians, bioinformaticians</td>
+</tr>
+<tr class="odd">
+<td><strong>Complete Methods</strong></td>
+<td>Ready-to-use analyses</td>
+<td>Researchers, data analysts</td>
+</tr>
+</tbody>
+</table>
+<p>This means you can: - <strong>Use</strong> existing methods out-of-the-box - <strong>Adapt</strong> methods to your specific needs - <strong>Develop</strong> entirely new statistical methods</p>
+<hr>
+</section>
+<section id="two-modes-of-operation" class="level3">
+<h3 class="anchored" data-anchor-id="two-modes-of-operation">💾 Two Modes of Operation</h3>
+<p>Work seamlessly with data in memory or on disk:</p>
+<p><strong>In-Memory Mode</strong> (for moderate datasets)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult</span>(X, Y, <span class="at">blocksize =</span> <span class="dv">128</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>HDF5 Mode</strong> (for large datasets)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(<span class="st">"data.h5"</span>, <span class="st">"X"</span>, <span class="st">"Y"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The API is nearly identical—just add <code>_hdf5</code> and pass file paths instead of matrices.</p>
+<hr>
+</section>
+<section id="performance-optimized" class="level3">
+<h3 class="anchored" data-anchor-id="performance-optimized">⚡ Performance Optimized</h3>
 <ul>
-<li>How to install BigDataStatMeth</li>
-<li>Basic package structure and capabilities</li>
-<li>Your first analysis with BigDataStatMeth</li>
-<li>Working with different data formats</li>
+<li><strong>C++ backend</strong>: Core operations in optimized C++</li>
+<li><strong>Block-wise processing</strong>: Efficient handling of large matrices</li>
+<li><strong>Parallel computing</strong>: Built-in multi-threading support</li>
+<li><strong>Memory efficient</strong>: Process datasets larger than RAM</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="who-should-use-bigdatastatmeth" class="level2">
+<h2 class="anchored" data-anchor-id="who-should-use-bigdatastatmeth">Who Should Use BigDataStatMeth?</h2>
+<section id="researchers-and-data-analysts" class="level3">
+<h3 class="anchored" data-anchor-id="researchers-and-data-analysts">👨‍🔬 Researchers and Data Analysts</h3>
+<p>You want to analyze large datasets without worrying about technical details.</p>
+<p><strong>Your path</strong>: 1. <a href="../get-started/installation.html">Installation</a> → Get set up (5 minutes) 2. <a href="../get-started/quickstart.html">Quick Start</a> → Learn basics (10 minutes) 3. <a href="../practical-workflows/index.html">Practical Workflows</a> → Apply to your data</p>
+<p><strong>Example task</strong>: Perform PCA on 1 million SNPs across 10,000 samples</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdPCA_hdf5</span>(<span class="st">"genomic_data.h5"</span>, <span class="st">"genotypes"</span>, <span class="at">k =</span> <span class="dv">20</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="statisticians-and-method-developers" class="level3">
+<h3 class="anchored" data-anchor-id="statisticians-and-method-developers">📊 Statisticians and Method Developers</h3>
+<p>You need to implement new methods or adapt existing ones to your domain.</p>
+<p><strong>Your path</strong>: 1. <a href="../get-started/installation.html">Installation</a> → Get set up 2. <a href="../get-started/quickstart.html">Quick Start</a> → Understand the three ways to use BigDataStatMeth 3. <a href="../tutorials/intermediate/index.html">Tutorials: Intermediate</a> → Learn to compose operations 4. <a href="../practical-workflows/cca-implementation/index.html">Practical Workflows: CCA</a> → See complete example</p>
+<p><strong>Example task</strong>: Implement custom canonical correlation analysis</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>my_cca <span class="ot">&lt;-</span> <span class="cf">function</span>(file, X, Y) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdNormalize_hdf5</span>(file, <span class="st">"data"</span>, X)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdNormalize_hdf5</span>(file, <span class="st">"data"</span>, Y)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ... compose more operations</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdSVD_hdf5</span>(file, <span class="st">"results"</span>, <span class="st">"crossprod"</span>, <span class="at">k =</span> <span class="dv">20</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="software-developers" class="level3">
+<h3 class="anchored" data-anchor-id="software-developers">👨‍💻 Software Developers</h3>
+<p>You need high-performance computing and want to avoid low-level HDF5 C API complexity.</p>
+<p><strong>Your path</strong>: 1. <a href="../get-started/installation.html">Installation</a> → Get set up 2. <a href="../get-started/quickstart.html">Quick Start</a> → See the C++ approach 3. <a href="../tutorials/advanced/01-using-cpp-api.qmd">Tutorials: Advanced</a> → Learn header-only API 4. <a href="../developer-guide/index.html">Developer Guide</a> → Architecture details</p>
+<p><strong>Example task</strong>: Use C++ API in your project</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;BigDataStatMeth/hdf5_operations.hpp&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Clean interface - no verbose HDF5 C API</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>hdf5Dataset ds<span class="op">(</span><span class="st">"data.h5"</span><span class="op">,</span> <span class="st">"/matrices/X"</span><span class="op">);</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>Eigen<span class="op">::</span>MatrixXd block <span class="op">=</span> ds<span class="op">.</span>readBlock<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1000</span><span class="op">,</span> <span class="dv">100</span><span class="op">);</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Your algorithm here...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+</section>
+<section id="key-features" class="level2">
+<h2 class="anchored" data-anchor-id="key-features">Key Features</h2>
+<section id="matrix-operations" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-operations">Matrix Operations</h3>
+<ul>
+<li>Block-wise multiplication</li>
+<li>Cross products: t(A) × B</li>
+<li>Transpose products: A × t(B)</li>
+<li>Optimized for large matrices</li>
 </ul>
 </section>
-<section id="prerequisites" class="level2">
-<h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
-<p>Before starting, make sure you have:</p>
+<section id="matrix-decompositions" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-decompositions">Matrix Decompositions</h3>
 <ul>
-<li>R version 4.0 or higher</li>
-<li>Basic knowledge of R programming</li>
-<li>For HDF5 functionality: HDF5 libraries installed on your system</li>
+<li>Principal Component Analysis (PCA)</li>
+<li>Singular Value Decomposition (SVD)</li>
+<li>QR decomposition</li>
+<li>Cholesky factorization</li>
+<li>Eigenvalue decomposition</li>
 </ul>
 </section>
-<section id="next-steps" class="level2">
-<h2 class="anchored" data-anchor-id="next-steps">Next Steps</h2>
+<section id="data-preprocessing" class="level3">
+<h3 class="anchored" data-anchor-id="data-preprocessing">Data Preprocessing</h3>
+<ul>
+<li>Centering and scaling</li>
+<li>Missing data imputation</li>
+<li>Quality control filters (MAF, missingness)</li>
+<li>Data normalization</li>
+</ul>
+</section>
+<section id="hdf5-integration" class="level3">
+<h3 class="anchored" data-anchor-id="hdf5-integration">HDF5 Integration</h3>
+<ul>
+<li>Create and manage HDF5 files</li>
+<li>Efficient block-wise I/O</li>
+<li>Hierarchical data organization</li>
+<li>Works with datasets larger than RAM</li>
+</ul>
+</section>
+<section id="parallel-computing" class="level3">
+<h3 class="anchored" data-anchor-id="parallel-computing">Parallel Computing</h3>
+<ul>
+<li>Multi-threaded operations</li>
+<li>Automatic or manual thread control</li>
+<li>2-8× speedup on multi-core systems</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="getting-started-paths" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started-paths">Getting Started Paths</h2>
+<p>Choose your learning path:</p>
+<section id="fast-track-30-minutes" class="level3">
+<h3 class="anchored" data-anchor-id="fast-track-30-minutes">🚀 Fast Track (30 minutes)</h3>
+<p><strong>Goal</strong>: Run your first analysis quickly</p>
 <ol type="1">
-<li><a href="../get-started/installation.html">Installation</a> - Install the package and dependencies</li>
-<li><a href="../get-started/quickstart.html">Quick Start</a> - Run your first analysis</li>
+<li>✅ <a href="../get-started/installation.html">Install</a> the package</li>
+<li>✅ Follow <a href="../get-started/quickstart.html">Quick Start</a> examples</li>
+<li>✅ Try a <a href="../practical-workflows/index.html">Practical Workflow</a></li>
 </ol>
+<hr>
 </section>
-<section id="getting-help" class="level2">
-<h2 class="anchored" data-anchor-id="getting-help">Getting Help</h2>
-<p>If you encounter any issues:</p>
+<section id="complete-path-2-3-hours" class="level3">
+<h3 class="anchored" data-anchor-id="complete-path-2-3-hours">📚 Complete Path (2-3 hours)</h3>
+<p><strong>Goal</strong>: Understand concepts and develop methods</p>
+<ol type="1">
+<li>✅ <a href="../get-started/installation.html">Install</a> the package</li>
+<li>✅ <a href="../get-started/quickstart.html">Quick Start</a> - Learn the basics</li>
+<li>📖 <a href="../fundamentals/index.html">Fundamentals</a> - Understand HDF5 and block-wise processing</li>
+<li>🎓 <a href="../tutorials/basic/index.html">Tutorials: Basic</a> - Practice with exercises</li>
+<li>🎓 <a href="../tutorials/intermediate/index.html">Tutorials: Intermediate</a> - Compose methods</li>
+</ol>
+<hr>
+</section>
+<section id="developer-path-4-6-hours" class="level3">
+<h3 class="anchored" data-anchor-id="developer-path-4-6-hours">💻 Developer Path (4-6 hours)</h3>
+<p><strong>Goal</strong>: Implement custom methods in C++</p>
+<ol type="1">
+<li>✅ <a href="../get-started/installation.html">Install</a> the package</li>
+<li>✅ <a href="../get-started/quickstart.html">Quick Start</a> - See the three approaches</li>
+<li>🎓 <a href="../tutorials/advanced/01-using-cpp-api.qmd">Tutorials: Advanced</a> - Learn C++ API</li>
+<li>💼 <a href="../practical-workflows/cca-implementation/index.html">Practical Workflows: CCA</a> - Complete example</li>
+<li>👨‍💻 <a href="../developer-guide/index.html">Developer Guide</a> - Architecture details</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick install from GitHub</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"isglobal-brge/BigDataStatMeth@HEAD"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Prerequisites</strong>: R ≥ 4.0.0, compiler tools, HDF5 libraries</p>
+<p><strong>→</strong> <a href="../get-started/installation.html">Complete installation guide</a> for detailed instructions, troubleshooting, and verification tests.</p>
+<hr>
+</section>
+<section id="example-end-to-end-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="example-end-to-end-analysis">Example: End-to-End Analysis</h2>
+<p>Here’s a complete workflow from data to visualization:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Create test data</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>data_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">5000</span>), <span class="at">nrow =</span> <span class="dv">1000</span>, <span class="at">ncol =</span> <span class="dv">5</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Save to HDF5</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>filename <span class="ot">&lt;-</span> <span class="st">"example.h5"</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> data_matrix,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data"</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"X"</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Normalize data</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="fu">bdNormalize_hdf5</span>(</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data"</span>,</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"X"</span>,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">bcenter =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">bscale =</span> <span class="cn">TRUE</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Perform PCA</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="fu">bdPCA_hdf5</span>(</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"NORMALIZED/data"</span>,</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"X"</span>,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">3</span>,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">bcenter =</span> <span class="cn">FALSE</span>,  <span class="co"># Already centered</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">bscale =</span> <span class="cn">FALSE</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Visualize results</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rhdf5)</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">&lt;-</span> <span class="fu">h5read</span>(filename, <span class="st">"/PCA/X/u"</span>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(scores[, <span class="dv">1</span>], scores[, <span class="dv">2</span>],</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"PC1"</span>, <span class="at">ylab =</span> <span class="st">"PC2"</span>,</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"PCA Results"</span>,</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"steelblue"</span>)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Cleanup</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="fu">h5closeAll</span>()</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="fu">file.remove</span>(filename)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Output</strong>: A PCA plot showing the structure in your data.</p>
+<hr>
+</section>
+<section id="real-world-applications" class="level2">
+<h2 class="anchored" data-anchor-id="real-world-applications">Real-World Applications</h2>
+<p>BigDataStatMeth is used in:</p>
+<section id="genomics" class="level3">
+<h3 class="anchored" data-anchor-id="genomics">Genomics</h3>
 <ul>
-<li>Check the <a href="../api-reference/r/index.html">API Reference</a> for function documentation</li>
-<li>Browse <a href="../examples/index.qmd">Examples</a> for common use cases</li>
-<li>Visit our <a href="https://github.com/isglobal-brge/BigDataStatMeth">GitHub repository</a> for issues and discussions</li>
+<li>GWAS quality control and analysis</li>
+<li>Population structure inference</li>
+<li>Gene expression analysis</li>
+<li>Methylation studies</li>
 </ul>
+</section>
+<section id="bioinformatics" class="level3">
+<h3 class="anchored" data-anchor-id="bioinformatics">Bioinformatics</h3>
+<ul>
+<li>Multi-omics integration</li>
+<li>Large-scale correlation analysis</li>
+<li>Dimensionality reduction</li>
+</ul>
+</section>
+<section id="statistics" class="level3">
+<h3 class="anchored" data-anchor-id="statistics">Statistics</h3>
+<ul>
+<li>High-dimensional data analysis</li>
+<li>Method development</li>
+<li>Computational statistics research</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="documentation-structure" class="level2">
+<h2 class="anchored" data-anchor-id="documentation-structure">Documentation Structure</h2>
+<section id="reference" class="level3">
+<h3 class="anchored" data-anchor-id="reference">📘 Reference</h3>
+<ul>
+<li><strong><a href="../api-reference/r/index.html">R Functions</a></strong>: Complete R API documentation</li>
+<li><strong><a href="../api-reference/cpp/index.html">C++ API</a></strong>: C++ classes and functions</li>
+</ul>
+</section>
+<section id="learning" class="level3">
+<h3 class="anchored" data-anchor-id="learning">📖 Learning</h3>
+<ul>
+<li><strong><a href="../fundamentals/index.html">Fundamentals</a></strong>: Concepts and theory</li>
+<li><strong><a href="../tutorials/index.html">Tutorials</a></strong>: Hands-on exercises</li>
+<li><strong><a href="../practical-workflows/index.html">Practical Workflows</a></strong>: Real-world examples</li>
+</ul>
+</section>
+<section id="development" class="level3">
+<h3 class="anchored" data-anchor-id="development">👨‍💻 Development</h3>
+<ul>
+<li><strong><a href="../developer-guide/index.html">Developer Guide</a></strong>: Extending the package</li>
+<li><strong><a href="../best-practices/index.html">Best Practices</a></strong>: Guidelines and patterns</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="community-and-support" class="level2">
+<h2 class="anchored" data-anchor-id="community-and-support">Community and Support</h2>
+<section id="getting-help" class="level3">
+<h3 class="anchored" data-anchor-id="getting-help">Getting Help</h3>
+<ul>
+<li><strong>Documentation</strong>: You’re reading it!</li>
+<li><strong>Function help</strong>: <code>?function_name</code> in R</li>
+<li><strong>GitHub Issues</strong>: <a href="https://github.com/isglobal-brge/BigDataStatMeth/issues">Report bugs</a></li>
+<li><strong>Discussions</strong>: <a href="https://github.com/isglobal-brge/BigDataStatMeth/discussions">Ask questions</a></li>
+</ul>
+</section>
+<section id="contributing" class="level3">
+<h3 class="anchored" data-anchor-id="contributing">Contributing</h3>
+<p>BigDataStatMeth is open source. Contributions welcome: - Report bugs and suggest features - Improve documentation - Submit pull requests</p>
+<p><strong>→</strong> <a href="../developer-guide/contributing/index.qmd">Contributing guide</a></p>
+<hr>
+</section>
+</section>
+<section id="package-philosophy" class="level2">
+<h2 class="anchored" data-anchor-id="package-philosophy">Package Philosophy</h2>
+<section id="design-principles" class="level3">
+<h3 class="anchored" data-anchor-id="design-principles">Design Principles</h3>
+<p><strong>Composability</strong>: Small, focused functions that work together<br>
+<strong>Consistency</strong>: Similar APIs across all operations<br>
+<strong>Performance</strong>: Optimized C++ core with clean R interface<br>
+<strong>Flexibility</strong>: Work in memory or on disk<br>
+<strong>Extensibility</strong>: Easy to build new methods</p>
+</section>
+<section id="why-this-matters" class="level3">
+<h3 class="anchored" data-anchor-id="why-this-matters">Why This Matters</h3>
+<p>Traditional packages offer fixed workflows. BigDataStatMeth gives you <strong>building blocks</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build your own method by composing operations</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>custom_method <span class="ot">&lt;-</span> <span class="cf">function</span>(file, data) {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdNormalize_hdf5</span>(file, <span class="st">"data"</span>, data)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdSplit_matrix_hdf5</span>(file, <span class="st">"NORMALIZED/data"</span>, data, <span class="at">nblocks =</span> <span class="dv">10</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    blocks <span class="ot">&lt;-</span> <span class="fu">bdgetDatasetsList_hdf5</span>(file, <span class="st">"NORMALIZED/data"</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdapply_Function_hdf5</span>(file, <span class="st">"NORMALIZED/data"</span>, blocks, <span class="at">func =</span> <span class="st">"QR"</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdBind_hdf5_datasets</span>(file, <span class="st">"results"</span>, blocks, <span class="at">func =</span> <span class="st">"bindRows"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This enables: - Custom preprocessing pipelines - Novel statistical methods - Domain-specific adaptations - Rapid prototyping</p>
+<hr>
+</section>
+</section>
+<section id="whats-next" class="level2">
+<h2 class="anchored" data-anchor-id="whats-next">What’s Next?</h2>
+<section id="ready-to-start" class="level3">
+<h3 class="anchored" data-anchor-id="ready-to-start">✅ Ready to Start?</h3>
+<p><strong>→</strong> <a href="../get-started/installation.html">Install BigDataStatMeth</a><br>
+<strong>→</strong> <a href="../get-started/quickstart.html">Quick Start Tutorial</a><br>
+<strong>→</strong> <a href="../practical-workflows/index.html">Try a Practical Example</a></p>
+</section>
+<section id="want-to-learn-more" class="level3">
+<h3 class="anchored" data-anchor-id="want-to-learn-more">📚 Want to Learn More?</h3>
+<p><strong>→</strong> <a href="../fundamentals/hdf5/what-is-hdf5.html">Understand HDF5</a><br>
+<strong>→</strong> <a href="../fundamentals/big-data-concepts/blockwise-processing.qmd">Learn Block-wise Processing</a><br>
+<strong>→</strong> <a href="../practical-workflows/index.html">See Complete Examples</a></p>
+</section>
+<section id="ready-to-develop" class="level3">
+<h3 class="anchored" data-anchor-id="ready-to-develop">🔧 Ready to Develop?</h3>
+<p><strong>→</strong> <a href="../tutorials/intermediate/index.html">Compose Operations (R)</a><br>
+<strong>→</strong> <a href="../tutorials/advanced/01-using-cpp-api.qmd">Use C++ API</a><br>
+<strong>→</strong> <a href="../practical-workflows/cca-implementation/index.html">See CCA Implementation</a></p>
+<hr>
+</section>
+</section>
+<section id="license-and-citation" class="level2">
+<h2 class="anchored" data-anchor-id="license-and-citation">License and Citation</h2>
+<p>BigDataStatMeth is free and open source.</p>
+<p><strong>License</strong>: [To be specified]</p>
+<p><strong>Citation</strong>: [To be added]</p>
+<hr>
+</section>
+<section id="acknowledgments" class="level2">
+<h2 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h2>
+<p>Developed by the <strong>ISGlobal Bioinformatics Research Group in Epidemiology (BRGE)</strong>.</p>
+<hr>
+<p><strong>Ready to begin?</strong> → <a href="../get-started/installation.html">Install BigDataStatMeth</a></p>
 
 
 </section>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>HDF5 Structure and Organization – BigDataStatMeth</title>
+<title>HDF5 Structure – BigDataStatMeth</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -105,6 +105,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../../assets/custom.css">
@@ -147,6 +150,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../fundamentals/index.html">
  <span class="dropdown-text">Fundamentals</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../design-implementation/index.html">
+ <span class="dropdown-text">Design &amp; Implementation</span></a>
+  </li>  
         <li class="dropdown-header">─── Practice ───</li>
         <li>
     <a class="dropdown-item" href="../../tutorials/index.html">
@@ -186,20 +193,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../developer-guide/contributing/index.qmd">
  <span class="dropdown-text">Contributing</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Resources</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-resources">    
+        <li><hr class="dropdown-divider"></li>
         <li>
     <a class="dropdown-item" href="../../best-practices/index.html">
  <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../../resources/index.html">
- <span class="dropdown-text">Additional Resources</span></a>
   </li>  
     </ul>
   </li>
@@ -221,7 +218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/index.html">HDF5 Data Format</a></li><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/structure.html">HDF5 Structure and Organization</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/index.html">HDF5 Data Format</a></li><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/structure.html">HDF5 Structure</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -255,7 +252,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../fundamentals/hdf5/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">HDF5 Data Format</span></a>
+ <span class="menu-text">HDF5 Fundamentals</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -266,8 +263,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../fundamentals/hdf5/why-hdf5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Why HDF5?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../fundamentals/hdf5/structure.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">HDF5 Structure and Organization</span></a>
+ <span class="menu-text">HDF5 Structure</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -279,13 +282,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../fundamentals/hdf5/performance.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">HDF5 Performance Optimization</span></a>
+ <span class="menu-text">Performance and Optimization</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../fundamentals/hdf5/best-practices.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">HDF5 Best Practices</span></a>
+  <a href="../../fundamentals/hdf5/parallelism.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Parallelism in BigDataStatMeth</span></a>
   </div>
 </li>
       </ul>
@@ -351,38 +354,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#quick-overview" id="toc-quick-overview" class="nav-link active" data-scroll-target="#quick-overview">Quick Overview</a></li>
-  <li><a href="#conceptual-understanding" id="toc-conceptual-understanding" class="nav-link" data-scroll-target="#conceptual-understanding">Conceptual Understanding</a>
-  <ul class="collapse">
-  <li><a href="#the-file-system-analogy" id="toc-the-file-system-analogy" class="nav-link" data-scroll-target="#the-file-system-analogy">The File System Analogy</a></li>
-  <li><a href="#groups-the-containers" id="toc-groups-the-containers" class="nav-link" data-scroll-target="#groups-the-containers">Groups: The Containers</a></li>
-  <li><a href="#datasets-the-data" id="toc-datasets-the-data" class="nav-link" data-scroll-target="#datasets-the-data">Datasets: The Data</a></li>
-  <li><a href="#attributes-the-metadata" id="toc-attributes-the-metadata" class="nav-link" data-scroll-target="#attributes-the-metadata">Attributes: The Metadata</a></li>
-  <li><a href="#paths-and-navigation" id="toc-paths-and-navigation" class="nav-link" data-scroll-target="#paths-and-navigation">Paths and Navigation</a></li>
-  <li><a href="#practical-organization-strategies" id="toc-practical-organization-strategies" class="nav-link" data-scroll-target="#practical-organization-strategies">Practical Organization Strategies</a></li>
-  </ul></li>
-  <li><a href="#technical-details" id="toc-technical-details" class="nav-link" data-scroll-target="#technical-details">Technical Details</a></li>
-  <li><a href="#working-with-structure" id="toc-working-with-structure" class="nav-link" data-scroll-target="#working-with-structure">Working with Structure</a>
-  <ul class="collapse">
-  <li><a href="#creating-groups-and-datasets" id="toc-creating-groups-and-datasets" class="nav-link" data-scroll-target="#creating-groups-and-datasets">Creating Groups and Datasets</a></li>
-  <li><a href="#inspecting-structure" id="toc-inspecting-structure" class="nav-link" data-scroll-target="#inspecting-structure">Inspecting Structure</a></li>
-  <li><a href="#working-with-attributes" id="toc-working-with-attributes" class="nav-link" data-scroll-target="#working-with-attributes">Working with Attributes</a></li>
-  <li><a href="#organizing-a-complete-analysis" id="toc-organizing-a-complete-analysis" class="nav-link" data-scroll-target="#organizing-a-complete-analysis">Organizing a Complete Analysis</a></li>
-  <li><a href="#best-practices-for-structure" id="toc-best-practices-for-structure" class="nav-link" data-scroll-target="#best-practices-for-structure">Best Practices for Structure</a></li>
-  <li><a href="#naming-conventions" id="toc-naming-conventions" class="nav-link" data-scroll-target="#naming-conventions">Naming Conventions</a></li>
-  </ul></li>
+  <li><a href="#understanding-the-hdf5-structure-in-bigdatastatmeth" id="toc-understanding-the-hdf5-structure-in-bigdatastatmeth" class="nav-link active" data-scroll-target="#understanding-the-hdf5-structure-in-bigdatastatmeth">Understanding the HDF5 Structure in BigDataStatMeth</a></li>
+  <li><a href="#components-of-an-hdf5-file" id="toc-components-of-an-hdf5-file" class="nav-link" data-scroll-target="#components-of-an-hdf5-file">Components of an HDF5 File</a></li>
+  <li><a href="#example-in-r" id="toc-example-in-r" class="nav-link" data-scroll-target="#example-in-r">Example in R</a></li>
+  <li><a href="#equivalent-c-example-not-executed" id="toc-equivalent-c-example-not-executed" class="nav-link" data-scroll-target="#equivalent-c-example-not-executed">Equivalent C++ Example (not executed)</a></li>
+  <li><a href="#proposed-structure-for-bigdatastatmeth-analyses" id="toc-proposed-structure-for-bigdatastatmeth-analyses" class="nav-link" data-scroll-target="#proposed-structure-for-bigdatastatmeth-analyses">Proposed structure for BigDataStatMeth analyses</a></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
-  <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional Resources</a></li>
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/index.html">HDF5 Data Format</a></li><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/structure.html">HDF5 Structure and Organization</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/index.html">HDF5 Data Format</a></li><li class="breadcrumb-item"><a href="../../fundamentals/hdf5/structure.html">HDF5 Structure</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">HDF5 Structure and Organization</h1>
-<p class="subtitle lead">Groups, Datasets, and Hierarchies</p>
+<h1 class="title">HDF5 Structure</h1>
 </div>
 
 
@@ -399,648 +386,296 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div class="content-guide">
-<p><strong>Choose your path:</strong></p>
-<ul>
-<li>🎯 <a href="#quick-overview">Quick Overview</a> - 2 min read</li>
-<li>💡 <a href="#conceptual-understanding">Conceptual Understanding</a> - 12 min read</li>
-<li>🔢 <a href="#technical-details">Technical Details</a> - 15 min read (advanced)</li>
-<li>💻 <a href="#working-with-structure">Working with Structure</a> - 10 min read</li>
-</ul>
-</div>
-<hr>
-<section id="quick-overview" class="level2">
-<h2 class="anchored" data-anchor-id="quick-overview">Quick Overview</h2>
-<div class="callout callout-style-default callout-note no-icon callout-titled">
+<section id="understanding-the-hdf5-structure-in-bigdatastatmeth" class="level2">
+<h2 class="anchored" data-anchor-id="understanding-the-hdf5-structure-in-bigdatastatmeth">Understanding the HDF5 Structure in BigDataStatMeth</h2>
+<p>An HDF5 file behaves like a <strong>miniature file system</strong> inside a single file, where data is organized into <strong>groups</strong>, <strong>datasets</strong>, and <strong>attributes</strong>. In <code>BigDataStatMeth</code>, the user decides the hierarchy: the package does <strong>not</strong> impose a fixed structure, but automatically creates any missing file, group, or dataset.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
+<i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>📋 TL;DR - HDF5 Structure Basics
+Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>HDF5 files contain two main object types:</strong></p>
-<ol type="1">
-<li><strong>Groups</strong>: Containers (like folders) that organize content</li>
-<li><strong>Datasets</strong>: Arrays of data (matrices, vectors, scalars)</li>
-</ol>
-<p><strong>Key concepts:</strong> - <strong>Hierarchical organization</strong>: Groups can contain groups and datasets - <strong>Paths</strong>: Objects identified by Unix-like paths (<code>/group/dataset</code>) - <strong>Attributes</strong>: Metadata attached to any object - <strong>Root group</strong>: Every file has a root group (<code>/</code>)</p>
-<p><strong>Think of it as:</strong> - Groups = Folders - Datasets = Files - Attributes = File properties - File = Drive with complete file system</p>
+<p><strong>Key concept</strong> — You define the structure that best fits your project.<br>
+<code>BigDataStatMeth</code> takes care of creating the file, group, and dataset if they do not exist.</p>
+</div>
+</div>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
+  A["demo.h5 (HDF5 file)"]
+  A --&gt; B["/myData (group)"]
+  B --&gt; C["X (dataset)"]
+  C --&gt; D["matrix values"]
+
+  style A fill:#cce5ff,stroke:#0066cc,stroke-width:1px
+  style B fill:#f5f5dc,stroke:#999999,stroke-width:1px
+  style C fill:#d4edda,stroke:#28a745,stroke-width:1px
+  style D fill:#ffffff,stroke:#cccccc,stroke-width:1px
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>The diagram above illustrates a simple hierarchy automatically created by <code>bdCreate_hdf5_matrix()</code>: a file (<code>demo.h5</code>) containing one group (<code>/myData</code>) and one dataset (<code>X</code>). Each level of the hierarchy is created automatically if missing.</p>
+<p>To visualize how an HDF5 structure can evolve as more groups and datasets are added:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
+  A["demo.h5"]
+  A --&gt; B["/myData"]
+  A --&gt; C["/results"]
+  B --&gt; D["X"]
+  B --&gt; E["Y"]
+  C --&gt; F["SVD"]
+  C --&gt; G["CCA"]
+
+  style A fill:#cce5ff,stroke:#0066cc,stroke-width:1px
+  style B fill:#f5f5dc,stroke:#999999,stroke-width:1px
+  style C fill:#f5f5dc,stroke:#999999,stroke-width:1px
+  style D fill:#d4edda,stroke:#28a745,stroke-width:1px
+  style E fill:#d4edda,stroke:#28a745,stroke-width:1px
+  style F fill:#d4edda,stroke:#28a745,stroke-width:1px
+  style G fill:#d4edda,stroke:#28a745,stroke-width:1px
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>This extended view shows how the hierarchy naturally grows as new data and results are added over time.</p>
+<hr>
+</section>
+<section id="components-of-an-hdf5-file" class="level2">
+<h2 class="anchored" data-anchor-id="components-of-an-hdf5-file">Components of an HDF5 File</h2>
+<p>An HDF5 file is composed of three fundamental building blocks:</p>
+<div class="grid">
+<div class="g-col-4">
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Groups
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Act like folders in a filesystem<br>
+</li>
+<li>Contain datasets or other groups<br>
+</li>
+<li>Help organize data hierarchically</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="g-col-4">
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Datasets
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Multidimensional arrays (numeric, text, etc.)<br>
+</li>
+<li>Store matrix-like data (e.g., <code>X</code>, <code>Y</code>, <code>Z</code>)<br>
+</li>
+<li>Accessed directly or by blocks in <code>BigDataStatMeth</code></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="g-col-4">
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Attributes
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Metadata describing datasets or groups<br>
+</li>
+<li>Small key–value pairs (units, sample names, etc.)<br>
+</li>
+<li>Improve reproducibility and self-description</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <hr>
 </section>
-<section id="conceptual-understanding" class="level2">
-<h2 class="anchored" data-anchor-id="conceptual-understanding">Conceptual Understanding</h2>
-<section id="the-file-system-analogy" class="level3">
-<h3 class="anchored" data-anchor-id="the-file-system-analogy">The File System Analogy</h3>
-<p>HDF5 works exactly like a file system on your computer:</p>
-<p><strong>Your Computer:</strong></p>
-<pre><code>/home/user/
-├── documents/
-│   ├── paper.pdf
-│   └── notes.txt
-├── data/
-│   ├── experiment1.csv
-│   └── experiment2.csv
-└── results/
-    └── plots/
-        └── figure1.png</code></pre>
-<p><strong>HDF5 File:</strong></p>
-<pre><code>analysis.hdf5 (the "drive")
-├── /raw_data/          (group = folder)
-│   ├── genotypes       (dataset = file)
-│   └── phenotypes      (dataset = file)
-├── /processed/         (group = folder)
-│   ├── filtered        (dataset = file)
-│   └── normalized      (dataset = file)
-└── /results/           (group = folder)
-    └── /pca/           (nested group = subfolder)
-        └── components  (dataset = file)</code></pre>
+<section id="example-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="example-in-r">Example in R</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">12</span>), <span class="at">nrow =</span> <span class="dv">3</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"demo.h5"</span>, X,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">group =</span> <span class="st">"myData"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">dataset =</span> <span class="st">"X"</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5ls</span>(<span class="st">"demo.h5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    group   name       otype dclass   dim
+0       / myData   H5I_GROUP             
+1 /myData      X H5I_DATASET  FLOAT 3 x 4</code></pre>
+</div>
+</div>
+<p>This command creates a new HDF5 file named <code>demo.h5</code> (if it does not already exist) and stores a dataset <code>X</code> within a group called <code>myData</code>.<br>
+The structure can be inspected with <code>rhdf5::h5ls()</code>.</p>
+<hr>
 </section>
-<section id="groups-the-containers" class="level3">
-<h3 class="anchored" data-anchor-id="groups-the-containers">Groups: The Containers</h3>
-<p>Groups are <strong>organizational containers</strong> that help you structure your data logically.</p>
-<p><strong>Example: Genomic Study</strong></p>
-<pre><code>genomic_study.hdf5
-├── /raw/
-│   ├── chr1_snps               [10000 × 5000]
-│   ├── chr2_snps               [10000 × 4800]
-│   └── clinical_data           [10000 × 50]
-├── /qc/
-│   ├── filtered_chr1           [9500 × 4500]
-│   ├── filtered_chr2           [9500 × 4200]
-│   └── qc_report              (attributes: stats)
-└── /analysis/
-    ├── /pca/
-    │   ├── components          [9500 × 20]
-    │   ├── loadings            [8700 × 20]
-    │   └── variance_explained  [20]
-    └── /gwas/
-        └── association_pvals   [8700]</code></pre>
-<p><strong>Why use groups?</strong></p>
-<ol type="1">
-<li><strong>Organization</strong>: Keep related data together</li>
-<li><strong>Versioning</strong>: Multiple versions in same file</li>
-<li><strong>Workflows</strong>: Track analysis stages</li>
-<li><strong>Collaboration</strong>: Different analyses in separate groups</li>
-</ol>
+<section id="equivalent-c-example-not-executed" class="level2">
+<h2 class="anchored" data-anchor-id="equivalent-c-example-not-executed">Equivalent C++ Example (not executed)</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"BigDataStatMeth.h"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  BigDataStatMeth<span class="op">::</span>hdf5File file<span class="op">(</span><span class="st">"demo.h5"</span><span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  file<span class="op">.</span>createFile<span class="op">();</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  BigDataStatMeth<span class="op">::</span>hdf5Dataset dataset<span class="op">(&amp;</span>file<span class="op">,</span> <span class="st">"myData"</span><span class="op">,</span> <span class="st">"X"</span><span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  dataset<span class="op">.</span>createDataset<span class="op">(</span><span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="st">"numeric"</span><span class="op">);</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  Rcpp<span class="op">::</span>NumericMatrix X <span class="op">=</span> Rcpp<span class="op">::</span>rnorm<span class="op">(</span><span class="dv">12</span><span class="op">);</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  dataset<span class="op">.</span>writeDataset<span class="op">(</span>X<span class="op">);</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Note</strong> — The R function <code>bdCreate_hdf5_matrix()</code> performs these same C++ steps internally: it creates the file, the group, and the dataset, then writes the data automatically.</p>
+</div>
+</div>
+<hr>
 </section>
-<section id="datasets-the-data" class="level3">
-<h3 class="anchored" data-anchor-id="datasets-the-data">Datasets: The Data</h3>
-<p>Datasets are <strong>multidimensional arrays</strong> that store your actual data.</p>
-<p><strong>Key characteristics:</strong></p>
-<ul>
-<li><strong>Homogeneous</strong>: All elements same data type</li>
-<li><strong>Dimensionality</strong>: 0D (scalar) to nD arrays</li>
-<li><strong>Size</strong>: Can be enormous (petabytes)</li>
-<li><strong>Chunked</strong>: Stored in optimal blocks for access</li>
-</ul>
-<p><strong>Common dataset types in BigDataStatMeth:</strong></p>
+<section id="proposed-structure-for-bigdatastatmeth-analyses" class="level2">
+<h2 class="anchored" data-anchor-id="proposed-structure-for-bigdatastatmeth-analyses">Proposed structure for BigDataStatMeth analyses</h2>
+<p>Although the user can freely define their own hierarchy, the following layout is a <strong>recommended structure</strong> that helps maintain a clear and reproducible organization across analyses.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
+  A["project.h5"]
+  A --&gt; B["/data"]
+  A --&gt; C["/meta"]
+  A --&gt; D["/results"]
+  B --&gt; E["X_raw"]
+  B --&gt; F["X_scaled"]
+  D --&gt; G["SVD_components"]
+  D --&gt; H["CCA_results"]
+  C --&gt; I["sample_info"]
+  C --&gt; J["variables"]
+
+  style A fill:#cce5ff,stroke:#0066cc,stroke-width:1px
+  style B fill:#f5f5dc,stroke:#999999,stroke-width:1px
+  style C fill:#f5f5dc,stroke:#999999,stroke-width:1px
+  style D fill:#f5f5dc,stroke:#999999,stroke-width:1px
+  style E fill:#d4edda,stroke:#28a745,stroke-width:1px
+  style F fill:#d4edda,stroke:#28a745,stroke-width:1px
+  style G fill:#d4edda,stroke:#28a745,stroke-width:1px
+  style H fill:#d4edda,stroke:#28a745,stroke-width:1px
+  style I fill:#d4edda,stroke:#28a745,stroke-width:1px
+  style J fill:#d4edda,stroke:#28a745,stroke-width:1px
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>Type</th>
-<th>Dimensions</th>
-<th>Example</th>
+<th style="text-align: left;">Group</th>
+<th style="text-align: left;">Example datasets</th>
+<th style="text-align: left;">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Scalar</td>
-<td>0D</td>
-<td><code>k = 5</code></td>
+<td style="text-align: left;"><code>/data</code></td>
+<td style="text-align: left;"><code>X_raw</code>, <code>X_scaled</code></td>
+<td style="text-align: left;">Input matrices or intermediate blocks</td>
 </tr>
 <tr class="even">
-<td>Vector</td>
-<td>1D</td>
-<td><code>[1, 2, 3, 4, 5]</code></td>
+<td style="text-align: left;"><code>/meta</code></td>
+<td style="text-align: left;"><code>sample_info</code>, <code>variables</code></td>
+<td style="text-align: left;">Metadata and annotations</td>
 </tr>
 <tr class="odd">
-<td>Matrix</td>
-<td>2D</td>
-<td><code>samples × features</code></td>
-</tr>
-<tr class="even">
-<td>3D Array</td>
-<td>3D</td>
-<td><code>time × samples × features</code></td>
+<td style="text-align: left;"><code>/results</code></td>
+<td style="text-align: left;"><code>SVD</code>, <code>CCA</code></td>
+<td style="text-align: left;">Outputs and computed results</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Example: Storing a matrix</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R matrix</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>genotypes <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>), <span class="at">nrow=</span><span class="dv">2</span>, <span class="at">ncol=</span><span class="dv">3</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#      [,1] [,2] [,3]</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># [1,]    0    2    1</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># [2,]    1    0    2</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># As HDF5 dataset</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="sc">/</span>data<span class="sc">/</span>genotypes  [<span class="dv">2</span> × <span class="dv">3</span>]</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  Datatype<span class="sc">:</span> H5T_NATIVE_DOUBLE</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  Dimensions<span class="sc">:</span> (<span class="dv">2</span>, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="attributes-the-metadata" class="level3">
-<h3 class="anchored" data-anchor-id="attributes-the-metadata">Attributes: The Metadata</h3>
-<p>Attributes are <strong>small pieces of metadata</strong> attached to groups or datasets.</p>
-<p><strong>Think of attributes as:</strong> - <strong>File properties</strong> (creation date, author) - <strong>Dataset descriptions</strong> (units, meaning) - <strong>Processing notes</strong> (parameters used)</p>
-<p><strong>Example:</strong></p>
-<pre><code>/processed/normalized  [1000 × 500]
-  Attributes:
-    - method: "z-score"
-    - date: "2024-01-15"
-    - software: "BigDataStatMeth v1.2"
-    - mean_before: 0.5
-    - mean_after: 0.0
-    - description: "Z-score normalized expression data"</code></pre>
-</section>
-<section id="paths-and-navigation" class="level3">
-<h3 class="anchored" data-anchor-id="paths-and-navigation">Paths and Navigation</h3>
-<p>HDF5 uses <strong>Unix-style paths</strong> to identify objects:</p>
-<p><strong>Absolute paths</strong> (from root):</p>
-<pre><code>/group/subgroup/dataset
-/data/raw/experiment1</code></pre>
-<p><strong>Relative paths</strong> (from current location):</p>
-<pre><code>subgroup/dataset
-../other_group/dataset</code></pre>
-<p><strong>Special paths:</strong></p>
-<pre><code>/           Root group
-.           Current group
-..          Parent group</code></pre>
-</section>
-<section id="practical-organization-strategies" class="level3">
-<h3 class="anchored" data-anchor-id="practical-organization-strategies">Practical Organization Strategies</h3>
-<section id="strategy-1-by-analysis-stage" class="level4">
-<h4 class="anchored" data-anchor-id="strategy-1-by-analysis-stage">Strategy 1: By Analysis Stage</h4>
-<pre><code>study.hdf5
-├── /01_raw/
-├── /02_qc/
-├── /03_normalized/
-├── /04_analysis/
-└── /05_results/</code></pre>
-<p><strong>Pros:</strong> - Clear workflow progression - Easy to track processing - Natural for sequential analyses</p>
-</section>
-<section id="strategy-2-by-data-type" class="level4">
-<h4 class="anchored" data-anchor-id="strategy-2-by-data-type">Strategy 2: By Data Type</h4>
-<pre><code>study.hdf5
-├── /genotypes/
-├── /phenotypes/
-├── /covariates/
-└── /results/</code></pre>
-<p><strong>Pros:</strong> - Logical grouping by content - Easy to find specific data types - Good for heterogeneous data</p>
-</section>
-<section id="strategy-3-by-sample-or-feature" class="level4">
-<h4 class="anchored" data-anchor-id="strategy-3-by-sample-or-feature">Strategy 3: By Sample or Feature</h4>
-<pre><code>study.hdf5
-├── /by_sample/
-│   ├── sample_001/
-│   ├── sample_002/
-│   └── ...
-└── /by_feature/
-    ├── gene_expression/
-    ├── methylation/
-    └── ...</code></pre>
-<p><strong>Pros:</strong> - Flexible access patterns - Scalable for large studies - Supports different views of data</p>
-</section>
-<section id="strategy-4-hybrid-approach-recommended" class="level4">
-<h4 class="anchored" data-anchor-id="strategy-4-hybrid-approach-recommended">Strategy 4: Hybrid Approach (Recommended)</h4>
-<pre><code>project.hdf5
-├── /data/
-│   ├── /raw/
-│   │   ├── genotypes
-│   │   └── phenotypes
-│   └── /processed/
-│       ├── qc_filtered
-│       └── normalized
-├── /analysis/
-│   ├── /pca/
-│   ├── /regression/
-│   └── /clustering/
-└── /results/
-    ├── /plots/
-    └── /tables/</code></pre>
-<p><strong>Pros:</strong> - Combines best of all strategies - Separates data from analysis - Clear organization - Extensible</p>
-<hr>
-</section>
-</section>
-</section>
-<section id="technical-details" class="level2">
-<h2 class="anchored" data-anchor-id="technical-details">Technical Details</h2>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>🔢 Technical Specifications (click to expand)
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<section id="group-structure" class="level3">
-<h3 class="anchored" data-anchor-id="group-structure">Group Structure</h3>
-<p>Groups are implemented as <strong>B-trees</strong> for efficient lookup:</p>
-<p><strong>Group properties:</strong> - <strong>Creation order</strong>: Tracked if requested - <strong>Link storage</strong>: Dense or compact - <strong>B-tree order</strong>: Typically 16 - <strong>Overhead</strong>: ~1 KB per group</p>
-<p><strong>Group types:</strong></p>
-<ol type="1">
-<li><strong>Compact</strong>: For small groups (&lt; 8 links)</li>
-<li><strong>Dense</strong>: For medium groups</li>
-<li><strong>B-tree</strong>: For large groups (&gt; 1000 links)</li>
-</ol>
-</section>
-<section id="dataset-storage" class="level3">
-<h3 class="anchored" data-anchor-id="dataset-storage">Dataset Storage</h3>
-<p>Datasets can use three layouts:</p>
-<section id="contiguous-layout" class="level4">
-<h4 class="anchored" data-anchor-id="contiguous-layout">1. Contiguous Layout</h4>
-<pre><code>[Header | Data in one continuous block]</code></pre>
-<ul>
-<li>Simple, fast for sequential access</li>
-<li>Cannot be extended</li>
-<li>No compression</li>
-<li>Best for: Small, static datasets</li>
-</ul>
-</section>
-<section id="chunked-layout" class="level4">
-<h4 class="anchored" data-anchor-id="chunked-layout">2. Chunked Layout</h4>
-<pre><code>[Header | Chunk1 | Chunk2 | ... | ChunkN]</code></pre>
-<ul>
-<li>Enables compression</li>
-<li>Extensible</li>
-<li>Partial I/O</li>
-<li>Best for: Large datasets</li>
-</ul>
-</section>
-<section id="compact-layout" class="level4">
-<h4 class="anchored" data-anchor-id="compact-layout">3. Compact Layout</h4>
-<pre><code>[Header with embedded data]</code></pre>
-<ul>
-<li>For tiny datasets (&lt; 64 KB)</li>
-<li>Minimal overhead</li>
-<li>Best for: Metadata-like data</li>
-</ul>
-</section>
-</section>
-<section id="datatype-system" class="level3">
-<h3 class="anchored" data-anchor-id="datatype-system">Datatype System</h3>
-<p>HDF5 has a rich type system:</p>
-<p><strong>Atomic types:</strong></p>
-<pre><code>H5T_NATIVE_INT       Integer (32-bit)
-H5T_NATIVE_LONG      Long integer (64-bit)
-H5T_NATIVE_FLOAT     Float (32-bit)
-H5T_NATIVE_DOUBLE    Double (64-bit)
-H5T_STRING           String (variable/fixed)</code></pre>
-<p><strong>Compound types:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span>    sample_id<span class="op">;</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> expression<span class="op">;</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span>   tissue<span class="op">[</span><span class="dv">20</span><span class="op">];</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> SampleData<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Array types:</strong></p>
-<pre><code>Array of [3 × 3] matrices</code></pre>
-<p><strong>Enumeration types:</strong></p>
-<pre><code>enum Status {CONTROL=0, CASE=1, UNKNOWN=2}</code></pre>
-</section>
-<section id="link-types" class="level3">
-<h3 class="anchored" data-anchor-id="link-types">Link Types</h3>
-<p>HDF5 supports three link types:</p>
-<section id="hard-links" class="level4">
-<h4 class="anchored" data-anchor-id="hard-links">1. Hard Links</h4>
-<pre><code>/data/original  -&gt; Dataset
-/data/copy      -&gt; Same dataset (different path)</code></pre>
-<ul>
-<li>Multiple paths to same object</li>
-<li>Object deleted when all links removed</li>
-<li>Like Unix hard links</li>
-</ul>
-</section>
-<section id="soft-links-symbolic-links" class="level4">
-<h4 class="anchored" data-anchor-id="soft-links-symbolic-links">2. Soft Links (Symbolic Links)</h4>
-<pre><code>/data/link -&gt; "/other/dataset"</code></pre>
-<ul>
-<li>Path stored as string</li>
-<li>Can be broken (dangling)</li>
-<li>Like Unix symlinks</li>
-</ul>
-</section>
-<section id="external-links" class="level4">
-<h4 class="anchored" data-anchor-id="external-links">3. External Links</h4>
-<pre><code>/local/link -&gt; "other_file.hdf5:/path/to/dataset"</code></pre>
-<ul>
-<li>Links to object in different file</li>
-<li>Enables distributed datasets</li>
-<li>Files opened on-demand</li>
-</ul>
-</section>
-</section>
-<section id="attribute-limitations" class="level3">
-<h3 class="anchored" data-anchor-id="attribute-limitations">Attribute Limitations</h3>
-<p>Attributes have specific constraints:</p>
-<ul>
-<li><strong>Size limit</strong>: Typically 64 KB (configurable)</li>
-<li><strong>No chunking</strong>: Always stored contiguously</li>
-<li><strong>No compression</strong>: Limited by size</li>
-<li><strong>Use case</strong>: Small metadata only</li>
-</ul>
-<p><strong>Guidelines:</strong> - Small values: Use attributes - Large arrays: Use separate datasets - Descriptive info: Use attributes - Analysis results: Use datasets</p>
-</section>
-<section id="object-references" class="level3">
-<h3 class="anchored" data-anchor-id="object-references">Object References</h3>
-<p>HDF5 supports references (pointers) to objects:</p>
-<p><strong>Region references:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reference to specific region of dataset</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ref <span class="ot">&lt;-</span> <span class="fu">H5Rcreate</span>(file, <span class="st">"/data/matrix"</span>, </span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                 H5S_SELECT_HYPERSLABS,</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">start=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">count=</span><span class="fu">c</span>(<span class="dv">100</span>,<span class="dv">100</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Object references:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reference to entire dataset</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>ref <span class="ot">&lt;-</span> <span class="fu">H5Rcreate</span>(file, <span class="st">"/data/matrix"</span>, H5S_SELECT_ALL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Use cases:</strong> - Creating indices - Linking related datasets - Building complex structures</p>
-</section>
-</div>
-</div>
-</div>
-<hr>
-</section>
-<section id="working-with-structure" class="level2">
-<h2 class="anchored" data-anchor-id="working-with-structure">Working with Structure</h2>
-<section id="creating-groups-and-datasets" class="level3">
-<h3 class="anchored" data-anchor-id="creating-groups-and-datasets">Creating Groups and Datasets</h3>
-<section id="using-rhdf5" class="level4">
-<h4 class="anchored" data-anchor-id="using-rhdf5">Using rhdf5</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rhdf5)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create file</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">h5createFile</span>(<span class="st">"analysis.hdf5"</span>)</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create group hierarchy</span></span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">h5createGroup</span>(<span class="st">"analysis.hdf5"</span>, <span class="st">"data"</span>)</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="fu">h5createGroup</span>(<span class="st">"analysis.hdf5"</span>, <span class="st">"data/raw"</span>)</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">h5createGroup</span>(<span class="st">"analysis.hdf5"</span>, <span class="st">"data/processed"</span>)</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Create dataset in group</span></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="fu">h5createDataset</span>(<span class="st">"analysis.hdf5"</span>, </span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>                <span class="st">"data/raw/genotypes"</span>,</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>                <span class="at">dims =</span> <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">5000</span>),</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>                <span class="at">storage.mode =</span> <span class="st">"double"</span>,</span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>                <span class="at">chunk =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>),</span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>                <span class="at">level =</span> <span class="dv">6</span>)</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Write data</span></span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">5000000</span>), <span class="dv">1000</span>, <span class="dv">5000</span>)</span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="fu">h5write</span>(data, <span class="st">"analysis.hdf5"</span>, <span class="st">"data/raw/genotypes"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="using-bigdatastatmeth" class="level4">
-<h4 class="anchored" data-anchor-id="using-bigdatastatmeth">Using BigDataStatMeth</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create entire structure in one call</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">5000000</span>), <span class="dv">1000</span>, <span class="dv">5000</span>)</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"analysis.hdf5"</span>,</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> data,</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data/raw"</span>,      <span class="co"># Creates all parent groups</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"genotypes"</span>,</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Automatically creates:</span></span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co"># /data/</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="co"># /data/raw/</span></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="co"># /data/raw/genotypes</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-<section id="inspecting-structure" class="level3">
-<h3 class="anchored" data-anchor-id="inspecting-structure">Inspecting Structure</h3>
-<section id="list-contents" class="level4">
-<h4 class="anchored" data-anchor-id="list-contents">List contents</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rhdf5)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Full file structure</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(<span class="st">"analysis.hdf5"</span>)</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co">#        group          name       otype  dclass       dim</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 0          /          data   H5I_GROUP                  </span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 1      /data           raw   H5I_GROUP                  </span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2  /data/raw    genotypes H5I_DATASET FLOAT   1000 x 5000</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co"># With details</span></span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(<span class="st">"analysis.hdf5"</span>, <span class="at">all =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="navigate-structure" class="level4">
-<h4 class="anchored" data-anchor-id="navigate-structure">Navigate structure</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Open file</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>h5file <span class="ot">&lt;-</span> <span class="fu">H5Fopen</span>(<span class="st">"analysis.hdf5"</span>)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Access group</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>data_group <span class="ot">&lt;-</span> h5file<span class="sc">$</span>data</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>raw_group <span class="ot">&lt;-</span> h5file<span class="sc">$</span>data<span class="sc">$</span>raw</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Access dataset</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>genotypes <span class="ot">&lt;-</span> h5file<span class="sc">$</span>data<span class="sc">$</span>raw<span class="sc">$</span>genotypes</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Read data</span></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>geno_data <span class="ot">&lt;-</span> genotypes[]  <span class="co"># Read all</span></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>subset <span class="ot">&lt;-</span> genotypes[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>]  <span class="co"># Read subset</span></span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Close</span></span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="fu">h5closeAll</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-<section id="working-with-attributes" class="level3">
-<h3 class="anchored" data-anchor-id="working-with-attributes">Working with Attributes</h3>
-<section id="add-attributes" class="level4">
-<h4 class="anchored" data-anchor-id="add-attributes">Add attributes</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using rhdf5</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">h5writeAttribute</span>(<span class="st">"Genotype data"</span>, </span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"analysis.hdf5"</span>, </span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"data/raw/genotypes"</span>,</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">name =</span> <span class="st">"description"</span>)</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">h5writeAttribute</span>(<span class="dv">1000</span>, </span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"analysis.hdf5"</span>, </span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"data/raw/genotypes"</span>,</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">name =</span> <span class="st">"n_samples"</span>)</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="fu">h5writeAttribute</span>(<span class="dv">5000</span>, </span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"analysis.hdf5"</span>, </span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"data/raw/genotypes"</span>,</span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>                 <span class="at">name =</span> <span class="st">"n_snps"</span>)</span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Add multiple attributes at once</span></span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>attrs <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">description =</span> <span class="st">"Quality-controlled SNP data"</span>,</span>
-<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">maf_threshold =</span> <span class="fl">0.05</span>,</span>
-<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">missingness_threshold =</span> <span class="fl">0.1</span>,</span>
-<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_processed =</span> <span class="fu">Sys.Date</span>()</span>
-<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (name <span class="cf">in</span> <span class="fu">names</span>(attrs)) {</span>
-<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">h5writeAttribute</span>(attrs[[name]], </span>
-<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"analysis.hdf5"</span>,</span>
-<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"data/processed/qc_filtered"</span>,</span>
-<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>                   <span class="at">name =</span> name)</span>
-<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="read-attributes" class="level4">
-<h4 class="anchored" data-anchor-id="read-attributes">Read attributes</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read single attribute</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>desc <span class="ot">&lt;-</span> <span class="fu">h5readAttributes</span>(<span class="st">"analysis.hdf5"</span>, </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"data/raw/genotypes"</span>)<span class="sc">$</span>description</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Read all attributes</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>all_attrs <span class="ot">&lt;-</span> <span class="fu">h5readAttributes</span>(<span class="st">"analysis.hdf5"</span>,</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>                              <span class="st">"data/raw/genotypes"</span>)</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Print attributes</span></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(all_attrs)</span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co"># $description</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] "Genotype data"</span></span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="co"># $n_samples</span></span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] 1000</span></span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="co"># $n_snps</span></span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="co"># [1] 5000</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-<section id="organizing-a-complete-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="organizing-a-complete-analysis">Organizing a Complete Analysis</h3>
-<section id="example-end-to-end-workflow-structure" class="level4">
-<h4 class="anchored" data-anchor-id="example-end-to-end-workflow-structure">Example: End-to-end workflow structure</h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Create base structure</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>filename <span class="ot">&lt;-</span> <span class="st">"genomic_analysis.hdf5"</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Add raw data</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> raw_genotypes,</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data/raw"</span>,</span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"genotypes"</span>,</span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
-<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> phenotypes,</span>
-<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data/raw"</span>,</span>
-<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"phenotypes"</span>,</span>
-<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">FALSE</span></span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. QC and save to processed</span></span>
-<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>filtered <span class="ot">&lt;-</span> <span class="fu">bdRemoveMAF_hdf5</span>(</span>
-<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
-<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data/raw"</span>,</span>
-<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"genotypes"</span>,</span>
-<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">outgroup =</span> <span class="st">"data/processed"</span>,</span>
-<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">outdataset =</span> <span class="st">"qc_filtered"</span>,</span>
-<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">maf =</span> <span class="fl">0.05</span></span>
-<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Perform PCA</span></span>
-<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">bdPCA_hdf5</span>(</span>
-<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> filename,</span>
-<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data/processed"</span>,</span>
-<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"qc_filtered"</span>,</span>
-<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">k =</span> <span class="dv">20</span>,</span>
-<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">bcenter =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">threads =</span> <span class="dv">4</span></span>
-<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Results automatically organized in:</span></span>
-<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a><span class="co"># /PCA/qc_filtered/components</span></span>
-<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a><span class="co"># /PCA/qc_filtered/eigenvalues</span></span>
-<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a><span class="co"># /PCA/qc_filtered/variance</span></span>
-<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Inspect final structure</span></span>
-<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(filename)</span>
-<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Final structure:</span></span>
-<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a><span class="co"># /data/raw/genotypes</span></span>
-<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a><span class="co"># /data/raw/phenotypes</span></span>
-<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a><span class="co"># /data/processed/qc_filtered</span></span>
-<span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a><span class="co"># /PCA/qc_filtered/components</span></span>
-<span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a><span class="co"># /PCA/qc_filtered/eigenvalues</span></span>
-<span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a><span class="co"># /PCA/qc_filtered/variance</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-<section id="best-practices-for-structure" class="level3">
-<h3 class="anchored" data-anchor-id="best-practices-for-structure">Best Practices for Structure</h3>
-<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>⚠️ Organization Guidelines
+Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Do:</strong> - ✅ Use descriptive group and dataset names - ✅ Create logical hierarchies (3-4 levels max) - ✅ Separate raw data from processed data - ✅ Document structure with attributes - ✅ Use consistent naming conventions - ✅ Plan structure before creating large files</p>
-<p><strong>Don’t:</strong> - ❌ Create overly deep hierarchies (&gt; 5 levels) - ❌ Use special characters in names (stick to <code>a-z</code>, <code>0-9</code>, <code>_</code>, <code>-</code>) - ❌ Mix different data types in same group - ❌ Store large arrays as attributes - ❌ Create thousands of groups at same level - ❌ Use spaces in names (causes issues with some tools)</p>
+<p><strong>Good practice</strong> — Organize files using clear and consistent group names (e.g., <code>/data</code>, <code>/meta</code>, <code>/results</code>) to make your analyses easier to navigate and reproduce.</p>
 </div>
 </div>
-</section>
-<section id="naming-conventions" class="level3">
-<h3 class="anchored" data-anchor-id="naming-conventions">Naming Conventions</h3>
-<p><strong>Recommended conventions:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Groups: lowercase, underscores</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="sc">/</span>data<span class="sc">/</span>raw_data<span class="sc">/</span>experiment_01<span class="sc">/</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Datasets: lowercase, descriptive</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="er">/</span>data<span class="sc">/</span>raw<span class="sc">/</span>genotype_matrix</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="sc">/</span>data<span class="sc">/</span>processed<span class="sc">/</span>normalized_expression</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Attributes: camelCase or snake_case</span></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>description</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>processingDate</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>n_samples</span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Versions: suffix with date or version</span></span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="sc">/</span>analysis<span class="sc">/</span>pca_20240115<span class="sc">/</span></span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="er">/</span>analysis<span class="sc">/</span>pca_v2<span class="sc">/</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <hr>
-</section>
 </section>
 <section id="summary" class="level2">
 <h2 class="anchored" data-anchor-id="summary">Summary</h2>
-<p>HDF5’s hierarchical structure provides:</p>
 <ul>
-<li><strong>Flexibility</strong>: Organize data any way you need</li>
-<li><strong>Scalability</strong>: Handle simple to complex structures</li>
-<li><strong>Clarity</strong>: Self-documenting with groups and attributes</li>
-<li><strong>Efficiency</strong>: Optimized storage and access patterns</li>
-</ul>
-<p><strong>Key takeaways:</strong></p>
-<ol type="1">
-<li><strong>Groups</strong> organize and contain other objects</li>
-<li><strong>Datasets</strong> store multidimensional arrays</li>
-<li><strong>Attributes</strong> add metadata to any object</li>
-<li><strong>Paths</strong> identify objects uniquely</li>
-<li><strong>Planning</strong> structure upfront saves time later</li>
-</ol>
-<p><strong>Next steps:</strong></p>
-<ul>
-<li>Learn <a href="../../fundamentals/hdf5/operations.html">basic HDF5 operations</a></li>
-<li>Optimize performance with <a href="../../fundamentals/hdf5/performance.html">chunking strategies</a></li>
-<li>Follow <a href="../../fundamentals/hdf5/best-practices.html">best practices</a> for production use</li>
+<li>HDF5 organizes information into groups, datasets, and attributes.<br>
+</li>
+<li>In <code>BigDataStatMeth</code>, users freely define their hierarchy.<br>
+</li>
+<li>The package automatically creates missing elements when writing.<br>
+</li>
+<li>A structured organization improves clarity, collaboration, and reproducibility.</li>
 </ul>
 <hr>
 </section>
-<section id="additional-resources" class="level2">
-<h2 class="anchored" data-anchor-id="additional-resources">Additional Resources</h2>
-<ul>
-<li><a href="https://portal.hdfgroup.org/display/HDF5/Groups">HDF5 Groups Documentation</a></li>
-<li><a href="https://portal.hdfgroup.org/display/HDF5/Datasets">HDF5 Datasets Guide</a></li>
-<li><a href="https://bioconductor.org/packages/release/bioc/vignettes/rhdf5/inst/doc/rhdf5.html">rhdf5 Structure Tutorial</a></li>
-</ul>
+<section id="next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
+<p>Continue to <a href="../../fundamentals/hdf5/operations.html">HDF5 Operations</a> to learn how to read, write, and manipulate HDF5 datasets efficiently in <code>BigDataStatMeth</code>.</p>
 
 
 </section>
