@@ -89,7 +89,13 @@
 //' @param threads Integer (optional). Number of threads for parallel processing.
 //' @param overwriteFile Logical (optional). Whether to overwrite existing HDF5 file.
 //'
-//' @return No return value, called for side effects (file creation).
+//' @return List with components:
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the imported data (group/dataset)}
+//'   \item{ds_rows}{Character string with the full dataset path to the row names}
+//'   \item{ds_cols}{Character string with the full dataset path to the column names}
+//' }
 //'
 //' @examples
 //' \dontrun{

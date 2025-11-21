@@ -16,7 +16,13 @@ bdmove_hdf5_dataset(filename, source_path, dest_path, overwrite = FALSE)
 \item{overwrite}{Logical. Whether to overwrite destination if it exists (default: FALSE)}
 }
 \value{
-Logical. TRUE on success, FALSE on failure
+List with components. If an error occurs, all string values are
+returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the moved dataset
+in its new location (group/dataset)}
+}
 }
 \description{
 Moves an HDF5 dataset from one location to another within the same HDF5 file.

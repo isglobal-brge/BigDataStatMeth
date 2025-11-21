@@ -80,10 +80,14 @@
 //' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
 //'        Default is false
 //' 
-//' @return Modifies the HDF5 file in place, adding:
-//'         - Normalized data under "NORMALIZED/\[group\]/\[dataset\]"
-//'         - Mean values under "NORMALIZED/\[group\]/mean.\[dataset\]"
-//'         - Standard deviations under "NORMALIZED/\[group\]/sd.\[dataset\]"
+//' @return List with components. If an error occurs, all string values are 
+//' returned as empty strings (""):
+//'   \describe{
+//'     \item{fn}{Character string. Path to the HDF5 file containing the results}
+//'     \item{ds}{Character string. Full dataset path to the normalized data, stored under "NORMALIZED/\\[group\\]/\\[dataset\\]"}
+//'     \item{mean}{Character string. Dataset path to the column means used for centering, stored under "NORMALIZED/\\[group\\]/mean.\\[dataset\\]"}
+//'     \item{sd}{Character string. Dataset path to the standard deviations used for scaling, stored under "NORMALIZED/\\[group\\]/sd.\\[dataset\\]"}
+//'   }
 //' 
 //' @details
 //' The function implements block-wise normalization through:
@@ -128,17 +132,21 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-void bdNormalize_hdf5( std::string filename, std::string group, std::string dataset,
+Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::string dataset,
                     Rcpp::Nullable<bool> bcenter = R_NilValue, Rcpp::Nullable<bool> bscale  = R_NilValue,
                     Rcpp::Nullable<bool> byrows = R_NilValue,
                     Rcpp::Nullable<int> wsize  = R_NilValue, Rcpp::Nullable<bool> overwrite  = false)
 {
  
-    
      BigDataStatMeth::hdf5Dataset* dsA = nullptr;
      BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
      BigDataStatMeth::hdf5Dataset* dssd = nullptr;
      BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
+     
+     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                                Rcpp::Named("ds") = "",
+                                                Rcpp::Named("mean") = "",
+                                                Rcpp::Named("sd") = "");
      
      try{
          
@@ -146,7 +154,7 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
          hsize_t nrows, ncols;
          std::string strgroupout;
          std::vector<hsize_t> stride = {1, 1},
-             block = {1, 1};
+                              block = {1, 1};
          
          Eigen::MatrixXd datanormal;
          
@@ -180,7 +188,8 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
          } else {
              checkClose_file(dsA, dsmean, dssd, dsNormal);
              Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : error with "<<dataset<< " datset\n";
-             return void();    
+             return(lst_return);
+             // return void();
          }
          
          strgroupout = "NORMALIZED/" + group;
@@ -194,7 +203,8 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
          } else {
             checkClose_file(dsA, dsmean, dssd, dsNormal);
             Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : error with "<<strdatasetmean<< " datset\n";
-            return void();
+            return(lst_return);
+            // return void();
          }
          
          dssd = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetsd, bforce);
@@ -204,7 +214,8 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
          } else {
             checkClose_file(dsA, dsmean, dssd, dsNormal);
             Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : error with "<<strdatasetsd<< " datset\n";
-            return void();
+            return(lst_return);
+            // return void();
          }
          
          delete dssd; dssd = nullptr;
@@ -219,32 +230,32 @@ void bdNormalize_hdf5( std::string filename, std::string group, std::string data
 
          delete dsNormal; dsNormal = nullptr;
          delete dsA; dsA = nullptr;
-
+         
+         lst_return["fn"] = filename;
+         lst_return["ds"] = strgroupout + "/" + dataset;
+         lst_return["mean"] = strgroupout + "/" + strdatasetmean;
+         lst_return["sd"] = strgroupout + "/" + strdatasetsd;
+         
      } catch( H5::FileIException& error ) {
          checkClose_file(dsA, dsmean, dssd, dsNormal);
          Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (File IException)";
-         return void();
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
          checkClose_file(dsA, dsmean, dssd, dsNormal);
          Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (DataSet IException)";
-         return void();
      } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
          checkClose_file(dsA, dsmean, dssd, dsNormal);
          Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (DataSpace IException)";
-         return void();
      } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
          checkClose_file(dsA, dsmean, dssd, dsNormal);
          Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (DataType IException)";
-         return void();
      } catch(std::exception &ex) {
          checkClose_file(dsA, dsmean, dssd, dsNormal);
          Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 : "<< ex.what();
-         return void();
      } catch (...) {
          checkClose_file(dsA, dsmean, dssd, dsNormal);
          Rcpp::Rcerr<<"C++ exception bdNormalize_hdf5 (unknown reason)";
-         return void();
      }
 
-     return void();
+     return(lst_return);
+     // return void();
 }

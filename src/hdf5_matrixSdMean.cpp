@@ -94,10 +94,22 @@
 //' @param overwrite Logical (optional). Whether to overwrite existing results.
 //'   Default is FALSE.
 //'
-//' @return No return value, called for side effects (statistics computation).
-//'   Results are stored in the HDF5 file under the 'mean_sd' group with names:
-//'   * 'sd.`dataset`' for standard deviation
-//'   * 'mean.`dataset`' for mean
+//' @return Depending on the \code{onmemory} parameter:
+//' \describe{
+//'   \item{If onmemory = TRUE}{List with components:
+//'     \itemize{
+//'       \item \code{mean}: Numeric vector with column/row means (or NULL if not computed)
+//'       \item \code{sd}: Numeric vector with column/row standard deviations (or NULL if not computed)
+//'     }
+//'   }
+//'   \item{If onmemory = FALSE}{List with components:
+//'     \itemize{
+//'       \item \code{fn}: Character string with the HDF5 filename
+//'       \item \code{mean}: Character string with the full dataset path to the means (group/dataset)
+//'       \item \code{sd}: Character string with the full dataset path to the standard deviations (group/dataset)
+//'     }
+//'   }
+//' }
 //'
 //' @examples
 //' \dontrun{
@@ -156,6 +168,10 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
     BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
     BigDataStatMeth::hdf5Dataset* dssd = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("sd") = "",
+                                               Rcpp::Named("mean") = "");
  
     try {
         
@@ -164,6 +180,9 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
         
         std::string strgroupout;
         Eigen::MatrixXd datanormal;
+        
+        std::string strdatasetmean;// = "mean." + dataset;
+        std::string strdatasetsd;// = "sd." + dataset;
          
          
          if( byrows.isNull()) {   bbyrows = false;   } 
@@ -215,8 +234,7 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
                  return sdmean;
              }
              
-             std::string strdatasetmean;// = "mean." + dataset;
-             std::string strdatasetsd;// = "sd." + dataset;
+             
              
              if( outgroup.isNull()) {   strgroupout = "mean_sd";  } 
              else {   strgroupout = Rcpp::as<std::string> (outgroup); }
@@ -229,9 +247,6 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
                 strdatasetsd = "sd." + Rcpp::as<std::string> (outdataset);
             }
              
-             // std::string strdatasetmean = "mean." + dataset;
-             // std::string strdatasetsd = "sd." + dataset;
-             
              if(bmean) {
                  BigDataStatMeth::hdf5Dataset* dsmean = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetmean, bforce);
                  dsmean->createDataset( datanormal.cols(), 1, "real");
@@ -240,7 +255,8 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
                  } else {
                      checkClose_file(dsA, dsmean);
                      Rf_error("c++ exception bdgetSDandMean_hdf5: Error creating %s dataset", strdatasetmean.c_str());
-                     return R_NilValue;
+                     return(lst_return);
+                     // return R_NilValue;
                  }    
              }
              
@@ -253,7 +269,8 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
                  } else {
                      checkClose_file(dsA, dssd, dsmean);
                      Rf_error("c++ exception bdgetSDandMean_hdf5: Error creating %s dataset", strdatasetsd.c_str());
-                     return R_NilValue;
+                     return(lst_return);
+                     // return R_NilValue;
                  }    
              }
              
@@ -263,10 +280,13 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
              return R_NilValue;
          }
          
-         
          delete dsA; dsA = nullptr;
          delete dssd; dssd = nullptr;
          delete dsmean; dsmean = nullptr;
+         
+         lst_return["fn"] = filename;
+         lst_return["mean"] = strgroupout + "/" + strdatasetmean;
+         lst_return["sd"] = strgroupout + "/" + strdatasetsd;
      
      } catch( H5::FileIException& error ) { 
          checkClose_file(dsA, dssd, dsmean);
@@ -282,7 +302,8 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
          Rf_error("C++ exception bdgetSDandMean_hdf5 (unknown reason)");
      }
  
-    return R_NilValue;
+    return(lst_return);
+    // return R_NilValue;
 
 }
 

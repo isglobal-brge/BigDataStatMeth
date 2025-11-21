@@ -76,7 +76,11 @@
 //' @param overwrite Boolean indicating whether to overwrite existing datasets.
 //'        Defaults to false
 //' 
-//' @return Modifies the HDF5 file in place, adding the merged dataset
+//' @return A list containing the location of the combined dataset:
+//'   \describe{
+//'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+//'     \item{ds}{Character string. Full dataset path to the bound/combined dataset within the HDF5 file}
+//'   }
 //' 
 //' @details
 //' The function performs dimension validation before binding:
@@ -112,12 +116,15 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-void bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::StringVector datasets, 
+Rcpp::List bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::StringVector datasets, 
                   std::string outgroup, std::string outdataset, std::string func,
                   Rcpp::Nullable<bool> overwrite = false )
 {
     
     BigDataStatMeth::hdf5Dataset* dsOut  = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
     
     try
     {
@@ -132,7 +139,8 @@ void bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::String
 
         if (func.compare("bindCols") != 0 && func.compare("bindRows") != 0  && func.compare("bindRowsbyIndex") != 0 ) {
             throw std::range_error( "Function to apply must be \"bindRows\", \"bindCols\" or \"bindRowsbyIndex\" other values are not allowed" );
-            return void();
+            return(lst_return);
+            // return void();
         }
         
         int bindFunction = oper.findName( func );
@@ -141,33 +149,37 @@ void bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::String
         
         RcppBind_datasets_hdf5( filename, group, datasets, dsOut, bindFunction, false);
         
+        lst_return["fn"] = filename;
+        lst_return["ds"] = outgroup + "/" + outdataset;
+        
         delete dsOut; dsOut = nullptr;
         
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsOut);
         Rcpp::stop("c++ exception bdBind_hdf5_datasets (File IException)");
-        return void();
+        // return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsOut);
         Rcpp::stop ("c++ exception bdBind_hdf5_datasets (Group IException)");
-        return void();
+        // return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsOut);
         Rcpp::stop ("c++ exception bdBind_hdf5_datasets (DataSet IException)");
-        return void();
+        // return void();
     } catch(std::exception& ex) {
         checkClose_file(dsOut);
         Rcpp::stop ("c++ exception bdBind_hdf5_datasets %s", ex.what());
-        return void();
+        // return void();
     } catch (...) {
         checkClose_file(dsOut);
         Rcpp::stop("c++ exception bdBind_hdf5_datasets (unknown reason)");
-        return void();
+        // return void();
     }
     
     // file->close();
     Rcpp::Rcout<< outdataset <<" dataset has been recomposed from blocks\n";
-    return void();
+    return(lst_return);
+    // return void();
     
 }

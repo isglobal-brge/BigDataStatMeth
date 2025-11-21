@@ -87,8 +87,12 @@
 //' @param overwrite Logical (optional). Whether to overwrite existing dataset.
 //'   Default is FALSE.
 //'
-//' @return No return value, called for side effects (data filtering).
-//'   Prints a warning message indicating the number of rows/columns removed.
+//' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the filtered dataset (group/dataset)}
+//'   \item{nremoved}{Integer with the number of SNPs removed due to low Minor Allele Frequency (MAF)}
+//' }
 //'
 //' @examples
 //' \dontrun{
@@ -133,16 +137,19 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdRemoveMAF_hdf5( std::string filename, std::string group, std::string dataset, 
+Rcpp::List bdRemoveMAF_hdf5( std::string filename, std::string group, std::string dataset, 
                        std::string outgroup, std::string outdataset, 
                        Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> bycols, 
                        Rcpp::Nullable<int> blocksize, Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
     
     
-    
     BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
     BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "",
+                                               Rcpp::Named("nremoved") = "");
     
     try
     {
@@ -180,7 +187,7 @@ void bdRemoveMAF_hdf5( std::string filename, std::string group, std::string data
             
         } else {
             throw std::range_error("Input and output dataset must be different");  
-            return void();
+            return(lst_return);
         }
         
         if( dsIn->getDatasetptr() != nullptr) {
@@ -188,11 +195,15 @@ void bdRemoveMAF_hdf5( std::string filename, std::string group, std::string data
         } else {
             checkClose_file(dsIn, dsOut);
             throw std::range_error("File does not exist");
-            return void();
+            return(lst_return);
         }
         
         delete dsIn; dsIn = nullptr;
         delete dsOut; dsOut = nullptr;
+        
+        lst_return["fn"] = filename;
+        lst_return["ds"] = outgroup + "/" + outdataset;
+        lst_return["nremoved"] = iremoved;
         
         Rcpp::Function warning("warning");
         if (!bcols )
@@ -203,30 +214,30 @@ void bdRemoveMAF_hdf5( std::string filename, std::string group, std::string data
     } catch( H5::FileIException& error ){
         checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (File IException)";
-        return void();
+        return(lst_return);
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataSet IException)";
-        return void();
+        return(lst_return);
     } catch( H5::DataSpaceIException& error ) { 
         checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataSpace IException)";
-        return void();
+        return(lst_return);
     } catch( H5::DataTypeIException& error ) { 
         checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataType IException)";
-        return void();
+        return(lst_return);
     } catch(std::exception &ex) {
         checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5: "<< ex.what();
-        return void();
+        return(lst_return);
     }  catch (...) {
         checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ exception bdRemoveMAF_hdf5 (unknown reason)";
-        return void();
+        return(lst_return);
     }
     
-    return void();
+    return(lst_return);
     
 }
 

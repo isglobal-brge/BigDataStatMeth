@@ -12,7 +12,13 @@
 //' @param dest_path Character string. New path for the dataset (e.g., "/group2/new_name")
 //' @param overwrite Logical. Whether to overwrite destination if it exists (default: FALSE)
 //'
-//' @return Logical. TRUE on success, FALSE on failure
+//' @return List with components. If an error occurs, all string values are 
+//' returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the moved dataset 
+//'   in its new location (group/dataset)}
+//' }
 //'
 //' @details
 //' This function provides a high-level interface for moving datasets within HDF5 files.
@@ -73,33 +79,36 @@
 //' @author BigDataStatMeth package authors
 //' @export
  // [[Rcpp::export]]
- void bdmove_hdf5_dataset(std::string filename,
+Rcpp::List bdmove_hdf5_dataset(std::string filename,
                      std::string source_path,
                      std::string dest_path, 
                      bool overwrite = false)
- {
-     BigDataStatMeth::hdf5Dataset* dataset = nullptr;
+{
+    
+    BigDataStatMeth::hdf5Dataset* dataset = nullptr;
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
      
      try {
          // Input validation
          if (filename.empty()) {
              Rcpp::Rcerr << "Error: filename cannot be empty" << std::endl;
-             return void();
+             return(lst_return);
          }
          
          if (source_path.empty()) {
              Rcpp::Rcerr << "Error: source_path cannot be empty" << std::endl;
-             return void();
+             return(lst_return);
          }
          
          if (dest_path.empty()) {
              Rcpp::Rcerr << "Error: dest_path cannot be empty" << std::endl;
-             return void();
+             return(lst_return);
          }
          
          if (source_path == dest_path) {
              Rcpp::Rcerr << "Error: source_path and dest_path cannot be the same" << std::endl;
-             return void();
+             return(lst_return);
          }
          
          // Create hdf5Dataset object with current path
@@ -114,19 +123,22 @@
          // Clean up
          delete dataset; dataset = nullptr;
          
-         return void();
+         lst_return["fn"] = filename;
+         lst_return["ds"] = dest_path;
+         
+         return(lst_return);
          
      } catch (const std::exception& e) {
          if (dataset) {
              delete dataset; dataset = nullptr;
          }
          Rcpp::Rcerr << "Exception in bdmove_hdf5_dataset: " << e.what() << std::endl;
-         return void();
+         return(lst_return);
      } catch (...) {
          if (dataset) {
              delete dataset; dataset = nullptr;
          }
          Rcpp::Rcerr << "Unknown exception in bdmove_hdf5_dataset" << std::endl;
-         return void();
+         return(lst_return);
      }
  }

@@ -38,10 +38,14 @@ Default is 1000}
 Default is false}
 }
 \value{
-Modifies the HDF5 file in place, adding:
-- Normalized data under "NORMALIZED/[group]/[dataset]"
-- Mean values under "NORMALIZED/[group]/mean.[dataset]"
-- Standard deviations under "NORMALIZED/[group]/sd.[dataset]"
+List with components. If an error occurs, all string values are
+returned as empty strings (""):
+\describe{
+\item{fn}{Character string. Path to the HDF5 file containing the results}
+\item{ds}{Character string. Full dataset path to the normalized data, stored under "NORMALIZED/\[group\]/\[dataset\]"}
+\item{mean}{Character string. Dataset path to the column means used for centering, stored under "NORMALIZED/\[group\]/mean.\[dataset\]"}
+\item{sd}{Character string. Dataset path to the standard deviations used for scaling, stored under "NORMALIZED/\[group\]/sd.\[dataset\]"}
+}
 }
 \description{
 Performs block-wise normalization of datasets stored in HDF5 format through

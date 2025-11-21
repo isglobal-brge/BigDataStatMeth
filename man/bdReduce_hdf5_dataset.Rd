@@ -34,7 +34,12 @@ Default is FALSE.}
 reduction. Default is FALSE.}
 }
 \value{
-No return value, called for side effects (dataset reduction).
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the reduced dataset (group/dataset)}
+\item{func}{Character string with the reduction function applied}
+}
 }
 \description{
 Reduces multiple datasets within an HDF5 group using arithmetic operations

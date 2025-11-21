@@ -85,7 +85,12 @@
 //' @param remove Logical (optional). Whether to remove source datasets after
 //'   reduction. Default is FALSE.
 //'
-//' @return No return value, called for side effects (dataset reduction).
+//' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the reduced dataset (group/dataset)}
+//'   \item{func}{Character string with the reduction function applied}
+//' }
 //'
 //' @examples
 //' \dontrun{
@@ -129,13 +134,17 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdReduce_hdf5_dataset( std::string filename, std::string group, 
+Rcpp::List bdReduce_hdf5_dataset( std::string filename, std::string group, 
                             std::string reducefunction, 
                             Rcpp::Nullable<std::string> outgroup = R_NilValue, 
                             Rcpp::Nullable<std::string> outdataset = R_NilValue,
                             Rcpp::Nullable<bool> overwrite = false , 
                             Rcpp::Nullable<bool> remove = false )
 {
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "",
+                                               Rcpp::Named("func") = "");
     
     try
     {
@@ -148,7 +157,7 @@ void bdReduce_hdf5_dataset( std::string filename, std::string group,
         
         if (reducefunction.compare("+") != 0 && reducefunction.compare("-") != 0 ) {
             throw std::range_error( "Function to apply must be \"+\" or \"-\" other values are not allowed" );
-            return void();
+            return(lst_return);
         }
         
         if(outgroup.isNull()) {  strOutgroup = group ;
@@ -165,19 +174,23 @@ void bdReduce_hdf5_dataset( std::string filename, std::string group,
         
         BigDataStatMeth::RcppReduce_dataset_hdf5( filename, group, strOutgroup, strOutdatset, reducefunction, boverwrite, bremove, false);
         
+        lst_return["fn"] = filename;
+        lst_return["ds"] = strOutgroup + "/" + strOutdatset;
+        lst_return["func"] = reducefunction;
+        
     } catch( H5::FileIException& error ) {  
         Rcpp::Rcerr << "c++ exception bdReduce_hdf5_dataset (File IException)";
-        return void();
+        return(lst_return);
     } catch( H5::GroupIException & error ) { 
         Rcpp::Rcerr << "c++ exception bdReduce_hdf5_dataset (Group IException)";
-        return void();
+        return(lst_return);
     } catch( H5::DataSetIException& error ) { 
         Rcpp::Rcerr << "c++ exception bdReduce_hdf5_dataset (DataSet IException)";
-        return void();
+        return(lst_return);
     } catch(std::exception& ex) {
         Rcpp::Rcerr << "c++ exception bdReduce_hdf5_dataset" << ex.what();
-        return void();
+        return(lst_return);
     }
     
-    return void();
+    return(lst_return);
 }

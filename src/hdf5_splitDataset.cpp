@@ -91,9 +91,13 @@
 //' @param overwrite Logical (optional). Whether to overwrite existing datasets.
 //'   Default is FALSE.
 //'
-//' @return No return value, called for side effects (dataset splitting).
-//'   Creates multiple datasets in the HDF5 file named as
-//'   "`outdataset`.1", "`outdataset`.2", etc.
+//' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the output group path where the split 
+//'   datasets are stored. Multiple datasets are created in this location named 
+//'   as "<outdataset>.1", "<outdataset>.2", etc.}
+//' }
 //'
 //' @examples
 //' \dontrun{
@@ -143,7 +147,7 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string dataset, 
+Rcpp::List bdSplit_matrix_hdf5( std::string filename, std::string group, std::string dataset, 
                           Rcpp::Nullable<std::string> outgroup = R_NilValue, 
                           Rcpp::Nullable<std::string> outdataset = R_NilValue, 
                           Rcpp::Nullable<int> nblocks = R_NilValue,  
@@ -153,6 +157,9 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
 {
     
     BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
     
     try
     {
@@ -164,9 +171,6 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         
         if(bycols.isNull()) { bcols = true ;
         } else {   bcols = Rcpp::as<bool>(bycols);}
-        
-        // if(overwrite.isNull()) { bforce = false ;
-        // } else {   bforce = Rcpp::as<bool>(overwrite);}
         
         if(outgroup.isNull()) {  stroutgroup = group ;
         } else {   stroutgroup = Rcpp::as<std::string>(outgroup);}
@@ -184,23 +188,20 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
             
             if( nblocks.isNull() && blocksize.isNull()){
                 checkClose_file(dsIn);
-                // Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "Block size or number of blocks are needed to proceed with matrix split. Please, review parameters";
                 Rf_error( "c++ exception bdSplit_matrix_hdf5: Block size or number of blocks are needed to proceed with matrix split. Please, review parameters");
-                return void();
+                return(lst_return);
                 
             } else if (!nblocks.isNull() && !blocksize.isNull()) {
                 checkClose_file(dsIn);
-                // Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "Block size and number of blocks are defined, please define only one option, split by number of blocks or by block size";
                 Rf_error( "c++ exception bdSplit_matrix_hdf5: Block size and number of blocks are defined, please define only one option, split by number of blocks or by block size");
-                return void();
+                return(lst_return);
                 
             } else if(!nblocks.isNull()) {
                 
                 if ( Rcpp::as<int>(nblocks) == 1) {
                     checkClose_file(dsIn);
                     Rf_error( "c++ exception bdSplit_matrix_hdf5: No data to split: Numbers of blocks = 1, no data to split");
-                    // Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "Numbers of blocks = 1, no data to split";
-                    return void();
+                    return(lst_return);
                     
                 } else {
                     
@@ -223,15 +224,13 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
                     if( iblocksize == nrows) {  
                         checkClose_file(dsIn);
                         Rf_error( "c++ exception bdSplit_matrix_hdf5: No data to split");
-                        // Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "No data to split";
-                        return void();
+                        return(lst_return);
                     }
                 } else {
                     if( iblocksize == ncols) {  
                         checkClose_file(dsIn);
                         Rf_error( "c++ exception bdSplit_matrix_hdf5: No data to split");
-                        // Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "No data to split";
-                        return void();
+                        return(lst_return);
                     }
                 }
             }
@@ -240,16 +239,17 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
                 RcppSplit_matrix_hdf5 ( dsIn, bcols, stroutgroup, stroutdataset, iblocksize, ncols, nrows );    
             } else {
                 checkClose_file(dsIn);
-                // Rcpp::Rcerr << "c++ exception bdSplit_matrix_hdf5: " << "File does not exist";
                 Rf_error( "c++ exception bdSplit_matrix_hdf5: File %s does not exist", filename.c_str());
-                return void();
+                return(lst_return);
             }
-            
         }
     
         delete dsIn; dsIn = nullptr;
-        Rcpp::Rcout<<"Dataset has been splitted, results can be found in "<< stroutgroup + "/" + stroutdataset <<"\n";
         
+        lst_return["fn"] = filename;
+        lst_return["ds"] = stroutgroup + "/" + stroutdataset;
+        
+        Rcpp::Rcout<<"Dataset has been splitted, results can be found in "<< stroutgroup + "/" + stroutdataset <<"\n";
         
     } catch( H5::FileIException& error ) { 
         checkClose_file(dsIn);
@@ -271,6 +271,6 @@ void bdSplit_matrix_hdf5( std::string filename, std::string group, std::string d
         Rf_error( "c++ exception bdSplit_matrix_hdf5 (unknown reason)");
     }
     
-    return void();
+    return(lst_return);
 }
 

@@ -79,7 +79,11 @@
 //'   in each block. Default is 1,000,000. For matrices larger than 5000x5000,
 //'   automatically adjusted to number of rows or columns * 2.
 //'
-//' @return No direct return value. The function modifies the HDF5 dataset in-place.
+//' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the modified matrix. The opposite triangular part is written to the same input dataset, completing the symmetric matrix (group/dataset)}
+//' }
 //'
 //' @examples
 //' library(BigDataStatMeth)
@@ -138,15 +142,18 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdWriteOppsiteTriangularMatrix_hdf5(std::string filename, 
+Rcpp::List bdWriteOppsiteTriangularMatrix_hdf5(std::string filename, 
                                       std::string group, std::string dataset, 
                                       Rcpp::Nullable<bool> copytolower = R_NilValue,
                                       Rcpp::Nullable<long> elementsBlock = 1000000)
- {
+{
      
      
      
-     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
      
      try
      {
@@ -171,7 +178,7 @@ void bdWriteOppsiteTriangularMatrix_hdf5(std::string filename,
              if(dsA->nrows() != dsA->ncols()) {
                  Rcpp::Rcout<<"\nCan not write opposite triangular matrix - Non squuare matrix";
                  delete dsA; dsA = nullptr;
-                 return void();   
+                 return(lst_return);   
              }
              
              if( blower == false ) {
@@ -183,24 +190,27 @@ void bdWriteOppsiteTriangularMatrix_hdf5(std::string filename,
          
          delete dsA; dsA = nullptr;
          
+         lst_return["fn"] = filename;
+         lst_return["ds"] = group + "/" + dataset;
+         
      } catch( H5::FileIException& error ) { 
          checkClose_file(dsA);
          Rcpp::Rcerr<<"c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (File IException)";
-         return void();
+         return(lst_return);
      } catch( H5::DataSetIException& error ) { 
          checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (DataSet IException)";
-         return void();
+         return(lst_return);
      } catch(std::exception& ex) {
          checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5" << ex.what();
-         return void();
+         return(lst_return);
      } catch (...) {
          checkClose_file(dsA);
          Rcpp::Rcerr<<"\nC++ exception bdWriteOppsiteTriangularMatrix_hdf5 (unknown reason)";
-         return void();
+         return(lst_return);
      }
      
      Rcpp::Rcout<<dataset<<" Triangular Matrix has been mirrored\n";
-     return void();
+     return(lst_return);
  }

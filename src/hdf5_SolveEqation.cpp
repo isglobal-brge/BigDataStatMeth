@@ -215,7 +215,11 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
 //' @param outdataset Optional string. Output dataset name (defaults to "A_B").
 //' @param overwrite Logical. Whether to overwrite existing results.
 //'
-//' @return No direct return value. Results are written to the HDF5 file.
+//' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the solution of the linear system (group/dataset)}
+//' }
 //'
 //' @examples
 //' library(BigDataStatMeth)
@@ -280,7 +284,7 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
 //'
 //' @export
 // [[Rcpp::export]]
-void bdSolve_hdf5(std::string filename, std::string groupA, std::string datasetA,
+Rcpp::List bdSolve_hdf5(std::string filename, std::string groupA, std::string datasetA,
                       std::string groupB, std::string datasetB,
                       Rcpp::Nullable<std::string> outgroup = R_NilValue, 
                       Rcpp::Nullable<std::string> outdataset = R_NilValue, 
@@ -290,6 +294,9 @@ void bdSolve_hdf5(std::string filename, std::string groupA, std::string datasetA
     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
     BigDataStatMeth::hdf5Dataset* dsB = nullptr;
     BigDataStatMeth::hdf5Dataset* dsRes = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
     
     try {
         
@@ -319,35 +326,38 @@ void bdSolve_hdf5(std::string filename, std::string groupA, std::string datasetA
         } else {
             checkClose_file(dsA, dsB, dsRes);
             Rcpp::Rcerr << "c++ exception bdSolve_hdf5: " << "Error creating dataset";
-            return void();
+            return(lst_return);
         }
         
         delete dsRes; dsRes = nullptr;
         delete dsB; dsB = nullptr;
         delete dsA; dsA = nullptr;
         
-    } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+        lst_return["fn"] = filename;
+        lst_return["ds"] = strOutgroup + "/" + strOutdataset;
+        
+    } catch( H5::FileIException& error ) { 
         checkClose_file(dsA, dsB, dsRes);
         Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5 (File IException)";
-        return void();
-    } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
+        return(lst_return);
+    } catch( H5::GroupIException & error ) { 
         checkClose_file(dsA, dsB, dsRes);
         Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5 (Group IException)";
-        return void();
-    } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        return(lst_return);
+    } catch( H5::DataSetIException& error ) { 
         checkClose_file(dsA, dsB, dsRes);
         Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5 (DataSet IException)";
-        return void();
+        return(lst_return);
     } catch(std::exception& ex) {
         checkClose_file(dsA, dsB, dsRes);
         Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5" << ex.what();
-        return void();
+        return(lst_return);
     } catch (...) {
         checkClose_file(dsA, dsB, dsRes);
         Rcpp::Rcerr<<"\nC++ exception bdSolve_hdf5 (unknown reason)";
-        return void();
+        return(lst_return);
     }
     
-    return void();
+    return(lst_return);
      
  }

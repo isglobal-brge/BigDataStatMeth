@@ -78,8 +78,11 @@ name (default: "pvalues")}
 (optional, default: auto)}
 }
 \value{
-A list containing dataset locations and metadata including
-transpose information
+List with components:
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the correlation matrix (group/dataset)}
+}
 }
 \description{
 This function computes Pearson or Spearman correlation matrix

@@ -195,7 +195,11 @@ Rcpp::RObject bdpseudoinv( Rcpp::RObject X,
 //' @param overwrite Logical. Whether to overwrite existing results.
 //' @param threads Optional integer. Number of threads for parallel computation.
 //'
-//' @return No direct return value. Results are written to the HDF5 file.
+//' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the pseudoinverse matrix (group/dataset)}
+//' }
 //'
 //' @examples
 //' library(BigDataStatMeth)
@@ -288,19 +292,19 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (File IException)";     
-        // return void();  
+        return(lst_return);
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (Group IException)";
-        // return void();
+        return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (DataSet IException)";
-        // return void();
+        return(lst_return);
     } catch(std::exception& ex) {
         checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5" << ex.what();
-        // return void();
+        return(lst_return);
     }
     
     // return void();

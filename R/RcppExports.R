@@ -46,8 +46,12 @@
 #'   (default = 100,000). For matrices larger than 5000x5000, automatically adjusted
 #'   to number of rows or columns * 2.
 #'
-#' @return No direct return value. Results are written to the HDF5 file in the
-#' specified location with the following structure:
+#' @return A list containing the location of the Cholesky decomposition result:
+#'   \describe{
+#'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+#'     \item{ds}{Character string. Full dataset path to the Cholesky decomposition result within the HDF5 file}
+#'   }
+#'   
 #' \describe{
 #'   \item{L}{The lower triangular Cholesky factor}
 #' }
@@ -169,9 +173,16 @@ bdQR <- function(X, thin = NULL, block_size = NULL, threads = NULL) {
 #' @param threads Integer. Optional number of threads for parallel computation.
 #'   If NULL, uses all available threads.
 #'
-#' @return No return value. Results are written to the HDF5 file as:
-#'   * Q.outdataset: The orthogonal matrix Q
-#'   * R.outdataset: The upper triangular matrix R
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds_Q}{Character string with the full dataset path to the Q matrix 
+#'   (orthogonal matrix). Results are written to the HDF5 file as 
+#'   "Q.<outdataset>" within the specified group}
+#'   \item{ds_R}{Character string with the full dataset path to the R matrix 
+#'   (upper triangular matrix). Results are written to the HDF5 file as 
+#'   "R.<outdataset>" within the specified group}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -407,7 +418,11 @@ bdSolve <- function(A, B) {
 #' @param outdataset Optional string. Output dataset name (defaults to "A_B").
 #' @param overwrite Logical. Whether to overwrite existing results.
 #'
-#' @return No direct return value. Results are written to the HDF5 file.
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the solution of the linear system (group/dataset)}
+#' }
 #'
 #' @examples
 #' library(BigDataStatMeth)
@@ -472,7 +487,7 @@ bdSolve <- function(A, B) {
 #'
 #' @export
 bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup = NULL, outdataset = NULL, overwrite = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdSolve_hdf5', PACKAGE = 'BigDataStatMeth', filename, groupA, datasetA, groupB, datasetB, outgroup, outdataset, overwrite))
+    .Call('_BigDataStatMeth_bdSolve_hdf5', PACKAGE = 'BigDataStatMeth', filename, groupA, datasetA, groupB, datasetB, outgroup, outdataset, overwrite)
 }
 
 #' Apply function to different datasets inside a group
@@ -612,13 +627,21 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #'   * "full": Performs direct computation (for smaller matrices)
 #' @param threads Integer. Number of threads for parallel computation.
 #'
-#' @return No direct return value. Results are written to the HDF5 file in the
-#' group 'PCA/`dataset`' with the following components:
-#'   * sdev: Standard deviations of the principal components
-#'   * rotation: Matrix of variable loadings (eigenvectors)
-#'   * x: Matrix containing the rotated data (principal components)
-#'   * center: Column means (if center = TRUE)
-#'   * scale: Column standard deviations (if scale = TRUE)
+#' @return A list containing the paths to the PCA results stored in the HDF5 file:
+#'   \describe{
+#'     \item{fn}{Character string. Path to the HDF5 file containing the results}
+#'     \item{lambda}{Character string. Dataset path to eigenvalues (λ)}
+#'     \item{variance}{Character string. Dataset path to variance explained by each PC}
+#'     \item{cumvar}{Character string. Dataset path to cumulative variance explained}
+#'     \item{var.coord}{Character string. Dataset path to variable coordinates on the PCs}
+#'     \item{var.cos2}{Character string. Dataset path to squared cosines (quality of representation) for variables}
+#'     \item{ind.dist}{Character string. Dataset path to distances of individuals from the origin}
+#'     \item{components}{Character string. Dataset path to principal components (rotated data)}
+#'     \item{ind.coord}{Character string. Dataset path to individual coordinates on the PCs}
+#'     \item{ind.cos2}{Character string. Dataset path to squared cosines (quality of representation) for individuals}
+#'     \item{ind.contrib}{Character string. Dataset path to contributions of individuals to each PC}
+#'   }
+#'   All results are written to the HDF5 file in the group 'PCA/`dataset`'.
 #'
 #' @examples
 #' \dontrun{
@@ -652,7 +675,7 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #'
 #' @export
 bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FALSE, bscale = FALSE, k = 2L, q = 1L, rankthreshold = 0.0, SVDgroup = NULL, overwrite = FALSE, method = NULL, threads = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, SVDgroup, overwrite, method, threads))
+    .Call('_BigDataStatMeth_bdPCA_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, SVDgroup, overwrite, method, threads)
 }
 
 #' Bind matrices by rows or columns
@@ -674,7 +697,11 @@ bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FAL
 #' @param overwrite Boolean indicating whether to overwrite existing datasets.
 #'        Defaults to false
 #' 
-#' @return Modifies the HDF5 file in place, adding the merged dataset
+#' @return A list containing the location of the combined dataset:
+#'   \describe{
+#'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+#'     \item{ds}{Character string. Full dataset path to the bound/combined dataset within the HDF5 file}
+#'   }
 #' 
 #' @details
 #' The function performs dimension validation before binding:
@@ -710,7 +737,7 @@ bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FAL
 #' 
 #' @export
 bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset, func, overwrite = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdBind_hdf5_datasets', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, outdataset, func, overwrite))
+    .Call('_BigDataStatMeth_bdBind_hdf5_datasets', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, outdataset, func, overwrite)
 }
 
 #' Crossprod with hdf5 matrix
@@ -740,7 +767,12 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
 #'        Default is false
 #' 
-#' @return Modifies the HDF5 file in place, adding the cross product result
+#' @return A list containing the location of the crossproduct result:
+#'   \describe{
+#'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+#'     \item{ds}{Character string. Full dataset path to the crossproduct 
+#'     result (t(A) %*% A or t(A) %*% B) within the HDF5 file}
+#'   }
 #' 
 #' @details
 #' The function implements block-wise matrix multiplication to handle large matrices
@@ -807,10 +839,14 @@ bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_
 #' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
 #'        Default is false
 #' 
-#' @return Modifies the HDF5 file in place, adding:
-#'         - Normalized data under "NORMALIZED/\[group\]/\[dataset\]"
-#'         - Mean values under "NORMALIZED/\[group\]/mean.\[dataset\]"
-#'         - Standard deviations under "NORMALIZED/\[group\]/sd.\[dataset\]"
+#' @return List with components. If an error occurs, all string values are 
+#' returned as empty strings (""):
+#'   \describe{
+#'     \item{fn}{Character string. Path to the HDF5 file containing the results}
+#'     \item{ds}{Character string. Full dataset path to the normalized data, stored under "NORMALIZED/\\[group\\]/\\[dataset\\]"}
+#'     \item{mean}{Character string. Dataset path to the column means used for centering, stored under "NORMALIZED/\\[group\\]/mean.\\[dataset\\]"}
+#'     \item{sd}{Character string. Dataset path to the standard deviations used for scaling, stored under "NORMALIZED/\\[group\\]/sd.\\[dataset\\]"}
+#'   }
 #' 
 #' @details
 #' The function implements block-wise normalization through:
@@ -855,7 +891,7 @@ bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_
 #' 
 #' @export
 bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = NULL, byrows = NULL, wsize = NULL, overwrite = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, byrows, wsize, overwrite))
+    .Call('_BigDataStatMeth_bdNormalize_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, bcenter, bscale, byrows, wsize, overwrite)
 }
 
 #' HDF5 dataset addition
@@ -883,7 +919,11 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
 #'        Default is false
 #' 
-#' @return Modifies the HDF5 file in place, adding the addition result
+#' @return A list containing the location of the addition result:
+#'   \describe{
+#'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+#'     \item{ds}{Character string. Full dataset path to the addition result (A + B) within the HDF5 file}
+#'   }
 #' 
 #' @details
 #' The function implements optimized addition through:
@@ -985,7 +1025,12 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #' * If `bparal = true`, number of concurrent threads in parallelization. If 
 #' `paral = TRUE` and `threads = NULL` then `threads` is set to a half of a 
 #' maximum number of available threads 
-#' @return a dataset inside the hdf5 data file with A*B 
+#' @return A list containing the location of the matrix multiplication result:
+#'   \describe{
+#'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+#'     \item{ds}{Character string. Full dataset path to the A*B multiplication result within the HDF5 file}
+#'   }
+#'   
 #' @examples
 #' library("BigDataStatMeth")
 #' library("rhdf5")
@@ -1155,7 +1200,11 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, groupB = NULL, block_
 #' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
 #'        Default is false
 #' 
-#' @return Modifies the HDF5 file in place, adding the subtraction result
+#' @return A list containing the location of the subtraction result:
+#'   \describe{
+#'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+#'     \item{ds}{Character string. Full dataset path to the subtraction result (A - B) within the HDF5 file}
+#'   }
 #' 
 #' @details
 #' The function implements optimized subtraction through:
@@ -1237,7 +1286,12 @@ bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_si
 #' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
 #'        Default is false
 #' 
-#' @return Modifies the HDF5 file in place, adding the transposed cross product result
+#' @return A list containing the location of the transposed crossproduct result:
+#'   \describe{
+#'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+#'     \item{ds}{Character string. Full dataset path to the transposed 
+#'     crossproduct result (A %*% t(A) or A %*% t(B)) within the HDF5 file}
+#'   }
 #' 
 #' @details
 #' The function implements block-wise matrix multiplication to handle large matrices
@@ -1337,7 +1391,7 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
 #' @return List with components:
 #' \describe{
 #'   \item{fn}{Character string with the HDF5 filename}
-#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#'   \item{ds}{Character string with the full dataset path to the diagonal matrix (group/dataset)}
 #' }
 #'
 #' @examples
@@ -1390,7 +1444,12 @@ bdCreate_diagonal_hdf5 <- function(filename, group, dataset, size = NULL, scalar
 #' default value \code{FALSE}.
 #' @param datatype Character. Element type (e.g., "real").
 #'
-#' @return No return value, called for side effects (dataset creation).
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the empty 
+#'   dataset (group/dataset)}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -1403,7 +1462,7 @@ bdCreate_diagonal_hdf5 <- function(filename, group, dataset, size = NULL, scalar
 #'
 #' @export
 bdCreate_hdf5_emptyDataset <- function(filename, group, dataset, nrows = 0L, ncols = 0L, overwriteFile = NULL, overwriteDataset = NULL, unlimited = NULL, datatype = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_emptyDataset', PACKAGE = 'BigDataStatMeth', filename, group, dataset, nrows, ncols, overwriteFile, overwriteDataset, unlimited, datatype))
+    .Call('_BigDataStatMeth_bdCreate_hdf5_emptyDataset', PACKAGE = 'BigDataStatMeth', filename, group, dataset, nrows, ncols, overwriteFile, overwriteDataset, unlimited, datatype)
 }
 
 #' Create Group in an HDF5 File
@@ -1420,7 +1479,12 @@ bdCreate_hdf5_emptyDataset <- function(filename, group, dataset, nrows = 0L, nco
 #' @param group Character string. Group path to create
 #'   (e.g., `"MGCCA_OUT/scores"`).
 #'
-#' @return No return value, called for side effects (group creation).
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{gr}{Character string with the full group path created within the 
+#'   HDF5 file}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -1444,7 +1508,7 @@ bdCreate_hdf5_emptyDataset <- function(filename, group, dataset, nrows = 0L, nco
 #'
 #' @export
 bdCreate_hdf5_group <- function(filename, group) {
-    invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_group', PACKAGE = 'BigDataStatMeth', filename, group))
+    .Call('_BigDataStatMeth_bdCreate_hdf5_group', PACKAGE = 'BigDataStatMeth', filename, group)
 }
 
 #' Create hdf5 data file and write data to it
@@ -1456,10 +1520,18 @@ bdCreate_hdf5_group <- function(filename, group) {
 #' @param group, character array indicating folder name to put the matrix in hdf5 file
 #' @param dataset, character array indicating the dataset name to store the matix data
 #' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
-#' @param overwriteFile, optional boolean by default overwriteFile = false, if true and file exists, removes old file and creates a new file with de dataset data.
-#' @param overwriteDataset, optional boolean by default overwriteDataset = false,  if true and dataset exists, removes old dataset and creates a new dataset.
-#' @param unlimited, optional boolean by default unlimited = false, if true creates a dataset that can growth.
-#' @return none
+#' @param overwriteFile, optional boolean by default overwriteFile = false, if 
+#' true and file exists, removes old file and creates a new file with de dataset 
+#' data.
+#' @param overwriteDataset, optional boolean by default overwriteDataset = false,  
+#' if true and dataset exists, removes old dataset and creates a new dataset.
+#' @param unlimited, optional boolean by default unlimited = false, if true 
+#' creates a dataset that can growth.
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the created matrix (group/dataset)}
+#' }
 #' 
 #' @examples
 #' 
@@ -1479,7 +1551,7 @@ bdCreate_hdf5_group <- function(filename, group) {
 #' 
 #' @export
 bdCreate_hdf5_matrix <- function(filename, object, group = NULL, dataset = NULL, transp = NULL, overwriteFile = NULL, overwriteDataset = NULL, unlimited = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdCreate_hdf5_matrix', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp, overwriteFile, overwriteDataset, unlimited))
+    .Call('_BigDataStatMeth_bdCreate_hdf5_matrix', PACKAGE = 'BigDataStatMeth', filename, object, group, dataset, transp, overwriteFile, overwriteDataset, unlimited)
 }
 
 #' Add Diagonal Elements from HDF5 Matrices or Vectors
@@ -1504,7 +1576,7 @@ bdCreate_hdf5_matrix <- function(filename, object, group = NULL, dataset = NULL,
 #' @return List with components:
 #' \describe{
 #'   \item{fn}{Character string with the HDF5 filename}
-#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#'   \item{ds}{Character string with the full dataset path to the diagonal addition result (group/dataset)}
 #' }
 #'
 #' @export
@@ -1560,7 +1632,7 @@ bdDiag_add_hdf5 <- function(filename, group, A, B, groupB = NULL, target = NULL,
 #' @return List with components:
 #' \describe{
 #'   \item{fn}{Character string with the HDF5 filename}
-#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#'   \item{ds}{Character string with the full dataset path to the diagonal subtraction result (group/dataset)}
 #' }
 #'
 #' @examples
@@ -1640,7 +1712,7 @@ bdDiag_subtract_hdf5 <- function(filename, group, A, B, groupB = NULL, target = 
 #' @return List with components:
 #' \describe{
 #'   \item{fn}{Character string with the HDF5 filename}
-#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#'   \item{ds}{Character string with the full dataset path to the diagonal multiplication result (group/dataset)}
 #' }
 #'
 #' @examples
@@ -1720,7 +1792,7 @@ bdDiag_multiply_hdf5 <- function(filename, group, A, B, groupB = NULL, target = 
 #' @return List with components:
 #' \describe{
 #'   \item{fn}{Character string with the HDF5 filename}
-#'   \item{ds}{Character string with the full dataset path (group/dataset)}
+#'   \item{ds}{Character string with the full dataset path to the diagonal division result (group/dataset)}
 #' }
 #'
 #' @examples
@@ -1864,14 +1936,14 @@ bdDiag_scalar_hdf5 <- function(filename, group, dataset, scalar, operation, targ
 #' @param overwrite Logical. If TRUE, allows overwriting existing results (default = FALSE).
 #' @param threads Integer. Number of threads for parallel computation (default = NULL, uses available cores).
 #'
-#' @return A list with the following elements:
+#' @return List with components:
 #' \describe{
-#'   \item{fn}{Path to the HDF5 file}
-#'   \item{values}{Path to the dataset containing eigenvalues (real part)}
-#'   \item{vectors}{Path to the dataset containing eigenvectors (real part)}
-#'   \item{values_imag}{Path to the dataset containing eigenvalues (imaginary part, if non-zero)}
-#'   \item{vectors_imag}{Path to the dataset containing eigenvectors (imaginary part, if non-zero)}
-#'   \item{is_symmetric}{Logical indicating if the matrix was detected as symmetric}
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{values}{Character string with the full dataset path to the eigenvalues (real part) (group/dataset)}
+#'   \item{vectors}{Character string with the full dataset path to the eigenvectors (real part) (group/dataset)}
+#'   \item{values_imag}{Character string with the full dataset path to the eigenvalues (imaginary part), or NULL if all eigenvalues are real}
+#'   \item{vectors_imag}{Character string with the full dataset path to the eigenvectors (imaginary part), or NULL if all eigenvectors are real}
+#'   \item{is_symmetric}{Logical indicating whether the matrix was detected as symmetric}
 #' }
 #'
 #' @examples
@@ -2159,7 +2231,13 @@ bdCheckMatrix_hdf5 <- function(filename, group = NULL, dataset = NULL, check_sym
 #' @param threads Integer (optional). Number of threads for parallel processing.
 #' @param overwriteFile Logical (optional). Whether to overwrite existing HDF5 file.
 #'
-#' @return No return value, called for side effects (file creation).
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the imported data (group/dataset)}
+#'   \item{ds_rows}{Character string with the full dataset path to the row names}
+#'   \item{ds_cols}{Character string with the full dataset path to the column names}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -2235,7 +2313,11 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #' @param threads Integer (optional). Number of threads for parallel processing.
 #' @param overwrite Logical (optional). Whether to overwrite existing dataset.
 #'
-#' @return No return value, called for side effects (data imputation).
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the imputed data (group/dataset)}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -2276,7 +2358,7 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #'
 #' @export
 bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, bycols = TRUE, paral = NULL, threads = NULL, overwrite = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdImputeSNPs_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols, paral, threads, overwrite))
+    .Call('_BigDataStatMeth_bdImputeSNPs_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, bycols, paral, threads, overwrite)
 }
 
 #' Matrix Inversion using Cholesky Decomposition for HDF5-Stored Matrices
@@ -2319,11 +2401,12 @@ bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdata
 #' @param elementsBlock Integer. Maximum number of elements to process in each block
 #'   (default = 1,000,000). For matrices larger than 5000x5000, automatically adjusted
 #'   to number of rows or columns * 2.
-#'
-#' @return No direct return value. Results are written to the HDF5 file in the
-#' specified location with the following structure:
+#' 
+#' @return List with components:
 #' \describe{
-#'   \item{inverse}{The inverse matrix A^(-1)}
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the inverse 
+#'   Cholesky decomposition A^(-1) result (group/dataset)}
 #' }
 #'
 #' @examples
@@ -2433,8 +2516,11 @@ bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = 
 #' @param threads Integer, number of threads for parallel computation 
 #' (optional, default: auto)
 #' 
-#' @return A list containing dataset locations and metadata including 
-#' transpose information
+#' @return List with components:
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the correlation matrix (group/dataset)}
+#' }
 #' 
 #' @examples
 #' \dontrun{
@@ -2551,7 +2637,11 @@ bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
 #' @param group Character string. Path to the group containing the dataset.
 #' @param dataset Character string. Name of the dataset to modify.
 #'
-#' @return No return value, called for side effects (diagonal modification).
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the diagonal elements written (group/dataset)}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -2589,7 +2679,7 @@ bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
 #'
 #' @export
 bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
-    invisible(.Call('_BigDataStatMeth_bdWriteDiagonal_hdf5', PACKAGE = 'BigDataStatMeth', diagonal, filename, group, dataset))
+    .Call('_BigDataStatMeth_bdWriteDiagonal_hdf5', PACKAGE = 'BigDataStatMeth', diagonal, filename, group, dataset)
 }
 
 #' Compute Matrix Standard Deviation and Mean in HDF5
@@ -2638,10 +2728,22 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' @param overwrite Logical (optional). Whether to overwrite existing results.
 #'   Default is FALSE.
 #'
-#' @return No return value, called for side effects (statistics computation).
-#'   Results are stored in the HDF5 file under the 'mean_sd' group with names:
-#'   * 'sd.`dataset`' for standard deviation
-#'   * 'mean.`dataset`' for mean
+#' @return Depending on the \code{onmemory} parameter:
+#' \describe{
+#'   \item{If onmemory = TRUE}{List with components:
+#'     \itemize{
+#'       \item \code{mean}: Numeric vector with column/row means (or NULL if not computed)
+#'       \item \code{sd}: Numeric vector with column/row standard deviations (or NULL if not computed)
+#'     }
+#'   }
+#'   \item{If onmemory = FALSE}{List with components:
+#'     \itemize{
+#'       \item \code{fn}: Character string with the HDF5 filename
+#'       \item \code{mean}: Character string with the full dataset path to the means (group/dataset)
+#'       \item \code{sd}: Character string with the full dataset path to the standard deviations (group/dataset)
+#'     }
+#'   }
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -2700,7 +2802,13 @@ bdgetSDandMean_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' @param dest_path Character string. New path for the dataset (e.g., "/group2/new_name")
 #' @param overwrite Logical. Whether to overwrite destination if it exists (default: FALSE)
 #'
-#' @return Logical. TRUE on success, FALSE on failure
+#' @return List with components. If an error occurs, all string values are 
+#' returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the moved dataset 
+#'   in its new location (group/dataset)}
+#' }
 #'
 #' @details
 #' This function provides a high-level interface for moving datasets within HDF5 files.
@@ -2761,7 +2869,7 @@ bdgetSDandMean_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' @author BigDataStatMeth package authors
 #' @export
 bdmove_hdf5_dataset <- function(filename, source_path, dest_path, overwrite = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdmove_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, source_path, dest_path, overwrite))
+    .Call('_BigDataStatMeth_bdmove_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, source_path, dest_path, overwrite)
 }
 
 #' Compute Matrix Pseudoinverse (In-Memory)
@@ -2868,7 +2976,11 @@ bdpseudoinv <- function(X, threads = NULL) {
 #' @param overwrite Logical. Whether to overwrite existing results.
 #' @param threads Optional integer. Number of threads for parallel computation.
 #'
-#' @return No direct return value. Results are written to the HDF5 file.
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the pseudoinverse matrix (group/dataset)}
+#' }
 #'
 #' @examples
 #' library(BigDataStatMeth)
@@ -2949,7 +3061,12 @@ bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdatas
 #' @param remove Logical (optional). Whether to remove source datasets after
 #'   reduction. Default is FALSE.
 #'
-#' @return No return value, called for side effects (dataset reduction).
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the reduced dataset (group/dataset)}
+#'   \item{func}{Character string with the reduction function applied}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -2993,7 +3110,7 @@ bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdatas
 #'
 #' @export
 bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NULL, outdataset = NULL, overwrite = FALSE, remove = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdReduce_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, group, reducefunction, outgroup, outdataset, overwrite, remove))
+    .Call('_BigDataStatMeth_bdReduce_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, group, reducefunction, outgroup, outdataset, overwrite, remove)
 }
 
 #' Remove Elements from HDF5 File
@@ -3093,8 +3210,12 @@ bdRemove_hdf5_element <- function(filename, elements) {
 #' @param overwrite Logical (optional). Whether to overwrite existing dataset.
 #'   Default is FALSE.
 #'
-#' @return No return value, called for side effects (data filtering).
-#'   Prints a warning message indicating the number of rows/columns removed.
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the filtered dataset (group/dataset)}
+#'   \item{nremoved}{Integer with the number of rows/columns removed due to low data quality}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -3137,7 +3258,7 @@ bdRemove_hdf5_element <- function(filename, elements) {
 #'
 #' @export
 bdRemovelowdata_hdf5 <- function(filename, group, dataset, outgroup, outdataset, pcent, bycols, overwrite = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdRemovelowdata_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, bycols, overwrite))
+    .Call('_BigDataStatMeth_bdRemovelowdata_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, pcent, bycols, overwrite)
 }
 
 #' Remove SNPs Based on Minor Allele Frequency
@@ -3176,8 +3297,12 @@ bdRemovelowdata_hdf5 <- function(filename, group, dataset, outgroup, outdataset,
 #' @param overwrite Logical (optional). Whether to overwrite existing dataset.
 #'   Default is FALSE.
 #'
-#' @return No return value, called for side effects (data filtering).
-#'   Prints a warning message indicating the number of rows/columns removed.
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the filtered dataset (group/dataset)}
+#'   \item{nremoved}{Integer with the number of SNPs removed due to low Minor Allele Frequency (MAF)}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -3222,7 +3347,7 @@ bdRemovelowdata_hdf5 <- function(filename, group, dataset, outgroup, outdataset,
 #'
 #' @export
 bdRemoveMAF_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize, overwrite = NULL) {
-    invisible(.Call('_BigDataStatMeth_bdRemoveMAF_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize, overwrite))
+    .Call('_BigDataStatMeth_bdRemoveMAF_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize, overwrite)
 }
 
 #' Sort HDF5 Dataset Using Predefined Order
@@ -3297,7 +3422,11 @@ bdRemoveMAF_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf
 #' @param overwrite Logical (optional). Whether to overwrite existing dataset.
 #'   Default is FALSE.
 #'
-#' @return No return value, called for side effects (dataset sorting).
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the sorted dataset (group/dataset)}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -3351,7 +3480,7 @@ bdRemoveMAF_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf
 #'
 #' @export
 bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSortlist, func, outgroup = NULL, overwrite = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdSort_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, blockedSortlist, func, outgroup, overwrite))
+    .Call('_BigDataStatMeth_bdSort_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outdataset, blockedSortlist, func, outgroup, overwrite)
 }
 
 #' Split HDF5 Dataset into Submatrices
@@ -3395,9 +3524,13 @@ bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSor
 #' @param overwrite Logical (optional). Whether to overwrite existing datasets.
 #'   Default is FALSE.
 #'
-#' @return No return value, called for side effects (dataset splitting).
-#'   Creates multiple datasets in the HDF5 file named as
-#'   "`outdataset`.1", "`outdataset`.2", etc.
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the output group path where the split 
+#'   datasets are stored. Multiple datasets are created in this location named 
+#'   as "<outdataset>.1", "<outdataset>.2", etc.}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -3447,7 +3580,7 @@ bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSor
 #'
 #' @export
 bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, nblocks = NULL, blocksize = NULL, bycols = TRUE, overwrite = FALSE) {
-    invisible(.Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, overwrite))
+    .Call('_BigDataStatMeth_bdSplit_matrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, overwrite)
 }
 
 #' Create Subset of HDF5 Dataset
@@ -3572,7 +3705,11 @@ bdsubset_hdf5_dataset <- function(filename, dataset_path, indices, select_rows =
 #'   in each block. Default is 1,000,000. For matrices larger than 5000x5000,
 #'   automatically adjusted to number of rows or columns * 2.
 #'
-#' @return No direct return value. The function modifies the HDF5 dataset in-place.
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{ds}{Character string with the full dataset path to the modified matrix. The opposite triangular part is written to the same input dataset, completing the symmetric matrix (group/dataset)}
+#' }
 #'
 #' @examples
 #' library(BigDataStatMeth)
@@ -3631,7 +3768,7 @@ bdsubset_hdf5_dataset <- function(filename, dataset_path, indices, select_rows =
 #'
 #' @export
 bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copytolower = NULL, elementsBlock = 1000000L) {
-    invisible(.Call('_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, copytolower, elementsBlock))
+    .Call('_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, copytolower, elementsBlock)
 }
 
 #' Apply Vector Operations to HDF5 Matrix
@@ -3777,7 +3914,14 @@ bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, ve
 #' \code{rownames} and \code{colnames} lengths are validated against the
 #' dataset dimensions.
 #'
-#' @return No return value, called for side effects (metadata write).
+#' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+#' \describe{
+#'   \item{fn}{Character string with the HDF5 filename}
+#'   \item{dsrows}{Character string with the full dataset path to the row names,
+#'    stored as ".<dataset>_dimnames/1" within the specified group}
+#'   \item{dscols}{Character string with the full dataset path to the column 
+#'   names, stored as ".<dataset>_dimnames/2" within the specified group}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -3797,7 +3941,7 @@ bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, ve
 #'
 #' @export
 bdWrite_hdf5_dimnames <- function(filename, group, dataset, rownames, colnames) {
-    invisible(.Call('_BigDataStatMeth_bdWrite_hdf5_dimnames', PACKAGE = 'BigDataStatMeth', filename, group, dataset, rownames, colnames))
+    .Call('_BigDataStatMeth_bdWrite_hdf5_dimnames', PACKAGE = 'BigDataStatMeth', filename, group, dataset, rownames, colnames)
 }
 
 #' Block-Based Matrix Multiplication

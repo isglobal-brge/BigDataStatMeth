@@ -30,7 +30,11 @@ bdpseudoinv_hdf5(
 \item{threads}{Optional integer. Number of threads for parallel computation.}
 }
 \value{
-No direct return value. Results are written to the HDF5 file.
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the pseudoinverse matrix (group/dataset)}
+}
 }
 \description{
 Computes the Moore-Penrose pseudoinverse of a matrix stored in HDF5 format.

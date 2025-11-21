@@ -88,13 +88,21 @@
 //'   * "full": Performs direct computation (for smaller matrices)
 //' @param threads Integer. Number of threads for parallel computation.
 //'
-//' @return No direct return value. Results are written to the HDF5 file in the
-//' group 'PCA/`dataset`' with the following components:
-//'   * sdev: Standard deviations of the principal components
-//'   * rotation: Matrix of variable loadings (eigenvectors)
-//'   * x: Matrix containing the rotated data (principal components)
-//'   * center: Column means (if center = TRUE)
-//'   * scale: Column standard deviations (if scale = TRUE)
+//' @return A list containing the paths to the PCA results stored in the HDF5 file:
+//'   \describe{
+//'     \item{fn}{Character string. Path to the HDF5 file containing the results}
+//'     \item{lambda}{Character string. Dataset path to eigenvalues (λ)}
+//'     \item{variance}{Character string. Dataset path to variance explained by each PC}
+//'     \item{cumvar}{Character string. Dataset path to cumulative variance explained}
+//'     \item{var.coord}{Character string. Dataset path to variable coordinates on the PCs}
+//'     \item{var.cos2}{Character string. Dataset path to squared cosines (quality of representation) for variables}
+//'     \item{ind.dist}{Character string. Dataset path to distances of individuals from the origin}
+//'     \item{components}{Character string. Dataset path to principal components (rotated data)}
+//'     \item{ind.coord}{Character string. Dataset path to individual coordinates on the PCs}
+//'     \item{ind.cos2}{Character string. Dataset path to squared cosines (quality of representation) for individuals}
+//'     \item{ind.contrib}{Character string. Dataset path to contributions of individuals to each PC}
+//'   }
+//'   All results are written to the HDF5 file in the group 'PCA/`dataset`'.
 //'
 //' @examples
 //' \dontrun{
@@ -128,7 +136,7 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
+Rcpp::List bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
                 Rcpp::Nullable<int> ncomponents = 0,
                 Rcpp::Nullable<bool> bcenter = false, Rcpp::Nullable<bool> bscale = false, 
                 Rcpp::Nullable<int> k = 2, Rcpp::Nullable<int> q = 1,
@@ -139,14 +147,26 @@ void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
                 Rcpp::Nullable<int> threads = R_NilValue)
 {
     
-
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("lambda") = "",
+                                               Rcpp::Named("variance") = "",
+                                               Rcpp::Named("cumvar") = "",
+                                               Rcpp::Named("var.coord") = "",
+                                               Rcpp::Named("var.cos2") = "",
+                                               Rcpp::Named("ind.dist") = "",
+                                               Rcpp::Named("components") = "",
+                                               Rcpp::Named("ind.coord") = "",
+                                               Rcpp::Named("ind.cos2") = "",
+                                               Rcpp::Named("ind.contrib") = "");
+    
     try
     {
         
         bool bcent, bscal, bforce;
         int ks, qs = 1, incomponents = 0;
         double dthreshold;
-        std::string strSVDgroup;
+        std::string strSVDgroup, 
+                    strPCAgroup = "PCA/" + dataset;
         
         if(ncomponents.isNull())  incomponents = 0 ;
         else    incomponents = Rcpp::as<int>(ncomponents);
@@ -171,10 +191,12 @@ void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
         } else {
             if( Rcpp::as<double>(rankthreshold) > 0.1 ) {
                 Rcpp::Rcout<< "Threshold to big, please set threshold with value lower than 0.1";
-                return void();
+                return(lst_return);
+                // return void();
             } else if( Rcpp::as<double>(rankthreshold) < 0 ) {
                 Rcpp::Rcout<< "Threshold must be a positive value near zero";
-                return void();
+                return(lst_return);
+                // return void();
             } else {
                 dthreshold = Rcpp::as<double>(rankthreshold);
             }
@@ -189,26 +211,39 @@ void bdPCA_hdf5(std::string filename, std::string group, std::string dataset,
         
         BigDataStatMeth::RcppPCAHdf5(filename, group, dataset, strSVDgroup, ks, qs, incomponents, bcent, bscal, dthreshold, bforce, false, method, threads);
         
+        lst_return["fn"] = filename;
+        lst_return["lambda"] = strPCAgroup + "/" +  "lambda";
+        lst_return["variance"] = strPCAgroup + "/" +  "variance";
+        lst_return["cumvar"] = strPCAgroup + "/" +  "cumvar";
+        lst_return["var.coord"] = strPCAgroup + "/" +  "var.coord";
+        lst_return["var.cos2"] = strPCAgroup + "/" +  "var.cos2";
+        lst_return["ind.dist"] = strPCAgroup + "/" +  "ind.dist";
+        lst_return["components"] = strPCAgroup + "/" +  "components";
+        lst_return["ind.coord"] = strPCAgroup + "/" +  "ind.coord";
+        lst_return["ind.cos2"] = strPCAgroup + "/" +  "ind.cos2";
+        lst_return["ind.contrib"] = strPCAgroup + "/" +  "ind.contrib";
+        
     } catch( H5::FileIException& error ) {
         Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (File IException)";
-        return void();
+        // return void();
     } catch( H5::DataSetIException& error ) { 
         Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (DataSet IException)";
-        return void();
+        // return void();
     } catch( H5::DataSpaceIException& error ) { 
         Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (DataSpace IException)";
-        return void();
+        // return void();
     } catch( H5::DataTypeIException& error ) {
         Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (DataType IException)";
-        return void();
+        // return void();
     } catch(std::exception &ex) {
         Rcpp::Rcerr<<"\nC++ exception bdPCA_hdf5 : "<< ex.what();
-        return void();
+        // return void();
     } catch (...) {
         Rcpp::Rcerr<<"\nC++ exception bdPCA_hdf5 (unknown reason)";
-        return void();
+        // return void();
     }
     
-    return void();
+    // return void();
+    return(lst_return);
     
 }

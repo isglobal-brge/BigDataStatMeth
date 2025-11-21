@@ -191,7 +191,11 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
 //' @param group Character string. Path to the group containing the dataset.
 //' @param dataset Character string. Name of the dataset to modify.
 //'
-//' @return No return value, called for side effects (diagonal modification).
+//' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the diagonal elements written (group/dataset)}
+//' }
 //'
 //' @examples
 //' \dontrun{
@@ -229,11 +233,14 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
 //'
 //' @export
 // [[Rcpp::export]]
- void bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, std::string group, std::string dataset)
- {
+Rcpp::List bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, std::string group, std::string dataset)
+{
      
      
      BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+     
+     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                                Rcpp::Named("ds") = "");
      
      try
      {
@@ -244,7 +251,7 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
             intNewDiagonal = Rcpp::as<Rcpp::NumericVector>(diagonal);
         } else {
             Rcpp::Rcout<<"\n Diagonal vector isn't a Numeric vector";
-            return void();
+            return(lst_return);
         }
          
         dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
@@ -257,25 +264,28 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
         }
          
         delete dsA; dsA = nullptr;
+        
+        lst_return["fn"] = filename;
+        lst_return["ds"] = strDataset;
          
      }  catch( H5::FileIException& error ) { 
          checkClose_file(dsA);
          Rcpp::Rcerr<<"c++ exception bdWriteDiagonal_hdf5 (File IException)";
-         return void();
+         return(lst_return);
      } catch( H5::DataSetIException& error ) { 
          checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdWriteDiagonal_hdf5 (DataSet IException)";
-         return void();
+         return(lst_return);
      } catch(std::exception& ex) {
          checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdWriteDiagonal_hdf5" << ex.what();
-         return void();
+         return(lst_return);
      } catch (...) {
          checkClose_file(dsA);
          Rcpp::Rcerr<<"\nC++ exception bdWriteDiagonal_hdf5 (unknown reason)";
-         return void();
+         return(lst_return);
      }
      
      Rcpp::Rcout<<dataset<<" diagonal has been overwritten\n";
-     return void();
+     return(lst_return);
  }

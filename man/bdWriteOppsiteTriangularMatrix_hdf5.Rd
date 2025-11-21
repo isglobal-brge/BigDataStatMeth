@@ -27,7 +27,11 @@ in each block. Default is 1,000,000. For matrices larger than 5000x5000,
 automatically adjusted to number of rows or columns * 2.}
 }
 \value{
-No direct return value. The function modifies the HDF5 dataset in-place.
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the modified matrix. The opposite triangular part is written to the same input dataset, completing the symmetric matrix (group/dataset)}
+}
 }
 \description{
 Creates a symmetric matrix by mirroring values from one triangular part to the other

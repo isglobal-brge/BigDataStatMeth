@@ -166,9 +166,16 @@ Rcpp::RObject bdQR( const Rcpp::RObject & X,
 //' @param threads Integer. Optional number of threads for parallel computation.
 //'   If NULL, uses all available threads.
 //'
-//' @return No return value. Results are written to the HDF5 file as:
-//'   * Q.outdataset: The orthogonal matrix Q
-//'   * R.outdataset: The upper triangular matrix R
+//' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds_Q}{Character string with the full dataset path to the Q matrix 
+//'   (orthogonal matrix). Results are written to the HDF5 file as 
+//'   "Q.<outdataset>" within the specified group}
+//'   \item{ds_R}{Character string with the full dataset path to the R matrix 
+//'   (upper triangular matrix). Results are written to the HDF5 file as 
+//'   "R.<outdataset>" within the specified group}
+//' }
 //'
 //' @examples
 //' \dontrun{

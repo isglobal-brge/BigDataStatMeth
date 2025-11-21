@@ -39,7 +39,11 @@ rows (FALSE). Default is TRUE.}
 \item{overwrite}{Logical (optional). Whether to overwrite existing dataset.}
 }
 \value{
-No return value, called for side effects (data imputation).
+List with components:
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the imputed data (group/dataset)}
+}
 }
 \description{
 Performs imputation of missing values in SNP (Single Nucleotide Polymorphism)

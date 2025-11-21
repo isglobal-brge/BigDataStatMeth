@@ -84,8 +84,11 @@ using namespace BigDataStatMeth;
 //' @param threads Integer, number of threads for parallel computation 
 //' (optional, default: auto)
 //' 
-//' @return A list containing dataset locations and metadata including 
-//' transpose information
+//' @return List with components:
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the correlation matrix (group/dataset)}
+//' }
 //' 
 //' @examples
 //' \dontrun{
@@ -112,7 +115,7 @@ using namespace BigDataStatMeth;
 //' 
 //' @export
  // [[Rcpp::export]]
- List bdCorr_hdf5(std::string filename_x, std::string group_x, std::string dataset_x,
+Rcpp::List bdCorr_hdf5(std::string filename_x, std::string group_x, std::string dataset_x,
                   std::string filename_y = "", std::string group_y = "", std::string dataset_y = "",
                   bool trans_x = false, bool trans_y = false,
                   std::string method = "pearson", bool use_complete_obs = true,

@@ -16,7 +16,11 @@ bdWriteDiagonal_hdf5(diagonal, filename, group, dataset)
 \item{dataset}{Character string. Name of the dataset to modify.}
 }
 \value{
-No return value, called for side effects (diagonal modification).
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the diagonal elements written (group/dataset)}
+}
 }
 \description{
 Updates the diagonal elements of a matrix stored in an HDF5 file.

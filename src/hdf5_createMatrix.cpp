@@ -11,10 +11,18 @@
 //' @param group, character array indicating folder name to put the matrix in hdf5 file
 //' @param dataset, character array indicating the dataset name to store the matix data
 //' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
-//' @param overwriteFile, optional boolean by default overwriteFile = false, if true and file exists, removes old file and creates a new file with de dataset data.
-//' @param overwriteDataset, optional boolean by default overwriteDataset = false,  if true and dataset exists, removes old dataset and creates a new dataset.
-//' @param unlimited, optional boolean by default unlimited = false, if true creates a dataset that can growth.
-//' @return none
+//' @param overwriteFile, optional boolean by default overwriteFile = false, if 
+//' true and file exists, removes old file and creates a new file with de dataset 
+//' data.
+//' @param overwriteDataset, optional boolean by default overwriteDataset = false,  
+//' if true and dataset exists, removes old dataset and creates a new dataset.
+//' @param unlimited, optional boolean by default unlimited = false, if true 
+//' creates a dataset that can growth.
+//' @return List with components:
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the created matrix (group/dataset)}
+//' }
 //' 
 //' @examples
 //' 
@@ -34,7 +42,7 @@
 //' 
 //' @export
 // [[Rcpp::export]]
-void bdCreate_hdf5_matrix(std::string filename, 
+Rcpp::List bdCreate_hdf5_matrix(std::string filename, 
                           Rcpp::RObject object, 
                           Rcpp::Nullable<std::string> group = R_NilValue, 
                           Rcpp::Nullable<std::string> dataset = R_NilValue,
@@ -48,6 +56,9 @@ void bdCreate_hdf5_matrix(std::string filename,
     BigDataStatMeth::hdf5Dataset* objDataset = nullptr;
     BigDataStatMeth::hdf5File* objFile = nullptr;
     BigDataStatMeth::hdf5Dims* dsdims = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
     
     try
     {
@@ -86,13 +97,13 @@ void bdCreate_hdf5_matrix(std::string filename,
         if ( object.sexp_type()==0 ) {
             // throw std::range_error("Unknown data type");
             Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
-            return void();
+            return(lst_return);
         }
         
         if ( object.sexp_type()==0  ) {
             // throw std::range_error("Data matrix must exsits and mustn't be null");
             Rf_error("c++ exception bdCreate_hdf5_matrix - Data matrix must exsits and mustn't be null");
-            return void();
+            return(lst_return);
         }
         
         dims = BigDataStatMeth::getObjectDims(object, strdatatype);
@@ -152,6 +163,9 @@ void bdCreate_hdf5_matrix(std::string filename,
             delete dsdims; dsdims = nullptr;
             delete objDataset; objDataset = nullptr;
             delete objFile; objFile = nullptr;
+            
+            lst_return["fn"] = filename;
+            lst_return["ds"] = strsubgroup + "/" + strdataset;
         } 
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
@@ -159,22 +173,22 @@ void bdCreate_hdf5_matrix(std::string filename,
         if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
         Rf_error("c++ c++ exception bdCreate_hdf5_matrix (File IException)");
-        return void();
+        return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         if(objFile != nullptr) delete objFile;
         if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
         Rf_error( "c++ exception bdCreate_hdf5_matrix (DataSet IException)");
-        return void();
+        return(lst_return);
     } catch(std::exception &ex) {
         if(objFile != nullptr) delete objFile;
         if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
         Rf_error( "c++ exception bdCreate_hdf5_matrix %s", ex.what());
-        return void();
+        return(lst_return);
     } 
 
-    return void();
+    return(lst_return);
     
 }
 

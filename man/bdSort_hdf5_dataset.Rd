@@ -40,7 +40,11 @@ uses input group.}
 Default is FALSE.}
 }
 \value{
-No return value, called for side effects (dataset sorting).
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the sorted dataset (group/dataset)}
+}
 }
 \description{
 Sorts a dataset in an HDF5 file based on a predefined ordering specified

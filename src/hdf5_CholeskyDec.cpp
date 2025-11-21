@@ -85,8 +85,12 @@
 //'   (default = 100,000). For matrices larger than 5000x5000, automatically adjusted
 //'   to number of rows or columns * 2.
 //'
-//' @return No direct return value. Results are written to the HDF5 file in the
-//' specified location with the following structure:
+//' @return A list containing the location of the Cholesky decomposition result:
+//'   \describe{
+//'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+//'     \item{ds}{Character string. Full dataset path to the Cholesky decomposition result within the HDF5 file}
+//'   }
+//'   
 //' \describe{
 //'   \item{L}{The lower triangular Cholesky factor}
 //' }

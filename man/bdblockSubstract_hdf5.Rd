@@ -49,7 +49,11 @@ Default is "A_-_B"}
 Default is false}
 }
 \value{
-Modifies the HDF5 file in place, adding the subtraction result
+A list containing the location of the subtraction result:
+\describe{
+\item{fn}{Character string. Path to the HDF5 file containing the result}
+\item{ds}{Character string. Full dataset path to the subtraction result (A - B) within the HDF5 file}
+}
 }
 \description{
 Performs optimized block-wise subtraction between two datasets stored in HDF5

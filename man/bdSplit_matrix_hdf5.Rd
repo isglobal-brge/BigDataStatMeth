@@ -42,9 +42,13 @@ rows (FALSE). Default is TRUE.}
 Default is FALSE.}
 }
 \value{
-No return value, called for side effects (dataset splitting).
-Creates multiple datasets in the HDF5 file named as
-"\code{outdataset}.1", "\code{outdataset}.2", etc.
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the output group path where the split
+datasets are stored. Multiple datasets are created in this location named
+as "\if{html}{\out{<outdataset>}}.1", "\if{html}{\out{<outdataset>}}.2", etc.}
+}
 }
 \description{
 Splits a large dataset in an HDF5 file into smaller submatrices, with

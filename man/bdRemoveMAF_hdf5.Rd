@@ -40,8 +40,12 @@ Larger values use more memory but may be faster.}
 Default is FALSE.}
 }
 \value{
-No return value, called for side effects (data filtering).
-Prints a warning message indicating the number of rows/columns removed.
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the filtered dataset (group/dataset)}
+\item{nremoved}{Integer with the number of SNPs removed due to low Minor Allele Frequency (MAF)}
+}
 }
 \description{
 Filters SNPs (Single Nucleotide Polymorphisms) based on Minor Allele

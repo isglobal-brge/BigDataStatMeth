@@ -41,10 +41,15 @@ Default is FALSE.}
 If NULL, uses all available threads.}
 }
 \value{
-No return value. Results are written to the HDF5 file as:
-\itemize{
-\item Q.outdataset: The orthogonal matrix Q
-\item R.outdataset: The upper triangular matrix R
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds_Q}{Character string with the full dataset path to the Q matrix
+(orthogonal matrix). Results are written to the HDF5 file as
+"Q.\if{html}{\out{<outdataset>}}" within the specified group}
+\item{ds_R}{Character string with the full dataset path to the R matrix
+(upper triangular matrix). Results are written to the HDF5 file as
+"R.\if{html}{\out{<outdataset>}}" within the specified group}
 }
 }
 \description{

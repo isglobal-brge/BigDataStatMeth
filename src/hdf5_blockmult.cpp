@@ -48,7 +48,12 @@
 //' * If `bparal = true`, number of concurrent threads in parallelization. If 
 //' `paral = TRUE` and `threads = NULL` then `threads` is set to a half of a 
 //' maximum number of available threads 
-//' @return a dataset inside the hdf5 data file with A*B 
+//' @return A list containing the location of the matrix multiplication result:
+//'   \describe{
+//'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+//'     \item{ds}{Character string. Full dataset path to the A*B multiplication result within the HDF5 file}
+//'   }
+//'   
 //' @examples
 //' library("BigDataStatMeth")
 //' library("rhdf5")

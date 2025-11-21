@@ -251,7 +251,7 @@
 //' @return List with components:
 //' \describe{
 //'   \item{fn}{Character string with the HDF5 filename}
-//'   \item{ds}{Character string with the full dataset path (group/dataset)}
+//'   \item{ds}{Character string with the full dataset path to the diagonal addition result (group/dataset)}
 //' }
 //'
 //' @export
@@ -417,7 +417,7 @@
 //' @return List with components:
 //' \describe{
 //'   \item{fn}{Character string with the HDF5 filename}
-//'   \item{ds}{Character string with the full dataset path (group/dataset)}
+//'   \item{ds}{Character string with the full dataset path to the diagonal subtraction result (group/dataset)}
 //' }
 //'
 //' @examples
@@ -601,7 +601,7 @@ Rcpp::List bdDiag_subtract_hdf5(std::string filename,
 //' @return List with components:
 //' \describe{
 //'   \item{fn}{Character string with the HDF5 filename}
-//'   \item{ds}{Character string with the full dataset path (group/dataset)}
+//'   \item{ds}{Character string with the full dataset path to the diagonal multiplication result (group/dataset)}
 //' }
 //'
 //' @examples
@@ -779,7 +779,7 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
 //' @return List with components:
 //' \describe{
 //'   \item{fn}{Character string with the HDF5 filename}
-//'   \item{ds}{Character string with the full dataset path (group/dataset)}
+//'   \item{ds}{Character string with the full dataset path to the diagonal division result (group/dataset)}
 //' }
 //'
 //' @examples

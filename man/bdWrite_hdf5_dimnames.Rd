@@ -21,7 +21,14 @@ to skip writing row names. If provided, length must equal nrow.}
 length must equal ncol.}
 }
 \value{
-No return value, called for side effects (metadata write).
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{dsrows}{Character string with the full dataset path to the row names,
+stored as ".\if{html}{\out{<dataset>}}_dimnames/1" within the specified group}
+\item{dscols}{Character string with the full dataset path to the column
+names, stored as ".\if{html}{\out{<dataset>}}_dimnames/2" within the specified group}
+}
 }
 \description{
 Write row and/or column names metadata for an existing dataset in an

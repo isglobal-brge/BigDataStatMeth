@@ -55,7 +55,12 @@
 //' default value \code{FALSE}.
 //' @param datatype Character. Element type (e.g., "real").
 //'
-//' @return No return value, called for side effects (dataset creation).
+//' @return List with components:
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the empty 
+//'   dataset (group/dataset)}
+//' }
 //'
 //' @examples
 //' \dontrun{
@@ -68,7 +73,7 @@
 //'
 //' @export
 // [[Rcpp::export]]
- void bdCreate_hdf5_emptyDataset(std::string filename, std::string group,
+Rcpp::List bdCreate_hdf5_emptyDataset(std::string filename, std::string group,
                                 std::string dataset, int nrows = 0, int ncols = 0,
                                 Rcpp::Nullable<bool> overwriteFile        = R_NilValue,
                                 Rcpp::Nullable<bool> overwriteDataset     = R_NilValue,
@@ -79,6 +84,9 @@
      
      hdf5Dataset* objDataset = nullptr;
      hdf5File*    objFile    = nullptr;
+     
+     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                                Rcpp::Named("ds") = "");
      
      try {
          if (nrows <= 0 || ncols <= 0)
@@ -107,27 +115,30 @@
              checkClose_file(objDataset);
              delete objDataset; objDataset = nullptr;
              delete objFile; objFile = nullptr;
+             
+             lst_return["fn"] = filename;
+             lst_return["ds"] = group + "/" + dataset;
          }
          
      } catch (H5::FileIException&) {
          if (objFile)    { delete objFile; objFile = nullptr; }
          checkClose_file(objDataset);    // null-safe
          Rcpp::stop("c++ exception bdCreate_hdf5_emptyDataset (File IException)");
-         return;
+         return(lst_return);
          
      } catch (H5::DataSetIException&) {
          if (objFile)    { delete objFile; objFile = nullptr; }
          checkClose_file(objDataset);
          Rcpp::stop("c++ exception bdCreate_hdf5_emptyDataset (DataSet IException)");
-         return;
+         return(lst_return);
          
      } catch (std::exception& ex) {
          if (objFile)    { delete objFile; objFile = nullptr; }
          checkClose_file(objDataset);
          Rcpp::stop("c++ exception bdCreate_hdf5_emptyDataset %s", ex.what());
-         return;
+         return(lst_return);
      }
      
-     return;
+     return(lst_return);
  }
  

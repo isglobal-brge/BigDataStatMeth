@@ -190,6 +190,10 @@ Rcpp::List bdCorr_matrix(Rcpp::RObject X,
      } catch(...) {
          ::Rf_error("C++ exception bdCorr_matrix (unknown reason)");
      }
+     
+     return List::create(
+         Named("correlation") = R_NilValue,
+         Named("method") = R_NilValue);
  }
 
 

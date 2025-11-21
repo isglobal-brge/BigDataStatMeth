@@ -40,10 +40,11 @@ If FALSE (default), stores only the lower triangular part to save space.}
 to number of rows or columns * 2.}
 }
 \value{
-No direct return value. Results are written to the HDF5 file in the
-specified location with the following structure:
+List with components:
 \describe{
-\item{inverse}{The inverse matrix A^(-1)}
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the inverse
+Cholesky decomposition A^(-1) result (group/dataset)}
 }
 }
 \description{

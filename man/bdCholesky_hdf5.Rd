@@ -40,8 +40,12 @@ stores only the lower triangular part to save space.}
 to number of rows or columns * 2.}
 }
 \value{
-No direct return value. Results are written to the HDF5 file in the
-specified location with the following structure:
+A list containing the location of the Cholesky decomposition result:
+\describe{
+\item{fn}{Character string. Path to the HDF5 file containing the result}
+\item{ds}{Character string. Full dataset path to the Cholesky decomposition result within the HDF5 file}
+}
+
 \describe{
 \item{L}{The lower triangular Cholesky factor}
 }

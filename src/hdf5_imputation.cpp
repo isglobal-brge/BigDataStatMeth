@@ -91,7 +91,11 @@
 //' @param threads Integer (optional). Number of threads for parallel processing.
 //' @param overwrite Logical (optional). Whether to overwrite existing dataset.
 //'
-//' @return No return value, called for side effects (data imputation).
+//' @return List with components:
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the imputed data (group/dataset)}
+//' }
 //'
 //' @examples
 //' \dontrun{
@@ -132,7 +136,7 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, 
+Rcpp::List bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, 
                         Rcpp::Nullable<std::string> outgroup = R_NilValue, 
                         Rcpp::Nullable<std::string> outdataset = R_NilValue, 
                         Rcpp::Nullable<bool> bycols = true, 
@@ -143,6 +147,9 @@ void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string data
     
     BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
     BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "");
     
     try
     {
@@ -176,10 +183,14 @@ void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string data
         } else {
             delete dsIn; dsIn = nullptr;
             Rf_error("c++ exception bdImputeSNPs_hdf5: Error opening %s dataset ",dataset.c_str());
-            return void();
+            return(lst_return);
+            // return void();
         }
         
         delete dsIn; dsIn = nullptr;
+        
+        lst_return["fn"] = filename;
+        lst_return["ds"] = group + "/" + dataset;
         
     } catch( H5::FileIException& error ){
         checkClose_file(dsIn, dsOut);
@@ -202,7 +213,7 @@ void bdImputeSNPs_hdf5(std::string filename, std::string group, std::string data
     }
     
     // Rcpp::Rcout<<"SNPs with missing values has been imputed\n";
-    return void();
-    
+    // return void();
+    return(lst_return);
 }
 

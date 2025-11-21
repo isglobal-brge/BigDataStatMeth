@@ -53,7 +53,12 @@ Default is "CrossProd_A_x_B"}
 Default is false}
 }
 \value{
-Modifies the HDF5 file in place, adding the cross product result
+A list containing the location of the crossproduct result:
+\describe{
+\item{fn}{Character string. Path to the HDF5 file containing the result}
+\item{ds}{Character string. Full dataset path to the crossproduct
+result (t(A) \%\emph{\% A or t(A) \%}\% B) within the HDF5 file}
+}
 }
 \description{
 Performs optimized cross product operations on matrices stored in HDF5 format.

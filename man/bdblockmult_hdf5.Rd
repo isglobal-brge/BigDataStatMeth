@@ -65,7 +65,11 @@ no calculations will be performed. If TRUE and a dataset with the same
 name as specified in outdataset already exists, it will be overwritten.}
 }
 \value{
-a dataset inside the hdf5 data file with A*B
+A list containing the location of the matrix multiplication result:
+\describe{
+\item{fn}{Character string. Path to the HDF5 file containing the result}
+\item{ds}{Character string. Full dataset path to the A*B multiplication result within the HDF5 file}
+}
 }
 \description{
 The bdblockmult_hdf5 function performs block-wise matrix multiplication

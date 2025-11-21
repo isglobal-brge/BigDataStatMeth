@@ -36,8 +36,12 @@ rows (FALSE). Default is TRUE.}
 Default is FALSE.}
 }
 \value{
-No return value, called for side effects (data filtering).
-Prints a warning message indicating the number of rows/columns removed.
+List with components. If an error occurs, all string values are returned as empty strings (""):
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the filtered dataset (group/dataset)}
+\item{nremoved}{Integer with the number of rows/columns removed due to low data quality}
+}
 }
 \description{
 Removes SNPs (Single Nucleotide Polymorphisms) with low representation from

@@ -52,7 +52,7 @@
 //' @return List with components:
 //' \describe{
 //'   \item{fn}{Character string with the HDF5 filename}
-//'   \item{ds}{Character string with the full dataset path (group/dataset)}
+//'   \item{ds}{Character string with the full dataset path to the diagonal matrix (group/dataset)}
 //' }
 //'
 //' @examples

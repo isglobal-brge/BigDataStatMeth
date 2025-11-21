@@ -42,7 +42,13 @@ bdImportTextFile_hdf5(
 \item{overwriteFile}{Logical (optional). Whether to overwrite existing HDF5 file.}
 }
 \value{
-No return value, called for side effects (file creation).
+List with components:
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the imported data (group/dataset)}
+\item{ds_rows}{Character string with the full dataset path to the row names}
+\item{ds_cols}{Character string with the full dataset path to the column names}
+}
 }
 \description{
 Converts a text file (e.g., CSV, TSV) to HDF5 format, providing efficient

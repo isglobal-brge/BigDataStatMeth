@@ -35,7 +35,11 @@ If NULL, output is stored in the same input group}
 Defaults to false}
 }
 \value{
-Modifies the HDF5 file in place, adding the merged dataset
+A list containing the location of the combined dataset:
+\describe{
+\item{fn}{Character string. Path to the HDF5 file containing the result}
+\item{ds}{Character string. Full dataset path to the bound/combined dataset within the HDF5 file}
+}
 }
 \description{
 This function merges existing matrices within an HDF5 data file either by

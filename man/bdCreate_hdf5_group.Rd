@@ -13,7 +13,12 @@ bdCreate_hdf5_group(filename, group)
 (e.g., \code{"MGCCA_OUT/scores"}).}
 }
 \value{
-No return value, called for side effects (group creation).
+List with components:
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{gr}{Character string with the full group path created within the
+HDF5 file}
+}
 }
 \description{
 Create a (nested) group inside an HDF5 file. The operation is

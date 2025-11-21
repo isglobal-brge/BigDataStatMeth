@@ -26,14 +26,22 @@ bdCreate_hdf5_matrix(
 
 \item{transp}{boolean, if trans=true matrix is stored transposed in hdf5 file}
 
-\item{overwriteFile, }{optional boolean by default overwriteFile = false, if true and file exists, removes old file and creates a new file with de dataset data.}
+\item{overwriteFile, }{optional boolean by default overwriteFile = false, if
+true and file exists, removes old file and creates a new file with de dataset
+data.}
 
-\item{overwriteDataset, }{optional boolean by default overwriteDataset = false,  if true and dataset exists, removes old dataset and creates a new dataset.}
+\item{overwriteDataset, }{optional boolean by default overwriteDataset = false,
+if true and dataset exists, removes old dataset and creates a new dataset.}
 
-\item{unlimited, }{optional boolean by default unlimited = false, if true creates a dataset that can growth.}
+\item{unlimited, }{optional boolean by default unlimited = false, if true
+creates a dataset that can growth.}
 }
 \value{
-none
+List with components:
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the created matrix (group/dataset)}
+}
 }
 \description{
 Creates a hdf5 file with numerical data matrix,

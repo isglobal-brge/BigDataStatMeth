@@ -60,15 +60,21 @@ stored. If SVD was previously computed, results will be reused from this group.}
 \item{threads}{Integer. Number of threads for parallel computation.}
 }
 \value{
-No direct return value. Results are written to the HDF5 file in the
-group 'PCA/\code{dataset}' with the following components:
-\itemize{
-\item sdev: Standard deviations of the principal components
-\item rotation: Matrix of variable loadings (eigenvectors)
-\item x: Matrix containing the rotated data (principal components)
-\item center: Column means (if center = TRUE)
-\item scale: Column standard deviations (if scale = TRUE)
+A list containing the paths to the PCA results stored in the HDF5 file:
+\describe{
+\item{fn}{Character string. Path to the HDF5 file containing the results}
+\item{lambda}{Character string. Dataset path to eigenvalues (λ)}
+\item{variance}{Character string. Dataset path to variance explained by each PC}
+\item{cumvar}{Character string. Dataset path to cumulative variance explained}
+\item{var.coord}{Character string. Dataset path to variable coordinates on the PCs}
+\item{var.cos2}{Character string. Dataset path to squared cosines (quality of representation) for variables}
+\item{ind.dist}{Character string. Dataset path to distances of individuals from the origin}
+\item{components}{Character string. Dataset path to principal components (rotated data)}
+\item{ind.coord}{Character string. Dataset path to individual coordinates on the PCs}
+\item{ind.cos2}{Character string. Dataset path to squared cosines (quality of representation) for individuals}
+\item{ind.contrib}{Character string. Dataset path to contributions of individuals to each PC}
 }
+All results are written to the HDF5 file in the group 'PCA/\code{dataset}'.
 }
 \description{
 Performs Principal Component Analysis (PCA) on a large matrix stored in an HDF5 file.

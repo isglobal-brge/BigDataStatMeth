@@ -56,7 +56,12 @@
 //' @param group Character string. Group path to create
 //'   (e.g., `"MGCCA_OUT/scores"`).
 //'
-//' @return No return value, called for side effects (group creation).
+//' @return List with components:
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{gr}{Character string with the full group path created within the 
+//'   HDF5 file}
+//' }
 //'
 //' @examples
 //' \dontrun{
@@ -81,10 +86,13 @@
 //' @export
 // [[Rcpp::export]]
 
- void bdCreate_hdf5_group(std::string filename, std::string group)
+Rcpp::List bdCreate_hdf5_group(std::string filename, std::string group)
  {
      
      BigDataStatMeth::hdf5File* objFile = nullptr;
+     
+     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                                Rcpp::Named("gr") = "");
      
      try
      {
@@ -115,28 +123,31 @@
          
          delete objFile; objFile = nullptr;
          
+         lst_return["fn"] = filename;
+         lst_return["gr"] = group;
+         
      } catch( H5::FileIException& error ) { 
          delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group (File IException)";
-         return void();
+         return(lst_return);
      } catch( H5::GroupIException & error ) { 
          delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group (Group IException)";
-         return void();
+         return(lst_return);
      } catch( H5::DataSetIException& error ) { 
          delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group (DataSet IException)";
-         return void();
+         return(lst_return);
      } catch(std::exception& ex) {
          delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group" << ex.what();
-         return void();
+         return(lst_return);
      } catch (...) {
          delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group (unknown reason)";
-         return void();
+         return(lst_return);
      }
      
-     return void();
+     return(lst_return);
      
  }

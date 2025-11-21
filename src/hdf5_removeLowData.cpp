@@ -85,8 +85,12 @@
 //' @param overwrite Logical (optional). Whether to overwrite existing dataset.
 //'   Default is FALSE.
 //'
-//' @return No return value, called for side effects (data filtering).
-//'   Prints a warning message indicating the number of rows/columns removed.
+//' @return List with components. If an error occurs, all string values are returned as empty strings (""):
+//' \describe{
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the filtered dataset (group/dataset)}
+//'   \item{nremoved}{Integer with the number of rows/columns removed due to low data quality}
+//' }
 //'
 //' @examples
 //' \dontrun{
@@ -129,12 +133,19 @@
 //'
 //' @export
 // [[Rcpp::export]]
-void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, 
-                               Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> overwrite = R_NilValue)
+Rcpp::List bdRemovelowdata_hdf5( std::string filename, std::string group, 
+                           std::string dataset, std::string outgroup, 
+                           std::string outdataset, Rcpp::Nullable<double> pcent, 
+                           Rcpp::Nullable<bool> bycols, 
+                           Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
     
     BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
     BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
+    
+    Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
+                                               Rcpp::Named("ds") = "",
+                                               Rcpp::Named("nremoved") = "");
 
     try
     {
@@ -165,7 +176,7 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
             
         } else {
             Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5: " << "Input and output dataset must be different";
-            return void();
+            return(lst_return);
         }
         
         if( dsIn->getDatasetptr() != nullptr) {
@@ -173,7 +184,7 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
         } else {
             checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5: " << "File does not exist";
-            return void();
+            return(lst_return);
         }
         
         Rcpp::Function warning("warning");
@@ -185,31 +196,35 @@ void bdRemovelowdata_hdf5( std::string filename, std::string group, std::string 
         delete dsIn; dsIn = nullptr;
         delete dsOut; dsOut = nullptr;
         
+        lst_return["fn"] = filename;
+        lst_return["ds"] = outgroup + "/" + outdataset;
+        lst_return["nremoved"] = iremoved;
+        
     } catch( H5::FileIException& error ){  
         checkClose_file(dsIn, dsOut);
         Rcpp::stop ("c++ exception bdRemovelowdata_hdf5 (File IException)");
-        return void();
+        return(lst_return);
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(dsIn, dsOut);
         Rcpp::stop ("c++ exception bdRemovelowdata_hdf5 (DataSet IException)");
-        return void();
+        return(lst_return);
     } catch( H5::DataSpaceIException& error ) { 
         checkClose_file(dsIn, dsOut);
         Rcpp::stop ("c++ exception bdRemovelowdata_hdf5 (DataSpace IException)");
-        return void();
+        return(lst_return);
     } catch( H5::DataTypeIException& error ) { 
         checkClose_file(dsIn, dsOut);
         Rcpp::stop( "c++ exception bdRemovelowdata_hdf5 (DataType IException)");
-        return void();
+        return(lst_return);
     } catch(std::exception &ex) {
         checkClose_file(dsIn, dsOut);
         Rcpp::stop ("c++ exception bdRemovelowdata_hdf5: %s",ex.what());
-        return void();
+        return(lst_return);
     } catch (...) {
         checkClose_file(dsIn, dsOut);
         Rcpp::stop ("c++ exception bdRemovelowdata_hdf5 (unknown reason)");
-        return void();
+        return(lst_return);
     }
     
-    return void();
+    return(lst_return);
 }

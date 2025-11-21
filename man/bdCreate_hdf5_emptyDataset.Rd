@@ -39,7 +39,12 @@ default value \code{FALSE}.}
 \item{datatype}{Character. Element type (e.g., "real").}
 }
 \value{
-No return value, called for side effects (dataset creation).
+List with components:
+\describe{
+\item{fn}{Character string with the HDF5 filename}
+\item{ds}{Character string with the full dataset path to the empty
+dataset (group/dataset)}
+}
 }
 \description{
 Creates an HDF5 dataset of size \code{nrows × ncols} inside \code{group}

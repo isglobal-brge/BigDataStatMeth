@@ -90,7 +90,12 @@
 //' @param overwrite Optional boolean indicating whether to overwrite existing datasets.
 //'        Default is false
 //' 
-//' @return Modifies the HDF5 file in place, adding the cross product result
+//' @return A list containing the location of the crossproduct result:
+//'   \describe{
+//'     \item{fn}{Character string. Path to the HDF5 file containing the result}
+//'     \item{ds}{Character string. Full dataset path to the crossproduct 
+//'     result (t(A) %*% A or t(A) %*% B) within the HDF5 file}
+//'   }
 //' 
 //' @details
 //' The function implements block-wise matrix multiplication to handle large matrices

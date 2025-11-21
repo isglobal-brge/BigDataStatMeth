@@ -81,11 +81,12 @@
 //' @param elementsBlock Integer. Maximum number of elements to process in each block
 //'   (default = 1,000,000). For matrices larger than 5000x5000, automatically adjusted
 //'   to number of rows or columns * 2.
-//'
-//' @return No direct return value. Results are written to the HDF5 file in the
-//' specified location with the following structure:
+//' 
+//' @return List with components:
 //' \describe{
-//'   \item{inverse}{The inverse matrix A^(-1)}
+//'   \item{fn}{Character string with the HDF5 filename}
+//'   \item{ds}{Character string with the full dataset path to the inverse 
+//'   Cholesky decomposition A^(-1) result (group/dataset)}
 //' }
 //'
 //' @examples

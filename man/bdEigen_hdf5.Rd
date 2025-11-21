@@ -58,14 +58,14 @@ bdEigen_hdf5(
 \item{threads}{Integer. Number of threads for parallel computation (default = NULL, uses available cores).}
 }
 \value{
-A list with the following elements:
+List with components:
 \describe{
-\item{fn}{Path to the HDF5 file}
-\item{values}{Path to the dataset containing eigenvalues (real part)}
-\item{vectors}{Path to the dataset containing eigenvectors (real part)}
-\item{values_imag}{Path to the dataset containing eigenvalues (imaginary part, if non-zero)}
-\item{vectors_imag}{Path to the dataset containing eigenvectors (imaginary part, if non-zero)}
-\item{is_symmetric}{Logical indicating if the matrix was detected as symmetric}
+\item{fn}{Character string with the HDF5 filename}
+\item{values}{Character string with the full dataset path to the eigenvalues (real part) (group/dataset)}
+\item{vectors}{Character string with the full dataset path to the eigenvectors (real part) (group/dataset)}
+\item{values_imag}{Character string with the full dataset path to the eigenvalues (imaginary part), or NULL if all eigenvalues are real}
+\item{vectors_imag}{Character string with the full dataset path to the eigenvectors (imaginary part), or NULL if all eigenvectors are real}
+\item{is_symmetric}{Logical indicating whether the matrix was detected as symmetric}
 }
 }
 \description{

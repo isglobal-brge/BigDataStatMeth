@@ -48,11 +48,21 @@ results are written to disk.}
 Default is FALSE.}
 }
 \value{
-No return value, called for side effects (statistics computation).
-Results are stored in the HDF5 file under the 'mean_sd' group with names:
+Depending on the \code{onmemory} parameter:
+\describe{
+\item{If onmemory = TRUE}{List with components:
 \itemize{
-\item 'sd.\code{dataset}' for standard deviation
-\item 'mean.\code{dataset}' for mean
+\item \code{mean}: Numeric vector with column/row means (or NULL if not computed)
+\item \code{sd}: Numeric vector with column/row standard deviations (or NULL if not computed)
+}
+}
+\item{If onmemory = FALSE}{List with components:
+\itemize{
+\item \code{fn}: Character string with the HDF5 filename
+\item \code{mean}: Character string with the full dataset path to the means (group/dataset)
+\item \code{sd}: Character string with the full dataset path to the standard deviations (group/dataset)
+}
+}
 }
 }
 \description{
