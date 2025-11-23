@@ -274,7 +274,9 @@ namespace BigDataStatMeth {
                 svrcolnames = Rcpp::wrap( get_SplitData_in_vectorString(line, reg_expres));
                 // If rownames then remove first column from header (belonging to the rownames)
                 if(Rcpp::as<bool>(rownames) == true) {
-                    if( incols ==  svrcolnames.size() || incols ==  (svrcolnames.size()-1)){
+                    // if( incols ==  svrcolnames.size() || incols ==  (svrcolnames.size()-1)){
+                    if (incols == static_cast<hsize_t>(svrcolnames.size()) ||
+                        incols == static_cast<hsize_t>(svrcolnames.size() - 1)) {
                         svrcolnames.erase(0);}
                 }
                 // Read next line
@@ -290,7 +292,7 @@ namespace BigDataStatMeth {
                                  count = { (hsize_t)incols, (hsize_t)irows},
                                  offset = {0,0};
 
-            bool btowrite;
+            bool btowrite = false;
             std::vector<std::string> strValues;
             
             while( !inFile.eof()  )

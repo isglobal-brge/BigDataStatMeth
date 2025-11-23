@@ -287,7 +287,8 @@ namespace BigDataStatMeth {
             
             if(block_size > 0 ) {
                 
-                if( N == Y.rows() && M == Y.cols())
+                // if( N == Y.rows() && M == Y.cols())
+                if (N == static_cast<hsize_t>(Y.rows()) && M == static_cast<hsize_t>(Y.cols())) 
                 {
                     
                     // ithreads = get_number_threads(threads, R_NilValue);

@@ -186,7 +186,9 @@ inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         irank = lu_decomp.rank();
         
         
-        if (irank == count[0] + 1 || irank == count[1] + 1 )
+        //..//if (irank == count[0] + 1 || irank == count[1] + 1 )
+        if (static_cast<unsigned long long>(irank) == count[0] + 1ULL ||
+            static_cast<unsigned long long>(irank) == count[1] + 1ULL)
         {
             Eigen::MatrixXd R = qr.matrixQR().template triangularView<Eigen::Upper>();
             dsR->createDataset( R.rows(), R.cols(), "real" );

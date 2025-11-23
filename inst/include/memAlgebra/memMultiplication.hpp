@@ -143,8 +143,8 @@ namespace BigDataStatMeth {
            hsize_t K = A.cols();
            hsize_t N = B.cols();
            
-           if( K == B.rows()) {
-               
+           //. 20251121 .// if( K == B.rows()) {
+           if( static_cast<Eigen::Index>(K) == B.rows()) {
                if( iblock_size.isNotNull()) {
                    block_size =  Rcpp::as<int>(iblock_size);  
                } else {
@@ -159,11 +159,11 @@ namespace BigDataStatMeth {
                getBlockPositionsSizes( M, block_size, vstartM, vsizetoReadM );
                getBlockPositionsSizes( K, block_size, vstartK, vsizetoReadK );
                
-               for (int ii = 0; ii < vstartM.size(); ii++)
+               for (size_t ii = 0; ii < vstartM.size(); ii++)
                {
-                   for (int jj = 0; jj < vstartN.size(); jj++)
+                   for (size_t jj = 0; jj < vstartN.size(); jj++)
                    {
-                       for(int kk = 0; kk < vstartK.size(); kk++)
+                       for(size_t kk = 0; kk < vstartK.size(); kk++)
                        {
                            C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) =  C.block(vstartM[ii], vstartN[jj], vsizetoReadM[ii], vsizetoReadN[jj]) + 
                                (A.block(vstartM[ii], vstartK[kk], vsizetoReadM[ii], vsizetoReadK[kk]) * B.block(vstartK[kk], vstartN[jj], vsizetoReadK[kk], vsizetoReadN[jj]));

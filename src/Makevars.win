@@ -41,5 +41,9 @@ PKG_LIBS += $(RHDF5_LIBS)
 CCACHE=ccache
 CXX_STD = $(CCACHE) CXX17
 
+## Disable Boost concept-checking to silence warnings from BH headers (no effect on code logic)
+PKG_CXXFLAGS += -DBOOST_NO_CONCEPT_CHECKING
+
+
 # Optional: safe compiler-specific additions (commented by default)
 # PKG_CXXFLAGS += -g3 -O3 -std=c++17 -Wall

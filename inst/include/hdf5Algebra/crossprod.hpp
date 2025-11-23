@@ -150,7 +150,8 @@ namespace BigDataStatMeth {
                 for (hsize_t block_idx = 0; block_idx < total_blocks; ++block_idx)
                 {
                     // Convert linear index to (ii_idx, jj_idx)
-                    hsize_t ii_idx, jj_idx;
+                    hsize_t ii_idx = 0, 
+                            jj_idx = 0;
                     
                     if (isSymmetric) {
                         // Convert to upper triangle coordinates

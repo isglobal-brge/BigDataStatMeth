@@ -96,10 +96,12 @@ inline void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, boo
             
             if( bycols == true) { 
                 kk = i * blocksize;
-                if( kk + blocksize > icols) { incols = icols - kk; }
+                if( kk + static_cast<hsize_t>(blocksize) > static_cast<hsize_t>(icols)) 
+                    { incols = static_cast<hsize_t>(icols) - kk; }
             } else  {
                 ii = i * blocksize;
-                if( ii + blocksize > irows) { inrows = irows - ii; }
+                if( ii + static_cast<hsize_t>(blocksize) > static_cast<hsize_t>(irows)) 
+                    { inrows = static_cast<hsize_t>(irows) - ii; }
             }
             
             std::vector<double> vdts( inrows * incols );
@@ -251,10 +253,14 @@ inline void RcppSplit_matrix_hdf5_internal ( BigDataStatMeth::hdf5Dataset* dstos
             
             if( bycols == true) {
                 kk = i * blocksize;
-                if( kk + blocksize > icols) { incols = icols - kk; }
+                if( kk + static_cast<hsize_t>(blocksize) > static_cast<hsize_t>(icols)) { 
+                    incols = static_cast<hsize_t>(icols) - kk; 
+                }
             } else  {
                 ii = i * blocksize;
-                if( ii + blocksize > irows) { inrows = irows - ii; }
+                if( ii + static_cast<hsize_t>(blocksize) > static_cast<hsize_t>(irows)) { 
+                    inrows = static_cast<hsize_t>(irows) - ii; 
+                }
             }
     
             std::vector<double> vdts( inrows * incols );

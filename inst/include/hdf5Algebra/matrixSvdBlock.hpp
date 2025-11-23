@@ -382,7 +382,8 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
 
                     Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
 
-                    if( u.size() < MAXELEMSINBLOCK ) {
+                    // if( u.size() < MAXELEMSINBLOCK ) {
+                    if (static_cast<hsize_t>(u.size()) < MAXELEMSINBLOCK) {
                         restmp = u*d;
                     } else{
                         restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);
@@ -557,7 +558,8 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
             
                 Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
             
-                if( u.size() < MAXELEMSINBLOCK ) {
+                // if( u.size() < MAXELEMSINBLOCK ) {
+                if (static_cast<hsize_t>(u.size()) < MAXELEMSINBLOCK) {
                     restmp = u*d;
                 } else{
                     restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);    

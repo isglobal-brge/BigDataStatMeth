@@ -182,7 +182,7 @@ namespace BigDataStatMeth {
         
         eigdecomp reteig;
         Eigen::MatrixXd nX;
-        int nconv = 0;
+        // int nconv = 0;
         
         try {
             
@@ -217,7 +217,8 @@ namespace BigDataStatMeth {
                 // Initialize and compute with appropriate sort rule
                 eigs.init();
                 Spectra::SortRule sort_rule = getSymmetricSortRule(which);
-                nconv = eigs.compute(sort_rule, max_iter, tol);
+                //..// nconv = eigs.compute(sort_rule, max_iter, tol);
+                (void)eigs.compute(sort_rule, max_iter, tol);
                 
                 // Retrieve results
                 if (eigs.info() == Spectra::CompInfo::Successful) {
@@ -249,7 +250,8 @@ namespace BigDataStatMeth {
                 // Initialize and compute with appropriate sort rule
                 eigs.init();
                 Spectra::SortRule sort_rule = getGeneralSortRule(which);
-                nconv = eigs.compute(sort_rule, max_iter, tol);
+                //..// nconv = eigs.compute(sort_rule, max_iter, tol);
+                (void)eigs.compute(sort_rule, max_iter, tol);
                 
                 // Retrieve results
                 if (eigs.info() == Spectra::CompInfo::Successful) {

@@ -1636,7 +1636,7 @@ namespace BigDataStatMeth {
                 throw std::runtime_error("Matrices must have same number of observations after transposition");
             }
             
-            hsize_t n_rows = n_rows_a;
+            // hsize_t n_rows = n_rows_a;
             
             // Strategy selection
             const hsize_t MEMORY_LIMIT = 250000; // Conservative for cross-correlation

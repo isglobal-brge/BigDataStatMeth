@@ -68,7 +68,8 @@ namespace BigDataStatMeth {
                 std::string strmessage = "Nothing to be removed removed";
                 Rcpp::message(Rcpp::wrap(strmessage));
             } else { // Remove datasets
-                for (int i=0; i<elements.size(); i++) 
+                // for (int i=0; i<elements.size(); i++) 
+                for (size_t i = 0; i < elements.size(); ++i)
                 {
                     H5std_string element = "" + elements[i];
                     if(exists_HDF5_element( file->getFileptr(), element))

@@ -96,9 +96,9 @@ namespace BigDataStatMeth {
                     if( func == 0 ) { // byCols
                         
                         // Test if dimmensions are correct
-                        if( original.cols() != count[0] && i!=0) {
+                        if( original.cols() != static_cast<Eigen::Index>(count[0]) && i!=0) {
                             
-                            if( count[0] > original.cols()) {
+                            if( static_cast<Eigen::Index>(count[0]) > original.cols()) {
                                 // Append needed cols to merge by cols
                                 int iappend = count[0] - original.cols();
                                 //..// original.conservativeResize(original.rows(), original.cols() + iappend);
@@ -116,9 +116,9 @@ namespace BigDataStatMeth {
                     } else { // byRows
                         
                         // Check if dimmensions are correct
-                        if( original.rows() != count[0]  && i!=0) {
+                        if( original.rows() != static_cast<Eigen::Index>(count[0])  && i!=0) {
                             
-                            if( count[0] > original.rows()) {
+                            if( static_cast<Eigen::Index>(count[0]) > original.rows()) {
                                 // Append needed rows to merge by rows
                                 int iappend = count[0] - original.rows();
                                 original.resize(original.rows() + iappend, original.cols());

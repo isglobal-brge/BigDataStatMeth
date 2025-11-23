@@ -58,7 +58,9 @@ namespace BigDataStatMeth {
      *
      * @par Example
      * @code
-     * hdf5Dataset *a = /* ... * /, *b = /* ... * /, *c = nullptr;
+     * hdf5Dataset *a = nullptr; // dataset A
+     * hdf5Dataset *b = nullptr; // dataset B
+     * hdf5Dataset *c = nullptr;
      * BigDataStatMeth::checkClose_file(a, b, c);
      * a = b = c = nullptr; // optional: clear caller-owned pointers
      * @endcode

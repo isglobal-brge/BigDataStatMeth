@@ -1132,7 +1132,8 @@ public:
             // Validate indices against R perspective
             hsize_t max_index = select_rows ? rows_from_r : cols_from_r;
             for (int idx : indices) {
-                if (idx < 0 || idx >= max_index) {
+                // if (idx < 0 || idx >= max_index) {
+                if (idx < 0 || static_cast<hsize_t>(idx) >= max_index) {
                     Rf_error("Index %d out of bounds", idx);
                     return void();
                 }

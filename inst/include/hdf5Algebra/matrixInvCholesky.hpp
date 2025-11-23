@@ -450,8 +450,8 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
                     rowstoRead = count[1];
                 }
                 
+                //. 2025/11/21 .// for (int j = 0; j < rowstoRead; j++)  {
                 for (int j = 0; j < rowstoRead; j++)  {
-
                     if( j + offset[0] == 0) {
                         L(j, j) = std::sqrt(A(j,j));
                     } else {
@@ -460,11 +460,12 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
                     
                     
                     #pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) private(sum) shared (A,L,j) schedule(dynamic) if (j < readedRows - 1)
-                    for ( int i = j + 1; i < dimensionSize - offset[0]  ; i++ )
+                    //. 2025/11/21 .// for ( int i = j + 1; i < dimensionSize - offset[0]  ; i++ )
+                    for ( int i = j + 1; i < dimensionSize - static_cast<int>(offset[0])  ; i++ )
                     {
                         if(bcancel == false) {
-                            if( j + offset[0] > 0) {
-                                sum = (L.block(i, 0, 1, j + offset[0]).array() * L.block(j, 0, 1, j + offset[0]).array()).array().sum();
+                            if( j + static_cast<int>(offset[0]) > 0) {
+                                sum = (L.block(i, 0, 1, j + static_cast<int>(offset[0])).array() * L.block(j, 0, 1, j + static_cast<int>(offset[0])).array()).array().sum();
                                 if( sum != sum ) {
                                     Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition matrix is not positive definite\n";
                                     bcancel = true;
@@ -473,7 +474,7 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
                                 sum = 0;
                             }
                             if(!bcancel){
-                                L(i,j + offset[0]) =  (1/L(j,j + offset[0])*(A(i,j + offset[0]) - sum));    
+                                L(i,j + static_cast<int>(offset[0])) =  (1/L(j,j + static_cast<int>(offset[0]))*(A(i,j + static_cast<int>(offset[0])) - sum));    
                             }    
                         }
                     }
@@ -777,12 +778,13 @@ inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth
                 InOutDataset->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vverticalData.data() );
                 verticalData = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vverticalData.data(), count[0], count[1] );
                 
-                for (int j = 1; j < dimensionSize - offset[0]; j++)
-                    //!!!!!!!!!!!! for (int j = 1; j < dimensionSize - offset[0] && j < static_cast<int>(count[0]); j++)
+                //. 20251121 .// for (int j = 1; j < dimensionSize - offset[0]; j++)
+                //!!!!!!!!!!!! for (int j = 1; j < dimensionSize - offset[0] && j < static_cast<int>(count[0]); j++)
+                for (int j = 1; j < dimensionSize - static_cast<int>(offset[0]); j++)
                 {
-                    // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> j < dimensionSize - offset[0]";
+                    // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> j < dimensionSize - static_cast<int>(offset[0])";
                     
-                    Eigen::VectorXd vR = Eigen::VectorXd::Zero(j+offset[0]);
+                    Eigen::VectorXd vR = Eigen::VectorXd::Zero(j+static_cast<int>(offset[0]));
                     Eigen::ArrayXd ar_j;
                     
                     int size_j;
@@ -792,25 +794,25 @@ inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth
                         size_j = colstoRead;
                     }
                     
-                    ar_j = verticalData.block( j, offset[0], 1,  size_j).transpose().array();
+                    ar_j = verticalData.block( j, static_cast<int>(offset[0]), 1,  size_j).transpose().array();
                     
-                    vR = Eigen::VectorXd::Zero(offset[0] + ar_j.size());
+                    vR = Eigen::VectorXd::Zero(static_cast<int>(offset[0]) + ar_j.size());
                     
 #pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) shared (ar_j, j, verticalData, offset, colstoRead, vR) schedule(dynamic) 
-                    for (int i = 0; i < offset[0] + ar_j.size() ; i++) {
+                    for (int i = 0; i < static_cast<int>(offset[0]) + ar_j.size() ; i++) {
                         
                         Eigen::ArrayXd ar_i = verticalData.block( 0, i, size_j, 1).array();
                         
-                        if( offset[0] > 0 ) {
+                        if( static_cast<int>(offset[0]) > 0 ) {
                             if( j  <= colstoRead ) {
-                                if( i < offset[0] ){
-                                    vR(i) =  (( verticalData.coeff(j, i) + ((ar_j.transpose() * ar_i.transpose()).sum())) * (-1)) / Diagonal[j+offset[0]];
+                                if( i < static_cast<int>(offset[0]) ){
+                                    vR(i) =  (( verticalData.coeff(j, i) + ((ar_j.transpose() * ar_i.transpose()).sum())) * (-1)) / Diagonal[j+static_cast<int>(offset[0])];
                                 } else {
-                                    vR(i) =   ((ar_j.transpose() * ar_i.transpose()) * (-1)).sum() / Diagonal[j+offset[0]];
+                                    vR(i) =   ((ar_j.transpose() * ar_i.transpose()) * (-1)).sum() / Diagonal[j+static_cast<int>(offset[0])];
                                     
                                 }
                             } else {
-                                if( i < offset[0] ){
+                                if( i < static_cast<int>(offset[0]) ){
                                     vR(i) =  ( verticalData.coeff(j, i) + ((ar_j.transpose() * ar_i.transpose()).sum()));
                                 } else {
                                     vR(i) =   (ar_j.transpose() * ar_i.transpose()).sum();
@@ -818,7 +820,7 @@ inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth
                             }
                         } else {
                             if( j <= colstoRead ) {
-                                vR(i) =   ((ar_j.transpose() * ar_i.transpose()) * (-1)).sum() / Diagonal[j+offset[0]];
+                                vR(i) =   ((ar_j.transpose() * ar_i.transpose()) * (-1)).sum() / Diagonal[j+static_cast<int>(offset[0])];
                             } else {
                                 vR(i) =   (ar_j.transpose() * ar_i.transpose()).sum();
                             }
@@ -966,8 +968,8 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
         
         int dimensionSize = idim0,
             readedCols = 0,
-            colstoRead,
-            minimumBlockSize;
+            colstoRead;
+            //.. 20251121 ..// minimumBlockSize;
         
         Eigen::VectorXd newDiag(idim0);
         
@@ -978,11 +980,11 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
         
         // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_intermediate_hdf5 -> Hi...";
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
-        if( dElementsBlock < dimensionSize * 2 ) {
-            minimumBlockSize = dimensionSize * 2;
-        } else {
-            minimumBlockSize = dElementsBlock;
-        }
+        //.. 20251121 ..// if( dElementsBlock < dimensionSize * 2 ) {
+        //.. 20251121 ..//     minimumBlockSize = dimensionSize * 2;
+        //.. 20251121 ..// } else {
+        //.. 20251121 ..//     minimumBlockSize = dElementsBlock;
+        //.. 20251121 ..// }
         
         if( idim0 == idim1 )
         {
@@ -991,7 +993,7 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
                 
                 // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel ->  readedCols < dimensionSize";
                 // Set minimum elements in block - prevent overflow and optimize for any matrix size
-                minimumBlockSize = std::min(static_cast<long>(dElementsBlock), static_cast<long>(std::max(2000L, dimensionSize * 2L)));
+                //.. 20251121 ..// minimumBlockSize = std::min(static_cast<long>(dElementsBlock), static_cast<long>(std::max(2000L, dimensionSize * 2L)));
                 
                 // Adaptive block size calculation for any matrix dimensions
                 // Target: ~50MB blocks for optimal cache usage and memory efficiency
@@ -1042,22 +1044,27 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
                 //!!!!! for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columns
 // #pragma omp parallel for num_threads(ithreads) shared (verticalData, colstoRead, offset) schedule(dynamic)
                 // int max_i = std::min(static_cast<int>(colstoRead + offset[0]), static_cast<int>(count[1]));
+                
+                if (offset[0] > static_cast<hsize_t>(std::numeric_limits<Eigen::Index>::max())) {
+                    Rcpp::stop("offset[0] is too large to convert to Eigen::Index");
+                }
+                
                 #pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) shared (verticalData, colstoRead, offset) schedule(static) ordered
-                for ( int i = 0; i < colstoRead + offset[0]; i++)   // Columns
+                for ( int i = 0; i < colstoRead + static_cast<int>(offset[0]); i++)   // Columns
                 // for ( int i = 0; i < max_i; i++)   // Columns
                 {
                     int init;
                     
-                    if(offset[0] == 0) {
+                    if(static_cast<int>(offset[0]) == 0) {
                         init = i + 1;
                         newDiag(i) = verticalData.block(i, i, idim0-i, 1 ).array().pow(2).sum();
                     } else {
-                        if(  i < offset[0]) {
+                        if(  i < static_cast<int>(offset[0])) {
                             init = 0;
                         } else {
-                            newDiag(i) = verticalData.block( i-offset[0], i, idim0-i, 1 ).array().pow(2).sum();
-                            if( i < offset[0] + colstoRead - 1) {
-                                init = i - offset[0] + 1;
+                            newDiag(i) = verticalData.block( i-static_cast<int>(offset[0]), i, idim0-i, 1 ).array().pow(2).sum();
+                            if( i < static_cast<int>(offset[0]) + colstoRead - 1) {
+                                init = i - static_cast<int>(offset[0]) + 1;
                             } else {
                                 init = colstoRead; // force end
                             }
@@ -1068,8 +1075,8 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
                     {
                         for ( int j = init; j < colstoRead ; j++) { // Rows
                             
-                            if( offset[0] + j < verticalData.cols()) {
-                                verticalData(j,i) = (verticalData.block( j, i , verticalData.rows() - j, 1).array() * verticalData.block( j, j + offset[0],  verticalData.rows() - j, 1).array()).sum();
+                            if( static_cast<int>(offset[0]) + j < verticalData.cols()) {
+                                verticalData(j,i) = (verticalData.block( j, i , verticalData.rows() - j, 1).array() * verticalData.block( j, j + static_cast<int>(offset[0]),  verticalData.rows() - j, 1).array()).sum();
                             }
                         }
                     }

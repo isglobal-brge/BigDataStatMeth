@@ -141,7 +141,8 @@ Rcpp::RObject bdblockSubstract(Rcpp::RObject A, Rcpp::RObject B,
         if (byBlocks.isNull()) { bbyBlocks = false; }
         else { bbyBlocks = Rcpp::as<bool> (byBlocks); }
 
-        if( bparal==false || Rcpp::as<Rcpp::NumericVector>(A).size() < MAXELEMSINBLOCK || bbyBlocks == false) {
+        // if( bparal==false || Rcpp::as<Rcpp::NumericVector>(A).size() < MAXELEMSINBLOCK || bbyBlocks == false) {
+        if (!bparal || static_cast<hsize_t>(Rcpp::as<Rcpp::NumericVector>(A).size()) < MAXELEMSINBLOCK || !bbyBlocks) {
             if( Rcpp::is<Rcpp::NumericMatrix>(A) && Rcpp::is<Rcpp::NumericMatrix>(B) ) {
                 return( BigDataStatMeth::Rcpp_matrix_substract(A, B) );
                 
