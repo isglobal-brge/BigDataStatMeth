@@ -537,7 +537,7 @@ public:
                     
                 } else {
                     close_file();
-                    std::cerr<<"\nc++ exception, please create "<< fullPath <<" dataset before proceed\n";
+                    Rf_error("c++ exception, please create %s dataset before proceed", fullPath.c_str());
                     // throw "c++ exception, please create Dataset before proceed"
                     // Rf_error("c++ exception, please create Dataset before proceed");
                     // return(pdataset);

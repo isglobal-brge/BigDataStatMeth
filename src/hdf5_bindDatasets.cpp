@@ -128,6 +128,7 @@ Rcpp::List bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::
     
     try
     {
+        H5::Exception::dontPrint();
         
         Rcpp::NumericVector oper = {0, 1, 2};
         oper.names() = Rcpp::CharacterVector({ "bindCols", "bindRows", "bindRowsbyIndex"});

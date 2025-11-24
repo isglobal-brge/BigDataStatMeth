@@ -163,6 +163,9 @@ Rcpp::List bdSplit_matrix_hdf5( std::string filename, std::string group, std::st
     
     try
     {
+        
+        H5::Exception::dontPrint();
+        
         std::string stroutgroup, stroutdataset, stroutdata;
         std::string strdataset = group + "/" + dataset;
         std::string strdatasetout;

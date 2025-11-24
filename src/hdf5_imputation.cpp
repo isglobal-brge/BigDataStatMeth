@@ -154,6 +154,8 @@ Rcpp::List bdImputeSNPs_hdf5(std::string filename, std::string group, std::strin
     try
     {
         
+        H5::Exception::dontPrint();
+        
         std::string strdataset = group +"/" + dataset;
         std::string stroutgroup, stroutdataset, stroutdata;
         

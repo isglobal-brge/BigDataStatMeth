@@ -164,6 +164,8 @@ Rcpp::List bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVe
      
      try {
          
+         H5::Exception::dontPrint();
+         
          int ks, qs, nvs = 0;
          bool bcent, bscal, bforce, bRowMajor = false; //, bbyblocks = true;
          Rcpp::CharacterVector strgroup, strdataset;

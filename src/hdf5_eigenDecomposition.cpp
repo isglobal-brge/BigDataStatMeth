@@ -139,6 +139,8 @@
      
      try {
          
+         H5::Exception::dontPrint();
+         
          int ks, max_iters, ncvs;
          bool bcent, bscal, bforce, bcompute_vecs;
          double tol;

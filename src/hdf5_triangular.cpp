@@ -157,6 +157,9 @@ Rcpp::List bdWriteOppsiteTriangularMatrix_hdf5(std::string filename,
      
      try
      {
+         
+         H5::Exception::dontPrint();
+         
         Rcpp::NumericVector intNewDiagonal;
         bool blower;
         long dElementsBlock;

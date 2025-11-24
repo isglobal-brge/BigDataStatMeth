@@ -111,6 +111,8 @@ Rcpp::RObject  bdgetDim_hdf5( std::string filename, std::string dataset)
     try
     {
         
+        H5::Exception::dontPrint();
+        
         ds = new BigDataStatMeth::hdf5Dataset(filename, dataset, false);
         ds->openDataset();
         

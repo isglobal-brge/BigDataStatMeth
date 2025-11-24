@@ -63,6 +63,9 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
     try
     {
         
+        H5::Exception::dontPrint();
+        
+        
         Rcpp::IntegerVector dims(2);
         Rcpp::CharacterVector svrows, svrcols;
         

@@ -189,6 +189,7 @@ void bdapply_Function_hdf5( std::string filename,
     
     try
     {
+        H5::Exception::dontPrint();
         
         bool bforce;
         

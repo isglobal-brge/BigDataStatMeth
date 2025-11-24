@@ -101,6 +101,8 @@
      
      try {
          
+         H5::Exception::dontPrint();
+         
          // Input validation
          if (filename.empty()) {
              Rcpp::Rcerr << "Error: filename cannot be empty" << std::endl;

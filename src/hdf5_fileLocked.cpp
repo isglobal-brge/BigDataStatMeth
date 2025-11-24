@@ -46,6 +46,8 @@
      
      try {
          
+         H5::Exception::dontPrint();
+         
          objFile = new BigDataStatMeth::hdf5File(filename, false);
          locked = objFile->isLocked(filename);  
          

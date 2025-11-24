@@ -244,6 +244,9 @@ Rcpp::List bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, s
      
      try
      {
+         
+         H5::Exception::dontPrint();
+         
         Rcpp::NumericVector intNewDiagonal;    
         std::string strDataset = group + "/" + dataset;
          

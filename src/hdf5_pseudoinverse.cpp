@@ -253,6 +253,8 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
                                                 Rcpp::Named("ds") = "");
      
     try {
+        
+        H5::Exception::dontPrint();
          
         Eigen::MatrixXd A;
         std::string strOutgroup, strOutdataset;

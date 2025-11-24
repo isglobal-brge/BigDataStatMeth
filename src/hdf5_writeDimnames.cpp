@@ -94,6 +94,8 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
      try
      {
          
+         H5::Exception::dontPrint();
+         
          objDataset = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false );
          objDataset->openDataset();
          

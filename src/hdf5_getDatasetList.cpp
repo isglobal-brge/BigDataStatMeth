@@ -116,6 +116,9 @@ Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rc
     
     try
     {
+        
+        H5::Exception::dontPrint();
+        
         std::string strprefix;
         
         if(prefix.isNull()){  strprefix = "" ;

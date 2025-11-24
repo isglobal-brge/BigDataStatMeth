@@ -150,6 +150,8 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
      
      try{
          
+         H5::Exception::dontPrint();
+         
          bool bc, bs, bforce, bbyrows, corrected = false;
          hsize_t nrows, ncols;
          std::string strgroupout;

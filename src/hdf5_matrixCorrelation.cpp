@@ -129,6 +129,9 @@ Rcpp::List bdCorr_hdf5(std::string filename_x, std::string group_x, std::string 
                                                 Rcpp::Named("ds") = "");
      
      try {
+         
+         H5::Exception::dontPrint();
+         
          // Validate method parameter
          if (method != "pearson" && method != "spearman") {
              stop("Method must be either 'pearson' or 'spearman'");

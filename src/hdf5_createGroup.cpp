@@ -96,6 +96,9 @@ Rcpp::List bdCreate_hdf5_group(std::string filename, std::string group)
      
      try
      {
+         
+         H5::Exception::dontPrint();
+         
          objFile = new BigDataStatMeth::hdf5File(filename, false);
          objFile->openFile("rw");
          

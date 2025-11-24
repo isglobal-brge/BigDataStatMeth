@@ -153,6 +153,9 @@ Rcpp::List bdRemoveMAF_hdf5( std::string filename, std::string group, std::strin
     
     try
     {
+        
+        H5::Exception::dontPrint();
+        
         int iremoved = 0;    
         bool bcols, bforce;
         double dpcent;

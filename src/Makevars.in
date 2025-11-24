@@ -38,6 +38,7 @@ CXX_STD = $(CCACHE) CXX17
 
 # Disable Boost concept-checking to silence warnings from BH headers (no effect on code logic)
 PKG_CXXFLAGS += -DBOOST_NO_CONCEPT_CHECKING
+PKG_CXXFLAGS += -DSTRICT_R_HEADERS
 
 
 # Optional: safe compiler-specific additions (commented by default)

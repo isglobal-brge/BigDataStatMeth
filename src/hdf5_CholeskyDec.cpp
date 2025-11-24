@@ -150,6 +150,8 @@ Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string 
      
      try
      {
+         H5::Exception::dontPrint();
+         
          long dElementsBlock;
          std::string strOutgroup, strIndataset, 
          strOutdataset, strOutdataset_tmp;

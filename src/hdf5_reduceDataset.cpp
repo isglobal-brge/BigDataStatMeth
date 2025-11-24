@@ -148,6 +148,8 @@ Rcpp::List bdReduce_hdf5_dataset( std::string filename, std::string group,
     
     try
     {
+        
+        H5::Exception::dontPrint();
        
         std::string strOutgroup,
                     strOutdatset,

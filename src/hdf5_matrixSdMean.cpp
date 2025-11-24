@@ -175,6 +175,8 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
  
     try {
         
+        H5::Exception::dontPrint();
+        
         bool bforce, bbyrows, bonmemory, bsd, bmean;
         hsize_t nrows, ncols;
         

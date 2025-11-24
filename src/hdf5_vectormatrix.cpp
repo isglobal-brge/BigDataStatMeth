@@ -197,6 +197,8 @@ Rcpp::List  bdcomputeMatrixVector_hdf5( std::string filename, std::string group,
                                                 Rcpp::Named("ds") = "");
      
      try{
+         
+         H5::Exception::dontPrint();
         
         bool bbyrows, bparal, bforce;
         std::string strgroupout;

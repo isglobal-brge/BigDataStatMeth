@@ -102,6 +102,8 @@
      
      try {
          
+         H5::Exception::dontPrint();
+         
          bool bforceFile, bforceDataset;
          int iRes;
          hsize_t final_size;

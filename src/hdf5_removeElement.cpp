@@ -109,6 +109,8 @@ void bdRemove_hdf5_element(std::string filename, std::vector<std::string> elemen
     try
     {
         
+        H5::Exception::dontPrint();
+        
         objFile = new BigDataStatMeth::hdf5File(filename, false);
         objFile->openFile("rw");
         

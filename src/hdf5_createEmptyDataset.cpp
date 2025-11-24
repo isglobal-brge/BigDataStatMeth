@@ -89,6 +89,9 @@ Rcpp::List bdCreate_hdf5_emptyDataset(std::string filename, std::string group,
                                                 Rcpp::Named("ds") = "");
      
      try {
+         
+         H5::Exception::dontPrint();
+         
          if (nrows <= 0 || ncols <= 0)
              Rf_error("c++ exception bdCreate_hdf5_emptyDataset - "
                           "nrows and ncols must be positive");

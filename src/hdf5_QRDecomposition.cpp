@@ -217,6 +217,8 @@ Rcpp::List  bdQR_hdf5( std::string filename, std::string group, std::string data
     
     try {
         
+        H5::Exception::dontPrint();
+        
         bool bthin, bforce;
         std::string strOutgroup, strOutdataset_Q, strOutdataset_R;
         // int iblock_size;

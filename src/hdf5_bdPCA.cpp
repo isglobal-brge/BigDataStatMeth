@@ -161,6 +161,7 @@ Rcpp::List bdPCA_hdf5(std::string filename, std::string group, std::string datas
     
     try
     {
+        H5::Exception::dontPrint();
         
         bool bcent, bscal, bforce;
         int ks, qs = 1, incomponents = 0;

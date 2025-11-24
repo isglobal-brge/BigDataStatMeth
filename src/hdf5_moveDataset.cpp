@@ -90,6 +90,9 @@ Rcpp::List bdmove_hdf5_dataset(std::string filename,
                                                Rcpp::Named("ds") = "");
      
      try {
+         
+         H5::Exception::dontPrint();
+         
          // Input validation
          if (filename.empty()) {
              Rcpp::Rcerr << "Error: filename cannot be empty" << std::endl;

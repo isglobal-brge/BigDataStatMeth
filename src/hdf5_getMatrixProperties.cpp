@@ -60,6 +60,8 @@
      
      try {
          
+         H5::Exception::dontPrint();
+         
          // Process parameters
          if (Rcpp::is<Rcpp::CharacterVector>(filename)) {
              str_filename = Rcpp::as<std::string>(filename);

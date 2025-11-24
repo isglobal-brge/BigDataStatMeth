@@ -112,6 +112,8 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
     
     try {
         
+        H5::Exception::dontPrint();
+        
         Eigen::MatrixXd a, b;
         
         char Uchar = 'U';
@@ -299,6 +301,8 @@ Rcpp::List bdSolve_hdf5(std::string filename, std::string groupA, std::string da
                                                Rcpp::Named("ds") = "");
     
     try {
+        
+        H5::Exception::dontPrint();
         
         std::string strOutgroup, strOutdataset;
         bool bforce;

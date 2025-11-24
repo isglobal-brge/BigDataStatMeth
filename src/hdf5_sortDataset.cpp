@@ -194,6 +194,8 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
     try
     {
         
+        H5::Exception::dontPrint();
+        
         std::string strOutgroup;
         bool boverwrite;
         hsize_t ncols = 0,

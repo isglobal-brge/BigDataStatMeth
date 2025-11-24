@@ -150,6 +150,8 @@ Rcpp::List bdImportTextFile_hdf5( std::string filename,
 
     try{
         
+        H5::Exception::dontPrint();
+        
         bool boverwrite, bforceFile;
         
         if( overwrite.isNull()) { boverwrite = false; 

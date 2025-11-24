@@ -150,6 +150,8 @@ Rcpp::List bdRemovelowdata_hdf5( std::string filename, std::string group,
     try
     {
         
+        H5::Exception::dontPrint();
+        
         bool bcols, bforce;
         double dpcent;
         int iremoved = 0;
