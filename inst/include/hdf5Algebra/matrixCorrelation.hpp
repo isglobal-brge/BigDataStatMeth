@@ -1090,8 +1090,9 @@ namespace BigDataStatMeth {
             result.has_pvalues = compute_pvalues; 
             
             // Optimized threading for cross-correlation
-            int num_threads = 1;
+            
     #ifdef _OPENMP
+            int num_threads = 1;
             if (!threads.isNull()) {
                 num_threads = Rcpp::as<int>(threads);
             } else {
@@ -1100,10 +1101,10 @@ namespace BigDataStatMeth {
                 num_threads = (total_pairs > 1000) ? std::min(6, omp_get_max_threads()) : 1;
             }
             num_threads = std::max(1, std::min(num_threads, omp_get_max_threads()));
-    #endif
-            
-            // Single level parallelization with good cache locality
-    #ifdef _OPENMP
+    // #endif
+    //         
+    //         // Single level parallelization with good cache locality
+    // #ifdef _OPENMP
     #pragma omp parallel for num_threads(num_threads) schedule(dynamic, 1)
     #endif
             for (int i = 0; i < n_vars_x; ++i) {
@@ -1294,10 +1295,11 @@ namespace BigDataStatMeth {
                 
                 Eigen::MatrixXd corr_matrix = Eigen::MatrixXd::Identity(n_cols, n_cols);
                 
-                int num_threads = std::min(2, omp_get_max_threads());
+                
                 
 #ifdef _OPENMP
-#pragma omp parallel for num_threads(num_threads) schedule(dynamic, 1)
+                int num_threads = std::min(2, omp_get_max_threads());
+            #pragma omp parallel for num_threads(num_threads) schedule(dynamic, 1)
 #endif
                 for (hsize_t i = 0; i < n_cols; ++i) {
                     std::vector<double> vec_i_data(n_rows);
@@ -1684,11 +1686,12 @@ namespace BigDataStatMeth {
                 Eigen::MatrixXd corr_matrix = Eigen::MatrixXd::Zero(n_cols_a, n_cols_b);
                 
                 // Intelligent threading and batching for big-omics
-                int num_threads = 1;
+                
                 int batch_size_a = 1;
                 int batch_size_b = 1;
                 
         #ifdef _OPENMP
+                int num_threads = 1;
                 if (!threads.isNull()) {
                     num_threads = Rcpp::as<int>(threads);
                 } else {
@@ -1710,10 +1713,10 @@ namespace BigDataStatMeth {
                     }
                 }
                 num_threads = std::max(1, std::min(num_threads, omp_get_max_threads()));
-        #endif
+        // #endif
                 
                 // Process A in batches
-        #ifdef _OPENMP
+        // #ifdef _OPENMP
         #pragma omp parallel for num_threads(num_threads) schedule(dynamic, 1)
         #endif
                 for (hsize_t i_start = 0; i_start < n_cols_a; i_start += batch_size_a) {

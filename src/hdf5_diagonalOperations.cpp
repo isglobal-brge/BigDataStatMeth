@@ -659,6 +659,9 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
         if (target.isNull()) { strtarget = "new"; }
         else { strtarget = Rcpp::as<std::string>(target); }
         
+        if (overwrite.isNull()) { bforce = false; } 
+        else { bforce = Rcpp::as<bool>(overwrite); }
+        
         // Validate target values
         std::string strtargetChk = strtarget;
         std::transform(strtargetChk.begin(), strtargetChk.end(), strtargetChk.begin(), ::tolower);

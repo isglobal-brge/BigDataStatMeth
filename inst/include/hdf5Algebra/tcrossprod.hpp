@@ -86,7 +86,9 @@ namespace BigDataStatMeth {
                         Rcpp::warning("isSymmetric=TRUE but different datasets provided. Results may be incorrect.");
                     }
                 }
+
                 
+/** 2025/11/25
                 // Configure parallel processing
                 int num_threads = 1;
                 if (bparal) {
@@ -95,6 +97,15 @@ namespace BigDataStatMeth {
                     omp_set_num_threads(num_threads);
 #endif
                 }
+ Fi 2025/11/25 **/
+
+#ifdef _OPENMP  // Configure parallel processing
+                int num_threads = 1;
+                if (bparal) {
+                    num_threads = get_number_threads(threads, Rcpp::wrap(bparal));
+                    omp_set_num_threads(num_threads);
+                }
+#endif
                 
                 // Calculate total blocks for parallelization
                 hsize_t blocks_i = (N + hdf5_block - 1) / hdf5_block;

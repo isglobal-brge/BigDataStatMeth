@@ -110,7 +110,7 @@ namespace BigDataStatMeth {
                 }
                 
                 dsC->createDataset( N, M, "real");
-                
+/** 2025/11/25                
                 // Configure parallel processing
                 int num_threads = 1;
                 if (bparal) {
@@ -119,7 +119,16 @@ namespace BigDataStatMeth {
                     omp_set_num_threads(num_threads);
 #endif
                 }
-                
+ Fi 2025/11/25 **/
+
+#ifdef _OPENMP // Configure parallel processing
+                int num_threads = 1;
+                if (bparal) {
+                    num_threads = get_number_threads(threads, Rcpp::wrap(bparal));  
+                    omp_set_num_threads(num_threads);
+                }
+#endif                
+                                
 //                 // HDF5 thread safety: Initialize lock for I/O serialization
 // #ifdef _OPENMP
 //                 static omp_lock_t hdf5_lock;

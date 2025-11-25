@@ -334,7 +334,7 @@ void bdapply_Function_hdf5( std::string filename,
                             }
                             
                         } else {
-                            int res = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
+                            [[maybe_unused]] int res = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
                             //..// int res [[maybe_unused]] = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
                         }
                         
