@@ -3,13 +3,8 @@ PKG_CXXFLAGS=-I../inst/include/
 
 ## With Rcpp 0.11.0 and later, we no longer need to set PKG_LIBS as there is
 ## no user-facing library. The include path to headers is already set by R.
-#PKG_LIBS = 
 
 PKG_LIBS = -lws2_32
-
-#..# # RcppParallel
-# ..# PKG_CXXFLAGS += -DRCPP_PARALLEL_USE_TBB=1
-# ..# PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "RcppParallel::RcppParallelLibs()")
 
 # OpenMP
 PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) 
@@ -25,26 +20,12 @@ RHDF5_LIBS = $(shell echo 'Rhdf5lib::pkgconfig("PKG_CXX_LIBS")'|\
     "${R_HOME}/bin/R" --vanilla --slave)  
 PKG_LIBS += $(RHDF5_LIBS)
 
-## With R 3.1.0 or later, you can uncomment the following line to tell R to 
-## enable compilation with C++11 (or even C++14) where available
-#..# CXXFLAGS = -g3 -O3 -Wall
-#..# CXX_STD = $(CCACHE) CXX17
-#..# CXXFLAGS += -g3 -O2 -std=c++17 -Wall
-#..# PKG_CXXFLAGS += -g3 -O3 -Wall
-
-#.ORIGINAL OK - CHECKS CRAN.# CCACHE=ccache
-#.ORIGINAL OK - CHECKS CRAN.# CXX_STD = $(CCACHE) CXX
-
-#..# CXXFLAGS += -g3 -O2 -std=c++17 -Wall
-#..# PKG_CXXFLAGS += -g3 -O3 -Wall
-#..# CXX_STD = $(CCACHE) CXX17
 CCACHE=ccache
 CXX_STD = $(CCACHE) CXX17
 
 ## Disable Boost concept-checking to silence warnings from BH headers (no effect on code logic)
 PKG_CXXFLAGS += -DBOOST_NO_CONCEPT_CHECKING
 PKG_CXXFLAGS += -DSTRICT_R_HEADERS
-
 
 # Optional: safe compiler-specific additions (commented by default)
 # PKG_CXXFLAGS += -g3 -O3 -std=c++17 -Wall

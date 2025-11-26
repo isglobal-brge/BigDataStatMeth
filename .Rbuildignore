@@ -8,3 +8,7 @@
 ^.*\ 2*
 ^.*\.hide$
 ^.*Spectra_old
+claude.md
+^.*\.log$
+^.*\.ffs_gui$
+^.*\.DS_Store$
