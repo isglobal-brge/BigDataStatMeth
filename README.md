@@ -93,3 +93,7 @@ library(BigDataStatMeth)
 | Perform CCA by blocks in hdf5                    |                  bdCCA_hdf5(…)                          |     ✔︎     |          |   ✔︎  |
 
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/isglobal-brge/BigDataStatMeth/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/isglobal-brge/BigDataStatMeth/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
