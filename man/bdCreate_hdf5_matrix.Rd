@@ -22,7 +22,7 @@ bdCreate_hdf5_matrix(
 
 \item{group, }{character array indicating folder name to put the matrix in hdf5 file}
 
-\item{dataset, }{character array indicating the dataset name to store the matix data}
+\item{dataset, }{character array indicating the dataset name to store the matrix data}
 
 \item{transp}{boolean, if trans=true matrix is stored transposed in hdf5 file}
 

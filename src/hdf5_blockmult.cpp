@@ -58,7 +58,7 @@
 //' library("BigDataStatMeth")
 //' library("rhdf5")
 //' 
-//' N = 1500; M = 1500
+//' N = 1000; M = 1000
 //' 
 //' set.seed(555)
 //' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 

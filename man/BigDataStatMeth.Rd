@@ -2,7 +2,7 @@
 % Please edit documentation in R/BigDataStatMeth.R
 \name{BigDataStatMeth}
 \alias{BigDataStatMeth}
-\title{BigDataStatMEth package documentation}
+\title{BigDataStatMeth package documentation}
 \description{
-BigDataStatMEth package documentation
+BigDataStatMeth package documentation
 }

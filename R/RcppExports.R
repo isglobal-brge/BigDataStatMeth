@@ -1002,7 +1002,7 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #' computation. Defaults to FALSE. Set `paral = true` to force parallel execution
 #' @param threads integer (optional), an optional parameter specifying the 
 #' number of threads to use if paral = TRUE. Ignored if paral = FALSE.
-#' @param outgroup string (optional), An optional parameger specifying the group 
+#' @param outgroup string (optional), An optional parameter specifying the group 
 #' where the output matrix will be stored. If NULL, the output will be stored 
 #' in the default group "OUTPUT".
 #' @param outdataset string (optional), An optional parameter specifying the 
@@ -1035,7 +1035,7 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #' library("BigDataStatMeth")
 #' library("rhdf5")
 #' 
-#' N = 1500; M = 1500
+#' N = 1000; M = 1000
 #' 
 #' set.seed(555)
 #' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
@@ -1514,7 +1514,7 @@ bdCreate_hdf5_group <- function(filename, group) {
 #' @param filename, character array indicating the name of the file to create
 #' @param object numerical data matrix
 #' @param group, character array indicating folder name to put the matrix in hdf5 file
-#' @param dataset, character array indicating the dataset name to store the matix data
+#' @param dataset, character array indicating the dataset name to store the matrix data
 #' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 #' @param overwriteFile, optional boolean by default overwriteFile = false, if 
 #' true and file exists, removes old file and creates a new file with de dataset 

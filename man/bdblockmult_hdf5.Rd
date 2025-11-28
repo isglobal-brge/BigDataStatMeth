@@ -49,7 +49,7 @@ computation. Defaults to FALSE. Set \code{paral = true} to force parallel execut
 \item{threads}{integer (optional), an optional parameter specifying the
 number of threads to use if paral = TRUE. Ignored if paral = FALSE.}
 
-\item{outgroup}{string (optional), An optional parameger specifying the group
+\item{outgroup}{string (optional), An optional parameter specifying the group
 where the output matrix will be stored. If NULL, the output will be stored
 in the default group "OUTPUT".}
 
@@ -94,7 +94,7 @@ maximum number of available threads
 library("BigDataStatMeth")
 library("rhdf5")
 
-N = 1500; M = 1500
+N = 1000; M = 1000
 
 set.seed(555)
 a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
