@@ -27,7 +27,7 @@ bdQR_hdf5(
 If not provided, results are stored in \verb{<input_group>/QRDec}.}
 
 \item{outdataset}{Character string. Optional base name for output datasets. Results
-will be stored as \verb{Q.<outdataset>} and \verb{R.<outdataset>}.}
+will be stored as \verb{Q.'outdataset'} and \verb{R.'outdataset'}.}
 
 \item{thin}{Logical. If TRUE, computes the reduced (thin) QR decomposition.
 If FALSE (default), computes the full decomposition.}
@@ -46,10 +46,10 @@ List with components. If an error occurs, all string values are returned as empt
 \item{fn}{Character string with the HDF5 filename}
 \item{ds_Q}{Character string with the full dataset path to the Q matrix
 (orthogonal matrix). Results are written to the HDF5 file as
-"Q.\if{html}{\out{<outdataset>}}" within the specified group}
+"Q.'outdataset'" within the specified group}
 \item{ds_R}{Character string with the full dataset path to the R matrix
 (upper triangular matrix). Results are written to the HDF5 file as
-"R.\if{html}{\out{<outdataset>}}" within the specified group}
+"R.'outdataset'" within the specified group}
 }
 }
 \description{

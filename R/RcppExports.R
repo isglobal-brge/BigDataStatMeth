@@ -164,7 +164,7 @@ bdQR <- function(X, thin = NULL, block_size = NULL, threads = NULL) {
 #' @param outgroup Character string. Optional output group path where results will be stored.
 #'   If not provided, results are stored in `<input_group>/QRDec`.
 #' @param outdataset Character string. Optional base name for output datasets. Results
-#'   will be stored as `Q.<outdataset>` and `R.<outdataset>`.
+#'   will be stored as `Q.'outdataset'` and `R.'outdataset'`.
 #' @param thin Logical. If TRUE, computes the reduced (thin) QR decomposition.
 #'   If FALSE (default), computes the full decomposition.
 #' @param block_size Integer. Optional block size for blocked computation.
@@ -178,10 +178,10 @@ bdQR <- function(X, thin = NULL, block_size = NULL, threads = NULL) {
 #'   \item{fn}{Character string with the HDF5 filename}
 #'   \item{ds_Q}{Character string with the full dataset path to the Q matrix 
 #'   (orthogonal matrix). Results are written to the HDF5 file as 
-#'   "Q.<outdataset>" within the specified group}
+#'   "Q.'outdataset'" within the specified group}
 #'   \item{ds_R}{Character string with the full dataset path to the R matrix 
 #'   (upper triangular matrix). Results are written to the HDF5 file as 
-#'   "R.<outdataset>" within the specified group}
+#'   "R.'outdataset'" within the specified group}
 #' }
 #'
 #' @examples
@@ -630,7 +630,7 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #' @return A list containing the paths to the PCA results stored in the HDF5 file:
 #'   \describe{
 #'     \item{fn}{Character string. Path to the HDF5 file containing the results}
-#'     \item{lambda}{Character string. Dataset path to eigenvalues (λ)}
+#'     \item{lambda}{Character string. Dataset path to eigenvalues \eqn{\lambda}}
 #'     \item{variance}{Character string. Dataset path to variance explained by each PC}
 #'     \item{cumvar}{Character string. Dataset path to cumulative variance explained}
 #'     \item{var.coord}{Character string. Dataset path to variable coordinates on the PCs}
@@ -1063,11 +1063,7 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #' res <- bdblockmult_hdf5(filename = fn, group = "groupA", 
 #'     A = "datasetA", B = "datasetB", outgroup = "results", 
 #'     outdataset = "res", overwrite = TRUE ) 
-#'     
-#' res <- bdblockmult_hdf5(filename = fn, group = "groupA", 
-#'     A = "datasetA", B = "datasetB", outgroup = "results", 
-#'     outdataset = "res", block_size = 1024, overwrite = TRUE ) 
-#' 
+#'  
 #' # list contents
 #' h5ls(fn)
 #' 
@@ -1769,7 +1765,7 @@ bdDiag_multiply_hdf5 <- function(filename, group, A, B, groupB = NULL, target = 
 #'   - Element-wise division: result\[i\] = A\[i\] / B\[i\]
 #'   - Division by zero results in infinity (IEEE 754 standard)
 #'   - Handles special cases: ±inf, NaN, and subnormal numbers
-#'   - Order matters: A / B ≠ B / A
+#'   - Order matters: \eqn{A / B \neq B / A}.
 #'
 #' @param filename String. Path to the HDF5 file containing the datasets.
 #' @param group String. Group path containing the first dataset (A, dividend).
@@ -2880,9 +2876,23 @@ bdmove_hdf5_dataset <- function(filename, source_path, dest_path, overwrite = FA
 #' numerically stable results even for singular or near-singular matrices.
 #'
 #' @details
-#' The Moore-Penrose pseudoinverse A⁺ of a matrix A is computed using Singular
-#' Value Decomposition (SVD). For a matrix A = UΣV*, the pseudoinverse is
-#' A⁺ = VΣ⁺U* where Σ⁺ is obtained by reciprocating non-zero singular values.
+#' The Moore-Penrose pseudoinverse (denoted A+) of a matrix A is computed using 
+#' Singular Value Decomposition (SVD). 
+#'
+#' For a matrix A = U*Sigma*V^T (where ^T denotes transpose), the pseudoinverse is 
+#' computed as:
+#'
+#' \deqn{A^+ = V \Sigma^+ U^T}
+#'
+#' where Sigma+ is obtained by taking the reciprocal of non-zero singular values.
+#'
+#' @section Mathematical Details:
+#' \itemize{
+#'   \item SVD decomposition: \eqn{A = U \Sigma V^T}
+#'   \item Pseudoinverse: \eqn{A^+ = V \Sigma^+ U^T}
+#'   \item \eqn{\Sigma^+_{ii} = 1/\Sigma_{ii}} if \eqn{\Sigma_{ii} > \text{tolerance}}
+#'   \item \eqn{\Sigma^+_{ii} = 0} otherwise
+#' }
 #' 
 #' Key features:
 #' * Robust computation:
@@ -2897,11 +2907,11 @@ bdmove_hdf5_dataset <- function(filename, source_path, dest_path, overwrite = FA
 #'   - Handles both dense and sparse inputs
 #'
 #' The pseudoinverse satisfies the Moore-Penrose conditions:
-#' * AA⁺A = A
-#' * A⁺AA⁺ = A⁺
-#' * (AA⁺)* = AA⁺
-#' * (A⁺A)* = A⁺A
-#'
+#' * \eqn{AA^+A = A}
+#' * \eqn{A^+AA^+ = A^+}
+#' * \eqn{(AA^+)^* = AA^+}
+#' * \eqn{(A^+A)^* = A^+A}
+#' 
 #' @param X Numeric matrix or vector to be pseudoinverted.
 #' @param threads Optional integer. Number of threads for parallel computation.
 #'   If NULL, uses maximum available threads.
@@ -3529,7 +3539,7 @@ bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSor
 #'   \item{fn}{Character string with the HDF5 filename}
 #'   \item{ds}{Character string with the output group path where the split 
 #'   datasets are stored. Multiple datasets are created in this location named 
-#'   as "<outdataset>.1", "<outdataset>.2", etc.}
+#'   as \<outdataset\>.1, \<outdataset\>.2, etc.}
 #' }
 #'
 #' @examples
@@ -3918,9 +3928,9 @@ bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, ve
 #' \describe{
 #'   \item{fn}{Character string with the HDF5 filename}
 #'   \item{dsrows}{Character string with the full dataset path to the row names,
-#'    stored as ".<dataset>_dimnames/1" within the specified group}
+#'    stored as ".\code{dataset}_dimnames/1" within the specified group}
 #'   \item{dscols}{Character string with the full dataset path to the column 
-#'   names, stored as ".<dataset>_dimnames/2" within the specified group}
+#'   names, stored as ".\code{dataset}_dimnames/2" within the specified group}
 #' }
 #'
 #' @examples

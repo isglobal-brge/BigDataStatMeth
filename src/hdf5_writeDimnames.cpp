@@ -55,9 +55,9 @@
 //' \describe{
 //'   \item{fn}{Character string with the HDF5 filename}
 //'   \item{dsrows}{Character string with the full dataset path to the row names,
-//'    stored as ".<dataset>_dimnames/1" within the specified group}
+//'    stored as ".\code{dataset}_dimnames/1" within the specified group}
 //'   \item{dscols}{Character string with the full dataset path to the column 
-//'   names, stored as ".<dataset>_dimnames/2" within the specified group}
+//'   names, stored as ".\code{dataset}_dimnames/2" within the specified group}
 //' }
 //'
 //' @examples

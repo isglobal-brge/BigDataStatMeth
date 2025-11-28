@@ -47,7 +47,7 @@ List with components. If an error occurs, all string values are returned as empt
 \item{fn}{Character string with the HDF5 filename}
 \item{ds}{Character string with the output group path where the split
 datasets are stored. Multiple datasets are created in this location named
-as "\if{html}{\out{<outdataset>}}.1", "\if{html}{\out{<outdataset>}}.2", etc.}
+as \<outdataset\>.1, \<outdataset\>.2, etc.}
 }
 }
 \description{

@@ -91,7 +91,7 @@
 //' @return A list containing the paths to the PCA results stored in the HDF5 file:
 //'   \describe{
 //'     \item{fn}{Character string. Path to the HDF5 file containing the results}
-//'     \item{lambda}{Character string. Dataset path to eigenvalues (λ)}
+//'     \item{lambda}{Character string. Dataset path to eigenvalues \eqn{\lambda}}
 //'     \item{variance}{Character string. Dataset path to variance explained by each PC}
 //'     \item{cumvar}{Character string. Dataset path to cumulative variance explained}
 //'     \item{var.coord}{Character string. Dataset path to variable coordinates on the PCs}

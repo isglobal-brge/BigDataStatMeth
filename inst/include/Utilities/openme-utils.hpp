@@ -276,7 +276,8 @@ inline SEXP getDTthreads_R(SEXP verbose) {
 #define _GET_FINAL_THREADS
     inline unsigned int get_number_threads(Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> bparal) {
         
-        unsigned int ithreads = std::thread::hardware_concurrency();
+        // unsigned int ithreads = std::thread::hardware_concurrency();
+        unsigned int ithreads = getDTthreads(INT_MAX, false);
         
         if( bparal.isNotNull() ) {
             if(Rcpp::as<bool>(bparal) == false) {

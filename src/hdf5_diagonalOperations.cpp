@@ -759,7 +759,7 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
 //'   - Element-wise division: result\[i\] = A\[i\] / B\[i\]
 //'   - Division by zero results in infinity (IEEE 754 standard)
 //'   - Handles special cases: ±inf, NaN, and subnormal numbers
-//'   - Order matters: A / B ≠ B / A
+//'   - Order matters: \eqn{A / B \neq B / A}.
 //'
 //' @param filename String. Path to the HDF5 file containing the datasets.
 //' @param group String. Group path containing the first dataset (A, dividend).

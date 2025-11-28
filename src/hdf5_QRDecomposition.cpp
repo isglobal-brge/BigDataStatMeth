@@ -157,7 +157,7 @@ Rcpp::RObject bdQR( const Rcpp::RObject & X,
 //' @param outgroup Character string. Optional output group path where results will be stored.
 //'   If not provided, results are stored in `<input_group>/QRDec`.
 //' @param outdataset Character string. Optional base name for output datasets. Results
-//'   will be stored as `Q.<outdataset>` and `R.<outdataset>`.
+//'   will be stored as `Q.'outdataset'` and `R.'outdataset'`.
 //' @param thin Logical. If TRUE, computes the reduced (thin) QR decomposition.
 //'   If FALSE (default), computes the full decomposition.
 //' @param block_size Integer. Optional block size for blocked computation.
@@ -171,10 +171,10 @@ Rcpp::RObject bdQR( const Rcpp::RObject & X,
 //'   \item{fn}{Character string with the HDF5 filename}
 //'   \item{ds_Q}{Character string with the full dataset path to the Q matrix 
 //'   (orthogonal matrix). Results are written to the HDF5 file as 
-//'   "Q.<outdataset>" within the specified group}
+//'   "Q.'outdataset'" within the specified group}
 //'   \item{ds_R}{Character string with the full dataset path to the R matrix 
 //'   (upper triangular matrix). Results are written to the HDF5 file as 
-//'   "R.<outdataset>" within the specified group}
+//'   "R.'outdataset'" within the specified group}
 //' }
 //'
 //' @examples

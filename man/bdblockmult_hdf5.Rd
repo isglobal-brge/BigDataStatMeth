@@ -122,11 +122,7 @@ bdCreate_hdf5_matrix(filename = fn,
 res <- bdblockmult_hdf5(filename = fn, group = "groupA", 
     A = "datasetA", B = "datasetB", outgroup = "results", 
     outdataset = "res", overwrite = TRUE ) 
-    
-res <- bdblockmult_hdf5(filename = fn, group = "groupA", 
-    A = "datasetA", B = "datasetB", outgroup = "results", 
-    outdataset = "res", block_size = 1024, overwrite = TRUE ) 
-
+ 
 # list contents
 h5ls(fn)
 

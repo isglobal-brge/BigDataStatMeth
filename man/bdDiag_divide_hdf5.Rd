@@ -81,7 +81,7 @@ This function provides flexible diagonal division with automatic optimization:
 \item Element-wise division: result[i] = A[i] / B[i]
 \item Division by zero results in infinity (IEEE 754 standard)
 \item Handles special cases: ±inf, NaN, and subnormal numbers
-\item Order matters: A / B ≠ B / A
+\item Order matters: \eqn{A / B \neq B / A}.
 }
 }
 }

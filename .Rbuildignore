@@ -12,3 +12,4 @@ claude.md
 ^.*\.log$
 ^.*\.ffs_gui$
 ^.*\.DS_Store$
+^cran-comments\.md$

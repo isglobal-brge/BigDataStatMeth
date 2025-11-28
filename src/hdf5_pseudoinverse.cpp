@@ -50,9 +50,23 @@
 //' numerically stable results even for singular or near-singular matrices.
 //'
 //' @details
-//' The Moore-Penrose pseudoinverse A⁺ of a matrix A is computed using Singular
-//' Value Decomposition (SVD). For a matrix A = UΣV*, the pseudoinverse is
-//' A⁺ = VΣ⁺U* where Σ⁺ is obtained by reciprocating non-zero singular values.
+//' The Moore-Penrose pseudoinverse (denoted A+) of a matrix A is computed using 
+//' Singular Value Decomposition (SVD). 
+//'
+//' For a matrix A = U*Sigma*V^T (where ^T denotes transpose), the pseudoinverse is 
+//' computed as:
+//'
+//' \deqn{A^+ = V \Sigma^+ U^T}
+//'
+//' where Sigma+ is obtained by taking the reciprocal of non-zero singular values.
+//'
+//' @section Mathematical Details:
+//' \itemize{
+//'   \item SVD decomposition: \eqn{A = U \Sigma V^T}
+//'   \item Pseudoinverse: \eqn{A^+ = V \Sigma^+ U^T}
+//'   \item \eqn{\Sigma^+_{ii} = 1/\Sigma_{ii}} if \eqn{\Sigma_{ii} > \text{tolerance}}
+//'   \item \eqn{\Sigma^+_{ii} = 0} otherwise
+//' }
 //' 
 //' Key features:
 //' * Robust computation:
@@ -67,11 +81,11 @@
 //'   - Handles both dense and sparse inputs
 //'
 //' The pseudoinverse satisfies the Moore-Penrose conditions:
-//' * AA⁺A = A
-//' * A⁺AA⁺ = A⁺
-//' * (AA⁺)* = AA⁺
-//' * (A⁺A)* = A⁺A
-//'
+//' * \eqn{AA^+A = A}
+//' * \eqn{A^+AA^+ = A^+}
+//' * \eqn{(AA^+)^* = AA^+}
+//' * \eqn{(A^+A)^* = A^+A}
+//' 
 //' @param X Numeric matrix or vector to be pseudoinverted.
 //' @param threads Optional integer. Number of threads for parallel computation.
 //'   If NULL, uses maximum available threads.
