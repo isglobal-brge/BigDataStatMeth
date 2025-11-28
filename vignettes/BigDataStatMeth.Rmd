@@ -107,7 +107,7 @@ library(BigDataStatMeth)
 
 Hierarchical Data Format (HDF) is a set of file formats  designed to store and organize large amounts of data. It is supported by The HDF Group, a non-profit corporation whose mission is to ensure continued development of HDF5 technologies and the continued accessibility of data stored in HDF.
 
-HDF5 is a technology suite that makes possible the management of extremely large and complex data collections, can accomodate virtually every kind of data in a single file, sequences, images, SNP matrices, and every other type of data and metadata associated with an experiment.
+HDF5 is a technology suite that makes possible the management of extremely large and complex data collections, can accommodate virtually every kind of data in a single file, sequences, images, SNP matrices, and every other type of data and metadata associated with an experiment.
 
 There is no limit on the number or size of data objects in the collection, giving great flexibility for omic data. Is high-performance I/O with a rich set of integrated performance features that allow for access time and storage space optimizations
 
@@ -234,7 +234,7 @@ Usually we have files with a large amount of data to be loaded into R. For Big d
 
 You can easily change your text files to HDF5 using the function `bdImportTextFile_hdf5 ()`, to do that, we only have to define the input file with the `filename` parameter and the HDF5 destination dataset with parameters `outputfile` for the output file name, `outGroup` with the group to store the dataset and the dataset name with the parameter `outDataset`. It should be considered that:
 
-- This function **only allows to import numeric data except for rownames and columnames where character are allowed**. 
+- This function **only allows to import numeric data except for rownames and colnames where character are allowed**. 
 
 - Data can be delimited by different characters. By default, we use tabs ("\\t") but it can be changed easily with `sep` parameter.
 

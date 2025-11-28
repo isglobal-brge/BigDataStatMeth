@@ -1,4 +1,4 @@
-#' BigDataStatMEth package documentation
+#' BigDataStatMeth package documentation
 #' @name BigDataStatMeth
 #' @useDynLib BigDataStatMeth
 #' @importFrom Rcpp evalCpp

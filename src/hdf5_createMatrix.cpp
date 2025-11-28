@@ -9,7 +9,7 @@
 //' @param filename, character array indicating the name of the file to create
 //' @param object numerical data matrix
 //' @param group, character array indicating folder name to put the matrix in hdf5 file
-//' @param dataset, character array indicating the dataset name to store the matix data
+//' @param dataset, character array indicating the dataset name to store the matrix data
 //' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
 //' @param overwriteFile, optional boolean by default overwriteFile = false, if 
 //' true and file exists, removes old file and creates a new file with de dataset 

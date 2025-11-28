@@ -71,7 +71,7 @@ library(BigDataStatMeth)
 | Principal Components Analysis (PCA)              |                      bdPCA_hdf5(…)                      |     ✔︎     |          |   ✔︎  |
 | MLR-MR (Linear Regression Big Data)              |                       bdlm_paral(…)                      |     ✔︎     |     ✔︎    |      |
 | **HDF5 data files Utils**                        |                                                         |           |          |      |
-| Remove rows or columns with hight missing values |                    bdRemovelowdata(…)                   |     ✔︎     |          |   ✔︎  |
+| Remove rows or columns with high missing values  |                    bdRemovelowdata(…)                   |     ✔︎     |          |   ✔︎  |
 | Impute missing data                              |                    bdImpute_snps_hdf5(…)                |     ✔︎     |          |   ✔︎  |
 | Create hdf5 data file with one dataset inside    |                bdCreate_hdf5_matrix_file(…)             |           |          |   ✔︎  |
 | Add one dataset in hdf5 data file                |                  bdAdd_hdf5_matrix(…)                   |           |          |   ✔︎  |

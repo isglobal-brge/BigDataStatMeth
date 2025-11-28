@@ -25,7 +25,7 @@
 //' computation. Defaults to FALSE. Set `paral = true` to force parallel execution
 //' @param threads integer (optional), an optional parameter specifying the 
 //' number of threads to use if paral = TRUE. Ignored if paral = FALSE.
-//' @param outgroup string (optional), An optional parameger specifying the group 
+//' @param outgroup string (optional), An optional parameter specifying the group 
 //' where the output matrix will be stored. If NULL, the output will be stored 
 //' in the default group "OUTPUT".
 //' @param outdataset string (optional), An optional parameter specifying the 
