@@ -1,4 +1,4 @@
-## Resubmission
+seeeeee## Resubmission
 
 This is a complete rewrite of BigDataStatMeth that was archived in 2022.
 
@@ -24,3 +24,9 @@ This is a complete rewrite of BigDataStatMeth that was archived in 2022.
 
 Package size is 11.6Mb due to HDF5 C++ library dependencies and comprehensive 
 documentation. This is necessary for the package's core functionality.
+
+### Note on previous ATLAS issues
+
+The package was previously archived partly due to ATLAS/BLAS issues. 
+The current version has been tested with standard BLAS/LAPACK and 
+we request verification on CRAN's ATLAS systems during review.
