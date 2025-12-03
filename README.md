@@ -1,5 +1,9 @@
 # Big Data Statistical Methods (BigDataStatMeth)
- 
+
+<!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/BigDataStatMeth)](https://CRAN.R-project.org/package=BigDataStatMeth)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/BigDataStatMeth)](https://CRAN.R-project.org/package=BigDataStatMeth)
+<!-- badges: end -->
 
 This package implements basic Algebra methods using parallel algorithms to be used in big data problems such as omic data analyses. The methods will accept objects as those designed to deal with big matrices in the Matrix package. The implemented methods will include:
 
@@ -27,8 +31,13 @@ This package implements basic Algebra methods using parallel algorithms to be us
 
 To install BigDataStatMeth package we only have to run the following commands from the R command shell 
 
-```{r, install, eval=FALSE}
+### From CRAN (recommended)
+```{r, installCRAN, eval=FALSE}
+install.packages("BigDataStatMeth")
+```
 
+### From GitHub (development version)
+```{r, install, eval=FALSE}
 # Install devtools and load library (if not previously installed)
 install.packages("devtools") 
 library(devtools)
@@ -93,7 +102,4 @@ library(BigDataStatMeth)
 | Perform CCA by blocks in hdf5                    |                  bdCCA_hdf5(…)                          |     ✔︎     |          |   ✔︎  |
 
 
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/isglobal-brge/BigDataStatMeth/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/isglobal-brge/BigDataStatMeth/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
 
