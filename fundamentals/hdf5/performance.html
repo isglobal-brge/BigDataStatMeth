@@ -431,30 +431,43 @@ Too large → memory exhaustion and slower due to paging.</p>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Write to HDF5</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"perf_demo.h5"</span>, A, <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">dataset =</span> <span class="st">"A"</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"perf_demo.h5"</span>, B, <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to measure time for a given block size</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>run_bench <span class="ot">&lt;-</span> <span class="cf">function</span>(block_size) {</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">system.time</span>({</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdblockmult_hdf5</span>(<span class="st">"perf_demo.h5"</span>,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">A =</span> <span class="st">"A"</span>,</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">groupB =</span> <span class="st">"bench"</span>, <span class="at">B =</span> <span class="st">"B"</span>,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">block_size =</span> block_size)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  })[<span class="dv">3</span>]</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(t)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>block_sizes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">sapply</span>(block_sizes, run_bench)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">BlockSize =</span> block_sizes, <span class="at">TimeSec =</span> <span class="fu">round</span>(times, <span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "perf_demo.h5"
+
+$ds
+[1] "bench/A"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"perf_demo.h5"</span>, B, <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "perf_demo.h5"
+
+$ds
+[1] "bench/B"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to measure time for a given block size</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>run_bench <span class="ot">&lt;-</span> <span class="cf">function</span>(block_size) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">system.time</span>({</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bdblockmult_hdf5</span>(<span class="st">"perf_demo.h5"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">A =</span> <span class="st">"A"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">groupB =</span> <span class="st">"bench"</span>, <span class="at">B =</span> <span class="st">"B"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">block_size =</span> block_size)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  })[<span class="dv">3</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(t)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>block_sizes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">64</span>, <span class="dv">128</span>, <span class="dv">256</span>, <span class="dv">512</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">sapply</span>(block_sizes, run_bench)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">BlockSize =</span> block_sizes, <span class="at">TimeSec =</span> <span class="fu">round</span>(times, <span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  BlockSize TimeSec
 1        64   0.004
-2       128   0.004
-3       256   0.003
-4       512   0.003</code></pre>
+2       128   0.006
+3       256   0.002
+4       512   0.002</code></pre>
 </div>
 </div>
 </div>

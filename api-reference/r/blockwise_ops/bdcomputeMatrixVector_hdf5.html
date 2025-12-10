@@ -667,10 +667,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See Also</a></li>
   </ul>
 </nav>
     </div>
@@ -698,6 +701,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge blockwise_ops">BLOCKWISE_OPS</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Performs element-wise operations between a matrix and a vector stored in HDF5 format. The function supports addition, subtraction, multiplication, division and power operations, with options for row-wise or column-wise application and parallel processing.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdcomputeMatrixVector_hdf5</span>(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, <span class="at">outgroup =</span> <span class="cn">NULL</span>, <span class="at">byrows =</span> <span class="cn">NULL</span>, <span class="at">paral =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="cn">NULL</span>, <span class="at">overwrite =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -772,8 +779,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>List with components: </p>
+<p>List with components:</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string with the HDF5 filename</li>
+<li><strong><code>gr</code></strong>: Character string with the HDF5 group</li>
+<li><strong><code>ds</code></strong>: Character string with the full dataset path (group/dataset)</li>
+</ul>
 </div>
+</section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>This function provides a flexible interface for performing element-wise operations between matrices and vectors stored in HDF5 format. It supports: - Four basic operations: - Addition (+): Adds vector elements to matrix rows/columns - Subtraction (-): Subtracts vector elements from matrix rows/columns - Multiplication (*): Multiplies matrix rows/columns by vector elements - Division (/): Divides matrix rows/columns by vector elements - Power (pow): power matrix rows/columns by vector elements - Processing options: - Row-wise or column-wise operations - Parallel processing for improved performance - Configurable thread count for parallel execution - Memory-efficient processing for large datasets</p>
+<p>The function performs extensive validation: - Checks matrix and vector dimensions for compatibility - Validates operation type - Verifies HDF5 file and dataset accessibility - Ensures proper data structures (matrix vs.&nbsp;vector)</p>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
@@ -832,6 +849,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(<span class="st">"test.hdf5"</span>)) {</span>
 <span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.remove</span>(<span class="st">"test.hdf5"</span>)</span>
 <span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
+<div class="see-also">
+<ul>
+<li><a href="../hdf5_io_management/bdCreate_hdf5_matrix.html">bdCreate_hdf5_matrix</a> for creating HDF5 matrices</li>
+</ul>
 </div>
 
 

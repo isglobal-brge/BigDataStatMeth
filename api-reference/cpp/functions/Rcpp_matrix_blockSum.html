@@ -248,38 +248,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dataset</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DatasetInternal</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DatasetInternal</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DiagonalMatrix</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DiagonalMatrix</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dims.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dims</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dims</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5File.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5File</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5File.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5File</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Group.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Group</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Group.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Group</span></a>
   </div>
 </li>
       </ul>
@@ -1507,7 +1507,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>File:</strong> <code>inst/include/memAlgebra/memSum.hpp</code> • <strong>Lines 194-270</strong></p>
+<p><strong>File:</strong> <code>inst/include/memAlgebra/memSum.hpp</code> • <strong>Lines 194-271</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> Rcpp<span class="op">::</span>RObject Rcpp_matrix_blockSum <span class="op">(</span> T  A<span class="op">,</span> T  B<span class="op">,</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> threads<span class="op">)</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        </span>
@@ -1541,50 +1541,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            </span>
 <span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span><span class="op">(</span>block_size <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">{</span></span>
 <span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span><span class="op">(</span> N <span class="op">==</span> Y<span class="op">.</span>rows<span class="op">()</span> <span class="op">&amp;&amp;</span> M <span class="op">==</span> Y<span class="op">.</span>cols<span class="op">())</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// hsize_t size = block_size + 1;</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// ithreads = get_number_threads(threads, R_NilValue);</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                    getBlockPositionsSizes<span class="op">(</span> N<span class="op">*</span>M<span class="op">,</span> block_size<span class="op">,</span> vstart<span class="op">,</span> vsizetoRead <span class="op">);</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// int chunks = vstart.size()/ithreads;</span></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>                    <span class="pp">#pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C)</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>                    <span class="op">{</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>                    <span class="pp">#pragma omp for schedule (dynamic)</span></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">for</span> <span class="op">(</span><span class="dt">hsize_t</span> ii <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> ii <span class="op">&lt;</span> vstart<span class="op">.</span>size<span class="op">();</span> ii <span class="op">++)</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>                        <span class="op">{</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>                            </span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>                            <span class="cf">if</span><span class="op">(</span> vstart<span class="op">[</span>ii<span class="op">]</span> <span class="op">+</span> vsizetoRead<span class="op">[</span>ii<span class="op">]</span> <span class="op">&gt;=</span> N<span class="op">*</span>M <span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>                                <span class="bu">std::</span>transform <span class="op">(</span>X<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> X<span class="op">.</span>end<span class="op">(),</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>                                                Y<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> C<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> <span class="bu">std::</span>plus<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;());</span></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>                            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>                                <span class="bu">std::</span>transform <span class="op">(</span>X<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> X<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">]</span> <span class="op">+</span> vsizetoRead<span class="op">[</span>ii<span class="op">],</span></span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                                                Y<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> C<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> <span class="bu">std::</span>plus<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;());</span>   </span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                            <span class="op">}</span></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>                    Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span><span class="st">"matrix sum error: non-conformable arguments</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">return</span><span class="op">(</span>R_NilValue<span class="op">);</span></span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span><span class="op">{</span></span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span><span class="st">"matrix sum error: Error whent computing block sizes</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span><span class="op">(</span>R_NilValue<span class="op">);</span></span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">();</span></span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span><span class="op">(</span>R_NilValue<span class="op">);</span></span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>        C<span class="op">.</span>attr<span class="op">(</span><span class="st">"dim"</span><span class="op">)</span> <span class="op">=</span> Rcpp<span class="op">::</span>Dimension<span class="op">(</span> N<span class="op">,</span> M<span class="op">);</span></span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span><span class="op">(</span>C<span class="op">);</span></span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                <span class="co">// if( N == Y.rows() &amp;&amp; M == Y.cols())</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>N <span class="op">==</span> <span class="kw">static_cast</span><span class="op">&lt;</span><span class="dt">hsize_t</span><span class="op">&gt;(</span>Y<span class="op">.</span>rows<span class="op">())</span> <span class="op">&amp;&amp;</span> M <span class="op">==</span> <span class="kw">static_cast</span><span class="op">&lt;</span><span class="dt">hsize_t</span><span class="op">&gt;(</span>Y<span class="op">.</span>cols<span class="op">()))</span> </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// hsize_t size = block_size + 1;</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// ithreads = get_number_threads(threads, R_NilValue);</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                    getBlockPositionsSizes<span class="op">(</span> N<span class="op">*</span>M<span class="op">,</span> block_size<span class="op">,</span> vstart<span class="op">,</span> vsizetoRead <span class="op">);</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// int chunks = vstart.size()/ithreads;</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>                    <span class="pp">#pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(A, B, C)</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>                    <span class="op">{</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>                    <span class="pp">#pragma omp for schedule (dynamic)</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">for</span> <span class="op">(</span><span class="dt">hsize_t</span> ii <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> ii <span class="op">&lt;</span> vstart<span class="op">.</span>size<span class="op">();</span> ii <span class="op">++)</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>                        <span class="op">{</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>                            </span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>                            <span class="cf">if</span><span class="op">(</span> vstart<span class="op">[</span>ii<span class="op">]</span> <span class="op">+</span> vsizetoRead<span class="op">[</span>ii<span class="op">]</span> <span class="op">&gt;=</span> N<span class="op">*</span>M <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>                                <span class="bu">std::</span>transform <span class="op">(</span>X<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> X<span class="op">.</span>end<span class="op">(),</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>                                                Y<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> C<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> <span class="bu">std::</span>plus<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;());</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>                            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                                <span class="bu">std::</span>transform <span class="op">(</span>X<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> X<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">]</span> <span class="op">+</span> vsizetoRead<span class="op">[</span>ii<span class="op">],</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                                                Y<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> C<span class="op">.</span>begin<span class="op">()</span> <span class="op">+</span> vstart<span class="op">[</span>ii<span class="op">],</span> <span class="bu">std::</span>plus<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;());</span>   </span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                            <span class="op">}</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>                    Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span><span class="st">"matrix sum error: non-conformable arguments</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">return</span><span class="op">(</span>R_NilValue<span class="op">);</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span><span class="op">{</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span><span class="st">"matrix sum error: Error whent computing block sizes</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span><span class="op">(</span>R_NilValue<span class="op">);</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">();</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span><span class="op">(</span>R_NilValue<span class="op">);</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>        C<span class="op">.</span>attr<span class="op">(</span><span class="st">"dim"</span><span class="op">)</span> <span class="op">=</span> Rcpp<span class="op">::</span>Dimension<span class="op">(</span> N<span class="op">,</span> M<span class="op">);</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span><span class="op">(</span>C<span class="op">);</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>

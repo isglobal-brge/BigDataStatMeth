@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>BigDataStatMeth::hdf5DatasetInternal – BigDataStatMeth</title>
+<title>hdf5Group – BigDataStatMeth</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -215,7 +215,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/index.html">Classes</a></li><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html">BigDataStatMeth::hdf5DatasetInternal</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/index.html">Classes</a></li><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/hdf5Group.html">hdf5Group</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -248,38 +248,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dataset</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">BigDataStatMeth::hdf5DatasetInternal</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DatasetInternal</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DiagonalMatrix</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DiagonalMatrix</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dims.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dims</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dims</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5File.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5File</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5File.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5File</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Group.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Group</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Group.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">hdf5Group</span></a>
   </div>
 </li>
       </ul>
@@ -1435,7 +1435,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
   </ul></li>
-  <li><a href="#private-implementation" id="toc-private-implementation" class="nav-link" data-scroll-target="#private-implementation">Private Implementation</a></li>
+  <li><a href="#protected-members" id="toc-protected-members" class="nav-link" data-scroll-target="#protected-members">Protected Members</a></li>
   <li><a href="#usage-example" id="toc-usage-example" class="nav-link" data-scroll-target="#usage-example">Usage Example</a></li>
   </ul>
 </nav>
@@ -1443,9 +1443,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/index.html">Classes</a></li><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html">BigDataStatMeth::hdf5DatasetInternal</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/index.html">Classes</a></li><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/hdf5Group.html">hdf5Group</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">BigDataStatMeth::hdf5DatasetInternal</h1>
+<h1 class="title">hdf5Group</h1>
 <p class="subtitle lead">C++ Class Reference</p>
 </div>
 
@@ -1465,18 +1465,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>Constructor with file, group, and dataset name.</p>
+<p>Constructor with filename and group name.</p>
 </section>
 <section id="detailed-description" class="level2">
 <h2 class="anchored" data-anchor-id="detailed-description">Detailed Description</h2>
-<p>fileHDF5 file pointer groupGroup path datasetnameDataset name overwriteWhether to overwrite existing dataset</p>
+<p>filenameName of HDF5 file groupGroup name/path</p>
 </section>
 <section id="class-hierarchy" class="level2">
 <h2 class="anchored" data-anchor-id="class-hierarchy">Class Hierarchy</h2>
 <div class="diagram-section">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/class_big_data_stat_meth_1_1hdf5_dataset_internal__inherit__graph_org.svg" class="class-diagram img-fluid figure-img"></p>
+<p><img src="images/class_big_data_stat_meth_1_1hdf5_group__inherit__graph_org.svg" class="class-diagram img-fluid figure-img"></p>
 <figcaption>Class diagram</figcaption>
 </figure>
 </div>
@@ -1486,183 +1486,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="inheritance">Inheritance</h2>
 <p>Inherits from:</p>
 <ul>
-<li>BigDataStatMeth::hdf5Dataset</li>
+<li>BigDataStatMeth::hdf5File</li>
 </ul>
 </section>
 <section id="public-interface" class="level2">
 <h2 class="anchored" data-anchor-id="public-interface">Public Interface</h2>
 <section id="methods" class="level3">
 <h3 class="anchored" data-anchor-id="methods">Methods</h3>
-<section id="hdf5datasetinternal" class="level4">
-<h4 class="anchored" data-anchor-id="hdf5datasetinternal"><code>hdf5DatasetInternal()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>hdf5DatasetInternal<span class="op">(</span><span class="bu">std::</span>string filename<span class="op">,</span> <span class="bu">std::</span>string group<span class="op">,</span> <span class="bu">std::</span>string datasetname<span class="op">,</span> <span class="dt">bool</span> overwrite<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Constructor with filename, group, and dataset name.</p>
+<section id="hdf5group" class="level4">
+<h4 class="anchored" data-anchor-id="hdf5group"><code>hdf5Group()</code></h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth<span class="op">::</span>hdf5Group<span class="op">::</span>hdf5Group<span class="op">(</span>BigDataStatMeth<span class="op">::</span>hdf5File <span class="op">*</span>objFile<span class="op">,</span> <span class="bu">std::</span>string group<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Constructor with file object and group name.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><code>filename</code> (<code>std::string</code>): Name of HDF5 file</li>
-<li><code>group</code> (<code>std::string</code>): Group path</li>
-<li><code>datasetname</code> (<code>std::string</code>): Dataset name</li>
-<li><code>overwrite</code> (<code>bool</code>): Whether to overwrite existing dataset</li>
+<li><code>objFile</code> (<code>BigDataStatMeth::hdf5File *</code>): HDF5 file object</li>
+<li><code>group</code> (<code>std::string</code>): Group name/path</li>
 </ul>
-<p>filenameName of HDF5 file groupGroup path datasetnameDataset name overwriteWhether to overwrite existing dataset</p>
+<p>Creates a new group if it doesn’t exist</p>
 <hr>
 </section>
-<section id="createdataset" class="level4">
-<h4 class="anchored" data-anchor-id="createdataset"><code>createDataset()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>createDataset<span class="op">(</span>BigDataStatMeth<span class="op">::</span>hdf5Dataset <span class="op">*</span>dsLike<span class="op">,</span> <span class="bu">std::</span>string strdatatype<span class="op">,</span> <span class="dt">int</span> compression_level<span class="op">=</span><span class="dv">6</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Create a dataset based on another dataset’s dimensions with optional compression.</p>
+<section id="create_hdf5_groups" class="level4">
+<h4 class="anchored" data-anchor-id="create_hdf5_groups"><code>create_HDF5_groups()</code></h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Group<span class="op">::</span>create_HDF5_groups<span class="op">(</span>H5std_string mGroup<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Create multiple nested groups.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><code>dsLike</code> (<code>BigDataStatMeth::hdf5Dataset *</code>): Reference dataset to copy dimensions from</li>
-<li><code>strdatatype</code> (<code>std::string</code>): Data type for the new dataset (“int”, “numeric”, “real”, “string”)</li>
-<li><code>compression_level</code> (<code>int</code>): Compression level (0=none, 1-9=gzip level, 6=balanced default) 0 = No compression 1-3 = Light compression (fast) 4-6 = Balanced compression (recommended) 7-9 = Maximum compression (slower)</li>
+<li><code>mGroup</code> (<code>H5std_string</code>): Group path with groups separated by “/”</li>
 </ul>
-<p>Creates a new dataset with the same dimensions as the reference dataset but with a specified data type and compression settings. This is useful for creating derived datasets or transformations while maintaining dimensional consistency.</p>
+<p>Creates a hierarchy of groups based on path separated by “/”</p>
 <hr>
 </section>
-<section id="createunlimiteddataset" class="level4">
-<h4 class="anchored" data-anchor-id="createunlimiteddataset"><code>createUnlimitedDataset()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>createUnlimitedDataset<span class="op">(</span><span class="dt">size_t</span> rows<span class="op">,</span> <span class="dt">size_t</span> cols<span class="op">,</span> <span class="bu">std::</span>string strdatatype<span class="op">,</span> <span class="dt">int</span> compression_level<span class="op">=</span><span class="dv">6</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Create an unlimited internal dataset with optional compression.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>rows</code> (<code>size_t</code>): Initial number of rows</li>
-<li><code>cols</code> (<code>size_t</code>): Initial number of columns</li>
-<li><code>strdatatype</code> (<code>std::string</code>): Data type for the dataset</li>
-<li><code>compression_level</code> (<code>int</code>): Compression level (0=none, 1-9=gzip level, 6=balanced default)</li>
-</ul>
-<p>Creates a new internal HDF5 dataset with unlimited dimensions. The dataset is marked as internal and unlimited and can grow in size.</p>
+<section id="getgroupname" class="level4">
+<h4 class="anchored" data-anchor-id="getgroupname"><code>getGroupName()</code></h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5Group<span class="op">::</span>getGroupName<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <hr>
 </section>
-<section id="extendunlimiteddataset" class="level4">
-<h4 class="anchored" data-anchor-id="extendunlimiteddataset"><code>extendUnlimitedDataset()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>extendUnlimitedDataset<span class="op">(</span><span class="at">const</span> <span class="dt">size_t</span> rows<span class="op">,</span> <span class="at">const</span> <span class="dt">size_t</span> cols<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Extend an unlimited internal dataset.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>rows</code> (<code>const size_t</code>): New number of rows</li>
-<li><code>cols</code> (<code>const size_t</code>): New number of columns</li>
-</ul>
-<p>Increases the dimensions of an unlimited internal dataset. Only works with datasets created as unlimited.</p>
-<hr>
-</section>
-<section id="writedataset" class="level4">
-<h4 class="anchored" data-anchor-id="writedataset"><code>writeDataset()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>writeDataset<span class="op">(</span>Rcpp<span class="op">::</span>RObject DatasetValues<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Write data to the internal dataset.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>DatasetValues</code> (<code>Rcpp::RObject</code>): R object containing the data to write</li>
-</ul>
-<p>Writes data to the internal dataset, handling different data types and formats. Optimized for internal storage patterns.</p>
-<hr>
-</section>
-<section id="writedatasetblock" class="level4">
-<h4 class="anchored" data-anchor-id="writedatasetblock"><code>writeDatasetBlock()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>writeDatasetBlock<span class="op">(</span><span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">double</span> <span class="op">&gt;</span> DatasetValues<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vOffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vCount<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vStride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vBlock<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Write block of vector data to internal dataset.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>DatasetValues</code> (<code>std::vector&lt; double &gt;</code>): Vector data to write</li>
-<li><code>vOffset</code> (<code>std::vector&lt; hsize_t &gt;</code>): Starting position</li>
-<li><code>vCount</code> (<code>std::vector&lt; hsize_t &gt;</code>): Number of elements</li>
-<li><code>vStride</code> (<code>std::vector&lt; hsize_t &gt;</code>): Stride between elements</li>
-<li><code>vBlock</code> (<code>std::vector&lt; hsize_t &gt;</code>): Block size</li>
-</ul>
-<p>Writes a block of vector data to the internal dataset. Optimized for vector operations.</p>
-<hr>
-</section>
-<section id="readdatasetblock" class="level4">
-<h4 class="anchored" data-anchor-id="readdatasetblock"><code>readDatasetBlock()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>readDatasetBlock<span class="op">(</span><span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivoffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivcount<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivstride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivblock<span class="op">,</span> <span class="dt">double</span> <span class="op">*</span>rdatablock<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Read a block of data from internal dataset.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>ivoffset</code> (<code>std::vector&lt; hsize_t &gt;</code>): Starting position for read</li>
-<li><code>ivcount</code> (<code>std::vector&lt; hsize_t &gt;</code>): Number of elements to read</li>
-<li><code>ivstride</code> (<code>std::vector&lt; hsize_t &gt;</code>): Stride between elements</li>
-<li><code>ivblock</code> (<code>std::vector&lt; hsize_t &gt;</code>): Size of blocks</li>
-<li><code>rdatablock</code> (<code>double *</code>): Pointer to read data (double*)</li>
-</ul>
-<p><strong>Returns:</strong> Pointer to read data (double*)</p>
-<p>Reads a specified block of data from the internal dataset. Optimized for internal data access patterns.</p>
-<hr>
-</section>
-<section id="getdatasetptr" class="level4">
-<h4 class="anchored" data-anchor-id="getdatasetptr"><code>getDatasetptr()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>H5<span class="op">::</span>DataSet <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>getDatasetptr<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<hr>
-</section>
-<section id="getdatasetname" class="level4">
-<h4 class="anchored" data-anchor-id="getdatasetname"><code>getDatasetName()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>getDatasetName<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Get dataset name.</p>
-<p><strong>Returns:</strong> Name of the internal dataset</p>
-<p>Name of the internal dataset</p>
-<hr>
-</section>
-<section id="getgroup" class="level4">
-<h4 class="anchored" data-anchor-id="getgroup"><code>getGroup()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>getGroup<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Get group name.</p>
-<p><strong>Returns:</strong> Name of the group containing the internal dataset</p>
-<p>Name of the group containing the internal dataset</p>
-<hr>
-</section>
-<section id="getfilename" class="level4">
-<h4 class="anchored" data-anchor-id="getfilename"><code>getFileName()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>getFileName<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Get file name.</p>
-<p><strong>Returns:</strong> Name of the file containing the internal dataset</p>
-<p>Name of the file containing the internal dataset</p>
-<hr>
-</section>
-<section id="nrows" class="level4">
-<h4 class="anchored" data-anchor-id="nrows"><code>nrows()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>nrows<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<hr>
-</section>
-<section id="ncols" class="level4">
-<h4 class="anchored" data-anchor-id="ncols"><code>ncols()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>ncols<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<hr>
-</section>
-<section id="dim" class="level4">
-<h4 class="anchored" data-anchor-id="dim"><code>dim()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>dim<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<hr>
-</section>
-<section id="isunlimited" class="level4">
-<h4 class="anchored" data-anchor-id="isunlimited"><code>isUnlimited()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>isUnlimited<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<hr>
-</section>
-<section id="hdf5datasetinternal-1" class="level4">
-<h4 class="anchored" data-anchor-id="hdf5datasetinternal-1"><code>~hdf5DatasetInternal()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::~</span>hdf5DatasetInternal<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Destructor.</p>
-<p>Closes the internal dataset and releases resources</p>
+<section id="hdf5group-1" class="level4">
+<h4 class="anchored" data-anchor-id="hdf5group-1"><code>~hdf5Group()</code></h4>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth<span class="op">::</span>hdf5Group<span class="op">::~</span>hdf5Group<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <hr>
 </section>
 </section>
 </section>
-<section id="private-implementation" class="level2">
-<h2 class="anchored" data-anchor-id="private-implementation">Private Implementation</h2>
+<section id="protected-members" class="level2">
+<h2 class="anchored" data-anchor-id="protected-members">Protected Members</h2>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Internal implementation details for advanced users and contributors.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1671,41 +1540,12 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<section id="methods-1" class="level3 callout-body-container callout-body">
-<h3 class="anchored" data-anchor-id="methods-1">Methods</h3>
-<section id="close_dataset" class="level4">
-<h4 class="anchored" data-anchor-id="close_dataset"><code>close_dataset()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>close_dataset<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Close the dataset.</p>
-<p>Closes the internal dataset and releases associated resources</p>
-<hr>
-</section>
-<section id="close_dataset_file" class="level4">
-<h4 class="anchored" data-anchor-id="close_dataset_file"><code>close_dataset_file()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>close_dataset_file<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Close dataset and file.</p>
-<p>Closes both the internal dataset and its associated file</p>
-<hr>
-</section>
-<section id="convert_dataframe_to_rangelist" class="level4">
-<h4 class="anchored" data-anchor-id="convert_dataframe_to_rangelist"><code>convert_DataFrame_to_RangeList()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>names <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>convert_DataFrame_to_RangeList<span class="op">(</span>Rcpp<span class="op">::</span>RObject DatasetValues<span class="op">,</span> <span class="dt">bool</span> bFullDataset<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Convert DataFrame to range list.</p>
-<p><strong>Parameters:</strong></p>
-<ul>
-<li><code>DatasetValues</code> (<code>Rcpp::RObject</code>): R DataFrame to convert</li>
-<li><code>bFullDataset</code> (<code>bool</code>): Whether to convert entire dataset</li>
-</ul>
-<p><strong>Returns:</strong> Array of name structures</p>
-<p>Converts R DataFrame to HDF5-compatible range list format for internal storage.</p>
-<hr>
-</section>
-<section id="getdimensexistingdataset" class="level4">
-<h4 class="anchored" data-anchor-id="getdimensexistingdataset"><code>getDimensExistingDataset()</code></h4>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">::</span>getDimensExistingDataset<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Get dimensions of existing dataset.</p>
-<p>Retrieves and stores the dimensions of an existing internal dataset</p>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<section id="attributes" class="level3 callout-body-container callout-body">
+<h3 class="anchored" data-anchor-id="attributes">Attributes</h3>
+<section id="groupname" class="level4">
+<h4 class="anchored" data-anchor-id="groupname"><code>groupname</code></h4>
+<p><strong>Type:</strong> <code>std::string</code></p>
 <hr>
 </section>
 </section>
@@ -1714,11 +1554,11 @@ Note
 </section>
 <section id="usage-example" class="level2">
 <h2 class="anchored" data-anchor-id="usage-example">Usage Example</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"BigDataStatMeth::hdf5DatasetInternal.hpp"</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Example usage</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal obj<span class="op">;</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"hdf5Group.hpp"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Example usage</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>hdf5Group obj<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>

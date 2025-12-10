@@ -248,38 +248,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dataset</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DatasetInternal</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DatasetInternal</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DiagonalMatrix</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DiagonalMatrix</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dims.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dims</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dims</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5File.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5File</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5File.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5File</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Group.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Group</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Group.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Group</span></a>
   </div>
 </li>
       </ul>
@@ -1545,8 +1545,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>           <span class="dt">hsize_t</span> K <span class="op">=</span> A<span class="op">.</span>cols<span class="op">();</span></span>
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>           <span class="dt">hsize_t</span> N <span class="op">=</span> B<span class="op">.</span>cols<span class="op">();</span></span>
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>           </span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>           <span class="cf">if</span><span class="op">(</span> K <span class="op">==</span> B<span class="op">.</span>rows<span class="op">())</span> <span class="op">{</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>               </span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>           <span class="co">//. 20251121 .// if( K == B.rows()) {</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>           <span class="cf">if</span><span class="op">(</span> <span class="kw">static_cast</span><span class="op">&lt;</span>Eigen<span class="op">::</span>Index<span class="op">&gt;(</span>K<span class="op">)</span> <span class="op">==</span> B<span class="op">.</span>rows<span class="op">())</span> <span class="op">{</span></span>
 <span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>               <span class="cf">if</span><span class="op">(</span> iblock_size<span class="op">.</span>isNotNull<span class="op">())</span> <span class="op">{</span></span>
 <span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                   block_size <span class="op">=</span>  Rcpp<span class="op">::</span>as<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span>iblock_size<span class="op">);</span>  </span>
 <span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>               <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
@@ -1561,11 +1561,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>               getBlockPositionsSizes<span class="op">(</span> M<span class="op">,</span> block_size<span class="op">,</span> vstartM<span class="op">,</span> vsizetoReadM <span class="op">);</span></span>
 <span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>               getBlockPositionsSizes<span class="op">(</span> K<span class="op">,</span> block_size<span class="op">,</span> vstartK<span class="op">,</span> vsizetoReadK <span class="op">);</span></span>
 <span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>               </span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>               <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> ii <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> ii <span class="op">&lt;</span> vstartM<span class="op">.</span>size<span class="op">();</span> ii<span class="op">++)</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>               <span class="cf">for</span> <span class="op">(</span><span class="dt">size_t</span> ii <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> ii <span class="op">&lt;</span> vstartM<span class="op">.</span>size<span class="op">();</span> ii<span class="op">++)</span></span>
 <span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>               <span class="op">{</span></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                   <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> jj <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> jj <span class="op">&lt;</span> vstartN<span class="op">.</span>size<span class="op">();</span> jj<span class="op">++)</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                   <span class="cf">for</span> <span class="op">(</span><span class="dt">size_t</span> jj <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> jj <span class="op">&lt;</span> vstartN<span class="op">.</span>size<span class="op">();</span> jj<span class="op">++)</span></span>
 <span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                   <span class="op">{</span></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>                       <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> kk <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> kk <span class="op">&lt;</span> vstartK<span class="op">.</span>size<span class="op">();</span> kk<span class="op">++)</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>                       <span class="cf">for</span><span class="op">(</span><span class="dt">size_t</span> kk <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> kk <span class="op">&lt;</span> vstartK<span class="op">.</span>size<span class="op">();</span> kk<span class="op">++)</span></span>
 <span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>                       <span class="op">{</span></span>
 <span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>                           C<span class="op">.</span>block<span class="op">(</span>vstartM<span class="op">[</span>ii<span class="op">],</span> vstartN<span class="op">[</span>jj<span class="op">],</span> vsizetoReadM<span class="op">[</span>ii<span class="op">],</span> vsizetoReadN<span class="op">[</span>jj<span class="op">])</span> <span class="op">=</span>  C<span class="op">.</span>block<span class="op">(</span>vstartM<span class="op">[</span>ii<span class="op">],</span> vstartN<span class="op">[</span>jj<span class="op">],</span> vsizetoReadM<span class="op">[</span>ii<span class="op">],</span> vsizetoReadN<span class="op">[</span>jj<span class="op">])</span> <span class="op">+</span> </span>
 <span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>                               <span class="op">(</span>A<span class="op">.</span>block<span class="op">(</span>vstartM<span class="op">[</span>ii<span class="op">],</span> vstartK<span class="op">[</span>kk<span class="op">],</span> vsizetoReadM<span class="op">[</span>ii<span class="op">],</span> vsizetoReadK<span class="op">[</span>kk<span class="op">])</span> <span class="op">*</span> B<span class="op">.</span>block<span class="op">(</span>vstartK<span class="op">[</span>kk<span class="op">],</span> vstartN<span class="op">[</span>jj<span class="op">],</span> vsizetoReadK<span class="op">[</span>kk<span class="op">],</span> vsizetoReadN<span class="op">[</span>jj<span class="op">]));</span></span>

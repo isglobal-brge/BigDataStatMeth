@@ -667,13 +667,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
-  <ul class="collapse">
-  <li><a href="#advanced-example-not-executed" id="toc-advanced-example-not-executed" class="nav-link" data-scroll-target="#advanced-example-not-executed">Advanced Example (not executed)</a></li>
-  </ul></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See Also</a></li>
   </ul>
 </nav>
     </div>
@@ -701,6 +701,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge hdf5_algebra">HDF5_ALGEBRA</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Computes the inverse of a symmetric positive-definite matrix stored in an HDF5 file using the Cholesky decomposition method. This approach is more efficient and numerically stable than general matrix inversion methods for symmetric positive-definite matrices.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdInvCholesky_hdf5</span>(filename, group, dataset, outdataset, <span class="at">outgroup =</span> <span class="cn">NULL</span>, <span class="at">fullMatrix =</span> <span class="cn">NULL</span>, <span class="at">overwrite =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="dv">2</span>L, <span class="at">elementsBlock =</span> <span class="dv">1000000</span>L)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -763,13 +767,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>No direct return value. Results are written to the HDF5 file in the specified location with the following structure: </p>
+<p>List with components:</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string with the HDF5 filename</li>
+<li><strong><code>ds</code></strong>: Character string with the full dataset path to the inverse Cholesky decomposition A^(-1) result (group/dataset)</li>
+</ul>
 </div>
+</section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>This function implements an efficient matrix inversion algorithm that leverages the special properties of symmetric positive-definite matrices. Key features: - Uses Cholesky decomposition for improved numerical stability - Block-based computation for large matrices - Optional storage formats (full or triangular) - Parallel processing support - Memory-efficient block algorithm</p>
+<p>The algorithm proceeds in two main steps: 1. Compute the Cholesky decomposition A = LL’ 2. Solve the system LL’X = I for X = A^(-1)</p>
+<p>Advantages of this method: - More efficient than general matrix inversion - Better numerical stability - Preserves matrix symmetry - Exploits positive-definiteness for efficiency</p>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<section id="advanced-example-not-executed" class="level3">
-<h3 class="anchored" data-anchor-id="advanced-example-not-executed">Advanced Example (not executed)</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -796,9 +808,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(<span class="fu">abs</span>(A <span class="sc">%*%</span> Ainv <span class="sc">-</span> <span class="fu">diag</span>(<span class="fu">nrow</span>(A))))  <span class="co"># Should be very small</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-
-
 </section>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
+<div class="see-also">
+<ul>
+<li><a href="bdCholesky_hdf5.html">bdCholesky_hdf5</a> for the underlying Cholesky decomposition</li>
+<li><a href="bdSolve_hdf5.html">bdSolve_hdf5</a> for solving linear systems</li>
+</ul>
+</div>
+
+
 </section>
 
 </main> <!-- /main -->

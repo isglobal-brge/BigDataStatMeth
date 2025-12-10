@@ -506,9 +506,9 @@ less accurate nanosecond times to avoid potential integer overflows</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: milliseconds
     expr        min         lq       mean     median         uq        max
-  base_R 145.044593 145.213308 145.585596 145.325320 145.872711 146.472049
-  bd_mem   8.583227   8.991054   9.019967   9.001632   9.131356   9.392567
- bd_hdf5 221.885850 222.591501 227.229872 222.930571 230.008483 238.732955
+  base_R 145.252381 145.274603 145.305943 145.274726 145.282311 145.445696
+  bd_mem   8.961329   9.108806   9.184754   9.190273   9.326147   9.337217
+ bd_hdf5 222.823274 223.654016 225.628797 226.207373 226.926964 228.532360
  neval
      5
      5
@@ -522,7 +522,7 @@ less accurate nanosecond times to avoid potential integer overflows</code></pre>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>med <span class="ot">&lt;-</span> <span class="fu">setNames</span>(agg<span class="sc">$</span>ms, agg<span class="sc">$</span>expr)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>rel <span class="ot">&lt;-</span> med <span class="sc">/</span> med[<span class="st">"bd_mem"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The median runtime for <code>bdCrossprod()</code> is <strong>9.002 ms</strong>, while base R’s <code>crossprod()</code> takes <strong>145.325 ms</strong> (16.144× slower). Using the HDF5-based <code>bdCrossprod_hdf5()</code> requires about <strong>222.931 ms</strong> (24.766 × slower), which is expected due to disk I/O. However, this variant enables analysis on datasets far larger than the available RAM.</p>
+<p>The median runtime for <code>bdCrossprod()</code> is <strong>9.19 ms</strong>, while base R’s <code>crossprod()</code> takes <strong>145.275 ms</strong> (15.807× slower). Using the HDF5-based <code>bdCrossprod_hdf5()</code> requires about <strong>226.207 ms</strong> (24.614 × slower), which is expected due to disk I/O. However, this variant enables analysis on datasets far larger than the available RAM.</p>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">

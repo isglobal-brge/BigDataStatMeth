@@ -248,38 +248,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dataset</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DatasetInternal</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DatasetInternal</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DiagonalMatrix</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DiagonalMatrix</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dims.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dims</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dims</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5File.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5File</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5File.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5File</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Group.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Group</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Group.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Group</span></a>
   </div>
 </li>
       </ul>
@@ -1501,7 +1501,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>File:</strong> <code>inst/include/hdf5Utilities/hdf5RemoveElements.hpp</code> • <strong>Lines 59-107</strong></p>
+<p><strong>File:</strong> <code>inst/include/hdf5Utilities/hdf5RemoveElements.hpp</code> • <strong>Lines 59-108</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="dt">void</span> RcppRemove_hdf5_elements<span class="op">(</span>BigDataStatMeth<span class="op">::</span>hdf5File<span class="op">*</span> file<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="bu">std::</span>string<span class="op">&gt;</span> elements<span class="op">)</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        </span>
@@ -1514,43 +1514,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                <span class="bu">std::</span>string strmessage <span class="op">=</span> <span class="st">"Nothing to be removed removed"</span><span class="op">;</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                Rcpp<span class="op">::</span>message<span class="op">(</span>Rcpp<span class="op">::</span>wrap<span class="op">(</span>strmessage<span class="op">));</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> <span class="co">// Remove datasets</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span>elements<span class="op">.</span>size<span class="op">();</span> i<span class="op">++)</span> </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                    H5std_string element <span class="op">=</span> <span class="st">""</span> <span class="op">+</span> elements<span class="op">[</span>i<span class="op">];</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span><span class="op">(</span>exists_HDF5_element<span class="op">(</span> file<span class="op">-&gt;</span>getFileptr<span class="op">(),</span> element<span class="op">))</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                    <span class="op">{</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">int</span> result <span class="op">=</span> H5Ldelete<span class="op">(</span> <span class="op">(</span>file<span class="op">-&gt;</span>getFileptr<span class="op">())-&gt;</span>getId<span class="op">(),</span> element<span class="op">.</span>data<span class="op">(),</span> H5P_DEFAULT<span class="op">);</span>  </span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span><span class="op">(</span>result<span class="op">&lt;</span><span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                            Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st"> Error removing : "</span><span class="op">&lt;&lt;</span>elements<span class="op">[</span>i<span class="op">]&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span> </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>                        Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st"> Element: "</span><span class="op">&lt;&lt;</span>elements<span class="op">[</span>i<span class="op">]&lt;&lt;</span><span class="st">" does not exists </span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span>    </span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>FileIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span> <span class="co">// catch failure caused by the H5File operations</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception RcppRemove_hdf5_elements (File IException)"</span><span class="op">;</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>GroupIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span> <span class="co">// catch failure caused by the Group operations</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception RcppRemove_hdf5_elements (Group IException)"</span><span class="op">;</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>DataSetIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span> <span class="co">// catch failure caused by the DataSet operations</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception RcppRemove_hdf5_elements (DataSet IException)"</span><span class="op">;</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>DataSpaceIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span> <span class="co">// catch failure caused by the DataSpace operations</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception RcppRemove_hdf5_elements (DataSpace IException)"</span><span class="op">;</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"c++ exception RcppRemove_hdf5_elements: "</span> <span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">();</span></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span> <span class="op">(...)</span> <span class="op">{</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"C++ exception RcppRemove_hdf5_elements (unknown reason)"</span><span class="op">;</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                <span class="co">// for (int i=0; i&lt;elements.size(); i++) </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> <span class="op">(</span><span class="dt">size_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> elements<span class="op">.</span>size<span class="op">();</span> <span class="op">++</span>i<span class="op">)</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                    H5std_string element <span class="op">=</span> <span class="st">""</span> <span class="op">+</span> elements<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span><span class="op">(</span>exists_HDF5_element<span class="op">(</span> file<span class="op">-&gt;</span>getFileptr<span class="op">(),</span> element<span class="op">))</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                    <span class="op">{</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">int</span> result <span class="op">=</span> H5Ldelete<span class="op">(</span> <span class="op">(</span>file<span class="op">-&gt;</span>getFileptr<span class="op">())-&gt;</span>getId<span class="op">(),</span> element<span class="op">.</span>data<span class="op">(),</span> H5P_DEFAULT<span class="op">);</span>  </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span><span class="op">(</span>result<span class="op">&lt;</span><span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                            Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st"> Error removing : "</span><span class="op">&lt;&lt;</span>elements<span class="op">[</span>i<span class="op">]&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span> </span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>                        Rcpp<span class="op">::</span>Rcout<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st"> Element: "</span><span class="op">&lt;&lt;</span>elements<span class="op">[</span>i<span class="op">]&lt;&lt;</span><span class="st">" does not exists </span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span>    </span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>FileIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span> <span class="co">// catch failure caused by the H5File operations</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception RcppRemove_hdf5_elements (File IException)"</span><span class="op">;</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>GroupIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span> <span class="co">// catch failure caused by the Group operations</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception RcppRemove_hdf5_elements (Group IException)"</span><span class="op">;</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>DataSetIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span> <span class="co">// catch failure caused by the DataSet operations</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception RcppRemove_hdf5_elements (DataSet IException)"</span><span class="op">;</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span>H5<span class="op">::</span>DataSpaceIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span> <span class="co">// catch failure caused by the DataSpace operations</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception RcppRemove_hdf5_elements (DataSpace IException)"</span><span class="op">;</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"c++ exception RcppRemove_hdf5_elements: "</span> <span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">();</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span> <span class="op">(...)</span> <span class="op">{</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"C++ exception RcppRemove_hdf5_elements (unknown reason)"</span><span class="op">;</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>

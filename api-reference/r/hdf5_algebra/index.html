@@ -688,23 +688,23 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="functions">Functions</h2>
 <section id="bdcholesky_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdcholesky_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdCholesky_hdf5.html">bdCholesky_hdf5</a></h3>
-<p>bdCholesky_hdf5</p>
+<p>Computes the Cholesky decomposition of a symmetric positive-definite matrix stored in an HDF5 file. The Cholesky decomposition factors a matrix A into the product A = LL’ where L is a lower triangular matrix.</p>
 </section>
 <section id="bdqr_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdqr_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdQR_hdf5.html">bdQR_hdf5</a></h3>
-<p>bdQR_hdf5</p>
+<p>Computes the QR decomposition of a matrix stored in an HDF5 file, factoring it into a product A = QR where Q is an orthogonal matrix and R is an upper triangular matrix. Results are stored back in the HDF5 file.</p>
 </section>
 <section id="bdsvd_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdsvd_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdSVD_hdf5.html">bdSVD_hdf5</a></h3>
-<p>bdSVD_hdf5</p>
+<p>Computes the Singular Value Decomposition (SVD) of a large matrix stored in an HDF5 file. The SVD decomposes a matrix A into a product A = UDV’ where U and V are orthogonal matrices and D is a diagonal matrix containing the singular values.</p>
 </section>
 <section id="bdsolve_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdsolve_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdSolve_hdf5.html">bdSolve_hdf5</a></h3>
-<p>bdSolve_hdf5</p>
+<p>Solves the linear system AX = B where matrices A and B are stored in HDF5 format. The solution X is written back to the HDF5 file.</p>
 </section>
 <section id="bdpca_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdpca_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdPCA_hdf5.html">bdPCA_hdf5</a></h3>
-<p>bdPCA_hdf5</p>
+<p>Performs Principal Component Analysis (PCA) on a large matrix stored in an HDF5 file. PCA reduces the dimensionality of the data while preserving as much variance as possible. The implementation uses SVD internally for efficient and numerically stable computation.</p>
 </section>
 <section id="bdcrossprod_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdcrossprod_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdCrossprod_hdf5.html">bdCrossprod_hdf5</a></h3>
@@ -716,51 +716,51 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="bdcreate_diagonal_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdcreate_diagonal_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdCreate_diagonal_hdf5.html">bdCreate_diagonal_hdf5</a></h3>
-<p>bdCreate_diagonal_hdf5</p>
+<p>Creates a diagonal matrix or vector directly in an HDF5 file using block-wise processing to minimize memory usage. This unified function replaces separate diagonal and identity matrix creation functions, providing flexible diagonal creation with automatic parameter detection.</p>
 </section>
 <section id="bddiag_add_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bddiag_add_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_add_hdf5.html">bdDiag_add_hdf5</a></h3>
-<p>bdDiag_add_hdf5</p>
+<p>Performs optimized diagonal addition between two datasets stored in HDF5 format. Automatically detects whether inputs are matrices (extracts diagonals) or vectors (direct operation) and uses the most efficient approach.</p>
 </section>
 <section id="bddiag_subtract_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bddiag_subtract_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_subtract_hdf5.html">bdDiag_subtract_hdf5</a></h3>
-<p>bdDiag_subtract_hdf5</p>
+<p>Performs optimized diagonal subtraction between two datasets stored in HDF5 format. Automatically detects whether inputs are matrices (extracts diagonals) or vectors (direct operation) and uses the most efficient approach. This function is ~50-250x faster than traditional matrix operations for diagonal computations.</p>
 </section>
 <section id="bddiag_multiply_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bddiag_multiply_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_multiply_hdf5.html">bdDiag_multiply_hdf5</a></h3>
-<p>bdDiag_multiply_hdf5</p>
+<p>Performs optimized diagonal multiplication between two datasets stored in HDF5 format. Automatically detects whether inputs are matrices (extracts diagonals) or vectors (direct operation) and uses the most efficient approach. This function performs element-wise multiplication and is ~50-250x faster than traditional matrix operations.</p>
 </section>
 <section id="bddiag_divide_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bddiag_divide_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_divide_hdf5.html">bdDiag_divide_hdf5</a></h3>
-<p>bdDiag_divide_hdf5</p>
+<p>Performs optimized diagonal division between two datasets stored in HDF5 format. Automatically detects whether inputs are matrices (extracts diagonals) or vectors (direct operation) and uses the most efficient approach. This function is ~50-250x faster than traditional matrix operations for diagonal computations.</p>
 </section>
 <section id="bddiag_scalar_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bddiag_scalar_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdDiag_scalar_hdf5.html">bdDiag_scalar_hdf5</a></h3>
-<p>bdDiag_scalar_hdf5</p>
+<p>Performs optimized scalar operations on diagonal elements of matrices or vectors stored in HDF5 format. Automatically detects whether input is a matrix (extracts diagonal) or vector (direct operation) and applies the specified scalar operation.</p>
 </section>
 <section id="bdeigen_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdeigen_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdEigen_hdf5.html">bdEigen_hdf5</a></h3>
-<p>bdEigen_hdf5</p>
+<p>Computes the eigenvalue decomposition of a large matrix stored in an HDF5 file using the Spectra library. This provides consistent results with the RSpectra package and can handle both symmetric and non-symmetric matrices.</p>
 </section>
 <section id="bdinvcholesky_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdinvcholesky_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdInvCholesky_hdf5.html">bdInvCholesky_hdf5</a></h3>
-<p>bdInvCholesky_hdf5</p>
+<p>Computes the inverse of a symmetric positive-definite matrix stored in an HDF5 file using the Cholesky decomposition method. This approach is more efficient and numerically stable than general matrix inversion methods for symmetric positive-definite matrices.</p>
 </section>
 <section id="bdgetdiagonal_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdgetdiagonal_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdgetDiagonal_hdf5.html">bdgetDiagonal_hdf5</a></h3>
-<p>bdgetDiagonal_hdf5</p>
+<p>Retrieves the diagonal elements from a matrix stored in an HDF5 file.</p>
 </section>
 <section id="bdwritediagonal_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdwritediagonal_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdWriteDiagonal_hdf5.html">bdWriteDiagonal_hdf5</a></h3>
-<p>bdWriteDiagonal_hdf5</p>
+<p>Updates the diagonal elements of a matrix stored in an HDF5 file.</p>
 </section>
 <section id="bdpseudoinv_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdpseudoinv_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdpseudoinv_hdf5.html">bdpseudoinv_hdf5</a></h3>
-<p>bdpseudoinv_hdf5</p>
+<p>Computes the Moore-Penrose pseudoinverse of a matrix stored in HDF5 format. The implementation is designed for large matrices, using block-based processing and efficient I/O operations.</p>
 </section>
 <section id="bdwriteoppsitetriangularmatrix_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdwriteoppsitetriangularmatrix_hdf5"><a href="../../../api-reference/r/hdf5_algebra/bdWriteOppsiteTriangularMatrix_hdf5.html">bdWriteOppsiteTriangularMatrix_hdf5</a></h3>
-<p>bdWriteOppsiteTriangularMatrix_hdf5</p>
+<p>Creates a symmetric matrix by mirroring values from one triangular part to the other in an HDF5-stored matrix. This function modifies the matrix in-place, either copying the upper triangular values to the lower triangular part or vice versa.</p>
 
 
 </section>

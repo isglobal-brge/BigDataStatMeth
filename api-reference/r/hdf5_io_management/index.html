@@ -694,11 +694,11 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="bdcreate_hdf5_emptydataset" class="level3">
 <h3 class="anchored" data-anchor-id="bdcreate_hdf5_emptydataset"><a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_emptyDataset.html">bdCreate_hdf5_emptyDataset</a></h3>
-<p>bdCreate_hdf5_emptyDataset</p>
+<p>Creates an HDF5 dataset of size inside with name , without writing data (allocation only). Honors file/dataset overwrite flags and supports unlimited datasets.</p>
 </section>
 <section id="bdcreate_hdf5_group" class="level3">
 <h3 class="anchored" data-anchor-id="bdcreate_hdf5_group"><a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_group.html">bdCreate_hdf5_group</a></h3>
-<p>bdCreate_hdf5_group</p>
+<p>Create a (nested) group inside an HDF5 file. The operation is idempotent: if the group already exists, no error is raised.</p>
 </section>
 <section id="bdcreate_hdf5_matrix" class="level3">
 <h3 class="anchored" data-anchor-id="bdcreate_hdf5_matrix"><a href="../../../api-reference/r/hdf5_io_management/bdCreate_hdf5_matrix.html">bdCreate_hdf5_matrix</a></h3>
@@ -706,51 +706,51 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="bdislocked_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdislocked_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdIsLocked_hdf5.html">bdIsLocked_hdf5</a></h3>
-<p>bdIsLocked_hdf5</p>
+<p>Uses HDF5 file locking to check if can be opened in read/write mode. If opening fails under locking, the file is treated as “in use” and is returned. Non-existent files return .</p>
 </section>
 <section id="bdgetdim_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdgetdim_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdgetDim_hdf5.html">bdgetDim_hdf5</a></h3>
-<p>bdgetDim_hdf5</p>
+<p>Retrieves the dimensions (number of rows and columns) of a dataset stored in an HDF5 file.</p>
 </section>
 <section id="bdgetdatasetslist_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdgetdatasetslist_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdgetDatasetsList_hdf5.html">bdgetDatasetsList_hdf5</a></h3>
-<p>bdgetDatasetsList_hdf5</p>
+<p>Retrieves a list of all datasets within a specified HDF5 group, with optional filtering by prefix or suffix.</p>
 </section>
 <section id="bdcheckmatrix_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdcheckmatrix_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdCheckMatrix_hdf5.html">bdCheckMatrix_hdf5</a></h3>
-<p>bdCheckMatrix_hdf5</p>
+<p>Checks whether a matrix stored in HDF5 format is suitable for eigenvalue decomposition using Spectra. The function verifies that the matrix is square and optionally checks for symmetry to recommend the best solver type.</p>
 </section>
 <section id="bdimporttextfile_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdimporttextfile_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdImportTextFile_hdf5.html">bdImportTextFile_hdf5</a></h3>
-<p>bdImportTextFile_hdf5</p>
+<p>Converts a text file (e.g., CSV, TSV) to HDF5 format, providing efficient storage and access capabilities.</p>
 </section>
 <section id="bdmove_hdf5_dataset" class="level3">
 <h3 class="anchored" data-anchor-id="bdmove_hdf5_dataset"><a href="../../../api-reference/r/hdf5_io_management/bdmove_hdf5_dataset.html">bdmove_hdf5_dataset</a></h3>
-<p>bdmove_hdf5_dataset</p>
+<p>Moves an HDF5 dataset from one location to another within the same HDF5 file. This function automatically handles moving associated rownames and colnames datasets, creates parent groups if needed, and updates all internal references.</p>
 </section>
 <section id="bdreduce_hdf5_dataset" class="level3">
 <h3 class="anchored" data-anchor-id="bdreduce_hdf5_dataset"><a href="../../../api-reference/r/hdf5_io_management/bdReduce_hdf5_dataset.html">bdReduce_hdf5_dataset</a></h3>
-<p>bdReduce_hdf5_dataset</p>
+<p>Reduces multiple datasets within an HDF5 group using arithmetic operations (addition or subtraction).</p>
 </section>
 <section id="bdremove_hdf5_element" class="level3">
 <h3 class="anchored" data-anchor-id="bdremove_hdf5_element"><a href="../../../api-reference/r/hdf5_io_management/bdRemove_hdf5_element.html">bdRemove_hdf5_element</a></h3>
-<p>bdRemove_hdf5_element</p>
+<p>Removes specified groups or datasets from an HDF5 file.</p>
 </section>
 <section id="bdsort_hdf5_dataset" class="level3">
 <h3 class="anchored" data-anchor-id="bdsort_hdf5_dataset"><a href="../../../api-reference/r/hdf5_io_management/bdSort_hdf5_dataset.html">bdSort_hdf5_dataset</a></h3>
-<p>bdSort_hdf5_dataset</p>
+<p>Sorts a dataset in an HDF5 file based on a predefined ordering specified through a list of sorting blocks.</p>
 </section>
 <section id="bdsplit_matrix_hdf5" class="level3">
 <h3 class="anchored" data-anchor-id="bdsplit_matrix_hdf5"><a href="../../../api-reference/r/hdf5_io_management/bdSplit_matrix_hdf5.html">bdSplit_matrix_hdf5</a></h3>
-<p>bdSplit_matrix_hdf5</p>
+<p>Splits a large dataset in an HDF5 file into smaller submatrices, with support for both row-wise and column-wise splitting.</p>
 </section>
 <section id="bdsubset_hdf5_dataset" class="level3">
 <h3 class="anchored" data-anchor-id="bdsubset_hdf5_dataset"><a href="../../../api-reference/r/hdf5_io_management/bdsubset_hdf5_dataset.html">bdsubset_hdf5_dataset</a></h3>
-<p>bdsubset_hdf5_dataset</p>
+<p>Creates a new HDF5 dataset containing only the specified rows or columns from an existing dataset. This operation is memory efficient as it uses HDF5’s hyperslab selection for direct disk-to-disk copying without loading the entire dataset into memory.</p>
 </section>
 <section id="bdwrite_hdf5_dimnames" class="level3">
 <h3 class="anchored" data-anchor-id="bdwrite_hdf5_dimnames"><a href="../../../api-reference/r/hdf5_io_management/bdWrite_hdf5_dimnames.html">bdWrite_hdf5_dimnames</a></h3>
-<p>bdWrite_hdf5_dimnames</p>
+<p>Write row and/or column names metadata for an existing dataset in an HDF5 file. Empty vectors skip the corresponding dimnames.</p>
 
 
 </section>

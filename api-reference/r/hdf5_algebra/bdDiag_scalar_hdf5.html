@@ -667,13 +667,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
-  <ul class="collapse">
-  <li><a href="#advanced-example-not-executed" id="toc-advanced-example-not-executed" class="nav-link" data-scroll-target="#advanced-example-not-executed">Advanced Example (not executed)</a></li>
-  </ul></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
   </ul>
 </nav>
     </div>
@@ -701,6 +700,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge hdf5_algebra">HDF5_ALGEBRA</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Performs optimized scalar operations on diagonal elements of matrices or vectors stored in HDF5 format. Automatically detects whether input is a matrix (extracts diagonal) or vector (direct operation) and applies the specified scalar operation.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdDiag_scalar_hdf5</span>(filename, group, dataset, scalar, operation, <span class="at">target =</span> <span class="cn">NULL</span>, <span class="at">paral =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="cn">NULL</span>, <span class="at">outgroup =</span> <span class="cn">NULL</span>, <span class="at">outdataset =</span> <span class="cn">NULL</span>, <span class="at">overwrite =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -771,13 +774,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>List with components: </p>
+<p>List with components:</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string with the HDF5 filename</li>
+<li><strong><code>gr</code></strong>: Character string with the HDF5 group</li>
+<li><strong><code>ds</code></strong>: Character string with the full dataset path (group/dataset)</li>
+</ul>
 </div>
+</section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>This function provides flexible scalar operations on diagonals: - Supported operations: - “+”: diagonal[i] + scalar - “-”: diagonal[i] - scalar<br>
+- “<em>”: diagonal[i] </em> scalar -”/“: diagonal[i] / scalar -”pow”: diagonal[i] ^ scalar - Input types: - Matrix input: Extracts diagonal automatically - Vector input: Operates directly (most efficient) - Target options: - “input”: Modifies original dataset in-place - “new”: Creates new dataset with result</p>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<section id="advanced-example-not-executed" class="level3">
-<h3 class="anchored" data-anchor-id="advanced-example-not-executed">Advanced Example (not executed)</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -800,7 +811,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

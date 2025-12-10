@@ -667,10 +667,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See Also</a></li>
   </ul>
 </nav>
     </div>
@@ -698,6 +701,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge linear_algebra">LINEAR_ALGEBRA</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Solves the linear system AX = B where A is an N-by-N matrix and X and B are N-by-NRHS matrices. The function automatically detects if A is symmetric and uses the appropriate solver.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdSolve</span>(A, B)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -735,6 +742,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Numeric matrix X, the solution to AX = B.</p>
 </div>
 </section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>This function provides an efficient implementation for solving linear systems using LAPACK routines. Key features: - Automatic detection of matrix properties: - Checks for matrix symmetry - Selects optimal solver based on matrix structure - Solver selection: - Symmetric systems: Uses LAPACK’s dsysv routine - Non-symmetric systems: Uses LAPACK’s dgesv routine - Performance optimizations: - Automatic workspace sizing - Efficient memory management - Support for multiple right-hand sides</p>
+<p>The implementation ensures: - Robust error handling - Efficient memory usage - Numerical stability - Support for various matrix sizes</p>
+</section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <div class="cell">
@@ -754,6 +766,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare with R's solve</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>XR <span class="ot">&lt;-</span> <span class="fu">solve</span>(A, B)</span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(X, XR, <span class="at">check.attributes=</span><span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
+<div class="see-also">
+<ul>
+<li><a href="../hdf5_algebra/bdSolve_hdf5.html">bdSolve_hdf5</a> for solving systems with HDF5-stored matrices</li>
+<li><a href="solve.html">solve</a> for R’s built-in solver</li>
+</ul>
 </div>
 
 

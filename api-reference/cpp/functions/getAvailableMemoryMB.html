@@ -248,38 +248,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dataset</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DatasetInternal</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DatasetInternal</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DiagonalMatrix</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DiagonalMatrix</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dims.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dims</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dims</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5File.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5File</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5File.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5File</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Group.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Group</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Group.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Group</span></a>
   </div>
 </li>
       </ul>
@@ -1498,26 +1498,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>File:</strong> <code>inst/include/Utilities/system-utils.hpp</code> • <strong>Lines 37-55</strong></p>
+<p><strong>File:</strong> <code>inst/include/Utilities/system-utils.hpp</code> • <strong>Lines 37-68</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="dt">size_t</span> getAvailableMemoryMB<span class="op">()</span> <span class="op">{</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="op">{</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Use R's internal memory functions (CRAN-safe)</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        SEXP memCall <span class="op">=</span> PROTECT<span class="op">(</span>Rf_lang1<span class="op">(</span>Rf_install<span class="op">(</span><span class="st">"memory.size"</span><span class="op">)));</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        SEXP memResult <span class="op">=</span> PROTECT<span class="op">(</span>Rf_eval<span class="op">(</span>memCall<span class="op">,</span> R_GlobalEnv<span class="op">));</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>Rf_isReal<span class="op">(</span>memResult<span class="op">)</span> <span class="op">&amp;&amp;</span> Rf_length<span class="op">(</span>memResult<span class="op">)</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">double</span> memMB <span class="op">=</span> REAL<span class="op">(</span>memResult<span class="op">)[</span><span class="dv">0</span><span class="op">];</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>            UNPROTECT<span class="op">(</span><span class="dv">2</span><span class="op">);</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">static_cast</span><span class="op">&lt;</span><span class="dt">size_t</span><span class="op">&gt;(</span>memMB <span class="op">*</span> <span class="fl">0.6</span><span class="op">);</span> <span class="co">// Use 60% of available</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        UNPROTECT<span class="op">(</span><span class="dv">2</span><span class="op">);</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(...)</span> <span class="op">{</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Fallback silently - no error throwing for robustness</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Conservative fallback for any system (safe minimum)</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">4000</span><span class="op">;</span> <span class="co">// Assume 4GB available memory</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Use R's internal memory functions (CRAN-safe)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">// // Use R's internal memory functions (CRAN-safe)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// SEXP memCall = PROTECT(Rf_lang1(Rf_install("memory.size")));</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// SEXP memResult = PROTECT(Rf_eval(memCall, R_GlobalEnv));</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// </span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// if (Rf_isReal(memResult) &amp;&amp; Rf_length(memResult) &gt; 0) {</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">//     double memMB = REAL(memResult)[0];</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">//     UNPROTECT(2);</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">//     return static_cast&lt;size_t&gt;(memMB * 0.6); // Use 60% of available</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// }</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// UNPROTECT(2);</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Function memSize<span class="op">(</span><span class="st">"memory.size"</span><span class="op">);</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>NumericVector memResult <span class="op">=</span> memSize<span class="op">();</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>memResult<span class="op">.</span>size<span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>            <span class="dt">double</span> memMB <span class="op">=</span> memResult<span class="op">[</span><span class="dv">0</span><span class="op">];</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">static_cast</span><span class="op">&lt;</span><span class="dt">size_t</span><span class="op">&gt;(</span>memMB <span class="op">*</span> <span class="fl">0.6</span><span class="op">);</span> <span class="co">// Use 60% of available</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(...)</span> <span class="op">{</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Fallback silently - no error throwing for robustness</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Conservative fallback for any system (safe minimum)</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">4000</span><span class="op">;</span> <span class="co">// Assume 4GB available memory</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>

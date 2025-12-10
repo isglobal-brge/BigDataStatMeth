@@ -670,7 +670,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
   </ul>
 </nav>
     </div>
@@ -759,7 +759,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td><code>outgroup</code></td>
-<td>string (optional), An optional parameger specifying the group where the output matrix will be stored. If NULL, the output will be stored in the default group “OUTPUT”.</td>
+<td>string (optional), An optional parameter specifying the group where the output matrix will be stored. If NULL, the output will be stored in the default group “OUTPUT”.</td>
 </tr>
 <tr class="even">
 <td><code>outdataset</code></td>
@@ -776,16 +776,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>a dataset inside the hdf5 data file with A*B</p>
+<p>A list containing the location of the matrix multiplication result:</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string. Path to the HDF5 file containing the result</li>
+<li><strong><code>ds</code></strong>: Character string. Full dataset path to the A*B multiplication result within the HDF5 file</li>
+</ul>
 </div>
 </section>
-<section id="examples" class="level2">
-<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<ul>
+<li>The function <code>bdblockmult_hdf5()</code> is efficient for both matrices that cannot fit into memory (by processing in blocks) and matrices that can be fully loaded into memory, as it optimizes computations based on available resources.</li>
+<li>Ensure that the dimensions of <code>A</code> and <code>B</code> matrices are compatible for matrix multiplication.</li>
+<li>The <code>block size</code> should be chosen based on the available memory and the size of the matrices.</li>
+<li>If <code>bparal = true</code>, number of concurrent threads in parallelization. If <code>paral = TRUE</code> and <code>threads = NULL</code> then <code>threads</code> is set to a half of a maximum number of available threads ## Examples</li>
+</ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"BigDataStatMeth"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"rhdf5"</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="dv">1500</span>; M <span class="ot">=</span> <span class="dv">1500</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="dv">1000</span>; M <span class="ot">=</span> <span class="dv">1000</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">555</span>)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">rnorm</span>( N<span class="sc">*</span>M, <span class="at">mean=</span><span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>), N, M) </span>
@@ -813,29 +823,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(<span class="at">filename =</span> fn, <span class="at">group =</span> <span class="st">"groupA"</span>, </span>
 <span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">A =</span> <span class="st">"datasetA"</span>, <span class="at">B =</span> <span class="st">"datasetB"</span>, <span class="at">outgroup =</span> <span class="st">"results"</span>, </span>
 <span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">outdataset =</span> <span class="st">"res"</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span> ) </span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(<span class="at">filename =</span> fn, <span class="at">group =</span> <span class="st">"groupA"</span>, </span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">A =</span> <span class="st">"datasetA"</span>, <span class="at">B =</span> <span class="st">"datasetB"</span>, <span class="at">outgroup =</span> <span class="st">"results"</span>, </span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">outdataset =</span> <span class="st">"res"</span>, <span class="at">block_size =</span> <span class="dv">1024</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span> ) </span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># list contents</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(fn)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co"># list contents</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(fn)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the result from HDF5</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>result_hdf5 <span class="ot">&lt;-</span> <span class="fu">h5read</span>(res<span class="sc">$</span>fn, res<span class="sc">$</span>ds)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>result_hdf5</span>
 <span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the result from HDF5</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>result_hdf5 <span class="ot">&lt;-</span> <span class="fu">h5read</span>(res<span class="sc">$</span>fn, res<span class="sc">$</span>ds)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>result_hdf5</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the same multiplication in R</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>result_r <span class="ot">&lt;-</span> (a <span class="sc">%*%</span> b)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>result_r</span>
 <span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the same multiplication in R</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>result_r <span class="ot">&lt;-</span> (a <span class="sc">%*%</span> b)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>result_r</span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare both results (should be TRUE)</span></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(result_hdf5, result_r)</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove file</span></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(fn)) {</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.remove</span>(fn)</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare both results (should be TRUE)</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(result_hdf5, result_r)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove file</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(fn)) {</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.remove</span>(fn)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 

@@ -667,13 +667,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
-  <ul class="collapse">
-  <li><a href="#advanced-example-not-executed" id="toc-advanced-example-not-executed" class="nav-link" data-scroll-target="#advanced-example-not-executed">Advanced Example (not executed)</a></li>
-  </ul></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See Also</a></li>
   </ul>
 </nav>
     </div>
@@ -701,6 +701,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge hdf5_algebra">HDF5_ALGEBRA</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Computes the QR decomposition of a matrix stored in an HDF5 file, factoring it into a product A = QR where Q is an orthogonal matrix and R is an upper triangular matrix. Results are stored back in the HDF5 file.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdQR_hdf5</span>(filename, group, dataset, <span class="at">outgroup =</span> <span class="cn">NULL</span>, <span class="at">outdataset =</span> <span class="cn">NULL</span>, <span class="at">thin =</span> <span class="cn">NULL</span>, <span class="at">block_size =</span> <span class="cn">NULL</span>, <span class="at">overwrite =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -738,7 +742,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td><code>outdataset</code></td>
-<td>Character string. Optional base name for output datasets. Results will be stored as <code>Q.&lt;outdataset&gt;</code> and <code>R.&lt;outdataset&gt;</code>.</td>
+<td>Character string. Optional base name for output datasets. Results will be stored as <code>Q.'outdataset'</code> and <code>R.'outdataset'</code>.</td>
 </tr>
 <tr class="even">
 <td><code>thin</code></td>
@@ -763,13 +767,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>No return value. Results are written to the HDF5 file as: * Q.outdataset: The orthogonal matrix Q * R.outdataset: The upper triangular matrix R</p>
+<p>List with components. If an error occurs, all string values are returned as empty strings (““):</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string with the HDF5 filename</li>
+<li><strong><code>ds_Q</code></strong>: Character string with the full dataset path to the Q matrix (orthogonal matrix). Results are written to the HDF5 file as “Q.’outdataset’” within the specified group</li>
+<li><strong><code>ds_R</code></strong>: Character string with the full dataset path to the R matrix (upper triangular matrix). Results are written to the HDF5 file as “R.’outdataset’” within the specified group</li>
+</ul>
 </div>
+</section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>This function performs QR decomposition on large matrices stored in HDF5 format, which is particularly useful for matrices too large to fit in memory. Features include: - Support for both thin and full QR decomposition - Blocked computation for improved performance - Parallel processing capabilities - Flexible output location specification - Optional overwriting of existing datasets</p>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<section id="advanced-example-not-executed" class="level3">
-<h3 class="anchored" data-anchor-id="advanced-example-not-executed">Advanced Example (not executed)</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -786,9 +797,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">thin =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-
-
 </section>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
+<div class="see-also">
+<p><a href="../linear_algebra/bdQR.html">bdQR</a> for QR decomposition of in-memory matrices</p>
+</div>
+
+
 </section>
 
 </main> <!-- /main -->

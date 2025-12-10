@@ -667,13 +667,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
-  <ul class="collapse">
-  <li><a href="#advanced-example-not-executed" id="toc-advanced-example-not-executed" class="nav-link" data-scroll-target="#advanced-example-not-executed">Advanced Example (not executed)</a></li>
-  </ul></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See Also</a></li>
   </ul>
 </nav>
     </div>
@@ -701,6 +701,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge hdf5_algebra">HDF5_ALGEBRA</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Performs Principal Component Analysis (PCA) on a large matrix stored in an HDF5 file. PCA reduces the dimensionality of the data while preserving as much variance as possible. The implementation uses SVD internally for efficient and numerically stable computation.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdPCA_hdf5</span>(filename, group, dataset, <span class="at">ncomponents =</span> <span class="dv">0</span>L, <span class="at">bcenter =</span> <span class="cn">FALSE</span>, <span class="at">bscale =</span> <span class="cn">FALSE</span>, <span class="at">k =</span> <span class="dv">2</span>L, <span class="at">q =</span> <span class="dv">1</span>L, <span class="at">rankthreshold =</span> <span class="fl">0.0</span>, <span class="at">SVDgroup =</span> <span class="cn">NULL</span>, <span class="at">overwrite =</span> <span class="cn">FALSE</span>, <span class="at">method =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -779,13 +783,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>No direct return value. Results are written to the HDF5 file in the group ‘PCA/<code>dataset</code>’ with the following components: * sdev: Standard deviations of the principal components * rotation: Matrix of variable loadings (eigenvectors) * x: Matrix containing the rotated data (principal components) * center: Column means (if center = TRUE) * scale: Column standard deviations (if scale = TRUE)</p>
+<p>A list containing the paths to the PCA results stored in the HDF5 file:</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string. Path to the HDF5 file containing the results</li>
+<li><strong><code>lambda</code></strong>: Character string. Dataset path to eigenvalues \eqn{</li>
+<li><strong><code>variance</code></strong>: Character string. Dataset path to variance explained by each PC</li>
+<li><strong><code>cumvar</code></strong>: Character string. Dataset path to cumulative variance explained</li>
+<li><strong><code>var.coord</code></strong>: Character string. Dataset path to variable coordinates on the PCs</li>
+<li><strong><code>var.cos2</code></strong>: Character string. Dataset path to squared cosines (quality of representation) for variables</li>
+<li><strong><code>ind.dist</code></strong>: Character string. Dataset path to distances of individuals from the origin</li>
+<li><strong><code>components</code></strong>: Character string. Dataset path to principal components (rotated data)</li>
+<li><strong><code>ind.coord</code></strong>: Character string. Dataset path to individual coordinates on the PCs</li>
+<li><strong><code>ind.cos2</code></strong>: Character string. Dataset path to squared cosines (quality of representation) for individuals</li>
+<li><strong><code>ind.contrib</code></strong>: Character string. Dataset path to contributions of individuals to each PC All results are written to the HDF5 file in the group ‘PCA/<code>dataset</code>’.</li>
+</ul>
 </div>
+</section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>This function implements a scalable PCA algorithm suitable for large matrices that may not fit in memory. Key features include: - Automatic method selection based on matrix size - Block-based computation for large matrices - Optional data preprocessing (centering and scaling) - Parallel processing support - Memory-efficient incremental algorithm - Reuse of existing SVD results</p>
+<p>The implementation uses SVD internally and supports two computation methods: - Full decomposition: Suitable for matrices that fit in memory - Block-based decomposition: For large matrices, uses an incremental algorithm</p>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<section id="advanced-example-not-executed" class="level3">
-<h3 class="anchored" data-anchor-id="advanced-example-not-executed">Advanced Example (not executed)</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -806,9 +826,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">threads =</span> <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-
-
 </section>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
+<div class="see-also">
+<ul>
+<li><a href="bdSVD_hdf5.html">bdSVD_hdf5</a> for the underlying SVD computation</li>
+<li><a href="../hdf5_statistics/bdNormalize_hdf5.html">bdNormalize_hdf5</a> for data preprocessing options</li>
+</ul>
+</div>
+
+
 </section>
 
 </main> <!-- /main -->

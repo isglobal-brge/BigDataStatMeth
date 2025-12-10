@@ -667,13 +667,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
-  <ul class="collapse">
-  <li><a href="#advanced-example-not-executed" id="toc-advanced-example-not-executed" class="nav-link" data-scroll-target="#advanced-example-not-executed">Advanced Example (not executed)</a></li>
-  </ul></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See Also</a></li>
   </ul>
 </nav>
     </div>
@@ -701,6 +701,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge linear_algebra">LINEAR_ALGEBRA</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Computes the QR decomposition (also called QR factorization) of a matrix A into a product A = QR where Q is an orthogonal matrix and R is an upper triangular matrix. This function operates on in-memory matrices.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdQR</span>(X, <span class="at">thin =</span> <span class="cn">NULL</span>, <span class="at">block_size =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -746,10 +750,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A list containing: * Q: The orthogonal matrix Q * R: The upper triangular matrix R</p>
 </div>
 </section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>The QR decomposition is a fundamental matrix factorization that decomposes a matrix into an orthogonal matrix Q and an upper triangular matrix R. This implementation: - Supports both thin and full QR decomposition - Can utilize parallel computation for better performance - Handles both matrix and vector inputs</p>
+</section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<section id="advanced-example-not-executed" class="level3">
-<h3 class="anchored" data-anchor-id="advanced-example-not-executed">Advanced Example (not executed)</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -764,9 +770,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(<span class="fu">abs</span>(X <span class="sc">-</span> result<span class="sc">$</span>Q <span class="sc">%*%</span> result<span class="sc">$</span>R))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-
-
 </section>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
+<div class="see-also">
+<p><a href="../hdf5_algebra/bdQR_hdf5.html">bdQR_hdf5</a> for QR decomposition of HDF5-stored matrices</p>
+</div>
+
+
 </section>
 
 </main> <!-- /main -->

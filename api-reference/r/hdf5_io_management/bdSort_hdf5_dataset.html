@@ -667,10 +667,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See Also</a></li>
   </ul>
 </nav>
     </div>
@@ -698,6 +701,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge hdf5_io_management">HDF5_IO_MANAGEMENT</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Sorts a dataset in an HDF5 file based on a predefined ordering specified through a list of sorting blocks.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdSort_hdf5_dataset</span>(filename, group, dataset, outdataset, blockedSortlist, func, <span class="at">outgroup =</span> <span class="cn">NULL</span>, <span class="at">overwrite =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -756,11 +763,78 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>No return value, called for side effects (dataset sorting).</p>
+<p>List with components. If an error occurs, all string values are returned as empty strings (““):</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string with the HDF5 filename</li>
+<li><strong><code>ds</code></strong>: Character string with the full dataset path to the sorted dataset (group/dataset)</li>
+</ul>
 </div>
+</section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>This function provides efficient dataset sorting capabilities with: - Sorting options: - Row-wise sorting - Column-wise sorting - Block-based processing - Implementation features: - Memory-efficient processing - Block-based operations - Safe file operations - Progress reporting</p>
+<p>The sorting order is specified through a list of data frames, where each data frame represents a block of elements to be sorted. Each data frame must contain: - Row names (current identifiers) - chr (new identifiers) - order (current positions) - newOrder (target positions)</p>
+<p>Example sorting blocks structure:</p>
+<p>Block 1 (maintaining order): chr order newOrder Diagonal TCGA-OR-A5J1 TCGA-OR-A5J1 1 1 1 TCGA-OR-A5J2 TCGA-OR-A5J2 2 2 1 TCGA-OR-A5J3 TCGA-OR-A5J3 3 3 1 TCGA-OR-A5J4 TCGA-OR-A5J4 4 4 1</p>
+<p>Block 2 (reordering with new identifiers): chr order newOrder Diagonal TCGA-OR-A5J5 TCGA-OR-A5JA 10 5 1 TCGA-OR-A5J6 TCGA-OR-A5JB 11 6 1 TCGA-OR-A5J7 TCGA-OR-A5JC 12 7 0 TCGA-OR-A5J8 TCGA-OR-A5JD 13 8 1</p>
+<p>Block 3 (reordering with identifier swaps): chr order newOrder Diagonal TCGA-OR-A5J9 TCGA-OR-A5J5 5 9 1 TCGA-OR-A5JA TCGA-OR-A5J6 6 10 1 TCGA-OR-A5JB TCGA-OR-A5J7 7 11 1 TCGA-OR-A5JC TCGA-OR-A5J8 8 12 1 TCGA-OR-A5JD TCGA-OR-A5J9 9 13 0</p>
+<p>In this example: - Block 1 maintains the original order - Block 2 assigns new identifiers (A5JA-D) to elements - Block 3 swaps identifiers between elements - The Diagonal column indicates whether the element is on the diagonal (1) or not (0)</p>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create test data</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>), <span class="dv">10</span>, <span class="dv">10</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(data) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"TCGA-OR-A5J"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Save to HDF5</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>fn <span class="ot">&lt;-</span> <span class="st">"test.hdf5"</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(fn, data, <span class="st">"data"</span>, <span class="st">"matrix1"</span>,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create sorting blocks</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>block1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">chr =</span> <span class="fu">paste0</span>(<span class="st">"TCGA-OR-A5J"</span>, <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">4</span>)),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">order =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">newOrder =</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">4</span>),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="fu">paste0</span>(<span class="st">"TCGA-OR-A5J"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>block2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">chr =</span> <span class="fu">paste0</span>(<span class="st">"TCGA-OR-A5J"</span>, <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">8</span>,<span class="dv">7</span>)),</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">order =</span> <span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">newOrder =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">5</span>,<span class="dv">8</span>,<span class="dv">7</span>),</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">row.names =</span> <span class="fu">paste0</span>(<span class="st">"TCGA-OR-A5J"</span>, <span class="dv">5</span><span class="sc">:</span><span class="dv">8</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort dataset</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="fu">bdSort_hdf5_dataset</span>(</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> fn,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data"</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"matrix1"</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">outdataset =</span> <span class="st">"matrix1_sorted"</span>,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">blockedSortlist =</span> <span class="fu">list</span>(block1, block2),</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">func =</span> <span class="st">"sortRows"</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Cleanup</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(fn)) {</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.remove</span>(fn)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
+<div class="see-also">
+<ul>
+<li><a href="bdCreate_hdf5_matrix.html">bdCreate_hdf5_matrix</a> for creating HDF5 matrices</li>
+</ul>
+</div>
 
 
 </section>

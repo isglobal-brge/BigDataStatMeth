@@ -667,10 +667,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#see-also" id="toc-see-also" class="nav-link" data-scroll-target="#see-also">See Also</a></li>
   </ul>
 </nav>
     </div>
@@ -698,6 +701,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge hdf5_algebra">HDF5_ALGEBRA</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Computes the eigenvalue decomposition of a large matrix stored in an HDF5 file using the Spectra library. This provides consistent results with the RSpectra package and can handle both symmetric and non-symmetric matrices.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdEigen_hdf5</span>(filename, <span class="at">group =</span> <span class="cn">NULL</span>, <span class="at">dataset =</span> <span class="cn">NULL</span>, <span class="at">k =</span> <span class="cn">NULL</span>, <span class="at">which =</span> <span class="cn">NULL</span>, <span class="at">ncv =</span> <span class="cn">NULL</span>, <span class="at">bcenter =</span> <span class="cn">NULL</span>, <span class="at">bscale =</span> <span class="cn">NULL</span>, <span class="at">tolerance =</span> <span class="cn">NULL</span>, <span class="at">max_iter =</span> <span class="cn">NULL</span>, <span class="at">compute_vectors =</span> <span class="cn">NULL</span>, <span class="at">overwrite =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -776,11 +783,73 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>A list with the following elements: </p>
+<p>List with components:</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string with the HDF5 filename</li>
+<li><strong><code>values</code></strong>: Character string with the full dataset path to the eigenvalues (real part) (group/dataset)</li>
+<li><strong><code>vectors</code></strong>: Character string with the full dataset path to the eigenvectors (real part) (group/dataset)</li>
+<li><strong><code>values_imag</code></strong>: Character string with the full dataset path to the eigenvalues (imaginary part), or NULL if all eigenvalues are real</li>
+<li><strong><code>vectors_imag</code></strong>: Character string with the full dataset path to the eigenvectors (imaginary part), or NULL if all eigenvectors are real</li>
+<li><strong><code>is_symmetric</code></strong>: Logical indicating whether the matrix was detected as symmetric</li>
+</ul>
 </div>
+</section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>This function uses the Spectra library (same as RSpectra) for eigenvalue computation, ensuring consistent results. Key features include: - Automatic detection of symmetric vs non-symmetric matrices - Support for both real and complex eigenvalues/eigenvectors - Memory-efficient block-based processing for large matrices - Parallel processing support - Various eigenvalue selection criteria - Consistent interface with RSpectra::eigs()</p>
+<p>The implementation automatically: - Detects matrix symmetry and uses appropriate solver (SymEigsSolver vs GenEigsSolver) - Handles complex eigenvalues for non-symmetric matrices - Saves imaginary parts separately when non-zero - Provides the same results as RSpectra::eigs() function</p>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<div class="cell">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rhdf5)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RSpectra)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a sample matrix (can be non-symmetric)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2500</span>), <span class="dv">50</span>, <span class="dv">50</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>fn <span class="ot">&lt;-</span> <span class="st">"test_eigen.hdf5"</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix_file</span>(<span class="at">filename =</span> fn, <span class="at">object =</span> A, <span class="at">group =</span> <span class="st">"data"</span>, <span class="at">dataset =</span> <span class="st">"matrix"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute eigendecomposition with BigDataStatMeth</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">bdEigen_hdf5</span>(fn, <span class="st">"data"</span>, <span class="st">"matrix"</span>, <span class="at">k =</span> <span class="dv">6</span>, <span class="at">which =</span> <span class="st">"LM"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare with RSpectra (should give same results)</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>rspectra_result <span class="ot">&lt;-</span> <span class="fu">eigs</span>(A, <span class="at">k =</span> <span class="dv">6</span>, <span class="at">which =</span> <span class="st">"LM"</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract results from HDF5</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>eigenvals_bd <span class="ot">&lt;-</span> <span class="fu">h5read</span>(res<span class="sc">$</span>fn, res<span class="sc">$</span>values)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>eigenvecs_bd <span class="ot">&lt;-</span> <span class="fu">h5read</span>(res<span class="sc">$</span>fn, res<span class="sc">$</span>vectors)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare eigenvalues (should be identical)</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(eigenvals_bd, <span class="fu">Re</span>(rspectra_result<span class="sc">$</span>values), <span class="at">tolerance =</span> <span class="fl">1e-12</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co"># For non-symmetric matrices, check imaginary parts</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(res<span class="sc">$</span>values_imag)) {</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  eigenvals_imag <span class="ot">&lt;-</span> <span class="fu">h5read</span>(res<span class="sc">$</span>fn, res<span class="sc">$</span>values_imag)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">all.equal</span>(eigenvals_imag, <span class="fu">Im</span>(rspectra_result<span class="sc">$</span>values), <span class="at">tolerance =</span> <span class="fl">1e-12</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove file</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(fn)) {</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.remove</span>(fn)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="see-also" class="level2">
+<h2 class="anchored" data-anchor-id="see-also">See Also</h2>
+<div class="see-also">
+<ul>
+<li><a href="bdSVD_hdf5.html">bdSVD_hdf5</a> for Singular Value Decomposition</li>
+<li><a href="bdPCA_hdf5.html">bdPCA_hdf5</a> for Principal Component Analysis</li>
+<li><code>RSpectra::eigs</code> for the R equivalent function</li>
+</ul>
+</div>
 
 
 </section>

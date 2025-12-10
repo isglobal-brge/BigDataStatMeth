@@ -667,7 +667,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
   </ul>
@@ -697,6 +698,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge hdf5_algebra">HDF5_ALGEBRA</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Performs optimized diagonal addition between two datasets stored in HDF5 format. Automatically detects whether inputs are matrices (extracts diagonals) or vectors (direct operation) and uses the most efficient approach.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdDiag_add_hdf5</span>(filename, group, A, B, <span class="at">groupB =</span> <span class="cn">NULL</span>, <span class="at">target =</span> <span class="cn">NULL</span>, <span class="at">outgroup =</span> <span class="cn">NULL</span>, <span class="at">outdataset =</span> <span class="cn">NULL</span>, <span class="at">paral =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="cn">NULL</span>, <span class="at">overwrite =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -767,7 +772,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>List with components: </p>
+<p>List with components:</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string with the HDF5 filename</li>
+<li><strong><code>ds</code></strong>: Character string with the full dataset path to the diagonal addition result (group/dataset)</li>
+</ul>
 </div>
 
 

@@ -248,38 +248,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dataset</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DatasetInternal</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DatasetInternal</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DiagonalMatrix</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DiagonalMatrix</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dims.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dims</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dims</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5File.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5File</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5File.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5File</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Group.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Group</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Group.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Group</span></a>
   </div>
 </li>
       </ul>
@@ -1502,7 +1502,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>File:</strong> <code>inst/include/hdf5Algebra/matrixCorrelation.hpp</code> • <strong>Lines 1044-1152</strong></p>
+<p><strong>File:</strong> <code>inst/include/hdf5Algebra/matrixCorrelation.hpp</code> • <strong>Lines 1044-1153</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> corr_result RcppbdCorr_matrix_cross<span class="op">(</span><span class="at">const</span> Eigen<span class="op">::</span>MatrixXd<span class="op">&amp;</span> X<span class="op">,</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                                         <span class="at">const</span> Eigen<span class="op">::</span>MatrixXd<span class="op">&amp;</span> Y<span class="op">,</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                                         <span class="at">const</span> <span class="bu">std::</span>string<span class="op">&amp;</span> method <span class="op">=</span> <span class="st">"pearson"</span><span class="op">,</span></span>
@@ -1552,66 +1552,67 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span>has_pvalues <span class="op">=</span> compute_pvalues<span class="op">;</span> </span>
 <span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>            </span>
 <span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Optimized threading for cross-correlation</span></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> num_threads <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>            </span>
 <span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#ifdef _OPENMP</span></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(!</span>threads<span class="op">.</span>isNull<span class="op">())</span> <span class="op">{</span></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>                num_threads <span class="op">=</span> Rcpp<span class="op">::</span>as<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span>threads<span class="op">);</span></span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Scale with matrix size but be conservative</span></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                <span class="dt">int</span> total_pairs <span class="op">=</span> n_vars_x <span class="op">*</span> n_vars_y<span class="op">;</span></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                num_threads <span class="op">=</span> <span class="op">(</span>total_pairs <span class="op">&gt;</span> <span class="dv">1000</span><span class="op">)</span> <span class="op">?</span> <span class="bu">std::</span>min<span class="op">(</span><span class="dv">6</span><span class="op">,</span> omp_get_max_threads<span class="op">())</span> <span class="op">:</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>            num_threads <span class="op">=</span> <span class="bu">std::</span>max<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="bu">std::</span>min<span class="op">(</span>num_threads<span class="op">,</span> omp_get_max_threads<span class="op">()));</span></span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#endif</span></span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Single level parallelization with good cache locality</span></span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#ifdef _OPENMP</span></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#pragma omp parallel for num_threads(num_threads) schedule(dynamic, 1)</span></span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#endif</span></span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n_vars_x<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n_vars_y<span class="op">;</span> <span class="op">++</span>j<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>                    Eigen<span class="op">::</span>VectorXd vec_x<span class="op">,</span> vec_y<span class="op">;</span></span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">double</span> corr_val<span class="op">;</span><span class="co">//, pval;</span></span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// Get vectors with logical transposition</span></span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>trans_x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>                        vec_x <span class="op">=</span> X<span class="op">.</span>row<span class="op">(</span>i<span class="op">).</span>transpose<span class="op">();</span> <span class="co">// Row becomes variable</span></span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>                        vec_x <span class="op">=</span> X<span class="op">.</span>col<span class="op">(</span>i<span class="op">);</span>            <span class="co">// Column is variable</span></span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>trans_y<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>                        vec_y <span class="op">=</span> Y<span class="op">.</span>row<span class="op">(</span>j<span class="op">).</span>transpose<span class="op">();</span> <span class="co">// Row becomes variable</span></span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>                        vec_y <span class="op">=</span> Y<span class="op">.</span>col<span class="op">(</span>j<span class="op">);</span>            <span class="co">// Column is variable</span></span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// double corr_val;</span></span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>method <span class="op">==</span> <span class="st">"spearman"</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>                        corr_val <span class="op">=</span> spearman_correlation<span class="op">(</span>vec_x<span class="op">,</span> vec_y<span class="op">,</span> use_complete_obs<span class="op">);</span></span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>                        corr_val <span class="op">=</span> pearson_correlation<span class="op">(</span>vec_x<span class="op">,</span> vec_y<span class="op">,</span> use_complete_obs<span class="op">);</span></span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                    result<span class="op">.</span>correlation_matrix<span class="op">(</span>i<span class="op">,</span> j<span class="op">)</span> <span class="op">=</span> corr_val<span class="op">;</span></span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Compute p-values using optimized vectorized function</span></span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>compute_pvalues<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>                result<span class="op">.</span>pvalues <span class="op">=</span> compute_pvalues_optimized<span class="op">(</span>result<span class="op">.</span>correlation_matrix<span class="op">,</span> n_obs_x<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span>bcomputed <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"C++ exception RcppbdCorr_matrix_cross: "</span> <span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span>bcomputed <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> result<span class="op">;</span></span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> num_threads <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(!</span>threads<span class="op">.</span>isNull<span class="op">())</span> <span class="op">{</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                num_threads <span class="op">=</span> Rcpp<span class="op">::</span>as<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span>threads<span class="op">);</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Scale with matrix size but be conservative</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                <span class="dt">int</span> total_pairs <span class="op">=</span> n_vars_x <span class="op">*</span> n_vars_y<span class="op">;</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>                num_threads <span class="op">=</span> <span class="op">(</span>total_pairs <span class="op">&gt;</span> <span class="dv">1000</span><span class="op">)</span> <span class="op">?</span> <span class="bu">std::</span>min<span class="op">(</span><span class="dv">6</span><span class="op">,</span> omp_get_max_threads<span class="op">())</span> <span class="op">:</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>            num_threads <span class="op">=</span> <span class="bu">std::</span>max<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="bu">std::</span>min<span class="op">(</span>num_threads<span class="op">,</span> omp_get_max_threads<span class="op">()));</span></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    <span class="co">// #endif</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="co">//         </span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    <span class="co">//         // Single level parallelization with good cache locality</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    <span class="co">// #ifdef _OPENMP</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#pragma omp parallel for num_threads(num_threads) schedule(dynamic, 1)</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#endif</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n_vars_x<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> n_vars_y<span class="op">;</span> <span class="op">++</span>j<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>                    Eigen<span class="op">::</span>VectorXd vec_x<span class="op">,</span> vec_y<span class="op">;</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                    <span class="dt">double</span> corr_val<span class="op">;</span><span class="co">//, pval;</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// Get vectors with logical transposition</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>trans_x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>                        vec_x <span class="op">=</span> X<span class="op">.</span>row<span class="op">(</span>i<span class="op">).</span>transpose<span class="op">();</span> <span class="co">// Row becomes variable</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>                        vec_x <span class="op">=</span> X<span class="op">.</span>col<span class="op">(</span>i<span class="op">);</span>            <span class="co">// Column is variable</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>trans_y<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>                        vec_y <span class="op">=</span> Y<span class="op">.</span>row<span class="op">(</span>j<span class="op">).</span>transpose<span class="op">();</span> <span class="co">// Row becomes variable</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>                        vec_y <span class="op">=</span> Y<span class="op">.</span>col<span class="op">(</span>j<span class="op">);</span>            <span class="co">// Column is variable</span></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// double corr_val;</span></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>method <span class="op">==</span> <span class="st">"spearman"</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>                        corr_val <span class="op">=</span> spearman_correlation<span class="op">(</span>vec_x<span class="op">,</span> vec_y<span class="op">,</span> use_complete_obs<span class="op">);</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>                        corr_val <span class="op">=</span> pearson_correlation<span class="op">(</span>vec_x<span class="op">,</span> vec_y<span class="op">,</span> use_complete_obs<span class="op">);</span></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>                    result<span class="op">.</span>correlation_matrix<span class="op">(</span>i<span class="op">,</span> j<span class="op">)</span> <span class="op">=</span> corr_val<span class="op">;</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Compute p-values using optimized vectorized function</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>compute_pvalues<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>                result<span class="op">.</span>pvalues <span class="op">=</span> compute_pvalues_optimized<span class="op">(</span>result<span class="op">.</span>correlation_matrix<span class="op">,</span> n_obs_x<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span>bcomputed <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"C++ exception RcppbdCorr_matrix_cross: "</span> <span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span>bcomputed <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>

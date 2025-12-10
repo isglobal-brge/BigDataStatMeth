@@ -667,13 +667,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#usage" id="toc-usage" class="nav-link active" data-scroll-target="#usage">Usage</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description">Description</a></li>
+  <li><a href="#usage" id="toc-usage" class="nav-link" data-scroll-target="#usage">Usage</a></li>
   <li><a href="#arguments" id="toc-arguments" class="nav-link" data-scroll-target="#arguments">Arguments</a></li>
   <li><a href="#value" id="toc-value" class="nav-link" data-scroll-target="#value">Value</a></li>
-  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
-  <ul class="collapse">
-  <li><a href="#advanced-example-not-executed" id="toc-advanced-example-not-executed" class="nav-link" data-scroll-target="#advanced-example-not-executed">Advanced Example (not executed)</a></li>
-  </ul></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
   </ul>
 </nav>
     </div>
@@ -701,6 +700,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p><span class="category-badge hdf5_algebra">HDF5_ALGEBRA</span></p>
+<section id="description" class="level2">
+<h2 class="anchored" data-anchor-id="description">Description</h2>
+<p>Creates a diagonal matrix or vector directly in an HDF5 file using block-wise processing to minimize memory usage. This unified function replaces separate diagonal and identity matrix creation functions, providing flexible diagonal creation with automatic parameter detection.</p>
+</section>
 <section id="usage" class="level2">
 <h2 class="anchored" data-anchor-id="usage">Usage</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_diagonal_hdf5</span>(filename, group, dataset, <span class="at">size =</span> <span class="cn">NULL</span>, <span class="at">scalar =</span> <span class="fl">1.0</span>, <span class="at">diagonal_values =</span> <span class="cn">NULL</span>, <span class="at">output_type =</span> <span class="st">"matrix"</span>, <span class="at">block_size =</span> <span class="dv">0</span>L, <span class="at">compression =</span> <span class="dv">6</span>L, <span class="at">overwriteFile =</span> <span class="cn">NULL</span>, <span class="at">overwriteDataset =</span> <span class="cn">NULL</span>, <span class="at">threads =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -775,13 +778,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="value" class="level2">
 <h2 class="anchored" data-anchor-id="value">Value</h2>
 <div class="return-value">
-<p>List with components: </p>
+<p>List with components:</p>
+<ul>
+<li><strong><code>fn</code></strong>: Character string with the HDF5 filename</li>
+<li><strong><code>ds</code></strong>: Character string with the full dataset path to the diagonal matrix (group/dataset)</li>
+</ul>
 </div>
+</section>
+<section id="details" class="level2">
+<h2 class="anchored" data-anchor-id="details">Details</h2>
+<p>This function provides flexible diagonal creation with two main modes: - Vector mode: Provide custom diagonal values - Size is automatically detected from vector length - Scalar acts as additional multiplier - Ideal for custom diagonal patterns - Scalar mode: Provide size and scalar value<br>
+- Creates uniform diagonal with specified scalar - scalar=1.0 creates identity matrix/vector - Ideal for identity or uniform diagonal matrices - Output formats: - “matrix”: Creates full N×N matrix (sparse, only diagonal populated) - “vector”: Creates efficient 1×N vector with diagonal values only - Performance features: - Block-wise processing for memory efficiency - Optional compression with configurable levels - Parallel processing support for large datasets - Automatic block size optimization</p>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<section id="advanced-example-not-executed" class="level3">
-<h3 class="anchored" data-anchor-id="advanced-example-not-executed">Advanced Example (not executed)</h3>
 <div class="cell">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -810,7 +820,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

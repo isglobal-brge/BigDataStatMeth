@@ -248,38 +248,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dataset</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DatasetInternal</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DatasetInternal</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DiagonalMatrix</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DiagonalMatrix</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dims.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dims</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dims</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5File.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5File</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5File.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5File</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Group.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Group</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Group.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Group</span></a>
   </div>
 </li>
       </ul>
@@ -1503,7 +1503,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>File:</strong> <code>inst/include/hdf5Algebra/matrixCorrelation.hpp</code> • <strong>Lines 1232-1364</strong></p>
+<p><strong>File:</strong> <code>inst/include/hdf5Algebra/matrixCorrelation.hpp</code> • <strong>Lines 1233-1366</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="dt">void</span> RcppbdCorr_hdf5_Block_single<span class="op">(</span>T<span class="op">*</span> dsA<span class="op">,</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                             BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">*</span> dsCorr<span class="op">,</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                                             BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">*</span> dsPval<span class="op">,</span></span>
@@ -1569,74 +1569,75 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>                </span>
 <span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>                Eigen<span class="op">::</span>MatrixXd corr_matrix <span class="op">=</span> Eigen<span class="op">::</span>MatrixXd<span class="op">::</span>Identity<span class="op">(</span>n_cols<span class="op">,</span> n_cols<span class="op">);</span></span>
 <span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                <span class="dt">int</span> num_threads <span class="op">=</span> <span class="bu">std::</span>min<span class="op">(</span><span class="dv">2</span><span class="op">,</span> omp_get_max_threads<span class="op">());</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>                </span>
 <span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>                </span>
 <span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifdef _OPENMP</span></span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="pp">#pragma omp parallel for num_threads(num_threads) schedule(dynamic, 1)</span></span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> <span class="op">(</span><span class="dt">hsize_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n_cols<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> vec_i_data<span class="op">(</span>n_rows<span class="op">);</span></span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// CRITICAL FIX: Transpose-aware I/O patterns for HDF5 data (R→HDF5 transposition)</span></span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>trans_x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// User wants correlation between samples</span></span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// In HDF5: samples are columns, so read column i</span></span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>                        dsA<span class="op">-&gt;</span>readDatasetBlock<span class="op">({</span><span class="dv">0</span><span class="op">,</span> i<span class="op">},</span> <span class="op">{</span>n_rows_hdf5<span class="op">,</span> <span class="dv">1</span><span class="op">},</span> stride<span class="op">,</span> block<span class="op">,</span> vec_i_data<span class="op">.</span>data<span class="op">());</span></span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// User wants correlation between variables (default)</span></span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// In HDF5: variables are rows, so read row i</span></span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>                        dsA<span class="op">-&gt;</span>readDatasetBlock<span class="op">({</span>i<span class="op">,</span> <span class="dv">0</span><span class="op">},</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> n_cols_hdf5<span class="op">},</span> stride<span class="op">,</span> block<span class="op">,</span> vec_i_data<span class="op">.</span>data<span class="op">());</span></span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>                    Eigen<span class="op">::</span>VectorXd vec_i <span class="op">=</span> Eigen<span class="op">::</span>Map<span class="op">&lt;</span>Eigen<span class="op">::</span>VectorXd<span class="op">&gt;(</span>vec_i_data<span class="op">.</span>data<span class="op">(),</span> n_rows<span class="op">);</span></span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>                    </span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// Compute correlations for upper triangle (symmetric matrix)</span></span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> <span class="op">(</span><span class="dt">hsize_t</span> j <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> j <span class="op">&lt;</span> n_cols<span class="op">;</span> <span class="op">++</span>j<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> vec_j_data<span class="op">(</span>n_rows<span class="op">);</span></span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>                        </span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// Consistent reading for second vector (final correction)</span></span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span> <span class="op">(</span>trans_x<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>                            <span class="co">// User wants correlation between samples</span></span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>                            <span class="co">// Read column j (this currently gives correct cor(ds) result)</span></span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>                            dsA<span class="op">-&gt;</span>readDatasetBlock<span class="op">({</span><span class="dv">0</span><span class="op">,</span> j<span class="op">},</span> <span class="op">{</span>n_rows_hdf5<span class="op">,</span> <span class="dv">1</span><span class="op">},</span> stride<span class="op">,</span> block<span class="op">,</span> vec_j_data<span class="op">.</span>data<span class="op">());</span></span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>                            <span class="co">// User wants correlation between variables (default - same as cor(ds))</span></span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>                            <span class="co">// Read row j (swap to make this give cor(ds) result)</span></span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>                            dsA<span class="op">-&gt;</span>readDatasetBlock<span class="op">({</span>j<span class="op">,</span> <span class="dv">0</span><span class="op">},</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> n_cols_hdf5<span class="op">},</span> stride<span class="op">,</span> block<span class="op">,</span> vec_j_data<span class="op">.</span>data<span class="op">());</span></span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>                        </span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>                        Eigen<span class="op">::</span>VectorXd vec_j <span class="op">=</span> Eigen<span class="op">::</span>Map<span class="op">&lt;</span>Eigen<span class="op">::</span>VectorXd<span class="op">&gt;(</span>vec_j_data<span class="op">.</span>data<span class="op">(),</span> n_rows<span class="op">);</span></span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>                        </span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">double</span> corr_val<span class="op">;</span></span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span> <span class="op">(</span>method <span class="op">==</span> <span class="st">"spearman"</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>                            corr_val <span class="op">=</span> spearman_correlation<span class="op">(</span>vec_i<span class="op">,</span> vec_j<span class="op">,</span> use_complete_obs<span class="op">);</span></span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>                            corr_val <span class="op">=</span> pearson_correlation<span class="op">(</span>vec_i<span class="op">,</span> vec_j<span class="op">,</span> use_complete_obs<span class="op">);</span></span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
-<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>                        </span>
-<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>                        corr_matrix<span class="op">(</span>i<span class="op">,</span> j<span class="op">)</span> <span class="op">=</span> corr_val<span class="op">;</span></span>
-<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>                        corr_matrix<span class="op">(</span>j<span class="op">,</span> i<span class="op">)</span> <span class="op">=</span> corr_val<span class="op">;</span></span>
-<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>                        </span>
-<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
-<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
-<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>                dsCorr<span class="op">-&gt;</span>createDataset<span class="op">(</span>corr_matrix<span class="op">.</span>rows<span class="op">(),</span> corr_matrix<span class="op">.</span>cols<span class="op">(),</span> <span class="st">"real"</span><span class="op">);</span></span>
-<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>                dsCorr<span class="op">-&gt;</span>writeDataset<span class="op">(</span>Rcpp<span class="op">::</span>wrap<span class="op">(</span>corr_matrix<span class="op">));</span></span>
-<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>compute_pvalues <span class="op">&amp;&amp;</span> dsPval<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>                    Eigen<span class="op">::</span>MatrixXd pvalues_matrix <span class="op">=</span> compute_pvalues_optimized<span class="op">(</span>corr_matrix<span class="op">,</span> n_rows<span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>                    dsPval<span class="op">-&gt;</span>createDataset<span class="op">(</span>pvalues_matrix<span class="op">.</span>rows<span class="op">(),</span> pvalues_matrix<span class="op">.</span>cols<span class="op">(),</span> <span class="st">"real"</span><span class="op">);</span></span>
-<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>                    dsPval<span class="op">-&gt;</span>writeDataset<span class="op">(</span>Rcpp<span class="op">::</span>wrap<span class="op">(</span>pvalues_matrix<span class="op">));</span></span>
-<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
-<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>                <span class="dt">int</span> num_threads <span class="op">=</span> <span class="bu">std::</span>min<span class="op">(</span><span class="dv">2</span><span class="op">,</span> omp_get_max_threads<span class="op">());</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>            <span class="pp">#pragma omp parallel for num_threads(num_threads) schedule(dynamic, 1)</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> <span class="op">(</span><span class="dt">hsize_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n_cols<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> vec_i_data<span class="op">(</span>n_rows<span class="op">);</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// CRITICAL FIX: Transpose-aware I/O patterns for HDF5 data (R→HDF5 transposition)</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>trans_x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// User wants correlation between samples</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// In HDF5: samples are columns, so read column i</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>                        dsA<span class="op">-&gt;</span>readDatasetBlock<span class="op">({</span><span class="dv">0</span><span class="op">,</span> i<span class="op">},</span> <span class="op">{</span>n_rows_hdf5<span class="op">,</span> <span class="dv">1</span><span class="op">},</span> stride<span class="op">,</span> block<span class="op">,</span> vec_i_data<span class="op">.</span>data<span class="op">());</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// User wants correlation between variables (default)</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// In HDF5: variables are rows, so read row i</span></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>                        dsA<span class="op">-&gt;</span>readDatasetBlock<span class="op">({</span>i<span class="op">,</span> <span class="dv">0</span><span class="op">},</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> n_cols_hdf5<span class="op">},</span> stride<span class="op">,</span> block<span class="op">,</span> vec_i_data<span class="op">.</span>data<span class="op">());</span></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>                    Eigen<span class="op">::</span>VectorXd vec_i <span class="op">=</span> Eigen<span class="op">::</span>Map<span class="op">&lt;</span>Eigen<span class="op">::</span>VectorXd<span class="op">&gt;(</span>vec_i_data<span class="op">.</span>data<span class="op">(),</span> n_rows<span class="op">);</span></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// Compute correlations for upper triangle (symmetric matrix)</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> <span class="op">(</span><span class="dt">hsize_t</span> j <span class="op">=</span> i <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> j <span class="op">&lt;</span> n_cols<span class="op">;</span> <span class="op">++</span>j<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>                        <span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> vec_j_data<span class="op">(</span>n_rows<span class="op">);</span></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// Consistent reading for second vector (final correction)</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span> <span class="op">(</span>trans_x<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>                            <span class="co">// User wants correlation between samples</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>                            <span class="co">// Read column j (this currently gives correct cor(ds) result)</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>                            dsA<span class="op">-&gt;</span>readDatasetBlock<span class="op">({</span><span class="dv">0</span><span class="op">,</span> j<span class="op">},</span> <span class="op">{</span>n_rows_hdf5<span class="op">,</span> <span class="dv">1</span><span class="op">},</span> stride<span class="op">,</span> block<span class="op">,</span> vec_j_data<span class="op">.</span>data<span class="op">());</span></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>                            <span class="co">// User wants correlation between variables (default - same as cor(ds))</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>                            <span class="co">// Read row j (swap to make this give cor(ds) result)</span></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>                            dsA<span class="op">-&gt;</span>readDatasetBlock<span class="op">({</span>j<span class="op">,</span> <span class="dv">0</span><span class="op">},</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> n_cols_hdf5<span class="op">},</span> stride<span class="op">,</span> block<span class="op">,</span> vec_j_data<span class="op">.</span>data<span class="op">());</span></span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>                        Eigen<span class="op">::</span>VectorXd vec_j <span class="op">=</span> Eigen<span class="op">::</span>Map<span class="op">&lt;</span>Eigen<span class="op">::</span>VectorXd<span class="op">&gt;(</span>vec_j_data<span class="op">.</span>data<span class="op">(),</span> n_rows<span class="op">);</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>                        <span class="dt">double</span> corr_val<span class="op">;</span></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span> <span class="op">(</span>method <span class="op">==</span> <span class="st">"spearman"</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>                            corr_val <span class="op">=</span> spearman_correlation<span class="op">(</span>vec_i<span class="op">,</span> vec_j<span class="op">,</span> use_complete_obs<span class="op">);</span></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>                            corr_val <span class="op">=</span> pearson_correlation<span class="op">(</span>vec_i<span class="op">,</span> vec_j<span class="op">,</span> use_complete_obs<span class="op">);</span></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>                        corr_matrix<span class="op">(</span>i<span class="op">,</span> j<span class="op">)</span> <span class="op">=</span> corr_val<span class="op">;</span></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>                        corr_matrix<span class="op">(</span>j<span class="op">,</span> i<span class="op">)</span> <span class="op">=</span> corr_val<span class="op">;</span></span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>                dsCorr<span class="op">-&gt;</span>createDataset<span class="op">(</span>corr_matrix<span class="op">.</span>rows<span class="op">(),</span> corr_matrix<span class="op">.</span>cols<span class="op">(),</span> <span class="st">"real"</span><span class="op">);</span></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>                dsCorr<span class="op">-&gt;</span>writeDataset<span class="op">(</span>Rcpp<span class="op">::</span>wrap<span class="op">(</span>corr_matrix<span class="op">));</span></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>compute_pvalues <span class="op">&amp;&amp;</span> dsPval<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>                    Eigen<span class="op">::</span>MatrixXd pvalues_matrix <span class="op">=</span> compute_pvalues_optimized<span class="op">(</span>corr_matrix<span class="op">,</span> n_rows<span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>                    dsPval<span class="op">-&gt;</span>createDataset<span class="op">(</span>pvalues_matrix<span class="op">.</span>rows<span class="op">(),</span> pvalues_matrix<span class="op">.</span>cols<span class="op">(),</span> <span class="st">"real"</span><span class="op">);</span></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>                    dsPval<span class="op">-&gt;</span>writeDataset<span class="op">(</span>Rcpp<span class="op">::</span>wrap<span class="op">(</span>pvalues_matrix<span class="op">));</span></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
 <span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>            checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsCorr<span class="op">,</span> dsPval<span class="op">);</span></span>
-<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"C++ exception RcppbdCorr_hdf5_Block_single: "</span> <span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
-<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>            <span class="cf">throw</span><span class="op">;</span></span>
-<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>            checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsCorr<span class="op">,</span> dsPval<span class="op">);</span></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>            Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"C++ exception RcppbdCorr_hdf5_Block_single: "</span> <span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">()</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>            <span class="cf">throw</span><span class="op">;</span></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>

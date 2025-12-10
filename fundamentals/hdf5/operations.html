@@ -426,10 +426,16 @@ Important
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">group    =</span> <span class="st">"myData"</span>,</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset  =</span> <span class="st">"X"</span>,</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect structure</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5ls</span>(<span class="st">"ops_demo.h5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "ops_demo.h5"
+
+$ds
+[1] "myData/X"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect structure</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5ls</span>(<span class="st">"ops_demo.h5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    group   name       otype dclass   dim
 0       / myData   H5I_GROUP             
@@ -439,33 +445,33 @@ Important
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># C++</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># #include "BigDataStatMeth.h"</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># int main() {</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   BigDataStatMeth::hdf5File* file = nullptr;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   BigDataStatMeth::hdf5Dataset* dset = nullptr;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   try {</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     // Create/open file</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     file = new BigDataStatMeth::hdf5File("ops_demo.h5", true);</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     file-&gt;createFile(); // creates (or opens) the file</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#     // Create dataset inside group</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#     dset = new BigDataStatMeth::hdf5Dataset(file, "myData", "X", true);</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#     dset-&gt;createDataset(3, 4, "numeric");</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#     // Write data (example; adapt to your data source)</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#     Rcpp::NumericMatrix X = Rcpp::rnorm(12);</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     dset-&gt;writeDataset(X);</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#     delete dset; dset = nullptr;</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#     delete file; file = nullptr;</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#     return 0;</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   } catch (std::exception&amp; ex) {</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">#     // handle / log</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co">#     return 1;</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   }</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># C++</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># #include "BigDataStatMeth.h"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># int main() {</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   BigDataStatMeth::hdf5File* file = nullptr;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   BigDataStatMeth::hdf5Dataset* dset = nullptr;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   try {</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     // Create/open file</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     file = new BigDataStatMeth::hdf5File("ops_demo.h5", true);</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     file-&gt;createFile(); // creates (or opens) the file</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#     // Create dataset inside group</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#     dset = new BigDataStatMeth::hdf5Dataset(file, "myData", "X", true);</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#     dset-&gt;createDataset(3, 4, "numeric");</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#     // Write data (example; adapt to your data source)</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#     Rcpp::NumericMatrix X = Rcpp::rnorm(12);</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     dset-&gt;writeDataset(X);</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#     delete dset; dset = nullptr;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#     delete file; file = nullptr;</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#     return 0;</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   } catch (std::exception&amp; ex) {</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#     // handle / log</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#     return 1;</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   }</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -489,20 +495,20 @@ Tip
 <h2 class="anchored" data-anchor-id="reading-data-inspect-with-rhdf5">Reading data (inspect with <code>rhdf5</code>)</h2>
 <p><code>BigDataStatMeth</code> reads HDF5 <strong>internally in C++</strong> during computations. For <strong>manual inspection</strong> from R, use the <code>rhdf5</code> package.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List objects</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5ls</span>(<span class="st">"ops_demo.h5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List objects</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5ls</span>(<span class="st">"ops_demo.h5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    group   name       otype dclass   dim
 0       / myData   H5I_GROUP             
 1 /myData      X H5I_DATASET  FLOAT 3 x 4</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read a (sub)matrix if needed, e.g. first 2 rows, first 3 cols</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5read</span>(<span class="st">"ops_demo.h5"</span>, <span class="at">name =</span> <span class="st">"myData/X"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">index =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read a (sub)matrix if needed, e.g. first 2 rows, first 3 cols</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5read</span>(<span class="st">"ops_demo.h5"</span>, <span class="at">name =</span> <span class="st">"myData/X"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">index =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>           [,1]      [,2]       [,3]
-[1,] -0.2152207 -1.803999 -0.8844296
-[2,]  0.3088812 -1.814394 -0.5548274</code></pre>
+<pre><code>           [,1]      [,2]      [,3]
+[1,] -0.1373560 0.5608898  1.092973
+[2,]  0.6310405 0.1134788 -1.717751</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -528,105 +534,118 @@ Note
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># In-memory block multiplication (data in RAM) — make dimensions conformable</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2000</span>), <span class="at">nrow =</span> <span class="dv">100</span>, <span class="at">ncol =</span> <span class="dv">20</span>)  <span class="co"># 100x20</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">600</span>),  <span class="at">nrow =</span> <span class="dv">20</span>,  <span class="at">ncol =</span> <span class="dv">30</span>)  <span class="co"># 20x30</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Reference result in memory (baseline)</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>AB_inmem <span class="ot">&lt;-</span> A <span class="sc">%*%</span> B</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare with BigDataStatMeth in-memory block function</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>AB_bdmem <span class="ot">&lt;-</span> <span class="fu">bdblockMult</span>(A, B)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Store A and B in HDF5 for on-disk operation</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"ops_demo.h5"</span>, A, <span class="at">group =</span> <span class="st">"ops"</span>, <span class="at">dataset =</span> <span class="st">"A"</span>,</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"ops_demo.h5"</span>, B, <span class="at">group =</span> <span class="st">"ops"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>,</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co"># On-disk block multiplication (HDF5)</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co"># (Result may be written to disk or returned as an R object depending on the implementation)</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>res_hdf5 <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(<span class="st">"ops_demo.h5"</span>,</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                             <span class="at">group =</span> <span class="st">"ops"</span>, <span class="at">A =</span> <span class="st">"A"</span>,</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                             <span class="at">groupB =</span> <span class="st">"ops"</span>, <span class="at">B =</span> <span class="st">"B"</span>)</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick check (if res_hdf5 returns an R matrix)</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">exists</span>(<span class="st">"res_hdf5"</span>) <span class="sc">&amp;&amp;</span> <span class="fu">is.matrix</span>(res_hdf5)) {</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Max abs diff (RAM vs HDF5):"</span>, <span class="fu">max</span>(<span class="fu">abs</span>(AB_inmem <span class="sc">-</span> res_hdf5)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># In-memory block multiplication (data in RAM) — make dimensions conformable</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2000</span>), <span class="at">nrow =</span> <span class="dv">100</span>, <span class="at">ncol =</span> <span class="dv">20</span>)  <span class="co"># 100x20</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">600</span>),  <span class="at">nrow =</span> <span class="dv">20</span>,  <span class="at">ncol =</span> <span class="dv">30</span>)  <span class="co"># 20x30</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Reference result in memory (baseline)</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>AB_inmem <span class="ot">&lt;-</span> A <span class="sc">%*%</span> B</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare with BigDataStatMeth in-memory block function</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>AB_bdmem <span class="ot">&lt;-</span> <span class="fu">bdblockMult</span>(A, B)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Store A and B in HDF5 for on-disk operation</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"ops_demo.h5"</span>, A, <span class="at">group =</span> <span class="st">"ops"</span>, <span class="at">dataset =</span> <span class="st">"A"</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "ops_demo.h5"
+
+$ds
+[1] "ops/A"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"ops_demo.h5"</span>, B, <span class="at">group =</span> <span class="st">"ops"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "ops_demo.h5"
+
+$ds
+[1] "ops/B"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On-disk block multiplication (HDF5)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (Result may be written to disk or returned as an R object depending on the implementation)</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>res_hdf5 <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(<span class="st">"ops_demo.h5"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                             <span class="at">group =</span> <span class="st">"ops"</span>, <span class="at">A =</span> <span class="st">"A"</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                             <span class="at">groupB =</span> <span class="st">"ops"</span>, <span class="at">B =</span> <span class="st">"B"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick check (if res_hdf5 returns an R matrix)</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">exists</span>(<span class="st">"res_hdf5"</span>) <span class="sc">&amp;&amp;</span> <span class="fu">is.matrix</span>(res_hdf5)) {</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"Max abs diff (RAM vs HDF5):"</span>, <span class="fu">max</span>(<span class="fu">abs</span>(AB_inmem <span class="sc">-</span> res_hdf5)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">/** C++</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">------------------------------------------------------------</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">Block-wise HDF5 multiplication using BigDataStatMeth API</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">Adapts the pattern you provided (datasets A, B -&gt; C),</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">including open, create, multiply, and robust exception handling.</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">**/</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"BigDataStatMeth.h"</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> BigDataStatMeth<span class="op">;</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string filename      <span class="op">=</span> <span class="st">"ops_demo.h5"</span><span class="op">;</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string strsubgroupIn <span class="op">=</span> <span class="st">"ops"</span><span class="op">;</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string strsubgroupInB<span class="op">=</span> <span class="st">"ops"</span><span class="op">;</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string A             <span class="op">=</span> <span class="st">"A"</span><span class="op">;</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string B             <span class="op">=</span> <span class="st">"B"</span><span class="op">;</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string strsubgroupOut<span class="op">=</span> <span class="st">"ops"</span><span class="op">;</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string strdatasetOut <span class="op">=</span> <span class="st">"AB"</span><span class="op">;</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">bool</span> bforce   <span class="op">=</span> <span class="kw">true</span><span class="op">;</span>   <span class="co">// overwrite output dataset if exists</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">// multiplication options</span></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">bool</span> btransA  <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">bool</span> btransB  <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">bool</span> paral    <span class="op">=</span> <span class="kw">true</span><span class="op">;</span>    <span class="co">// enable parallel if available</span></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">int</span>  block_size <span class="op">=</span> <span class="dv">1024</span><span class="op">;</span>  <span class="co">// tune per system</span></span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">int</span>  threads    <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>     <span class="co">// tune per system</span></span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>  hdf5Dataset<span class="op">*</span> dsA <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>  hdf5Dataset<span class="op">*</span> dsB <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  hdf5Dataset<span class="op">*</span> dsC <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> <span class="op">{</span></span>
-<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    H5<span class="op">::</span>Exception<span class="op">::</span>dontPrint<span class="op">();</span></span>
-<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    dsA <span class="op">=</span> <span class="kw">new</span> hdf5Dataset<span class="op">(</span>filename<span class="op">,</span> strsubgroupIn<span class="op">,</span> A<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
-<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    dsA<span class="op">-&gt;</span>openDataset<span class="op">();</span></span>
-<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    dsB <span class="op">=</span> <span class="kw">new</span> hdf5Dataset<span class="op">(</span>filename<span class="op">,</span> strsubgroupInB<span class="op">,</span> B<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
-<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    dsB<span class="op">-&gt;</span>openDataset<span class="op">();</span></span>
-<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>dsA<span class="op">-&gt;</span>getDatasetptr<span class="op">()</span> <span class="op">!=</span> <span class="kw">nullptr</span> <span class="op">&amp;&amp;</span> dsB<span class="op">-&gt;</span>getDatasetptr<span class="op">()</span> <span class="op">!=</span> <span class="kw">nullptr</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>      dsC <span class="op">=</span> <span class="kw">new</span> hdf5Dataset<span class="op">(</span>filename<span class="op">,</span> strsubgroupOut<span class="op">,</span> strdatasetOut<span class="op">,</span> bforce<span class="op">);</span></span>
-<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>      BigDataStatMeth<span class="op">::</span>multiplication<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">,</span> btransA<span class="op">,</span> btransB<span class="op">,</span> paral<span class="op">,</span> block_size<span class="op">,</span> threads<span class="op">);</span></span>
-<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>      <span class="kw">delete</span> dsC<span class="op">;</span> dsC <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
-<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>    <span class="kw">delete</span> dsA<span class="op">;</span> dsA <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
-<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">delete</span> dsB<span class="op">;</span> dsB <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
-<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span>H5<span class="op">::</span>FileIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>    BigDataStatMeth<span class="op">::</span>checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">);</span></span>
-<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>    Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">C++ exception blockmult_hdf5 (File IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span>H5<span class="op">::</span>DataSetIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>    BigDataStatMeth<span class="op">::</span>checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">);</span></span>
-<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>    Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">C++ exception blockmult_hdf5 (DataSet IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">std::</span>exception<span class="op">&amp;</span> ex<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>    BigDataStatMeth<span class="op">::</span>checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">);</span></span>
-<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>    Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"C++ exception blockmult_hdf5: "</span> <span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">();</span></span>
-<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">catch</span> <span class="op">(...)</span> <span class="op">{</span></span>
-<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    BigDataStatMeth<span class="op">::</span>checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">);</span></span>
-<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>    Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"C++ exception blockmult_hdf5 (unknown reason)"</span><span class="op">;</span></span>
-<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">1</span><span class="op">;</span></span>
-<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">/** C++</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">------------------------------------------------------------</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">Block-wise HDF5 multiplication using BigDataStatMeth API</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">Adapts the pattern you provided (datasets A, B -&gt; C),</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">including open, create, multiply, and robust exception handling.</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">**/</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"BigDataStatMeth.h"</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> <span class="kw">namespace</span> BigDataStatMeth<span class="op">;</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string filename      <span class="op">=</span> <span class="st">"ops_demo.h5"</span><span class="op">;</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string strsubgroupIn <span class="op">=</span> <span class="st">"ops"</span><span class="op">;</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string strsubgroupInB<span class="op">=</span> <span class="st">"ops"</span><span class="op">;</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string A             <span class="op">=</span> <span class="st">"A"</span><span class="op">;</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string B             <span class="op">=</span> <span class="st">"B"</span><span class="op">;</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string strsubgroupOut<span class="op">=</span> <span class="st">"ops"</span><span class="op">;</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="bu">std::</span>string strdatasetOut <span class="op">=</span> <span class="st">"AB"</span><span class="op">;</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">bool</span> bforce   <span class="op">=</span> <span class="kw">true</span><span class="op">;</span>   <span class="co">// overwrite output dataset if exists</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">// multiplication options</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">bool</span> btransA  <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">bool</span> btransB  <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">bool</span> paral    <span class="op">=</span> <span class="kw">true</span><span class="op">;</span>    <span class="co">// enable parallel if available</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">int</span>  block_size <span class="op">=</span> <span class="dv">1024</span><span class="op">;</span>  <span class="co">// tune per system</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">const</span> <span class="dt">int</span>  threads    <span class="op">=</span> <span class="dv">4</span><span class="op">;</span>     <span class="co">// tune per system</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>  hdf5Dataset<span class="op">*</span> dsA <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>  hdf5Dataset<span class="op">*</span> dsB <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>  hdf5Dataset<span class="op">*</span> dsC <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>    H5<span class="op">::</span>Exception<span class="op">::</span>dontPrint<span class="op">();</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>    dsA <span class="op">=</span> <span class="kw">new</span> hdf5Dataset<span class="op">(</span>filename<span class="op">,</span> strsubgroupIn<span class="op">,</span> A<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    dsA<span class="op">-&gt;</span>openDataset<span class="op">();</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>    dsB <span class="op">=</span> <span class="kw">new</span> hdf5Dataset<span class="op">(</span>filename<span class="op">,</span> strsubgroupInB<span class="op">,</span> B<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>    dsB<span class="op">-&gt;</span>openDataset<span class="op">();</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>dsA<span class="op">-&gt;</span>getDatasetptr<span class="op">()</span> <span class="op">!=</span> <span class="kw">nullptr</span> <span class="op">&amp;&amp;</span> dsB<span class="op">-&gt;</span>getDatasetptr<span class="op">()</span> <span class="op">!=</span> <span class="kw">nullptr</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>      dsC <span class="op">=</span> <span class="kw">new</span> hdf5Dataset<span class="op">(</span>filename<span class="op">,</span> strsubgroupOut<span class="op">,</span> strdatasetOut<span class="op">,</span> bforce<span class="op">);</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>      BigDataStatMeth<span class="op">::</span>multiplication<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">,</span> btransA<span class="op">,</span> btransB<span class="op">,</span> paral<span class="op">,</span> block_size<span class="op">,</span> threads<span class="op">);</span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>      <span class="kw">delete</span> dsC<span class="op">;</span> dsC <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>    <span class="kw">delete</span> dsA<span class="op">;</span> dsA <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">delete</span> dsB<span class="op">;</span> dsB <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span>H5<span class="op">::</span>FileIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>    BigDataStatMeth<span class="op">::</span>checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">);</span></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>    Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">C++ exception blockmult_hdf5 (File IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span>H5<span class="op">::</span>DataSetIException<span class="op">&amp;</span> error<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>    BigDataStatMeth<span class="op">::</span>checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">);</span></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>    Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"</span><span class="sc">\n</span><span class="st">C++ exception blockmult_hdf5 (DataSet IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">std::</span>exception<span class="op">&amp;</span> ex<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>    BigDataStatMeth<span class="op">::</span>checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">);</span></span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>    Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"C++ exception blockmult_hdf5: "</span> <span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">();</span></span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span> <span class="cf">catch</span> <span class="op">(...)</span> <span class="op">{</span></span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>    BigDataStatMeth<span class="op">::</span>checkClose_file<span class="op">(</span>dsA<span class="op">,</span> dsB<span class="op">,</span> dsC<span class="op">);</span></span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>    Rcpp<span class="op">::</span>Rcerr <span class="op">&lt;&lt;</span> <span class="st">"C++ exception blockmult_hdf5 (unknown reason)"</span><span class="op">;</span></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -650,48 +669,61 @@ Tip
 <h2 class="anchored" data-anchor-id="mini-benchmark-ram-vs-hdf5">Mini benchmark: RAM vs HDF5</h2>
 <p>We compare three approaches for multiplying matrices: base R (<code>%*%</code>), <code>bdblockMult()</code> (in-memory), and <code>bdblockmult_hdf5()</code> (HDF5).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">40000</span>), <span class="at">nrow =</span> <span class="dv">200</span>, <span class="at">ncol =</span> <span class="dv">200</span>)  <span class="co"># 200x200</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">40000</span>), <span class="at">nrow =</span> <span class="dv">200</span>, <span class="at">ncol =</span> <span class="dv">200</span>)  <span class="co"># 200x200</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare HDF5 datasets (overwrite datasets if they exist)</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"ops_bench.h5"</span>, A, <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">dataset =</span> <span class="st">"A"</span>,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"ops_bench.h5"</span>, B, <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>,</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>bm_ops <span class="ot">&lt;-</span> <span class="fu">microbenchmark</span>(</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">base_R   =</span> A <span class="sc">%*%</span> B,</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">bd_mem   =</span> <span class="fu">bdblockMult</span>(A, B),</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">bd_hdf5  =</span> <span class="fu">bdblockmult_hdf5</span>(<span class="st">"ops_bench.h5"</span>,</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                              <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">A =</span> <span class="st">"A"</span>,</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>                              <span class="at">groupB =</span> <span class="st">"bench"</span>, <span class="at">B =</span> <span class="st">"B"</span>),</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">5</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>bm_ops</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(microbenchmark)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">40000</span>), <span class="at">nrow =</span> <span class="dv">200</span>, <span class="at">ncol =</span> <span class="dv">200</span>)  <span class="co"># 200x200</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">40000</span>), <span class="at">nrow =</span> <span class="dv">200</span>, <span class="at">ncol =</span> <span class="dv">200</span>)  <span class="co"># 200x200</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare HDF5 datasets (overwrite datasets if they exist)</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"ops_bench.h5"</span>, A, <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">dataset =</span> <span class="st">"A"</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "ops_bench.h5"
+
+$ds
+[1] "bench/A"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"ops_bench.h5"</span>, B, <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "ops_bench.h5"
+
+$ds
+[1] "bench/B"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>bm_ops <span class="ot">&lt;-</span> <span class="fu">microbenchmark</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">base_R   =</span> A <span class="sc">%*%</span> B,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">bd_mem   =</span> <span class="fu">bdblockMult</span>(A, B),</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">bd_hdf5  =</span> <span class="fu">bdblockmult_hdf5</span>(<span class="st">"ops_bench.h5"</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                              <span class="at">group =</span> <span class="st">"bench"</span>, <span class="at">A =</span> <span class="st">"A"</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">groupB =</span> <span class="st">"bench"</span>, <span class="at">B =</span> <span class="st">"B"</span>),</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">times =</span> <span class="dv">5</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>bm_ops</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Unit: microseconds
     expr      min       lq     mean   median       uq       max neval
-  base_R 2918.462 2919.815 2931.935 2930.188 2943.103  2948.105     5
-  bd_mem  271.912  382.735 3158.025  457.396 3452.077 11226.005     5
- bd_hdf5 2004.490 2080.668 4070.455 2142.742 2243.110 11881.267     5</code></pre>
+  base_R 2919.364 2924.120 2968.572 2942.734 3003.988  3052.655     5
+  bd_mem  349.402  599.174 1587.955  718.689 1371.983  4900.525     5
+ bd_hdf5 2079.766 2150.901 4093.005 2326.668 2359.099 11548.593     5</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Robust aggregation</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>s  <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(bm_ops)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ag <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(time <span class="sc">~</span> expr, <span class="at">data =</span> s, <span class="at">FUN =</span> median, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>ag<span class="sc">$</span>ms <span class="ot">&lt;-</span> ag<span class="sc">$</span>time <span class="sc">/</span> <span class="fl">1e6</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>ag <span class="ot">&lt;-</span> ag[<span class="fu">order</span>(ag<span class="sc">$</span>expr), ]</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>med_ops <span class="ot">&lt;-</span> <span class="fu">setNames</span>(ag<span class="sc">$</span>ms, ag<span class="sc">$</span>expr)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>rel_ops <span class="ot">&lt;-</span> med_ops <span class="sc">/</span> med_ops[<span class="st">"bd_mem"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Robust aggregation</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>s  <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(bm_ops)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>ag <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(time <span class="sc">~</span> expr, <span class="at">data =</span> s, <span class="at">FUN =</span> median, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>ag<span class="sc">$</span>ms <span class="ot">&lt;-</span> ag<span class="sc">$</span>time <span class="sc">/</span> <span class="fl">1e6</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>ag <span class="ot">&lt;-</span> ag[<span class="fu">order</span>(ag<span class="sc">$</span>expr), ]</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>med_ops <span class="ot">&lt;-</span> <span class="fu">setNames</span>(ag<span class="sc">$</span>ms, ag<span class="sc">$</span>expr)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>rel_ops <span class="ot">&lt;-</span> med_ops <span class="sc">/</span> med_ops[<span class="st">"bd_mem"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Median times (ms):</strong><br>
-- <code>bdblockMult()</code> (RAM): <strong>0.457</strong><br>
-- base R <code>%*%</code>: <strong>2.93</strong><br>
-- <code>bdblockmult_hdf5()</code> (HDF5): <strong>2.143</strong></p>
-<p>Compared to <code>bdblockMult()</code> (in-memory), HDF5 is <strong>4.685 ×</strong> slower and base R is <strong>6.406 ×</strong> slower/faster (depending on your machine). This difference is expected due to disk I/O, and the benefit is that HDF5 scales to matrices much larger than RAM.</p>
+- <code>bdblockMult()</code> (RAM): <strong>0.719</strong><br>
+- base R <code>%*%</code>: <strong>2.943</strong><br>
+- <code>bdblockmult_hdf5()</code> (HDF5): <strong>2.327</strong></p>
+<p>Compared to <code>bdblockMult()</code> (in-memory), HDF5 is <strong>3.237 ×</strong> slower and base R is <strong>4.095 ×</strong> slower/faster (depending on your machine). This difference is expected due to disk I/O, and the benefit is that HDF5 scales to matrices much larger than RAM.</p>
 <hr>
 </section>
 <section id="data-flow-visual" class="level2">

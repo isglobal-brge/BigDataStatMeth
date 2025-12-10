@@ -441,17 +441,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"data"</span>,</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"matrix"</span>,</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the structure using rhdf5 (for visualization)</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5ls</span>(<span class="st">"example.h5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>    group            name       otype  dclass         dim
-0       /          OUTPUT   H5I_GROUP                    
-1 /OUTPUT CrossProd_X_x_X H5I_DATASET   FLOAT 1000 x 1000
-2       /            data   H5I_GROUP                    
-3   /data               X H5I_DATASET   FLOAT 1000 x 1000
-4   /data          matrix H5I_DATASET INTEGER       3 x 3</code></pre>
+<pre><code>$fn
+[1] "example.h5"
+
+$ds
+[1] "data/matrix"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the structure using rhdf5 (for visualization)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5ls</span>(<span class="st">"example.h5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  group   name       otype  dclass   dim
+0     /   data   H5I_GROUP              
+1 /data matrix H5I_DATASET INTEGER 3 x 3</code></pre>
 </div>
 </div>
 <p>The output shows the hierarchical organization of the file, confirming that <code>data/matrix</code> is a dataset stored within the group <code>/data</code>.</p>

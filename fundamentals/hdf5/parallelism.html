@@ -428,12 +428,12 @@ Tip
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(res1 <span class="ot">&lt;-</span> <span class="fu">bdblockMult</span>(A, B, <span class="at">threads =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.069   0.001   0.011 </code></pre>
+  0.000   0.001   0.000 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(res2 <span class="ot">&lt;-</span> <span class="fu">bdblockMult</span>(A, B, <span class="at">threads =</span> <span class="dv">4</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.008   0.001   0.001 </code></pre>
+      0       0       0 </code></pre>
 </div>
 </div>
 </div>
@@ -625,20 +625,33 @@ If data fit easily in memory, the cost of splitting, scheduling, and combining t
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create HDF5 files</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"par_demo.h5"</span>, A, <span class="at">group =</span> <span class="st">"demo"</span>, <span class="at">dataset =</span> <span class="st">"A"</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"par_demo.h5"</span>, B, <span class="at">group =</span> <span class="st">"demo"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Run block-wise multiplication using multiple threads</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bdblockmult_hdf5</span>(<span class="st">"par_demo.h5"</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                   <span class="at">group =</span> <span class="st">"demo"</span>, <span class="at">A =</span> <span class="st">"A"</span>,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                   <span class="at">groupB =</span> <span class="st">"demo"</span>, <span class="at">B =</span> <span class="st">"B"</span>,</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>                   <span class="at">block_size =</span> <span class="dv">128</span>, <span class="at">threads =</span> <span class="dv">4</span>)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "par_demo.h5"
+
+$ds
+[1] "demo/A"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="st">"par_demo.h5"</span>, B, <span class="at">group =</span> <span class="st">"demo"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">FALSE</span>, <span class="at">overwriteDataset =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "par_demo.h5"
+
+$ds
+[1] "demo/B"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run block-wise multiplication using multiple threads</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bdblockmult_hdf5</span>(<span class="st">"par_demo.h5"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">group =</span> <span class="st">"demo"</span>, <span class="at">A =</span> <span class="st">"A"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">groupB =</span> <span class="st">"demo"</span>, <span class="at">B =</span> <span class="st">"B"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">block_size =</span> <span class="dv">128</span>, <span class="at">threads =</span> <span class="dv">4</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.003   0.001   0.005 </code></pre>
+  0.003   0.001   0.004 </code></pre>
 </div>
 </div>
 <p>This function automatically distributes block computations across available threads while reading and writing data directly from HDF5.</p>

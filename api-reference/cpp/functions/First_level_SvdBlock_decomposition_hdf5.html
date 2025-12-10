@@ -248,38 +248,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dataset.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dataset</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dataset</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DatasetInternal</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DatasetInternal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DatasetInternal</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5DiagonalMatrix</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5DiagonalMatrix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5DiagonalMatrix</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Dims.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Dims</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Dims.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Dims</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5File.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5File</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5File.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5File</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../api-reference/cpp/classes/BigDataStatMeth::hdf5Group.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">BigDataStatMeth::hdf5Group</span></a>
+  <a href="../../../api-reference/cpp/classes/hdf5Group.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">hdf5Group</span></a>
   </div>
 </li>
       </ul>
@@ -1503,7 +1503,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><strong>File:</strong> <code>inst/include/hdf5Algebra/matrixSvdBlock.hpp</code> • <strong>Lines 238-466</strong></p>
+<p><strong>File:</strong> <code>inst/include/hdf5Algebra/matrixSvdBlock.hpp</code> • <strong>Lines 238-467</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> <span class="dt">void</span> First_level_SvdBlock_decomposition_hdf5<span class="op">(</span> T<span class="op">*</span> dsA<span class="op">,</span> <span class="bu">std::</span>string strGroupName<span class="op">,</span> <span class="dt">int</span> k<span class="op">,</span> <span class="dt">int</span> q<span class="op">,</span> <span class="dt">int</span> nev<span class="op">,</span> <span class="dt">bool</span> bcenter<span class="op">,</span> <span class="dt">bool</span> bscale<span class="op">,</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                             <span class="dt">double</span> dthreshold<span class="op">,</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> threads <span class="op">=</span> R_NilValue<span class="op">)</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
@@ -1651,88 +1651,89 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>                    Eigen<span class="op">::</span>MatrixXd u <span class="op">=</span> <span class="op">(</span>retsvd<span class="op">.</span>u<span class="op">).</span>block<span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="op">(</span>retsvd<span class="op">.</span>u<span class="op">).</span>rows<span class="op">(),</span> isize<span class="op">);</span></span>
 <span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span><span class="op">(</span> u<span class="op">.</span>size<span class="op">()</span> <span class="op">&lt;</span> MAXELEMSINBLOCK <span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>                        restmp <span class="op">=</span> u<span class="op">*</span>d<span class="op">;</span></span>
-<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span><span class="op">{</span></span>
-<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>                        restmp <span class="op">=</span> Rcpp_block_matrix_mul<span class="op">(</span> u<span class="op">,</span> d<span class="op">,</span> R_NilValue<span class="op">);</span></span>
-<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
-<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
-<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>                paralPos<span class="op">[</span>i<span class="op">].</span>write_count <span class="op">=</span> <span class="op">{(</span><span class="dt">hsize_t</span><span class="op">)</span>restmp<span class="op">.</span>rows<span class="op">(),</span> <span class="op">(</span><span class="dt">hsize_t</span><span class="op">)</span>restmp<span class="op">.</span>cols<span class="op">()};</span></span>
-<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>                <span class="co">//    d) Write results to hdf5 file</span></span>
-<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>                <span class="pp">#pragma omp ordered</span></span>
-<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
-<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>                    <span class="pp">#pragma omp critical(accessFile)</span></span>
-<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>                    <span class="op">{</span></span>
-<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span><span class="op">(</span> i<span class="op">%(</span>M<span class="op">/</span>k<span class="op">)</span> <span class="op">==</span> <span class="dv">0</span> <span class="op">||</span> <span class="op">(</span> <span class="op">(</span>i<span class="op">%(</span>M<span class="op">/</span>k<span class="op">)</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span>  <span class="op">!</span>exists_HDF5_element<span class="op">(</span>dsA<span class="op">-&gt;</span>getFileptr<span class="op">(),</span>  paralPos<span class="op">[</span>i<span class="op">].</span>strDatasetName <span class="op">))</span> <span class="op">)</span> <span class="op">)</span></span>
-<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>                        <span class="op">{</span></span>
-<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>                            unlimDataset <span class="op">=</span> <span class="kw">new</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">(</span>dsA<span class="op">-&gt;</span>getFullPath<span class="op">(),</span> paralPos<span class="op">[</span>i<span class="op">].</span>strDatasetName<span class="op">,</span> <span class="kw">true</span> <span class="op">);</span></span>
-<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>                            unlimDataset<span class="op">-&gt;</span>createUnlimitedDataset<span class="op">(</span>paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">[</span><span class="dv">0</span><span class="op">],</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">[</span><span class="dv">1</span><span class="op">],</span> <span class="st">"real"</span><span class="op">);</span></span>
-<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>                            <span class="kw">delete</span> unlimDataset<span class="op">;</span> unlimDataset <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
-<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>                            paralPos<span class="op">[</span>i<span class="op">].</span>write_offset <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
-<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a>                        unlimDataset <span class="op">=</span> <span class="kw">new</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">(</span>dsA<span class="op">-&gt;</span>getFullPath<span class="op">(),</span> paralPos<span class="op">[</span>i<span class="op">].</span>strDatasetName<span class="op">,</span> <span class="kw">true</span> <span class="op">);</span></span>
-<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>                        unlimDataset<span class="op">-&gt;</span>openDataset<span class="op">();</span></span>
-<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// Extend dataset before to put the data</span></span>
-<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span><span class="op">((</span>i<span class="op">%(</span>M<span class="op">/</span>k<span class="op">))</span> <span class="op">!=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_offset <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>                            unlimDataset<span class="op">-&gt;</span>extendUnlimitedDataset<span class="op">(</span><span class="dv">0</span><span class="op">,</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">);</span></span>
-<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
-<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// std::vector&lt;double&gt; vtmpc(restmp.data(), restmp.data() + restmp.rows() * restmp.cols());</span></span>
-<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>                        unlimDataset<span class="op">-&gt;</span>writeDatasetBlock<span class="op">(</span> Rcpp<span class="op">::</span>wrap<span class="op">(</span>restmp<span class="op">),</span> <span class="op">{</span><span class="dv">0</span><span class="op">,</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_offset<span class="op">},</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">,</span> paralPos<span class="op">[</span>i<span class="op">].</span>stride<span class="op">,</span> paralPos<span class="op">[</span>i<span class="op">].</span>block<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
-<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>                        <span class="kw">delete</span> unlimDataset<span class="op">;</span> unlimDataset <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
-<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span><span class="op">(</span> i<span class="op">&lt;</span>M<span class="op">-</span><span class="dv">1</span> <span class="op">)</span></span>
-<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>                            paralPos<span class="op">[</span>i<span class="op">+</span><span class="dv">1</span><span class="op">].</span>write_offset <span class="op">=</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_offset <span class="op">+</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">[</span><span class="dv">1</span><span class="op">];</span></span>
-<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
-<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
-<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>bcenter<span class="op">==</span><span class="kw">true</span> <span class="op">||</span> bscale<span class="op">==</span><span class="kw">true</span><span class="op">)</span> <span class="op">{</span> </span>
-<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a>            <span class="kw">delete</span> normalizedData<span class="op">;</span> normalizedData <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
-<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>FileIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
-<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
-<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (File IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>DataSetIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
-<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
-<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSet IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>GroupIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
-<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
-<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (Group IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>DataTypeIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
-<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
-<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (DataType IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>DataSpaceIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
-<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
-<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSpace IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
-<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception First_level_SvdBlock_decomposition_hdf5 </span><span class="sc">\n</span><span class="st">"</span><span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">();</span></span>
-<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span> <span class="op">(...)</span> <span class="op">{</span></span>
-<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
-<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">C++ exception First_level_SvdBlock_decomposition_hdf5 (unknown reason)"</span><span class="op">;</span></span>
-<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// if( u.size() &lt; MAXELEMSINBLOCK ) {</span></span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span><span class="kw">static_cast</span><span class="op">&lt;</span><span class="dt">hsize_t</span><span class="op">&gt;(</span>u<span class="op">.</span>size<span class="op">())</span> <span class="op">&lt;</span> MAXELEMSINBLOCK<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>                        restmp <span class="op">=</span> u<span class="op">*</span>d<span class="op">;</span></span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span> <span class="cf">else</span><span class="op">{</span></span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>                        restmp <span class="op">=</span> Rcpp_block_matrix_mul<span class="op">(</span> u<span class="op">,</span> d<span class="op">,</span> R_NilValue<span class="op">);</span></span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>                paralPos<span class="op">[</span>i<span class="op">].</span>write_count <span class="op">=</span> <span class="op">{(</span><span class="dt">hsize_t</span><span class="op">)</span>restmp<span class="op">.</span>rows<span class="op">(),</span> <span class="op">(</span><span class="dt">hsize_t</span><span class="op">)</span>restmp<span class="op">.</span>cols<span class="op">()};</span></span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>                <span class="co">//    d) Write results to hdf5 file</span></span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>                <span class="pp">#pragma omp ordered</span></span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>                    <span class="pp">#pragma omp critical(accessFile)</span></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>                    <span class="op">{</span></span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span><span class="op">(</span> i<span class="op">%(</span>M<span class="op">/</span>k<span class="op">)</span> <span class="op">==</span> <span class="dv">0</span> <span class="op">||</span> <span class="op">(</span> <span class="op">(</span>i<span class="op">%(</span>M<span class="op">/</span>k<span class="op">)</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span>  <span class="op">!</span>exists_HDF5_element<span class="op">(</span>dsA<span class="op">-&gt;</span>getFileptr<span class="op">(),</span>  paralPos<span class="op">[</span>i<span class="op">].</span>strDatasetName <span class="op">))</span> <span class="op">)</span> <span class="op">)</span></span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>                        <span class="op">{</span></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>                            unlimDataset <span class="op">=</span> <span class="kw">new</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">(</span>dsA<span class="op">-&gt;</span>getFullPath<span class="op">(),</span> paralPos<span class="op">[</span>i<span class="op">].</span>strDatasetName<span class="op">,</span> <span class="kw">true</span> <span class="op">);</span></span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>                            unlimDataset<span class="op">-&gt;</span>createUnlimitedDataset<span class="op">(</span>paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">[</span><span class="dv">0</span><span class="op">],</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">[</span><span class="dv">1</span><span class="op">],</span> <span class="st">"real"</span><span class="op">);</span></span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>                            <span class="kw">delete</span> unlimDataset<span class="op">;</span> unlimDataset <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>                            paralPos<span class="op">[</span>i<span class="op">].</span>write_offset <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>                        unlimDataset <span class="op">=</span> <span class="kw">new</span> BigDataStatMeth<span class="op">::</span>hdf5DatasetInternal<span class="op">(</span>dsA<span class="op">-&gt;</span>getFullPath<span class="op">(),</span> paralPos<span class="op">[</span>i<span class="op">].</span>strDatasetName<span class="op">,</span> <span class="kw">true</span> <span class="op">);</span></span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>                        unlimDataset<span class="op">-&gt;</span>openDataset<span class="op">();</span></span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// Extend dataset before to put the data</span></span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span><span class="op">((</span>i<span class="op">%(</span>M<span class="op">/</span>k<span class="op">))</span> <span class="op">!=</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_offset <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>                            unlimDataset<span class="op">-&gt;</span>extendUnlimitedDataset<span class="op">(</span><span class="dv">0</span><span class="op">,</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">[</span><span class="dv">1</span><span class="op">]</span> <span class="op">);</span></span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>                        <span class="op">}</span></span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>                        <span class="co">// std::vector&lt;double&gt; vtmpc(restmp.data(), restmp.data() + restmp.rows() * restmp.cols());</span></span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>                        unlimDataset<span class="op">-&gt;</span>writeDatasetBlock<span class="op">(</span> Rcpp<span class="op">::</span>wrap<span class="op">(</span>restmp<span class="op">),</span> <span class="op">{</span><span class="dv">0</span><span class="op">,</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_offset<span class="op">},</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">,</span> paralPos<span class="op">[</span>i<span class="op">].</span>stride<span class="op">,</span> paralPos<span class="op">[</span>i<span class="op">].</span>block<span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>                        <span class="kw">delete</span> unlimDataset<span class="op">;</span> unlimDataset <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">if</span><span class="op">(</span> i<span class="op">&lt;</span>M<span class="op">-</span><span class="dv">1</span> <span class="op">)</span></span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>                            paralPos<span class="op">[</span>i<span class="op">+</span><span class="dv">1</span><span class="op">].</span>write_offset <span class="op">=</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_offset <span class="op">+</span> paralPos<span class="op">[</span>i<span class="op">].</span>write_count<span class="op">[</span><span class="dv">1</span><span class="op">];</span></span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>bcenter<span class="op">==</span><span class="kw">true</span> <span class="op">||</span> bscale<span class="op">==</span><span class="kw">true</span><span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>            <span class="kw">delete</span> normalizedData<span class="op">;</span> normalizedData <span class="op">=</span> <span class="kw">nullptr</span><span class="op">;</span></span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>FileIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (File IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>DataSetIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSet IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>GroupIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (Group IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>DataTypeIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (DataType IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span> H5<span class="op">::</span>DataSpaceIException<span class="op">&amp;</span> error <span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSpace IException)</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(</span><span class="bu">std::</span>exception <span class="op">&amp;</span>ex<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
+<span id="cb2-219"><a href="#cb2-219" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"c++ exception First_level_SvdBlock_decomposition_hdf5 </span><span class="sc">\n</span><span class="st">"</span><span class="op">&lt;&lt;</span> ex<span class="op">.</span>what<span class="op">();</span></span>
+<span id="cb2-220"><a href="#cb2-220" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span> <span class="op">(...)</span> <span class="op">{</span></span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a>        checkClose_file<span class="op">(</span>dsA<span class="op">,</span> unlimDataset<span class="op">,</span> normalizedData<span class="op">);</span></span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a>        Rcpp<span class="op">::</span>Rcerr<span class="op">&lt;&lt;</span><span class="st">"</span><span class="sc">\n</span><span class="st">C++ exception First_level_SvdBlock_decomposition_hdf5 (unknown reason)"</span><span class="op">;</span></span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
-<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dt">void</span><span class="op">();</span></span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-230"><a href="#cb2-230" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
