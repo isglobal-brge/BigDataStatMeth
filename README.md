@@ -1,4 +1,4 @@
-# BigDataStatMeth <img src="man/figures/logo.svg" align="right" height="139" alt="" />
+# BigDataStatMeth <!-- <img src="man/figures/logo.svg" align="right" height="139" alt="" /> -->
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/BigDataStatMeth)](https://CRAN.R-project.org/package=BigDataStatMeth)
