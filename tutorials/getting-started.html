@@ -1,0 +1,2257 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Getting Started – BigDataStatMeth</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../assets/favicon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-969ddfa49e00a70eb3423444dbc81f6c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-d0f1cdce0779274a5ec1152cd33adb41.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-d6747531eee53fd58085a197f3afc013.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d0f1cdce0779274a5ec1152cd33adb41.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../assets/css/custom.css">
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/images/logo.png" alt="" class="navbar-logo light-content">
+    <img src="../assets/images/logo.png" alt="" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">BigDataStatMeth</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-fundamentals" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Fundamentals</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-fundamentals">    
+        <li>
+    <a class="dropdown-item" href="../fundamentals/big-data-problem.html">
+ <span class="dropdown-text">The Big Data Problem</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../fundamentals/understanding-hdf5.html">
+ <span class="dropdown-text">Understanding HDF5</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../fundamentals/blockwise-computing.html">
+ <span class="dropdown-text">Block-Wise Computing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../fundamentals/linear-algebra.html">
+ <span class="dropdown-text">Linear Algebra Essentials</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tutorials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Tutorials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tutorials">    
+        <li>
+    <a class="dropdown-item" href="../tutorials/getting-started.html">
+ <span class="dropdown-text">Getting Started</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../tutorials/working-hdf5-matrices.html">
+ <span class="dropdown-text">Working with HDF5 Matrices</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../tutorials/first-analysis.html">
+ <span class="dropdown-text">Your First Analysis</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-workflows" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Workflows</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-workflows">    
+        <li>
+    <a class="dropdown-item" href="../workflows/implementing-pca.html">
+ <span class="dropdown-text">Implementing PCA</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workflows/implementing-cca.html">
+ <span class="dropdown-text">Implementing CCA</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../workflows/cross-platform.html">
+ <span class="dropdown-text">Cross-Platform Workflows</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developing-methods" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Developing Methods</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-developing-methods">    
+        <li>
+    <a class="dropdown-item" href="../developing-methods/cca-r-implementation.html">
+ <span class="dropdown-text">CCA in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../developing-methods/cca-cpp-implementation.html">
+ <span class="dropdown-text">CCA in C++</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-api-reference" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">API Reference</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-api-reference">    
+        <li>
+    <a class="dropdown-item" href="../api-reference/r/index.html">
+ <span class="dropdown-text">R Functions</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../api-reference/cpp/index.html">
+ <span class="dropdown-text">C++ API</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../technical/performance.html"> 
+<span class="menu-text">Technical</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/isglobal-brge/BigDataStatMeth"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://cran.r-project.org/package=BigDataStatMeth"> 
+<span class="menu-text">CRAN</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/getting-started.html">Getting Started</a></li><li class="breadcrumb-item"><a href="../tutorials/getting-started.html">Getting Started</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Getting Started</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/getting-started.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Getting Started</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/working-hdf5-matrices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Working with HDF5 Matrices</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/first-analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Your First Analysis</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a>
+  <ul class="collapse">
+  <li><a href="#what-youll-learn" id="toc-what-youll-learn" class="nav-link" data-scroll-target="#what-youll-learn"><span class="header-section-number">1.1</span> What You’ll Learn</a></li>
+  </ul></li>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites"><span class="header-section-number">2</span> Prerequisites</a>
+  <ul class="collapse">
+  <li><a href="#system-requirements" id="toc-system-requirements" class="nav-link" data-scroll-target="#system-requirements"><span class="header-section-number">2.1</span> System Requirements</a></li>
+  </ul></li>
+  <li><a href="#step-1-install-dependencies" id="toc-step-1-install-dependencies" class="nav-link" data-scroll-target="#step-1-install-dependencies"><span class="header-section-number">3</span> Step 1: Install Dependencies</a>
+  <ul class="collapse">
+  <li><a href="#install-biocmanager" id="toc-install-biocmanager" class="nav-link" data-scroll-target="#install-biocmanager"><span class="header-section-number">3.1</span> Install BiocManager</a></li>
+  <li><a href="#install-required-packages" id="toc-install-required-packages" class="nav-link" data-scroll-target="#install-required-packages"><span class="header-section-number">3.2</span> Install Required Packages</a></li>
+  </ul></li>
+  <li><a href="#step-2-install-bigdatastatmeth" id="toc-step-2-install-bigdatastatmeth" class="nav-link" data-scroll-target="#step-2-install-bigdatastatmeth"><span class="header-section-number">4</span> Step 2: Install BigDataStatMeth</a>
+  <ul class="collapse">
+  <li><a href="#from-cran-recommended---stable-version" id="toc-from-cran-recommended---stable-version" class="nav-link" data-scroll-target="#from-cran-recommended---stable-version"><span class="header-section-number">4.1</span> From CRAN (Recommended - Stable Version)</a></li>
+  <li><a href="#from-github-development-version" id="toc-from-github-development-version" class="nav-link" data-scroll-target="#from-github-development-version"><span class="header-section-number">4.2</span> From GitHub (Development Version)</a></li>
+  </ul></li>
+  <li><a href="#step-3-load-and-verify" id="toc-step-3-load-and-verify" class="nav-link" data-scroll-target="#step-3-load-and-verify"><span class="header-section-number">5</span> Step 3: Load and Verify</a>
+  <ul class="collapse">
+  <li><a href="#load-the-package" id="toc-load-the-package" class="nav-link" data-scroll-target="#load-the-package"><span class="header-section-number">5.1</span> Load the Package</a></li>
+  <li><a href="#quick-verification" id="toc-quick-verification" class="nav-link" data-scroll-target="#quick-verification"><span class="header-section-number">5.2</span> Quick Verification</a></li>
+  </ul></li>
+  <li><a href="#step-4-your-first-hdf5-dataset" id="toc-step-4-your-first-hdf5-dataset" class="nav-link" data-scroll-target="#step-4-your-first-hdf5-dataset"><span class="header-section-number">6</span> Step 4: Your First HDF5 Dataset</a>
+  <ul class="collapse">
+  <li><a href="#create-sample-data" id="toc-create-sample-data" class="nav-link" data-scroll-target="#create-sample-data"><span class="header-section-number">6.1</span> Create Sample Data</a></li>
+  <li><a href="#save-to-hdf5" id="toc-save-to-hdf5" class="nav-link" data-scroll-target="#save-to-hdf5"><span class="header-section-number">6.2</span> Save to HDF5</a></li>
+  <li><a href="#inspect-the-file" id="toc-inspect-the-file" class="nav-link" data-scroll-target="#inspect-the-file"><span class="header-section-number">6.3</span> Inspect the File</a></li>
+  <li><a href="#read-data-back" id="toc-read-data-back" class="nav-link" data-scroll-target="#read-data-back"><span class="header-section-number">6.4</span> Read Data Back</a></li>
+  </ul></li>
+  <li><a href="#step-5-basic-operations" id="toc-step-5-basic-operations" class="nav-link" data-scroll-target="#step-5-basic-operations"><span class="header-section-number">7</span> Step 5: Basic Operations</a>
+  <ul class="collapse">
+  <li><a href="#matrix-multiplication" id="toc-matrix-multiplication" class="nav-link" data-scroll-target="#matrix-multiplication"><span class="header-section-number">7.1</span> Matrix Multiplication</a></li>
+  <li><a href="#crossproduct-operation" id="toc-crossproduct-operation" class="nav-link" data-scroll-target="#crossproduct-operation"><span class="header-section-number">7.2</span> Crossproduct Operation</a></li>
+  </ul></li>
+  <li><a href="#step-6-clean-up" id="toc-step-6-clean-up" class="nav-link" data-scroll-target="#step-6-clean-up"><span class="header-section-number">8</span> Step 6: Clean Up</a></li>
+  <li><a href="#interactive-exercise" id="toc-interactive-exercise" class="nav-link" data-scroll-target="#interactive-exercise"><span class="header-section-number">9</span> Interactive Exercise</a>
+  <ul class="collapse">
+  <li><a href="#practice-creating-your-own-hdf5-workflow" id="toc-practice-creating-your-own-hdf5-workflow" class="nav-link" data-scroll-target="#practice-creating-your-own-hdf5-workflow"><span class="header-section-number">9.1</span> Practice: Creating Your Own HDF5 Workflow</a></li>
+  </ul></li>
+  <li><a href="#what-youve-accomplished" id="toc-what-youve-accomplished" class="nav-link" data-scroll-target="#what-youve-accomplished"><span class="header-section-number">10</span> What You’ve Accomplished</a></li>
+  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps"><span class="header-section-number">11</span> Next Steps</a></li>
+  <li><a href="#getting-help" id="toc-getting-help" class="nav-link" data-scroll-target="#getting-help"><span class="header-section-number">12</span> Getting Help</a></li>
+  <li><a href="#key-takeaways" id="toc-key-takeaways" class="nav-link" data-scroll-target="#key-takeaways"><span class="header-section-number">13</span> Key Takeaways</a>
+  <ul class="collapse">
+  <li><a href="#essential-concepts" id="toc-essential-concepts" class="nav-link" data-scroll-target="#essential-concepts"><span class="header-section-number">13.1</span> Essential Concepts</a></li>
+  <li><a href="#when-to-use-bigdatastatmeth" id="toc-when-to-use-bigdatastatmeth" class="nav-link" data-scroll-target="#when-to-use-bigdatastatmeth"><span class="header-section-number">13.2</span> When to Use BigDataStatMeth</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/edit/main/tutorials/getting-started.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../tutorials/getting-started.html">Getting Started</a></li><li class="breadcrumb-item"><a href="../tutorials/getting-started.html">Getting Started</a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Getting Started</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Installation and First Steps with BigDataStatMeth</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1</span> Overview</h2>
+<p>BigDataStatMeth enables statistical analysis on datasets too large for RAM by using HDF5 file storage and block-wise processing. This tutorial guides you through installation and your first analysis, ensuring you have a working environment before diving into more complex operations.</p>
+<p>Think of this as setting up your laboratory bench before starting experiments. You’ll verify that all your tools work correctly with small, manageable examples before scaling to real big data analyses. This approach prevents frustrating debugging sessions later when you’re working with large files.</p>
+<section id="what-youll-learn" class="level3 learning-objectives" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="what-youll-learn"><span class="header-section-number">1.1</span> What You’ll Learn</h3>
+<p>By the end of this tutorial, you will:</p>
+<ul>
+<li>Install BigDataStatMeth and all required dependencies correctly</li>
+<li>Create your first HDF5 matrix from R data</li>
+<li>Perform basic matrix operations on HDF5-stored data</li>
+<li>Understand the HDF5 file structure and how to navigate it</li>
+<li>Verify your installation works correctly with test examples</li>
+<li>Know where to find help when you encounter issues</li>
+<li>Be prepared for more advanced tutorials</li>
+</ul>
+</section>
+<hr>
+</section>
+<section id="prerequisites" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="prerequisites"><span class="header-section-number">2</span> Prerequisites</h2>
+<section id="system-requirements" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="system-requirements"><span class="header-section-number">2.1</span> System Requirements</h3>
+<p><strong>Operating System:</strong> - Linux (recommended) - macOS - Windows (requires Rtools - see below)</p>
+<p><strong>R Version:</strong> - R ≥ 4.0.0 (check with <code>R.version.string</code>)</p>
+<p><strong>RAM:</strong> - Minimum: 4 GB - Recommended: 8+ GB for comfortable work</p>
+<p><strong>Disk Space:</strong> - ~500 MB for package and dependencies - Additional space for your HDF5 data files</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Windows Users: Install Rtools First
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>BigDataStatMeth is compiled from C++ source code. Windows users must install <a href="https://cran.r-project.org/bin/windows/Rtools/">Rtools</a> <strong>before</strong> installing the package.</p>
+<p>Download the version matching your R installation from the link above.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="step-1-install-dependencies" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="step-1-install-dependencies"><span class="header-section-number">3</span> Step 1: Install Dependencies</h2>
+<p>BigDataStatMeth requires packages from both CRAN and Bioconductor.</p>
+<section id="install-biocmanager" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="install-biocmanager"><span class="header-section-number">3.1</span> Install BiocManager</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BiocManager helps install Bioconductor packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="install-required-packages" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="install-required-packages"><span class="header-section-number">3.2</span> Install Required Packages</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CRAN packages</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"Matrix"</span>, <span class="st">"RcppEigen"</span>, <span class="st">"RSpectra"</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Bioconductor packages  </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="fu">c</span>(<span class="st">"rhdf5"</span>, <span class="st">"HDF5Array"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Troubleshooting Dependencies
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If installation fails:</p>
+<ol type="1">
+<li><strong>Update R:</strong> Some packages require recent R versions</li>
+<li><strong>Update BiocManager:</strong> Run <code>BiocManager::install()</code> with no arguments</li>
+<li><strong>Check compilation tools:</strong> Especially on Windows/macOS</li>
+<li><strong>Installation logs:</strong> Look for specific error messages about missing libraries</li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="step-2-install-bigdatastatmeth" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="step-2-install-bigdatastatmeth"><span class="header-section-number">4</span> Step 2: Install BigDataStatMeth</h2>
+<section id="from-cran-recommended---stable-version" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="from-cran-recommended---stable-version"><span class="header-section-number">4.1</span> From CRAN (Recommended - Stable Version)</h3>
+<p>The stable version is available on CRAN:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"BigDataStatMeth"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This installs the latest stable, tested release.</p>
+</section>
+<section id="from-github-development-version" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="from-github-development-version"><span class="header-section-number">4.2</span> From GitHub (Development Version)</h3>
+<p>For the latest development features:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install devtools if needed</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"devtools"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"devtools"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Install development version from GitHub</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"isglobal-brge/BigDataStatMeth"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Which Version Should I Use?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Use CRAN version if:</strong> - You want maximum stability - You’re doing production analysis - You prefer well-tested releases</p>
+<p><strong>Use GitHub version if:</strong> - You need the latest features - You’re contributing to development - You want to test new functionality</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="step-3-load-and-verify" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="step-3-load-and-verify"><span class="header-section-number">5</span> Step 3: Load and Verify</h2>
+<section id="load-the-package" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="load-the-package"><span class="header-section-number">5.1</span> Load the Package</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>If no errors appear, the package loaded successfully!</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>About Loading rhdf5
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You might see examples that load <code>library(rhdf5)</code>. This is <strong>only necessary</strong> when you use rhdf5 functions directly like <code>h5ls()</code>, <code>h5read()</code>, or <code>H5Fopen()</code>.</p>
+<p>BigDataStatMeth already depends on rhdf5 internally, so you don’t need to load it for BigDataStatMeth functions. However, in this tutorial we’ll use some rhdf5 functions for file inspection, so we’ll load it when needed.</p>
+<p><strong>Key point:</strong> BigDataStatMeth implements its own high-level functions. We use rhdf5’s inspection functions because they’re already excellent and there’s no need to reimplement them.</p>
+</div>
+</div>
+</section>
+<section id="quick-verification" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="quick-verification"><span class="header-section-number">5.2</span> Quick Verification</h3>
+<p>Run this simple test to verify everything works:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a small test matrix</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>test_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">10</span>, <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create HDF5 file</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>test_file <span class="ot">&lt;-</span> <span class="st">"verification_test.hdf5"</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> test_file,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> test_matrix,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"test"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"data"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "verification_test.hdf5"
+
+$ds
+[1] "test/data"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify file was created</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(test_file)) {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"✓ Installation verified!</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"✓ HDF5 file created successfully</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Clean up</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.remove</span>(test_file)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"✗ Installation issue - file not created</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Installation verified!
+✓ HDF5 file created successfully</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p><strong>Expected output:</strong></p>
+<pre><code>✓ Installation verified!
+✓ HDF5 file created successfully</code></pre>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>If Verification Fails
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Common issues:</p>
+<ul>
+<li><strong>“Package not found”:</strong> Restart R session</li>
+<li><strong>“HDF5 library error”:</strong> Reinstall <code>rhdf5</code> package<br>
+</li>
+<li><strong>Permission denied:</strong> Check write permissions in working directory</li>
+<li><strong>Symbol not found:</strong> Recompile package from source</li>
+</ul>
+<p>Try <code>sessionInfo()</code> to check loaded packages and versions.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="step-4-your-first-hdf5-dataset" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="step-4-your-first-hdf5-dataset"><span class="header-section-number">6</span> Step 4: Your First HDF5 Dataset</h2>
+<p>Now let’s create a realistic dataset and perform basic operations.</p>
+<section id="create-sample-data" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="create-sample-data"><span class="header-section-number">6.1</span> Create Sample Data</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate a genomic dataset: 1,000 samples × 5,000 SNPs</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>n_snps <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>genotype_data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>, n_samples <span class="sc">*</span> n_snps, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> n_samples,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> n_snps</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Add meaningful row/column names</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(genotype_data) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Sample_"</span>, <span class="dv">1</span><span class="sc">:</span>n_samples)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(genotype_data) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"SNP_"</span>, <span class="dv">1</span><span class="sc">:</span>n_snps)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Check size</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>(<span class="fu">object.size</span>(genotype_data), <span class="at">units =</span> <span class="st">"MB"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "19.5 Mb"</code></pre>
+</div>
+</div>
+</section>
+<section id="save-to-hdf5" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="save-to-hdf5"><span class="header-section-number">6.2</span> Save to HDF5</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create HDF5 file</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>data_file <span class="ot">&lt;-</span> <span class="st">"my_first_dataset.hdf5"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> data_file,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> genotype_data,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"genotypes"</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"data"</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "my_first_dataset.hdf5"
+
+$ds
+[1] "genotypes/data"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ Dataset saved to HDF5</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✓ Dataset saved to HDF5</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>HDF5 File Structure
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>HDF5 files organize data hierarchically:</p>
+<ul>
+<li><strong>File:</strong> <code>my_first_dataset.hdf5</code>
+<ul>
+<li><strong>Group:</strong> <code>genotypes</code> (like a folder)
+<ul>
+<li><strong>Dataset:</strong> <code>data</code> (the actual matrix)</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>Think of groups as folders and datasets as files inside them.</p>
+</div>
+</div>
+</section>
+<section id="inspect-the-file" class="level3" data-number="6.3">
+<h3 data-number="6.3" class="anchored" data-anchor-id="inspect-the-file"><span class="header-section-number">6.3</span> Inspect the File</h3>
+<p>For file inspection, we use rhdf5 functions:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rhdf5)  <span class="co"># Needed for h5ls()</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co"># List file contents</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(data_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      group           name       otype   dclass         dim
+0                         /      genotypes   H5I_GROUP                     
+1                /genotypes .data_dimnames   H5I_GROUP                     
+2 /genotypes/.data_dimnames              1 H5I_DATASET COMPOUND        1000
+3 /genotypes/.data_dimnames              2 H5I_DATASET COMPOUND        5000
+4                /genotypes           data H5I_DATASET  INTEGER 1000 x 5000</code></pre>
+</div>
+</div>
+</section>
+<section id="read-data-back" class="level3" data-number="6.4">
+<h3 data-number="6.4" class="anchored" data-anchor-id="read-data-back"><span class="header-section-number">6.4</span> Read Data Back</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read a small portion</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>small_chunk <span class="ot">&lt;-</span> <span class="fu">h5read</span>(data_file, <span class="st">"/genotypes/data"</span>, </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">index =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>small_chunk</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+[1,]    2    1    2    2    2    0    1    0    2     0
+[2,]    2    2    1    2    2    1    0    0    0     2
+[3,]    2    1    0    0    2    2    1    0    0     0
+[4,]    1    0    0    0    2    1    0    0    1     1
+[5,]    2    2    0    1    0    2    0    2    2     2</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify it matches original</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(small_chunk, genotype_data[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Attributes: &lt; Length mismatch: comparison on first 1 components &gt;"</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Understanding all.equal()
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you see output like <code>"Attributes: &lt; Component 'dimnames': target is NULL, current is list &gt;"</code>, this means the matrices are numerically identical but have different attributes (row/column names).</p>
+<p>This is expected: HDF5 stores dimension names separately from the data matrix. The <strong>numeric values</strong> are identical, which is what matters for calculations. You can verify with:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare just the numeric values</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">as.numeric</span>(small_chunk), <span class="fu">as.numeric</span>(genotype_data[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="step-5-basic-operations" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="step-5-basic-operations"><span class="header-section-number">7</span> Step 5: Basic Operations</h2>
+<p>Let’s perform operations directly on the HDF5 file using BigDataStatMeth functions.</p>
+<section id="matrix-multiplication" class="level3" data-number="7.1">
+<h3 data-number="7.1" class="anchored" data-anchor-id="matrix-multiplication"><span class="header-section-number">7.1</span> Matrix Multiplication</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create two smaller matrices for demonstration</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">500</span> <span class="sc">*</span> <span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">500</span>, <span class="at">ncol =</span> <span class="dv">100</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span> <span class="sc">*</span> <span class="dv">200</span>), <span class="at">nrow =</span> <span class="dv">100</span>, <span class="at">ncol =</span> <span class="dv">200</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Save to HDF5</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>example_file <span class="ot">&lt;-</span> <span class="st">"operations_example.hdf5"</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="at">filename =</span> example_file, <span class="at">object =</span> A,</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">group =</span> <span class="st">"matrices"</span>, <span class="at">dataset =</span> <span class="st">"A"</span>,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "operations_example.hdf5"
+
+$ds
+[1] "matrices/A"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="at">filename =</span> example_file, <span class="at">object =</span> B,</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">group =</span> <span class="st">"matrices"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$fn
+[1] "operations_example.hdf5"
+
+$ds
+[1] "matrices/B"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform block-wise multiplication</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> example_file,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"A"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">B =</span> <span class="st">"B"</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">outgroup =</span> <span class="st">"results"</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Read and display a portion of the result</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>result_sample <span class="ot">&lt;-</span> <span class="fu">h5read</span>(result<span class="sc">$</span>fn, result<span class="sc">$</span>ds, <span class="at">index =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Result preview (first 5×5):</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Result preview (first 5×5):</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_sample)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]       [,3]       [,4]     [,5]
+[1,]  3.966529 -1.596117 -10.575227  -1.523170 13.37335
+[2,] 10.496300 -4.726875  16.389046   3.817424 16.47317
+[3,] -8.331547 -9.299947  -3.084136   4.030101 11.75505
+[4,] -5.159786  2.319629   2.815899  -3.407731 -5.72410
+[5,]  3.384955 18.492893   1.697668 -13.890756 10.48865</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">✓ Matrix multiplication completed</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+✓ Matrix multiplication completed</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Result stored in:"</span>, result<span class="sc">$</span>ds, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Result stored in: results/A_x_B </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Memory Efficiency in Action
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Notice we multiplied a 500×100 matrix by a 100×200 matrix <strong>without loading the full result into memory</strong>. BigDataStatMeth processed this in blocks and wrote directly to HDF5.</p>
+<p>For truly large matrices (100 GB+), this same code works identically - just takes longer.</p>
+</div>
+</div>
+</section>
+<section id="crossproduct-operation" class="level3" data-number="7.2">
+<h3 data-number="7.2" class="anchored" data-anchor-id="crossproduct-operation"><span class="header-section-number">7.2</span> Crossproduct Operation</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute t(A) %*% A</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>crossprod_result <span class="ot">&lt;-</span> <span class="fu">bdCrossprod_hdf5</span>(</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> example_file,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"A"</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Read and display a portion</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>crossprod_sample <span class="ot">&lt;-</span> <span class="fu">h5read</span>(crossprod_result<span class="sc">$</span>fn, crossprod_result<span class="sc">$</span>ds, </span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">index =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Crossproduct result preview (first 5×5):</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Crossproduct result preview (first 5×5):</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(crossprod_sample)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           [,1]       [,2]       [,3]       [,4]      [,5]
+[1,] 475.947503 -26.983942   1.705196  18.276113  22.03469
+[2,] -26.983942 488.288982 -24.322274   6.712965 -14.34956
+[3,]   1.705196 -24.322274 498.798075   9.800220  52.82859
+[4,]  18.276113   6.712965   9.800220 511.565405 -26.92909
+[5,]  22.034686 -14.349559  52.828589 -26.929093 438.22361</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">✓ Crossprod completed</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+✓ Crossprod completed</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Result dimensions should be 100 × 100</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Result dimensions should be 100 × 100</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify dimensions</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(example_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      group            name       otype dclass       dim
+0         /          OUTPUT   H5I_GROUP                 
+1   /OUTPUT CrossProd_A_x_A H5I_DATASET  FLOAT 100 x 100
+2         /        matrices   H5I_GROUP                 
+3 /matrices               A H5I_DATASET  FLOAT 500 x 100
+4 /matrices               B H5I_DATASET  FLOAT 100 x 200
+5         /         results   H5I_GROUP                 
+6  /results           A_x_B H5I_DATASET  FLOAT 500 x 200</code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="step-6-clean-up" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="step-6-clean-up"><span class="header-section-number">8</span> Step 6: Clean Up</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Close any open HDF5 connections</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">h5closeAll</span>()</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove test files (optional)</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="fu">file.remove</span>(data_file, example_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE TRUE</code></pre>
+</div>
+</div>
+<hr>
+</section>
+<section id="interactive-exercise" class="level2 exercise" data-number="9">
+<h2 class="exercise anchored" data-number="9" data-anchor-id="interactive-exercise"><span class="header-section-number">9</span> Interactive Exercise</h2>
+<section id="practice-creating-your-own-hdf5-workflow" class="level3" data-number="9.1">
+<h3 data-number="9.1" class="anchored" data-anchor-id="practice-creating-your-own-hdf5-workflow"><span class="header-section-number">9.1</span> Practice: Creating Your Own HDF5 Workflow</h3>
+<p>Now that you’ve seen the basic operations, try designing a small workflow with data relevant to your work. This helps internalize the concepts through hands-on practice.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exercise: Create a mini-analysis workflow</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Generate or load your own data</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>my_data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span> <span class="sc">*</span> <span class="dv">500</span>), <span class="at">nrow =</span> <span class="dv">1000</span>, <span class="at">ncol =</span> <span class="dv">500</span>)  </span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace with: read.csv(), or data from your field</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Save to HDF5 with meaningful names</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"my_analysis.hdf5"</span>,</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> my_data,</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"raw_data"</span>,           <span class="co"># Choose descriptive name</span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"measurements"</span>,     <span class="co"># What does this represent?</span></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Perform an operation</span></span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdCrossprod_hdf5</span>(</span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"my_analysis.hdf5"</span>,</span>
+<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"raw_data"</span>,</span>
+<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"measurements"</span>,</span>
+<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">outgroup =</span> <span class="st">"processed"</span></span>
+<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Verify the result</span></span>
+<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(<span class="st">"my_analysis.hdf5"</span>)  <span class="co"># Examine the structure</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Reflection Questions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>As you work through this exercise, consider:</p>
+<p><strong>1. File Organization:</strong> - How are you structuring your HDF5 file? (groups and datasets) - If you added more data tomorrow, where would it go? - Could someone else understand your organization scheme?</p>
+<p><strong>2. Memory vs.&nbsp;Disk:</strong> - At what data size would your operation fail in memory? - How much disk space does your HDF5 file use? - Compare: object size in R (<code>object.size(my_data)</code>) vs.&nbsp;file size on disk</p>
+<p><strong>3. Operation Choice:</strong> - Why did you choose <code>bdCrossprod_hdf5()</code> over other operations? - What statistical question does this operation answer? - Could you achieve the same result by composing multiple simpler operations?</p>
+<p><strong>4. Error Handling:</strong> - What happens if you try to create a dataset that already exists? - Try it: What does the error message tell you? - How do you fix it? (<code>overwriteDataset = TRUE</code> or different name?)</p>
+<p><strong>5. Scaling Up:</strong> - Your test used 1,000 × 500. What about 100,000 × 50,000? - Which operations would work unchanged? - Which would need adjustment (block sizes, memory)?</p>
+<p>Don’t worry about “correct” answers - the goal is developing intuition about when and how to use these tools. Each analysis scenario is unique, and hands-on experimentation builds understanding better than reading alone.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="what-youve-accomplished" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="what-youve-accomplished"><span class="header-section-number">10</span> What You’ve Accomplished</h2>
+<p>✅ <strong>Installed</strong> BigDataStatMeth and all dependencies<br>
+✅ <strong>Created</strong> your first HDF5 dataset<br>
+✅ <strong>Performed</strong> block-wise operations on HDF5 data<br>
+✅ <strong>Understood</strong> the HDF5 file structure (groups and datasets)<br>
+✅ <strong>Verified</strong> that block-wise processing works correctly</p>
+<hr>
+</section>
+<section id="next-steps" class="level2" data-number="11">
+<h2 data-number="11" class="anchored" data-anchor-id="next-steps"><span class="header-section-number">11</span> Next Steps</h2>
+<p>Now that you have BigDataStatMeth working, continue learning:</p>
+<p><strong>Continue the tutorial series:</strong></p>
+<ol type="1">
+<li>✅ <strong>Getting Started</strong> (you are here)</li>
+<li>→ <a href="../tutorials/working-hdf5-matrices.html">Working with HDF5 Matrices</a> - File operations, data conversion, and management</li>
+<li>→ <a href="../tutorials/first-analysis.html">Your First Analysis</a> - Complete workflow from raw data to results</li>
+</ol>
+<p><strong>Explore practical workflows:</strong></p>
+<ul>
+<li><a href="../workflows/implementing-pca.html">Implementing PCA</a> - Principal Component Analysis on genomic data</li>
+<li><a href="../workflows/implementing-cca.html">Implementing CCA</a> - Canonical Correlation Analysis</li>
+</ul>
+<p><strong>Dive deeper into concepts:</strong></p>
+<ul>
+<li><a href="../fundamentals/understanding-hdf5.html">Understanding HDF5</a> - How HDF5 storage works</li>
+<li><a href="../fundamentals/blockwise-computing.html">Block-Wise Computing</a> - Algorithms behind the scenes</li>
+</ul>
+<hr>
+</section>
+<section id="getting-help" class="level2" data-number="12">
+<h2 data-number="12" class="anchored" data-anchor-id="getting-help"><span class="header-section-number">12</span> Getting Help</h2>
+<p><strong>If you encounter issues:</strong></p>
+<ol type="1">
+<li><strong>Check documentation:</strong> Most functions have detailed help: <code>?bdCreate_hdf5_matrix</code></li>
+<li><strong>Review examples:</strong> Package vignettes contain working code</li>
+<li><strong>GitHub Issues:</strong> Report bugs at <a href="https://github.com/isglobal-brge/BigDataStatMeth/issues">isglobal-brge/BigDataStatMeth</a></li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Quick Troubleshooting Commands
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check package version</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"BigDataStatMeth"</span>)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View all loaded packages</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Test HDF5 installation</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5version</span>()</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Check working directory (where files are created)</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a><span class="fu">getwd</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="key-takeaways" class="level2 key-concept" data-number="13">
+<h2 class="key-concept anchored" data-number="13" data-anchor-id="key-takeaways"><span class="header-section-number">13</span> Key Takeaways</h2>
+<p>Let’s consolidate what you’ve learned about setting up and using BigDataStatMeth for the first time.</p>
+<section id="essential-concepts" class="level3" data-number="13.1">
+<h3 data-number="13.1" class="anchored" data-anchor-id="essential-concepts"><span class="header-section-number">13.1</span> Essential Concepts</h3>
+<p><strong>Installation creates the foundation</strong> for all subsequent work with BigDataStatMeth. Without properly installed dependencies (rhdf5, HDF5Array, compilation tools), nothing else works. Windows users face additional complexity requiring Rtools, but following the installation sequence systematically prevents most problems. Testing with small examples immediately after installation catches configuration issues before you invest time in real analyses.</p>
+<p><strong>HDF5 files are organized hierarchically</strong> like a file system, with groups acting as folders and datasets as files. This structure isn’t just organizational convenience - it enables efficient partial I/O where you read only the data you need. Creating your first HDF5 file teaches this fundamental paradigm: data lives on disk, accessed selectively, rather than entirely in RAM. Good organization from the start saves confusion when projects grow complex.</p>
+<p><strong>Block-wise processing happens automatically</strong> behind BigDataStatMeth’s functions. You don’t partition matrices manually or manage memory explicitly - the package handles block sizes, I/O patterns, and result aggregation internally. When you call <code>bdCrossprod_hdf5()</code>, it looks like a single function call, but executes sophisticated block-wise algorithms transparently. This abstraction is the package’s main value: complexity hidden, scaling achieved.</p>
+<p><strong>Verification prevents wasted effort.</strong> Testing installations with small examples (100×100 matrices) catches problems when they’re easy to fix. If basic operations fail on tiny test data, they won’t mysteriously work on real 100,000×100,000 matrices. Small-scale testing establishes that your environment works correctly before investing hours generating or converting large datasets.</p>
+<p><strong>The R API suffices for most users.</strong> Functions like <code>bdCreate_hdf5_matrix()</code>, <code>bdSVD_hdf5()</code>, and <code>bdCrossprod_hdf5()</code> provide complete functionality for standard analyses. The C++ API exists for developers implementing novel statistical methods who need fine-grained control over algorithms and memory management. Unless you’re developing new methods from scratch, the R interface provides everything needed.</p>
+</section>
+<section id="when-to-use-bigdatastatmeth" class="level3" data-number="13.2">
+<h3 data-number="13.2" class="anchored" data-anchor-id="when-to-use-bigdatastatmeth"><span class="header-section-number">13.2</span> When to Use BigDataStatMeth</h3>
+<p>Making informed decisions about when BigDataStatMeth helps versus when simpler approaches suffice saves time and prevents unnecessary complexity.</p>
+<p>✅ <strong>Use BigDataStatMeth when:</strong></p>
+<ul>
+<li><p><strong>Data exceeds 30% of available RAM</strong> - This threshold provides headroom for intermediate computations and operating system needs. Below 30%, traditional R approaches work fine. Above 30%, you risk memory exhaustion during operations, and disk-based computing becomes necessary.</p></li>
+<li><p><strong>You’re starting a new analysis project</strong> - Converting data to HDF5 at the beginning avoids migration pain later. It’s easier to start organized than to reorganize mid-project when you discover your data has grown beyond memory limits.</p></li>
+<li><p><strong>Multiple analyses will reuse the same data</strong> - Converting to HDF5 once pays off when you’ll run PCA, then regression, then association tests on the same dataset. The upfront conversion cost amortizes across repeated analyses.</p></li>
+<li><p><strong>Your workflow spans multiple tools</strong> - If you work in R, Python, and command-line tools, HDF5 provides a common format all can read efficiently. This beats converting between CSV, RData, and tool-specific formats repeatedly.</p></li>
+</ul>
+<p>❌ <strong>Traditional R works better when:</strong></p>
+<ul>
+<li><p><strong>Data comfortably fits in less than 20% of RAM</strong> - If <code>data &lt;- read.csv(file)</code> works without issues, stick with familiar R approaches. Traditional methods are simpler, more flexible, and better supported by the broader R ecosystem. Don’t add complexity unnecessarily.</p></li>
+<li><p><strong>You’re doing one-off exploratory analysis</strong> - For quick investigations you won’t repeat, the HDF5 conversion overhead outweighs benefits. Load data, explore, save key results, discard working data, and you’re done.</p></li>
+<li><p><strong>You need maximum flexibility</strong> - In-memory R data structures support arbitrary manipulations trivially: reshape, subset, transform however you want. HDF5 adds structure, which aids organization but constrains spontaneous manipulations. If your workflow involves many ad-hoc transformations, staying in memory maintains flexibility.</p></li>
+</ul>
+<p>The key question isn’t just “can my data fit in memory?” but “does my workflow benefit from disk-based computing?” Sometimes the answer is obvious (500 GB dataset, 32 GB RAM → yes). Sometimes it’s contextual (40 GB dataset, 64 GB RAM → depends on specific operations needed). Understanding your analysis requirements and computational resources helps make this decision rationally rather than by trial and error.</p>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/isglobal-brge\.github\.io\/BigDataStatMeth\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Getting Started"</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Installation and First Steps with BigDataStatMeth"</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overview</span></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth enables statistical analysis on datasets too large for RAM by using HDF5 file storage and block-wise processing. This tutorial guides you through installation and your first analysis, ensuring you have a working environment before diving into more complex operations.</span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>Think of this as setting up your laboratory bench before starting experiments. You'll verify that all your tools work correctly with small, manageable examples before scaling to real big data analyses. This approach prevents frustrating debugging sessions later when you're working with large files.</span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>::: {.learning-objectives}</span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a><span class="fu">### What You'll Learn</span></span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>By the end of this tutorial, you will:</span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Install BigDataStatMeth and all required dependencies correctly</span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Create your first HDF5 matrix from R data</span>
+<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Perform basic matrix operations on HDF5-stored data</span>
+<span id="cb52-20"><a href="#cb52-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Understand the HDF5 file structure and how to navigate it</span>
+<span id="cb52-21"><a href="#cb52-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Verify your installation works correctly with test examples</span>
+<span id="cb52-22"><a href="#cb52-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Know where to find help when you encounter issues</span>
+<span id="cb52-23"><a href="#cb52-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Be prepared for more advanced tutorials</span>
+<span id="cb52-24"><a href="#cb52-24" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-25"><a href="#cb52-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-26"><a href="#cb52-26" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-27"><a href="#cb52-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-28"><a href="#cb52-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## Prerequisites</span></span>
+<span id="cb52-29"><a href="#cb52-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-30"><a href="#cb52-30" aria-hidden="true" tabindex="-1"></a><span class="fu">### System Requirements</span></span>
+<span id="cb52-31"><a href="#cb52-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-32"><a href="#cb52-32" aria-hidden="true" tabindex="-1"></a>**Operating System:**</span>
+<span id="cb52-33"><a href="#cb52-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Linux (recommended)</span>
+<span id="cb52-34"><a href="#cb52-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>macOS</span>
+<span id="cb52-35"><a href="#cb52-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Windows (requires Rtools - see below)</span>
+<span id="cb52-36"><a href="#cb52-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-37"><a href="#cb52-37" aria-hidden="true" tabindex="-1"></a>**R Version:**</span>
+<span id="cb52-38"><a href="#cb52-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>R ≥ 4.0.0 (check with <span class="in">`R.version.string`</span>)</span>
+<span id="cb52-39"><a href="#cb52-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-40"><a href="#cb52-40" aria-hidden="true" tabindex="-1"></a>**RAM:**</span>
+<span id="cb52-41"><a href="#cb52-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Minimum: 4 GB</span>
+<span id="cb52-42"><a href="#cb52-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Recommended: 8+ GB for comfortable work</span>
+<span id="cb52-43"><a href="#cb52-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-44"><a href="#cb52-44" aria-hidden="true" tabindex="-1"></a>**Disk Space:**</span>
+<span id="cb52-45"><a href="#cb52-45" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>~500 MB for package and dependencies</span>
+<span id="cb52-46"><a href="#cb52-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Additional space for your HDF5 data files</span>
+<span id="cb52-47"><a href="#cb52-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-48"><a href="#cb52-48" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb52-49"><a href="#cb52-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## Windows Users: Install Rtools First</span></span>
+<span id="cb52-50"><a href="#cb52-50" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth is compiled from C++ source code. Windows users must install <span class="co">[</span><span class="ot">Rtools</span><span class="co">](https://cran.r-project.org/bin/windows/Rtools/)</span> **before** installing the package.</span>
+<span id="cb52-51"><a href="#cb52-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-52"><a href="#cb52-52" aria-hidden="true" tabindex="-1"></a>Download the version matching your R installation from the link above.</span>
+<span id="cb52-53"><a href="#cb52-53" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-54"><a href="#cb52-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-55"><a href="#cb52-55" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-56"><a href="#cb52-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-57"><a href="#cb52-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 1: Install Dependencies</span></span>
+<span id="cb52-58"><a href="#cb52-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-59"><a href="#cb52-59" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth requires packages from both CRAN and Bioconductor.</span>
+<span id="cb52-60"><a href="#cb52-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-61"><a href="#cb52-61" aria-hidden="true" tabindex="-1"></a><span class="fu">### Install BiocManager</span></span>
+<span id="cb52-62"><a href="#cb52-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-63"><a href="#cb52-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r install-biocmanager, eval=FALSE}</span></span>
+<span id="cb52-64"><a href="#cb52-64" aria-hidden="true" tabindex="-1"></a><span class="co"># BiocManager helps install Bioconductor packages</span></span>
+<span id="cb52-65"><a href="#cb52-65" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb52-66"><a href="#cb52-66" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>)</span>
+<span id="cb52-67"><a href="#cb52-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-68"><a href="#cb52-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-69"><a href="#cb52-69" aria-hidden="true" tabindex="-1"></a><span class="fu">### Install Required Packages</span></span>
+<span id="cb52-70"><a href="#cb52-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-71"><a href="#cb52-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r install-deps, eval=FALSE}</span></span>
+<span id="cb52-72"><a href="#cb52-72" aria-hidden="true" tabindex="-1"></a><span class="co"># CRAN packages</span></span>
+<span id="cb52-73"><a href="#cb52-73" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">"Matrix"</span>, <span class="st">"RcppEigen"</span>, <span class="st">"RSpectra"</span>))</span>
+<span id="cb52-74"><a href="#cb52-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-75"><a href="#cb52-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Bioconductor packages  </span></span>
+<span id="cb52-76"><a href="#cb52-76" aria-hidden="true" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="fu">c</span>(<span class="st">"rhdf5"</span>, <span class="st">"HDF5Array"</span>))</span>
+<span id="cb52-77"><a href="#cb52-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-78"><a href="#cb52-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-79"><a href="#cb52-79" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb52-80"><a href="#cb52-80" aria-hidden="true" tabindex="-1"></a><span class="fu">## Troubleshooting Dependencies</span></span>
+<span id="cb52-81"><a href="#cb52-81" aria-hidden="true" tabindex="-1"></a>If installation fails:</span>
+<span id="cb52-82"><a href="#cb52-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-83"><a href="#cb52-83" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Update R:** Some packages require recent R versions</span>
+<span id="cb52-84"><a href="#cb52-84" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Update BiocManager:** Run <span class="in">`BiocManager::install()`</span> with no arguments</span>
+<span id="cb52-85"><a href="#cb52-85" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Check compilation tools:** Especially on Windows/macOS</span>
+<span id="cb52-86"><a href="#cb52-86" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Installation logs:** Look for specific error messages about missing libraries</span>
+<span id="cb52-87"><a href="#cb52-87" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-88"><a href="#cb52-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-89"><a href="#cb52-89" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-90"><a href="#cb52-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-91"><a href="#cb52-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 2: Install BigDataStatMeth</span></span>
+<span id="cb52-92"><a href="#cb52-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-93"><a href="#cb52-93" aria-hidden="true" tabindex="-1"></a><span class="fu">### From CRAN (Recommended - Stable Version)</span></span>
+<span id="cb52-94"><a href="#cb52-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-95"><a href="#cb52-95" aria-hidden="true" tabindex="-1"></a>The stable version is available on CRAN:</span>
+<span id="cb52-96"><a href="#cb52-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-97"><a href="#cb52-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{r install-cran, eval=FALSE}</span></span>
+<span id="cb52-98"><a href="#cb52-98" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"BigDataStatMeth"</span>)</span>
+<span id="cb52-99"><a href="#cb52-99" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-100"><a href="#cb52-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-101"><a href="#cb52-101" aria-hidden="true" tabindex="-1"></a>This installs the latest stable, tested release.</span>
+<span id="cb52-102"><a href="#cb52-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-103"><a href="#cb52-103" aria-hidden="true" tabindex="-1"></a><span class="fu">### From GitHub (Development Version)</span></span>
+<span id="cb52-104"><a href="#cb52-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-105"><a href="#cb52-105" aria-hidden="true" tabindex="-1"></a>For the latest development features:</span>
+<span id="cb52-106"><a href="#cb52-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-107"><a href="#cb52-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r install-github, eval=FALSE}</span></span>
+<span id="cb52-108"><a href="#cb52-108" aria-hidden="true" tabindex="-1"></a><span class="co"># Install devtools if needed</span></span>
+<span id="cb52-109"><a href="#cb52-109" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"devtools"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb52-110"><a href="#cb52-110" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"devtools"</span>)</span>
+<span id="cb52-111"><a href="#cb52-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-112"><a href="#cb52-112" aria-hidden="true" tabindex="-1"></a><span class="co"># Install development version from GitHub</span></span>
+<span id="cb52-113"><a href="#cb52-113" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"isglobal-brge/BigDataStatMeth"</span>)</span>
+<span id="cb52-114"><a href="#cb52-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-115"><a href="#cb52-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-116"><a href="#cb52-116" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb52-117"><a href="#cb52-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Which Version Should I Use?</span></span>
+<span id="cb52-118"><a href="#cb52-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-119"><a href="#cb52-119" aria-hidden="true" tabindex="-1"></a>**Use CRAN version if:**</span>
+<span id="cb52-120"><a href="#cb52-120" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You want maximum stability</span>
+<span id="cb52-121"><a href="#cb52-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You're doing production analysis</span>
+<span id="cb52-122"><a href="#cb52-122" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You prefer well-tested releases</span>
+<span id="cb52-123"><a href="#cb52-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-124"><a href="#cb52-124" aria-hidden="true" tabindex="-1"></a>**Use GitHub version if:**</span>
+<span id="cb52-125"><a href="#cb52-125" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You need the latest features</span>
+<span id="cb52-126"><a href="#cb52-126" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You're contributing to development</span>
+<span id="cb52-127"><a href="#cb52-127" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You want to test new functionality</span>
+<span id="cb52-128"><a href="#cb52-128" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-129"><a href="#cb52-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-130"><a href="#cb52-130" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-131"><a href="#cb52-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-132"><a href="#cb52-132" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 3: Load and Verify</span></span>
+<span id="cb52-133"><a href="#cb52-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-134"><a href="#cb52-134" aria-hidden="true" tabindex="-1"></a><span class="fu">### Load the Package</span></span>
+<span id="cb52-135"><a href="#cb52-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-136"><a href="#cb52-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r load-packages, eval=TRUE, message=FALSE}</span></span>
+<span id="cb52-137"><a href="#cb52-137" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BigDataStatMeth)</span>
+<span id="cb52-138"><a href="#cb52-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-139"><a href="#cb52-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-140"><a href="#cb52-140" aria-hidden="true" tabindex="-1"></a>If no errors appear, the package loaded successfully!</span>
+<span id="cb52-141"><a href="#cb52-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-142"><a href="#cb52-142" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb52-143"><a href="#cb52-143" aria-hidden="true" tabindex="-1"></a><span class="fu">## About Loading rhdf5</span></span>
+<span id="cb52-144"><a href="#cb52-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-145"><a href="#cb52-145" aria-hidden="true" tabindex="-1"></a>You might see examples that load <span class="in">`library(rhdf5)`</span>. This is **only necessary** when you use rhdf5 functions directly like <span class="in">`h5ls()`</span>, <span class="in">`h5read()`</span>, or <span class="in">`H5Fopen()`</span>.</span>
+<span id="cb52-146"><a href="#cb52-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-147"><a href="#cb52-147" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth already depends on rhdf5 internally, so you don't need to load it for BigDataStatMeth functions. However, in this tutorial we'll use some rhdf5 functions for file inspection, so we'll load it when needed.</span>
+<span id="cb52-148"><a href="#cb52-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-149"><a href="#cb52-149" aria-hidden="true" tabindex="-1"></a>**Key point:** BigDataStatMeth implements its own high-level functions. We use rhdf5's inspection functions because they're already excellent and there's no need to reimplement them.</span>
+<span id="cb52-150"><a href="#cb52-150" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-151"><a href="#cb52-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-152"><a href="#cb52-152" aria-hidden="true" tabindex="-1"></a><span class="fu">### Quick Verification</span></span>
+<span id="cb52-153"><a href="#cb52-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-154"><a href="#cb52-154" aria-hidden="true" tabindex="-1"></a>Run this simple test to verify everything works:</span>
+<span id="cb52-155"><a href="#cb52-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-156"><a href="#cb52-156" aria-hidden="true" tabindex="-1"></a><span class="in">```{r verification, eval=TRUE}</span></span>
+<span id="cb52-157"><a href="#cb52-157" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a small test matrix</span></span>
+<span id="cb52-158"><a href="#cb52-158" aria-hidden="true" tabindex="-1"></a>test_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">10</span>, <span class="at">ncol =</span> <span class="dv">10</span>)</span>
+<span id="cb52-159"><a href="#cb52-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-160"><a href="#cb52-160" aria-hidden="true" tabindex="-1"></a><span class="co"># Create HDF5 file</span></span>
+<span id="cb52-161"><a href="#cb52-161" aria-hidden="true" tabindex="-1"></a>test_file <span class="ot">&lt;-</span> <span class="st">"verification_test.hdf5"</span></span>
+<span id="cb52-162"><a href="#cb52-162" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb52-163"><a href="#cb52-163" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> test_file,</span>
+<span id="cb52-164"><a href="#cb52-164" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> test_matrix,</span>
+<span id="cb52-165"><a href="#cb52-165" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"test"</span>,</span>
+<span id="cb52-166"><a href="#cb52-166" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"data"</span>,</span>
+<span id="cb52-167"><a href="#cb52-167" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
+<span id="cb52-168"><a href="#cb52-168" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-169"><a href="#cb52-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-170"><a href="#cb52-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify file was created</span></span>
+<span id="cb52-171"><a href="#cb52-171" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(test_file)) {</span>
+<span id="cb52-172"><a href="#cb52-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"✓ Installation verified!</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-173"><a href="#cb52-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"✓ HDF5 file created successfully</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-174"><a href="#cb52-174" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb52-175"><a href="#cb52-175" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Clean up</span></span>
+<span id="cb52-176"><a href="#cb52-176" aria-hidden="true" tabindex="-1"></a>  <span class="fu">file.remove</span>(test_file)</span>
+<span id="cb52-177"><a href="#cb52-177" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb52-178"><a href="#cb52-178" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"✗ Installation issue - file not created</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-179"><a href="#cb52-179" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb52-180"><a href="#cb52-180" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-181"><a href="#cb52-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-182"><a href="#cb52-182" aria-hidden="true" tabindex="-1"></a>**Expected output:**</span>
+<span id="cb52-183"><a href="#cb52-183" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-184"><a href="#cb52-184" aria-hidden="true" tabindex="-1"></a><span class="in">✓ Installation verified!</span></span>
+<span id="cb52-185"><a href="#cb52-185" aria-hidden="true" tabindex="-1"></a><span class="in">✓ HDF5 file created successfully</span></span>
+<span id="cb52-186"><a href="#cb52-186" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-187"><a href="#cb52-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-188"><a href="#cb52-188" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb52-189"><a href="#cb52-189" aria-hidden="true" tabindex="-1"></a><span class="fu">## If Verification Fails</span></span>
+<span id="cb52-190"><a href="#cb52-190" aria-hidden="true" tabindex="-1"></a>Common issues:</span>
+<span id="cb52-191"><a href="#cb52-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-192"><a href="#cb52-192" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**"Package not found":** Restart R session</span>
+<span id="cb52-193"><a href="#cb52-193" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**"HDF5 library error":** Reinstall <span class="in">`rhdf5`</span> package  </span>
+<span id="cb52-194"><a href="#cb52-194" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Permission denied:** Check write permissions in working directory</span>
+<span id="cb52-195"><a href="#cb52-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Symbol not found:** Recompile package from source</span>
+<span id="cb52-196"><a href="#cb52-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-197"><a href="#cb52-197" aria-hidden="true" tabindex="-1"></a>Try <span class="in">`sessionInfo()`</span> to check loaded packages and versions.</span>
+<span id="cb52-198"><a href="#cb52-198" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-199"><a href="#cb52-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-200"><a href="#cb52-200" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-201"><a href="#cb52-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-202"><a href="#cb52-202" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 4: Your First HDF5 Dataset</span></span>
+<span id="cb52-203"><a href="#cb52-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-204"><a href="#cb52-204" aria-hidden="true" tabindex="-1"></a>Now let's create a realistic dataset and perform basic operations.</span>
+<span id="cb52-205"><a href="#cb52-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-206"><a href="#cb52-206" aria-hidden="true" tabindex="-1"></a><span class="fu">### Create Sample Data</span></span>
+<span id="cb52-207"><a href="#cb52-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-208"><a href="#cb52-208" aria-hidden="true" tabindex="-1"></a><span class="in">```{r create-data, eval=TRUE}</span></span>
+<span id="cb52-209"><a href="#cb52-209" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate a genomic dataset: 1,000 samples × 5,000 SNPs</span></span>
+<span id="cb52-210"><a href="#cb52-210" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb52-211"><a href="#cb52-211" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb52-212"><a href="#cb52-212" aria-hidden="true" tabindex="-1"></a>n_snps <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb52-213"><a href="#cb52-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-214"><a href="#cb52-214" aria-hidden="true" tabindex="-1"></a>genotype_data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb52-215"><a href="#cb52-215" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">2</span>, n_samples <span class="sc">*</span> n_snps, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb52-216"><a href="#cb52-216" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> n_samples,</span>
+<span id="cb52-217"><a href="#cb52-217" aria-hidden="true" tabindex="-1"></a>  <span class="at">ncol =</span> n_snps</span>
+<span id="cb52-218"><a href="#cb52-218" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-219"><a href="#cb52-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-220"><a href="#cb52-220" aria-hidden="true" tabindex="-1"></a><span class="co"># Add meaningful row/column names</span></span>
+<span id="cb52-221"><a href="#cb52-221" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(genotype_data) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"Sample_"</span>, <span class="dv">1</span><span class="sc">:</span>n_samples)</span>
+<span id="cb52-222"><a href="#cb52-222" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(genotype_data) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"SNP_"</span>, <span class="dv">1</span><span class="sc">:</span>n_snps)</span>
+<span id="cb52-223"><a href="#cb52-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-224"><a href="#cb52-224" aria-hidden="true" tabindex="-1"></a><span class="co"># Check size</span></span>
+<span id="cb52-225"><a href="#cb52-225" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span>(<span class="fu">object.size</span>(genotype_data), <span class="at">units =</span> <span class="st">"MB"</span>)</span>
+<span id="cb52-226"><a href="#cb52-226" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-227"><a href="#cb52-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-228"><a href="#cb52-228" aria-hidden="true" tabindex="-1"></a><span class="fu">### Save to HDF5</span></span>
+<span id="cb52-229"><a href="#cb52-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-230"><a href="#cb52-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{r save-hdf5, eval=TRUE}</span></span>
+<span id="cb52-231"><a href="#cb52-231" aria-hidden="true" tabindex="-1"></a><span class="co"># Create HDF5 file</span></span>
+<span id="cb52-232"><a href="#cb52-232" aria-hidden="true" tabindex="-1"></a>data_file <span class="ot">&lt;-</span> <span class="st">"my_first_dataset.hdf5"</span></span>
+<span id="cb52-233"><a href="#cb52-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-234"><a href="#cb52-234" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb52-235"><a href="#cb52-235" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> data_file,</span>
+<span id="cb52-236"><a href="#cb52-236" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> genotype_data,</span>
+<span id="cb52-237"><a href="#cb52-237" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"genotypes"</span>,</span>
+<span id="cb52-238"><a href="#cb52-238" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"data"</span>,</span>
+<span id="cb52-239"><a href="#cb52-239" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
+<span id="cb52-240"><a href="#cb52-240" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-241"><a href="#cb52-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-242"><a href="#cb52-242" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"✓ Dataset saved to HDF5</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-243"><a href="#cb52-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-244"><a href="#cb52-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-245"><a href="#cb52-245" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb52-246"><a href="#cb52-246" aria-hidden="true" tabindex="-1"></a><span class="fu">## HDF5 File Structure</span></span>
+<span id="cb52-247"><a href="#cb52-247" aria-hidden="true" tabindex="-1"></a>HDF5 files organize data hierarchically:</span>
+<span id="cb52-248"><a href="#cb52-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-249"><a href="#cb52-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**File:** <span class="in">`my_first_dataset.hdf5`</span></span>
+<span id="cb52-250"><a href="#cb52-250" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>**Group:** <span class="in">`genotypes`</span> (like a folder)</span>
+<span id="cb52-251"><a href="#cb52-251" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>**Dataset:** <span class="in">`data`</span> (the actual matrix)</span>
+<span id="cb52-252"><a href="#cb52-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-253"><a href="#cb52-253" aria-hidden="true" tabindex="-1"></a>Think of groups as folders and datasets as files inside them.</span>
+<span id="cb52-254"><a href="#cb52-254" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-255"><a href="#cb52-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-256"><a href="#cb52-256" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inspect the File</span></span>
+<span id="cb52-257"><a href="#cb52-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-258"><a href="#cb52-258" aria-hidden="true" tabindex="-1"></a>For file inspection, we use rhdf5 functions:</span>
+<span id="cb52-259"><a href="#cb52-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-260"><a href="#cb52-260" aria-hidden="true" tabindex="-1"></a><span class="in">```{r inspect-file, eval=TRUE}</span></span>
+<span id="cb52-261"><a href="#cb52-261" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rhdf5)  <span class="co"># Needed for h5ls()</span></span>
+<span id="cb52-262"><a href="#cb52-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-263"><a href="#cb52-263" aria-hidden="true" tabindex="-1"></a><span class="co"># List file contents</span></span>
+<span id="cb52-264"><a href="#cb52-264" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(data_file)</span>
+<span id="cb52-265"><a href="#cb52-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-266"><a href="#cb52-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-267"><a href="#cb52-267" aria-hidden="true" tabindex="-1"></a><span class="fu">### Read Data Back</span></span>
+<span id="cb52-268"><a href="#cb52-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-269"><a href="#cb52-269" aria-hidden="true" tabindex="-1"></a><span class="in">```{r read-data, eval=TRUE}</span></span>
+<span id="cb52-270"><a href="#cb52-270" aria-hidden="true" tabindex="-1"></a><span class="co"># Read a small portion</span></span>
+<span id="cb52-271"><a href="#cb52-271" aria-hidden="true" tabindex="-1"></a>small_chunk <span class="ot">&lt;-</span> <span class="fu">h5read</span>(data_file, <span class="st">"/genotypes/data"</span>, </span>
+<span id="cb52-272"><a href="#cb52-272" aria-hidden="true" tabindex="-1"></a>                      <span class="at">index =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>))</span>
+<span id="cb52-273"><a href="#cb52-273" aria-hidden="true" tabindex="-1"></a>small_chunk</span>
+<span id="cb52-274"><a href="#cb52-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-275"><a href="#cb52-275" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify it matches original</span></span>
+<span id="cb52-276"><a href="#cb52-276" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(small_chunk, genotype_data[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>])</span>
+<span id="cb52-277"><a href="#cb52-277" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-278"><a href="#cb52-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-279"><a href="#cb52-279" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb52-280"><a href="#cb52-280" aria-hidden="true" tabindex="-1"></a><span class="fu">## Understanding all.equal()</span></span>
+<span id="cb52-281"><a href="#cb52-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-282"><a href="#cb52-282" aria-hidden="true" tabindex="-1"></a>If you see output like <span class="in">`"Attributes: &lt; Component 'dimnames': target is NULL, current is list &gt;"`</span>, this means the matrices are numerically identical but have different attributes (row/column names).</span>
+<span id="cb52-283"><a href="#cb52-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-284"><a href="#cb52-284" aria-hidden="true" tabindex="-1"></a>This is expected: HDF5 stores dimension names separately from the data matrix. The **numeric values** are identical, which is what matters for calculations. You can verify with:</span>
+<span id="cb52-285"><a href="#cb52-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-286"><a href="#cb52-286" aria-hidden="true" tabindex="-1"></a><span class="in">```{r verify-numeric, eval=TRUE}</span></span>
+<span id="cb52-287"><a href="#cb52-287" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare just the numeric values</span></span>
+<span id="cb52-288"><a href="#cb52-288" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">as.numeric</span>(small_chunk), <span class="fu">as.numeric</span>(genotype_data[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]))</span>
+<span id="cb52-289"><a href="#cb52-289" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-290"><a href="#cb52-290" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-291"><a href="#cb52-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-292"><a href="#cb52-292" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-293"><a href="#cb52-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-294"><a href="#cb52-294" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 5: Basic Operations</span></span>
+<span id="cb52-295"><a href="#cb52-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-296"><a href="#cb52-296" aria-hidden="true" tabindex="-1"></a>Let's perform operations directly on the HDF5 file using BigDataStatMeth functions.</span>
+<span id="cb52-297"><a href="#cb52-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-298"><a href="#cb52-298" aria-hidden="true" tabindex="-1"></a><span class="fu">### Matrix Multiplication</span></span>
+<span id="cb52-299"><a href="#cb52-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-300"><a href="#cb52-300" aria-hidden="true" tabindex="-1"></a><span class="in">```{r matrix-mult, eval=TRUE}</span></span>
+<span id="cb52-301"><a href="#cb52-301" aria-hidden="true" tabindex="-1"></a><span class="co"># Create two smaller matrices for demonstration</span></span>
+<span id="cb52-302"><a href="#cb52-302" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">456</span>)</span>
+<span id="cb52-303"><a href="#cb52-303" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">500</span> <span class="sc">*</span> <span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">500</span>, <span class="at">ncol =</span> <span class="dv">100</span>)</span>
+<span id="cb52-304"><a href="#cb52-304" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span> <span class="sc">*</span> <span class="dv">200</span>), <span class="at">nrow =</span> <span class="dv">100</span>, <span class="at">ncol =</span> <span class="dv">200</span>)</span>
+<span id="cb52-305"><a href="#cb52-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-306"><a href="#cb52-306" aria-hidden="true" tabindex="-1"></a><span class="co"># Save to HDF5</span></span>
+<span id="cb52-307"><a href="#cb52-307" aria-hidden="true" tabindex="-1"></a>example_file <span class="ot">&lt;-</span> <span class="st">"operations_example.hdf5"</span></span>
+<span id="cb52-308"><a href="#cb52-308" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="at">filename =</span> example_file, <span class="at">object =</span> A,</span>
+<span id="cb52-309"><a href="#cb52-309" aria-hidden="true" tabindex="-1"></a>                     <span class="at">group =</span> <span class="st">"matrices"</span>, <span class="at">dataset =</span> <span class="st">"A"</span>,</span>
+<span id="cb52-310"><a href="#cb52-310" aria-hidden="true" tabindex="-1"></a>                     <span class="at">overwriteFile =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb52-311"><a href="#cb52-311" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(<span class="at">filename =</span> example_file, <span class="at">object =</span> B,</span>
+<span id="cb52-312"><a href="#cb52-312" aria-hidden="true" tabindex="-1"></a>                     <span class="at">group =</span> <span class="st">"matrices"</span>, <span class="at">dataset =</span> <span class="st">"B"</span>)</span>
+<span id="cb52-313"><a href="#cb52-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-314"><a href="#cb52-314" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform block-wise multiplication</span></span>
+<span id="cb52-315"><a href="#cb52-315" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdblockmult_hdf5</span>(</span>
+<span id="cb52-316"><a href="#cb52-316" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> example_file,</span>
+<span id="cb52-317"><a href="#cb52-317" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
+<span id="cb52-318"><a href="#cb52-318" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"A"</span>,</span>
+<span id="cb52-319"><a href="#cb52-319" aria-hidden="true" tabindex="-1"></a>  <span class="at">B =</span> <span class="st">"B"</span>,</span>
+<span id="cb52-320"><a href="#cb52-320" aria-hidden="true" tabindex="-1"></a>  <span class="at">outgroup =</span> <span class="st">"results"</span></span>
+<span id="cb52-321"><a href="#cb52-321" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-322"><a href="#cb52-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-323"><a href="#cb52-323" aria-hidden="true" tabindex="-1"></a><span class="co"># Read and display a portion of the result</span></span>
+<span id="cb52-324"><a href="#cb52-324" aria-hidden="true" tabindex="-1"></a>result_sample <span class="ot">&lt;-</span> <span class="fu">h5read</span>(result<span class="sc">$</span>fn, result<span class="sc">$</span>ds, <span class="at">index =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb52-325"><a href="#cb52-325" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Result preview (first 5×5):</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-326"><a href="#cb52-326" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(result_sample)</span>
+<span id="cb52-327"><a href="#cb52-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-328"><a href="#cb52-328" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">✓ Matrix multiplication completed</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-329"><a href="#cb52-329" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Result stored in:"</span>, result<span class="sc">$</span>ds, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-330"><a href="#cb52-330" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-331"><a href="#cb52-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-332"><a href="#cb52-332" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb52-333"><a href="#cb52-333" aria-hidden="true" tabindex="-1"></a><span class="fu">## Memory Efficiency in Action</span></span>
+<span id="cb52-334"><a href="#cb52-334" aria-hidden="true" tabindex="-1"></a>Notice we multiplied a 500×100 matrix by a 100×200 matrix **without loading the full result into memory**. BigDataStatMeth processed this in blocks and wrote directly to HDF5.</span>
+<span id="cb52-335"><a href="#cb52-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-336"><a href="#cb52-336" aria-hidden="true" tabindex="-1"></a>For truly large matrices (100 GB+), this same code works identically - just takes longer.</span>
+<span id="cb52-337"><a href="#cb52-337" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-338"><a href="#cb52-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-339"><a href="#cb52-339" aria-hidden="true" tabindex="-1"></a><span class="fu">### Crossproduct Operation</span></span>
+<span id="cb52-340"><a href="#cb52-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-341"><a href="#cb52-341" aria-hidden="true" tabindex="-1"></a><span class="in">```{r crossprod, eval=TRUE}</span></span>
+<span id="cb52-342"><a href="#cb52-342" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute t(A) %*% A</span></span>
+<span id="cb52-343"><a href="#cb52-343" aria-hidden="true" tabindex="-1"></a>crossprod_result <span class="ot">&lt;-</span> <span class="fu">bdCrossprod_hdf5</span>(</span>
+<span id="cb52-344"><a href="#cb52-344" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> example_file,</span>
+<span id="cb52-345"><a href="#cb52-345" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"matrices"</span>,</span>
+<span id="cb52-346"><a href="#cb52-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"A"</span></span>
+<span id="cb52-347"><a href="#cb52-347" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-348"><a href="#cb52-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-349"><a href="#cb52-349" aria-hidden="true" tabindex="-1"></a><span class="co"># Read and display a portion</span></span>
+<span id="cb52-350"><a href="#cb52-350" aria-hidden="true" tabindex="-1"></a>crossprod_sample <span class="ot">&lt;-</span> <span class="fu">h5read</span>(crossprod_result<span class="sc">$</span>fn, crossprod_result<span class="sc">$</span>ds, </span>
+<span id="cb52-351"><a href="#cb52-351" aria-hidden="true" tabindex="-1"></a>                           <span class="at">index =</span> <span class="fu">list</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))</span>
+<span id="cb52-352"><a href="#cb52-352" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Crossproduct result preview (first 5×5):</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-353"><a href="#cb52-353" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(crossprod_sample)</span>
+<span id="cb52-354"><a href="#cb52-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-355"><a href="#cb52-355" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">✓ Crossprod completed</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-356"><a href="#cb52-356" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Result dimensions should be 100 × 100</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb52-357"><a href="#cb52-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-358"><a href="#cb52-358" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify dimensions</span></span>
+<span id="cb52-359"><a href="#cb52-359" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(example_file)</span>
+<span id="cb52-360"><a href="#cb52-360" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-361"><a href="#cb52-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-362"><a href="#cb52-362" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-363"><a href="#cb52-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-364"><a href="#cb52-364" aria-hidden="true" tabindex="-1"></a><span class="fu">## Step 6: Clean Up</span></span>
+<span id="cb52-365"><a href="#cb52-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-366"><a href="#cb52-366" aria-hidden="true" tabindex="-1"></a><span class="in">```{r cleanup, eval=TRUE}</span></span>
+<span id="cb52-367"><a href="#cb52-367" aria-hidden="true" tabindex="-1"></a><span class="co"># Close any open HDF5 connections</span></span>
+<span id="cb52-368"><a href="#cb52-368" aria-hidden="true" tabindex="-1"></a><span class="fu">h5closeAll</span>()</span>
+<span id="cb52-369"><a href="#cb52-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-370"><a href="#cb52-370" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove test files (optional)</span></span>
+<span id="cb52-371"><a href="#cb52-371" aria-hidden="true" tabindex="-1"></a><span class="fu">file.remove</span>(data_file, example_file)</span>
+<span id="cb52-372"><a href="#cb52-372" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-373"><a href="#cb52-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-374"><a href="#cb52-374" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-375"><a href="#cb52-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-376"><a href="#cb52-376" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interactive Exercise {.exercise}</span></span>
+<span id="cb52-377"><a href="#cb52-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-378"><a href="#cb52-378" aria-hidden="true" tabindex="-1"></a><span class="fu">### Practice: Creating Your Own HDF5 Workflow</span></span>
+<span id="cb52-379"><a href="#cb52-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-380"><a href="#cb52-380" aria-hidden="true" tabindex="-1"></a>Now that you've seen the basic operations, try designing a small workflow with data relevant to your work. This helps internalize the concepts through hands-on practice.</span>
+<span id="cb52-381"><a href="#cb52-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-384"><a href="#cb52-384" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb52-385"><a href="#cb52-385" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb52-386"><a href="#cb52-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-387"><a href="#cb52-387" aria-hidden="true" tabindex="-1"></a><span class="co"># Exercise: Create a mini-analysis workflow</span></span>
+<span id="cb52-388"><a href="#cb52-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-389"><a href="#cb52-389" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Generate or load your own data</span></span>
+<span id="cb52-390"><a href="#cb52-390" aria-hidden="true" tabindex="-1"></a>my_data <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span> <span class="sc">*</span> <span class="dv">500</span>), <span class="at">nrow =</span> <span class="dv">1000</span>, <span class="at">ncol =</span> <span class="dv">500</span>)  </span>
+<span id="cb52-391"><a href="#cb52-391" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace with: read.csv(), or data from your field</span></span>
+<span id="cb52-392"><a href="#cb52-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-393"><a href="#cb52-393" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Save to HDF5 with meaningful names</span></span>
+<span id="cb52-394"><a href="#cb52-394" aria-hidden="true" tabindex="-1"></a><span class="fu">bdCreate_hdf5_matrix</span>(</span>
+<span id="cb52-395"><a href="#cb52-395" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"my_analysis.hdf5"</span>,</span>
+<span id="cb52-396"><a href="#cb52-396" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> my_data,</span>
+<span id="cb52-397"><a href="#cb52-397" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"raw_data"</span>,           <span class="co"># Choose descriptive name</span></span>
+<span id="cb52-398"><a href="#cb52-398" aria-hidden="true" tabindex="-1"></a>  <span class="at">dataset =</span> <span class="st">"measurements"</span>,     <span class="co"># What does this represent?</span></span>
+<span id="cb52-399"><a href="#cb52-399" aria-hidden="true" tabindex="-1"></a>  <span class="at">overwriteFile =</span> <span class="cn">TRUE</span></span>
+<span id="cb52-400"><a href="#cb52-400" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-401"><a href="#cb52-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-402"><a href="#cb52-402" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Perform an operation</span></span>
+<span id="cb52-403"><a href="#cb52-403" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">bdCrossprod_hdf5</span>(</span>
+<span id="cb52-404"><a href="#cb52-404" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">"my_analysis.hdf5"</span>,</span>
+<span id="cb52-405"><a href="#cb52-405" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="st">"raw_data"</span>,</span>
+<span id="cb52-406"><a href="#cb52-406" aria-hidden="true" tabindex="-1"></a>  <span class="at">A =</span> <span class="st">"measurements"</span>,</span>
+<span id="cb52-407"><a href="#cb52-407" aria-hidden="true" tabindex="-1"></a>  <span class="at">outgroup =</span> <span class="st">"processed"</span></span>
+<span id="cb52-408"><a href="#cb52-408" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb52-409"><a href="#cb52-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-410"><a href="#cb52-410" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Verify the result</span></span>
+<span id="cb52-411"><a href="#cb52-411" aria-hidden="true" tabindex="-1"></a><span class="fu">h5ls</span>(<span class="st">"my_analysis.hdf5"</span>)  <span class="co"># Examine the structure</span></span>
+<span id="cb52-412"><a href="#cb52-412" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-413"><a href="#cb52-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-414"><a href="#cb52-414" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb52-415"><a href="#cb52-415" aria-hidden="true" tabindex="-1"></a><span class="fu">### Reflection Questions</span></span>
+<span id="cb52-416"><a href="#cb52-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-417"><a href="#cb52-417" aria-hidden="true" tabindex="-1"></a>As you work through this exercise, consider:</span>
+<span id="cb52-418"><a href="#cb52-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-419"><a href="#cb52-419" aria-hidden="true" tabindex="-1"></a>**1. File Organization:**</span>
+<span id="cb52-420"><a href="#cb52-420" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>How are you structuring your HDF5 file? (groups and datasets)</span>
+<span id="cb52-421"><a href="#cb52-421" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>If you added more data tomorrow, where would it go?</span>
+<span id="cb52-422"><a href="#cb52-422" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Could someone else understand your organization scheme?</span>
+<span id="cb52-423"><a href="#cb52-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-424"><a href="#cb52-424" aria-hidden="true" tabindex="-1"></a>**2. Memory vs. Disk:**</span>
+<span id="cb52-425"><a href="#cb52-425" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>At what data size would your operation fail in memory?</span>
+<span id="cb52-426"><a href="#cb52-426" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>How much disk space does your HDF5 file use?</span>
+<span id="cb52-427"><a href="#cb52-427" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Compare: object size in R (<span class="in">`object.size(my_data)`</span>) vs. file size on disk</span>
+<span id="cb52-428"><a href="#cb52-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-429"><a href="#cb52-429" aria-hidden="true" tabindex="-1"></a>**3. Operation Choice:**</span>
+<span id="cb52-430"><a href="#cb52-430" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Why did you choose <span class="in">`bdCrossprod_hdf5()`</span> over other operations?</span>
+<span id="cb52-431"><a href="#cb52-431" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>What statistical question does this operation answer?</span>
+<span id="cb52-432"><a href="#cb52-432" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Could you achieve the same result by composing multiple simpler operations?</span>
+<span id="cb52-433"><a href="#cb52-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-434"><a href="#cb52-434" aria-hidden="true" tabindex="-1"></a>**4. Error Handling:**</span>
+<span id="cb52-435"><a href="#cb52-435" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>What happens if you try to create a dataset that already exists?</span>
+<span id="cb52-436"><a href="#cb52-436" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Try it: What does the error message tell you?</span>
+<span id="cb52-437"><a href="#cb52-437" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>How do you fix it? (<span class="in">`overwriteDataset = TRUE`</span> or different name?)</span>
+<span id="cb52-438"><a href="#cb52-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-439"><a href="#cb52-439" aria-hidden="true" tabindex="-1"></a>**5. Scaling Up:**</span>
+<span id="cb52-440"><a href="#cb52-440" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Your test used 1,000 × 500. What about 100,000 × 50,000?</span>
+<span id="cb52-441"><a href="#cb52-441" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Which operations would work unchanged?</span>
+<span id="cb52-442"><a href="#cb52-442" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Which would need adjustment (block sizes, memory)?</span>
+<span id="cb52-443"><a href="#cb52-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-444"><a href="#cb52-444" aria-hidden="true" tabindex="-1"></a>Don't worry about "correct" answers - the goal is developing intuition about when and how to use these tools. Each analysis scenario is unique, and hands-on experimentation builds understanding better than reading alone.</span>
+<span id="cb52-445"><a href="#cb52-445" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-446"><a href="#cb52-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-447"><a href="#cb52-447" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-448"><a href="#cb52-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-449"><a href="#cb52-449" aria-hidden="true" tabindex="-1"></a><span class="fu">## What You've Accomplished</span></span>
+<span id="cb52-450"><a href="#cb52-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-451"><a href="#cb52-451" aria-hidden="true" tabindex="-1"></a>✅ **Installed** BigDataStatMeth and all dependencies  </span>
+<span id="cb52-452"><a href="#cb52-452" aria-hidden="true" tabindex="-1"></a>✅ **Created** your first HDF5 dataset  </span>
+<span id="cb52-453"><a href="#cb52-453" aria-hidden="true" tabindex="-1"></a>✅ **Performed** block-wise operations on HDF5 data  </span>
+<span id="cb52-454"><a href="#cb52-454" aria-hidden="true" tabindex="-1"></a>✅ **Understood** the HDF5 file structure (groups and datasets)  </span>
+<span id="cb52-455"><a href="#cb52-455" aria-hidden="true" tabindex="-1"></a>✅ **Verified** that block-wise processing works correctly</span>
+<span id="cb52-456"><a href="#cb52-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-457"><a href="#cb52-457" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-458"><a href="#cb52-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-459"><a href="#cb52-459" aria-hidden="true" tabindex="-1"></a><span class="fu">## Next Steps</span></span>
+<span id="cb52-460"><a href="#cb52-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-461"><a href="#cb52-461" aria-hidden="true" tabindex="-1"></a>Now that you have BigDataStatMeth working, continue learning:</span>
+<span id="cb52-462"><a href="#cb52-462" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-463"><a href="#cb52-463" aria-hidden="true" tabindex="-1"></a>**Continue the tutorial series:**</span>
+<span id="cb52-464"><a href="#cb52-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-465"><a href="#cb52-465" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>✅ **Getting Started** (you are here)</span>
+<span id="cb52-466"><a href="#cb52-466" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>→ <span class="co">[</span><span class="ot">Working with HDF5 Matrices</span><span class="co">](working-hdf5-matrices.qmd)</span> - File operations, data conversion, and management</span>
+<span id="cb52-467"><a href="#cb52-467" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>→ <span class="co">[</span><span class="ot">Your First Analysis</span><span class="co">](first-analysis.qmd)</span> - Complete workflow from raw data to results</span>
+<span id="cb52-468"><a href="#cb52-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-469"><a href="#cb52-469" aria-hidden="true" tabindex="-1"></a>**Explore practical workflows:**</span>
+<span id="cb52-470"><a href="#cb52-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-471"><a href="#cb52-471" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Implementing PCA</span><span class="co">](../workflows/implementing-pca.qmd)</span> - Principal Component Analysis on genomic data</span>
+<span id="cb52-472"><a href="#cb52-472" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Implementing CCA</span><span class="co">](../workflows/implementing-cca.qmd)</span> - Canonical Correlation Analysis</span>
+<span id="cb52-473"><a href="#cb52-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-474"><a href="#cb52-474" aria-hidden="true" tabindex="-1"></a>**Dive deeper into concepts:**</span>
+<span id="cb52-475"><a href="#cb52-475" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-476"><a href="#cb52-476" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Understanding HDF5</span><span class="co">](../fundamentals/understanding-hdf5.qmd)</span> - How HDF5 storage works</span>
+<span id="cb52-477"><a href="#cb52-477" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="co">[</span><span class="ot">Block-Wise Computing</span><span class="co">](../fundamentals/blockwise-computing.qmd)</span> - Algorithms behind the scenes</span>
+<span id="cb52-478"><a href="#cb52-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-479"><a href="#cb52-479" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-480"><a href="#cb52-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-481"><a href="#cb52-481" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting Help</span></span>
+<span id="cb52-482"><a href="#cb52-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-483"><a href="#cb52-483" aria-hidden="true" tabindex="-1"></a>**If you encounter issues:**</span>
+<span id="cb52-484"><a href="#cb52-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-485"><a href="#cb52-485" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Check documentation:** Most functions have detailed help: <span class="in">`?bdCreate_hdf5_matrix`</span></span>
+<span id="cb52-486"><a href="#cb52-486" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Review examples:** Package vignettes contain working code</span>
+<span id="cb52-487"><a href="#cb52-487" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**GitHub Issues:** Report bugs at <span class="co">[</span><span class="ot">isglobal-brge/BigDataStatMeth</span><span class="co">](https://github.com/isglobal-brge/BigDataStatMeth/issues)</span></span>
+<span id="cb52-488"><a href="#cb52-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-489"><a href="#cb52-489" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb52-490"><a href="#cb52-490" aria-hidden="true" tabindex="-1"></a><span class="fu">## Quick Troubleshooting Commands</span></span>
+<span id="cb52-491"><a href="#cb52-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-492"><a href="#cb52-492" aria-hidden="true" tabindex="-1"></a><span class="in">```{r troubleshoot, eval=FALSE}</span></span>
+<span id="cb52-493"><a href="#cb52-493" aria-hidden="true" tabindex="-1"></a><span class="co"># Check package version</span></span>
+<span id="cb52-494"><a href="#cb52-494" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"BigDataStatMeth"</span>)</span>
+<span id="cb52-495"><a href="#cb52-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-496"><a href="#cb52-496" aria-hidden="true" tabindex="-1"></a><span class="co"># View all loaded packages</span></span>
+<span id="cb52-497"><a href="#cb52-497" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb52-498"><a href="#cb52-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-499"><a href="#cb52-499" aria-hidden="true" tabindex="-1"></a><span class="co"># Test HDF5 installation</span></span>
+<span id="cb52-500"><a href="#cb52-500" aria-hidden="true" tabindex="-1"></a>rhdf5<span class="sc">::</span><span class="fu">h5version</span>()</span>
+<span id="cb52-501"><a href="#cb52-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-502"><a href="#cb52-502" aria-hidden="true" tabindex="-1"></a><span class="co"># Check working directory (where files are created)</span></span>
+<span id="cb52-503"><a href="#cb52-503" aria-hidden="true" tabindex="-1"></a><span class="fu">getwd</span>()</span>
+<span id="cb52-504"><a href="#cb52-504" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb52-505"><a href="#cb52-505" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb52-506"><a href="#cb52-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-507"><a href="#cb52-507" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-508"><a href="#cb52-508" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-509"><a href="#cb52-509" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways {.key-concept}</span></span>
+<span id="cb52-510"><a href="#cb52-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-511"><a href="#cb52-511" aria-hidden="true" tabindex="-1"></a>Let's consolidate what you've learned about setting up and using BigDataStatMeth for the first time.</span>
+<span id="cb52-512"><a href="#cb52-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-513"><a href="#cb52-513" aria-hidden="true" tabindex="-1"></a><span class="fu">### Essential Concepts</span></span>
+<span id="cb52-514"><a href="#cb52-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-515"><a href="#cb52-515" aria-hidden="true" tabindex="-1"></a>**Installation creates the foundation** for all subsequent work with BigDataStatMeth. Without properly installed dependencies (rhdf5, HDF5Array, compilation tools), nothing else works. Windows users face additional complexity requiring Rtools, but following the installation sequence systematically prevents most problems. Testing with small examples immediately after installation catches configuration issues before you invest time in real analyses.</span>
+<span id="cb52-516"><a href="#cb52-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-517"><a href="#cb52-517" aria-hidden="true" tabindex="-1"></a>**HDF5 files are organized hierarchically** like a file system, with groups acting as folders and datasets as files. This structure isn't just organizational convenience - it enables efficient partial I/O where you read only the data you need. Creating your first HDF5 file teaches this fundamental paradigm: data lives on disk, accessed selectively, rather than entirely in RAM. Good organization from the start saves confusion when projects grow complex.</span>
+<span id="cb52-518"><a href="#cb52-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-519"><a href="#cb52-519" aria-hidden="true" tabindex="-1"></a>**Block-wise processing happens automatically** behind BigDataStatMeth's functions. You don't partition matrices manually or manage memory explicitly - the package handles block sizes, I/O patterns, and result aggregation internally. When you call <span class="in">`bdCrossprod_hdf5()`</span>, it looks like a single function call, but executes sophisticated block-wise algorithms transparently. This abstraction is the package's main value: complexity hidden, scaling achieved.</span>
+<span id="cb52-520"><a href="#cb52-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-521"><a href="#cb52-521" aria-hidden="true" tabindex="-1"></a>**Verification prevents wasted effort.** Testing installations with small examples (100×100 matrices) catches problems when they're easy to fix. If basic operations fail on tiny test data, they won't mysteriously work on real 100,000×100,000 matrices. Small-scale testing establishes that your environment works correctly before investing hours generating or converting large datasets.</span>
+<span id="cb52-522"><a href="#cb52-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-523"><a href="#cb52-523" aria-hidden="true" tabindex="-1"></a>**The R API suffices for most users.** Functions like <span class="in">`bdCreate_hdf5_matrix()`</span>, <span class="in">`bdSVD_hdf5()`</span>, and <span class="in">`bdCrossprod_hdf5()`</span> provide complete functionality for standard analyses. The C++ API exists for developers implementing novel statistical methods who need fine-grained control over algorithms and memory management. Unless you're developing new methods from scratch, the R interface provides everything needed.</span>
+<span id="cb52-524"><a href="#cb52-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-525"><a href="#cb52-525" aria-hidden="true" tabindex="-1"></a><span class="fu">### When to Use BigDataStatMeth</span></span>
+<span id="cb52-526"><a href="#cb52-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-527"><a href="#cb52-527" aria-hidden="true" tabindex="-1"></a>Making informed decisions about when BigDataStatMeth helps versus when simpler approaches suffice saves time and prevents unnecessary complexity.</span>
+<span id="cb52-528"><a href="#cb52-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-529"><a href="#cb52-529" aria-hidden="true" tabindex="-1"></a>✅ **Use BigDataStatMeth when:**</span>
+<span id="cb52-530"><a href="#cb52-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-531"><a href="#cb52-531" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Data exceeds 30% of available RAM** - This threshold provides headroom for intermediate computations and operating system needs. Below 30%, traditional R approaches work fine. Above 30%, you risk memory exhaustion during operations, and disk-based computing becomes necessary.</span>
+<span id="cb52-532"><a href="#cb52-532" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-533"><a href="#cb52-533" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**You're starting a new analysis project** - Converting data to HDF5 at the beginning avoids migration pain later. It's easier to start organized than to reorganize mid-project when you discover your data has grown beyond memory limits.</span>
+<span id="cb52-534"><a href="#cb52-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-535"><a href="#cb52-535" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Multiple analyses will reuse the same data** - Converting to HDF5 once pays off when you'll run PCA, then regression, then association tests on the same dataset. The upfront conversion cost amortizes across repeated analyses.</span>
+<span id="cb52-536"><a href="#cb52-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-537"><a href="#cb52-537" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Your workflow spans multiple tools** - If you work in R, Python, and command-line tools, HDF5 provides a common format all can read efficiently. This beats converting between CSV, RData, and tool-specific formats repeatedly.</span>
+<span id="cb52-538"><a href="#cb52-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-539"><a href="#cb52-539" aria-hidden="true" tabindex="-1"></a>❌ **Traditional R works better when:**</span>
+<span id="cb52-540"><a href="#cb52-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-541"><a href="#cb52-541" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Data comfortably fits in less than 20% of RAM** - If <span class="in">`data &lt;- read.csv(file)`</span> works without issues, stick with familiar R approaches. Traditional methods are simpler, more flexible, and better supported by the broader R ecosystem. Don't add complexity unnecessarily.</span>
+<span id="cb52-542"><a href="#cb52-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-543"><a href="#cb52-543" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**You're doing one-off exploratory analysis** - For quick investigations you won't repeat, the HDF5 conversion overhead outweighs benefits. Load data, explore, save key results, discard working data, and you're done.</span>
+<span id="cb52-544"><a href="#cb52-544" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-545"><a href="#cb52-545" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**You need maximum flexibility** - In-memory R data structures support arbitrary manipulations trivially: reshape, subset, transform however you want. HDF5 adds structure, which aids organization but constrains spontaneous manipulations. If your workflow involves many ad-hoc transformations, staying in memory maintains flexibility.</span>
+<span id="cb52-546"><a href="#cb52-546" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-547"><a href="#cb52-547" aria-hidden="true" tabindex="-1"></a>The key question isn't just "can my data fit in memory?" but "does my workflow benefit from disk-based computing?" Sometimes the answer is obvious (500 GB dataset, 32 GB RAM → yes). Sometimes it's contextual (40 GB dataset, 64 GB RAM → depends on specific operations needed). Understanding your analysis requirements and computational resources helps make this decision rationally rather than by trial and error.</span>
+<span id="cb52-548"><a href="#cb52-548" aria-hidden="true" tabindex="-1"></a></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2025 BigDataStatMeth - ISGlobal BRGE</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/edit/main/tutorials/getting-started.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/isglobal-brge/BigDataStatMeth">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item">
+ License: GPL-3
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

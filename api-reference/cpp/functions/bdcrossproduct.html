@@ -73,10 +73,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-969ddfa49e00a70eb3423444dbc81f6c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-69e22614feb0789a4b1e69368fd0350a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-d0f1cdce0779274a5ec1152cd33adb41.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-d6747531eee53fd58085a197f3afc013.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-d0f1cdce0779274a5ec1152cd33adb41.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,10 +111,172 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <style>html{ scroll-behavior: smooth; }</style>
 
 
-<link rel="stylesheet" href="../../../assets/custom.css">
+<link rel="stylesheet" href="../../../assets/css/custom.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -118,6 +284,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../assets/images/logo.png" alt="" class="navbar-logo light-content">
+    <img src="../../../assets/images/logo.png" alt="" class="navbar-logo dark-content">
     </a>
     <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">BigDataStatMeth</span>
@@ -133,32 +301,79 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link active" href="../../../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../../get-started/index.html"> 
-<span class="menu-text">Get Started</span></a>
-  </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-learn" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Learn</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-fundamentals" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Fundamentals</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-learn">    
-        <li class="dropdown-header">─── Theory ───</li>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-fundamentals">    
         <li>
-    <a class="dropdown-item" href="../../../fundamentals/index.html">
- <span class="dropdown-text">Fundamentals</span></a>
+    <a class="dropdown-item" href="../../../fundamentals/big-data-problem.html">
+ <span class="dropdown-text">The Big Data Problem</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../design-implementation/index.html">
- <span class="dropdown-text">Design &amp; Implementation</span></a>
-  </li>  
-        <li class="dropdown-header">─── Practice ───</li>
-        <li>
-    <a class="dropdown-item" href="../../../tutorials/index.html">
- <span class="dropdown-text">Tutorials</span></a>
+    <a class="dropdown-item" href="../../../fundamentals/understanding-hdf5.html">
+ <span class="dropdown-text">Understanding HDF5</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../practical-workflows/index.html">
- <span class="dropdown-text">Practical Workflows</span></a>
+    <a class="dropdown-item" href="../../../fundamentals/blockwise-computing.html">
+ <span class="dropdown-text">Block-Wise Computing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../fundamentals/linear-algebra.html">
+ <span class="dropdown-text">Linear Algebra Essentials</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tutorials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Tutorials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tutorials">    
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/getting-started.html">
+ <span class="dropdown-text">Getting Started</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/working-hdf5-matrices.html">
+ <span class="dropdown-text">Working with HDF5 Matrices</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/first-analysis.html">
+ <span class="dropdown-text">Your First Analysis</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-workflows" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Workflows</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-workflows">    
+        <li>
+    <a class="dropdown-item" href="../../../workflows/implementing-pca.html">
+ <span class="dropdown-text">Implementing PCA</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../workflows/implementing-cca.html">
+ <span class="dropdown-text">Implementing CCA</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../workflows/cross-platform.html">
+ <span class="dropdown-text">Cross-Platform Workflows</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developing-methods" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Developing Methods</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-developing-methods">    
+        <li>
+    <a class="dropdown-item" href="../../../developing-methods/cca-r-implementation.html">
+ <span class="dropdown-text">CCA in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../developing-methods/cca-cpp-implementation.html">
+ <span class="dropdown-text">CCA in C++</span></a>
   </li>  
     </ul>
   </li>
@@ -177,26 +392,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developers" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Developers</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-developers">    
-        <li>
-    <a class="dropdown-item" href="../../../developer-guide/index.html">
- <span class="dropdown-text">Developer Guide</span></a>
+  <li class="nav-item">
+    <a class="nav-link" href="../../../technical/performance.html"> 
+<span class="menu-text">Technical</span></a>
   </li>  
-        <li>
-    <a class="dropdown-item" href="../../../developer-guide/contributing/index.qmd">
- <span class="dropdown-text">Contributing</span></a>
-  </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li>
-    <a class="dropdown-item" href="../../../best-practices/index.html">
- <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-    </ul>
-  </li>
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
@@ -204,9 +403,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </i> 
 <span class="menu-text"></span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://cran.r-project.org/package=BigDataStatMeth"> 
+<span class="menu-text">CRAN</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -224,7 +428,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="../../../index.html" class="sidebar-logo-link">
       </a>
@@ -1427,23 +1631,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#signature" id="toc-signature" class="nav-link active" data-scroll-target="#signature">Signature</a></li>
-  <li><a href="#description" id="toc-description" class="nav-link" data-scroll-target="#description">Description</a></li>
-  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
-  <li><a href="#returns" id="toc-returns" class="nav-link" data-scroll-target="#returns">Returns</a></li>
-  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details">Details</a></li>
-  <li><a href="#call-graph" id="toc-call-graph" class="nav-link" data-scroll-target="#call-graph">Call Graph</a></li>
-  <li><a href="#source-code" id="toc-source-code" class="nav-link" data-scroll-target="#source-code">Source Code</a></li>
-  <li><a href="#usage-example" id="toc-usage-example" class="nav-link" data-scroll-target="#usage-example">Usage Example</a></li>
+  <li><a href="#signature" id="toc-signature" class="nav-link active" data-scroll-target="#signature"><span class="header-section-number">1</span> Signature</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link" data-scroll-target="#description"><span class="header-section-number">2</span> Description</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters"><span class="header-section-number">3</span> Parameters</a></li>
+  <li><a href="#returns" id="toc-returns" class="nav-link" data-scroll-target="#returns"><span class="header-section-number">4</span> Returns</a></li>
+  <li><a href="#details" id="toc-details" class="nav-link" data-scroll-target="#details"><span class="header-section-number">5</span> Details</a></li>
+  <li><a href="#call-graph" id="toc-call-graph" class="nav-link" data-scroll-target="#call-graph"><span class="header-section-number">6</span> Call Graph</a></li>
+  <li><a href="#source-code" id="toc-source-code" class="nav-link" data-scroll-target="#source-code"><span class="header-section-number">7</span> Source Code</a></li>
+  <li><a href="#usage-example" id="toc-usage-example" class="nav-link" data-scroll-target="#usage-example"><span class="header-section-number">8</span> Usage Example</a></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/edit/main/api-reference/cpp/functions/bdcrossproduct.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/cpp/functions/index.html">Functions</a></li><li class="breadcrumb-item"><a href="../../../api-reference/cpp/functions/bdcrossproduct.html">bdcrossproduct</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">bdcrossproduct</h1>
+<div class="quarto-title-block"><div><h1 class="title">bdcrossproduct</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 <p class="subtitle lead">C++ Function Reference</p>
 </div>
 
@@ -1461,38 +1666,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="signature" class="level2">
-<h2 class="anchored" data-anchor-id="signature">Signature</h2>
+<section id="signature" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="signature"><span class="header-section-number">1</span> Signature</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Eigen<span class="op">::</span>MatrixXd BigDataStatMeth<span class="op">::</span>bdcrossproduct<span class="op">(</span>T X<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="description" class="level2">
-<h2 class="anchored" data-anchor-id="description">Description</h2>
+<section id="description" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="description"><span class="header-section-number">2</span> Description</h2>
 <p>Compute matrix cross-product X’X.</p>
 </section>
-<section id="parameters" class="level2">
-<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+<section id="parameters" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="parameters"><span class="header-section-number">3</span> Parameters</h2>
 <ul>
 <li><code>X</code> (<code>T</code>): Input matrix</li>
 </ul>
 </section>
-<section id="returns" class="level2">
-<h2 class="anchored" data-anchor-id="returns">Returns</h2>
+<section id="returns" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="returns"><span class="header-section-number">4</span> Returns</h2>
 <p>Cross-product matrix X’X</p>
 </section>
-<section id="details" class="level2">
-<h2 class="anchored" data-anchor-id="details">Details</h2>
+<section id="details" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="details"><span class="header-section-number">5</span> Details</h2>
 <p>Efficiently computes the cross-product of a matrix with its transpose (X’X) using optimized matrix operations.</p>
 </section>
-<section id="call-graph" class="level2">
-<h2 class="anchored" data-anchor-id="call-graph">Call Graph</h2>
+<section id="call-graph" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="call-graph"><span class="header-section-number">6</span> Call Graph</h2>
 <div class="diagram-section">
 <object type="image/svg+xml" data="images/namespace_big_data_stat_meth_ab7b48d0904453c785df129d9e538e70a_cgraph.svg" class="class-diagram">
 <img src="images/namespace_big_data_stat_meth_ab7b48d0904453c785df129d9e538e70a_cgraph.svg" alt="Function dependencies">
 </object>
 </div>
 </section>
-<section id="source-code" class="level2">
-<h2 class="anchored" data-anchor-id="source-code">Source Code</h2>
+<section id="source-code" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="source-code"><span class="header-section-number">7</span> Source Code</h2>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1525,19 +1730,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="usage-example" class="level2">
-<h2 class="anchored" data-anchor-id="usage-example">Usage Example</h2>
+<section id="usage-example" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="usage-example"><span class="header-section-number">8</span> Usage Example</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"BigDataStatMeth.hpp"</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Example usage</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> bdcrossproduct<span class="op">(...);</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
+<!-- -->
+
 </section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -1607,9 +1827,60 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       });
       clipboardModal.on('success', onCopySuccess);
     }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/isglobal-brge\.github\.io\/BigDataStatMeth\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -1942,19 +2213,100 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       }
     }
   });
-  </script>
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "bdcrossproduct"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "C++ Function Reference"</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Signature</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>Eigen<span class="op">::</span>MatrixXd BigDataStatMeth<span class="op">::</span>bdcrossproduct<span class="op">(</span>T X<span class="op">)</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Description</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>Compute matrix cross-product X'X.</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## Parameters</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`X`</span> (<span class="in">`T`</span>): Input matrix</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## Returns</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>Cross-product matrix X'X</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Details</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>Efficiently computes the cross-product of a matrix with its transpose (X'X) using optimized matrix operations.</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="fu">## Call Graph</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>::: {.diagram-section}</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">object</span><span class="ot"> type</span><span class="op">=</span><span class="st">"image/svg+xml"</span><span class="ot"> data</span><span class="op">=</span><span class="st">"images/namespace_big_data_stat_meth_ab7b48d0904453c785df129d9e538e70a_cgraph.svg"</span><span class="ot"> class</span><span class="op">=</span><span class="st">"class-diagram"</span><span class="dt">&gt;</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">"images/namespace_big_data_stat_meth_ab7b48d0904453c785df129d9e538e70a_cgraph.svg"</span><span class="ot"> alt</span><span class="op">=</span><span class="st">"Function dependencies"</span><span class="dt">/&gt;</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">object</span><span class="dt">&gt;</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Source Code</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse="true"}</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementation</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>**File:** `inst/include/memAlgebra/memOptimizedProducts.hpp` • **Lines 162-176**</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="kw">inline</span> Eigen<span class="op">::</span>MatrixXd bdcrossproduct <span class="op">(</span> T X <span class="op">)</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">static_assert</span><span class="op">(</span><span class="bu">std::</span>is_same<span class="op">&lt;</span>T<span class="op">,</span> Eigen<span class="op">::</span>MatrixXd <span class="op">&gt;::</span>value <span class="op">||</span> </span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>                  <span class="bu">std::</span>is_same<span class="op">&lt;</span>T<span class="op">,</span> Eigen<span class="op">::</span>Map<span class="op">&lt;</span> Eigen<span class="op">::</span>Matrix<span class="op">&lt;</span><span class="dt">double</span><span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>RowMajor<span class="op">&gt;&gt;</span> <span class="op">&gt;::</span>value <span class="op">||</span> </span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>                  <span class="bu">std::</span>is_same<span class="op">&lt;</span>T<span class="op">,</span> Eigen<span class="op">::</span>Map<span class="op">&lt;</span> Eigen<span class="op">::</span>Matrix<span class="op">&lt;</span><span class="dt">double</span><span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>ColMajor<span class="op">&gt;&gt;</span> <span class="op">&gt;::</span>value <span class="op">||</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>                  <span class="bu">std::</span>is_same<span class="op">&lt;</span>T<span class="op">,</span> Eigen<span class="op">::</span>Transpose<span class="op">&lt;</span>Eigen<span class="op">::</span>Map<span class="op">&lt;</span> Eigen<span class="op">::</span>Matrix<span class="op">&lt;</span><span class="dt">double</span><span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>RowMajor<span class="op">&gt;&gt;</span> <span class="op">&gt;</span> <span class="op">&gt;::</span>value <span class="op">||</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>                  <span class="bu">std::</span>is_same<span class="op">&lt;</span>T<span class="op">,</span> Eigen<span class="op">::</span>Transpose<span class="op">&lt;</span>Eigen<span class="op">::</span>Map<span class="op">&lt;</span> Eigen<span class="op">::</span>Matrix<span class="op">&lt;</span><span class="dt">double</span><span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>ColMajor<span class="op">&gt;&gt;</span> <span class="op">&gt;</span> <span class="op">&gt;::</span>value<span class="op">,</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"Error - type not allowed"</span><span class="op">);</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>    Eigen<span class="op">::</span>MatrixXd Xem <span class="op">=</span> X<span class="op">;</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>    <span class="dt">size_t</span> nc<span class="op">(</span>Xem<span class="op">.</span>cols<span class="op">());</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    Eigen<span class="op">::</span>MatrixXd XtX<span class="op">(</span>Eigen<span class="op">::</span>MatrixXd<span class="op">(</span>nc<span class="op">,</span> nc<span class="op">).</span>setZero<span class="op">().</span>selfadjointView<span class="op">&lt;</span>Eigen<span class="op">::</span>Lower<span class="op">&gt;().</span>rankUpdate<span class="op">(</span>Xem<span class="op">.</span>adjoint<span class="op">()));</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span><span class="op">(</span>XtX<span class="op">);</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="fu">## Usage Example</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"BigDataStatMeth.hpp"</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="co">// Example usage</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> result <span class="op">=</span> bdcrossproduct<span class="op">(...);</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>BigDataStatMeth - ISGlobal Bioinformatics Research Group</p>
+<p>© 2025 BigDataStatMeth - ISGlobal BRGE</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    </div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/edit/main/api-reference/cpp/functions/bdcrossproduct.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>Built with <a href="https://quarto.org/">Quarto</a></p>
-</div>
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/isglobal-brge/BigDataStatMeth">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item">
+ License: GPL-3
+  </li>  
+</ul>
+    </div>
   </div>
 </footer>
 

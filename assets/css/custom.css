@@ -1,0 +1,667 @@
+/*-- scss:defaults --*/
+
+/* BigDataStatMeth Custom Styles - Academic & Clean */
+
+/* Color Palette - Unified from SCSS and CSS */
+:root {
+  --primary-color: #0066cc;
+  --secondary-color: #6c757d;
+  --accent-color: #4A90E2;
+  --success-color: #28a745;
+  --info-color: #17a2b8;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  
+  /* Functional colors */
+  --code-bg: #f5f5f5;
+  --border-color: #dee2e6;
+  --link-color: #0066cc;
+  
+  /* Domain-specific colors */
+  --hdf5-color: #f0f8ff;
+  --memory-color: #f5f5f5;
+  --cpu-color: #e8e8e8;
+  --result-color: #e8f6e8;
+}
+
+/*-- scss:rules --*/
+
+/* Typography improvements */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.7;
+  color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1 {
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 0.3em;
+}
+
+h2 {
+  margin-top: 2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border-color);
+  color: var(--dark-color);
+}
+
+h3 {
+  margin-top: 1.5rem;
+  color: #545454;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-left: 3px solid var(--primary-color);
+  border-radius: 4px;
+  padding: 1em;
+  overflow-x: auto;
+}
+
+code {
+  background-color: #f4f4f4;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* Callout boxes */
+.callout {
+  border-left: 4px solid;
+  border-radius: 4px;
+  padding: 1em;
+  margin: 1.5em 0;
+}
+
+.callout-note {
+  background-color: #e7f3ff;
+  border-left-color: var(--info-color);
+}
+
+.callout-tip {
+  background-color: #e8f6e8;
+  border-left-color: var(--success-color);
+}
+
+.callout-warning {
+  background-color: #fff8e1;
+  border-left-color: var(--warning-color);
+}
+
+.callout-important {
+  background-color: #ffe8e8;
+  border-left-color: var(--danger-color);
+}
+
+.callout-caution {
+  background-color: #fff3cd;
+  border-left-color: #856404;
+}
+
+/* Tables - JSS style */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5em 0;
+}
+
+thead {
+  border-bottom: 2px solid #333;
+  border-top: 1px solid #333;
+}
+
+th {
+  text-align: left;
+  padding: 0.5em;
+  font-weight: 600;
+}
+
+td {
+  padding: 0.5em;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* No vertical lines in tables - JSS style */
+table td, table th {
+  border-left: none;
+  border-right: none;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  text-align: center;
+  margin: 2em 0;
+  background-color: white !important;
+}
+
+/* Force light theme for Mermaid */
+.mermaid svg {
+  background-color: white !important;
+}
+
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  stroke: #333 !important;
+  stroke-width: 1.5px !important;
+}
+
+.mermaid .node .label {
+  color: #333 !important;
+  fill: #333 !important;
+}
+
+.mermaid .edgeLabel {
+  background-color: white !important;
+  color: #333 !important;
+}
+
+/* Figure captions */
+figcaption {
+  font-style: italic;
+  text-align: center;
+  color: #666;
+  font-size: 0.9em;
+  margin-top: 0.5em;
+}
+
+/* Links */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-bottom 0.2s;
+}
+
+a:hover {
+  border-bottom: 1px solid var(--primary-color);
+}
+
+/* Navigation */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Sidebar */
+.sidebar-item-container {
+  padding: 0.25em 0;
+}
+
+/* Learning objectives box */
+.learning-objectives {
+  background-color: #f0f8ff;
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  padding: 1.5em;
+  margin: 2em 0;
+}
+
+.learning-objectives h3 {
+  color: var(--primary-color);
+  margin-top: 0;
+  border: none;
+}
+
+.learning-objectives ul {
+  margin-bottom: 0;
+}
+
+/* Key concept boxes */
+.key-concept {
+  background-color: #fffbf0;
+  border-left: 4px solid #ffa500;
+  padding: 1em;
+  margin: 1.5em 0;
+  border-radius: 4px;
+}
+
+/* Exercise boxes */
+.exercise {
+  background-color: #f0fff0;
+  border: 2px dashed var(--success-color);
+  border-radius: 8px;
+  padding: 1.5em;
+  margin: 2em 0;
+}
+
+.exercise h3 {
+  color: var(--success-color);
+  margin-top: 0;
+  border: none;
+}
+
+/* Code tabs */
+.panel-tabset {
+  margin: 1.5em 0;
+}
+
+.nav-tabs {
+  border-bottom: 2px solid var(--primary-color);
+}
+
+/* Footer */
+.nav-footer {
+  border-top: 1px solid #e0e0e0;
+  margin-top: 3em;
+  padding-top: 1em;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  body {
+    font-size: 0.95em;
+  }
+  
+  h1 {
+    font-size: 1.8em;
+  }
+  
+  h2 {
+    font-size: 1.5em;
+  }
+  
+  /* API docs responsive */
+  .function-signature {
+    padding: 0.75rem;
+    font-size: 0.9em;
+  }
+  
+  .param-table table {
+    font-size: 0.9em;
+  }
+  
+  .param-table th, 
+  .param-table td {
+    padding: 0.5rem;
+  }
+}
+
+/* ============================================
+   API Documentation Specific Styles (from SCSS)
+   ============================================ */
+
+/* Function signature styling (unified for R and C++) */
+.function-signature {
+  background-color: var(--code-bg);
+  border-left: 4px solid var(--primary-color);
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.25rem;
+}
+
+.function-signature code {
+  background-color: transparent;
+  font-size: 0.95em;
+}
+
+/* Parameter tables */
+.param-table {
+  margin: 1.5rem 0;
+}
+
+.param-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.param-table th {
+  background-color: var(--light-color);
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.param-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.param-table td:first-child {
+  font-family: monospace;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+/* Example sections */
+.example-section {
+  background-color: #f9f9f9;
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin: 1.5rem 0;
+}
+
+.example-section h3 {
+  margin-top: 0;
+  color: var(--dark-color);
+  font-size: 1.1em;
+}
+
+/* Code blocks in examples */
+pre.sourceCode.r,
+pre.sourceCode.cpp {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--info-color);
+  border-radius: 0.25rem;
+  padding: 1rem;
+}
+
+/* Inline code enhancement */
+code:not(pre code) {
+  background-color: rgba(0, 102, 204, 0.1);
+  color: #0052a3;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+/* Return value section */
+.return-value {
+  background-color: rgba(40, 167, 69, 0.1);
+  border-left: 4px solid var(--success-color);
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.25rem;
+}
+
+/* See Also section */
+.see-also {
+  background-color: var(--light-color);
+  padding: 1rem;
+  border-radius: 0.25rem;
+  margin: 1.5rem 0;
+}
+
+.see-also ul {
+  margin-bottom: 0;
+}
+
+.see-also a {
+  font-weight: 500;
+}
+
+/* Class diagram styling */
+.class-diagram,
+img[alt*="Class diagram"],
+img[alt*="diagram"],
+img[alt*="Diagram"] {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 2rem auto;
+  border: 1px solid #e1e4e8;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: #fafbfc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  cursor: zoom-in;
+}
+
+.class-diagram:hover,
+img[alt*="Class diagram"]:hover,
+img[alt*="diagram"]:hover,
+img[alt*="Diagram"]:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5da;
+}
+
+/* Large diagrams get more space */
+.class-diagram svg,
+img[alt*="Class diagram"][src*="large"],
+img[alt*="diagram"][src*="large"],
+img[alt*="Diagram"][src*="large"] {
+  max-width: 100%;
+  min-height: 400px;
+  height: auto;
+}
+
+/* Zoom functionality - Click to enlarge */
+.diagram-container {
+  position: relative;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+/* Hidden checkbox for zoom toggle */
+.diagram-zoom-toggle {
+  display: none;
+}
+
+/* Zoom label/trigger */
+.diagram-zoom-label {
+  display: inline-block;
+  cursor: pointer;
+  max-width: 100%;
+  transition: all 0.3s ease;
+}
+
+/* When checked, show large overlay */
+.diagram-zoom-toggle:checked ~ .diagram-zoom-overlay {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  padding: 2rem;
+}
+
+.diagram-zoom-overlay {
+  display: none;
+}
+
+.diagram-zoom-overlay img {
+  max-width: 95%;
+  max-height: 95vh;
+  object-fit: contain;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+}
+
+/* Click anywhere to close */
+.diagram-zoom-overlay label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  cursor: zoom-out;
+}
+
+/* Close button */
+.diagram-zoom-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.diagram-zoom-close:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* For SVG diagrams inside divs */
+.class-diagram svg {
+  max-width: 100%;
+  height: auto;
+  min-height: 300px;
+}
+
+/* Responsive diagram sizes */
+@media (min-width: 1200px) {
+  .class-diagram,
+  img[alt*="diagram"] {
+    max-width: 90%;
+  }
+  
+  .class-diagram svg {
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .class-diagram,
+  img[alt*="diagram"] {
+    padding: 0.75rem;
+    margin: 1rem auto;
+  }
+  
+  .class-diagram svg {
+    min-height: 250px;
+  }
+  
+  .diagram-zoom-overlay {
+    padding: 1rem;
+  }
+  
+  .diagram-zoom-overlay img {
+    max-width: 98%;
+    max-height: 90vh;
+  }
+}
+
+/* Sidebar customization for API docs */
+.sidebar .sidebar-title {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.sidebar .sidebar-section {
+  margin-top: 1rem;
+}
+
+.sidebar .sidebar-section-title {
+  font-weight: 500;
+  font-size: 0.95em;
+  text-transform: uppercase;
+  color: var(--secondary-color);
+}
+
+/* ============================================
+   Category badges
+   ============================================ */
+
+.category-badge {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    font-size: 0.75em;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 3px;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.category-badge.linear_algebra {
+    background-color: #3498db;  /* Blue */
+}
+
+.category-badge.hdf5_algebra {
+    background-color: #9b59b6;  /* Purple */
+}
+
+.category-badge.blockwise_ops {
+    background-color: #2ecc71;  /* Green */
+}
+
+.category-badge.hdf5_statistics {
+    background-color: #e67e22;  /* Orange */
+}
+
+.category-badge.hdf5_io_management {
+    background-color: #f1c40f;  /* Yellow with darker text */
+    color: #333;
+}
+
+.category-badge.other {
+    background-color: #95a5a6;  /* Gray */
+}
+
+
+/* Source code link */
+.source-link {
+  float: right;
+  font-size: 0.9em;
+}
+
+.source-link a {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+.source-link a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+/* Code block improvements */
+pre code {
+  tab-size: 2;
+  -moz-tab-size: 2;
+  -o-tab-size: 2;
+  font-family: 'Monaco', 'Menlo', 'Consolas', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* Print styles */
+@media print {
+  .sidebar, .navbar, .page-footer {
+    display: none;
+  }
+  
+  body {
+    font-size: 11pt;
+  }
+  
+  pre {
+    border: 1px solid #ccc;
+  }
+  
+  .function-signature,
+  .param-table,
+  .return-value {
+    border: 1px solid #ccc;
+  }
+}

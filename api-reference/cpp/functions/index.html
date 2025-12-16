@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -38,10 +73,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-969ddfa49e00a70eb3423444dbc81f6c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-69e22614feb0789a4b1e69368fd0350a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-d0f1cdce0779274a5ec1152cd33adb41.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-d6747531eee53fd58085a197f3afc013.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-d0f1cdce0779274a5ec1152cd33adb41.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,10 +111,172 @@ ul.task-list li input[type="checkbox"] {
 <style>html{ scroll-behavior: smooth; }</style>
 
 
-<link rel="stylesheet" href="../../../assets/custom.css">
+<link rel="stylesheet" href="../../../assets/css/custom.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -83,6 +284,8 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../assets/images/logo.png" alt="" class="navbar-logo light-content">
+    <img src="../../../assets/images/logo.png" alt="" class="navbar-logo dark-content">
     </a>
     <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">BigDataStatMeth</span>
@@ -98,32 +301,79 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link active" href="../../../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../../get-started/index.html"> 
-<span class="menu-text">Get Started</span></a>
-  </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-learn" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Learn</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-fundamentals" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Fundamentals</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-learn">    
-        <li class="dropdown-header">─── Theory ───</li>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-fundamentals">    
         <li>
-    <a class="dropdown-item" href="../../../fundamentals/index.html">
- <span class="dropdown-text">Fundamentals</span></a>
+    <a class="dropdown-item" href="../../../fundamentals/big-data-problem.html">
+ <span class="dropdown-text">The Big Data Problem</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../design-implementation/index.html">
- <span class="dropdown-text">Design &amp; Implementation</span></a>
-  </li>  
-        <li class="dropdown-header">─── Practice ───</li>
-        <li>
-    <a class="dropdown-item" href="../../../tutorials/index.html">
- <span class="dropdown-text">Tutorials</span></a>
+    <a class="dropdown-item" href="../../../fundamentals/understanding-hdf5.html">
+ <span class="dropdown-text">Understanding HDF5</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../practical-workflows/index.html">
- <span class="dropdown-text">Practical Workflows</span></a>
+    <a class="dropdown-item" href="../../../fundamentals/blockwise-computing.html">
+ <span class="dropdown-text">Block-Wise Computing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../fundamentals/linear-algebra.html">
+ <span class="dropdown-text">Linear Algebra Essentials</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tutorials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Tutorials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tutorials">    
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/getting-started.html">
+ <span class="dropdown-text">Getting Started</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/working-hdf5-matrices.html">
+ <span class="dropdown-text">Working with HDF5 Matrices</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/first-analysis.html">
+ <span class="dropdown-text">Your First Analysis</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-workflows" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Workflows</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-workflows">    
+        <li>
+    <a class="dropdown-item" href="../../../workflows/implementing-pca.html">
+ <span class="dropdown-text">Implementing PCA</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../workflows/implementing-cca.html">
+ <span class="dropdown-text">Implementing CCA</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../workflows/cross-platform.html">
+ <span class="dropdown-text">Cross-Platform Workflows</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developing-methods" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Developing Methods</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-developing-methods">    
+        <li>
+    <a class="dropdown-item" href="../../../developing-methods/cca-r-implementation.html">
+ <span class="dropdown-text">CCA in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../developing-methods/cca-cpp-implementation.html">
+ <span class="dropdown-text">CCA in C++</span></a>
   </li>  
     </ul>
   </li>
@@ -142,26 +392,10 @@ ul.task-list li input[type="checkbox"] {
   </li>  
     </ul>
   </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developers" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Developers</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-developers">    
-        <li>
-    <a class="dropdown-item" href="../../../developer-guide/index.html">
- <span class="dropdown-text">Developer Guide</span></a>
+  <li class="nav-item">
+    <a class="nav-link" href="../../../technical/performance.html"> 
+<span class="menu-text">Technical</span></a>
   </li>  
-        <li>
-    <a class="dropdown-item" href="../../../developer-guide/contributing/index.qmd">
- <span class="dropdown-text">Contributing</span></a>
-  </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li>
-    <a class="dropdown-item" href="../../../best-practices/index.html">
- <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-    </ul>
-  </li>
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
@@ -169,9 +403,14 @@ ul.task-list li input[type="checkbox"] {
 </i> 
 <span class="menu-text"></span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://cran.r-project.org/package=BigDataStatMeth"> 
+<span class="menu-text">CRAN</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -189,7 +428,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="../../../index.html" class="sidebar-logo-link">
       </a>
@@ -1392,16 +1631,17 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#standalone-functions" id="toc-standalone-functions" class="nav-link active" data-scroll-target="#standalone-functions">Standalone Functions</a></li>
+  <li><a href="#standalone-functions" id="toc-standalone-functions" class="nav-link active" data-scroll-target="#standalone-functions"><span class="header-section-number">1</span> Standalone Functions</a></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/edit/main/api-reference/cpp/functions/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">C++ Functions</h1>
+<div class="quarto-title-block"><div><h1 class="title">C++ Functions</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -1418,19 +1658,34 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="standalone-functions" class="level2">
-<h2 class="anchored" data-anchor-id="standalone-functions">Standalone Functions</h2>
+<section id="standalone-functions" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="standalone-functions"><span class="header-section-number">1</span> Standalone Functions</h2>
 <p>Documentation for standalone utility functions.</p>
 <ul>
 <li><a href="../../../api-reference/cpp/functions/addDiagonals.html">addDiagonals</a>* <a href="../../../api-reference/cpp/functions/after_fork.html">after_fork</a>* <a href="../../../api-reference/cpp/functions/avoid_openmp_hang_within_fork.html">avoid_openmp_hang_within_fork</a>* <a href="../../../api-reference/cpp/functions/Bblock_matrix_mul_parallel.html">Bblock_matrix_mul_parallel</a>* <a href="../../../api-reference/cpp/functions/bdcrossproduct.html">bdcrossproduct</a>* <a href="../../../api-reference/cpp/functions/bdtcrossproduct.html">bdtcrossproduct</a>* <a href="../../../api-reference/cpp/functions/calc_freq.html">calc_freq</a>* <a href="../../../api-reference/cpp/functions/calculate_multiplication_blocks.html">calculate_multiplication_blocks</a>* <a href="../../../api-reference/cpp/functions/checkClose_file.html">checkClose_file</a>* <a href="../../../api-reference/cpp/functions/Cholesky_decomposition_hdf5.html">Cholesky_decomposition_hdf5</a>* <a href="../../../api-reference/cpp/functions/Cholesky_decomposition_intermediate_hdf5.html">Cholesky_decomposition_intermediate_hdf5</a>* <a href="../../../api-reference/cpp/functions/Cholesky_decomposition_outofcore_hdf5.html">Cholesky_decomposition_outofcore_hdf5</a>* <a href="../../../api-reference/cpp/functions/classify_matrix_type.html">classify_matrix_type</a>* <a href="../../../api-reference/cpp/functions/cleanup_temp_datasets.html">cleanup_temp_datasets</a>* <a href="../../../api-reference/cpp/functions/compute_pvalues_optimized.html">compute_pvalues_optimized</a>* <a href="../../../api-reference/cpp/functions/correlation_pvalue.html">correlation_pvalue</a>* <a href="../../../api-reference/cpp/functions/createHardLink.html">createHardLink</a>* <a href="../../../api-reference/cpp/functions/crossprod.html">crossprod</a>* <a href="../../../api-reference/cpp/functions/cumsum.html">cumsum</a>* <a href="../../../api-reference/cpp/functions/dgemm_.html">dgemm_</a>* <a href="../../../api-reference/cpp/functions/dgesdd_.html">dgesdd_</a>* <a href="../../../api-reference/cpp/functions/dgesv_.html">dgesv_</a>* <a href="../../../api-reference/cpp/functions/dgesvd_.html">dgesvd_</a>* <a href="../../../api-reference/cpp/functions/divideDiagonals.html">divideDiagonals</a>* <a href="../../../api-reference/cpp/functions/dscal_.html">dscal_</a>* <a href="../../../api-reference/cpp/functions/dsysv_.html">dsysv_</a>* <a href="../../../api-reference/cpp/functions/estimateOptimalBlockSize.html">estimateOptimalBlockSize</a>* <a href="../../../api-reference/cpp/functions/exists_HDF5_element.html">exists_HDF5_element</a>* <a href="../../../api-reference/cpp/functions/extractDiagonalToVector.html">extractDiagonalToVector</a>* <a href="../../../api-reference/cpp/functions/find_all.html">find_all</a>* <a href="../../../api-reference/cpp/functions/First_level_SvdBlock_decomposition_hdf5.html">First_level_SvdBlock_decomposition_hdf5</a>* <a href="../../../api-reference/cpp/functions/get_block_size.html">get_block_size</a>* <a href="../../../api-reference/cpp/functions/get_data_as_Matrix.html">get_data_as_Matrix</a>* <a href="../../../api-reference/cpp/functions/get_HDF5_mean_sd_by_column.html">get_HDF5_mean_sd_by_column</a>* <a href="../../../api-reference/cpp/functions/get_HDF5_mean_sd_by_row.html">get_HDF5_mean_sd_by_row</a>* <a href="../../../api-reference/cpp/functions/get_NewLineEnding.html">get_NewLineEnding</a>* <a href="../../../api-reference/cpp/functions/get_number_threads.html">get_number_threads</a>* <a href="../../../api-reference/cpp/functions/get_SplitData_in_vectorString.html">get_SplitData_in_vectorString</a>* <a href="../../../api-reference/cpp/functions/get_threads.html">get_threads</a>* <a href="../../../api-reference/cpp/functions/get_value_to_impute_discrete.html">get_value_to_impute_discrete</a>* <a href="../../../api-reference/cpp/functions/getAvailableMemoryMB.html">getAvailableMemoryMB</a>* <a href="../../../api-reference/cpp/functions/getBlockPositionsSizes_hdf5.html">getBlockPositionsSizes_hdf5</a>* <a href="../../../api-reference/cpp/functions/getBlockPositionsSizes_mat.html">getBlockPositionsSizes_mat</a>* <a href="../../../api-reference/cpp/functions/getBlockPositionsSizes.html">getBlockPositionsSizes</a>* <a href="../../../api-reference/cpp/functions/getDiagonalfromMatrix.html">getDiagonalfromMatrix</a>* <a href="../../../api-reference/cpp/functions/getDTthreads_R.html">getDTthreads_R</a>* <a href="../../../api-reference/cpp/functions/getDTthreads.html">getDTthreads</a>* <a href="../../../api-reference/cpp/functions/getGeneralSortRule.html">getGeneralSortRule</a>* <a href="../../../api-reference/cpp/functions/getInitialPosition.html">getInitialPosition</a>* <a href="../../../api-reference/cpp/functions/getIntEnv.html">getIntEnv</a>* <a href="../../../api-reference/cpp/functions/getMatrixBlockSize.html">getMatrixBlockSize</a>* <a href="../../../api-reference/cpp/functions/getMaxBlockSize.html">getMaxBlockSize</a>* <a href="../../../api-reference/cpp/functions/getObjecDataType.html">getObjecDataType</a>* <a href="../../../api-reference/cpp/functions/getObjectDims.html">getObjectDims</a>* <a href="../../../api-reference/cpp/functions/getOptimalBlockElements.html">getOptimalBlockElements</a>* <a href="../../../api-reference/cpp/functions/getOptimBlockSize.html">getOptimBlockSize</a>* <a href="../../../api-reference/cpp/functions/getSizetoRead.html">getSizetoRead</a>* <a href="../../../api-reference/cpp/functions/getSymmetricSortRule.html">getSymmetricSortRule</a>* <a href="../../../api-reference/cpp/functions/getVectorBlockSize.html">getVectorBlockSize</a>* <a href="../../../api-reference/cpp/functions/hdf5_matrixVector_calculus.html">hdf5_matrixVector_calculus</a>* <a href="../../../api-reference/cpp/functions/imax.html">imax</a>* <a href="../../../api-reference/cpp/functions/imin.html">imin</a>* <a href="../../../api-reference/cpp/functions/initDTthreads.html">initDTthreads</a>* <a href="../../../api-reference/cpp/functions/Inverse_Matrix_Cholesky_hdf5.html">Inverse_Matrix_Cholesky_hdf5</a>* <a href="../../../api-reference/cpp/functions/Inverse_Matrix_Cholesky_intermediate_hdf5.html">Inverse_Matrix_Cholesky_intermediate_hdf5</a>* <a href="../../../api-reference/cpp/functions/Inverse_Matrix_Cholesky_outofcore_hdf5.html">Inverse_Matrix_Cholesky_outofcore_hdf5</a>* <a href="../../../api-reference/cpp/functions/Inverse_of_Cholesky_decomposition_hdf5.html">Inverse_of_Cholesky_decomposition_hdf5</a>* <a href="../../../api-reference/cpp/functions/Inverse_of_Cholesky_decomposition_intermediate_hdf5.html">Inverse_of_Cholesky_decomposition_intermediate_hdf5</a>* <a href="../../../api-reference/cpp/functions/Inverse_of_Cholesky_decomposition_outofcore_hdf5.html">Inverse_of_Cholesky_decomposition_outofcore_hdf5</a>* <a href="../../../api-reference/cpp/functions/is_number.html">is_number</a>* <a href="../../../api-reference/cpp/functions/isDiagonalVector.html">isDiagonalVector</a>* <a href="../../../api-reference/cpp/functions/isMatrixSymmetric.html">isMatrixSymmetric</a>* <a href="../../../api-reference/cpp/functions/join_datasets.html">join_datasets</a>* <a href="../../../api-reference/cpp/functions/multiplication.html">multiplication</a>* <a href="../../../api-reference/cpp/functions/multiplicationSparse.html">multiplicationSparse</a>* <a href="../../../api-reference/cpp/functions/multiplyDiagonals.html">multiplyDiagonals</a>* <a href="../../../api-reference/cpp/functions/mygetenv.html">mygetenv</a>* <a href="../../../api-reference/cpp/functions/Next_level_SvdBlock_decomposition_hdf5.html">Next_level_SvdBlock_decomposition_hdf5</a>* <a href="../../../api-reference/cpp/functions/pathExists.html">pathExists</a>* <a href="../../../api-reference/cpp/functions/pearson_correlation.html">pearson_correlation</a>* <a href="../../../api-reference/cpp/functions/performMatrixDiagonalOperation.html">performMatrixDiagonalOperation</a>* <a href="../../../api-reference/cpp/functions/powerDiagonals.html">powerDiagonals</a>* <a href="../../../api-reference/cpp/functions/prepareForParallelization.html">prepareForParallelization</a>* <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_mul_parallel.html">Rcpp_block_matrix_mul_parallel</a>* <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_mul.html">Rcpp_block_matrix_mul</a>* <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_substract_hdf5.html">Rcpp_block_matrix_substract_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_sum_hdf5.html">Rcpp_block_matrix_sum_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_vector_substract_hdf5.html">Rcpp_block_matrix_vector_substract_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_vector_substract.html">Rcpp_block_matrix_vector_substract</a>* <a href="../../../api-reference/cpp/functions/Rcpp_block_matrix_vector_sum_hdf5.html">Rcpp_block_matrix_vector_sum_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_FileExist.html">Rcpp_FileExist</a>* <a href="../../../api-reference/cpp/functions/Rcpp_Import_File_to_hdf5.html">Rcpp_Import_File_to_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_Impute_snps_hdf5.html">Rcpp_Impute_snps_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_InvCholesky_hdf5.html">Rcpp_InvCholesky_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_blockSubstract.html">Rcpp_matrix_blockSubstract</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_blockSum.html">Rcpp_matrix_blockSum</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_substract.html">Rcpp_matrix_substract</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_sum.html">Rcpp_matrix_sum</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vect_mult.html">Rcpp_matrix_vect_mult</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vect_substract.html">Rcpp_matrix_vect_substract</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vect_sum.html">Rcpp_matrix_vect_sum</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vector_blockMult.html">Rcpp_matrix_vector_blockMult</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vector_blockSubstract.html">Rcpp_matrix_vector_blockSubstract</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrix_vector_blockSum.html">Rcpp_matrix_vector_blockSum</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorDivision_byCol.html">Rcpp_matrixVectorDivision_byCol</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorDivision_byRow.html">Rcpp_matrixVectorDivision_byRow</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorMultiplication_byCol.html">Rcpp_matrixVectorMultiplication_byCol</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorMultiplication_byRow.html">Rcpp_matrixVectorMultiplication_byRow</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorPow_byRow.html">Rcpp_matrixVectorPow_byRow</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorPower_byCol.html">Rcpp_matrixVectorPower_byCol</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorSubstract_byCol.html">Rcpp_matrixVectorSubstract_byCol</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorSubstract_byRow.html">Rcpp_matrixVectorSubstract_byRow</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorSum_byCol.html">Rcpp_matrixVectorSum_byCol</a>* <a href="../../../api-reference/cpp/functions/Rcpp_matrixVectorSum_byRow.html">Rcpp_matrixVectorSum_byRow</a>* <a href="../../../api-reference/cpp/functions/Rcpp_Remove_Low_Data_hdf5.html">Rcpp_Remove_Low_Data_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_Remove_MAF_hdf5.html">Rcpp_Remove_MAF_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_vector_add_hdf5.html">Rcpp_vector_add_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_vector_divide_hdf5.html">Rcpp_vector_divide_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_vector_mult.html">Rcpp_vector_mult</a>* <a href="../../../api-reference/cpp/functions/Rcpp_vector_multiply_hdf5.html">Rcpp_vector_multiply_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_vector_power_hdf5.html">Rcpp_vector_power_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_vector_substract.html">Rcpp_vector_substract</a>* <a href="../../../api-reference/cpp/functions/Rcpp_vector_subtract_hdf5.html">Rcpp_vector_subtract_hdf5</a>* <a href="../../../api-reference/cpp/functions/Rcpp_vector_sum.html">Rcpp_vector_sum</a>* <a href="../../../api-reference/cpp/functions/RcppApplyFunctionHdf5.html">RcppApplyFunctionHdf5</a>* <a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_Block_cross.html">RcppbdCorr_hdf5_Block_cross</a>* <a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_Block_single.html">RcppbdCorr_hdf5_Block_single</a>* <a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_cross.html">RcppbdCorr_hdf5_cross</a>* <a href="../../../api-reference/cpp/functions/RcppbdCorr_hdf5_single.html">RcppbdCorr_hdf5_single</a>* <a href="../../../api-reference/cpp/functions/RcppbdCorr_matrix_cross.html">RcppbdCorr_matrix_cross</a>* <a href="../../../api-reference/cpp/functions/RcppbdCorr_matrix_single.html">RcppbdCorr_matrix_single</a>* <a href="../../../api-reference/cpp/functions/RcppbdEigen_hdf5_Block.html">RcppbdEigen_hdf5_Block</a>* <a href="../../../api-reference/cpp/functions/RcppbdEigen_hdf5.html">RcppbdEigen_hdf5</a>* <a href="../../../api-reference/cpp/functions/RcppbdEigen_spectra.html">RcppbdEigen_spectra</a>* <a href="../../../api-reference/cpp/functions/RcppbdSVD_hdf5_Block.html">RcppbdSVD_hdf5_Block</a>* <a href="../../../api-reference/cpp/functions/RcppbdSVD_hdf5.html">RcppbdSVD_hdf5</a>* <a href="../../../api-reference/cpp/functions/RcppbdSVD_lapack.html">RcppbdSVD_lapack</a>* <a href="../../../api-reference/cpp/functions/RcppbdSVD.html">RcppbdSVD</a>* <a href="../../../api-reference/cpp/functions/RcppBind_datasets_hdf5.html">RcppBind_datasets_hdf5</a>* <a href="../../../api-reference/cpp/functions/RcppGetPCAIndividualsHdf5.html">RcppGetPCAIndividualsHdf5</a>* <a href="../../../api-reference/cpp/functions/RcppGetPCAVariablesHdf5.html">RcppGetPCAVariablesHdf5</a>* <a href="../../../api-reference/cpp/functions/RcppNormalize_Data_R_hdf5.html">RcppNormalize_Data_R_hdf5</a>* <a href="../../../api-reference/cpp/functions/RcppNormalize_Data.html">RcppNormalize_Data</a>* <a href="../../../api-reference/cpp/functions/RcppNormalizeColwise.html">RcppNormalizeColwise</a>* <a href="../../../api-reference/cpp/functions/RcppNormalizeHdf5.html">RcppNormalizeHdf5</a>* <a href="../../../api-reference/cpp/functions/RcppNormalizeRowwise.html">RcppNormalizeRowwise</a>* <a href="../../../api-reference/cpp/functions/RcppPCAHdf5.html">RcppPCAHdf5</a>* <a href="../../../api-reference/cpp/functions/RcppPseudoinv.html">RcppPseudoinv</a>* <a href="../../../api-reference/cpp/functions/RcppPseudoinvHdf5.html">RcppPseudoinvHdf5</a>* <a href="../../../api-reference/cpp/functions/RcppQR.html">RcppQR</a>* <a href="../../../api-reference/cpp/functions/RcppQRHdf5.html">RcppQRHdf5</a>* <a href="../../../api-reference/cpp/functions/RcppReduce_dataset_hdf5.html">RcppReduce_dataset_hdf5</a>* <a href="../../../api-reference/cpp/functions/RcppRemove_hdf5_elements.html">RcppRemove_hdf5_elements</a>* <a href="../../../api-reference/cpp/functions/RcppSolve.html">RcppSolve</a>* <a href="../../../api-reference/cpp/functions/RcppSolveHdf5.html">RcppSolveHdf5</a>* <a href="../../../api-reference/cpp/functions/RcppSort_dataset_hdf5.html">RcppSort_dataset_hdf5</a>* <a href="../../../api-reference/cpp/functions/RcppSplit_matrix_hdf5_internal.html">RcppSplit_matrix_hdf5_internal</a>* <a href="../../../api-reference/cpp/functions/RcppSplit_matrix_hdf5.html">RcppSplit_matrix_hdf5</a>* <a href="../../../api-reference/cpp/functions/RcppTypifyNormalizeHdf5.html">RcppTypifyNormalizeHdf5</a>* <a href="../../../api-reference/cpp/functions/remove_elements.html">remove_elements</a>* <a href="../../../api-reference/cpp/functions/removeColumn.html">removeColumn</a>* <a href="../../../api-reference/cpp/functions/removeRow.html">removeRow</a>* <a href="../../../api-reference/cpp/functions/renameElement.html">renameElement</a>* <a href="../../../api-reference/cpp/functions/scalarOperation.html">scalarOperation</a>* <a href="../../../api-reference/cpp/functions/setDiagonalMatrix.html">setDiagonalMatrix</a>* <a href="../../../api-reference/cpp/functions/setLowerTriangularMatrix.html">setLowerTriangularMatrix</a>* <a href="../../../api-reference/cpp/functions/setUpperTriangularMatrix.html">setUpperTriangularMatrix</a>* <a href="../../../api-reference/cpp/functions/spearman_correlation.html">spearman_correlation</a>* <a href="../../../api-reference/cpp/functions/SplitElementName.html">SplitElementName</a>* <a href="../../../api-reference/cpp/functions/subtractDiagonals.html">subtractDiagonals</a>* <a href="../../../api-reference/cpp/functions/t_distribution_cdf.html">t_distribution_cdf</a>* <a href="../../../api-reference/cpp/functions/tcrossprod.html">tcrossprod</a>* <a href="../../../api-reference/cpp/functions/transpose.html">transpose</a>* <a href="../../../api-reference/cpp/functions/validateSpectraParams.html">validateSpectraParams</a>* <a href="../../../api-reference/cpp/functions/validateVector.html">validateVector</a>* <a href="../../../api-reference/cpp/functions/validateVectorDataset.html">validateVectorDataset</a>* <a href="../../../api-reference/cpp/functions/VectortoOrderedMap_SNP_counts.html">VectortoOrderedMap_SNP_counts</a>* <a href="../../../api-reference/cpp/functions/wdX_parallel.html">wdX_parallel</a>* <a href="../../../api-reference/cpp/functions/wdX.html">wdX</a>* <a href="../../../api-reference/cpp/functions/when_fork.html">when_fork</a>* <a href="../../../api-reference/cpp/functions/writeDiagonalFromVector.html">writeDiagonalFromVector</a>* <a href="../../../api-reference/cpp/functions/wX.html">wX</a>* <a href="../../../api-reference/cpp/functions/xtwx.html">xtwx</a>* <a href="../../../api-reference/cpp/functions/Xw.html">Xw</a>* <a href="../../../api-reference/cpp/functions/Xwd_parallel.html">Xwd_parallel</a>* <a href="../../../api-reference/cpp/functions/Xwd.html">Xwd</a>* <a href="../../../api-reference/cpp/functions/xwxt.html">xwxt</a></li>
 </ul>
 
 
+<!-- -->
+
 </section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -1500,9 +1755,60 @@ ul.task-list li input[type="checkbox"] {
       });
       clipboardModal.on('success', onCopySuccess);
     }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/isglobal-brge\.github\.io\/BigDataStatMeth\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -1835,19 +2141,39 @@ ul.task-list li input[type="checkbox"] {
       }
     }
   });
-  </script>
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "C++ Functions"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Standalone Functions</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Documentation for standalone utility functions.</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="co">[</span><span class="ot">addDiagonals</span><span class="co">](addDiagonals.qmd)</span>* <span class="co">[</span><span class="ot">after_fork</span><span class="co">](after_fork.qmd)</span>* <span class="co">[</span><span class="ot">avoid_openmp_hang_within_fork</span><span class="co">](avoid_openmp_hang_within_fork.qmd)</span>* <span class="co">[</span><span class="ot">Bblock_matrix_mul_parallel</span><span class="co">](Bblock_matrix_mul_parallel.qmd)</span>* <span class="co">[</span><span class="ot">bdcrossproduct</span><span class="co">](bdcrossproduct.qmd)</span>* <span class="co">[</span><span class="ot">bdtcrossproduct</span><span class="co">](bdtcrossproduct.qmd)</span>* <span class="co">[</span><span class="ot">calc_freq</span><span class="co">](calc_freq.qmd)</span>* <span class="co">[</span><span class="ot">calculate_multiplication_blocks</span><span class="co">](calculate_multiplication_blocks.qmd)</span>* <span class="co">[</span><span class="ot">checkClose_file</span><span class="co">](checkClose_file.qmd)</span>* <span class="co">[</span><span class="ot">Cholesky_decomposition_hdf5</span><span class="co">](Cholesky_decomposition_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Cholesky_decomposition_intermediate_hdf5</span><span class="co">](Cholesky_decomposition_intermediate_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Cholesky_decomposition_outofcore_hdf5</span><span class="co">](Cholesky_decomposition_outofcore_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">classify_matrix_type</span><span class="co">](classify_matrix_type.qmd)</span>* <span class="co">[</span><span class="ot">cleanup_temp_datasets</span><span class="co">](cleanup_temp_datasets.qmd)</span>* <span class="co">[</span><span class="ot">compute_pvalues_optimized</span><span class="co">](compute_pvalues_optimized.qmd)</span>* <span class="co">[</span><span class="ot">correlation_pvalue</span><span class="co">](correlation_pvalue.qmd)</span>* <span class="co">[</span><span class="ot">createHardLink</span><span class="co">](createHardLink.qmd)</span>* <span class="co">[</span><span class="ot">crossprod</span><span class="co">](crossprod.qmd)</span>* <span class="co">[</span><span class="ot">cumsum</span><span class="co">](cumsum.qmd)</span>* <span class="co">[</span><span class="ot">dgemm_</span><span class="co">](dgemm_.qmd)</span>* <span class="co">[</span><span class="ot">dgesdd_</span><span class="co">](dgesdd_.qmd)</span>* <span class="co">[</span><span class="ot">dgesv_</span><span class="co">](dgesv_.qmd)</span>* <span class="co">[</span><span class="ot">dgesvd_</span><span class="co">](dgesvd_.qmd)</span>* <span class="co">[</span><span class="ot">divideDiagonals</span><span class="co">](divideDiagonals.qmd)</span>* <span class="co">[</span><span class="ot">dscal_</span><span class="co">](dscal_.qmd)</span>* <span class="co">[</span><span class="ot">dsysv_</span><span class="co">](dsysv_.qmd)</span>* <span class="co">[</span><span class="ot">estimateOptimalBlockSize</span><span class="co">](estimateOptimalBlockSize.qmd)</span>* <span class="co">[</span><span class="ot">exists_HDF5_element</span><span class="co">](exists_HDF5_element.qmd)</span>* <span class="co">[</span><span class="ot">extractDiagonalToVector</span><span class="co">](extractDiagonalToVector.qmd)</span>* <span class="co">[</span><span class="ot">find_all</span><span class="co">](find_all.qmd)</span>* <span class="co">[</span><span class="ot">First_level_SvdBlock_decomposition_hdf5</span><span class="co">](First_level_SvdBlock_decomposition_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">get_block_size</span><span class="co">](get_block_size.qmd)</span>* <span class="co">[</span><span class="ot">get_data_as_Matrix</span><span class="co">](get_data_as_Matrix.qmd)</span>* <span class="co">[</span><span class="ot">get_HDF5_mean_sd_by_column</span><span class="co">](get_HDF5_mean_sd_by_column.qmd)</span>* <span class="co">[</span><span class="ot">get_HDF5_mean_sd_by_row</span><span class="co">](get_HDF5_mean_sd_by_row.qmd)</span>* <span class="co">[</span><span class="ot">get_NewLineEnding</span><span class="co">](get_NewLineEnding.qmd)</span>* <span class="co">[</span><span class="ot">get_number_threads</span><span class="co">](get_number_threads.qmd)</span>* <span class="co">[</span><span class="ot">get_SplitData_in_vectorString</span><span class="co">](get_SplitData_in_vectorString.qmd)</span>* <span class="co">[</span><span class="ot">get_threads</span><span class="co">](get_threads.qmd)</span>* <span class="co">[</span><span class="ot">get_value_to_impute_discrete</span><span class="co">](get_value_to_impute_discrete.qmd)</span>* <span class="co">[</span><span class="ot">getAvailableMemoryMB</span><span class="co">](getAvailableMemoryMB.qmd)</span>* <span class="co">[</span><span class="ot">getBlockPositionsSizes_hdf5</span><span class="co">](getBlockPositionsSizes_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">getBlockPositionsSizes_mat</span><span class="co">](getBlockPositionsSizes_mat.qmd)</span>* <span class="co">[</span><span class="ot">getBlockPositionsSizes</span><span class="co">](getBlockPositionsSizes.qmd)</span>* <span class="co">[</span><span class="ot">getDiagonalfromMatrix</span><span class="co">](getDiagonalfromMatrix.qmd)</span>* <span class="co">[</span><span class="ot">getDTthreads_R</span><span class="co">](getDTthreads_R.qmd)</span>* <span class="co">[</span><span class="ot">getDTthreads</span><span class="co">](getDTthreads.qmd)</span>* <span class="co">[</span><span class="ot">getGeneralSortRule</span><span class="co">](getGeneralSortRule.qmd)</span>* <span class="co">[</span><span class="ot">getInitialPosition</span><span class="co">](getInitialPosition.qmd)</span>* <span class="co">[</span><span class="ot">getIntEnv</span><span class="co">](getIntEnv.qmd)</span>* <span class="co">[</span><span class="ot">getMatrixBlockSize</span><span class="co">](getMatrixBlockSize.qmd)</span>* <span class="co">[</span><span class="ot">getMaxBlockSize</span><span class="co">](getMaxBlockSize.qmd)</span>* <span class="co">[</span><span class="ot">getObjecDataType</span><span class="co">](getObjecDataType.qmd)</span>* <span class="co">[</span><span class="ot">getObjectDims</span><span class="co">](getObjectDims.qmd)</span>* <span class="co">[</span><span class="ot">getOptimalBlockElements</span><span class="co">](getOptimalBlockElements.qmd)</span>* <span class="co">[</span><span class="ot">getOptimBlockSize</span><span class="co">](getOptimBlockSize.qmd)</span>* <span class="co">[</span><span class="ot">getSizetoRead</span><span class="co">](getSizetoRead.qmd)</span>* <span class="co">[</span><span class="ot">getSymmetricSortRule</span><span class="co">](getSymmetricSortRule.qmd)</span>* <span class="co">[</span><span class="ot">getVectorBlockSize</span><span class="co">](getVectorBlockSize.qmd)</span>* <span class="co">[</span><span class="ot">hdf5_matrixVector_calculus</span><span class="co">](hdf5_matrixVector_calculus.qmd)</span>* <span class="co">[</span><span class="ot">imax</span><span class="co">](imax.qmd)</span>* <span class="co">[</span><span class="ot">imin</span><span class="co">](imin.qmd)</span>* <span class="co">[</span><span class="ot">initDTthreads</span><span class="co">](initDTthreads.qmd)</span>* <span class="co">[</span><span class="ot">Inverse_Matrix_Cholesky_hdf5</span><span class="co">](Inverse_Matrix_Cholesky_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Inverse_Matrix_Cholesky_intermediate_hdf5</span><span class="co">](Inverse_Matrix_Cholesky_intermediate_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Inverse_Matrix_Cholesky_outofcore_hdf5</span><span class="co">](Inverse_Matrix_Cholesky_outofcore_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Inverse_of_Cholesky_decomposition_hdf5</span><span class="co">](Inverse_of_Cholesky_decomposition_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Inverse_of_Cholesky_decomposition_intermediate_hdf5</span><span class="co">](Inverse_of_Cholesky_decomposition_intermediate_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Inverse_of_Cholesky_decomposition_outofcore_hdf5</span><span class="co">](Inverse_of_Cholesky_decomposition_outofcore_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">is_number</span><span class="co">](is_number.qmd)</span>* <span class="co">[</span><span class="ot">isDiagonalVector</span><span class="co">](isDiagonalVector.qmd)</span>* <span class="co">[</span><span class="ot">isMatrixSymmetric</span><span class="co">](isMatrixSymmetric.qmd)</span>* <span class="co">[</span><span class="ot">join_datasets</span><span class="co">](join_datasets.qmd)</span>* <span class="co">[</span><span class="ot">multiplication</span><span class="co">](multiplication.qmd)</span>* <span class="co">[</span><span class="ot">multiplicationSparse</span><span class="co">](multiplicationSparse.qmd)</span>* <span class="co">[</span><span class="ot">multiplyDiagonals</span><span class="co">](multiplyDiagonals.qmd)</span>* <span class="co">[</span><span class="ot">mygetenv</span><span class="co">](mygetenv.qmd)</span>* <span class="co">[</span><span class="ot">Next_level_SvdBlock_decomposition_hdf5</span><span class="co">](Next_level_SvdBlock_decomposition_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">pathExists</span><span class="co">](pathExists.qmd)</span>* <span class="co">[</span><span class="ot">pearson_correlation</span><span class="co">](pearson_correlation.qmd)</span>* <span class="co">[</span><span class="ot">performMatrixDiagonalOperation</span><span class="co">](performMatrixDiagonalOperation.qmd)</span>* <span class="co">[</span><span class="ot">powerDiagonals</span><span class="co">](powerDiagonals.qmd)</span>* <span class="co">[</span><span class="ot">prepareForParallelization</span><span class="co">](prepareForParallelization.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_block_matrix_mul_parallel</span><span class="co">](Rcpp_block_matrix_mul_parallel.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_block_matrix_mul</span><span class="co">](Rcpp_block_matrix_mul.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_block_matrix_substract_hdf5</span><span class="co">](Rcpp_block_matrix_substract_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_block_matrix_sum_hdf5</span><span class="co">](Rcpp_block_matrix_sum_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_block_matrix_vector_substract_hdf5</span><span class="co">](Rcpp_block_matrix_vector_substract_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_block_matrix_vector_substract</span><span class="co">](Rcpp_block_matrix_vector_substract.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_block_matrix_vector_sum_hdf5</span><span class="co">](Rcpp_block_matrix_vector_sum_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_FileExist</span><span class="co">](Rcpp_FileExist.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_Import_File_to_hdf5</span><span class="co">](Rcpp_Import_File_to_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_Impute_snps_hdf5</span><span class="co">](Rcpp_Impute_snps_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_InvCholesky_hdf5</span><span class="co">](Rcpp_InvCholesky_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_blockSubstract</span><span class="co">](Rcpp_matrix_blockSubstract.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_blockSum</span><span class="co">](Rcpp_matrix_blockSum.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_substract</span><span class="co">](Rcpp_matrix_substract.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_sum</span><span class="co">](Rcpp_matrix_sum.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_vect_mult</span><span class="co">](Rcpp_matrix_vect_mult.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_vect_substract</span><span class="co">](Rcpp_matrix_vect_substract.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_vect_sum</span><span class="co">](Rcpp_matrix_vect_sum.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_vector_blockMult</span><span class="co">](Rcpp_matrix_vector_blockMult.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_vector_blockSubstract</span><span class="co">](Rcpp_matrix_vector_blockSubstract.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrix_vector_blockSum</span><span class="co">](Rcpp_matrix_vector_blockSum.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorDivision_byCol</span><span class="co">](Rcpp_matrixVectorDivision_byCol.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorDivision_byRow</span><span class="co">](Rcpp_matrixVectorDivision_byRow.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorMultiplication_byCol</span><span class="co">](Rcpp_matrixVectorMultiplication_byCol.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorMultiplication_byRow</span><span class="co">](Rcpp_matrixVectorMultiplication_byRow.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorPow_byRow</span><span class="co">](Rcpp_matrixVectorPow_byRow.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorPower_byCol</span><span class="co">](Rcpp_matrixVectorPower_byCol.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorSubstract_byCol</span><span class="co">](Rcpp_matrixVectorSubstract_byCol.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorSubstract_byRow</span><span class="co">](Rcpp_matrixVectorSubstract_byRow.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorSum_byCol</span><span class="co">](Rcpp_matrixVectorSum_byCol.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_matrixVectorSum_byRow</span><span class="co">](Rcpp_matrixVectorSum_byRow.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_Remove_Low_Data_hdf5</span><span class="co">](Rcpp_Remove_Low_Data_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_Remove_MAF_hdf5</span><span class="co">](Rcpp_Remove_MAF_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_vector_add_hdf5</span><span class="co">](Rcpp_vector_add_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_vector_divide_hdf5</span><span class="co">](Rcpp_vector_divide_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_vector_mult</span><span class="co">](Rcpp_vector_mult.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_vector_multiply_hdf5</span><span class="co">](Rcpp_vector_multiply_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_vector_power_hdf5</span><span class="co">](Rcpp_vector_power_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_vector_substract</span><span class="co">](Rcpp_vector_substract.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_vector_subtract_hdf5</span><span class="co">](Rcpp_vector_subtract_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">Rcpp_vector_sum</span><span class="co">](Rcpp_vector_sum.qmd)</span>* <span class="co">[</span><span class="ot">RcppApplyFunctionHdf5</span><span class="co">](RcppApplyFunctionHdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdCorr_hdf5_Block_cross</span><span class="co">](RcppbdCorr_hdf5_Block_cross.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdCorr_hdf5_Block_single</span><span class="co">](RcppbdCorr_hdf5_Block_single.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdCorr_hdf5_cross</span><span class="co">](RcppbdCorr_hdf5_cross.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdCorr_hdf5_single</span><span class="co">](RcppbdCorr_hdf5_single.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdCorr_matrix_cross</span><span class="co">](RcppbdCorr_matrix_cross.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdCorr_matrix_single</span><span class="co">](RcppbdCorr_matrix_single.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdEigen_hdf5_Block</span><span class="co">](RcppbdEigen_hdf5_Block.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdEigen_hdf5</span><span class="co">](RcppbdEigen_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdEigen_spectra</span><span class="co">](RcppbdEigen_spectra.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdSVD_hdf5_Block</span><span class="co">](RcppbdSVD_hdf5_Block.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdSVD_hdf5</span><span class="co">](RcppbdSVD_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdSVD_lapack</span><span class="co">](RcppbdSVD_lapack.qmd)</span>* <span class="co">[</span><span class="ot">RcppbdSVD</span><span class="co">](RcppbdSVD.qmd)</span>* <span class="co">[</span><span class="ot">RcppBind_datasets_hdf5</span><span class="co">](RcppBind_datasets_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppGetPCAIndividualsHdf5</span><span class="co">](RcppGetPCAIndividualsHdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppGetPCAVariablesHdf5</span><span class="co">](RcppGetPCAVariablesHdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppNormalize_Data_R_hdf5</span><span class="co">](RcppNormalize_Data_R_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppNormalize_Data</span><span class="co">](RcppNormalize_Data.qmd)</span>* <span class="co">[</span><span class="ot">RcppNormalizeColwise</span><span class="co">](RcppNormalizeColwise.qmd)</span>* <span class="co">[</span><span class="ot">RcppNormalizeHdf5</span><span class="co">](RcppNormalizeHdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppNormalizeRowwise</span><span class="co">](RcppNormalizeRowwise.qmd)</span>* <span class="co">[</span><span class="ot">RcppPCAHdf5</span><span class="co">](RcppPCAHdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppPseudoinv</span><span class="co">](RcppPseudoinv.qmd)</span>* <span class="co">[</span><span class="ot">RcppPseudoinvHdf5</span><span class="co">](RcppPseudoinvHdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppQR</span><span class="co">](RcppQR.qmd)</span>* <span class="co">[</span><span class="ot">RcppQRHdf5</span><span class="co">](RcppQRHdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppReduce_dataset_hdf5</span><span class="co">](RcppReduce_dataset_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppRemove_hdf5_elements</span><span class="co">](RcppRemove_hdf5_elements.qmd)</span>* <span class="co">[</span><span class="ot">RcppSolve</span><span class="co">](RcppSolve.qmd)</span>* <span class="co">[</span><span class="ot">RcppSolveHdf5</span><span class="co">](RcppSolveHdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppSort_dataset_hdf5</span><span class="co">](RcppSort_dataset_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppSplit_matrix_hdf5_internal</span><span class="co">](RcppSplit_matrix_hdf5_internal.qmd)</span>* <span class="co">[</span><span class="ot">RcppSplit_matrix_hdf5</span><span class="co">](RcppSplit_matrix_hdf5.qmd)</span>* <span class="co">[</span><span class="ot">RcppTypifyNormalizeHdf5</span><span class="co">](RcppTypifyNormalizeHdf5.qmd)</span>* <span class="co">[</span><span class="ot">remove_elements</span><span class="co">](remove_elements.qmd)</span>* <span class="co">[</span><span class="ot">removeColumn</span><span class="co">](removeColumn.qmd)</span>* <span class="co">[</span><span class="ot">removeRow</span><span class="co">](removeRow.qmd)</span>* <span class="co">[</span><span class="ot">renameElement</span><span class="co">](renameElement.qmd)</span>* <span class="co">[</span><span class="ot">scalarOperation</span><span class="co">](scalarOperation.qmd)</span>* <span class="co">[</span><span class="ot">setDiagonalMatrix</span><span class="co">](setDiagonalMatrix.qmd)</span>* <span class="co">[</span><span class="ot">setLowerTriangularMatrix</span><span class="co">](setLowerTriangularMatrix.qmd)</span>* <span class="co">[</span><span class="ot">setUpperTriangularMatrix</span><span class="co">](setUpperTriangularMatrix.qmd)</span>* <span class="co">[</span><span class="ot">spearman_correlation</span><span class="co">](spearman_correlation.qmd)</span>* <span class="co">[</span><span class="ot">SplitElementName</span><span class="co">](SplitElementName.qmd)</span>* <span class="co">[</span><span class="ot">subtractDiagonals</span><span class="co">](subtractDiagonals.qmd)</span>* <span class="co">[</span><span class="ot">t_distribution_cdf</span><span class="co">](t_distribution_cdf.qmd)</span>* <span class="co">[</span><span class="ot">tcrossprod</span><span class="co">](tcrossprod.qmd)</span>* <span class="co">[</span><span class="ot">transpose</span><span class="co">](transpose.qmd)</span>* <span class="co">[</span><span class="ot">validateSpectraParams</span><span class="co">](validateSpectraParams.qmd)</span>* <span class="co">[</span><span class="ot">validateVector</span><span class="co">](validateVector.qmd)</span>* <span class="co">[</span><span class="ot">validateVectorDataset</span><span class="co">](validateVectorDataset.qmd)</span>* <span class="co">[</span><span class="ot">VectortoOrderedMap_SNP_counts</span><span class="co">](VectortoOrderedMap_SNP_counts.qmd)</span>* <span class="co">[</span><span class="ot">wdX_parallel</span><span class="co">](wdX_parallel.qmd)</span>* <span class="co">[</span><span class="ot">wdX</span><span class="co">](wdX.qmd)</span>* <span class="co">[</span><span class="ot">when_fork</span><span class="co">](when_fork.qmd)</span>* <span class="co">[</span><span class="ot">writeDiagonalFromVector</span><span class="co">](writeDiagonalFromVector.qmd)</span>* <span class="co">[</span><span class="ot">wX</span><span class="co">](wX.qmd)</span>* <span class="co">[</span><span class="ot">xtwx</span><span class="co">](xtwx.qmd)</span>* <span class="co">[</span><span class="ot">Xw</span><span class="co">](Xw.qmd)</span>* <span class="co">[</span><span class="ot">Xwd_parallel</span><span class="co">](Xwd_parallel.qmd)</span>* <span class="co">[</span><span class="ot">Xwd</span><span class="co">](Xwd.qmd)</span>* <span class="co">[</span><span class="ot">xwxt</span><span class="co">](xwxt.qmd)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>BigDataStatMeth - ISGlobal Bioinformatics Research Group</p>
+<p>© 2025 BigDataStatMeth - ISGlobal BRGE</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    </div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/edit/main/api-reference/cpp/functions/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>Built with <a href="https://quarto.org/">Quarto</a></p>
-</div>
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/isglobal-brge/BigDataStatMeth">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item">
+ License: GPL-3
+  </li>  
+</ul>
+    </div>
   </div>
 </footer>
 

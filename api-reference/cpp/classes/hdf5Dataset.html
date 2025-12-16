@@ -73,10 +73,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-969ddfa49e00a70eb3423444dbc81f6c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-69e22614feb0789a4b1e69368fd0350a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-d0f1cdce0779274a5ec1152cd33adb41.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-d6747531eee53fd58085a197f3afc013.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-d0f1cdce0779274a5ec1152cd33adb41.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,10 +111,172 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <style>html{ scroll-behavior: smooth; }</style>
 
 
-<link rel="stylesheet" href="../../../assets/custom.css">
+<link rel="stylesheet" href="../../../assets/css/custom.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light">
+<body class="nav-sidebar docked nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -118,6 +284,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../assets/images/logo.png" alt="" class="navbar-logo light-content">
+    <img src="../../../assets/images/logo.png" alt="" class="navbar-logo dark-content">
     </a>
     <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">BigDataStatMeth</span>
@@ -133,32 +301,79 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="nav-link active" href="../../../index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../../get-started/index.html"> 
-<span class="menu-text">Get Started</span></a>
-  </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-learn" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Learn</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-fundamentals" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Fundamentals</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-learn">    
-        <li class="dropdown-header">─── Theory ───</li>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-fundamentals">    
         <li>
-    <a class="dropdown-item" href="../../../fundamentals/index.html">
- <span class="dropdown-text">Fundamentals</span></a>
+    <a class="dropdown-item" href="../../../fundamentals/big-data-problem.html">
+ <span class="dropdown-text">The Big Data Problem</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../design-implementation/index.html">
- <span class="dropdown-text">Design &amp; Implementation</span></a>
-  </li>  
-        <li class="dropdown-header">─── Practice ───</li>
-        <li>
-    <a class="dropdown-item" href="../../../tutorials/index.html">
- <span class="dropdown-text">Tutorials</span></a>
+    <a class="dropdown-item" href="../../../fundamentals/understanding-hdf5.html">
+ <span class="dropdown-text">Understanding HDF5</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../../practical-workflows/index.html">
- <span class="dropdown-text">Practical Workflows</span></a>
+    <a class="dropdown-item" href="../../../fundamentals/blockwise-computing.html">
+ <span class="dropdown-text">Block-Wise Computing</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../fundamentals/linear-algebra.html">
+ <span class="dropdown-text">Linear Algebra Essentials</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tutorials" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Tutorials</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tutorials">    
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/getting-started.html">
+ <span class="dropdown-text">Getting Started</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/working-hdf5-matrices.html">
+ <span class="dropdown-text">Working with HDF5 Matrices</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../tutorials/first-analysis.html">
+ <span class="dropdown-text">Your First Analysis</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-workflows" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Workflows</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-workflows">    
+        <li>
+    <a class="dropdown-item" href="../../../workflows/implementing-pca.html">
+ <span class="dropdown-text">Implementing PCA</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../workflows/implementing-cca.html">
+ <span class="dropdown-text">Implementing CCA</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../workflows/cross-platform.html">
+ <span class="dropdown-text">Cross-Platform Workflows</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developing-methods" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Developing Methods</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-developing-methods">    
+        <li>
+    <a class="dropdown-item" href="../../../developing-methods/cca-r-implementation.html">
+ <span class="dropdown-text">CCA in R</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../developing-methods/cca-cpp-implementation.html">
+ <span class="dropdown-text">CCA in C++</span></a>
   </li>  
     </ul>
   </li>
@@ -177,26 +392,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
     </ul>
   </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-developers" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Developers</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-developers">    
-        <li>
-    <a class="dropdown-item" href="../../../developer-guide/index.html">
- <span class="dropdown-text">Developer Guide</span></a>
+  <li class="nav-item">
+    <a class="nav-link" href="../../../technical/performance.html"> 
+<span class="menu-text">Technical</span></a>
   </li>  
-        <li>
-    <a class="dropdown-item" href="../../../developer-guide/contributing/index.qmd">
- <span class="dropdown-text">Contributing</span></a>
-  </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li>
-    <a class="dropdown-item" href="../../../best-practices/index.html">
- <span class="dropdown-text">Best Practices</span></a>
-  </li>  
-    </ul>
-  </li>
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
@@ -204,9 +403,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </i> 
 <span class="menu-text"></span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://cran.r-project.org/package=BigDataStatMeth"> 
+<span class="menu-text">CRAN</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -224,7 +428,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="../../../index.html" class="sidebar-logo-link">
       </a>
@@ -1427,25 +1631,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#detailed-description" id="toc-detailed-description" class="nav-link" data-scroll-target="#detailed-description">Detailed Description</a></li>
-  <li><a href="#class-hierarchy" id="toc-class-hierarchy" class="nav-link" data-scroll-target="#class-hierarchy">Class Hierarchy</a></li>
-  <li><a href="#inheritance" id="toc-inheritance" class="nav-link" data-scroll-target="#inheritance">Inheritance</a></li>
-  <li><a href="#public-interface" id="toc-public-interface" class="nav-link" data-scroll-target="#public-interface">Public Interface</a>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#detailed-description" id="toc-detailed-description" class="nav-link" data-scroll-target="#detailed-description"><span class="header-section-number">2</span> Detailed Description</a></li>
+  <li><a href="#class-hierarchy" id="toc-class-hierarchy" class="nav-link" data-scroll-target="#class-hierarchy"><span class="header-section-number">3</span> Class Hierarchy</a></li>
+  <li><a href="#inheritance" id="toc-inheritance" class="nav-link" data-scroll-target="#inheritance"><span class="header-section-number">4</span> Inheritance</a></li>
+  <li><a href="#public-interface" id="toc-public-interface" class="nav-link" data-scroll-target="#public-interface"><span class="header-section-number">5</span> Public Interface</a>
   <ul class="collapse">
-  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods"><span class="header-section-number">5.1</span> Methods</a></li>
   </ul></li>
-  <li><a href="#protected-members" id="toc-protected-members" class="nav-link" data-scroll-target="#protected-members">Protected Members</a></li>
-  <li><a href="#usage-example" id="toc-usage-example" class="nav-link" data-scroll-target="#usage-example">Usage Example</a></li>
+  <li><a href="#protected-members" id="toc-protected-members" class="nav-link" data-scroll-target="#protected-members"><span class="header-section-number">6</span> Protected Members</a></li>
+  <li><a href="#usage-example" id="toc-usage-example" class="nav-link" data-scroll-target="#usage-example"><span class="header-section-number">7</span> Usage Example</a></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/edit/main/api-reference/cpp/classes/hdf5Dataset.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/index.html">Classes</a></li><li class="breadcrumb-item"><a href="../../../api-reference/cpp/classes/hdf5Dataset.html">hdf5Dataset</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">hdf5Dataset</h1>
+<div class="quarto-title-block"><div><h1 class="title">hdf5Dataset</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 <p class="subtitle lead">C++ Class Reference</p>
 </div>
 
@@ -1463,16 +1668,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<section id="overview" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1</span> Overview</h2>
 <p>Structure for string data.</p>
 </section>
-<section id="detailed-description" class="level2">
-<h2 class="anchored" data-anchor-id="detailed-description">Detailed Description</h2>
+<section id="detailed-description" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="detailed-description"><span class="header-section-number">2</span> Detailed Description</h2>
 <p>Used for storing fixed-length string data in HDF5</p>
 </section>
-<section id="class-hierarchy" class="level2">
-<h2 class="anchored" data-anchor-id="class-hierarchy">Class Hierarchy</h2>
+<section id="class-hierarchy" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="class-hierarchy"><span class="header-section-number">3</span> Class Hierarchy</h2>
 <div class="diagram-section">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1482,19 +1687,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="inheritance" class="level2">
-<h2 class="anchored" data-anchor-id="inheritance">Inheritance</h2>
+<section id="inheritance" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="inheritance"><span class="header-section-number">4</span> Inheritance</h2>
 <p>Inherits from:</p>
 <ul>
 <li>BigDataStatMeth::hdf5Group</li>
 </ul>
 </section>
-<section id="public-interface" class="level2">
-<h2 class="anchored" data-anchor-id="public-interface">Public Interface</h2>
-<section id="methods" class="level3">
-<h3 class="anchored" data-anchor-id="methods">Methods</h3>
-<section id="hdf5dataset" class="level4">
-<h4 class="anchored" data-anchor-id="hdf5dataset"><code>hdf5Dataset()</code></h4>
+<section id="public-interface" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="public-interface"><span class="header-section-number">5</span> Public Interface</h2>
+<section id="methods" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="methods"><span class="header-section-number">5.1</span> Methods</h3>
+<section id="hdf5dataset" class="level4" data-number="5.1.1">
+<h4 data-number="5.1.1" class="anchored" data-anchor-id="hdf5dataset"><span class="header-section-number">5.1.1</span> <code>hdf5Dataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>hdf5Dataset<span class="op">(</span><span class="bu">std::</span>string filename<span class="op">,</span> <span class="bu">std::</span>string group<span class="op">,</span> <span class="bu">std::</span>string datasetname<span class="op">,</span> <span class="dt">bool</span> overwrite<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Parameters:</strong></p>
 <ul>
@@ -1505,15 +1710,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <hr>
 </section>
-<section id="remove" class="level4">
-<h4 class="anchored" data-anchor-id="remove"><code>remove()</code></h4>
+<section id="remove" class="level4" data-number="5.1.2">
+<h4 data-number="5.1.2" class="anchored" data-anchor-id="remove"><span class="header-section-number">5.1.2</span> <code>remove()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>remove<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Remove the dataset.</p>
 <p>Deletes the dataset from the HDF5 file</p>
 <hr>
 </section>
-<section id="createdataset" class="level4">
-<h4 class="anchored" data-anchor-id="createdataset"><code>createDataset()</code></h4>
+<section id="createdataset" class="level4" data-number="5.1.3">
+<h4 data-number="5.1.3" class="anchored" data-anchor-id="createdataset"><span class="header-section-number">5.1.3</span> <code>createDataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>createDataset<span class="op">(</span>BigDataStatMeth<span class="op">::</span>hdf5Dataset <span class="op">*</span>dsLike<span class="op">,</span> <span class="bu">std::</span>string strdatatype<span class="op">,</span> <span class="dt">int</span> compression_level<span class="op">=</span><span class="dv">6</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Create a dataset based on another dataset’s dimensions with optional compression.</p>
 <p><strong>Parameters:</strong></p>
@@ -1525,8 +1730,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Creates a new dataset with the same dimensions as the reference dataset but with a specified data type and compression settings. This is useful for creating derived datasets or transformations while maintaining dimensional consistency.</p>
 <hr>
 </section>
-<section id="createunlimiteddataset" class="level4">
-<h4 class="anchored" data-anchor-id="createunlimiteddataset"><code>createUnlimitedDataset()</code></h4>
+<section id="createunlimiteddataset" class="level4" data-number="5.1.4">
+<h4 data-number="5.1.4" class="anchored" data-anchor-id="createunlimiteddataset"><span class="header-section-number">5.1.4</span> <code>createUnlimitedDataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>createUnlimitedDataset<span class="op">(</span><span class="dt">size_t</span> rows<span class="op">,</span> <span class="dt">size_t</span> cols<span class="op">,</span> <span class="bu">std::</span>string strdatatype<span class="op">,</span> <span class="dt">int</span> compression_level<span class="op">=</span><span class="dv">6</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Create an unlimited dataset with optional compression.</p>
 <p><strong>Parameters:</strong></p>
@@ -1539,8 +1744,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Creates a new HDF5 dataset with unlimited dimensions, allowing it to grow in size dynamically. The dataset is created with initial dimensions but can be extended using extendUnlimitedDataset(). Compression is fully compatible with unlimited datasets.</p>
 <hr>
 </section>
-<section id="extendunlimiteddataset" class="level4">
-<h4 class="anchored" data-anchor-id="extendunlimiteddataset"><code>extendUnlimitedDataset()</code></h4>
+<section id="extendunlimiteddataset" class="level4" data-number="5.1.5">
+<h4 data-number="5.1.5" class="anchored" data-anchor-id="extendunlimiteddataset"><span class="header-section-number">5.1.5</span> <code>extendUnlimitedDataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>extendUnlimitedDataset<span class="op">(</span><span class="at">const</span> <span class="dt">size_t</span> rows<span class="op">,</span> <span class="at">const</span> <span class="dt">size_t</span> cols<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Extend an unlimited dataset.</p>
 <p><strong>Parameters:</strong></p>
@@ -1551,13 +1756,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Increases the dimensions of an unlimited dataset to accommodate more data. Only works with datasets created as unlimited.</p>
 <hr>
 </section>
-<section id="opendataset" class="level4">
-<h4 class="anchored" data-anchor-id="opendataset"><code>openDataset()</code></h4>
+<section id="opendataset" class="level4" data-number="5.1.6">
+<h4 data-number="5.1.6" class="anchored" data-anchor-id="opendataset"><span class="header-section-number">5.1.6</span> <code>openDataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>H5<span class="op">::</span>DataSet <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>openDataset<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <hr>
 </section>
-<section id="writedataset" class="level4">
-<h4 class="anchored" data-anchor-id="writedataset"><code>writeDataset()</code></h4>
+<section id="writedataset" class="level4" data-number="5.1.7">
+<h4 data-number="5.1.7" class="anchored" data-anchor-id="writedataset"><span class="header-section-number">5.1.7</span> <code>writeDataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>writeDataset<span class="op">(</span><span class="dt">double</span> <span class="op">*</span>mdata<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Write raw double data to dataset.</p>
 <p><strong>Parameters:</strong></p>
@@ -1567,8 +1772,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Direct write of double array to dataset without type conversion.</p>
 <hr>
 </section>
-<section id="writerowmajordatasetblock" class="level4">
-<h4 class="anchored" data-anchor-id="writerowmajordatasetblock"><code>writeRowMajorDatasetBlock()</code></h4>
+<section id="writerowmajordatasetblock" class="level4" data-number="5.1.8">
+<h4 data-number="5.1.8" class="anchored" data-anchor-id="writerowmajordatasetblock"><span class="header-section-number">5.1.8</span> <code>writeRowMajorDatasetBlock()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>writeRowMajorDatasetBlock<span class="op">(</span>Eigen<span class="op">::</span>Map<span class="op">&lt;</span> Eigen<span class="op">::</span>Matrix<span class="op">&lt;</span> <span class="dt">double</span><span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>RowMajor <span class="op">&gt;</span> <span class="op">&gt;</span> DatasetValues<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vOffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vCount<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vStride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vBlock<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Write block of data in row-major order.</p>
 <p><strong>Parameters:</strong></p>
@@ -1582,8 +1787,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Writes a block of data to the dataset using row-major memory layout. Supports:Partial dataset updatesStrided accessBlock-based operations</p>
 <hr>
 </section>
-<section id="writecolmajordatasetblock" class="level4">
-<h4 class="anchored" data-anchor-id="writecolmajordatasetblock"><code>writeColMajorDatasetBlock()</code></h4>
+<section id="writecolmajordatasetblock" class="level4" data-number="5.1.9">
+<h4 data-number="5.1.9" class="anchored" data-anchor-id="writecolmajordatasetblock"><span class="header-section-number">5.1.9</span> <code>writeColMajorDatasetBlock()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>writeColMajorDatasetBlock<span class="op">(</span>Eigen<span class="op">::</span>MatrixXd DatasetValues<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vOffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vStride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vBlock<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Write block of data in column-major order.</p>
 <p><strong>Parameters:</strong></p>
@@ -1596,8 +1801,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Writes a block of data to the dataset using column-major memory layout. Supports:Partial dataset updatesStrided accessBlock-based operations</p>
 <hr>
 </section>
-<section id="writedatasetblock" class="level4">
-<h4 class="anchored" data-anchor-id="writedatasetblock"><code>writeDatasetBlock()</code></h4>
+<section id="writedatasetblock" class="level4" data-number="5.1.10">
+<h4 data-number="5.1.10" class="anchored" data-anchor-id="writedatasetblock"><span class="header-section-number">5.1.10</span> <code>writeDatasetBlock()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>writeDatasetBlock<span class="op">(</span><span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">double</span> <span class="op">&gt;</span> DatasetValues<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vOffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vCount<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vStride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vBlock<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Write block of vector data.</p>
 <p><strong>Parameters:</strong></p>
@@ -1611,8 +1816,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Writes a block of vector data to the dataset. Useful for column/row-wise operations.</p>
 <hr>
 </section>
-<section id="createsubsetdataset" class="level4">
-<h4 class="anchored" data-anchor-id="createsubsetdataset"><code>createSubsetDataset()</code></h4>
+<section id="createsubsetdataset" class="level4" data-number="5.1.11">
+<h4 data-number="5.1.11" class="anchored" data-anchor-id="createsubsetdataset"><span class="header-section-number">5.1.11</span> <code>createSubsetDataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>createSubsetDataset<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">int</span> <span class="op">&gt;</span> <span class="op">&amp;</span>indices<span class="op">,</span> <span class="dt">bool</span> select_rows<span class="op">=</span><span class="kw">true</span><span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>new_group<span class="op">=</span><span class="st">""</span><span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>new_name<span class="op">=</span><span class="st">""</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Create subset dataset with selected rows/columns (memory efficient)</p>
 <p><strong>Parameters:</strong></p>
@@ -1625,8 +1830,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Creates a new dataset containing only the specified rows or columns using HDF5’s hyperslab selection for direct disk-to-disk copy without loading data into memory. Ideal for big datasets.</p>
 <hr>
 </section>
-<section id="readdatasetblock" class="level4">
-<h4 class="anchored" data-anchor-id="readdatasetblock"><code>readDatasetBlock()</code></h4>
+<section id="readdatasetblock" class="level4" data-number="5.1.12">
+<h4 data-number="5.1.12" class="anchored" data-anchor-id="readdatasetblock"><span class="header-section-number">5.1.12</span> <code>readDatasetBlock()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>readDatasetBlock<span class="op">(</span><span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivoffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivcount<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivstride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivblock<span class="op">,</span> <span class="dt">double</span> <span class="op">*</span>rdatablock<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Parameters:</strong></p>
 <ul>
@@ -1638,8 +1843,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <hr>
 </section>
-<section id="addattribute" class="level4">
-<h4 class="anchored" data-anchor-id="addattribute"><code>addAttribute()</code></h4>
+<section id="addattribute" class="level4" data-number="5.1.13">
+<h4 data-number="5.1.13" class="anchored" data-anchor-id="addattribute"><span class="header-section-number">5.1.13</span> <code>addAttribute()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>addAttribute<span class="op">(</span><span class="bu">std::</span>string attrName<span class="op">,</span> Rcpp<span class="op">::</span>RObject attr_data<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Add an attribute to the dataset.</p>
 <p><strong>Parameters:</strong></p>
@@ -1651,8 +1856,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Adds or updates an attribute associated with the dataset. Supports various R data types.</p>
 <hr>
 </section>
-<section id="getattribute" class="level4">
-<h4 class="anchored" data-anchor-id="getattribute"><code>getAttribute()</code></h4>
+<section id="getattribute" class="level4" data-number="5.1.14">
+<h4 data-number="5.1.14" class="anchored" data-anchor-id="getattribute"><span class="header-section-number">5.1.14</span> <code>getAttribute()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getAttribute<span class="op">(</span><span class="bu">std::</span>string strAtribute<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get an attribute from the dataset.</p>
 <p><strong>Parameters:</strong></p>
@@ -1662,8 +1867,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Retrieves the value of a named attribute from the dataset.</p>
 <hr>
 </section>
-<section id="movedataset" class="level4">
-<h4 class="anchored" data-anchor-id="movedataset"><code>moveDataset()</code></h4>
+<section id="movedataset" class="level4" data-number="5.1.15">
+<h4 data-number="5.1.15" class="anchored" data-anchor-id="movedataset"><span class="header-section-number">5.1.15</span> <code>moveDataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>moveDataset<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>new_path<span class="op">,</span> <span class="dt">bool</span> overwrite<span class="op">=</span><span class="kw">false</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Parameters:</strong></p>
 <ul>
@@ -1672,128 +1877,128 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <hr>
 </section>
-<section id="getdatasetptr" class="level4">
-<h4 class="anchored" data-anchor-id="getdatasetptr"><code>getDatasetptr()</code></h4>
+<section id="getdatasetptr" class="level4" data-number="5.1.16">
+<h4 data-number="5.1.16" class="anchored" data-anchor-id="getdatasetptr"><span class="header-section-number">5.1.16</span> <code>getDatasetptr()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>H5<span class="op">::</span>DataSet <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getDatasetptr<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get dataset pointer.</p>
 <p><strong>Returns:</strong> Pointer of the dataset</p>
 <p>Pointer of the dataset</p>
 <hr>
 </section>
-<section id="getdatasetname" class="level4">
-<h4 class="anchored" data-anchor-id="getdatasetname"><code>getDatasetName()</code></h4>
+<section id="getdatasetname" class="level4" data-number="5.1.17">
+<h4 data-number="5.1.17" class="anchored" data-anchor-id="getdatasetname"><span class="header-section-number">5.1.17</span> <code>getDatasetName()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getDatasetName<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get dataset name.</p>
 <p><strong>Returns:</strong> Name of the dataset</p>
 <p>Name of the dataset</p>
 <hr>
 </section>
-<section id="getgroup" class="level4">
-<h4 class="anchored" data-anchor-id="getgroup"><code>getGroup()</code></h4>
+<section id="getgroup" class="level4" data-number="5.1.18">
+<h4 data-number="5.1.18" class="anchored" data-anchor-id="getgroup"><span class="header-section-number">5.1.18</span> <code>getGroup()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getGroup<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get group name.</p>
 <p><strong>Returns:</strong> Name of the group containing the dataset</p>
 <p>Name of the group containing the dataset</p>
 <hr>
 </section>
-<section id="getfilename" class="level4">
-<h4 class="anchored" data-anchor-id="getfilename"><code>getFileName()</code></h4>
+<section id="getfilename" class="level4" data-number="5.1.19">
+<h4 data-number="5.1.19" class="anchored" data-anchor-id="getfilename"><span class="header-section-number">5.1.19</span> <code>getFileName()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getFileName<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get file name.</p>
 <p><strong>Returns:</strong> Name of the file containing the dataset</p>
 <p>Name of the file containing the dataset</p>
 <hr>
 </section>
-<section id="nrows" class="level4">
-<h4 class="anchored" data-anchor-id="nrows"><code>nrows()</code></h4>
+<section id="nrows" class="level4" data-number="5.1.20">
+<h4 data-number="5.1.20" class="anchored" data-anchor-id="nrows"><span class="header-section-number">5.1.20</span> <code>nrows()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>nrows<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get number of rows in internal format.</p>
 <p><strong>Returns:</strong> Number of rows in the dataset’s internal storage</p>
 <p>Number of rows in the dataset’s internal storage</p>
 <hr>
 </section>
-<section id="ncols" class="level4">
-<h4 class="anchored" data-anchor-id="ncols"><code>ncols()</code></h4>
+<section id="ncols" class="level4" data-number="5.1.21">
+<h4 data-number="5.1.21" class="anchored" data-anchor-id="ncols"><span class="header-section-number">5.1.21</span> <code>ncols()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>ncols<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get number of columns in internal format.</p>
 <p><strong>Returns:</strong> Number of columns in the dataset’s internal storage</p>
 <p>Number of columns in the dataset’s internal storage</p>
 <hr>
 </section>
-<section id="nrows_r" class="level4">
-<h4 class="anchored" data-anchor-id="nrows_r"><code>nrows_r()</code></h4>
+<section id="nrows_r" class="level4" data-number="5.1.22">
+<h4 data-number="5.1.22" class="anchored" data-anchor-id="nrows_r"><span class="header-section-number">5.1.22</span> <code>nrows_r()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>nrows_r<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get number of rows in R format.</p>
 <p><strong>Returns:</strong> Number of rows in R’s representation (transposed)</p>
 <p>Number of rows in R’s representation (transposed)</p>
 <hr>
 </section>
-<section id="ncols_r" class="level4">
-<h4 class="anchored" data-anchor-id="ncols_r"><code>ncols_r()</code></h4>
+<section id="ncols_r" class="level4" data-number="5.1.23">
+<h4 data-number="5.1.23" class="anchored" data-anchor-id="ncols_r"><span class="header-section-number">5.1.23</span> <code>ncols_r()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>ncols_r<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get number of columns in R format.</p>
 <p><strong>Returns:</strong> Number of columns in R’s representation (transposed)</p>
 <p>Number of columns in R’s representation (transposed)</p>
 <hr>
 </section>
-<section id="dim" class="level4">
-<h4 class="anchored" data-anchor-id="dim"><code>dim()</code></h4>
+<section id="dim" class="level4" data-number="5.1.24">
+<h4 data-number="5.1.24" class="anchored" data-anchor-id="dim"><span class="header-section-number">5.1.24</span> <code>dim()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>dim<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get dataset dimension.</p>
 <p><strong>Returns:</strong> Pointer to dataset dimension (rows x columns)</p>
 <p>Pointer to dataset dimension (rows x columns)</p>
 <hr>
 </section>
-<section id="dimfile" class="level4">
-<h4 class="anchored" data-anchor-id="dimfile"><code>dimFile()</code></h4>
+<section id="dimfile" class="level4" data-number="5.1.25">
+<h4 data-number="5.1.25" class="anchored" data-anchor-id="dimfile"><span class="header-section-number">5.1.25</span> <code>dimFile()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>dimFile<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get dataset file dimension.</p>
 <p><strong>Returns:</strong> Pointer to dataset file dimension (rows x columns)</p>
 <p>Pointer to dataset file dimension (rows x columns)</p>
 <hr>
 </section>
-<section id="nrows_file" class="level4">
-<h4 class="anchored" data-anchor-id="nrows_file"><code>nrows_file()</code></h4>
+<section id="nrows_file" class="level4" data-number="5.1.26">
+<h4 data-number="5.1.26" class="anchored" data-anchor-id="nrows_file"><span class="header-section-number">5.1.26</span> <code>nrows_file()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>nrows_file<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get number of rows in file.</p>
 <p><strong>Returns:</strong> Number of rows in file storage</p>
 <p>Number of rows in file storage</p>
 <hr>
 </section>
-<section id="ncols_file" class="level4">
-<h4 class="anchored" data-anchor-id="ncols_file"><code>ncols_file()</code></h4>
+<section id="ncols_file" class="level4" data-number="5.1.27">
+<h4 data-number="5.1.27" class="anchored" data-anchor-id="ncols_file"><span class="header-section-number">5.1.27</span> <code>ncols_file()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>ncols_file<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get number of columns in file.</p>
 <p><strong>Returns:</strong> Number of columns in file storage</p>
 <p>Number of columns in file storage</p>
 <hr>
 </section>
-<section id="isunlimited" class="level4">
-<h4 class="anchored" data-anchor-id="isunlimited"><code>isUnlimited()</code></h4>
+<section id="isunlimited" class="level4" data-number="5.1.28">
+<h4 data-number="5.1.28" class="anchored" data-anchor-id="isunlimited"><span class="header-section-number">5.1.28</span> <code>isUnlimited()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>isUnlimited<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Check if dataset is unlimited.</p>
 <p><strong>Returns:</strong> True if dataset has unlimited dimensions</p>
 <p>True if dataset has unlimited dimensions</p>
 <hr>
 </section>
-<section id="isinternal" class="level4">
-<h4 class="anchored" data-anchor-id="isinternal"><code>isInternal()</code></h4>
+<section id="isinternal" class="level4" data-number="5.1.29">
+<h4 data-number="5.1.29" class="anchored" data-anchor-id="isinternal"><span class="header-section-number">5.1.29</span> <code>isInternal()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>isInternal<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Check if dataset is internal.</p>
 <p><strong>Returns:</strong> True if dataset is used for internal storage</p>
 <p>True if dataset is used for internal storage</p>
 <hr>
 </section>
-<section id="isopen" class="level4">
-<h4 class="anchored" data-anchor-id="isopen"><code>isOpen()</code></h4>
+<section id="isopen" class="level4" data-number="5.1.30">
+<h4 data-number="5.1.30" class="anchored" data-anchor-id="isopen"><span class="header-section-number">5.1.30</span> <code>isOpen()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>isOpen<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Check if dataset is open.</p>
 <p><strong>Returns:</strong> True if dataset is currently open</p>
 <p>True if dataset is currently open</p>
 <hr>
 </section>
-<section id="setrownamesdatasetpath" class="level4">
-<h4 class="anchored" data-anchor-id="setrownamesdatasetpath"><code>setRownamesDatasetPath()</code></h4>
+<section id="setrownamesdatasetpath" class="level4" data-number="5.1.31">
+<h4 data-number="5.1.31" class="anchored" data-anchor-id="setrownamesdatasetpath"><span class="header-section-number">5.1.31</span> <code>setRownamesDatasetPath()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>setRownamesDatasetPath<span class="op">(</span><span class="bu">std::</span>string fullpath<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Set rownames path inside hdf5 data file.</p>
 <p><strong>Parameters:</strong></p>
@@ -1804,8 +2009,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>void</p>
 <hr>
 </section>
-<section id="setcolnamesdatasetpath" class="level4">
-<h4 class="anchored" data-anchor-id="setcolnamesdatasetpath"><code>setColnamesDatasetPath()</code></h4>
+<section id="setcolnamesdatasetpath" class="level4" data-number="5.1.32">
+<h4 data-number="5.1.32" class="anchored" data-anchor-id="setcolnamesdatasetpath"><span class="header-section-number">5.1.32</span> <code>setColnamesDatasetPath()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>setColnamesDatasetPath<span class="op">(</span><span class="bu">std::</span>string fullpath<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Set colnames path inside hdf5 data file.</p>
 <p><strong>Parameters:</strong></p>
@@ -1816,8 +2021,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>void</p>
 <hr>
 </section>
-<section id="hdf5dataset-1" class="level4">
-<h4 class="anchored" data-anchor-id="hdf5dataset-1"><code>~hdf5Dataset()</code></h4>
+<section id="hdf5dataset-1" class="level4" data-number="5.1.33">
+<h4 data-number="5.1.33" class="anchored" data-anchor-id="hdf5dataset-1"><span class="header-section-number">5.1.33</span> <code>~hdf5Dataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::~</span>hdf5Dataset<span class="op">()</span> <span class="kw">noexcept</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Destructor.</p>
 <p>Closes the dataset and releases resources</p>
@@ -1825,8 +2030,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 </section>
-<section id="protected-members" class="level2">
-<h2 class="anchored" data-anchor-id="protected-members">Protected Members</h2>
+<section id="protected-members" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="protected-members"><span class="header-section-number">6</span> Protected Members</h2>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1839,24 +2044,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<section id="methods-1" class="level3">
-<h3 class="anchored" data-anchor-id="methods-1">Methods</h3>
-<section id="close_dataset" class="level4">
-<h4 class="anchored" data-anchor-id="close_dataset"><code>close_dataset()</code></h4>
+<section id="methods-1" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="methods-1"><span class="header-section-number">6.1</span> Methods</h3>
+<section id="close_dataset" class="level4" data-number="6.1.1">
+<h4 data-number="6.1.1" class="anchored" data-anchor-id="close_dataset"><span class="header-section-number">6.1.1</span> <code>close_dataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>close_dataset<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Close the dataset.</p>
 <p>Closes the dataset and releases associated resources</p>
 <hr>
 </section>
-<section id="close_dataset_file" class="level4">
-<h4 class="anchored" data-anchor-id="close_dataset_file"><code>close_dataset_file()</code></h4>
+<section id="close_dataset_file" class="level4" data-number="6.1.2">
+<h4 data-number="6.1.2" class="anchored" data-anchor-id="close_dataset_file"><span class="header-section-number">6.1.2</span> <code>close_dataset_file()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>close_dataset_file<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Close dataset and file.</p>
 <p>Closes both the dataset and its associated file</p>
 <hr>
 </section>
-<section id="convert_dataframe_to_rangelist" class="level4">
-<h4 class="anchored" data-anchor-id="convert_dataframe_to_rangelist"><code>convert_DataFrame_to_RangeList()</code></h4>
+<section id="convert_dataframe_to_rangelist" class="level4" data-number="6.1.3">
+<h4 data-number="6.1.3" class="anchored" data-anchor-id="convert_dataframe_to_rangelist"><span class="header-section-number">6.1.3</span> <code>convert_DataFrame_to_RangeList()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>names <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>convert_DataFrame_to_RangeList<span class="op">(</span>Rcpp<span class="op">::</span>RObject DatasetValues<span class="op">,</span> <span class="dt">bool</span> bFullDataset<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Convert DataFrame to range list.</p>
 <p><strong>Parameters:</strong></p>
@@ -1868,15 +2073,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Converts R DataFrame to HDF5-compatible range list format</p>
 <hr>
 </section>
-<section id="getdimensexistingdataset" class="level4">
-<h4 class="anchored" data-anchor-id="getdimensexistingdataset"><code>getDimensExistingDataset()</code></h4>
+<section id="getdimensexistingdataset" class="level4" data-number="6.1.4">
+<h4 data-number="6.1.4" class="anchored" data-anchor-id="getdimensexistingdataset"><span class="header-section-number">6.1.4</span> <code>getDimensExistingDataset()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getDimensExistingDataset<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get dimensions of existing dataset.</p>
 <p>Retrieves and stores the dimensions of an existing dataset</p>
 <hr>
 </section>
-<section id="isdatasetopen" class="level4">
-<h4 class="anchored" data-anchor-id="isdatasetopen"><code>isDatasetOpen()</code></h4>
+<section id="isdatasetopen" class="level4" data-number="6.1.5">
+<h4 data-number="6.1.5" class="anchored" data-anchor-id="isdatasetopen"><span class="header-section-number">6.1.5</span> <code>isDatasetOpen()</code></h4>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>isDatasetOpen<span class="op">()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Check if dataset is open.</p>
 <p><strong>Returns:</strong> True if dataset is open, false otherwise</p>
@@ -1884,64 +2089,64 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <hr>
 </section>
 </section>
-<section id="attributes" class="level3">
-<h3 class="anchored" data-anchor-id="attributes">Attributes</h3>
-<section id="pdataset" class="level4">
-<h4 class="anchored" data-anchor-id="pdataset"><code>pdataset</code></h4>
+<section id="attributes" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="attributes"><span class="header-section-number">6.2</span> Attributes</h3>
+<section id="pdataset" class="level4" data-number="6.2.1">
+<h4 data-number="6.2.1" class="anchored" data-anchor-id="pdataset"><span class="header-section-number">6.2.1</span> <code>pdataset</code></h4>
 <p><strong>Type:</strong> <code>H5::DataSet *</code></p>
 <p>Dataset pointer.</p>
 <hr>
 </section>
-<section id="dimdataset" class="level4">
-<h4 class="anchored" data-anchor-id="dimdataset"><code>dimDataset</code></h4>
+<section id="dimdataset" class="level4" data-number="6.2.2">
+<h4 data-number="6.2.2" class="anchored" data-anchor-id="dimdataset"><span class="header-section-number">6.2.2</span> <code>dimDataset</code></h4>
 <p><strong>Type:</strong> <code>hsize_t</code></p>
 <p>Dataset dimensions.</p>
 <hr>
 </section>
-<section id="dimdatasetinfile" class="level4">
-<h4 class="anchored" data-anchor-id="dimdatasetinfile"><code>dimDatasetinFile</code></h4>
+<section id="dimdatasetinfile" class="level4" data-number="6.2.3">
+<h4 data-number="6.2.3" class="anchored" data-anchor-id="dimdatasetinfile"><span class="header-section-number">6.2.3</span> <code>dimDatasetinFile</code></h4>
 <p><strong>Type:</strong> <code>hsize_t</code></p>
 <p>File storage dimensions.</p>
 <hr>
 </section>
-<section id="name" class="level4">
-<h4 class="anchored" data-anchor-id="name"><code>name</code></h4>
+<section id="name" class="level4" data-number="6.2.4">
+<h4 data-number="6.2.4" class="anchored" data-anchor-id="name"><span class="header-section-number">6.2.4</span> <code>name</code></h4>
 <p><strong>Type:</strong> <code>std::string</code></p>
 <p>Dataset name.</p>
 <hr>
 </section>
-<section id="type" class="level4">
-<h4 class="anchored" data-anchor-id="type"><code>type</code></h4>
+<section id="type" class="level4" data-number="6.2.5">
+<h4 data-number="6.2.5" class="anchored" data-anchor-id="type"><span class="header-section-number">6.2.5</span> <code>type</code></h4>
 <p><strong>Type:</strong> <code>std::string</code></p>
 <p>Dataset type.</p>
 <hr>
 </section>
-<section id="colnamesdataset" class="level4">
-<h4 class="anchored" data-anchor-id="colnamesdataset"><code>colnamesDataset</code></h4>
+<section id="colnamesdataset" class="level4" data-number="6.2.6">
+<h4 data-number="6.2.6" class="anchored" data-anchor-id="colnamesdataset"><span class="header-section-number">6.2.6</span> <code>colnamesDataset</code></h4>
 <p><strong>Type:</strong> <code>std::string</code></p>
 <p>Column names dataset.</p>
 <hr>
 </section>
-<section id="rownamesdataset" class="level4">
-<h4 class="anchored" data-anchor-id="rownamesdataset"><code>rownamesDataset</code></h4>
+<section id="rownamesdataset" class="level4" data-number="6.2.7">
+<h4 data-number="6.2.7" class="anchored" data-anchor-id="rownamesdataset"><span class="header-section-number">6.2.7</span> <code>rownamesDataset</code></h4>
 <p><strong>Type:</strong> <code>std::string</code></p>
 <p>Row names dataset.</p>
 <hr>
 </section>
-<section id="boverwrite" class="level4">
-<h4 class="anchored" data-anchor-id="boverwrite"><code>boverwrite</code></h4>
+<section id="boverwrite" class="level4" data-number="6.2.8">
+<h4 data-number="6.2.8" class="anchored" data-anchor-id="boverwrite"><span class="header-section-number">6.2.8</span> <code>boverwrite</code></h4>
 <p><strong>Type:</strong> <code>bool</code></p>
 <p>Overwrite flag.</p>
 <hr>
 </section>
-<section id="unlimited" class="level4">
-<h4 class="anchored" data-anchor-id="unlimited"><code>unlimited</code></h4>
+<section id="unlimited" class="level4" data-number="6.2.9">
+<h4 data-number="6.2.9" class="anchored" data-anchor-id="unlimited"><span class="header-section-number">6.2.9</span> <code>unlimited</code></h4>
 <p><strong>Type:</strong> <code>bool</code></p>
 <p>Unlimited dimensions flag.</p>
 <hr>
 </section>
-<section id="internaldataset" class="level4">
-<h4 class="anchored" data-anchor-id="internaldataset"><code>internalDataset</code></h4>
+<section id="internaldataset" class="level4" data-number="6.2.10">
+<h4 data-number="6.2.10" class="anchored" data-anchor-id="internaldataset"><span class="header-section-number">6.2.10</span> <code>internalDataset</code></h4>
 <p><strong>Type:</strong> <code>bool</code></p>
 <p>Internal dataset flag.</p>
 <hr>
@@ -1951,8 +2156,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="usage-example" class="level2">
-<h2 class="anchored" data-anchor-id="usage-example">Usage Example</h2>
+<section id="usage-example" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="usage-example"><span class="header-section-number">7</span> Usage Example</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"hdf5Dataset.hpp"</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Example usage</span></span>
@@ -1960,11 +2165,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Your code here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
+<!-- -->
+
 </section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -2034,9 +2254,60 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       });
       clipboardModal.on('success', onCopySuccess);
     }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/isglobal-brge\.github\.io\/BigDataStatMeth\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -2369,19 +2640,736 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       }
     }
   });
-  </script>
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "hdf5Dataset"</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "C++ Class Reference"</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overview</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>Structure for string data.</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Detailed Description</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>Used for storing fixed-length string data in HDF5</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## Class Hierarchy</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>::: {.diagram-section}</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a><span class="al">![Class diagram](images/class_big_data_stat_meth_1_1hdf5_dataset__inherit__graph_org.svg)</span>{.class-diagram}</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inheritance</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>Inherits from:</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>BigDataStatMeth::hdf5Group</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a><span class="fu">## Public Interface</span></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a><span class="fu">### Methods</span></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `hdf5Dataset()`</span></span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>hdf5Dataset<span class="op">(</span><span class="bu">std::</span>string filename<span class="op">,</span> <span class="bu">std::</span>string group<span class="op">,</span> <span class="bu">std::</span>string datasetname<span class="op">,</span> <span class="dt">bool</span> overwrite<span class="op">)</span></span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`filename`</span> (<span class="in">`std::string`</span>)</span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`group`</span> (<span class="in">`std::string`</span>)</span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`datasetname`</span> (<span class="in">`std::string`</span>)</span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`overwrite`</span> (<span class="in">`bool`</span>)</span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `remove()`</span></span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>remove<span class="op">()</span></span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a>Remove the dataset.</span>
+<span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a>Deletes the dataset from the HDF5 file</span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `createDataset()`</span></span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-59"><a href="#cb40-59" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-60"><a href="#cb40-60" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>createDataset<span class="op">(</span>BigDataStatMeth<span class="op">::</span>hdf5Dataset <span class="op">*</span>dsLike<span class="op">,</span> <span class="bu">std::</span>string strdatatype<span class="op">,</span> <span class="dt">int</span> compression_level<span class="op">=</span><span class="dv">6</span><span class="op">)</span></span>
+<span id="cb40-61"><a href="#cb40-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-62"><a href="#cb40-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-63"><a href="#cb40-63" aria-hidden="true" tabindex="-1"></a>Create a dataset based on another dataset's dimensions with optional compression.</span>
+<span id="cb40-64"><a href="#cb40-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-65"><a href="#cb40-65" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-66"><a href="#cb40-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-67"><a href="#cb40-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`dsLike`</span> (<span class="in">`BigDataStatMeth::hdf5Dataset *`</span>): Reference dataset to copy dimensions from</span>
+<span id="cb40-68"><a href="#cb40-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`strdatatype`</span> (<span class="in">`std::string`</span>): Data type for the new dataset ("int", "numeric", "real", "string")</span>
+<span id="cb40-69"><a href="#cb40-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`compression_level`</span> (<span class="in">`int`</span>): Compression level (0=none, 1-9=gzip level, 6=balanced default) 0 = No compression 1-3 = Light compression (fast) 4-6 = Balanced compression (recommended) 7-9 = Maximum compression (slower)</span>
+<span id="cb40-70"><a href="#cb40-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-71"><a href="#cb40-71" aria-hidden="true" tabindex="-1"></a>Creates a new dataset with the same dimensions as the reference dataset but with a specified data type and compression settings. This is useful for creating derived datasets or transformations while maintaining dimensional consistency.</span>
+<span id="cb40-72"><a href="#cb40-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-73"><a href="#cb40-73" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-74"><a href="#cb40-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-75"><a href="#cb40-75" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `createUnlimitedDataset()`</span></span>
+<span id="cb40-76"><a href="#cb40-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-77"><a href="#cb40-77" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-78"><a href="#cb40-78" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>createUnlimitedDataset<span class="op">(</span><span class="dt">size_t</span> rows<span class="op">,</span> <span class="dt">size_t</span> cols<span class="op">,</span> <span class="bu">std::</span>string strdatatype<span class="op">,</span> <span class="dt">int</span> compression_level<span class="op">=</span><span class="dv">6</span><span class="op">)</span></span>
+<span id="cb40-79"><a href="#cb40-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-80"><a href="#cb40-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-81"><a href="#cb40-81" aria-hidden="true" tabindex="-1"></a>Create an unlimited dataset with optional compression.</span>
+<span id="cb40-82"><a href="#cb40-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-83"><a href="#cb40-83" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-84"><a href="#cb40-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-85"><a href="#cb40-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`rows`</span> (<span class="in">`size_t`</span>): Initial number of rows (used as chunk size)</span>
+<span id="cb40-86"><a href="#cb40-86" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`cols`</span> (<span class="in">`size_t`</span>): Initial number of columns (used as chunk size)</span>
+<span id="cb40-87"><a href="#cb40-87" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`strdatatype`</span> (<span class="in">`std::string`</span>): Data type for the dataset ("int", "numeric") Note: String type not supported for unlimited datasets</span>
+<span id="cb40-88"><a href="#cb40-88" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`compression_level`</span> (<span class="in">`int`</span>): Compression level (0=none, 1-9=gzip level, 6=balanced default) Recommended: 4-6 for unlimited datasets to balance compression ratio with extension performance</span>
+<span id="cb40-89"><a href="#cb40-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-90"><a href="#cb40-90" aria-hidden="true" tabindex="-1"></a>Creates a new HDF5 dataset with unlimited dimensions, allowing it to grow in size dynamically. The dataset is created with initial dimensions but can be extended using extendUnlimitedDataset(). Compression is fully compatible with unlimited datasets.</span>
+<span id="cb40-91"><a href="#cb40-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-92"><a href="#cb40-92" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-93"><a href="#cb40-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-94"><a href="#cb40-94" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `extendUnlimitedDataset()`</span></span>
+<span id="cb40-95"><a href="#cb40-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-96"><a href="#cb40-96" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-97"><a href="#cb40-97" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>extendUnlimitedDataset<span class="op">(</span><span class="at">const</span> <span class="dt">size_t</span> rows<span class="op">,</span> <span class="at">const</span> <span class="dt">size_t</span> cols<span class="op">)</span></span>
+<span id="cb40-98"><a href="#cb40-98" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-99"><a href="#cb40-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-100"><a href="#cb40-100" aria-hidden="true" tabindex="-1"></a>Extend an unlimited dataset.</span>
+<span id="cb40-101"><a href="#cb40-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-102"><a href="#cb40-102" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-103"><a href="#cb40-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-104"><a href="#cb40-104" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`rows`</span> (<span class="in">`const size_t`</span>): New number of rows</span>
+<span id="cb40-105"><a href="#cb40-105" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`cols`</span> (<span class="in">`const size_t`</span>): New number of columns</span>
+<span id="cb40-106"><a href="#cb40-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-107"><a href="#cb40-107" aria-hidden="true" tabindex="-1"></a>Increases the dimensions of an unlimited dataset to accommodate more data. Only works with datasets created as unlimited.</span>
+<span id="cb40-108"><a href="#cb40-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-109"><a href="#cb40-109" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-110"><a href="#cb40-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-111"><a href="#cb40-111" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `openDataset()`</span></span>
+<span id="cb40-112"><a href="#cb40-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-113"><a href="#cb40-113" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-114"><a href="#cb40-114" aria-hidden="true" tabindex="-1"></a>H5<span class="op">::</span>DataSet <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>openDataset<span class="op">()</span></span>
+<span id="cb40-115"><a href="#cb40-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-116"><a href="#cb40-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-117"><a href="#cb40-117" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-118"><a href="#cb40-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-119"><a href="#cb40-119" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `writeDataset()`</span></span>
+<span id="cb40-120"><a href="#cb40-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-121"><a href="#cb40-121" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-122"><a href="#cb40-122" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>writeDataset<span class="op">(</span><span class="dt">double</span> <span class="op">*</span>mdata<span class="op">)</span></span>
+<span id="cb40-123"><a href="#cb40-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-124"><a href="#cb40-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-125"><a href="#cb40-125" aria-hidden="true" tabindex="-1"></a>Write raw double data to dataset.</span>
+<span id="cb40-126"><a href="#cb40-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-127"><a href="#cb40-127" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-128"><a href="#cb40-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-129"><a href="#cb40-129" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`mdata`</span> (<span class="in">`double *`</span>): Pointer to double array</span>
+<span id="cb40-130"><a href="#cb40-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-131"><a href="#cb40-131" aria-hidden="true" tabindex="-1"></a>Direct write of double array to dataset without type conversion.</span>
+<span id="cb40-132"><a href="#cb40-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-133"><a href="#cb40-133" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-134"><a href="#cb40-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-135"><a href="#cb40-135" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `writeRowMajorDatasetBlock()`</span></span>
+<span id="cb40-136"><a href="#cb40-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-137"><a href="#cb40-137" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-138"><a href="#cb40-138" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>writeRowMajorDatasetBlock<span class="op">(</span>Eigen<span class="op">::</span>Map<span class="op">&lt;</span> Eigen<span class="op">::</span>Matrix<span class="op">&lt;</span> <span class="dt">double</span><span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>Dynamic<span class="op">,</span> Eigen<span class="op">::</span>RowMajor <span class="op">&gt;</span> <span class="op">&gt;</span> DatasetValues<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vOffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vCount<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vStride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vBlock<span class="op">)</span></span>
+<span id="cb40-139"><a href="#cb40-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-140"><a href="#cb40-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-141"><a href="#cb40-141" aria-hidden="true" tabindex="-1"></a>Write block of data in row-major order.</span>
+<span id="cb40-142"><a href="#cb40-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-143"><a href="#cb40-143" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-144"><a href="#cb40-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-145"><a href="#cb40-145" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`DatasetValues`</span> (<span class="in">`Eigen::Map&lt; Eigen::Matrix&lt; double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt; &gt;`</span>): Matrix data in row-major format</span>
+<span id="cb40-146"><a href="#cb40-146" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vOffset`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Starting position for write</span>
+<span id="cb40-147"><a href="#cb40-147" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vCount`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Number of elements to write</span>
+<span id="cb40-148"><a href="#cb40-148" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vStride`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Stride between elements</span>
+<span id="cb40-149"><a href="#cb40-149" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vBlock`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Size of blocks</span>
+<span id="cb40-150"><a href="#cb40-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-151"><a href="#cb40-151" aria-hidden="true" tabindex="-1"></a>Writes a block of data to the dataset using row-major memory layout. Supports:Partial dataset updatesStrided accessBlock-based operations</span>
+<span id="cb40-152"><a href="#cb40-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-153"><a href="#cb40-153" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-154"><a href="#cb40-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-155"><a href="#cb40-155" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `writeColMajorDatasetBlock()`</span></span>
+<span id="cb40-156"><a href="#cb40-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-157"><a href="#cb40-157" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-158"><a href="#cb40-158" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>writeColMajorDatasetBlock<span class="op">(</span>Eigen<span class="op">::</span>MatrixXd DatasetValues<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vOffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vStride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vBlock<span class="op">)</span></span>
+<span id="cb40-159"><a href="#cb40-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-160"><a href="#cb40-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-161"><a href="#cb40-161" aria-hidden="true" tabindex="-1"></a>Write block of data in column-major order.</span>
+<span id="cb40-162"><a href="#cb40-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-163"><a href="#cb40-163" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-164"><a href="#cb40-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-165"><a href="#cb40-165" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`DatasetValues`</span> (<span class="in">`Eigen::MatrixXd`</span>): Matrix data in column-major format</span>
+<span id="cb40-166"><a href="#cb40-166" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vOffset`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Starting position for write</span>
+<span id="cb40-167"><a href="#cb40-167" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vStride`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Stride between elements</span>
+<span id="cb40-168"><a href="#cb40-168" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vBlock`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Size of blocks</span>
+<span id="cb40-169"><a href="#cb40-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-170"><a href="#cb40-170" aria-hidden="true" tabindex="-1"></a>Writes a block of data to the dataset using column-major memory layout. Supports:Partial dataset updatesStrided accessBlock-based operations</span>
+<span id="cb40-171"><a href="#cb40-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-172"><a href="#cb40-172" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-173"><a href="#cb40-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-174"><a href="#cb40-174" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `writeDatasetBlock()`</span></span>
+<span id="cb40-175"><a href="#cb40-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-176"><a href="#cb40-176" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-177"><a href="#cb40-177" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>writeDatasetBlock<span class="op">(</span><span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">double</span> <span class="op">&gt;</span> DatasetValues<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vOffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vCount<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vStride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> vBlock<span class="op">)</span></span>
+<span id="cb40-178"><a href="#cb40-178" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-179"><a href="#cb40-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-180"><a href="#cb40-180" aria-hidden="true" tabindex="-1"></a>Write block of vector data.</span>
+<span id="cb40-181"><a href="#cb40-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-182"><a href="#cb40-182" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-183"><a href="#cb40-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-184"><a href="#cb40-184" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`DatasetValues`</span> (<span class="in">`std::vector&lt; double &gt;`</span>): Vector data to write</span>
+<span id="cb40-185"><a href="#cb40-185" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vOffset`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Starting position</span>
+<span id="cb40-186"><a href="#cb40-186" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vCount`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Number of elements</span>
+<span id="cb40-187"><a href="#cb40-187" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vStride`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Stride between elements</span>
+<span id="cb40-188"><a href="#cb40-188" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`vBlock`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>): Block size</span>
+<span id="cb40-189"><a href="#cb40-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-190"><a href="#cb40-190" aria-hidden="true" tabindex="-1"></a>Writes a block of vector data to the dataset. Useful for column/row-wise operations.</span>
+<span id="cb40-191"><a href="#cb40-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-192"><a href="#cb40-192" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-193"><a href="#cb40-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-194"><a href="#cb40-194" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `createSubsetDataset()`</span></span>
+<span id="cb40-195"><a href="#cb40-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-196"><a href="#cb40-196" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-197"><a href="#cb40-197" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>createSubsetDataset<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">int</span> <span class="op">&gt;</span> <span class="op">&amp;</span>indices<span class="op">,</span> <span class="dt">bool</span> select_rows<span class="op">=</span><span class="kw">true</span><span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>new_group<span class="op">=</span><span class="st">""</span><span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>new_name<span class="op">=</span><span class="st">""</span><span class="op">)</span></span>
+<span id="cb40-198"><a href="#cb40-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-199"><a href="#cb40-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-200"><a href="#cb40-200" aria-hidden="true" tabindex="-1"></a>Create subset dataset with selected rows/columns (memory efficient)</span>
+<span id="cb40-201"><a href="#cb40-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-202"><a href="#cb40-202" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-203"><a href="#cb40-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-204"><a href="#cb40-204" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`indices`</span> (<span class="in">`const std::vector&lt; int &gt; &amp;`</span>): Vector of row/column indices to include (0-based)</span>
+<span id="cb40-205"><a href="#cb40-205" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`select_rows`</span> (<span class="in">`bool`</span>): If true, selects rows; if false, selects columns</span>
+<span id="cb40-206"><a href="#cb40-206" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`new_group`</span> (<span class="in">`const std::string &amp;`</span>): Target group for the new dataset (default: same group)</span>
+<span id="cb40-207"><a href="#cb40-207" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`new_name`</span> (<span class="in">`const std::string &amp;`</span>): Name for the new dataset (default: original_name + "_subset")</span>
+<span id="cb40-208"><a href="#cb40-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-209"><a href="#cb40-209" aria-hidden="true" tabindex="-1"></a>Creates a new dataset containing only the specified rows or columns using HDF5's hyperslab selection for direct disk-to-disk copy without loading data into memory. Ideal for big datasets.</span>
+<span id="cb40-210"><a href="#cb40-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-211"><a href="#cb40-211" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-212"><a href="#cb40-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-213"><a href="#cb40-213" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `readDatasetBlock()`</span></span>
+<span id="cb40-214"><a href="#cb40-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-215"><a href="#cb40-215" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-216"><a href="#cb40-216" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>readDatasetBlock<span class="op">(</span><span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivoffset<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivcount<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivstride<span class="op">,</span> <span class="bu">std::</span>vector<span class="op">&lt;</span> <span class="dt">hsize_t</span> <span class="op">&gt;</span> ivblock<span class="op">,</span> <span class="dt">double</span> <span class="op">*</span>rdatablock<span class="op">)</span></span>
+<span id="cb40-217"><a href="#cb40-217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-218"><a href="#cb40-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-219"><a href="#cb40-219" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-220"><a href="#cb40-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-221"><a href="#cb40-221" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`ivoffset`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>)</span>
+<span id="cb40-222"><a href="#cb40-222" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`ivcount`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>)</span>
+<span id="cb40-223"><a href="#cb40-223" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`ivstride`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>)</span>
+<span id="cb40-224"><a href="#cb40-224" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`ivblock`</span> (<span class="in">`std::vector&lt; hsize_t &gt;`</span>)</span>
+<span id="cb40-225"><a href="#cb40-225" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`rdatablock`</span> (<span class="in">`double *`</span>)</span>
+<span id="cb40-226"><a href="#cb40-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-227"><a href="#cb40-227" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-228"><a href="#cb40-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-229"><a href="#cb40-229" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `addAttribute()`</span></span>
+<span id="cb40-230"><a href="#cb40-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-231"><a href="#cb40-231" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-232"><a href="#cb40-232" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>addAttribute<span class="op">(</span><span class="bu">std::</span>string attrName<span class="op">,</span> Rcpp<span class="op">::</span>RObject attr_data<span class="op">)</span></span>
+<span id="cb40-233"><a href="#cb40-233" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-234"><a href="#cb40-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-235"><a href="#cb40-235" aria-hidden="true" tabindex="-1"></a>Add an attribute to the dataset.</span>
+<span id="cb40-236"><a href="#cb40-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-237"><a href="#cb40-237" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-238"><a href="#cb40-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-239"><a href="#cb40-239" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`attrName`</span> (<span class="in">`std::string`</span>): Name of the attribute</span>
+<span id="cb40-240"><a href="#cb40-240" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`attr_data`</span> (<span class="in">`Rcpp::RObject`</span>): Attribute data</span>
+<span id="cb40-241"><a href="#cb40-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-242"><a href="#cb40-242" aria-hidden="true" tabindex="-1"></a>**Returns:** EXEC_OK on success, EXEC_ERROR on failure</span>
+<span id="cb40-243"><a href="#cb40-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-244"><a href="#cb40-244" aria-hidden="true" tabindex="-1"></a>Adds or updates an attribute associated with the dataset. Supports various R data types.</span>
+<span id="cb40-245"><a href="#cb40-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-246"><a href="#cb40-246" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-247"><a href="#cb40-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-248"><a href="#cb40-248" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `getAttribute()`</span></span>
+<span id="cb40-249"><a href="#cb40-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-250"><a href="#cb40-250" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-251"><a href="#cb40-251" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getAttribute<span class="op">(</span><span class="bu">std::</span>string strAtribute<span class="op">)</span></span>
+<span id="cb40-252"><a href="#cb40-252" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-253"><a href="#cb40-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-254"><a href="#cb40-254" aria-hidden="true" tabindex="-1"></a>Get an attribute from the dataset.</span>
+<span id="cb40-255"><a href="#cb40-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-256"><a href="#cb40-256" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-257"><a href="#cb40-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-258"><a href="#cb40-258" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`strAtribute`</span> (<span class="in">`std::string`</span>): Name of the attribute to retrieve</span>
+<span id="cb40-259"><a href="#cb40-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-260"><a href="#cb40-260" aria-hidden="true" tabindex="-1"></a>Retrieves the value of a named attribute from the dataset.</span>
+<span id="cb40-261"><a href="#cb40-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-262"><a href="#cb40-262" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-263"><a href="#cb40-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-264"><a href="#cb40-264" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `moveDataset()`</span></span>
+<span id="cb40-265"><a href="#cb40-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-266"><a href="#cb40-266" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-267"><a href="#cb40-267" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> <span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>moveDataset<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>new_path<span class="op">,</span> <span class="dt">bool</span> overwrite<span class="op">=</span><span class="kw">false</span><span class="op">)</span></span>
+<span id="cb40-268"><a href="#cb40-268" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-269"><a href="#cb40-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-270"><a href="#cb40-270" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-271"><a href="#cb40-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-272"><a href="#cb40-272" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`new_path`</span> (<span class="in">`const std::string &amp;`</span>)</span>
+<span id="cb40-273"><a href="#cb40-273" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`overwrite`</span> (<span class="in">`bool`</span>)</span>
+<span id="cb40-274"><a href="#cb40-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-275"><a href="#cb40-275" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-276"><a href="#cb40-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-277"><a href="#cb40-277" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `getDatasetptr()`</span></span>
+<span id="cb40-278"><a href="#cb40-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-279"><a href="#cb40-279" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-280"><a href="#cb40-280" aria-hidden="true" tabindex="-1"></a>H5<span class="op">::</span>DataSet <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getDatasetptr<span class="op">()</span></span>
+<span id="cb40-281"><a href="#cb40-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-282"><a href="#cb40-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-283"><a href="#cb40-283" aria-hidden="true" tabindex="-1"></a>Get dataset pointer.</span>
+<span id="cb40-284"><a href="#cb40-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-285"><a href="#cb40-285" aria-hidden="true" tabindex="-1"></a>**Returns:** Pointer of the dataset</span>
+<span id="cb40-286"><a href="#cb40-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-287"><a href="#cb40-287" aria-hidden="true" tabindex="-1"></a>Pointer of the dataset</span>
+<span id="cb40-288"><a href="#cb40-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-289"><a href="#cb40-289" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-290"><a href="#cb40-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-291"><a href="#cb40-291" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `getDatasetName()`</span></span>
+<span id="cb40-292"><a href="#cb40-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-293"><a href="#cb40-293" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-294"><a href="#cb40-294" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getDatasetName<span class="op">()</span></span>
+<span id="cb40-295"><a href="#cb40-295" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-296"><a href="#cb40-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-297"><a href="#cb40-297" aria-hidden="true" tabindex="-1"></a>Get dataset name.</span>
+<span id="cb40-298"><a href="#cb40-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-299"><a href="#cb40-299" aria-hidden="true" tabindex="-1"></a>**Returns:** Name of the dataset</span>
+<span id="cb40-300"><a href="#cb40-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-301"><a href="#cb40-301" aria-hidden="true" tabindex="-1"></a>Name of the dataset</span>
+<span id="cb40-302"><a href="#cb40-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-303"><a href="#cb40-303" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-304"><a href="#cb40-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-305"><a href="#cb40-305" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `getGroup()`</span></span>
+<span id="cb40-306"><a href="#cb40-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-307"><a href="#cb40-307" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-308"><a href="#cb40-308" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getGroup<span class="op">()</span></span>
+<span id="cb40-309"><a href="#cb40-309" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-310"><a href="#cb40-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-311"><a href="#cb40-311" aria-hidden="true" tabindex="-1"></a>Get group name.</span>
+<span id="cb40-312"><a href="#cb40-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-313"><a href="#cb40-313" aria-hidden="true" tabindex="-1"></a>**Returns:** Name of the group containing the dataset</span>
+<span id="cb40-314"><a href="#cb40-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-315"><a href="#cb40-315" aria-hidden="true" tabindex="-1"></a>Name of the group containing the dataset</span>
+<span id="cb40-316"><a href="#cb40-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-317"><a href="#cb40-317" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-318"><a href="#cb40-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-319"><a href="#cb40-319" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `getFileName()`</span></span>
+<span id="cb40-320"><a href="#cb40-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-321"><a href="#cb40-321" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-322"><a href="#cb40-322" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>string BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getFileName<span class="op">()</span></span>
+<span id="cb40-323"><a href="#cb40-323" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-324"><a href="#cb40-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-325"><a href="#cb40-325" aria-hidden="true" tabindex="-1"></a>Get file name.</span>
+<span id="cb40-326"><a href="#cb40-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-327"><a href="#cb40-327" aria-hidden="true" tabindex="-1"></a>**Returns:** Name of the file containing the dataset</span>
+<span id="cb40-328"><a href="#cb40-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-329"><a href="#cb40-329" aria-hidden="true" tabindex="-1"></a>Name of the file containing the dataset</span>
+<span id="cb40-330"><a href="#cb40-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-331"><a href="#cb40-331" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-332"><a href="#cb40-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-333"><a href="#cb40-333" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `nrows()`</span></span>
+<span id="cb40-334"><a href="#cb40-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-335"><a href="#cb40-335" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-336"><a href="#cb40-336" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>nrows<span class="op">()</span></span>
+<span id="cb40-337"><a href="#cb40-337" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-338"><a href="#cb40-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-339"><a href="#cb40-339" aria-hidden="true" tabindex="-1"></a>Get number of rows in internal format.</span>
+<span id="cb40-340"><a href="#cb40-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-341"><a href="#cb40-341" aria-hidden="true" tabindex="-1"></a>**Returns:** Number of rows in the dataset's internal storage</span>
+<span id="cb40-342"><a href="#cb40-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-343"><a href="#cb40-343" aria-hidden="true" tabindex="-1"></a>Number of rows in the dataset's internal storage</span>
+<span id="cb40-344"><a href="#cb40-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-345"><a href="#cb40-345" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-346"><a href="#cb40-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-347"><a href="#cb40-347" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `ncols()`</span></span>
+<span id="cb40-348"><a href="#cb40-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-349"><a href="#cb40-349" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-350"><a href="#cb40-350" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>ncols<span class="op">()</span></span>
+<span id="cb40-351"><a href="#cb40-351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-352"><a href="#cb40-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-353"><a href="#cb40-353" aria-hidden="true" tabindex="-1"></a>Get number of columns in internal format.</span>
+<span id="cb40-354"><a href="#cb40-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-355"><a href="#cb40-355" aria-hidden="true" tabindex="-1"></a>**Returns:** Number of columns in the dataset's internal storage</span>
+<span id="cb40-356"><a href="#cb40-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-357"><a href="#cb40-357" aria-hidden="true" tabindex="-1"></a>Number of columns in the dataset's internal storage</span>
+<span id="cb40-358"><a href="#cb40-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-359"><a href="#cb40-359" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-360"><a href="#cb40-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-361"><a href="#cb40-361" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `nrows_r()`</span></span>
+<span id="cb40-362"><a href="#cb40-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-363"><a href="#cb40-363" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-364"><a href="#cb40-364" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>nrows_r<span class="op">()</span></span>
+<span id="cb40-365"><a href="#cb40-365" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-366"><a href="#cb40-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-367"><a href="#cb40-367" aria-hidden="true" tabindex="-1"></a>Get number of rows in R format.</span>
+<span id="cb40-368"><a href="#cb40-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-369"><a href="#cb40-369" aria-hidden="true" tabindex="-1"></a>**Returns:** Number of rows in R's representation (transposed)</span>
+<span id="cb40-370"><a href="#cb40-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-371"><a href="#cb40-371" aria-hidden="true" tabindex="-1"></a>Number of rows in R's representation (transposed)</span>
+<span id="cb40-372"><a href="#cb40-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-373"><a href="#cb40-373" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-374"><a href="#cb40-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-375"><a href="#cb40-375" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `ncols_r()`</span></span>
+<span id="cb40-376"><a href="#cb40-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-377"><a href="#cb40-377" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-378"><a href="#cb40-378" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>ncols_r<span class="op">()</span></span>
+<span id="cb40-379"><a href="#cb40-379" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-380"><a href="#cb40-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-381"><a href="#cb40-381" aria-hidden="true" tabindex="-1"></a>Get number of columns in R format.</span>
+<span id="cb40-382"><a href="#cb40-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-383"><a href="#cb40-383" aria-hidden="true" tabindex="-1"></a>**Returns:** Number of columns in R's representation (transposed)</span>
+<span id="cb40-384"><a href="#cb40-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-385"><a href="#cb40-385" aria-hidden="true" tabindex="-1"></a>Number of columns in R's representation (transposed)</span>
+<span id="cb40-386"><a href="#cb40-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-387"><a href="#cb40-387" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-388"><a href="#cb40-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-389"><a href="#cb40-389" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `dim()`</span></span>
+<span id="cb40-390"><a href="#cb40-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-391"><a href="#cb40-391" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-392"><a href="#cb40-392" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>dim<span class="op">()</span></span>
+<span id="cb40-393"><a href="#cb40-393" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-394"><a href="#cb40-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-395"><a href="#cb40-395" aria-hidden="true" tabindex="-1"></a>Get dataset dimension.</span>
+<span id="cb40-396"><a href="#cb40-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-397"><a href="#cb40-397" aria-hidden="true" tabindex="-1"></a>**Returns:** Pointer to dataset dimension (rows x columns)</span>
+<span id="cb40-398"><a href="#cb40-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-399"><a href="#cb40-399" aria-hidden="true" tabindex="-1"></a>Pointer to dataset dimension (rows x columns)</span>
+<span id="cb40-400"><a href="#cb40-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-401"><a href="#cb40-401" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-402"><a href="#cb40-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-403"><a href="#cb40-403" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `dimFile()`</span></span>
+<span id="cb40-404"><a href="#cb40-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-405"><a href="#cb40-405" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-406"><a href="#cb40-406" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>dimFile<span class="op">()</span></span>
+<span id="cb40-407"><a href="#cb40-407" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-408"><a href="#cb40-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-409"><a href="#cb40-409" aria-hidden="true" tabindex="-1"></a>Get dataset file dimension.</span>
+<span id="cb40-410"><a href="#cb40-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-411"><a href="#cb40-411" aria-hidden="true" tabindex="-1"></a>**Returns:** Pointer to dataset file dimension (rows x columns)</span>
+<span id="cb40-412"><a href="#cb40-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-413"><a href="#cb40-413" aria-hidden="true" tabindex="-1"></a>Pointer to dataset file dimension (rows x columns)</span>
+<span id="cb40-414"><a href="#cb40-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-415"><a href="#cb40-415" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-416"><a href="#cb40-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-417"><a href="#cb40-417" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `nrows_file()`</span></span>
+<span id="cb40-418"><a href="#cb40-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-419"><a href="#cb40-419" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-420"><a href="#cb40-420" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>nrows_file<span class="op">()</span></span>
+<span id="cb40-421"><a href="#cb40-421" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-422"><a href="#cb40-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-423"><a href="#cb40-423" aria-hidden="true" tabindex="-1"></a>Get number of rows in file.</span>
+<span id="cb40-424"><a href="#cb40-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-425"><a href="#cb40-425" aria-hidden="true" tabindex="-1"></a>**Returns:** Number of rows in file storage</span>
+<span id="cb40-426"><a href="#cb40-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-427"><a href="#cb40-427" aria-hidden="true" tabindex="-1"></a>Number of rows in file storage</span>
+<span id="cb40-428"><a href="#cb40-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-429"><a href="#cb40-429" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-430"><a href="#cb40-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-431"><a href="#cb40-431" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `ncols_file()`</span></span>
+<span id="cb40-432"><a href="#cb40-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-433"><a href="#cb40-433" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-434"><a href="#cb40-434" aria-hidden="true" tabindex="-1"></a><span class="dt">hsize_t</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>ncols_file<span class="op">()</span></span>
+<span id="cb40-435"><a href="#cb40-435" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-436"><a href="#cb40-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-437"><a href="#cb40-437" aria-hidden="true" tabindex="-1"></a>Get number of columns in file.</span>
+<span id="cb40-438"><a href="#cb40-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-439"><a href="#cb40-439" aria-hidden="true" tabindex="-1"></a>**Returns:** Number of columns in file storage</span>
+<span id="cb40-440"><a href="#cb40-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-441"><a href="#cb40-441" aria-hidden="true" tabindex="-1"></a>Number of columns in file storage</span>
+<span id="cb40-442"><a href="#cb40-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-443"><a href="#cb40-443" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-444"><a href="#cb40-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-445"><a href="#cb40-445" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `isUnlimited()`</span></span>
+<span id="cb40-446"><a href="#cb40-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-447"><a href="#cb40-447" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-448"><a href="#cb40-448" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>isUnlimited<span class="op">()</span></span>
+<span id="cb40-449"><a href="#cb40-449" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-450"><a href="#cb40-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-451"><a href="#cb40-451" aria-hidden="true" tabindex="-1"></a>Check if dataset is unlimited.</span>
+<span id="cb40-452"><a href="#cb40-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-453"><a href="#cb40-453" aria-hidden="true" tabindex="-1"></a>**Returns:** True if dataset has unlimited dimensions</span>
+<span id="cb40-454"><a href="#cb40-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-455"><a href="#cb40-455" aria-hidden="true" tabindex="-1"></a>True if dataset has unlimited dimensions</span>
+<span id="cb40-456"><a href="#cb40-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-457"><a href="#cb40-457" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-458"><a href="#cb40-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-459"><a href="#cb40-459" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `isInternal()`</span></span>
+<span id="cb40-460"><a href="#cb40-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-461"><a href="#cb40-461" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-462"><a href="#cb40-462" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>isInternal<span class="op">()</span></span>
+<span id="cb40-463"><a href="#cb40-463" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-464"><a href="#cb40-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-465"><a href="#cb40-465" aria-hidden="true" tabindex="-1"></a>Check if dataset is internal.</span>
+<span id="cb40-466"><a href="#cb40-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-467"><a href="#cb40-467" aria-hidden="true" tabindex="-1"></a>**Returns:** True if dataset is used for internal storage</span>
+<span id="cb40-468"><a href="#cb40-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-469"><a href="#cb40-469" aria-hidden="true" tabindex="-1"></a>True if dataset is used for internal storage</span>
+<span id="cb40-470"><a href="#cb40-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-471"><a href="#cb40-471" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-472"><a href="#cb40-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-473"><a href="#cb40-473" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `isOpen()`</span></span>
+<span id="cb40-474"><a href="#cb40-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-475"><a href="#cb40-475" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-476"><a href="#cb40-476" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>isOpen<span class="op">()</span></span>
+<span id="cb40-477"><a href="#cb40-477" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-478"><a href="#cb40-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-479"><a href="#cb40-479" aria-hidden="true" tabindex="-1"></a>Check if dataset is open.</span>
+<span id="cb40-480"><a href="#cb40-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-481"><a href="#cb40-481" aria-hidden="true" tabindex="-1"></a>**Returns:** True if dataset is currently open</span>
+<span id="cb40-482"><a href="#cb40-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-483"><a href="#cb40-483" aria-hidden="true" tabindex="-1"></a>True if dataset is currently open</span>
+<span id="cb40-484"><a href="#cb40-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-485"><a href="#cb40-485" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-486"><a href="#cb40-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-487"><a href="#cb40-487" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `setRownamesDatasetPath()`</span></span>
+<span id="cb40-488"><a href="#cb40-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-489"><a href="#cb40-489" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-490"><a href="#cb40-490" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>setRownamesDatasetPath<span class="op">(</span><span class="bu">std::</span>string fullpath<span class="op">)</span></span>
+<span id="cb40-491"><a href="#cb40-491" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-492"><a href="#cb40-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-493"><a href="#cb40-493" aria-hidden="true" tabindex="-1"></a>Set rownames path inside hdf5 data file.</span>
+<span id="cb40-494"><a href="#cb40-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-495"><a href="#cb40-495" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-496"><a href="#cb40-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-497"><a href="#cb40-497" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`fullpath`</span> (<span class="in">`std::string`</span>)</span>
+<span id="cb40-498"><a href="#cb40-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-499"><a href="#cb40-499" aria-hidden="true" tabindex="-1"></a>**Returns:** void</span>
+<span id="cb40-500"><a href="#cb40-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-501"><a href="#cb40-501" aria-hidden="true" tabindex="-1"></a>void</span>
+<span id="cb40-502"><a href="#cb40-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-503"><a href="#cb40-503" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-504"><a href="#cb40-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-505"><a href="#cb40-505" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `setColnamesDatasetPath()`</span></span>
+<span id="cb40-506"><a href="#cb40-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-507"><a href="#cb40-507" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-508"><a href="#cb40-508" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>setColnamesDatasetPath<span class="op">(</span><span class="bu">std::</span>string fullpath<span class="op">)</span></span>
+<span id="cb40-509"><a href="#cb40-509" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-510"><a href="#cb40-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-511"><a href="#cb40-511" aria-hidden="true" tabindex="-1"></a>Set colnames path inside hdf5 data file.</span>
+<span id="cb40-512"><a href="#cb40-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-513"><a href="#cb40-513" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-514"><a href="#cb40-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-515"><a href="#cb40-515" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`fullpath`</span> (<span class="in">`std::string`</span>)</span>
+<span id="cb40-516"><a href="#cb40-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-517"><a href="#cb40-517" aria-hidden="true" tabindex="-1"></a>**Returns:** void</span>
+<span id="cb40-518"><a href="#cb40-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-519"><a href="#cb40-519" aria-hidden="true" tabindex="-1"></a>void</span>
+<span id="cb40-520"><a href="#cb40-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-521"><a href="#cb40-521" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-522"><a href="#cb40-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-523"><a href="#cb40-523" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `~hdf5Dataset()`</span></span>
+<span id="cb40-524"><a href="#cb40-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-525"><a href="#cb40-525" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-526"><a href="#cb40-526" aria-hidden="true" tabindex="-1"></a><span class="kw">virtual</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::~</span>hdf5Dataset<span class="op">()</span> <span class="kw">noexcept</span></span>
+<span id="cb40-527"><a href="#cb40-527" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-528"><a href="#cb40-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-529"><a href="#cb40-529" aria-hidden="true" tabindex="-1"></a>Destructor.</span>
+<span id="cb40-530"><a href="#cb40-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-531"><a href="#cb40-531" aria-hidden="true" tabindex="-1"></a>Closes the dataset and releases resources</span>
+<span id="cb40-532"><a href="#cb40-532" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-533"><a href="#cb40-533" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-534"><a href="#cb40-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-535"><a href="#cb40-535" aria-hidden="true" tabindex="-1"></a><span class="fu">## Protected Members</span></span>
+<span id="cb40-536"><a href="#cb40-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-537"><a href="#cb40-537" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse="true"}</span>
+<span id="cb40-538"><a href="#cb40-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-539"><a href="#cb40-539" aria-hidden="true" tabindex="-1"></a><span class="fu">### Details</span></span>
+<span id="cb40-540"><a href="#cb40-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-541"><a href="#cb40-541" aria-hidden="true" tabindex="-1"></a><span class="fu">### Methods</span></span>
+<span id="cb40-542"><a href="#cb40-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-543"><a href="#cb40-543" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `close_dataset()`</span></span>
+<span id="cb40-544"><a href="#cb40-544" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-545"><a href="#cb40-545" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-546"><a href="#cb40-546" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>close_dataset<span class="op">()</span></span>
+<span id="cb40-547"><a href="#cb40-547" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-548"><a href="#cb40-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-549"><a href="#cb40-549" aria-hidden="true" tabindex="-1"></a>Close the dataset.</span>
+<span id="cb40-550"><a href="#cb40-550" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-551"><a href="#cb40-551" aria-hidden="true" tabindex="-1"></a>Closes the dataset and releases associated resources</span>
+<span id="cb40-552"><a href="#cb40-552" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-553"><a href="#cb40-553" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-554"><a href="#cb40-554" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-555"><a href="#cb40-555" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `close_dataset_file()`</span></span>
+<span id="cb40-556"><a href="#cb40-556" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-557"><a href="#cb40-557" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-558"><a href="#cb40-558" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>close_dataset_file<span class="op">()</span></span>
+<span id="cb40-559"><a href="#cb40-559" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-560"><a href="#cb40-560" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-561"><a href="#cb40-561" aria-hidden="true" tabindex="-1"></a>Close dataset and file.</span>
+<span id="cb40-562"><a href="#cb40-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-563"><a href="#cb40-563" aria-hidden="true" tabindex="-1"></a>Closes both the dataset and its associated file</span>
+<span id="cb40-564"><a href="#cb40-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-565"><a href="#cb40-565" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-566"><a href="#cb40-566" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-567"><a href="#cb40-567" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `convert_DataFrame_to_RangeList()`</span></span>
+<span id="cb40-568"><a href="#cb40-568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-569"><a href="#cb40-569" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-570"><a href="#cb40-570" aria-hidden="true" tabindex="-1"></a>names <span class="op">*</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>convert_DataFrame_to_RangeList<span class="op">(</span>Rcpp<span class="op">::</span>RObject DatasetValues<span class="op">,</span> <span class="dt">bool</span> bFullDataset<span class="op">)</span></span>
+<span id="cb40-571"><a href="#cb40-571" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-572"><a href="#cb40-572" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-573"><a href="#cb40-573" aria-hidden="true" tabindex="-1"></a>Convert DataFrame to range list.</span>
+<span id="cb40-574"><a href="#cb40-574" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-575"><a href="#cb40-575" aria-hidden="true" tabindex="-1"></a>**Parameters:**</span>
+<span id="cb40-576"><a href="#cb40-576" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-577"><a href="#cb40-577" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`DatasetValues`</span> (<span class="in">`Rcpp::RObject`</span>): R DataFrame to convert</span>
+<span id="cb40-578"><a href="#cb40-578" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`bFullDataset`</span> (<span class="in">`bool`</span>): Whether to convert entire dataset</span>
+<span id="cb40-579"><a href="#cb40-579" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-580"><a href="#cb40-580" aria-hidden="true" tabindex="-1"></a>**Returns:** Array of name structures</span>
+<span id="cb40-581"><a href="#cb40-581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-582"><a href="#cb40-582" aria-hidden="true" tabindex="-1"></a>Converts R DataFrame to HDF5-compatible range list format</span>
+<span id="cb40-583"><a href="#cb40-583" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-584"><a href="#cb40-584" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-585"><a href="#cb40-585" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-586"><a href="#cb40-586" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `getDimensExistingDataset()`</span></span>
+<span id="cb40-587"><a href="#cb40-587" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-588"><a href="#cb40-588" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-589"><a href="#cb40-589" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>getDimensExistingDataset<span class="op">()</span></span>
+<span id="cb40-590"><a href="#cb40-590" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-591"><a href="#cb40-591" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-592"><a href="#cb40-592" aria-hidden="true" tabindex="-1"></a>Get dimensions of existing dataset.</span>
+<span id="cb40-593"><a href="#cb40-593" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-594"><a href="#cb40-594" aria-hidden="true" tabindex="-1"></a>Retrieves and stores the dimensions of an existing dataset</span>
+<span id="cb40-595"><a href="#cb40-595" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-596"><a href="#cb40-596" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-597"><a href="#cb40-597" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-598"><a href="#cb40-598" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `isDatasetOpen()`</span></span>
+<span id="cb40-599"><a href="#cb40-599" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-600"><a href="#cb40-600" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-601"><a href="#cb40-601" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> BigDataStatMeth<span class="op">::</span>hdf5Dataset<span class="op">::</span>isDatasetOpen<span class="op">()</span></span>
+<span id="cb40-602"><a href="#cb40-602" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-603"><a href="#cb40-603" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-604"><a href="#cb40-604" aria-hidden="true" tabindex="-1"></a>Check if dataset is open.</span>
+<span id="cb40-605"><a href="#cb40-605" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-606"><a href="#cb40-606" aria-hidden="true" tabindex="-1"></a>**Returns:** True if dataset is open, false otherwise</span>
+<span id="cb40-607"><a href="#cb40-607" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-608"><a href="#cb40-608" aria-hidden="true" tabindex="-1"></a>Verifies if the dataset is currently open and accessible</span>
+<span id="cb40-609"><a href="#cb40-609" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-610"><a href="#cb40-610" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-611"><a href="#cb40-611" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-612"><a href="#cb40-612" aria-hidden="true" tabindex="-1"></a><span class="fu">### Attributes</span></span>
+<span id="cb40-613"><a href="#cb40-613" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-614"><a href="#cb40-614" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `pdataset`</span></span>
+<span id="cb40-615"><a href="#cb40-615" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-616"><a href="#cb40-616" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`H5::DataSet *`</span></span>
+<span id="cb40-617"><a href="#cb40-617" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-618"><a href="#cb40-618" aria-hidden="true" tabindex="-1"></a>Dataset pointer.</span>
+<span id="cb40-619"><a href="#cb40-619" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-620"><a href="#cb40-620" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-621"><a href="#cb40-621" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-622"><a href="#cb40-622" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `dimDataset`</span></span>
+<span id="cb40-623"><a href="#cb40-623" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-624"><a href="#cb40-624" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`hsize_t`</span></span>
+<span id="cb40-625"><a href="#cb40-625" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-626"><a href="#cb40-626" aria-hidden="true" tabindex="-1"></a>Dataset dimensions.</span>
+<span id="cb40-627"><a href="#cb40-627" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-628"><a href="#cb40-628" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-629"><a href="#cb40-629" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-630"><a href="#cb40-630" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `dimDatasetinFile`</span></span>
+<span id="cb40-631"><a href="#cb40-631" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-632"><a href="#cb40-632" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`hsize_t`</span></span>
+<span id="cb40-633"><a href="#cb40-633" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-634"><a href="#cb40-634" aria-hidden="true" tabindex="-1"></a>File storage dimensions.</span>
+<span id="cb40-635"><a href="#cb40-635" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-636"><a href="#cb40-636" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-637"><a href="#cb40-637" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-638"><a href="#cb40-638" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `name`</span></span>
+<span id="cb40-639"><a href="#cb40-639" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-640"><a href="#cb40-640" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`std::string`</span></span>
+<span id="cb40-641"><a href="#cb40-641" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-642"><a href="#cb40-642" aria-hidden="true" tabindex="-1"></a>Dataset name.</span>
+<span id="cb40-643"><a href="#cb40-643" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-644"><a href="#cb40-644" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-645"><a href="#cb40-645" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-646"><a href="#cb40-646" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `type`</span></span>
+<span id="cb40-647"><a href="#cb40-647" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-648"><a href="#cb40-648" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`std::string`</span></span>
+<span id="cb40-649"><a href="#cb40-649" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-650"><a href="#cb40-650" aria-hidden="true" tabindex="-1"></a>Dataset type.</span>
+<span id="cb40-651"><a href="#cb40-651" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-652"><a href="#cb40-652" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-653"><a href="#cb40-653" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-654"><a href="#cb40-654" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `colnamesDataset`</span></span>
+<span id="cb40-655"><a href="#cb40-655" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-656"><a href="#cb40-656" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`std::string`</span></span>
+<span id="cb40-657"><a href="#cb40-657" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-658"><a href="#cb40-658" aria-hidden="true" tabindex="-1"></a>Column names dataset.</span>
+<span id="cb40-659"><a href="#cb40-659" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-660"><a href="#cb40-660" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-661"><a href="#cb40-661" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-662"><a href="#cb40-662" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `rownamesDataset`</span></span>
+<span id="cb40-663"><a href="#cb40-663" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-664"><a href="#cb40-664" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`std::string`</span></span>
+<span id="cb40-665"><a href="#cb40-665" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-666"><a href="#cb40-666" aria-hidden="true" tabindex="-1"></a>Row names dataset.</span>
+<span id="cb40-667"><a href="#cb40-667" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-668"><a href="#cb40-668" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-669"><a href="#cb40-669" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-670"><a href="#cb40-670" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `boverwrite`</span></span>
+<span id="cb40-671"><a href="#cb40-671" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-672"><a href="#cb40-672" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`bool`</span></span>
+<span id="cb40-673"><a href="#cb40-673" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-674"><a href="#cb40-674" aria-hidden="true" tabindex="-1"></a>Overwrite flag.</span>
+<span id="cb40-675"><a href="#cb40-675" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-676"><a href="#cb40-676" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-677"><a href="#cb40-677" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-678"><a href="#cb40-678" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `unlimited`</span></span>
+<span id="cb40-679"><a href="#cb40-679" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-680"><a href="#cb40-680" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`bool`</span></span>
+<span id="cb40-681"><a href="#cb40-681" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-682"><a href="#cb40-682" aria-hidden="true" tabindex="-1"></a>Unlimited dimensions flag.</span>
+<span id="cb40-683"><a href="#cb40-683" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-684"><a href="#cb40-684" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-685"><a href="#cb40-685" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-686"><a href="#cb40-686" aria-hidden="true" tabindex="-1"></a><span class="fu">#### `internalDataset`</span></span>
+<span id="cb40-687"><a href="#cb40-687" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-688"><a href="#cb40-688" aria-hidden="true" tabindex="-1"></a>**Type:** <span class="in">`bool`</span></span>
+<span id="cb40-689"><a href="#cb40-689" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-690"><a href="#cb40-690" aria-hidden="true" tabindex="-1"></a>Internal dataset flag.</span>
+<span id="cb40-691"><a href="#cb40-691" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-692"><a href="#cb40-692" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb40-693"><a href="#cb40-693" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-694"><a href="#cb40-694" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-695"><a href="#cb40-695" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb40-696"><a href="#cb40-696" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-697"><a href="#cb40-697" aria-hidden="true" tabindex="-1"></a><span class="fu">## Usage Example</span></span>
+<span id="cb40-698"><a href="#cb40-698" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-699"><a href="#cb40-699" aria-hidden="true" tabindex="-1"></a><span class="in">```cpp</span></span>
+<span id="cb40-700"><a href="#cb40-700" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"hdf5Dataset.hpp"</span></span>
+<span id="cb40-701"><a href="#cb40-701" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-702"><a href="#cb40-702" aria-hidden="true" tabindex="-1"></a><span class="co">// Example usage</span></span>
+<span id="cb40-703"><a href="#cb40-703" aria-hidden="true" tabindex="-1"></a>hdf5Dataset obj<span class="op">;</span></span>
+<span id="cb40-704"><a href="#cb40-704" aria-hidden="true" tabindex="-1"></a><span class="co">// Your code here</span></span>
+<span id="cb40-705"><a href="#cb40-705" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb40-706"><a href="#cb40-706" aria-hidden="true" tabindex="-1"></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-<p>BigDataStatMeth - ISGlobal Bioinformatics Research Group</p>
+<p>© 2025 BigDataStatMeth - ISGlobal BRGE</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    </div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/edit/main/api-reference/cpp/classes/hdf5Dataset.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/isglobal-brge/BigDataStatMeth/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
-<p>Built with <a href="https://quarto.org/">Quarto</a></p>
-</div>
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/isglobal-brge/BigDataStatMeth">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item">
+ License: GPL-3
+  </li>  
+</ul>
+    </div>
   </div>
 </footer>
 
