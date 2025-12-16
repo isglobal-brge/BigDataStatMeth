@@ -3,7 +3,7 @@
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/BigDataStatMeth)](https://CRAN.R-project.org/package=BigDataStatMeth)
 [![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/BigDataStatMeth)](https://CRAN.R-project.org/package=BigDataStatMeth)
-[![R-CMD-check](https://github.com/isglobal-brge/BigDataStatMeth/workflows/R-CMD-check/badge.svg)](https://github.com/isglobal-brge/BigDataStatMeth/actions)
+<!--[![R-CMD-check](https://github.com/isglobal-brge/BigDataStatMeth/workflows/R-CMD-check/badge.svg)](https://github.com/isglobal-brge/BigDataStatMeth/actions) -->
 [![Documentation](https://img.shields.io/badge/docs-online-blue.svg)](https://isglobal-brge.github.io/BigDataStatMeth/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
