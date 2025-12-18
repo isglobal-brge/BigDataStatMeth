@@ -174,12 +174,12 @@ Comprehensive documentation is available at **[https://isglobal-brge.github.io/B
 
 ### Sections
 
-- **[Getting Started](https://isglobal-brge.github.io/BigDataStatMeth/getting-started.html)**: Installation and first steps
+- **[Getting Started](https://isglobal-brge.github.io/BigDataStatMeth/tutorials/getting-started.html)**: Installation and first steps
 - **[Fundamentals](https://isglobal-brge.github.io/BigDataStatMeth/fundamentals/)**: HDF5 storage and block-wise computing concepts
 - **[Workflows](https://isglobal-brge.github.io/BigDataStatMeth/workflows/)**: Complete analysis examples (PCA, CCA, cross-platform integration)
 - **[Developing Methods](https://isglobal-brge.github.io/BigDataStatMeth/developing-methods/)**: Building new statistical methods with BigDataStatMeth
 - **[API Reference](https://isglobal-brge.github.io/BigDataStatMeth/api-reference/)**: Complete function documentation (R and C++)
-- **[Technical Guide](https://isglobal-brge.github.io/BigDataStatMeth/technical/)**: Performance optimization and benchmarking
+- **[Technical Guide](https://isglobal-brge.github.io/BigDataStatMeth/technical/performance.html)**: Performance optimization and benchmarking
 
 ### Vignettes
 
@@ -329,7 +329,6 @@ Contributions are welcome! Please:
 
 - **Documentation**: [https://isglobal-brge.github.io/BigDataStatMeth/](https://isglobal-brge.github.io/BigDataStatMeth/)
 - **Issues**: [GitHub Issues](https://github.com/isglobal-brge/BigDataStatMeth/issues)
-- **Questions**: [GitHub Discussions](https://github.com/isglobal-brge/BigDataStatMeth/discussions)
 
 ## License
 
