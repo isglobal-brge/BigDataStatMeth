@@ -20,8 +20,9 @@ RHDF5_LIBS = $(shell echo 'Rhdf5lib::pkgconfig("PKG_CXX_LIBS")'|\
     "${R_HOME}/bin/R" --vanilla --slave)  
 PKG_LIBS += $(RHDF5_LIBS)
 
-CCACHE=ccache
-CXX_STD = $(CCACHE) CXX17
+#..# CCACHE=ccache
+#..# CXX_STD = $(CCACHE) CXX17
+CXX_STD = CXX17
 
 ## Disable Boost concept-checking to silence warnings from BH headers (no effect on code logic)
 PKG_CXXFLAGS += -DBOOST_NO_CONCEPT_CHECKING

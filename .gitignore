@@ -65,3 +65,5 @@ src/Makevars
 *.backup
 *.bck
 *.nofunciona
+README.md,old.md
+.sync.ffs_db

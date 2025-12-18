@@ -1,17 +1,16 @@
-# DESCRIPTION
-Version: 1.0.2  # Era 1.0.1
-
-# NEWS.md - Añadir al inicio
 # BigDataStatMeth 1.0.2
 
+## Major changes
 * Reduced example execution time for CRAN compliance
 * Fixed bdblockmult_hdf5 example (< 5 seconds now)
+
+## Bug fixes
+* Fixed Makevars configuration issue causing compilation warnings
 
 
 # BigDataStatMeth 1.0.1
 
 ## CRAN Resubmission Fixes
-
 * **Thread management**: Implemented respect for OMP_THREAD_LIMIT environment variable
 * **Default threads**: Limited to maximum 2 threads on CRAN servers to prevent excessive CPU usage
 * **Documentation**: Replaced all Unicode characters with proper LaTeX macros (\eqn{}, \deqn{})
@@ -19,14 +18,12 @@ Version: 1.0.2  # Era 1.0.1
 * **ATLAS compatibility**: Tested with standard BLAS/LAPACK configurations
 
 ## Bug Fixes
-
 * Fixed thread safety in parallel HDF5 operations
 * Improved file locking mechanisms for concurrent access
 * Corrected dimension handling in transposed operations
 * Enhanced error messages for invalid inputs
 
 ## Documentation Improvements
-
 * Updated all function examples with proper mathematical notation
 * Added comprehensive CRAN submission notes
 * Improved vignette with clearer explanations
