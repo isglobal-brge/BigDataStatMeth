@@ -14,4 +14,3 @@ claude.md
 ^.*\.DS_Store$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
-^.sync.ffs_db
