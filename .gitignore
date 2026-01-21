@@ -65,3 +65,4 @@ src/Makevars
 *.backup
 *.bck
 *.nofunciona
+*.ffs_db
