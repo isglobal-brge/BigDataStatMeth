@@ -794,7 +794,6 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #' @examples
 #' \dontrun{
 #'   library(BigDataStatMeth)
-#'   library(rhdf5)
 #'   
 #'   # Create test matrix
 #'   N = 1000
