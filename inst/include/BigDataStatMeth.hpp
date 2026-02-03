@@ -47,12 +47,7 @@
     #include <fstream>
     #include <sys/stat.h>
     #include <string>
-    // #include <regex>
-    // #include <algorithm>
     #include <vector>
-    // #include <cmath>
-    // #include <numeric>
-    // #include <random>
 
 
     
@@ -217,6 +212,7 @@
     #include "Utilities/openme-utils.hpp"
     #include "Utilities/Utilities.hpp"
     #include "hdf5Utilities/hdf5Utilities.hpp"
+    #include "hdf5Utilities/hdf5RAII.hpp"
     
     // #include "hdf5Omics/hdf5OmicsUtils.hpp"
     
