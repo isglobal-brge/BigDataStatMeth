@@ -26,6 +26,13 @@ public:
     HDF5Handle& operator=(const HDF5Handle&) = delete;
 };
 
+// Aliases - declared here, but only usable after the classes are included
+// BigDataStatMeth.hpp incluye este archivo después de las clases
+using hdf5FileHandle           = HDF5Handle<hdf5File>;
+using hdf5GroupHandle          = HDF5Handle<hdf5Group>;
+using hdf5DatasetHandle        = HDF5Handle<hdf5Dataset>;
+using hdf5DatasetInternalHandle = HDF5Handle<hdf5DatasetInternal>;
+
 } // namespace BigDataStatMeth
 
 #endif

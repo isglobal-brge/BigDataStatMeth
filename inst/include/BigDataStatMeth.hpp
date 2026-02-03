@@ -212,7 +212,6 @@
     #include "Utilities/openme-utils.hpp"
     #include "Utilities/Utilities.hpp"
     #include "hdf5Utilities/hdf5Utilities.hpp"
-    #include "hdf5Utilities/hdf5RAII.hpp"
     
     // #include "hdf5Omics/hdf5OmicsUtils.hpp"
     
@@ -225,6 +224,7 @@
     #include "hdf5Utilities/hdf5Groups.hpp"
     #include "hdf5Utilities/hdf5Datasets.hpp"
     #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
+    #include "hdf5Utilities/hdf5RAII.hpp"
     #include "hdf5Utilities/hdf5CheckClose.hpp"
     #include "hdf5Utilities/hdf5Dims.hpp"
     
