@@ -159,9 +159,9 @@ Rcpp::List bdblockSum_hdf5(std::string filename,
     
     
     
-    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsB = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsC = nullptr;
+    // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    // BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+    // BigDataStatMeth::hdf5Dataset* dsC = nullptr;
     
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
@@ -203,11 +203,17 @@ Rcpp::List bdblockSum_hdf5(std::string filename,
         else { strdatasetOut =  A + "_+_" + B; }
         
         
-        dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        // dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        // dsA->openDataset();
+        // dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        // dsB->openDataset();
+        // dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+        
+        BigDataStatMeth::HDF5Handle dsA(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false));
         dsA->openDataset();
-        dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        BigDataStatMeth::HDF5Handle dsB(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false));
         dsB->openDataset();
-        dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+        BigDataStatMeth::HDF5Handle dsC(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce));
         
         if( dsA->getDatasetptr() != nullptr &&  dsB->getDatasetptr() != nullptr  ) 
         { 
@@ -233,13 +239,13 @@ Rcpp::List bdblockSum_hdf5(std::string filename,
             }
             
             if( irowsA != 1 && icolsA!= 1 && irowsB != 1 && icolsB!= 1) {
-                Rcpp_block_matrix_sum_hdf5(dsA, dsB, dsC, iblock_size, bparal, threads);
+                Rcpp_block_matrix_sum_hdf5(dsA.get(), dsB.get(), dsC.get(), iblock_size, bparal, threads);
             } else {
                 
                 if( irowsA==1 || icolsA==1 ) {
-                    Rcpp_block_matrix_vector_sum_hdf5(dsA, dsB, dsC, iblock_size, bparal, threads);
+                    Rcpp_block_matrix_vector_sum_hdf5(dsA.get(), dsB.get(), dsC.get(), iblock_size, bparal, threads);
                 } else {
-                    Rcpp_block_matrix_vector_sum_hdf5(dsB, dsA, dsC, iblock_size, bparal, threads);
+                    Rcpp_block_matrix_vector_sum_hdf5(dsB.get(), dsA.get(), dsC.get(), iblock_size, bparal, threads);
                 }
             }
         }
@@ -247,24 +253,24 @@ Rcpp::List bdblockSum_hdf5(std::string filename,
         lst_return["fn"] = filename;
         lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
         
-        delete dsA; dsA = nullptr;
-        delete dsB; dsB = nullptr;
-        delete dsC; dsC = nullptr;
+        // delete dsA; dsA = nullptr;
+        // delete dsB; dsB = nullptr;
+        // delete dsC; dsC = nullptr;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (File IException)";
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (Group IException)";
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (DataSet IException)";
     } catch(std::exception& ex) {
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5: " << ex.what();
     } catch (...) {
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"C++ exception bdblockSum_hdf5 (unknown reason)";
     }
     
