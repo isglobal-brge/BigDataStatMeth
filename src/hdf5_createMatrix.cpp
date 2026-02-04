@@ -52,11 +52,6 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
                           Rcpp::Nullable<bool> unlimited = R_NilValue)
 {
     
-    
-    // BigDataStatMeth::hdf5Dataset* objDataset = nullptr;
-    // BigDataStatMeth::hdf5File* objFile = nullptr;
-    BigDataStatMeth::hdf5Dims* dsdims = nullptr;
-    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
     
@@ -166,30 +161,17 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
                 }
             }
             
-            // delete dsdims; dsdims = nullptr;
-            // delete objDataset; objDataset = nullptr;
-            // delete objFile; objFile = nullptr;
-            
             lst_return["fn"] = filename;
             lst_return["ds"] = strsubgroup + "/" + strdataset;
         } 
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        // if(objFile != nullptr) delete objFile;
-        // if(dsdims != nullptr) delete dsdims;
-        // checkClose_file(objDataset);
         Rf_error("c++ c++ exception bdCreate_hdf5_matrix (File IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        // if(objFile != nullptr) delete objFile;
-        // if(dsdims != nullptr) delete dsdims;
-        // checkClose_file(objDataset);
         Rf_error( "c++ exception bdCreate_hdf5_matrix (DataSet IException)");
         return(lst_return);
     } catch(std::exception &ex) {
-        // if(objFile != nullptr) delete objFile;
-        // if(dsdims != nullptr) delete dsdims;
-        // checkClose_file(objDataset);
         Rf_error( "c++ exception bdCreate_hdf5_matrix %s", ex.what());
         return(lst_return);
     } 
