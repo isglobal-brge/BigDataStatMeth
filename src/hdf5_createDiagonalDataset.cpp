@@ -95,8 +95,6 @@
                                    Rcpp::Nullable<bool> overwriteDataset = R_NilValue,
                                    Rcpp::Nullable<int> threads = R_NilValue) {
      
-     // BigDataStatMeth::hdf5File* objFile = nullptr;
-     // BigDataStatMeth::hdf5DiagonalMatrix* dsDiag = nullptr;
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("ds") = "");
      
@@ -169,28 +167,20 @@
              dsDiag->createScalarDiagonalMatrix(final_size, scalar, diag_vec, 
                                                 iblock_size, compression, threads, output_type);
              
-             // delete dsDiag; dsDiag = nullptr;
-             // delete objFile; objFile = nullptr;
          }
          
          lst_return["fn"] = filename;
          lst_return["ds"] = group + "/" + dataset;
          
      }  catch (H5::FileIException&) {
-         // if(objFile != nullptr) delete objFile;
-         // checkClose_file(dsDiag);
          Rcpp::stop("c++ exception bdCreate_diagonal_hdf5 (File IException)");
          return(lst_return);
          
      } catch (H5::DataSetIException&) {
-         // if(objFile != nullptr) delete objFile;
-         // checkClose_file(dsDiag);
          Rcpp::stop("c++ exception bdCreate_diagonal_hdf5 (DataSet IException)");
          return(lst_return);
          
      } catch (std::exception& ex) {
-         // if(objFile != nullptr) delete objFile;
-         // checkClose_file(dsDiag);
          Rcpp::stop("c++ exception bdCreate_diagonal_hdf5 %s", ex.what());
          return(lst_return);
      }
