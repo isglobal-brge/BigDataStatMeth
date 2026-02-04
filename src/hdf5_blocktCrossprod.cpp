@@ -160,10 +160,6 @@ Rcpp::List bdtCrossprod_hdf5( std::string filename,
                               Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
      
-     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-     BigDataStatMeth::hdf5Dataset* dsB = nullptr;
-     BigDataStatMeth::hdf5Dataset* dsC = nullptr;
-     
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("ds") = "");
      
@@ -206,14 +202,17 @@ Rcpp::List bdtCrossprod_hdf5( std::string filename,
          
          if (!block_size.isNull()) { iblock_size = Rcpp::as<int> (block_size); } 
          
-         dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        //  dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+         BigDataStatMeth::HDF5Handle dsA(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false));
          dsA->openDataset();
-         dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, matB, false);
+        //  dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, matB, false);
+         BigDataStatMeth::HDF5Handle dsB(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, matB, false));
          dsB->openDataset();
 
          if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
              
-             dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+            //  dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+             BigDataStatMeth::HDF5Handle dsC( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce) );
              iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
              
              if(bparal == true) { // parallel
@@ -225,32 +224,24 @@ Rcpp::List bdtCrossprod_hdf5( std::string filename,
                      memory_block = iblock_size/2;
                  }
                  
-                 dsC = BigDataStatMeth::tcrossprod(dsA, dsB, dsC, bisSymetric, iblock_size, memory_block, bparal, true, threads);
+                 BigDataStatMeth::tcrossprod(dsA.get(), dsB.get(), dsC.get(), bisSymetric, iblock_size, memory_block, bparal, true, threads);
                  
              } else if (bparal == false) { // Not parallel
-                 dsC = BigDataStatMeth::tcrossprod(dsA, dsB, dsC, bisSymetric, iblock_size, 0, bparal, true, threads);
+                 BigDataStatMeth::tcrossprod(dsA.get(), dsB.get(), dsC.get(), bisSymetric, iblock_size, 0, bparal, true, threads);
              }    
              
              lst_return["fn"] = filename;
              lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
-             
-             delete dsC; dsC = nullptr;    
          }
          
-         delete dsA; dsA = nullptr;
-         delete dsB; dsB = nullptr;
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr<<"c++ c++ exception bdtCrossprod_hdf5 (File IException)";
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr<<"c++ exception bdtCrossprod_hdf5 (DataSet IException)";
      } catch(std::exception &ex) {
-         checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr << "c++ exception bdtCrossprod_hdf5: " << ex.what();
      } catch (...) {
-         checkClose_file(dsA, dsB, dsC);
          Rcpp::Rcerr<<"C++ exception bdtCrossprod_hdf5 (unknown reason)";
      }
      
