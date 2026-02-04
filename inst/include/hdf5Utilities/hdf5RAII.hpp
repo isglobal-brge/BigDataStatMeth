@@ -32,6 +32,7 @@ using hdf5FileHandle           = HDF5Handle<hdf5File>;
 using hdf5GroupHandle          = HDF5Handle<hdf5Group>;
 using hdf5DatasetHandle        = HDF5Handle<hdf5Dataset>;
 using hdf5DatasetInternalHandle = HDF5Handle<hdf5DatasetInternal>;
+using hdf5DatasetDimsHandle     = HDF5Handle<hdf5Dims>;
 
 } // namespace BigDataStatMeth
 

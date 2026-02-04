@@ -224,9 +224,10 @@
     #include "hdf5Utilities/hdf5Groups.hpp"
     #include "hdf5Utilities/hdf5Datasets.hpp"
     #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
+    #include "hdf5Utilities/hdf5Dims.hpp"
     #include "hdf5Utilities/hdf5RAII.hpp"
     #include "hdf5Utilities/hdf5CheckClose.hpp"
-    #include "hdf5Utilities/hdf5Dims.hpp"
+    
     
     // #include "hdf5Utilities/hdf5DiagonalOperations.hpp"
 
