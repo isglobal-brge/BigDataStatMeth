@@ -143,10 +143,6 @@ Rcpp::List bdRemoveMAF_hdf5( std::string filename, std::string group, std::strin
                        Rcpp::Nullable<int> blocksize, Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
     
-    
-    BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
-    BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
-    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "",
                                                Rcpp::Named("nremoved") = "");
@@ -155,7 +151,13 @@ Rcpp::List bdRemoveMAF_hdf5( std::string filename, std::string group, std::strin
     {
         
         H5::Exception::dontPrint();
-        
+
+        // BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+        // BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5DatasetInternal> dsOut(nullptr);
+
+
         int iremoved = 0;    
         bool bcols, bforce;
         double dpcent;
@@ -183,10 +185,12 @@ Rcpp::List bdRemoveMAF_hdf5( std::string filename, std::string group, std::strin
             
         if( strdataset.compare(stroutdata)!= 0)
         {
-            dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+            // dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+            dsIn.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
             dsIn->openDataset();
             
-            dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, outdataset, bforce);
+            // dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, outdataset, bforce);
+            dsOut.reset( new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, outdataset, bforce) );
             
         } else {
             throw std::range_error("Input and output dataset must be different");  
@@ -194,15 +198,14 @@ Rcpp::List bdRemoveMAF_hdf5( std::string filename, std::string group, std::strin
         }
         
         if( dsIn->getDatasetptr() != nullptr) {
-            iremoved = Rcpp_Remove_MAF_hdf5( dsIn, dsOut, bcols, dpcent, iblocksize);
+            iremoved = Rcpp_Remove_MAF_hdf5( dsIn.get(), dsOut.get(), bcols, dpcent, iblocksize);
         } else {
-            checkClose_file(dsIn, dsOut);
             throw std::range_error("File does not exist");
             return(lst_return);
         }
         
-        delete dsIn; dsIn = nullptr;
-        delete dsOut; dsOut = nullptr;
+        // delete dsIn; dsIn = nullptr;
+        // delete dsOut; dsOut = nullptr;
         
         lst_return["fn"] = filename;
         lst_return["ds"] = outgroup + "/" + outdataset;
@@ -215,27 +218,21 @@ Rcpp::List bdRemoveMAF_hdf5( std::string filename, std::string group, std::strin
             warning( std::to_string(iremoved) + " Columns have been removed");
         
     } catch( H5::FileIException& error ){
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (File IException)";
         return(lst_return);
     } catch( H5::DataSetIException& error ) { 
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataSet IException)";
         return(lst_return);
     } catch( H5::DataSpaceIException& error ) { 
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataSpace IException)";
         return(lst_return);
     } catch( H5::DataTypeIException& error ) { 
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataType IException)";
         return(lst_return);
     } catch(std::exception &ex) {
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5: "<< ex.what();
         return(lst_return);
     }  catch (...) {
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ exception bdRemoveMAF_hdf5 (unknown reason)";
         return(lst_return);
     }

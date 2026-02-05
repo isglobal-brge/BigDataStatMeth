@@ -148,17 +148,16 @@ Rcpp::List bdWriteOppsiteTriangularMatrix_hdf5(std::string filename,
                                       Rcpp::Nullable<long> elementsBlock = 1000000)
 {
      
-     
-     
-    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
      
      try
      {
          
-         H5::Exception::dontPrint();
+        H5::Exception::dontPrint();
+
+        // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
          
         Rcpp::NumericVector intNewDiagonal;
         bool blower;
@@ -173,43 +172,40 @@ Rcpp::List bdWriteOppsiteTriangularMatrix_hdf5(std::string filename,
          
          std::string strDataset = group + "/" + dataset;
          
-         dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        //  dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+         dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
          dsA->openDataset();
          
          if( dsA->getDatasetptr() != nullptr)  {
              
              if(dsA->nrows() != dsA->ncols()) {
                  Rcpp::Rcout<<"\nCan not write opposite triangular matrix - Non squuare matrix";
-                 delete dsA; dsA = nullptr;
+                //  delete dsA; dsA = nullptr;
                  return(lst_return);   
              }
              
              if( blower == false ) {
-                 setLowerTriangularMatrix( dsA, dElementsBlock);
+                 setLowerTriangularMatrix( dsA.get(), dElementsBlock);
              } else {
-                 setUpperTriangularMatrix( dsA, dElementsBlock);
+                 setUpperTriangularMatrix( dsA.get(), dElementsBlock);
              }    
          }
          
-         delete dsA; dsA = nullptr;
+        //  delete dsA; dsA = nullptr;
          
          lst_return["fn"] = filename;
          lst_return["ds"] = group + "/" + dataset;
          
      } catch( H5::FileIException& error ) { 
-         checkClose_file(dsA);
          Rcpp::Rcerr<<"c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (File IException)";
          return(lst_return);
      } catch( H5::DataSetIException& error ) { 
-         checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (DataSet IException)";
          return(lst_return);
      } catch(std::exception& ex) {
-         checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5" << ex.what();
          return(lst_return);
      } catch (...) {
-         checkClose_file(dsA);
          Rcpp::Rcerr<<"\nC++ exception bdWriteOppsiteTriangularMatrix_hdf5 (unknown reason)";
          return(lst_return);
      }

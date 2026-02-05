@@ -101,6 +101,9 @@
      try {
          
          H5::Exception::dontPrint();
+
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5File> objFile(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5DiagonalMatrix> dsDiag(nullptr);
          
          bool bforceFile, bforceDataset;
          int iRes;
@@ -151,7 +154,7 @@
          
          // Create file
          // objFile = new BigDataStatMeth::hdf5File(filename, bforceFile);
-         BigDataStatMeth::HDF5Handle objFile(new BigDataStatMeth::hdf5File(filename, bforceFile));
+         objFile.reset(new BigDataStatMeth::hdf5File(filename, bforceFile));
          iRes = objFile->createFile();
          
          if( (iRes == EXEC_OK) | (iRes == EXEC_WARNING)) {
@@ -161,7 +164,7 @@
              }
              
              // dsDiag = new BigDataStatMeth::hdf5DiagonalMatrix(objFile->getFileptr(), group, dataset, bforceDataset);
-             BigDataStatMeth::HDF5Handle dsDiag( new BigDataStatMeth::hdf5DiagonalMatrix(objFile->getFileptr(), group, dataset, bforceDataset) );
+             dsDiag.reset( new BigDataStatMeth::hdf5DiagonalMatrix(objFile->getFileptr(), group, dataset, bforceDataset) );
              
              // Create diagonal matrix/vector with unified function
              dsDiag->createScalarDiagonalMatrix(final_size, scalar, diag_vec, 

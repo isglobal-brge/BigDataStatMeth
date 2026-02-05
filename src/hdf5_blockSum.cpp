@@ -159,10 +159,14 @@ Rcpp::List bdblockSum_hdf5(std::string filename,
     
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
-    
+
     try{
         
         H5::Exception::dontPrint();  
+
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsC(nullptr);
 
         int iblock_size,
             bparal, 
@@ -196,11 +200,11 @@ Rcpp::List bdblockSum_hdf5(std::string filename,
         if( outdataset.isNotNull()) { strdatasetOut =  Rcpp::as<std::string> (outdataset); } 
         else { strdatasetOut =  A + "_+_" + B; }
         
-        BigDataStatMeth::HDF5Handle dsA(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false));
+        dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false));
         dsA->openDataset();
-        BigDataStatMeth::HDF5Handle dsB(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false));
+        dsB.reset( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false));
         dsB->openDataset();
-        BigDataStatMeth::HDF5Handle dsC(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce));
+        dsC.reset( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce));
         
         if( dsA->getDatasetptr() != nullptr &&  dsB->getDatasetptr() != nullptr  ) 
         { 

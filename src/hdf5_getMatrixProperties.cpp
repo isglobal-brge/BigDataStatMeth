@@ -61,6 +61,8 @@
      try {
          
          H5::Exception::dontPrint();
+
+         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
          
          // Process parameters
          if (Rcpp::is<Rcpp::CharacterVector>(filename)) {
@@ -84,13 +86,13 @@
          if (sample_size.isNull()) samp_size = 1000;  // Default sample size
          else samp_size = Rcpp::as<int>(sample_size);
          
-         // Open dataset and check properties
-         BigDataStatMeth::hdf5Dataset dsA(str_filename, Rcpp::as<std::string>(strgroup), 
-                                          Rcpp::as<std::string>(strdataset), false);
-         dsA.openDataset();
+        // Open dataset and check properties
+        // BigDataStatMeth::hdf5Dataset dsA(str_filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), false);
+        dsA.reset( new BigDataStatMeth::hdf5Dataset(str_filename, Rcpp::as<std::string>(strgroup), Rcpp::as<std::string>(strdataset), false ));
+        dsA->openDataset();
          
-         hsize_t n_rows = dsA.nrows();
-         hsize_t n_cols = dsA.ncols();
+         hsize_t n_rows = dsA->nrows();
+         hsize_t n_cols = dsA->ncols();
          
          bool is_square = (n_rows == n_cols);
          bool is_symmetric = true;
@@ -110,11 +112,11 @@
                      std::vector<double> temp_data(1);
                      
                      // Read element (i,j)
-                     dsA.readDatasetBlock({(hsize_t)i, (hsize_t)j}, {1, 1}, stride, block, temp_data.data());
+                     dsA->readDatasetBlock({(hsize_t)i, (hsize_t)j}, {1, 1}, stride, block, temp_data.data());
                      val_ij = temp_data[0];
                      
                      // Read element (j,i)
-                     dsA.readDatasetBlock({(hsize_t)j, (hsize_t)i}, {1, 1}, stride, block, temp_data.data());
+                     dsA->readDatasetBlock({(hsize_t)j, (hsize_t)i}, {1, 1}, stride, block, temp_data.data());
                      val_ji = temp_data[0];
                      
                      double asymmetry = std::abs(val_ij - val_ji);

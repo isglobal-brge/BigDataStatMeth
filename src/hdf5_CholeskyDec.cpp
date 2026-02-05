@@ -140,8 +140,6 @@ Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string 
                           Rcpp::Nullable<long> elementsBlock = 1000000)
 {
      
-     
-     
      // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
      // BigDataStatMeth::hdf5DatasetInternal* dstmp = nullptr;
      
@@ -151,6 +149,9 @@ Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string 
      try
      {
          H5::Exception::dontPrint();
+
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5DatasetInternal> dstmp(nullptr);
          
          long dElementsBlock;
          std::string strOutgroup, strIndataset, 
@@ -170,7 +171,7 @@ Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string 
          strOutdataset_tmp = "tmp/tmp_L";
          
          // dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
-         BigDataStatMeth::HDF5Handle dsA( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
+         dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
          dsA->openDataset();
          
          if( dsA->getDatasetptr() != nullptr) { 
@@ -180,7 +181,7 @@ Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string 
              
              if(nrows == ncols) {
                  // dstmp = new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true);
-                 BigDataStatMeth::HDF5Handle dstmp( new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true) );
+                 dstmp.reset( new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true) );
                  dstmp->createDataset(nrows, ncols, "real");
                  
                  int res = 0;

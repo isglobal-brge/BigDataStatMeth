@@ -59,7 +59,10 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
     {
         
         H5::Exception::dontPrint();
-        
+
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5File> objFile(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
         
         Rcpp::IntegerVector dims(2);
         Rcpp::CharacterVector svrows, svrcols;
@@ -89,7 +92,6 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
         if(overwriteFile.isNull())  bforceFile = false ;
         else    bforceFile = Rcpp::as<bool>(overwriteFile);
         
-        
         strdatatype = BigDataStatMeth::getObjecDataType(object);
         
         if ( object.sexp_type()==0 ) {
@@ -107,7 +109,7 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
         dims = BigDataStatMeth::getObjectDims(object, strdatatype);
         
         // objFile = new BigDataStatMeth::hdf5File(filename, bforceFile);
-        BigDataStatMeth::HDF5Handle objFile( new BigDataStatMeth::hdf5File(filename, bforceFile) );
+        objFile.reset(new BigDataStatMeth::hdf5File(filename, bforceFile));
         iRes = objFile->createFile();
         
         if( (iRes == EXEC_OK) | (iRes == EXEC_WARNING)) {
@@ -117,7 +119,7 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
             }
             
             // objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforceDataset );
-            BigDataStatMeth::HDF5Handle objDataset( new BigDataStatMeth::hdf5Dataset(objFile.get(), strsubgroup, strdataset, bforceDataset ) );
+            objDataset.reset(new BigDataStatMeth::hdf5Dataset(objFile.get(), strsubgroup, strdataset, bforceDataset ));
             if( bunlimited == false){
                 objDataset->createDataset(dims[0], dims[1], strdatatype);
             } else{
@@ -140,7 +142,7 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
             if(dimnames.size()>0 ) {
                 
                 // dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
-                BigDataStatMeth::HDF5Handle dsdims( new BigDataStatMeth::hdf5Dims(objDataset.get()) );
+                dsdims.reset(new BigDataStatMeth::hdf5Dims(objDataset.get()));
                 
                 if(!Rf_isNull(dimnames[0])) {
                     svrows = rownames(object);

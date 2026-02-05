@@ -105,16 +105,21 @@
 Rcpp::RObject  bdgetDim_hdf5( std::string filename, std::string dataset)
 {
     
-    BigDataStatMeth::hdf5Dataset* ds = nullptr;
+    
     Rcpp::IntegerVector dims(2);
     
     try
     {
         
         H5::Exception::dontPrint();
+
+        // BigDataStatMeth::hdf5Dataset* ds = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> ds(nullptr);
+        
         
         // ds = new BigDataStatMeth::hdf5Dataset(filename, dataset, false);
-        BigDataStatMeth::HDF5Handle ds(new BigDataStatMeth::hdf5Dataset(filename, dataset, false));
+        // BigDataStatMeth::HDF5Handle ds(new BigDataStatMeth::hdf5Dataset(filename, dataset, false));
+        ds.reset( new BigDataStatMeth::hdf5Dataset(filename, dataset, false) );
         ds->openDataset();
         
         if( ds->getDatasetptr() != nullptr ) { 

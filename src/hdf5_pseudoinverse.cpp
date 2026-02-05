@@ -260,8 +260,7 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
                                Rcpp::Nullable<int> threads = R_NilValue)
 {
      
-     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-     BigDataStatMeth::hdf5Dataset* dsRes = nullptr;
+     
 
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("ds") = "");
@@ -269,6 +268,12 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
     try {
         
         H5::Exception::dontPrint();
+
+
+        // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        //  BigDataStatMeth::hdf5Dataset* dsRes = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsRes(nullptr);
          
         Eigen::MatrixXd A;
         std::string strOutgroup, strOutdataset;
@@ -283,15 +288,17 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
         if(overwrite.isNull()) { bforce = false ; }
         else { bforce = Rcpp::as<bool>(overwrite); }
         
-        dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        // dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
         dsA->openDataset();
         
-        dsRes = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset, bforce);
+        // dsRes = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset, bforce);
+        dsRes.reset( new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset, bforce) );
         
         if( dsA->getDatasetptr() != nullptr ) {
-            RcppPseudoinvHdf5(dsA, dsRes, threads);
+            RcppPseudoinvHdf5(dsA.get(), dsRes.get(), threads);
         } else {
-            checkClose_file(dsA, dsRes);
+            // checkClose_file(dsA, dsRes);
             Rcpp::Rcerr << "c++ exception bdPseudoinv_hdf5: " << "Error opening dataset";
             return(lst_return);
         }
@@ -302,23 +309,19 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
         // lst_return = Rcpp::List::create(Rcpp::Named("fn") = filename,
         //                                 Rcpp::Named("ds") = strOutgroup + "/" + strOutdataset);
         
-        delete dsA; dsA = nullptr;
-        delete dsRes; dsRes = nullptr;
+        // delete dsA; dsA = nullptr;
+        // delete dsRes; dsRes = nullptr;
          
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (File IException)";     
         return(lst_return);
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (Group IException)";
         return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (DataSet IException)";
         return(lst_return);
     } catch(std::exception& ex) {
-        checkClose_file(dsA, dsRes);    
         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5" << ex.what();
         return(lst_return);
     }

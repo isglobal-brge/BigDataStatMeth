@@ -135,11 +135,13 @@
                                                 Rcpp::Named("vectors_imag") = R_NilValue,
                                                 Rcpp::Named("is_symmetric") = R_NilValue);
      
-     BigDataStatMeth::hdf5File* objFile = nullptr;
+     // BigDataStatMeth::hdf5File* objFile = nullptr;
      
      try {
          
          H5::Exception::dontPrint();
+         
+         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5File> objFile(nullptr);
          
          int ks, max_iters, ncvs;
          bool bcent, bscal, bforce, bcompute_vecs;
@@ -230,7 +232,8 @@
          // Check if imaginary parts exist (for non-symmetric matrices)
          try {
              
-             objFile = new BigDataStatMeth::hdf5File(str_filename, false);
+             // objFile = new BigDataStatMeth::hdf5File(str_filename, false);
+             objFile.reset( new BigDataStatMeth::hdf5File(str_filename, false) );
              objFile->openFile("r");
              
              if( objFile->getFileptr()!=nullptr && BigDataStatMeth::exists_HDF5_element( objFile->getFileptr(), "EIGEN/" + Rcpp::as<std::string>(strdataset) + "/values_imag")) {
@@ -242,7 +245,7 @@
                      lst_return["vectors_imag"] = "EIGEN/" + Rcpp::as<std::string>(strdataset) + "/vectors_imag";
                  }
              }
-             delete objFile; objFile = nullptr;
+             // delete objFile; objFile = nullptr;
              
          } catch (...) {
              
@@ -253,19 +256,14 @@
          lst_return["is_symmetric"] = (lst_return["values_imag"] == R_NilValue);
          
      } catch (H5::FileIException& error) {
-         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5 (File IException)";
      } catch (H5::GroupIException& error) {
-         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5 (Group IException)";
      } catch (H5::DataSetIException& error) {
-         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5 (DataSet IException)";
      } catch (std::exception& ex) {
-         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5: " << ex.what();
      } catch (...) {
-         delete objFile; objFile = nullptr;
          Rcpp::Rcerr << "\nC++ exception bdEigen_hdf5 (unknown reason)";
      }
      

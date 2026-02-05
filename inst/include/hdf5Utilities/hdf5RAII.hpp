@@ -18,8 +18,26 @@ public:
     }
     
     T* get() const { return ptr_; }
-    T* operator->() const { return ptr_; }
-    T& operator*() const { return *ptr_; }
+    T* operator->() const { 
+        if (!ptr_) {
+            Rcpp::stop("Attempting to access null HDF5Handle");
+        }
+        return ptr_; 
+    }
+    
+    T& operator*() const { 
+        if (!ptr_) {
+            Rcpp::stop("Attempting to dereference null HDF5Handle");
+        }
+        return *ptr_; 
+    }
+    
+    explicit operator bool() const { return ptr_ != nullptr; } 
+    
+    void reset(T* p = nullptr) {
+        if (ptr_) delete ptr_;
+        ptr_ = p;
+    }
     
     // Non-copyable
     HDF5Handle(const HDF5Handle&) = delete;

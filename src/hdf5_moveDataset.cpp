@@ -85,13 +85,16 @@ Rcpp::List bdmove_hdf5_dataset(std::string filename,
                      bool overwrite = false)
 {
     
-    BigDataStatMeth::hdf5Dataset* dataset = nullptr;
+    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
      
      try {
          
          H5::Exception::dontPrint();
+
+        //  BigDataStatMeth::hdf5Dataset* dataset = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dataset(nullptr);
          
          // Input validation
          if (filename.empty()) {
@@ -115,16 +118,15 @@ Rcpp::List bdmove_hdf5_dataset(std::string filename,
          }
          
          // Create hdf5Dataset object with current path
-         dataset = new BigDataStatMeth::hdf5Dataset(filename, source_path, false);
+        //  dataset = new BigDataStatMeth::hdf5Dataset(filename, source_path, false);
+        dataset.reset( new BigDataStatMeth::hdf5Dataset(filename, source_path, false) );
+        dataset->openDataset();
          
-         // Open the existing dataset
-         dataset->openDataset();
+        // Perform the move operation
+        dataset->moveDataset(dest_path, overwrite);
          
-         // Perform the move operation
-         dataset->moveDataset(dest_path, overwrite);
-         
-         // Clean up
-         delete dataset; dataset = nullptr;
+        //  // Clean up
+        //  delete dataset; dataset = nullptr;
          
          lst_return["fn"] = filename;
          lst_return["ds"] = dest_path;
@@ -132,15 +134,9 @@ Rcpp::List bdmove_hdf5_dataset(std::string filename,
          return(lst_return);
          
      } catch (const std::exception& e) {
-         if (dataset) {
-             delete dataset; dataset = nullptr;
-         }
          Rcpp::Rcerr << "Exception in bdmove_hdf5_dataset: " << e.what() << std::endl;
          return(lst_return);
      } catch (...) {
-         if (dataset) {
-             delete dataset; dataset = nullptr;
-         }
          Rcpp::Rcerr << "Unknown exception in bdmove_hdf5_dataset" << std::endl;
          return(lst_return);
      }

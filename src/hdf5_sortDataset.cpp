@@ -185,9 +185,6 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
                           Rcpp::Nullable<bool> overwrite = false )
 {
     
-    BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
-    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
 
@@ -195,6 +192,11 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
     {
         
         H5::Exception::dontPrint();
+
+        // BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+        // BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsOut(nullptr);
         
         std::string strOutgroup;
         bool boverwrite;
@@ -212,11 +214,11 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
         if( outgroup.isNull() ) {  strOutgroup = group;  } 
         else {  strOutgroup = Rcpp::as<std::string>(outgroup); }
         
-        dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        // dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        dsIn.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
         dsIn->openDataset();
         
         if( dsIn->getDatasetptr() == nullptr ) {
-            checkClose_file(dsIn);
             Rcpp::Rcerr<<"\nError opening dataset";
             return(lst_return);
         }
@@ -228,41 +230,36 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
             Rcpp::DataFrame df(blockedSortlist[i]);
             nrows = nrows + df.nrow();
         } 
-        dsOut = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, outdataset, boverwrite);
+        // dsOut = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, outdataset, boverwrite);
+        dsOut.reset( new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, outdataset, boverwrite) );
         dsOut->createDataset( ncols, nrows, "real");
         
         if( dsOut->getDatasetptr() != nullptr ) {
-            RcppSort_dataset_hdf5(dsIn, dsOut, blockedSortlist, func);
+            RcppSort_dataset_hdf5(dsIn.get(), dsOut.get(), blockedSortlist, func);
         } else {
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"\nError creating dataset";
             return(lst_return);
         }
         
-        delete dsIn; dsIn = nullptr;
-        delete dsOut; dsOut = nullptr;
-        
+        // delete dsIn; dsIn = nullptr;
+        // delete dsOut; dsOut = nullptr;
         lst_return["fn"] = filename;
         lst_return["ds"] = strOutgroup + "/" + outdataset;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr<<"c++ exception bdSort_hdf5_dataset (File IException)";
         return(lst_return);
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset (Group IException)";
         return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset (DataSet IException)";
         return(lst_return);
     } catch(std::exception& ex) {
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset" << ex.what();
         return(lst_return);
     } catch (...) {
-        checkClose_file(dsIn, dsOut);
         Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset (unknown reason)";
         return(lst_return);
     }

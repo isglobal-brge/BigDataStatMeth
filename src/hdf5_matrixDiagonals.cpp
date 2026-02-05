@@ -104,34 +104,34 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
 {
     
     Rcpp::NumericVector intNewDiagonal;
-    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-    try
-        {
-         dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
-         dsA->openDataset();
+    
+    try 
+    {
+        // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+
+        //  dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
+        dsA->openDataset();
          
          if( dsA->getDatasetptr() != nullptr) {
-             intNewDiagonal = getDiagonalfromMatrix(dsA);    
+             intNewDiagonal = getDiagonalfromMatrix(dsA.get());
          } else{
              Rcpp::Rcerr<<"c++ exception error obtaining diagonal from: "<<dataset<<"\n";
          }
          
-         delete dsA; dsA = nullptr;
+        //  delete dsA; dsA = nullptr;
          
      } catch( H5::FileIException& error ) { 
-         checkClose_file(dsA);
          Rcpp::Rcerr<<"c++ exception bdgetDiagonal_hdf5 (File IException)";
          return(Rcpp::wrap(0));
      } catch( H5::DataSetIException& error ) { 
-         checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdgetDiagonal_hdf5 (DataSet IException)";
          return(Rcpp::wrap(0));
      } catch(std::exception& ex) {
-         checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdgetDiagonal_hdf5" << ex.what();
          return(Rcpp::wrap(0));
      } catch (...) {
-         checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdgetDiagonal_hdf5 (unknown reason)";
          return(Rcpp::wrap(0));
      }
@@ -236,16 +236,16 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
 Rcpp::List bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, std::string group, std::string dataset)
 {
      
-     
-     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-     
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("ds") = "");
      
      try
      {
          
-         H5::Exception::dontPrint();
+        H5::Exception::dontPrint();
+
+        // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
          
         Rcpp::NumericVector intNewDiagonal;    
         std::string strDataset = group + "/" + dataset;
@@ -257,34 +257,31 @@ Rcpp::List bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, s
             return(lst_return);
         }
          
-        dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        //dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
         dsA->openDataset();
          
         if( dsA->getDatasetptr() != nullptr) {
-             setDiagonalMatrix( dsA, intNewDiagonal);
+             setDiagonalMatrix( dsA.get(), intNewDiagonal);
         } else{
             Rcpp::Rcerr<<"c++ exception error writing diagonal to: "<<dataset<<"\n";
         }
          
-        delete dsA; dsA = nullptr;
+        // delete dsA; dsA = nullptr;
         
         lst_return["fn"] = filename;
         lst_return["ds"] = strDataset;
          
      }  catch( H5::FileIException& error ) { 
-         checkClose_file(dsA);
          Rcpp::Rcerr<<"c++ exception bdWriteDiagonal_hdf5 (File IException)";
          return(lst_return);
      } catch( H5::DataSetIException& error ) { 
-         checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdWriteDiagonal_hdf5 (DataSet IException)";
          return(lst_return);
      } catch(std::exception& ex) {
-         checkClose_file(dsA);
          Rcpp::Rcerr << "c++ exception bdWriteDiagonal_hdf5" << ex.what();
          return(lst_return);
      } catch (...) {
-         checkClose_file(dsA);
          Rcpp::Rcerr<<"\nC++ exception bdWriteDiagonal_hdf5 (unknown reason)";
          return(lst_return);
      }

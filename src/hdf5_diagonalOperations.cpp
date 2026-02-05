@@ -268,15 +268,20 @@
                             Rcpp::Nullable<int> threads = R_NilValue,
                             Rcpp::Nullable<bool> overwrite = R_NilValue)
  {
-     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-     BigDataStatMeth::hdf5Dataset* dsB = nullptr;
-     BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
      
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("ds") = "");
      
      try {
          H5::Exception::dontPrint();
+
+         //  BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        //  BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+        //  BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
+        
+         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
          
          bool bparal, 
               bforce, 
@@ -322,19 +327,23 @@
          else { strdatasetOut = A + "_+_" + B + ".diag"; }
          
          // Open datasets
-         dsA = new BigDataStatMeth::hdf5Dataset(filename, group, A, bforce_tA);
+        //  dsA = new BigDataStatMeth::hdf5Dataset(filename, group, A, bforce_tA);
+         dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, A, bforce_tA) );
          dsA->openDataset();
          
-         dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, bforce_tB);
+        //  dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, bforce_tB);
+         dsB.reset( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, bforce_tB) );
          dsB->openDataset();
          
          if (dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
              
+             BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
              lst_return["fn"] = filename;
              
              // Only create result dataset if target="new"
              if (strtarget == "new") {
-                 dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+                 //  dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+                 dsResult.reset(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce));
                  lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
              } else if (strtarget == "A") {
                  lst_return["ds"] = group + "/" + A;
@@ -343,24 +352,24 @@
              }
              
              // Perform diagonal addition using namespace function
-             BigDataStatMeth::DiagonalOps::addDiagonals(dsA, dsB, dsResult, strtarget, bparal, threads);
+             BigDataStatMeth::DiagonalOps::addDiagonals(dsA.get(), dsB.get(), dsResult.get(), strtarget, bparal, threads);
          }
          
-         delete dsA; dsA = nullptr;
-         delete dsB; dsB = nullptr;
-         if (dsResult) { delete dsResult; dsResult = nullptr; }
+        //  delete dsA; dsA = nullptr;
+        //  delete dsB; dsB = nullptr;
+        //  if (dsResult) { delete dsResult; dsResult = nullptr; }
          
      }  catch(H5::FileIException& error) {
-         checkClose_file(dsA, dsB, dsResult);
+        //  checkClose_file(dsA, dsB, dsResult);
          Rcpp::stop("c++ exception bdDiag_add_hdf5 (File IException)");
      } catch(H5::DataSetIException& error) {
-         checkClose_file(dsA, dsB, dsResult);
+        //  checkClose_file(dsA, dsB, dsResult);
          Rcpp::stop("c++ exception bdDiag_add_hdf5 (DataSet IException)");
      } catch(std::exception& ex) {
-         checkClose_file(dsA, dsB, dsResult);
+        //  checkClose_file(dsA, dsB, dsResult);
          Rcpp::stop("c++ exception bdDiag_add_hdf5: %s", ex.what());
      } catch(...) {
-         checkClose_file(dsA, dsB, dsResult);
+        //  checkClose_file(dsA, dsB, dsResult);
          Rcpp::stop("C++ exception bdDiag_add_hdf5 (unknown reason)");
      }
      
@@ -457,15 +466,16 @@ Rcpp::List bdDiag_subtract_hdf5(std::string filename,
                                 Rcpp::Nullable<int> threads = R_NilValue,
                                 Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
-    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsB = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
     
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
     
     try {
         H5::Exception::dontPrint();
+        
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
         
         bool bparal, bforce;
         std::string strsubgroupOut, strdatasetOut, strsubgroupInB, strtarget;
@@ -504,10 +514,10 @@ Rcpp::List bdDiag_subtract_hdf5(std::string filename,
         else { strdatasetOut = A + "_-_" + B + ".diag"; }
         
         // Open datasets
-        dsA = new BigDataStatMeth::hdf5Dataset(filename, group, A, false);
+        dsA.reset(new BigDataStatMeth::hdf5Dataset(filename, group, A, false));
         dsA->openDataset();
         
-        dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        dsB.reset(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false));
         dsB->openDataset();
         
         if (dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
@@ -516,7 +526,7 @@ Rcpp::List bdDiag_subtract_hdf5(std::string filename,
             
             // Only create result dataset if target="new"
             if (strtarget == "new") {
-                dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+                dsResult.reset(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce));
                 lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
             } else if (strtarget == "A") {
                 lst_return["ds"] = group + "/" + A;
@@ -525,24 +535,20 @@ Rcpp::List bdDiag_subtract_hdf5(std::string filename,
             }
             
             // Perform diagonal subtraction using namespace function
-            BigDataStatMeth::DiagonalOps::subtractDiagonals(dsA, dsB, dsResult, strtarget, bparal, threads);
+            BigDataStatMeth::DiagonalOps::subtractDiagonals(dsA.get(), dsB.get(), dsResult.get(), strtarget, bparal, threads);
         }
         
-        delete dsA; dsA = nullptr;
-        delete dsB; dsB = nullptr;
-        if (dsResult) { delete dsResult; dsResult = nullptr; }
+        // delete dsA; dsA = nullptr;
+        // delete dsB; dsB = nullptr;
+        // if (dsResult) { delete dsResult; dsResult = nullptr; }
         
     } catch(H5::FileIException& error) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("c++ exception bdDiag_subtract_hdf5 (File IException)");
     } catch(H5::DataSetIException& error) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("c++ exception bdDiag_subtract_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("c++ exception bdDiag_subtract_hdf5: %s", ex.what());
     } catch(...) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("C++ exception bdDiag_subtract_hdf5 (unknown reason)");
     }
     
@@ -639,16 +645,21 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
                                 Rcpp::Nullable<int> threads = R_NilValue,
                                 Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
-    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsB = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
     
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
     
     try {
         H5::Exception::dontPrint();
+
+        // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        // BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+        // BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
         
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
+
         bool bparal, bforce;
         std::string strsubgroupOut, strdatasetOut, strsubgroupInB, strtarget;
         
@@ -686,10 +697,11 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
         else { strdatasetOut = A + "_*_" + B + ".diag"; }
         
         // Open datasets
-        dsA = new BigDataStatMeth::hdf5Dataset(filename, group, A, false);
+        // dsA = new BigDataStatMeth::hdf5Dataset(filename, group, A, false);
+        dsA.reset(new BigDataStatMeth::hdf5Dataset(filename, group, A, false));
         dsA->openDataset();
         
-        dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        dsB.reset(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false));
         dsB->openDataset();
         
         if (dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
@@ -698,7 +710,8 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
             
             // Only create result dataset if target="new"
             if (strtarget == "new") {
-                dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+                // dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+                dsResult.reset(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce));
                 lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
             } else if (strtarget == "A") {
                 lst_return["ds"] = group + "/" + A;
@@ -707,24 +720,20 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
             }
             
             // Perform diagonal multiplication using namespace function
-            BigDataStatMeth::DiagonalOps::multiplyDiagonals(dsA, dsB, dsResult, strtarget, bparal, threads);
+            BigDataStatMeth::DiagonalOps::multiplyDiagonals(dsA.get(), dsB.get(), dsResult.get(), strtarget, bparal, threads);
         }
         
-        delete dsA; dsA = nullptr;
-        delete dsB; dsB = nullptr;
-        if (dsResult) { delete dsResult; dsResult = nullptr; }
+        // delete dsA; dsA = nullptr;
+        // delete dsB; dsB = nullptr;
+        // if (dsResult) { delete dsResult; dsResult = nullptr; }
         
     } catch(H5::FileIException& error) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("c++ exception bdDiag_multiply_hdf5 (File IException)");
     } catch(H5::DataSetIException& error) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("c++ exception bdDiag_multiply_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("c++ exception bdDiag_multiply_hdf5: %s", ex.what());
     } catch(...) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("C++ exception bdDiag_multiply_hdf5 (unknown reason)");
     }
     
@@ -820,15 +829,19 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
                               Rcpp::Nullable<int> threads = R_NilValue,
                               Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
-    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsB = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
+    // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    // BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+    // BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
     
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
     
     try {
         H5::Exception::dontPrint();
+
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
         
         bool bparal, bforce;
         std::string strsubgroupOut, strdatasetOut, strsubgroupInB, strtarget;
@@ -867,10 +880,13 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
         else { strdatasetOut = A + "_/_" + B + ".diag"; }
         
         // Open datasets
-        dsA = new BigDataStatMeth::hdf5Dataset(filename, group, A, false);
+        // dsA = new BigDataStatMeth::hdf5Dataset(filename, group, A, false);
+
+        dsA.reset(new BigDataStatMeth::hdf5Dataset(filename, group, A, false));
         dsA->openDataset();
         
-        dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        // dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        dsB.reset(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false));
         dsB->openDataset();
         
         if (dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
@@ -879,7 +895,8 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
             
             // Only create result dataset if target="new"
             if (strtarget == "new") {
-                dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+                // dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+                dsResult.reset(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce));
                 lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
             } else if (strtarget == "A") {
                 lst_return["ds"] = group + "/" + A;
@@ -888,24 +905,20 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
             }
             
             // Perform diagonal division using namespace function
-            BigDataStatMeth::DiagonalOps::divideDiagonals(dsA, dsB, dsResult, strtarget, bparal, threads);
+            BigDataStatMeth::DiagonalOps::divideDiagonals(dsA.get(), dsB.get(), dsResult.get(), strtarget, bparal, threads);
         }
         
-        delete dsA; dsA = nullptr;
-        delete dsB; dsB = nullptr;
-        if (dsResult) { delete dsResult; dsResult = nullptr; }
+        // delete dsA; dsA = nullptr;
+        // delete dsB; dsB = nullptr;
+        // if (dsResult) { delete dsResult; dsResult = nullptr; }
         
     } catch(H5::FileIException& error) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("c++ exception bdDiag_divide_hdf5 (File IException)");
     } catch(H5::DataSetIException& error) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("c++ exception bdDiag_divide_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("c++ exception bdDiag_divide_hdf5: %s", ex.what());
     } catch(...) {
-        checkClose_file(dsA, dsB, dsResult);
         Rcpp::stop("C++ exception bdDiag_divide_hdf5 (unknown reason)");
     }
     
@@ -990,8 +1003,7 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
                                Rcpp::Nullable<std::string> outdataset = R_NilValue,
                                Rcpp::Nullable<bool> overwrite = R_NilValue)
  {
-     BigDataStatMeth::hdf5Dataset* dsInput = nullptr;
-     BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
+     
      
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("gr") = "",
@@ -999,19 +1011,25 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
      
      try {
          H5::Exception::dontPrint();
+
+        //  BigDataStatMeth::hdf5Dataset* dsInput = nullptr;
+        //  BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
          
-         bool bparal, bforce;
-         std::string strsubgroupOut, strdatasetOut, strtarget;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsInput(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
+
+        bool bparal, bforce;
+        std::string strsubgroupOut, strdatasetOut, strtarget;
          
-         // Parse parameters
-         if (paral.isNull()) { bparal = false; } 
-         else { bparal = Rcpp::as<bool>(paral); }
+        // Parse parameters
+        if (paral.isNull()) { bparal = false; } 
+        else { bparal = Rcpp::as<bool>(paral); }
          
-         if (overwrite.isNull()) { bforce = false; } 
-         else { bforce = Rcpp::as<bool>(overwrite); }
+        if (overwrite.isNull()) { bforce = false; } 
+        else { bforce = Rcpp::as<bool>(overwrite); }
          
-         if (target.isNull()) { strtarget = "new"; }
-         else { strtarget = Rcpp::as<std::string>(target); }
+        if (target.isNull()) { strtarget = "new"; }
+        else { strtarget = Rcpp::as<std::string>(target); }
          
          // Validate parameters
          if (strtarget != "new" && strtarget != "input") {
@@ -1030,8 +1048,9 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
          else { strdatasetOut = dataset + "_" + operation + "_" + std::to_string(scalar) + ".diag"; }
          
          // Open input dataset
-         dsInput = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
-         dsInput->openDataset();
+        // dsInput = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        dsInput.reset(new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false));
+        dsInput->openDataset();
          
          if (dsInput->getDatasetptr() != nullptr) {
              
@@ -1039,15 +1058,15 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
              lst_return["gr"] = strsubgroupOut;
              
              // Only create result dataset if target="new"
-             if (strtarget == "new") {
-                 dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
-                 lst_return["ds"] = strdatasetOut;
-             } else if (strtarget == "input") {
-                 lst_return["ds"] = dataset;
-             }
+            if (strtarget == "new") {
+                 // dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+                dsResult.reset(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce));
+                lst_return["ds"] = strdatasetOut;
+            } else if (strtarget == "input") {
+                lst_return["ds"] = dataset;
+            }
              
              // Perform scalar operation
-             
              // Rcpp_diagonal_scalar_hdf5(dsInput, dsResult, scalar, operation, strtarget, bparal, threads);
              
              int op_code;
@@ -1057,29 +1076,21 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
              else if (operation == "/") op_code = 3;
              else if (operation == "pow") op_code = 4;
              else {
-                 checkClose_file(dsInput, dsResult);
                  Rcpp::stop("Invalid operation: %s. Must be 'add', 'subtract', 'multiply', or 'divide'", operation.c_str());
              }
-             
-             BigDataStatMeth::DiagonalOps::scalarOperation(dsInput, dsResult, scalar, op_code, strtarget, bparal, threads);
-             
+             BigDataStatMeth::DiagonalOps::scalarOperation(dsInput.get(), dsResult.get(), scalar, op_code, strtarget, bparal, threads);
          }
          
-         delete dsInput; dsInput = nullptr;
-         if (dsResult) { delete dsResult; dsResult = nullptr; }
+        //  delete dsInput; dsInput = nullptr;
+        //  if (dsResult) { delete dsResult; dsResult = nullptr; }
          
      } catch(H5::FileIException& error) {
-         checkClose_file(dsInput, dsResult);
          Rcpp::stop("c++ exception bdDiag_scalar_hdf5 (File IException)");
      } catch(H5::DataSetIException& error) {
-         checkClose_file(dsInput, dsResult);
          Rcpp::stop("c++ exception bdDiag_scalar_hdf5 (DataSet IException)");
      } catch(std::exception& ex) {
-         checkClose_file(dsInput, dsResult);
          Rcpp::stop("c++ exception bdDiag_scalar_hdf5: %s", ex.what());
      } catch(...) {
-         checkClose_file(dsInput, dsResult);
-         
          Rcpp::stop("C++ exception bdDiag_scalar_hdf5 (unknown reason)");
      }
      

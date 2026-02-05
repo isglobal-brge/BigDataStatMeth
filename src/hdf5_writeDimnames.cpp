@@ -84,9 +84,6 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
                             Rcpp::StringVector colnames)
  { 
      
-     BigDataStatMeth::hdf5Dataset* objDataset = nullptr;
-     BigDataStatMeth::hdf5Dims* dsdims = nullptr;
-     
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("dsrows") = "",
                                                 Rcpp::Named("dscols") = "");
@@ -95,13 +92,19 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
      {
          
          H5::Exception::dontPrint();
+
+        //  BigDataStatMeth::hdf5Dataset* objDataset = nullptr;
+        //  BigDataStatMeth::hdf5Dims* dsdims = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
          
-         objDataset = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false );
+         objDataset.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false ) );
          objDataset->openDataset();
          
          hsize_t* dims = objDataset->dim(); 
          
-         dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
+         // dsdims = new BigDataStatMeth::hdf5Dims(objDataset.get());
+         dsdims.reset( new BigDataStatMeth::hdf5Dims(objDataset.get()) );
          
          if( rownames.size() < dims[1]){
              Rcpp::CharacterVector svrownames(1);
@@ -113,26 +116,20 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
              dsdims->writeDimnames( colnames, rownames);
          }
          
-         delete dsdims; dsdims = nullptr;
-         delete objDataset; objDataset = nullptr;
+        //  delete dsdims; dsdims = nullptr;
+        //  delete objDataset; objDataset = nullptr;
          
          lst_return["fn"] = filename;
          lst_return["dsrows"] = group + "/." + dataset + "/1";
          lst_return["dscols"] = group + "/." + dataset + "/2";
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         if(dsdims != nullptr) delete dsdims;
-         checkClose_file(objDataset);
          Rf_error("c++ c++ exception bdWrite_hdf5_dimnames (File IException)");
          return(lst_return);
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         if(dsdims != nullptr) delete dsdims;
-         checkClose_file(objDataset);
          Rf_error( "c++ exception bdWrite_hdf5_dimnames (DataSet IException)");
          return(lst_return);
      } catch(std::exception &ex) {
-         if(dsdims != nullptr) delete dsdims;
-         checkClose_file(objDataset);
          Rf_error( "c++ exception bdWrite_hdf5_dimnames %s", ex.what());
          return(lst_return);
      } 

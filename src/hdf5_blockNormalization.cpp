@@ -142,7 +142,12 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
                                                 Rcpp::Named("ds") = "",
                                                 Rcpp::Named("mean") = "",
                                                 Rcpp::Named("sd") = "");
-     
+    
+    BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+    BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
+    BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
+    BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsNormal(nullptr);
+
      try{
          
          H5::Exception::dontPrint();
@@ -167,7 +172,7 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
          if( overwrite.isNull()) {   bforce = false;   }
          else {   bforce = Rcpp::as<bool> (overwrite);   }
          
-         BigDataStatMeth::HDF5Handle dsA( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
+         dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
          dsA->openDataset();
          
          nrows = dsA->nrows();
@@ -191,7 +196,7 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
          std::string strdatasetmean = "mean." + dataset;
          std::string strdatasetsd = "sd." + dataset;
          
-         BigDataStatMeth::HDF5Handle dsmean( new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetmean, bforce) );
+         dsmean.reset( new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetmean, bforce) );
          dsmean->createDataset( datanormal.cols(), 1, "real");
          if( dsmean->getDatasetptr() != nullptr) {
             dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
@@ -200,7 +205,7 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
             return(lst_return);
          }
          
-         BigDataStatMeth::HDF5Handle dssd( new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetsd, bforce) );
+         dssd.reset( new BigDataStatMeth::hdf5Dataset(filename, strgroupout, strdatasetsd, bforce) );
          dssd->createDataset( datanormal.cols(), 1, "real");
          if( dssd->getDatasetptr() != nullptr) {
             dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
@@ -209,7 +214,7 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
             return(lst_return);
          }
          
-         BigDataStatMeth::HDF5Handle dsNormal( new BigDataStatMeth::hdf5Dataset(filename, strgroupout, dataset, bforce) );
+         dsNormal.reset( new BigDataStatMeth::hdf5Dataset(filename, strgroupout, dataset, bforce) );
          dsNormal->createDataset( dsA.get(), "real");
          
          if( dsA->getDatasetptr() != nullptr && dsNormal->getDatasetptr() != nullptr){

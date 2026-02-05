@@ -391,25 +391,18 @@ namespace BigDataStatMeth {
                 bool isVectorA = isDiagonalVector(dsA);
                 bool isVectorB = isDiagonalVector(dsB);
                 
-                Rcpp::Rcout<<"\n Error add-1";
                 if (isVectorA && isVectorB && (target == "A" || target == "B")) {
-                    Rcpp::Rcout<<"\n Error add-2";
                     BigDataStatMeth::hdf5Dataset* targetDataset = (target == "A") ? dsA : dsB;
-                    Rcpp::Rcout<<"\n Error add-3";
                     Rcpp_vector_add_hdf5(dsA, dsB, targetDataset, bparal, threads);
                 } else if (isVectorA && isVectorB && target == "new") {
-                    Rcpp::Rcout<<"\n Error add-4";
                     Rcpp_vector_add_hdf5(dsA, dsB, dsResult, bparal, threads);
                 } else {
-                    Rcpp::Rcout<<"\n Error add-5";
                     performMatrixDiagonalOperation(dsA, dsB, dsResult, 0, target, bparal, threads);
                 }
-                Rcpp::Rcout<<"\n Error add-6";
             } catch(std::exception& ex) {
                 Rf_error("Error in addDiagonals: %s", ex.what());
             }
         }
-        
         
         
         /**

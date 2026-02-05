@@ -160,19 +160,21 @@ Rcpp::List bdblockSubstract_hdf5(std::string filename,
                            Rcpp::Nullable<std::string> outdataset = R_NilValue,
                            Rcpp::Nullable<bool> overwrite = R_NilValue)
 {
-    
-    
-    
+        
     // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
     // BigDataStatMeth::hdf5Dataset* dsB = nullptr;
     // BigDataStatMeth::hdf5Dataset* dsC = nullptr;
-    
+
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
     
     try{
         
         H5::Exception::dontPrint();  
+
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsC(nullptr);
 
         int iblock_size;
         bool bparal, bforce;
@@ -205,13 +207,13 @@ Rcpp::List bdblockSubstract_hdf5(std::string filename,
         
         
         // dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
-        BigDataStatMeth::HDF5Handle dsA( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false) );
+        dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false) );
         dsA->openDataset();
         // dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
-        BigDataStatMeth::HDF5Handle dsB( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false) );
+        dsB.reset( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false) );
         dsB->openDataset();
         // dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
-        BigDataStatMeth::HDF5Handle dsC( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce) );
+        dsC.reset( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce) );
         
         if( dsA->getDatasetptr() != nullptr &&  dsB->getDatasetptr() != nullptr  ) 
         { 

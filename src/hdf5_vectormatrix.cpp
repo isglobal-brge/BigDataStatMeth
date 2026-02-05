@@ -187,11 +187,6 @@ Rcpp::List  bdcomputeMatrixVector_hdf5( std::string filename, std::string group,
                                   Rcpp::Nullable<int> overwrite  = false)
  {
      
-     
-     BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-     BigDataStatMeth::hdf5Dataset* dsB = nullptr;
-     BigDataStatMeth::hdf5Dataset* dsC = nullptr;
-     
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("gr") = "",
                                                 Rcpp::Named("ds") = "");
@@ -199,6 +194,12 @@ Rcpp::List  bdcomputeMatrixVector_hdf5( std::string filename, std::string group,
      try{
          
          H5::Exception::dontPrint();
+        // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        // BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+        // BigDataStatMeth::hdf5Dataset* dsC = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsC(nullptr);
         
         bool bbyrows, bparal, bforce;
         std::string strgroupout;
@@ -226,10 +227,12 @@ Rcpp::List  bdcomputeMatrixVector_hdf5( std::string filename, std::string group,
              return lst_return;
          } 
 
-         dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        //  dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+         dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
          dsA->openDataset();
          
-         dsB = new BigDataStatMeth::hdf5Dataset(filename, vectorgroup, vectordataset, false);
+        //  dsB = new BigDataStatMeth::hdf5Dataset(filename, vectorgroup, vectordataset, false);
+         dsB.reset( new BigDataStatMeth::hdf5Dataset(filename, vectorgroup, vectordataset, false) );
          dsB->openDataset();
          
          if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr)  {
@@ -246,7 +249,8 @@ Rcpp::List  bdcomputeMatrixVector_hdf5( std::string filename, std::string group,
              }
              
              if( bError == false ) {
-                 dsC = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, outdataset, bforce);
+                //  dsC = new BigDataStatMeth::hdf5Dataset(filename, strgroupout, outdataset, bforce);
+                dsC.reset( new BigDataStatMeth::hdf5Dataset(filename, strgroupout, outdataset, bforce) );
                  
                  if( (bbyrows == false && dsB->ncols() != dsA->ncols()) || dsB->nrows() != 1 ) {
                      Rcpp::Rcout<<"\nNon-conformable dimensions or vector dataset is not a vector";
@@ -256,32 +260,29 @@ Rcpp::List  bdcomputeMatrixVector_hdf5( std::string filename, std::string group,
                      Rcpp::Rcout<<"\nCalculus has not been computed\n";
                  } else {
                      
-                     dsC = hdf5_matrixVector_calculus( dsA, dsB, dsC, oper(oper.findName(func)), bbyrows, bparal, threads);
+                     hdf5_matrixVector_calculus( dsA.get(), dsB.get(), dsC.get(), oper(oper.findName(func)), bbyrows, bparal, threads);
                  }
                  
                  lst_return["fn"] = filename;
                  lst_return["gr"] = strgroupout;
                  lst_return["ds"] = outdataset;
                  
-                 delete dsC; dsC = nullptr;
+                //  delete dsC; dsC = nullptr;
              }    
              
          } else {
-             checkClose_file(dsA, dsB);
+            //  checkClose_file(dsA, dsB);
              Rf_error("c++ exception bdcomputeMatrixVector_hdf5 (DataSet IException)");
          }
          
-         delete dsA; dsA = nullptr;
-         delete dsB; dsB = nullptr;
+        //  delete dsA; dsA = nullptr;
+        //  delete dsB; dsB = nullptr;
          
      } catch( H5::FileIException& error ) {     
-        checkClose_file(dsA, dsB, dsC);
         Rcpp::stop ( "c++ exception bdcomputeMatrixVector_hdf5 (File IException)");
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         checkClose_file(dsA, dsB, dsC);
          Rcpp::stop ("c++ exception bdcomputeMatrixVector_hdf5 (DataSet IException)");
      } catch(std::exception &ex) {
-         checkClose_file(dsA, dsB, dsC);
          Rcpp::stop ("c++ exception bdcomputeMatrixVector_hdf5 (std::exception): %s",  ex.what());
      }
      

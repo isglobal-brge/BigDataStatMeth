@@ -135,10 +135,6 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
                         Rcpp::Nullable<long> elementsBlock = 1000000)
 {
     
-    
-    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-    BigDataStatMeth::hdf5DatasetInternal* dstmp = nullptr;
-    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
     
@@ -146,6 +142,11 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
     {
         
         H5::Exception::dontPrint();
+
+        // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        // BigDataStatMeth::hdf5DatasetInternal* dstmp = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5DatasetInternal> dstmp(nullptr);
         
         long dElementsBlock;
         
@@ -164,7 +165,8 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
         
         strOutdataset = strOutgroup + "/" + outdataset;
 
-        dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        // dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
         dsA->openDataset();
         
         if( dsA->getDatasetptr() != nullptr  )  {
@@ -174,24 +176,22 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
             
             if(nrows == ncols) {
                 
-                dstmp = new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true);
+                // dstmp = new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true);
+                dstmp.reset( new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, true) );
                 dstmp->createDataset(nrows, ncols, "real");
                 
                 if( dstmp->getDatasetptr() != nullptr ) {
-                    BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA, dstmp, bfull, dElementsBlock, threads);
+                    BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA.get(), dstmp.get(), bfull, dElementsBlock, threads);
                 } else {
-                    checkClose_file(dsA, dstmp);
                     Rcpp::Rcerr << "c++ exception bdInvCholesky_hdf5: " << "Error creating temporary dataset";
                     return(lst_return);
                 }
                 
             } else {
-                delete dsA; dsA = nullptr;
                 Rcpp::Rcout<<"\n Can't get inverse matrix for "<< group + "/" + dataset <<" using Cholesky decomposition \n";
                 return(lst_return);
             }    
         } else {
-            delete dsA; dsA = nullptr;
             Rcpp::Rcerr << "c++ exception bdInvCholesky_hdf5: " << "Error opening dataset";
             return(lst_return);
         }
@@ -199,23 +199,15 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
         lst_return["fn"] = filename;
         lst_return["ds"] = strOutdataset;
         
-        delete dsA; dsA = nullptr;
-        delete dstmp; dstmp = nullptr;
-        
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (File IException)";
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (Group IException)";
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (DataSet IException)";
     } catch(std::exception& ex) {
-        checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5: " << ex.what();
     } catch (...) {
-        checkClose_file(dsA, dstmp);
         Rcpp::Rcerr<<"\nC++ exception bdInvCholesky_hdf5 (unknown reason)";
     }
     

@@ -205,12 +205,7 @@ Rcpp::List  bdQR_hdf5( std::string filename, std::string group, std::string data
                 Rcpp::Nullable<bool> overwrite = R_NilValue,
                 Rcpp::Nullable<int> threads = R_NilValue)
 {
-    
-    
-    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsQ = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsR = nullptr;
-    
+        
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds_Q") = "",
                                                Rcpp::Named("ds_R") = "");
@@ -218,10 +213,16 @@ Rcpp::List  bdQR_hdf5( std::string filename, std::string group, std::string data
     try {
         
         H5::Exception::dontPrint();
-        
+
+        // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+        // BigDataStatMeth::hdf5Dataset* dsQ = nullptr;
+        // BigDataStatMeth::hdf5Dataset* dsR = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsQ(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsR(nullptr);
+
         bool bthin, bforce;
         std::string strOutgroup, strOutdataset_Q, strOutdataset_R;
-        // int iblock_size;
         
         if(outgroup.isNull()) { strOutgroup = group + "/QRDec"; } 
         else {   strOutgroup = Rcpp::as<std::string>(outgroup); }
@@ -244,19 +245,19 @@ Rcpp::List  bdQR_hdf5( std::string filename, std::string group, std::string data
         if(overwrite.isNull())  bforce = false ;
         else    bforce = Rcpp::as<bool>(overwrite);
         
-        dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, bforce);
+        // dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, bforce);
+        dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, bforce) );
         dsA->openDataset();
         
         
-        dsQ = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset_Q, bforce);
-        // dsQ->openDataset();
+        // dsQ = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset_Q, bforce);
+        dsQ.reset( new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset_Q, bforce) );
         
-        dsR = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset_R, bforce);
-        // dsR->openDataset();
+        // dsR = new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset_R, bforce);
+        dsR.reset( new BigDataStatMeth::hdf5Dataset(filename, strOutgroup, strOutdataset_R, bforce) );
         
         if( dsA->getDatasetptr() != nullptr ) {
-            RcppQRHdf5(dsA, dsQ, dsR, bthin, block_size, threads);
-
+            RcppQRHdf5(dsA.get(), dsQ.get(), dsR.get(), bthin, block_size, threads);
 
         lst_return["fn"] = filename;
         lst_return["ds_Q"] = strOutgroup + "/" + strOutdataset_Q;
@@ -267,31 +268,22 @@ Rcpp::List  bdQR_hdf5( std::string filename, std::string group, std::string data
             //                                 Rcpp::Named("ds_R") = strOutgroup + "/" + strOutdataset_R);
             
         } else {
-            checkClose_file(dsA, dsQ, dsR);
             Rcpp::Rcerr << "c++ exception bdQR_hdf5: " << "Error creating dataset";
             return(lst_return);
         }
         
-        delete dsA; dsA = nullptr;
-        delete dsQ; dsQ = nullptr;
-        delete dsR; dsR = nullptr;
+        // delete dsA; dsA = nullptr;
+        // delete dsQ; dsQ = nullptr;
+        // delete dsR; dsR = nullptr;
         
     } catch( H5::FileIException& error ) { 
-        checkClose_file(dsA, dsQ, dsR);
         Rcpp::Rcerr << "c++ exception bdQR_hdf5 (File IException)";
-        // return void();
     } catch( H5::GroupIException & error ) { 
-        checkClose_file(dsA, dsQ, dsR);
         Rcpp::Rcerr << "c++ exception bdQR_hdf5 (Group IException)";
-        // return void();
     } catch( H5::DataSetIException& error ) {
-        checkClose_file(dsA, dsQ, dsR);
         Rcpp::Rcerr << "c++ exception bdQR_hdf5 (DataSet IException)";
-        // return void();
     } catch(std::exception& ex) {
-        checkClose_file(dsA, dsQ, dsR);
         Rcpp::Rcerr << "c++ exception bdQR_hdf5" << ex.what();
-        // return void();
     }
     
     // return void();

@@ -145,9 +145,6 @@ Rcpp::List bdImputeSNPs_hdf5(std::string filename, std::string group, std::strin
                         Rcpp::Nullable<bool> overwrite = R_NilValue )
 {
     
-    BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
-    BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
-    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
     
@@ -155,7 +152,12 @@ Rcpp::List bdImputeSNPs_hdf5(std::string filename, std::string group, std::strin
     {
         
         H5::Exception::dontPrint();
-        
+
+        // BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+        // BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5DatasetInternal> dsOut(nullptr);
+
         std::string strdataset = group +"/" + dataset;
         std::string stroutgroup, stroutdataset, stroutdata;
         
@@ -175,42 +177,39 @@ Rcpp::List bdImputeSNPs_hdf5(std::string filename, std::string group, std::strin
         
         stroutdata = stroutgroup + "/" + stroutdataset;
         
-        dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        // dsIn = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
+        dsIn.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
         dsIn->openDataset();
         
         if( dsIn->getDatasetptr() != nullptr ) {
-            dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, stroutgroup, stroutdataset, bforce);
-            Rcpp_Impute_snps_hdf5( dsIn, dsOut, bcols, stroutdataset, threads);
-            delete dsOut; dsOut = nullptr;
+            // dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, stroutgroup, stroutdataset, bforce);
+            // Rcpp_Impute_snps_hdf5( dsIn, dsOut, bcols, stroutdataset, threads);
+            dsOut.reset( new BigDataStatMeth::hdf5DatasetInternal(filename, stroutgroup, stroutdataset, bforce) );
+            Rcpp_Impute_snps_hdf5( dsIn.get(), dsOut.get(), bcols, stroutdataset, threads) ;
+            // delete dsOut; dsOut = nullptr;
         } else {
-            delete dsIn; dsIn = nullptr;
+            // delete dsIn; dsIn = nullptr;
             Rf_error("c++ exception bdImputeSNPs_hdf5: Error opening %s dataset ",dataset.c_str());
             return(lst_return);
             // return void();
         }
         
-        delete dsIn; dsIn = nullptr;
+        // delete dsIn; dsIn = nullptr;
         
         lst_return["fn"] = filename;
         lst_return["ds"] = group + "/" + dataset;
         
     } catch( H5::FileIException& error ){
-        checkClose_file(dsIn, dsOut);
         Rf_error("c++ exception bdImputeSNPs_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { 
-        checkClose_file(dsIn, dsOut);
         Rf_error("c++ exception bdImputeSNPs_hdf5 (DataSet IException)");
     } catch( H5::DataSpaceIException& error ) { 
-        checkClose_file(dsIn, dsOut);
         Rf_error("c++ exception bdImputeSNPs_hdf5 (DataSpace IException)");
     } catch( H5::DataTypeIException&    error ) { 
-        checkClose_file(dsIn, dsOut);
         Rf_error("c++ c++ exception bdImputeSNPs_hdf5 (DataType IException)");
     } catch(std::exception &ex) {   
-        checkClose_file(dsIn, dsOut);
         Rf_error( "c++ exception bdImputeSNPs_hdf5 : %s", ex.what());
     }  catch (...) {
-        checkClose_file(dsIn, dsOut);
         Rf_error("c++ exception bdImputeSNPs_hdf5 (unknown reason)");
     }
     

@@ -121,14 +121,15 @@ Rcpp::List bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::
                   Rcpp::Nullable<bool> overwrite = false )
 {
     
-    BigDataStatMeth::hdf5Dataset* dsOut  = nullptr;
-    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
     
     try
     {
+        
         H5::Exception::dontPrint();
+
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsOut(nullptr);
         
         Rcpp::NumericVector oper = {0, 1, 2};
         oper.names() = Rcpp::CharacterVector({ "bindCols", "bindRows", "bindRowsbyIndex"});
@@ -146,34 +147,34 @@ Rcpp::List bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::
         
         int bindFunction = oper.findName( func );
         
-        dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outdataset, boverwrite);
+        dsOut.reset(new BigDataStatMeth::hdf5Dataset(filename, outgroup, outdataset, boverwrite));
         
-        RcppBind_datasets_hdf5( filename, group, datasets, dsOut, bindFunction, false);
+        RcppBind_datasets_hdf5( filename, group, datasets, dsOut.get(), bindFunction, false);
         
         lst_return["fn"] = filename;
         lst_return["ds"] = outgroup + "/" + outdataset;
         
-        delete dsOut; dsOut = nullptr;
+        // delete dsOut; dsOut = nullptr;
         
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        checkClose_file(dsOut);
+        // checkClose_file(dsOut);
         Rcpp::stop("c++ exception bdBind_hdf5_datasets (File IException)");
         // return void();
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsOut);
+        // checkClose_file(dsOut);
         Rcpp::stop ("c++ exception bdBind_hdf5_datasets (Group IException)");
         // return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsOut);
+        // checkClose_file(dsOut);
         Rcpp::stop ("c++ exception bdBind_hdf5_datasets (DataSet IException)");
         // return void();
     } catch(std::exception& ex) {
-        checkClose_file(dsOut);
+        // checkClose_file(dsOut);
         Rcpp::stop ("c++ exception bdBind_hdf5_datasets %s", ex.what());
         // return void();
     } catch (...) {
-        checkClose_file(dsOut);
+        // checkClose_file(dsOut);
         Rcpp::stop("c++ exception bdBind_hdf5_datasets (unknown reason)");
         // return void();
     }

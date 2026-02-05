@@ -41,26 +41,30 @@
  // [[Rcpp::export]]
  bool bdIsLocked_hdf5(std::string filename) {
      
-     BigDataStatMeth::hdf5File* objFile = nullptr;   
+     // BigDataStatMeth::hdf5File* objFile = nullptr;   
      bool locked = true;
      
      try {
          
          H5::Exception::dontPrint();
          
-         objFile = new BigDataStatMeth::hdf5File(filename, false);
+         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5File> objFile(nullptr);
+         
+         // objFile = new BigDataStatMeth::hdf5File(filename, false);
+         objFile.reset( new BigDataStatMeth::hdf5File(filename, false) );
+         
          locked = objFile->isLocked(filename);  
          
      } catch( H5::FileIException& error ) { 
-         if(objFile != nullptr) delete objFile;
+         // if(objFile != nullptr) delete objFile;
          Rf_error("c++ c++ exception bdIsLocked_hdf5 (File IException)");
          return locked;
      } catch( H5::DataSetIException& error ) { 
-         if(objFile != nullptr) delete objFile;
+         // if(objFile != nullptr) delete objFile;
          Rf_error( "c++ exception bdIsLocked_hdf5 (DataSet IException)");
          return locked;
      } catch(std::exception &ex) {
-         if(objFile != nullptr) delete objFile;
+         // if(objFile != nullptr) delete objFile;
          Rf_error( "c++ exception bdIsLocked_hdf5 %s", ex.what());
          return locked;
      } 
