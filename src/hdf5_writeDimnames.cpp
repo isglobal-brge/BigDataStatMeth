@@ -116,9 +116,6 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
              dsdims->writeDimnames( colnames, rownames);
          }
          
-        //  delete dsdims; dsdims = nullptr;
-        //  delete objDataset; objDataset = nullptr;
-         
          lst_return["fn"] = filename;
          lst_return["dsrows"] = group + "/." + dataset + "/1";
          lst_return["dscols"] = group + "/." + dataset + "/2";

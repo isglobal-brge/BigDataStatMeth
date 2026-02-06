@@ -97,11 +97,13 @@
                        std::string new_name = "",
                        bool overwrite = false)
  {
-     BigDataStatMeth::hdf5Dataset* dataset = nullptr;
      
      try {
          
          H5::Exception::dontPrint();
+
+        //  BigDataStatMeth::hdf5Dataset* dataset = nullptr;
+        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dataset(nullptr);
          
          // Input validation
          if (filename.empty()) {
@@ -133,7 +135,8 @@
          }
          
          // Create hdf5Dataset object
-         dataset = new BigDataStatMeth::hdf5Dataset(filename, dataset_path, false);
+        //  dataset = new BigDataStatMeth::hdf5Dataset(filename, dataset_path, false);
+        dataset.reset( new BigDataStatMeth::hdf5Dataset(filename, dataset_path, false) );
          
          // Open the existing dataset
          dataset->openDataset();
@@ -145,7 +148,7 @@
          
          for (int idx : cpp_indices) {
              if (idx >= max_index) {
-                 delete dataset;
+                 // delete dataset;
                  Rcpp::Rcerr << "Error: index " << (idx + 1) << " exceeds dataset dimensions (R perspective: " 
                              << max_rows_r << "x" << max_cols_r << ")" << std::endl;
                  return false;
@@ -163,7 +166,7 @@
          
          if (BigDataStatMeth::exists_HDF5_element(file, target_path)) {
              if (!overwrite) {
-                 delete dataset;
+                 // delete dataset;
                  Rcpp::Rcerr << "Error: destination dataset already exists: " << target_path 
                              << ". Use overwrite=TRUE to replace it." << std::endl;
                  return false;
@@ -177,16 +180,16 @@
          dataset->createSubsetDataset(cpp_indices, select_rows, new_group, new_name);
          
          // Clean up
-         delete dataset;
+         // delete dataset;
          
          return true;
          
      } catch (const std::exception& e) {
-         BigDataStatMeth::checkClose_file(dataset);
+        //  BigDataStatMeth::checkClose_file(dataset);
          Rcpp::Rcerr << "Exception in bdsubset_hdf5_dataset: " << e.what() << std::endl;
          return false;
      } catch (...) {
-         BigDataStatMeth::checkClose_file(dataset);
+        //  BigDataStatMeth::checkClose_file(dataset);
          Rcpp::Rcerr << "Unknown exception in bdsubset_hdf5_dataset" << std::endl;
          return false;
      }
