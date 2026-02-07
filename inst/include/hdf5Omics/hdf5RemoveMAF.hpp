@@ -208,27 +208,27 @@ namespace BigDataStatMeth {
             // }
             
         } catch( H5::FileIException& error ){
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5 (File IException)\n";
             return -1;
         } catch( H5::DataSetIException& error ) { 
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5 (DataSet IException)\n";
             return -1;
         } catch( H5::DataSpaceIException& error ) { 
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5 (DataSpace IException)\n";
             return -1;
         } catch( H5::DataTypeIException& error ) { 
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5 (DataType IException)\n";
             return -1;
         } catch(std::exception &ex) {
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5: "<< ex.what()<<"\n";
             return -1;
         }  catch (...) {
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"\nC++ exception Rcpp_Remove_MAF_hdf5 (unknown reason)";
             return -1;
         }
