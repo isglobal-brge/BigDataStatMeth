@@ -154,19 +154,19 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_add_hdf5 (File IException)";
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_add_hdf5 (DataSet IException)";
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_add_hdf5: " << ex.what();
             // return dsC;
         } catch (...) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nC++ exception Rcpp_vector_add_hdf5 (unknown reason)";
             // return dsC;
         }
@@ -232,15 +232,15 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_subtract_hdf5 (File IException)";
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_subtract_hdf5 (DataSet IException)";
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_subtract_hdf5: " << ex.what();
             // return dsC;
         }
@@ -306,15 +306,15 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_multiply_hdf5 (File IException)";
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_multiply_hdf5 (DataSet IException)";
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_multiply_hdf5: " << ex.what();
             // return dsC;
         }
@@ -382,15 +382,15 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_divide_hdf5 (File IException)";
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_divide_hdf5 (DataSet IException)";
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_divide_hdf5: " << ex.what();
             // return dsC;
         }
@@ -460,15 +460,15 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_power_hdf5 (File IException)";
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_power_hdf5 (DataSet IException)";
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr << "\nc++ exception Rcpp_vector_power_hdf5: " << ex.what();
             // return dsC;
         }

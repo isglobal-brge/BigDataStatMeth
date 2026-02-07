@@ -145,14 +145,14 @@ inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA,
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         // error.printErrorStack();
-        checkClose_file(dsA);
+        // checkClose_file(dsA);
         Rf_error("c++ exception get_HDF5_mean_sd_by_row (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         // error.printErrorStack();
-        checkClose_file(dsA);
+        // checkClose_file(dsA);
         Rf_error("c++ exception get_HDF5_mean_sd_by_row (DataSet IException)");
     } catch(std::exception& error) {
-        checkClose_file(dsA);
+        // checkClose_file(dsA);
         Rf_error("c++ exception get_HDF5_mean_sd_by_row function: %s",error.what());
     }
     
@@ -228,14 +228,14 @@ inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA,
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         // error.printErrorStack();
-        checkClose_file(dsA);
+        // checkClose_file(dsA);
         Rf_error("c++ exception get_HDF5_mean_sd_by_column (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         // error.printErrorStack();
-        checkClose_file(dsA);
+        // checkClose_file(dsA);
         Rf_error("c++ exception get_HDF5_mean_sd_by_column (DataSet IException)");
     } catch(std::exception& error) {
-        checkClose_file(dsA);
+        // checkClose_file(dsA);
         Rf_error("c++ exception get_HDF5_mean_sd_by_column function: %s",error.what());
         // return void();
     }

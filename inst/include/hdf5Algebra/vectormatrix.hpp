@@ -318,14 +318,14 @@ inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         // error.printErrorStack();
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<< "c++ exception hdf5_matrixVector_calculus (File IException)" ;
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         // error.printErrorStack();
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception hdf5_matrixVector_calculus (DataSet IException)";
     } catch(std::exception& error) {
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcout<< "c++ exception vector-matrix functions: "<<error.what()<< " \n";
         // return(dsC);
     }

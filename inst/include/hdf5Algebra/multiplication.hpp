@@ -244,14 +244,7 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
     {
         
         try {
-        
-            // int ihdf5_block;
-            // hsize_t K = dsA->nrows();
-            // hsize_t N = dsA->ncols();
-            // hsize_t L = dsB->ncols();
-            // hsize_t M = dsB->nrows();
-            // 
-             
+                  
              hsize_t K, N, L, M;
             
             if (transpose_A) {
@@ -269,13 +262,6 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                 L = dsB->ncols();  // B normal
                 M = dsB->nrows();
             }
-            
-             // if( hdf5_block.isNotNull()) {
-             //     ihdf5_block =  Rcpp::as<int>(hdf5_block);
-             // } else {
-             //     ihdf5_block =  MAXBLOCKSIZE/3;
-             // }
-
              
              int ihdf5_block_N, ihdf5_block_M, ihdf5_block_K;
              
@@ -287,10 +273,8 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                  ihdf5_block_K = blocks.inner_block;
              }
              
-             
             if( K == L )
             {
-
                 std::vector<hsize_t> stride = {1, 1},
                                      block = {1, 1},
                                      vsizetoRead, vstart,
@@ -299,20 +283,11 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                 
                 dsC->createDataset( N, M, "real");
                 
-                if( dsC->getDatasetptr() != nullptr) {
-
-                    
+                if( dsC->getDatasetptr() != nullptr) 
+                {
                     getBlockPositionsSizes_hdf5( N, ihdf5_block_N, vstart, vsizetoRead );
                     getBlockPositionsSizes_hdf5( M, ihdf5_block_M, vstartM, vsizetoReadM );
                     getBlockPositionsSizes_hdf5( K, ihdf5_block_K, vstartK, vsizetoReadK );
-                    
-                    // getBlockPositionsSizes_hdf5( N, ihdf5_block, vstart, vsizetoRead );
-                    // getBlockPositionsSizes_hdf5( M, ihdf5_block, vstartM, vsizetoReadM );
-                    // getBlockPositionsSizes_hdf5( K, ihdf5_block, vstartK, vsizetoReadK );
-                    
-                    
-                    // int ithreads = get_number_threads(threads, R_NilValue);
-                    // int chunks = vstart.size()/ithreads;
                     
                     #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) ) shared(dsA, dsB, dsC, vstart, vsizetoRead) // chunks
                     {
@@ -374,58 +349,6 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                                 }
                             }
                         }
-                        
-                    // #pragma omp for schedule(dynamic) nowait
-                    //     for (hsize_t ii = 0; ii < vstart.size(); ii++)
-                    //     {
-                    //         
-                    //         for (hsize_t jj = 0; jj < vstartM.size(); jj++)
-                    //         {
-                    //             
-                    //             for (hsize_t kk = 0; kk < vstartK.size(); kk++)
-                    //             {
-                    //                 
-                    //                 hsize_t iColsA = vsizetoReadK[kk],
-                    //                         iRowsA = vsizetoRead[ii],
-                    //                         iColsB = vsizetoReadM[jj],
-                    //                         iRowsB = vsizetoReadK[kk];
-                    //                 
-                    //                 std::vector<double> vdA( iRowsA * iColsA );
-                    //                 #pragma omp critical(accessFile)
-                    //                 {
-                    //                     dsA->readDatasetBlock( {vstartK[kk], vstart[ii]}, {vsizetoReadK[kk], vsizetoRead[ii]}, stride, block, vdA.data() );
-                    //                 }
-                    //                 
-                    //                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), vsizetoReadK[kk], vsizetoRead[ii] );
-                    //                 
-                    //                 std::vector<double> vdB( iRowsB * iColsB );
-                    //                 #pragma omp critical(accessFile)
-                    //                 {
-                    //                     dsB->readDatasetBlock( {vstartM[jj], vstartK[kk]}, {vsizetoReadM[jj], vsizetoReadK[kk]}, stride, block, vdB.data() );
-                    //                 }
-                    //                 
-                    //                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), vsizetoReadM[jj], vsizetoReadK[kk] );
-                    //                 
-                    //                 std::vector<double> vdC( vsizetoReadM[jj] * vsizetoRead[ii] );
-                    //                 #pragma omp critical(accessFile)
-                    //                 {
-                    //                     dsC->readDatasetBlock( {vstartM[jj], vstart[ii]}, {vsizetoReadM[jj],  vsizetoRead[ii]}, stride, block, vdC.data() );
-                    //                 }
-                    // 
-                    //                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C (vdC.data(), B.rows(), A.cols() );
-                    // 
-                    //                 C = C + B * A;
-                    // 
-                    //                 std::vector<hsize_t> offset = {vstartM[jj], vstart[ii]};
-                    //                 std::vector<hsize_t> count = {vsizetoReadM[jj], vsizetoRead[ii] };
-                    //                 
-                    //                 #pragma omp critical(accessFile)
-                    //                 {
-                    //                     dsC->writeDatasetBlock(vdC, offset, count, stride, block);
-                    //                 }
-                    //             }
-                    //         }
-                    //     }
                     }
                 } 
                 
@@ -434,19 +357,19 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
             }
 
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ c++ exception multiplication (File IException)\n";
             // return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception multiplication (DataSet IException)\n";
             // return void();
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception multiplication " << ex.what();
             // return void();
         }  catch (...) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nC++ exception multiplication (unknown reason)";
             // return void();
         }

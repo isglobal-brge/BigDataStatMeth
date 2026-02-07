@@ -87,18 +87,6 @@ namespace BigDataStatMeth {
                     }
                 }
 
-                
-/** 2025/11/25
-                // Configure parallel processing
-                int num_threads = 1;
-                if (bparal) {
-                    num_threads = get_number_threads(threads, Rcpp::wrap(bparal));
-#ifdef _OPENMP
-                    omp_set_num_threads(num_threads);
-#endif
-                }
- Fi 2025/11/25 **/
-
 #ifdef _OPENMP  // Configure parallel processing
                 int num_threads = 1;
                 if (bparal) {

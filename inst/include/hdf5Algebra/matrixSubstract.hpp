@@ -163,23 +163,23 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) { 
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5 (File IException)";
             return(dsC);
         } catch( H5::GroupIException & error ) { 
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5 (Group IException)";
             return(dsC);
         } catch( H5::DataSetIException& error ) { 
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5 (DataSet IException)";
             return(dsC);
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5" << ex.what();
             return(dsC);
         } catch (...) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nC++ exception Rcpp_block_matrix_substract_hdf5 (unknown reason)";
             return(dsC);
         }
@@ -325,23 +325,23 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) { 
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 (File IException)";
             return(dsC);
         } catch( H5::GroupIException & error ) { 
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 (Group IException)";
             return(dsC);
         } catch( H5::DataSetIException& error ) { 
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 (DataSet IException)";
             return(dsC);
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 " << ex.what();
             return(dsC);
         } catch (...) {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA, dsB, dsC);
             Rcpp::Rcerr<<"\nC++ exception Rcpp_block_matrix_vector_substract_hdf5 (unknown reason)";
             return(dsC);
         }

@@ -318,9 +318,12 @@ namespace BigDataStatMeth {
                       std::is_same<T*, BigDataStatMeth::hdf5DatasetInternal*>::value,
                       "Error - type not allowed");
         
-        BigDataStatMeth::hdf5Dataset* dsnormalizedData = nullptr;
+        
         
         try {
+
+            // BigDataStatMeth::hdf5Dataset* dsnormalizedData = nullptr;
+            // BigDataStatMeth::hdf5DatasetHandle dsnormalizedData(nullptr);
             
             std::vector<hsize_t> stride = {1, 1}, block = {1, 1};
             eigdecomp reteig;
@@ -399,23 +402,23 @@ namespace BigDataStatMeth {
             }
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsd, dsu, dsnormalizedData);
+            // checkClose_file(dsA, dsd, dsu, dsnormalizedData);
             Rcpp::Rcerr << "\nc++ exception RcppbdEigen_hdf5_Block (File IException)\n";
             return;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsd, dsu, dsnormalizedData);
+            // checkClose_file(dsA, dsd, dsu, dsnormalizedData);
             Rcpp::Rcerr << "\nc++ exception RcppbdEigen_hdf5_Block (DataSet IException)\n";
             return;
         } catch(H5::GroupIException& error) {
-            checkClose_file(dsA, dsd, dsu, dsnormalizedData);
+            // checkClose_file(dsA, dsd, dsu, dsnormalizedData);
             Rcpp::Rcerr << "\nc++ exception RcppbdEigen_hdf5_Block (Group IException)\n";
             return;
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsd, dsu, dsnormalizedData);
+            // checkClose_file(dsA, dsd, dsu, dsnormalizedData);
             Rcpp::Rcerr << "C++ exception RcppbdEigen_hdf5_Block: " << ex.what();
             return;
         } catch (...) {
-            checkClose_file(dsA, dsd, dsu, dsnormalizedData);
+            // checkClose_file(dsA, dsd, dsu, dsnormalizedData);
             Rcpp::Rcerr << "\nC++ exception RcppbdEigen_hdf5_Block (unknown reason)";
             return;
         }
@@ -460,15 +463,15 @@ namespace BigDataStatMeth {
                                  bool compute_vectors = true, bool bforce = false,
                                  Rcpp::Nullable<int> threads = R_NilValue) {
         
-        BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsd = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsu = nullptr;
-        
         try {
+            BigDataStatMeth::hdf5DatasetHandle dsA(nullptr);
+            BigDataStatMeth::hdf5DatasetHandle dsd(nullptr);
+            BigDataStatMeth::hdf5DatasetHandle dsu(nullptr);
             
             std::vector<hsize_t> stride = {1, 1}, block = {1, 1}, offset = {0, 0}, count = {0, 0};
             
-            dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroup, strdataset, false);
+            // dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroup, strdataset, false);
+            dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, strsubgroup, strdataset, false) );
             dsA->openDataset();
             
             if (dsA->getDatasetptr() != nullptr) {
@@ -491,9 +494,11 @@ namespace BigDataStatMeth {
                 std::tie(k, ncv) = validateSpectraParams((int)n, k, ncv);
                 
                 // Create output datasets
-                dsd = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "values", bforce);
+                // dsd = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "values", bforce);
+                dsd.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "values", bforce) );
                 if (compute_vectors) {
-                    dsu = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "vectors", bforce);
+                    // dsu = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "vectors", bforce);
+                    dsu.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "vectors", bforce) );
                 }
                 
                 // Small matrices => Direct eigendecomposition with Spectra
@@ -528,41 +533,41 @@ namespace BigDataStatMeth {
                     // Write imaginary parts if non-zero (for non-symmetric matrices)
                     if (!reteig.is_symmetric && reteig.eigenvalues_imag.cwiseAbs().maxCoeff() > 1e-14) {
                         
-                        BigDataStatMeth::hdf5Dataset* dsd_imag = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "values_imag", bforce);
+                        // BigDataStatMeth::hdf5Dataset* dsd_imag = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "values_imag", bforce);
+                        BigDataStatMeth::hdf5DatasetHandle dsd_imag(nullptr);
+                        dsd_imag.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "values_imag", bforce) );
+
                         dsd_imag->createDataset(1, reteig.eigenvalues_imag.size(), "real");
                         dsd_imag->writeDataset(Rcpp::wrap(reteig.eigenvalues_imag));
-                        delete dsd_imag;
+                        // delete dsd_imag;
                         
                         if (compute_vectors && reteig.bcomputevectors && reteig.eigenvectors_imag.cwiseAbs().maxCoeff() > 1e-14) {
-                            BigDataStatMeth::hdf5Dataset* dsu_imag = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "vectors_imag", bforce);
+                            // BigDataStatMeth::hdf5Dataset* dsu_imag = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "vectors_imag", bforce);
+                            BigDataStatMeth::hdf5DatasetHandle dsu_imag(nullptr);
+                            dsu_imag.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "vectors_imag", bforce) );
                             dsu_imag->createDataset(reteig.eigenvectors_imag.rows(), reteig.eigenvectors_imag.cols(), "real");
                             dsu_imag->writeDataset(Rcpp::wrap(reteig.eigenvectors_imag));
-                            delete dsu_imag;
+                            // delete dsu_imag;
                         }
                     }
                     
                 } else {
                     // Large matrices => Block-based approach with Spectra  
                     if (dsA->getDatasetptr() != nullptr) {
-                        RcppbdEigen_hdf5_Block(dsA, dsd, dsu, k, which, ncv, bcenter, bscale, tolerance, max_iter, compute_vectors, threads);
+                        // RcppbdEigen_hdf5_Block(dsA, dsd, dsu, k, which, ncv, bcenter, bscale, tolerance, max_iter, compute_vectors, threads);
+                        RcppbdEigen_hdf5_Block(dsA.get(), dsd.get(), dsu.get(), k, which, ncv, bcenter, bscale, tolerance, max_iter, compute_vectors, threads);
                     }
                 }
             }
-            delete dsd; dsd = nullptr;
-            if (dsu) { delete dsu; dsu = nullptr; }
-            delete dsA; dsA = nullptr;
+            
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsd, dsu);
             Rcpp::Rcerr << "\nc++ exception RcppbdEigen_hdf5 (File IException)\n";
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsd, dsu);
             Rcpp::Rcerr << "\nc++ exception RcppbdEigen_hdf5 (DataSet IException) "<<error.getDetailMsg() <<" \n";
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsd, dsu);
             Rcpp::Rcerr << "c++ exception RcppbdEigen_hdf5: " << ex.what();
         } catch (...) {
-            checkClose_file(dsA, dsd, dsu);
             Rcpp::Rcerr << "\nC++ exception RcppbdEigen_hdf5 (unknown reason)";
         }
     }
