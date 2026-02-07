@@ -191,14 +191,6 @@ namespace BigDataStatMeth {
                             newoffset[1] =  newoffset[1] + extendcols;
                     }
                     
-                    // IntegerVector countblock = IntegerVector::create(extendrows, extendcols);
-                    // write_HDF5_matrix_subset_v2(file, unlimDataset, newoffset, countblock, stride, block, wrap(data) );
-                    
-                    // if(bycols == true)
-                    //     newoffset[0] =  newoffset[0] + extendrows;
-                    // else
-                    //     newoffset[1] =  newoffset[1] + extendcols;
-                    
                     itotrem = itotrem - iblockrem;
                 }
             }
