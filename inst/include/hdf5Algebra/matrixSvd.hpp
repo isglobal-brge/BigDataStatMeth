@@ -179,9 +179,9 @@ namespace BigDataStatMeth {
             // BigDataStatMeth::hdf5Dataset* dsnormalizedData = nullptr;
             // BigDataStatMeth::hdf5Dataset* dsJoined = nullptr;
             // BigDataStatMeth::hdf5DatasetInternal* dsnormalizedData_i = nullptr;
-            BigDataStatMeth::hdf5DatasetHandle dsnormalizedData(nullptr);
-            BigDataStatMeth::hdf5DatasetInternalHandle dsJoined(nullptr);
-            BigDataStatMeth::hdf5DatasetInternalHandle dsnormalizedData_i(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsnormalizedData(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal> dsJoined(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal> dsnormalizedData_i(nullptr);
             
             std::vector<hsize_t> stride = {1, 1},
                 block = {1, 1};
@@ -390,10 +390,10 @@ namespace BigDataStatMeth {
             // BigDataStatMeth::hdf5Dataset* dsu = nullptr;
             // BigDataStatMeth::hdf5Dataset* dsv = nullptr;
             // BigDataStatMeth::hdf5Dataset* dsd = nullptr;
-            BigDataStatMeth::hdf5DatasetHandle dsA(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsu(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsv(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsd(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsu(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsv(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsd(nullptr);
             
             std::string strMethod;
             

@@ -548,7 +548,7 @@ inline int Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* i
     
     try {
 
-        BigDataStatMeth::hdf5DatasetHandle tempA(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> tempA(nullptr);
 
         int dimensionSize = idim0;
         int tileSize = 10000; // Fixed tile size for predictable memory usage

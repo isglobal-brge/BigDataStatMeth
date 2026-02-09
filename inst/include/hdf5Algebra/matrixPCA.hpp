@@ -78,11 +78,11 @@ namespace BigDataStatMeth {
             // BigDataStatMeth::hdf5Dataset* dscumvar = nullptr;
             // BigDataStatMeth::hdf5Dataset* dscoord = nullptr;
             // BigDataStatMeth::hdf5Dataset* dscos2 = nullptr;
-            BigDataStatMeth::hdf5DatasetHandle dslambda(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsvar(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dscumvar(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dscoord(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dscos2(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dslambda(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsvar(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dscumvar(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dscoord(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dscos2(nullptr);
             
             // int ielements = 0;
             std::vector<hsize_t> stride = {1, 1},
@@ -211,11 +211,11 @@ namespace BigDataStatMeth {
             // BigDataStatMeth::hdf5Dataset* dscoord = nullptr;
             // BigDataStatMeth::hdf5Dataset* dscos2 = nullptr;
             // BigDataStatMeth::hdf5Dataset* dscontrib = nullptr;
-            BigDataStatMeth::hdf5DatasetHandle dsdist2(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsComp(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dscoord(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dscos2(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dscontrib(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsdist2(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsComp(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dscoord(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dscos2(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dscontrib(nullptr);
             
             // int ielements = 0;
             std::vector<hsize_t> stride = {1, 1},
@@ -374,11 +374,11 @@ namespace BigDataStatMeth {
 
             H5::Exception::dontPrint();
             
-            BigDataStatMeth::hdf5DatasetHandle dsA(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsd(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsu(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsv(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsX(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsd(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsu(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsv(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsX(nullptr);
             
             std::string strPCAgroup = "PCA/" + strdataset;
             bool bexistsSVD, bexistsPCA;
@@ -388,7 +388,7 @@ namespace BigDataStatMeth {
             // BigDataStatMeth::hdf5File* file = new BigDataStatMeth::hdf5File(filename, false);
             Rcpp::Rcout<<"Checking for existing SVD decomposition in HDF5 file...\n";
             {
-                BigDataStatMeth::hdf5FileHandle file(nullptr);
+               std::unique_ptr<BigDataStatMeth::hdf5File> file(nullptr);
                 file.reset(  new BigDataStatMeth::hdf5File(filename, false) );
                 file->openFile("r");
                 

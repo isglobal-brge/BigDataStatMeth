@@ -1420,9 +1420,9 @@ namespace BigDataStatMeth {
             // BigDataStatMeth::hdf5Dataset* dsCorr = nullptr;
             // BigDataStatMeth::hdf5Dataset* dsPval = nullptr;
 
-            BigDataStatMeth::hdf5DatasetHandle dsA(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsCorr(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsPval(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsCorr(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsPval(nullptr);
             
             std::vector<hsize_t> stride = {1, 1}, block = {1, 1}, offset = {0, 0}, count = {0, 0};
             
@@ -1885,10 +1885,10 @@ namespace BigDataStatMeth {
         
         try {
 
-            BigDataStatMeth::hdf5DatasetHandle dsA(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsB(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsCorr(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsPval(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsCorr(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsPval(nullptr);
             
             // std::vector<hsize_t> stride = {1, 1}, block = {1, 1}, offset = {0, 0};
             

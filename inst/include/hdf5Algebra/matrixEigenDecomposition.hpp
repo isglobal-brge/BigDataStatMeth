@@ -323,7 +323,7 @@ namespace BigDataStatMeth {
         try {
 
             // BigDataStatMeth::hdf5Dataset* dsnormalizedData = nullptr;
-            // BigDataStatMeth::hdf5DatasetHandle dsnormalizedData(nullptr);
+            // std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsnormalizedData(nullptr);
             
             std::vector<hsize_t> stride = {1, 1}, block = {1, 1};
             eigdecomp reteig;
@@ -464,9 +464,9 @@ namespace BigDataStatMeth {
                                  Rcpp::Nullable<int> threads = R_NilValue) {
         
         try {
-            BigDataStatMeth::hdf5DatasetHandle dsA(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsd(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsu(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsd(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsu(nullptr);
             
             std::vector<hsize_t> stride = {1, 1}, block = {1, 1}, offset = {0, 0}, count = {0, 0};
             
@@ -534,7 +534,7 @@ namespace BigDataStatMeth {
                     if (!reteig.is_symmetric && reteig.eigenvalues_imag.cwiseAbs().maxCoeff() > 1e-14) {
                         
                         // BigDataStatMeth::hdf5Dataset* dsd_imag = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "values_imag", bforce);
-                        BigDataStatMeth::hdf5DatasetHandle dsd_imag(nullptr);
+                        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsd_imag(nullptr);
                         dsd_imag.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "values_imag", bforce) );
 
                         dsd_imag->createDataset(1, reteig.eigenvalues_imag.size(), "real");
@@ -543,7 +543,7 @@ namespace BigDataStatMeth {
                         
                         if (compute_vectors && reteig.bcomputevectors && reteig.eigenvectors_imag.cwiseAbs().maxCoeff() > 1e-14) {
                             // BigDataStatMeth::hdf5Dataset* dsu_imag = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "vectors_imag", bforce);
-                            BigDataStatMeth::hdf5DatasetHandle dsu_imag(nullptr);
+                            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsu_imag(nullptr);
                             dsu_imag.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "vectors_imag", bforce) );
                             dsu_imag->createDataset(reteig.eigenvectors_imag.rows(), reteig.eigenvectors_imag.cols(), "real");
                             dsu_imag->writeDataset(Rcpp::wrap(reteig.eigenvectors_imag));

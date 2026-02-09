@@ -181,13 +181,14 @@ void bdapply_Function_hdf5( std::string filename,
     
     try
     {
+        H5::Exception::dontPrint();
 
-         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsQ(nullptr);
-         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsR(nullptr);
-         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
-         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsQ(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsR(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
 
         H5::Exception::dontPrint();
         

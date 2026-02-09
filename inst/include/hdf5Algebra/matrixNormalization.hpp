@@ -409,9 +409,9 @@ namespace BigDataStatMeth {
             // BigDataStatMeth::hdf5Dataset* dssd = nullptr;
             // BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
 
-            BigDataStatMeth::hdf5DatasetHandle dsmean(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dssd(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsNormal(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsNormal(nullptr);
             
             Rcpp::Nullable<int> wsize = R_NilValue;
             Eigen::MatrixXd datanormal;
@@ -493,9 +493,9 @@ namespace BigDataStatMeth {
             // BigDataStatMeth::hdf5Dataset* dssd = nullptr;
             // BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
 
-            BigDataStatMeth::hdf5DatasetHandle dsmean(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dssd(nullptr);
-            BigDataStatMeth::hdf5DatasetHandle dsNormal(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsNormal(nullptr);
             
             Rcpp::Nullable<int> wsize = R_NilValue;
             Eigen::MatrixXd datanormal;

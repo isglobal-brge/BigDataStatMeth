@@ -149,7 +149,7 @@ std::vector<svdPositions> prepareForParallelization( T* dsA, int M, int k, bool 
         H5::Exception::dontPrint();
             
         // // BigDataStatMeth::hdf5Dataset* unlimDataset = nullptr;
-        // BigDataStatMeth::hdf5DatasetHandle unlimDataset(nullptr);
+        // std::unique_ptr<BigDataStatMeth::hdf5Dataset> unlimDataset(nullptr);
 
 
         // int realsizeread, cummoffset;
@@ -249,8 +249,8 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
 
         // BigDataStatMeth::hdf5DatasetInternal* normalizedData = nullptr;
         // BigDataStatMeth::hdf5Dataset* unlimDataset = nullptr;
-        BigDataStatMeth::hdf5DatasetInternalHandle normalizedData(nullptr);
-        BigDataStatMeth::hdf5DatasetHandle unlimDataset(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  normalizedData(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> unlimDataset(nullptr);
         
         std::vector<svdPositions> paralPos;
         
@@ -489,8 +489,8 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
         // BigDataStatMeth::hdf5Dataset* unlimDataset = nullptr;    
         // BigDataStatMeth::hdf5Dataset* dsCur = nullptr;
 
-        BigDataStatMeth::hdf5DatasetInternalHandle unlimDataset(nullptr);
-        BigDataStatMeth::hdf5DatasetHandle dsCur(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  unlimDataset(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsCur(nullptr);
         
         int cummoffset = 0, M;
             // ithreads,  M;
