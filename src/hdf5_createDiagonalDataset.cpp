@@ -104,7 +104,7 @@
 
         std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
         // BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5DiagonalMatrix> dsDiag(nullptr);
-        BigDataStatMeth::hdf5DiagonalMatrixHandle dsDiag(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5DiagonalMatrix> dsDiag(nullptr);
          
          bool bforceFile, bforceDataset;
          int iRes;

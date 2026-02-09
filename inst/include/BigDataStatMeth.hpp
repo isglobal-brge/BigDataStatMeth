@@ -226,7 +226,7 @@
     #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
     #include "hdf5Utilities/hdf5Dims.hpp"
     #include "hdf5Utilities/hdf5Diagonal.hpp"
-    #include "hdf5Utilities/hdf5RAII.hpp"
+    // #include "hdf5Utilities/hdf5RAII.hpp"
     #include "hdf5Utilities/hdf5CheckClose.hpp"
     
     
