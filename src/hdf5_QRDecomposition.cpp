@@ -217,9 +217,9 @@ Rcpp::List  bdQR_hdf5( std::string filename, std::string group, std::string data
         // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
         // BigDataStatMeth::hdf5Dataset* dsQ = nullptr;
         // BigDataStatMeth::hdf5Dataset* dsR = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsQ(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsR(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsQ(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsR(nullptr);
 
         bool bthin, bforce;
         std::string strOutgroup, strOutdataset_Q, strOutdataset_R;

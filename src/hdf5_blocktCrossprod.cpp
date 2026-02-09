@@ -162,18 +162,17 @@ Rcpp::List bdtCrossprod_hdf5( std::string filename,
      
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("ds") = "");
-
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsC(nullptr);
-     
      try {
-         
-         H5::Exception::dontPrint();  
 
-         int iblock_size = 0;
-         int iblockfactor = 2;
-         bool bparal, bforce, bisSymetric = false;
+        H5::Exception::dontPrint();  
+
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(nullptr);
+
+        int iblock_size = 0;
+        int iblockfactor = 2;
+        bool bparal, bforce, bisSymetric = false;
 
          std::string strsubgroupOut, 
          strdatasetOut, 

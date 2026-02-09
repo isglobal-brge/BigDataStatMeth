@@ -178,9 +178,9 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
         // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
         // BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
         // BigDataStatMeth::hdf5Dataset* dssd = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
         
         bool bforce, bbyrows, bonmemory, bsd, bmean;
         hsize_t nrows, ncols;

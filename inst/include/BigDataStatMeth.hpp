@@ -225,6 +225,7 @@
     #include "hdf5Utilities/hdf5Datasets.hpp"
     #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
     #include "hdf5Utilities/hdf5Dims.hpp"
+    #include "hdf5Utilities/hdf5Diagonal.hpp"
     #include "hdf5Utilities/hdf5RAII.hpp"
     #include "hdf5Utilities/hdf5CheckClose.hpp"
     
@@ -300,7 +301,7 @@
 // LEVEL 1 - CORE UTILITIES - Classes and related to classes
 // =============================================================================
     #include "hdf5Utilities/hdf5DiagonalMethods.hpp"
-    #include "hdf5Utilities/hdf5Diagonal.hpp"
+    // #include "hdf5Utilities/hdf5Diagonal.hpp"
     
 
 // =============================================================================

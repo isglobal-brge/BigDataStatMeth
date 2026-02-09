@@ -48,12 +48,12 @@
          
          H5::Exception::dontPrint();
          
-         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5File> objFile(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
          
-         // objFile = new BigDataStatMeth::hdf5File(filename, false);
-         objFile.reset( new BigDataStatMeth::hdf5File(filename, false) );
-         
-         locked = objFile->isLocked(filename);  
+        // objFile = new BigDataStatMeth::hdf5File(filename, false);
+        objFile.reset( new BigDataStatMeth::hdf5File(filename, false) );
+        
+        locked = objFile->isLocked(filename);  
          
      } catch( H5::FileIException& error ) { 
          // if(objFile != nullptr) delete objFile;

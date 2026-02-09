@@ -156,11 +156,9 @@ void bdblockmult_sparse_hdf5( std::string filename, std::string group,
 {
      
     
-    BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsB = nullptr;
-    BigDataStatMeth::hdf5Dataset* dsC = nullptr;
-    
-    
+    // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+    // BigDataStatMeth::hdf5Dataset* dsB = nullptr;
+    // BigDataStatMeth::hdf5Dataset* dsC = nullptr;
 
     try
     {
@@ -198,16 +196,20 @@ void bdblockmult_sparse_hdf5( std::string filename, std::string group,
         else { bforce = Rcpp::as<bool> (overwrite); }
         
         
-        dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        // dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupIn, A, false) );
         dsA->openDataset();
-        dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        // dsB = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupInB, B, false) );
         dsB->openDataset();
-        dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+        
+        // dsC = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC( new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce) );
         
         if( dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
             iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(), iblockfactor, block_size);
         } else {
-            checkClose_file(dsA, dsB, dsC);
+            // checkClose_file(dsA.get(), dsB.get(), dsC.get());
             Rcpp::Rcerr<<"c++ exception bdblockmult_sparse_hdf5 : error with "<<A<< " or "<<B<< " datset\n";
             return void();
         }
@@ -230,31 +232,33 @@ void bdblockmult_sparse_hdf5( std::string filename, std::string group,
                  memory_block = iblock_size/2;
              }
              
-             dsC = BigDataStatMeth::multiplicationSparse(dsA, dsB, dsC, iblock_size, memory_block, bparal, true, threads);
+             // dsC = BigDataStatMeth::multiplicationSparse(dsA, dsB, dsC, iblock_size, memory_block, bparal, true, threads);
+             BigDataStatMeth::multiplicationSparse(dsA.get(), dsB.get(), dsC.get(), iblock_size, memory_block, bparal, true, threads);
              
          } else if (bparal == false) { // Not parallel
-             dsC = BigDataStatMeth::multiplicationSparse(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
+             // dsC = BigDataStatMeth::multiplicationSparse(dsA, dsB, dsC, iblock_size, 0, bparal, true, threads);
+             BigDataStatMeth::multiplicationSparse(dsA.get(), dsB.get(), dsC.get(), iblock_size, 0, bparal, true, threads);
          }
      
-         delete dsA;   dsA = nullptr;
-         delete dsB;   dsB = nullptr;
-         delete dsC;   dsC = nullptr;
+         // delete dsA;   dsA = nullptr;
+         // delete dsB;   dsB = nullptr;
+         // delete dsC;   dsC = nullptr;
      
      
     } catch( H5::FileIException& error ) { 
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockmult_sparse_hdf5 (File IException)";
         return void();
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockmult_sparse_hdf5 (DataSet IException)";
         return void();
     } catch(std::exception &ex) {
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"c++ exception bdblockmult_sparse_hdf5";
         return void();
     } catch (...) {
-        checkClose_file(dsA, dsB, dsC);
+        // checkClose_file(dsA, dsB, dsC);
         Rcpp::Rcerr<<"C++ exception bdblockmult_sparse_hdf5 (unknown reason)";
         return void();
     }

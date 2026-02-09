@@ -303,9 +303,9 @@ Rcpp::List bdSolve_hdf5(std::string filename, std::string groupA, std::string da
         // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
         // BigDataStatMeth::hdf5Dataset* dsB = nullptr;
         // BigDataStatMeth::hdf5Dataset* dsRes = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsRes(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsRes(nullptr);
         
         std::string strOutgroup, strOutdataset;
         bool bforce;

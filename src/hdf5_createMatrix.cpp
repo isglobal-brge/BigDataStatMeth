@@ -60,9 +60,10 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
         
         H5::Exception::dontPrint();
 
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5File> objFile(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
+        // BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
         
         Rcpp::IntegerVector dims(2);
         Rcpp::CharacterVector svrows, svrcols;
@@ -168,7 +169,7 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
         } 
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rf_error("c++ c++ exception bdCreate_hdf5_matrix (File IException)");
+        Rf_error("c++ exception bdCreate_hdf5_matrix (File IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         Rf_error( "c++ exception bdCreate_hdf5_matrix (DataSet IException)");

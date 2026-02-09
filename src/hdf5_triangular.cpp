@@ -157,7 +157,7 @@ Rcpp::List bdWriteOppsiteTriangularMatrix_hdf5(std::string filename,
         H5::Exception::dontPrint();
 
         // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
          
         Rcpp::NumericVector intNewDiagonal;
         bool blower;

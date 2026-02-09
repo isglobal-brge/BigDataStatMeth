@@ -62,7 +62,7 @@
          
          H5::Exception::dontPrint();
 
-         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+          std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
          
          // Process parameters
          if (Rcpp::is<Rcpp::CharacterVector>(filename)) {

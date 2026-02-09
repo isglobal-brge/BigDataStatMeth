@@ -182,12 +182,12 @@ void bdapply_Function_hdf5( std::string filename,
     try
     {
 
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsQ(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsR(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsQ(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsR(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
 
         H5::Exception::dontPrint();
         
@@ -257,7 +257,7 @@ void bdapply_Function_hdf5( std::string filename,
                     
                     if((dims_out[0] * dims_out[1]) > (MAXELEMSINBLOCK / 1024)) {
                         // dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
-                        BigDataStatMeth::HDF5Handle dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce) );
+                        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce) );
                         
                         // int iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsA->nrows(), dsA->ncols(), 4, R_NilValue);
                         // int memory_block = iblock_size/2;
@@ -288,7 +288,7 @@ void bdapply_Function_hdf5( std::string filename,
                         
                         Eigen::MatrixXd results;
                         // dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
-                        BigDataStatMeth::HDF5Handle dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce) );
+                        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce) );
                         
                         if(  oper(oper.findName( func )) == 1 ) {
                             results = BigDataStatMeth::bdcrossproduct(original);
@@ -315,7 +315,7 @@ void bdapply_Function_hdf5( std::string filename,
                         std::string strOutdataset = outgroup + "/" +  Rcpp::as<std::string>(datasets(i));
                         //..// BigDataStatMeth::hdf5DatasetInternal* dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
                         // BigDataStatMeth::hdf5DatasetInternal* dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, bforce);
-                        BigDataStatMeth::HDF5Handle dsOut( new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, bforce) );
+                        std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  dsOut( new BigDataStatMeth::hdf5DatasetInternal(filename, strOutdataset, bforce) );
                         
                         dsOut->createDataset(nrows, ncols, "real");
                         
@@ -360,7 +360,7 @@ void bdapply_Function_hdf5( std::string filename,
                         if( ((dims_out[0] * dims_out[1]) > (MAXELEMSINBLOCK / 1024) || (dims_outB[0] * dims_outB[1]) > (MAXELEMSINBLOCK / 1024)) && oper(oper.findName( func )) == 4 ) {
                             
                             // dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce);
-                            BigDataStatMeth::HDF5Handle dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce) );
+                            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce) );
                             
                             BigDataStatMeth::multiplication(dsA.get(), dsB.get(), dsOut.get(), btransdataA, btransdataB, R_NilValue, R_NilValue, threads); 
                             
@@ -394,7 +394,7 @@ void bdapply_Function_hdf5( std::string filename,
                             if( results != Eigen::MatrixXd::Zero(original.rows(),originalB.cols()) ) {
                                 
                                 // dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce);
-                                BigDataStatMeth::HDF5Handle dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce) );
+                                std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce) );
                                 dsOut->createDataset(results.rows(), results.cols(), "real");
                                 dsOut->writeDataset(Rcpp::wrap(results));
                                 
@@ -412,7 +412,7 @@ void bdapply_Function_hdf5( std::string filename,
                     dsB->openDataset();
                     
                     // dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + "_eq_" + Rcpp::as<std::string>(str_bdatasets(i)) , bforce);
-                    BigDataStatMeth::HDF5Handle dsOut( new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + "_eq_" + Rcpp::as<std::string>(str_bdatasets(i)) , bforce) );
+                    std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  dsOut( new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + "_eq_" + Rcpp::as<std::string>(str_bdatasets(i)) , bforce) );
                     dsOut->createDataset( dsB->nrows(), dsB->ncols(), "real" );
                     
                     if( dsB->getDatasetptr() != nullptr )  {

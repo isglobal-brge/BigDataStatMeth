@@ -129,7 +129,7 @@ Rcpp::List bdBind_hdf5_datasets( std::string filename, std::string group, Rcpp::
         
         H5::Exception::dontPrint();
 
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsOut(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut(nullptr);
         
         Rcpp::NumericVector oper = {0, 1, 2};
         oper.names() = Rcpp::CharacterVector({ "bindCols", "bindRows", "bindRowsbyIndex"});

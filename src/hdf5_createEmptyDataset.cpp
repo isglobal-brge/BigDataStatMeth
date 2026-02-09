@@ -89,8 +89,8 @@ Rcpp::List bdCreate_hdf5_emptyDataset(std::string filename, std::string group,
          
          H5::Exception::dontPrint();
 
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5File> objFile(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
         // hdf5Dataset* objDataset = nullptr;
         // hdf5File*    objFile    = nullptr;
          

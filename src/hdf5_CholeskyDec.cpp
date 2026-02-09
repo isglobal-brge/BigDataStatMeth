@@ -150,8 +150,8 @@ Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string 
      {
          H5::Exception::dontPrint();
 
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5DatasetInternal> dstmp(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  dstmp(nullptr);
          
          long dElementsBlock;
          std::string strOutgroup, strIndataset, 

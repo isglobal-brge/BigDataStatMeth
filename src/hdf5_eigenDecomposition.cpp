@@ -141,7 +141,7 @@
          
          H5::Exception::dontPrint();
          
-         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5File> objFile(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
          
          int ks, max_iters, ncvs;
          bool bcent, bscal, bforce, bcompute_vecs;

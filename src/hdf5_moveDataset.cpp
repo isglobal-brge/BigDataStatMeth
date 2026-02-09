@@ -94,7 +94,7 @@ Rcpp::List bdmove_hdf5_dataset(std::string filename,
          H5::Exception::dontPrint();
 
         //  BigDataStatMeth::hdf5Dataset* dataset = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dataset(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dataset(nullptr);
          
          // Input validation
          if (filename.empty()) {

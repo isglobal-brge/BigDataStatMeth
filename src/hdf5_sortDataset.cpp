@@ -195,8 +195,8 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
 
         // BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
         // BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsOut(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut(nullptr);
         
         std::string strOutgroup;
         bool boverwrite;

@@ -165,7 +165,7 @@ Rcpp::List bdSplit_matrix_hdf5( std::string filename, std::string group, std::st
         H5::Exception::dontPrint();
 
         // BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
         
         std::string stroutgroup, stroutdataset, stroutdata;
         std::string strdataset = group + "/" + dataset;

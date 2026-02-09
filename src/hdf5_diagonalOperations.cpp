@@ -279,9 +279,9 @@
         //  BigDataStatMeth::hdf5Dataset* dsB = nullptr;
         //  BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
         
-         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-         BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
+          std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+          std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+          std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
          
          bool bparal, 
               bforce, 
@@ -337,7 +337,7 @@
          
          if (dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
              
-             BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
+              std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
              lst_return["fn"] = filename;
              
              // Only create result dataset if target="new"
@@ -473,9 +473,9 @@ Rcpp::List bdDiag_subtract_hdf5(std::string filename,
     try {
         H5::Exception::dontPrint();
         
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
         
         bool bparal, bforce;
         std::string strsubgroupOut, strdatasetOut, strsubgroupInB, strtarget;
@@ -656,9 +656,9 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
         // BigDataStatMeth::hdf5Dataset* dsB = nullptr;
         // BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
         
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
 
         bool bparal, bforce;
         std::string strsubgroupOut, strdatasetOut, strsubgroupInB, strtarget;
@@ -839,9 +839,9 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
     try {
         H5::Exception::dontPrint();
 
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
         
         bool bparal, bforce;
         std::string strsubgroupOut, strdatasetOut, strsubgroupInB, strtarget;
@@ -1015,8 +1015,8 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
         //  BigDataStatMeth::hdf5Dataset* dsInput = nullptr;
         //  BigDataStatMeth::hdf5Dataset* dsResult = nullptr;
          
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsInput(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsInput(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsResult(nullptr);
 
         bool bparal, bforce;
         std::string strsubgroupOut, strdatasetOut, strtarget;
@@ -1046,12 +1046,11 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
          
          if (outdataset.isNotNull()) { strdatasetOut = Rcpp::as<std::string>(outdataset); } 
          else { strdatasetOut = dataset + "_" + operation + "_" + std::to_string(scalar) + ".diag"; }
-         
-         // Open input dataset
+
         // dsInput = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsInput.reset(new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false));
         dsInput->openDataset();
-         
+
          if (dsInput->getDatasetptr() != nullptr) {
              
              lst_return["fn"] = filename;
@@ -1061,9 +1060,11 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
             if (strtarget == "new") {
                  // dsResult = new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce);
                 dsResult.reset(new BigDataStatMeth::hdf5Dataset(filename, strsubgroupOut, strdatasetOut, bforce));
-                lst_return["ds"] = strdatasetOut;
+                // lst_return["ds"] = strdatasetOut;
+                lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
             } else if (strtarget == "input") {
-                lst_return["ds"] = dataset;
+                // lst_return["ds"] = dataset;
+                lst_return["ds"] = strsubgroupOut + "/" + dataset;
             }
              
              // Perform scalar operation

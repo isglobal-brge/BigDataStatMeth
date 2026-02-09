@@ -272,8 +272,8 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
 
         // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
         //  BigDataStatMeth::hdf5Dataset* dsRes = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsRes(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsRes(nullptr);
          
         Eigen::MatrixXd A;
         std::string strOutgroup, strOutdataset;

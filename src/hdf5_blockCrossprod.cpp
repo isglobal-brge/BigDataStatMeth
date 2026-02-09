@@ -156,9 +156,9 @@ Rcpp::List bdCrossprod_hdf5( std::string filename,
                                                Rcpp::Named("ds") = "");
     try {
 
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsC(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(nullptr);
         
         H5::Exception::dontPrint();  
 

@@ -143,10 +143,10 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
                                                 Rcpp::Named("mean") = "",
                                                 Rcpp::Named("sd") = "");
     
-    BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-    BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
-    BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
-    BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsNormal(nullptr);
+     std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+     std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
+     std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
+     std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsNormal(nullptr);
 
      try{
          

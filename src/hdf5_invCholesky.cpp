@@ -145,8 +145,8 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
 
         // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
         // BigDataStatMeth::hdf5DatasetInternal* dstmp = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5DatasetInternal> dstmp(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  dstmp(nullptr);
         
         long dElementsBlock;
         

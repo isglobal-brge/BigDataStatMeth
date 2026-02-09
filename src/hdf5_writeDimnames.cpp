@@ -95,8 +95,9 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
 
         //  BigDataStatMeth::hdf5Dataset* objDataset = nullptr;
         //  BigDataStatMeth::hdf5Dims* dsdims = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
+        // BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
          
          objDataset.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false ) );
          objDataset->openDataset();

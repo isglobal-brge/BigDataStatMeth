@@ -110,7 +110,7 @@ void bdRemove_hdf5_element(std::string filename, std::vector<std::string> elemen
         H5::Exception::dontPrint();
 
         // BigDataStatMeth::hdf5File* objFile = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5File> objFile(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
         
         // objFile = new BigDataStatMeth::hdf5File(filename, false);
         objFile.reset( new BigDataStatMeth::hdf5File(filename, false) );

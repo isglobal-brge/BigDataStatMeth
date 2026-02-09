@@ -172,9 +172,9 @@ Rcpp::List bdblockSubstract_hdf5(std::string filename,
         
         H5::Exception::dontPrint();  
 
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsC(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(nullptr);
 
         int iblock_size;
         bool bparal, bforce;

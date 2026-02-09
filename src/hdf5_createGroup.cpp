@@ -100,7 +100,8 @@ Rcpp::List bdCreate_hdf5_group(std::string filename, std::string group)
          H5::Exception::dontPrint();
          
          // objFile = new BigDataStatMeth::hdf5File(filename, false);
-         BigDataStatMeth::HDF5Handle objFile( new BigDataStatMeth::hdf5File(filename, false) );
+         // BigDataStatMeth::HDF5Handle objFile( new BigDataStatMeth::hdf5File(filename, false) );
+        std::unique_ptr<BigDataStatMeth::hdf5File> objFile( new BigDataStatMeth::hdf5File(filename, false) );
          objFile->openFile("rw");
          
          if( BigDataStatMeth::exists_HDF5_element(objFile->getFileptr(),  group))  {

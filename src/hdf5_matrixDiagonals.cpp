@@ -108,7 +108,7 @@ Rcpp::RObject bdgetDiagonal_hdf5( std::string filename, std::string group, std::
     try 
     {
         // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
 
         //  dsA = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false);
         dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false) );
@@ -245,7 +245,7 @@ Rcpp::List bdWriteDiagonal_hdf5( Rcpp::RObject diagonal, std::string filename, s
         H5::Exception::dontPrint();
 
         // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
          
         Rcpp::NumericVector intNewDiagonal;    
         std::string strDataset = group + "/" + dataset;

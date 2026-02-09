@@ -114,7 +114,7 @@ Rcpp::RObject  bdgetDim_hdf5( std::string filename, std::string dataset)
         H5::Exception::dontPrint();
 
         // BigDataStatMeth::hdf5Dataset* ds = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> ds(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> ds(nullptr);
         
         
         // ds = new BigDataStatMeth::hdf5Dataset(filename, dataset, false);

@@ -154,8 +154,8 @@ Rcpp::List bdRemoveMAF_hdf5( std::string filename, std::string group, std::strin
 
         // BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
         // BigDataStatMeth::hdf5DatasetInternal* dsOut = nullptr;
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
-        BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5DatasetInternal> dsOut(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
+         std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  dsOut(nullptr);
 
 
         int iremoved = 0;    
