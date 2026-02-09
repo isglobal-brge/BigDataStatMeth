@@ -360,8 +360,11 @@ namespace BigDataStatMeth {
             }
 
             
-            BigDataStatMeth::hdf5Dims* dsdims;
-            dsdims = new BigDataStatMeth::hdf5Dims(dsOut);
+            
+            // BigDataStatMeth::hdf5Dims* dsdims;
+            // dsdims = new BigDataStatMeth::hdf5Dims(dsOut);
+            std::unique_ptr<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
+            dsdims.reset(new BigDataStatMeth::hdf5Dims(dsOut));
             
             if( Rcpp::as<bool>(rownames) == true || Rcpp::as<bool>(header) == true ) {
                 if( Rcpp::as<bool>(rownames) == false){
@@ -376,7 +379,7 @@ namespace BigDataStatMeth {
                 }
             }
             
-            delete dsdims;
+            // delete dsdims;
 
         } catch( H5::FileIException& error ) {
             Rcpp::Rcerr<<"c++ exception Convert_text_to_HDF5 (File IException)" << std::endl;

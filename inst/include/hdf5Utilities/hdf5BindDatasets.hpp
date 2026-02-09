@@ -60,10 +60,12 @@ namespace BigDataStatMeth {
                                  int func, bool binternal )
     {
         
-        
-        BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
-        
         try {
+
+            H5::Exception::dontPrint();
+
+            // BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
             
             hsize_t* dims_out;
             std::vector<hsize_t> stride = {1, 1},
@@ -77,7 +79,8 @@ namespace BigDataStatMeth {
                 
                 std::string strdataset = group +"/" + datasets(i);
                 
-                dsIn = new BigDataStatMeth::hdf5Dataset(filename, strdataset, false);
+                // dsIn = new BigDataStatMeth::hdf5Dataset(filename, strdataset, false);
+                dsIn.reset( new BigDataStatMeth::hdf5Dataset(filename, strdataset, false) );
                 dsIn->openDataset();
                 
                 // Real data set dimension
@@ -88,9 +91,7 @@ namespace BigDataStatMeth {
                 dsIn->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdIn.data() );
                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> original (vdIn.data(), dims_out[0], dims_out[1] );    
                 
-                delete dsIn; dsIn = nullptr;
-                
-                
+                // delete dsIn; dsIn = nullptr;
                 if( func == 0 || func == 1) {
                     
                     if( func == 0 ) { // byCols
@@ -149,30 +150,25 @@ namespace BigDataStatMeth {
                     dsOut->writeDatasetBlock( Rcpp::wrap(original), offset, count, stride, block, true);
                     
                 } else {
-                    delete dsIn; dsIn = nullptr;
+                    // delete dsIn; dsIn = nullptr;
                     Rcpp::Rcerr<<"Group not exists, create the input datasets before proceed";
                     return void();
                 }
             }
             
         } catch( H5::FileIException& error ) {
-            checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5 (File IException)\n";
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
-            checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5 (dstosplit IException)\n";
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5 (DataSpace IException)\n";
             return void();
         } catch(std::exception &ex) {
-            checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr << "c++ exception RcppBind_datasets_hdf5: " << ex.what();
             return void();
         } catch (...) {
-            checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"C++ exception RcppBind_datasets_hdf5 (unknown reason)";
             return void();
         } 
@@ -215,10 +211,13 @@ namespace BigDataStatMeth {
                                bool binternal, Rcpp::Nullable<bool> overwrite = false )
     {
         
-        BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
+        
         
         try
         {
+            H5::Exception::dontPrint();
+            // BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut(nullptr);
             
             Rcpp::NumericVector oper = {0, 1, 2};
             oper.names() = Rcpp::CharacterVector({ "bindCols", "bindRows", "bindRowsbyIndex"});
@@ -235,30 +234,26 @@ namespace BigDataStatMeth {
             
             int bindFunction = oper.findName( func );
             
-            dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outdataset, boverwrite);
+            // dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outdataset, boverwrite);
+            dsOut.reset( new BigDataStatMeth::hdf5Dataset(filename, outgroup, outdataset, boverwrite) );
             
-            RcppBind_datasets_hdf5( filename, group, datasets, dsOut, bindFunction, binternal);
+            RcppBind_datasets_hdf5( filename, group, datasets, dsOut.get(), bindFunction, binternal);
             
-            delete dsOut; dsOut = nullptr;
+            // delete dsOut; dsOut = nullptr;
             
         } catch( H5::FileIException& error ) { 
-            checkClose_file(dsOut);
             Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5_ (File IException)";
             return void();
         } catch( H5::GroupIException & error ) { 
-            checkClose_file(dsOut);
             Rcpp::Rcerr <<"c++ exception RcppBind_datasets_hdf5_ (Group IException)";
             return void();
         } catch( H5::DataSetIException& error ) { 
-            checkClose_file(dsOut);
             Rcpp::Rcerr <<"c++ exception RcppBind_datasets_hdf5_ (DataSet IException)";
             return void();
         } catch(std::exception& ex) {
-            checkClose_file(dsOut);
             Rcpp::Rcerr <<"c++ exception RcppBind_datasets_hdf5_" << ex.what();
             return void();
         } catch (...) {
-            checkClose_file(dsOut);
             Rcpp::Rcerr<<"C++ exception RcppBind_datasets_hdf5_ (unknown reason)";
             return void();
         }

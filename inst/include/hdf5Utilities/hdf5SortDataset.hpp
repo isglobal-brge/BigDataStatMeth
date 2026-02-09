@@ -159,23 +159,23 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) {
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"c++ exception RcppSort_dataset_hdf5 (File IException )" << std::endl;
             return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"c++ exception RcppSort_dataset_hdf5 (dstosplit IException )" << std::endl;
             return void();
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"c++ exception RcppSort_dataset_hdf5 (DataSpace IException )" << std::endl;
             return void();
         } catch(std::exception &ex) {
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr << "c++ exception RcppSort_dataset_hdf5: " << ex.what();
             return void();
         } catch (...) {
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rcpp::Rcerr<<"C++ exception RcppSort_dataset_hdf5 (unknown reason)";
             return void();
         } 

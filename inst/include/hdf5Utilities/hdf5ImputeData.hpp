@@ -288,25 +288,25 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error) { // catch failure caused by the H5File operations
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (File IException)");
         } catch( H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (DataSet IException)");
         } catch( H5::GroupIException& error) { // catch failure caused by the Group operations
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (Group IException)");
         } catch( H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (Data TypeIException)");
         } catch(std::exception &ex) {
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rf_error( "c++ exception Rcpp_Impute_snps_hdf5 : %s", ex.what());
         } catch (...) {
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             Rf_error("C++ exception Rcpp_Impute_snps_hdf5 (unknown reason)");
         }
         

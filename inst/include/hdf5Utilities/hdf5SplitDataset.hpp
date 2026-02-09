@@ -67,9 +67,13 @@ inline void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, boo
                                 int blocksize, int irows, int icols )
 {
         
-    BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
-        
     try {
+
+        H5::Exception::dontPrint();
+
+        // BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut(nullptr);
+
         
         int blocks;
         hsize_t inrows = irows, 
@@ -107,31 +111,32 @@ inline void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, boo
             std::vector<double> vdts( inrows * incols );
             dstosplit->readDatasetBlock( {kk, ii}, {incols, inrows}, stride, block, vdts.data() );
                 
-            dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, true);
+            // dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, true);
+            dsOut.reset( new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, true) );
             dsOut->createDataset( inrows, incols, "real"); 
             
             if( dsOut->getDatasetptr() != nullptr ){
                 dsOut->writeDataset(vdts.data());
             }
             
-            delete dsOut; dsOut = nullptr;
+            // delete dsOut; dsOut = nullptr;
             
         }
         
     } catch( H5::FileIException& error ) {
-        checkClose_file(dstosplit, dsOut);
+        // checkClose_file(dstosplit, dsOut);
         Rf_error( "c++ exception RcppSplit_matrix_hdf5(File IException )");
     } catch( H5::DataSetIException& error ) { 
-        checkClose_file(dstosplit, dsOut);
+        // checkClose_file(dstosplit, dsOut);
         Rf_error( "c++ exception RcppSplit_matrix_hdf5 (DataSet IException )");
     } catch( H5::DataSpaceIException& error ) { 
-        checkClose_file(dstosplit, dsOut);
+        // checkClose_file(dstosplit, dsOut);
         Rf_error( "c++ exception RcppSplit_matrix_hdf5 (DataSpace IException )");
     } catch(std::exception &ex) {
-        checkClose_file(dstosplit, dsOut);
+        // checkClose_file(dstosplit, dsOut);
         Rf_error( "\nC++ exception RcppSplit_matrix_hdf5 : %s", ex.what());
     } catch (...) {
-        checkClose_file(dstosplit, dsOut);
+        // checkClose_file(dstosplit, dsOut);
         Rf_error( "\nC++ exception RcppSplit_matrix_hdf5 (unknown reason)");
     }
     
@@ -278,19 +283,19 @@ inline void RcppSplit_matrix_hdf5_internal ( BigDataStatMeth::hdf5Dataset* dstos
         }
         
     } catch( H5::FileIException& error ) {
-        checkClose_file(dstosplit, dsOut);
+        checkClose_file(dsOut);
         Rf_error( "c++ exception RcppSplit_matrix_hdf5_internal(File IException )");
     } catch( H5::DataSetIException& error ) { 
-        checkClose_file(dstosplit, dsOut);
+        checkClose_file(dsOut);
         Rf_error( "c++ exception RcppSplit_matrix_hdf5_internal (DataSet IException )");
     } catch( H5::DataSpaceIException& error ) { 
-        checkClose_file(dstosplit, dsOut);
+        checkClose_file(dsOut);
         Rf_error( "c++ exception RcppSplit_matrix_hdf5_internal (DataSpace IException )");
     } catch(std::exception &ex) {
-        checkClose_file(dstosplit, dsOut);
+        checkClose_file(dsOut);
         Rf_error( "\nC++ exception RcppSplit_matrix_hdf5_internal : %s",ex.what());
     } catch (...) {
-        checkClose_file(dstosplit, dsOut);
+        checkClose_file(dsOut);
         Rf_error( "\nC++ exception RcppSplit_matrix_hdf5_internal (unknown reason)");
     }
     
