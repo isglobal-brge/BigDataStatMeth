@@ -101,9 +101,8 @@ The implementation uses SVD internally and supports two computation methods:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Create a sample large matrix in HDF5
-library(rhdf5)
 X <- matrix(rnorm(10000), 1000, 10)
 h5createFile("data.h5")
 h5write(X, "data.h5", "data/matrix")

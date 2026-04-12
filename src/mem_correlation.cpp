@@ -36,7 +36,7 @@ using namespace BigDataStatMeth;
 //' @return A list containing correlation results
 //' 
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Backward compatible - existing code unchanged
 //' set.seed(123)
 //' X <- matrix(rnorm(1000), ncol = 10)
@@ -188,7 +188,7 @@ Rcpp::List bdCorr_matrix(Rcpp::RObject X,
      } catch(std::exception &ex) {
          forward_exception_to_r(ex);
      } catch(...) {
-         ::Rf_error("C++ exception bdCorr_matrix (unknown reason)");
+         Rcpp::stop("C++ exception bdCorr_matrix (unknown reason)");
      }
      
      return List::create(
@@ -211,7 +211,7 @@ Rcpp::List bdCorr_matrix(Rcpp::RObject X,
 // //' @return A list containing correlation results for single matrix
 // //' 
 // //' @examples
-// //' \dontrun{
+// //' \donttest{
 // //' # Create sample data
 // //' set.seed(123)
 // //' X <- matrix(rnorm(1000), ncol = 10)
@@ -276,7 +276,7 @@ Rcpp::List bdCorr_matrix(Rcpp::RObject X,
 // //' @return A list containing cross-correlation results
 // //' 
 // //' @examples
-// //' \dontrun{
+// //' \donttest{
 // //' # Create sample data with different number of variables
 // //' set.seed(123)
 // //' X <- matrix(rnorm(1000), nrow = 100, ncol = 10)

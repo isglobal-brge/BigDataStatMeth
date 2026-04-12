@@ -1,6 +1,8 @@
 /**
  * @file hdf5Methods.hpp
  * @brief Core HDF5 utility methods for dataset operations
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * 
  * This file provides core functionality for HDF5 dataset operations,
  * particularly focusing on joining multiple datasets. It implements
@@ -96,6 +98,7 @@ namespace BigDataStatMeth {
             hsize_t* dims_out = dstoJoin->dim();
             
             // Add rows and needed cols to add the merged data in the new dataset
+            dsJoined->inheritCompressionLevel(dstoJoin->getCompressionLevel());
             dsJoined->createUnlimitedDataset( (unsigned long long)dims_out[0], (unsigned long long)dims_out[1], "real");
             dsJoined->openDataset();
 
@@ -150,32 +153,25 @@ namespace BigDataStatMeth {
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             // checkClose_file(dsJoined);
-            Rcpp::Rcerr<<"c++ exception join_datasets (File IException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception join_datasets (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             // checkClose_file(dsJoined);
-            Rcpp::Rcerr<<"c++ exception join_datasets (DataSet IException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception join_datasets (DataSet IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             // checkClose_file(dsJoined);
-            Rcpp::Rcerr<<"c++ exception join_datasets (Group IException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception join_datasets (Group IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsJoined);
-            Rcpp::Rcerr<<"c++ exception join_datasets (DataSpace IException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception join_datasets (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsJoined);
-            Rcpp::Rcerr<<"c++ exception join_datasets (Data TypeIException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception join_datasets (Data TypeIException)");
         } catch(std::exception &ex) {
             // checkClose_file(dsJoined);
-            Rcpp::Rcerr << "c++ exception join_datasets: " << ex.what();
-            return -1;
+            throw std::runtime_error(std::string("c++ exception join_datasets: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsJoined);
-            Rcpp::Rcerr<<"C++ exception join_datasets (unknown reason)";
-            return -1;
+            throw std::runtime_error("C++ exception join_datasets (unknown reason)");
         }
         return(0);
     }

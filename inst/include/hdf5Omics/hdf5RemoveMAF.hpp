@@ -1,6 +1,8 @@
 /**
  * @file hdf5RemoveMAF.hpp
  * @brief Implementation of Minor Allele Frequency (MAF) filtering for genomic data in HDF5 format
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  *
  * This file provides functionality for filtering genomic data based on Minor Allele
  * Frequency (MAF) thresholds. It operates on large-scale genomic datasets stored
@@ -166,6 +168,7 @@ namespace BigDataStatMeth {
                         // unlimDataset = new DataSet(file->openDataSet(stroutdata));
                         // bcreated = true;
                         
+                        dsOut->setCompressionLevel(dsIn->getCompressionLevel());
                         dsOut->createUnlimitedDataset(extendrows, extendcols, "real");
                         dsOut->openDataset();
                         bcreated = true;
@@ -201,28 +204,22 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error ){
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5 (File IException)\n";
-            return -1;
+            throw std::runtime_error("c++ c++ exception Rcpp_Remove_MAF_hdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { 
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5 (DataSet IException)\n";
-            return -1;
+            throw std::runtime_error("c++ c++ exception Rcpp_Remove_MAF_hdf5 (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { 
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5 (DataSpace IException)\n";
-            return -1;
+            throw std::runtime_error("c++ c++ exception Rcpp_Remove_MAF_hdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error ) { 
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5 (DataType IException)\n";
-            return -1;
+            throw std::runtime_error("c++ c++ exception Rcpp_Remove_MAF_hdf5 (DataType IException)");
         } catch(std::exception &ex) {
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nc++ c++ exception Rcpp_Remove_MAF_hdf5: "<< ex.what()<<"\n";
-            return -1;
+            throw std::runtime_error(std::string("c++ c++ exception Rcpp_Remove_MAF_hdf5: ") + ex.what());
         }  catch (...) {
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nC++ exception Rcpp_Remove_MAF_hdf5 (unknown reason)";
-            return -1;
+            throw std::runtime_error("C++ exception Rcpp_Remove_MAF_hdf5 (unknown reason)");
         }
         
         return(itotrem);

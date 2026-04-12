@@ -1,6 +1,8 @@
 /**
  * @file hdf5BindDatasets.hpp
  * @brief Utilities for combining HDF5 datasets
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * 
  * This file provides functionality for binding multiple HDF5 datasets together,
  * either by rows or columns. It supports operations similar to R's rbind and cbind
@@ -138,6 +140,7 @@ namespace BigDataStatMeth {
                     count[1] = original.rows();
                     
                     if(i == 0) 
+                        dsOut->inheritCompressionLevel(dsIn->getCompressionLevel());
                         dsOut->createUnlimitedDataset(count[0], count[1], "real");
                     dsOut->openDataset();
                     
@@ -151,26 +154,20 @@ namespace BigDataStatMeth {
                     
                 } else {
                     // delete dsIn; dsIn = nullptr;
-                    Rcpp::Rcerr<<"Group not exists, create the input datasets before proceed";
-                    return void();
+                    throw std::runtime_error("Group not exists, create the input datasets before proceed");
                 }
             }
             
         } catch( H5::FileIException& error ) {
-            Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5 (File IException)\n";
-            return void();
+            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
-            Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5 (dstosplit IException)\n";
-            return void();
+            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5 (dstosplit IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5 (DataSpace IException)\n";
-            return void();
+            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5 (DataSpace IException)");
         } catch(std::exception &ex) {
-            Rcpp::Rcerr << "c++ exception RcppBind_datasets_hdf5: " << ex.what();
-            return void();
+            throw std::runtime_error(std::string("c++ exception RcppBind_datasets_hdf5: ") + ex.what());
         } catch (...) {
-            Rcpp::Rcerr<<"C++ exception RcppBind_datasets_hdf5 (unknown reason)";
-            return void();
+            throw std::runtime_error("C++ exception RcppBind_datasets_hdf5 (unknown reason)");
         } 
         
         return void();
@@ -242,20 +239,15 @@ namespace BigDataStatMeth {
             // delete dsOut; dsOut = nullptr;
             
         } catch( H5::FileIException& error ) { 
-            Rcpp::Rcerr<<"c++ exception RcppBind_datasets_hdf5_ (File IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5_ (File IException)");
         } catch( H5::GroupIException & error ) { 
-            Rcpp::Rcerr <<"c++ exception RcppBind_datasets_hdf5_ (Group IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5_ (Group IException)");
         } catch( H5::DataSetIException& error ) { 
-            Rcpp::Rcerr <<"c++ exception RcppBind_datasets_hdf5_ (DataSet IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5_ (DataSet IException)");
         } catch(std::exception& ex) {
-            Rcpp::Rcerr <<"c++ exception RcppBind_datasets_hdf5_" << ex.what();
-            return void();
+            throw std::runtime_error(std::string("c++ exception RcppBind_datasets_hdf5_: ") + ex.what());
         } catch (...) {
-            Rcpp::Rcerr<<"C++ exception RcppBind_datasets_hdf5_ (unknown reason)";
-            return void();
+            throw std::runtime_error("C++ exception RcppBind_datasets_hdf5_ (unknown reason)");
         }
         
         return void();

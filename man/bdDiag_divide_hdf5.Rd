@@ -86,8 +86,7 @@ This function provides flexible diagonal division with automatic optimization:
 }
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test matrices
 N <- 1000
@@ -96,13 +95,13 @@ A <- matrix(rnorm(N*N), N, N)
 B <- matrix(rnorm(N*N, mean=1), N, N)  # Avoid division by zero
 
 # Save to HDF5
-bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+bdCreate_hdf5_matrix("test.HDF5", A, "data", "matrixA",
                      overwriteFile = TRUE)
-bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+bdCreate_hdf5_matrix("test.HDF5", B, "data", "matrixB",
                      overwriteFile = FALSE)
 
 # Divide diagonals
-result <- bdDiag_divide_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+result <- bdDiag_divide_hdf5("test.HDF5", "data", "matrixA", "matrixB",
                             outgroup = "results",
                             outdataset = "diagonal_ratio",
                             paral = TRUE)

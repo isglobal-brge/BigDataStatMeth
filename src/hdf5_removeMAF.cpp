@@ -95,15 +95,14 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test SNP data
 //' snps <- matrix(sample(c(0, 1, 2), 1000, replace = TRUE,
 //'                      prob = c(0.7, 0.2, 0.1)), 100, 10)
 //' 
 //' # Save to HDF5
-//' fn <- "snp_data.hdf5"
+//' fn <- "snp_data.HDF5"
 //' bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
 //'                      overwriteFile = TRUE)
 //' 
@@ -218,22 +217,22 @@ Rcpp::List bdRemoveMAF_hdf5( std::string filename, std::string group, std::strin
             warning( std::to_string(iremoved) + " Columns have been removed");
         
     } catch( H5::FileIException& error ){
-        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (File IException)";
+        Rcpp::stop("c++ c++ exception bdRemoveMAF_hdf5 (File IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataSet IException)";
+        Rcpp::stop("c++ c++ exception bdRemoveMAF_hdf5 (DataSet IException)");
         return(lst_return);
     } catch( H5::DataSpaceIException& error ) { 
-        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataSpace IException)";
+        Rcpp::stop("c++ c++ exception bdRemoveMAF_hdf5 (DataSpace IException)");
         return(lst_return);
     } catch( H5::DataTypeIException& error ) { 
-        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5 (DataType IException)";
+        Rcpp::stop("c++ c++ exception bdRemoveMAF_hdf5 (DataType IException)");
         return(lst_return);
     } catch(std::exception &ex) {
-        Rcpp::Rcerr<<"c++ c++ exception bdRemoveMAF_hdf5: "<< ex.what();
+        Rcpp::stop("c++ c++ exception bdRemoveMAF_hdf5: " + std::string(ex.what()));
         return(lst_return);
     }  catch (...) {
-        Rcpp::Rcerr<<"c++ exception bdRemoveMAF_hdf5 (unknown reason)";
+        Rcpp::stop("c++ exception bdRemoveMAF_hdf5 (unknown reason)");
         return(lst_return);
     }
     

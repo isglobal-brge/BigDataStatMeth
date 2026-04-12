@@ -112,13 +112,11 @@ namespace BigDataStatMeth {
                                             std::string output_type = "matrix")
             {
                 if (diagonal_vector.size() != size) {
-                    Rf_error("Diagonal vector size must match matrix size");
-                    return;
+                    throw std::runtime_error("Diagonal vector size must match matrix size");
                 }
                 
                 if (output_type != "matrix" && output_type != "vector") {
-                    Rf_error("Invalid output_type: must be 'matrix' or 'vector'");
-                    return;
+                    throw std::runtime_error("Invalid output_type: must be 'matrix' or 'vector'");
                 }
                 
                 // Set optimal block size
@@ -512,8 +510,7 @@ namespace BigDataStatMeth {
                     hid_t mem_space = H5Screate_simple(1, &size, NULL);
                     
                     if (file_space < 0 || mem_space < 0) {
-                        Rf_error("Failed to create HDF5 data spaces for diagonal write");
-                        return;
+                        throw std::runtime_error("Failed to create HDF5 data spaces for diagonal write");
                     }
                     
                     // Select diagonal elements in file space
@@ -521,8 +518,7 @@ namespace BigDataStatMeth {
                     if (status < 0) {
                         H5Sclose(file_space);
                         H5Sclose(mem_space);
-                        Rf_error("Failed to select diagonal elements in HDF5 file space");
-                        return;
+                        throw std::runtime_error("Failed to select diagonal elements in HDF5 file space");
                     }
                     
                     // Write all diagonal elements in single operation
@@ -530,8 +526,7 @@ namespace BigDataStatMeth {
                     if (status < 0) {
                         H5Sclose(file_space);
                         H5Sclose(mem_space);
-                        Rf_error("Failed to write diagonal elements to HDF5 dataset");
-                        return;
+                        throw std::runtime_error("Failed to write diagonal elements to HDF5 dataset");
                     }
                     
                     // Cleanup HDF5 resources
@@ -539,9 +534,9 @@ namespace BigDataStatMeth {
                     H5Sclose(mem_space);
                     
                 } catch(H5::Exception& error) {
-                    Rf_error("HDF5 exception in writeDiagonal: %s", error.getCDetailMsg());
+                    throw std::runtime_error(std::string("HDF5 exception in writeDiagonal: ") + error.getCDetailMsg());
                 } catch(std::exception& ex) {
-                    Rf_error("C++ exception in writeDiagonal: %s", ex.what());
+                    throw std::runtime_error(std::string("C++ exception in writeDiagonal: ") + ex.what());
                 }
             }
             
@@ -585,7 +580,7 @@ namespace BigDataStatMeth {
                     writeDatasetBlock(scaled_values, {0, 0}, {1, size}, stride, block);
                     
                 } catch(std::exception& ex) {
-                    Rf_error("C++ exception in writeVectorDiagonal: %s", ex.what());
+                    throw std::runtime_error(std::string("C++ exception in writeVectorDiagonal: ") + ex.what());
                 }
             }
             

@@ -31,7 +31,7 @@
 #'         HDF5 file.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Import from local file
 #' bdImportData_hdf5(
 #'   inFile = "data.txt",
@@ -43,7 +43,7 @@
 #' )
 #' 
 #' # Import from URL
-#' bdImportData_hdf5(
+#' bdImportData_hdf5(Pors
 #'   inFile = "https://example.com/data.csv",
 #'   destFile = "output.h5",
 #'   destGroup = "downloaded",

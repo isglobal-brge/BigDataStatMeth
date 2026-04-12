@@ -27,7 +27,7 @@
 //' @return A list with matrix properties and suitability assessment.
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Check matrix suitability
 //' check_result <- bdEigen_check_matrix("data.h5", "matrices", "my_matrix")
 //' 

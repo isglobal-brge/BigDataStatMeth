@@ -80,7 +80,6 @@
 //' @return Numeric matrix containing the cross-product result.
 //'
 //' @examples
-//' library(BigDataStatMeth)
 //' 
 //' # Single matrix cross-product
 //' n <- 100
@@ -176,11 +175,11 @@ Eigen::MatrixXd bdCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B = 
         }
         
     } catch(std::exception &ex) {
-        Rcpp::Rcerr << "c++ exception bdCrossprod: " << ex.what();
+        Rcpp::stop("c++ exception bdCrossprod: " + std::string(ex.what()));
         return(Eigen::MatrixXd(0,0));
         // return(Rcpp::IntegerMatrix(0,0));
     } catch (...) {
-        Rcpp::Rcerr << "c++ exception bdCrossprod (unknown reason)";
+        Rcpp::stop("c++ exception bdCrossprod (unknown reason)");
         return(Eigen::MatrixXd(0,0));
     }
     

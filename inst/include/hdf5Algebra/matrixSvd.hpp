@@ -35,6 +35,8 @@
  * @author BigDataStatMeth Development Team
  * @version 1.0
  * @date 2025
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @note Updated for Spectra 1.0.1 compatibility
  */
 
@@ -233,6 +235,7 @@ namespace BigDataStatMeth {
             
             
             // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
+            dsd->inheritCompressionLevel(dsA->getCompressionLevel());
             dsd->createDataset( 1, retsvd.d.size(), "real");
             dsd->writeDataset( Rcpp::wrap(retsvd.d) );
             
@@ -300,13 +303,17 @@ namespace BigDataStatMeth {
             v = v.array().rowwise() / Eigen::Map<Eigen::RowVectorXd>(retsvd.d.data(), (retsvd.d).size()).array();
             
             if (transp == true)  {
+                dsu->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsu->createDataset( v.rows(), v.cols(), "real");
+                dsv->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsv->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real");
                 
                 dsu->writeDataset(Rcpp::wrap(v));
                 dsv->writeDataset(Rcpp::wrap(retsvd.u));
             } else {
+                dsu->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsu->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real");
+                dsv->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsv->createDataset( v.rows(), v.cols(), "real");
                 
                 dsu->writeDataset(Rcpp::wrap(retsvd.u));
@@ -318,20 +325,16 @@ namespace BigDataStatMeth {
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             // checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
-            Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5_Block (File IException)\n";
-            return void();
+            throw std::runtime_error("c++ exception RcppbdSVD_hdf5_Block (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
             // checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
-            Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5_Block (DataSet IException)\n";
-            return void();
+            throw std::runtime_error("c++ exception RcppbdSVD_hdf5_Block (DataSet IException)");
         } catch(std::exception &ex) {
             // checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
-            Rcpp::Rcerr<< "C++ exception RcppbdSVD_hdf5_Block : "<< ex.what();
-            return void();
+            throw std::runtime_error(std::string("C++ exception RcppbdSVD_hdf5_Block: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
-            Rcpp::Rcerr<<"\nC++ exception RcppbdSVD_hdf5_Block (unknown reason)";
-            return void();
+            throw std::runtime_error("C++ exception RcppbdSVD_hdf5_Block (unknown reason)");
         }
         
         return void();
@@ -439,16 +442,20 @@ namespace BigDataStatMeth {
                     
                     // dsu = new hdf5Dataset(filename, stroutgroup, "u", bforce);
                     dsu.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "u", bforce) );
+                    dsu->inheritCompressionLevel(dsA->getCompressionLevel());
+                    dsu->createDataset( retsvd.u.rows(), retsvd.u.cols(), "real"); //. Added 20260227 - .//
                     dsu->writeDataset( Rcpp::wrap(retsvd.u) );
                     
                     // dsv = new hdf5Dataset(filename, stroutgroup, "v", bforce);
                     dsv.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "v", bforce) );
+                    dsv->inheritCompressionLevel(dsA->getCompressionLevel());
                     dsv->createDataset( retsvd.v.rows(), retsvd.v.cols(), "real");
                     dsv->writeDataset( Rcpp::wrap(retsvd.v) );
                     
                     // dsd = new hdf5Dataset(filename, stroutgroup, "d", bforce);
                     dsd.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, "d", bforce) );
                     //.. COMENTAT 2025-02-06 ..// dsd->createDataset( retsvd.d.size(), 1, "real");
+                    dsd->inheritCompressionLevel(dsA->getCompressionLevel());
                     dsd->createDataset( 1, retsvd.d.size(), "real");
                     dsd->writeDataset( Rcpp::wrap(retsvd.d) );
                     
@@ -474,17 +481,13 @@ namespace BigDataStatMeth {
             // delete dsA; dsA = nullptr;
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5 (File IException)\n";
-            return void();
+            throw std::runtime_error("c++ exception RcppbdSVD_hdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception RcppbdSVD_hdf5 (DataSet IException)\n";
-            return void();
+            throw std::runtime_error("c++ exception RcppbdSVD_hdf5 (DataSet IException)");
         } catch(std::exception &ex) {
-            Rcpp::Rcerr<<"c++ exception RcppbdSVD_hdf5 \n"<< ex.what();
-            return void();
+            throw std::runtime_error(std::string("c++ exception RcppbdSVD_hdf5: ") + ex.what());
         } catch (...) {
-            Rcpp::Rcerr<<"\nC++ exception RcppbdSVD_hdf5 (unknown reason)";
-            return void();
+            throw std::runtime_error("C++ exception RcppbdSVD_hdf5 (unknown reason)");
         }
         
         return void();

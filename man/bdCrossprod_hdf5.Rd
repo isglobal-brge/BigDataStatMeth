@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdCrossprod_hdf5}
 \alias{bdCrossprod_hdf5}
-\title{Crossprod with hdf5 matrix}
+\title{Crossprod with HDF5 matrix}
 \usage{
 bdCrossprod_hdf5(
   filename,
@@ -89,9 +89,7 @@ Memory efficiency is achieved through:
 }
 }
 \examples{
-\dontrun{
-  library(BigDataStatMeth)
-  library(rhdf5)
+\donttest{
   
   # Create test matrix
   N = 1000
@@ -100,10 +98,10 @@ Memory efficiency is achieved through:
   a <- matrix(rnorm(N*M), N, M)
   
   # Save to HDF5
-  bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A", overwriteFile = TRUE)
+  bdCreate_hdf5_matrix("test.HDF5", a, "INPUT", "A", overwriteFile = TRUE)
   
   # Compute cross product
-  bdCrossprod_hdf5("test.hdf5", "INPUT", "A", 
+  bdCrossprod_hdf5("test.HDF5", "INPUT", "A", 
                    outgroup = "OUTPUT",
                    outdataset = "result",
                    block_size = 1024,

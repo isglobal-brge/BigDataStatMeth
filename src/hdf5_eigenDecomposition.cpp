@@ -64,16 +64,13 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
-//' library(rhdf5)
-//' library(RSpectra)
+//' \donttest{
 //' 
 //' # Create a sample matrix (can be non-symmetric)
 //' set.seed(123)
 //' A <- matrix(rnorm(2500), 50, 50)
 //' 
-//' fn <- "test_eigen.hdf5"
+//' fn <- "test_eigen.HDF5"
 //' bdCreate_hdf5_matrix_file(filename = fn, object = A, group = "data", dataset = "matrix")
 //'
 //' # Compute eigendecomposition with BigDataStatMeth
@@ -187,30 +184,30 @@
          if (Rcpp::is<Rcpp::CharacterVector>(filename)) {
              str_filename = Rcpp::as<std::string>(filename);
          } else {
-             Rcpp::Rcout << "File name must be character string";
+             Rcpp::stop("File name must be character string");
              return lst_return;
          }
          
          // Validate parameters
          if (ks < 1) {
-             Rcpp::Rcout << "k must be positive";
+             Rcpp::stop("k must be positive");
              return lst_return;
          }
          
          if (tol < 0 || tol > 0.1) {
-             Rcpp::Rcout << "Tolerance must be between 0 and 0.1";
+             Rcpp::stop("Tolerance must be between 0 and 0.1");
              return lst_return;
          }
          
          if (max_iters < 1) {
-             Rcpp::Rcout << "Maximum iterations must be positive";
+             Rcpp::stop("Maximum iterations must be positive");
              return lst_return;
          }
          
          // Validate 'which' parameter
          std::vector<std::string> valid_which = {"LM", "SM", "LR", "SR", "LI", "SI", "LA", "SA"};
          if (std::find(valid_which.begin(), valid_which.end(), which_str) == valid_which.end()) {
-             Rcpp::Rcout << "Invalid 'which' parameter. Must be one of: LM, SM, LR, SR, LI, SI, LA, SA";
+             Rcpp::stop("Invalid 'which' parameter. Must be one of: LM, SM, LR, SR, LI, SI, LA, SA");
              return lst_return;
          }
          
@@ -256,15 +253,15 @@
          lst_return["is_symmetric"] = (lst_return["values_imag"] == R_NilValue);
          
      } catch (H5::FileIException& error) {
-         Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5 (File IException)";
+         Rcpp::stop("c++ exception bdEigen_hdf5 (File IException)");
      } catch (H5::GroupIException& error) {
-         Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5 (Group IException)";
+         Rcpp::stop("c++ exception bdEigen_hdf5 (Group IException)");
      } catch (H5::DataSetIException& error) {
-         Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5 (DataSet IException)";
+         Rcpp::stop("c++ exception bdEigen_hdf5 (DataSet IException)");
      } catch (std::exception& ex) {
-         Rcpp::Rcerr << "\nc++ exception bdEigen_hdf5: " << ex.what();
+         Rcpp::stop("c++ exception bdEigen_hdf5: " + std::string(ex.what()));
      } catch (...) {
-         Rcpp::Rcerr << "\nC++ exception bdEigen_hdf5 (unknown reason)";
+         Rcpp::stop("C++ exception bdEigen_hdf5 (unknown reason)");
      }
      
      return lst_return;

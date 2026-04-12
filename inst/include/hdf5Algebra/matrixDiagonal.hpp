@@ -109,25 +109,25 @@ namespace BigDataStatMeth {
             std::vector<hsize_t> stride = {1, 1}, block = {1, 1};
             
             for (hsize_t block_start = 0; block_start < matrix_size; block_start += DIAG_BLOCK_SIZE) {
-                hsize_t current_block_size = std::min(DIAG_BLOCK_SIZE, matrix_size - block_start);
+                hsize_t N = std::min(DIAG_BLOCK_SIZE, matrix_size - block_start);
                 
-                // Read square block starting from diagonal position
                 std::vector<hsize_t> offset = {block_start, block_start};
-                std::vector<hsize_t> count = {current_block_size, current_block_size};
+                std::vector<hsize_t> count  = {N, N};
                 
-                std::vector<double> block_data(current_block_size * current_block_size);
+                // Read block as raw HDF5 row-major bytes.
+                // block_data[i*N + j] == HDF5[block_start+i, block_start+j]
+                std::vector<double> block_data(N * N);
                 dsMat->readDatasetBlock(offset, count, stride, block, block_data.data());
                 
-                // Map to Eigen for correct R/HDF5 layout handling
-                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> 
-                    block_matrix(block_data.data(), current_block_size, current_block_size);
+                // Diagonal elements sit at block_data[k*N + k] (same index in
+                // HDF5 row-major and R column-major for the diagonal).
+                // Write new diagonal values directly — no transposition needed.
+                for (hsize_t k = 0; k < N; ++k)
+                    block_data[k * N + k] = intNewDiagonal[block_start + k];
                 
-                // Use Eigen diagonal assignment - NO LOOP NEEDED
-                Eigen::Map<Eigen::VectorXd> diagonal_segment(REAL(intNewDiagonal) + block_start, current_block_size);
-                block_matrix.diagonal() = diagonal_segment;
-                
-                // Write modified block back
-                dsMat->writeDatasetBlock(Rcpp::wrap(block_matrix), offset, count, stride, block, false);
+                // Write back using the vector overload, which passes the raw
+                // row-major bytes straight to HDF5 without any R/Rcpp wrapping.
+                dsMat->writeDatasetBlock(block_data, offset, count, stride, block);
             }
             
         } catch(std::exception& ex) {

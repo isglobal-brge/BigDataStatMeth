@@ -81,8 +81,7 @@ The function supports parallel processing for large files and provides
 memory-efficient import capabilities.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create a test CSV file
 data <- matrix(rnorm(100), 10, 10)
@@ -91,7 +90,7 @@ write.csv(data, "test.csv", row.names = FALSE)
 # Import to HDF5
 bdImportTextFile_hdf5(
   filename = "test.csv",
-  outputfile = "output.hdf5",
+  outputfile = "output.HDF5",
   outGroup = "data",
   outDataset = "matrix1",
   sep = ",",
@@ -100,7 +99,7 @@ bdImportTextFile_hdf5(
 )
 
 # Cleanup
-unlink(c("test.csv", "output.hdf5"))
+unlink(c("test.csv", "output.HDF5"))
 }
 
 }

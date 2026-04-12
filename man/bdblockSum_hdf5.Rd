@@ -92,8 +92,7 @@ Error handling:
 }
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test matrices
 N <- 1500
@@ -103,13 +102,13 @@ a <- matrix(rnorm(N*M), N, M)
 b <- matrix(rnorm(N*M), N, M)
 
 # Save to HDF5
-bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+bdCreate_hdf5_matrix("test.HDF5", a, "data", "A",
                      overwriteFile = TRUE)
-bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+bdCreate_hdf5_matrix("test.HDF5", b, "data", "B",
                      overwriteFile = FALSE)
 
 # Perform addition
-bdblockSum_hdf5("test.hdf5", "data", "A", "B",
+bdblockSum_hdf5("test.HDF5", "data", "A", "B",
                 outgroup = "results",
                 outdataset = "sum",
                 block_size = 1024,

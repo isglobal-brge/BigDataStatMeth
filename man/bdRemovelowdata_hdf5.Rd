@@ -69,15 +69,14 @@ support for:
 The function supports both in-place modification and creation of new datasets.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test SNP data with missing values
 snps <- matrix(sample(c(0, 1, 2, NA), 100, replace = TRUE,
                      prob = c(0.3, 0.3, 0.3, 0.1)), 10, 10)
 
 # Save to HDF5
-fn <- "snp_data.hdf5"
+fn <- "snp_data.HDF5"
 bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
                      overwriteFile = TRUE)
 

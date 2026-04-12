@@ -113,18 +113,17 @@
 //' - Exception handling
 //' 
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test data
 //' data <- matrix(rnorm(1000*100), 1000, 100)
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test.hdf5", data, "data", "matrix",
+//' bdCreate_hdf5_matrix("test.HDF5", data, "data", "matrix",
 //'                      overwriteFile = TRUE)
 //' 
 //' # Normalize data
-//' bdNormalize_hdf5("test.hdf5", "data", "matrix",
+//' bdNormalize_hdf5("test.HDF5", "data", "matrix",
 //'                  bcenter = TRUE,
 //'                  bscale = TRUE,
 //'                  wsize = 1000)
@@ -152,7 +151,8 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
          
          H5::Exception::dontPrint();
          
-         bool bc, bs, bforce, bbyrows, corrected = false;
+         //..// bool bc, bs, bforce, bbyrows, corrected = false;
+         bool bc, bs, bforce, bbyrows;
          hsize_t nrows, ncols;
          std::string strgroupout;
          std::vector<hsize_t> stride = {1, 1},
@@ -188,7 +188,7 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
                  get_HDF5_mean_sd_by_row( dsA.get(), datanormal, true, true, wsize);
              }    
          } else {
-             Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : error with "<<dataset<< " datset\n";
+             Rcpp::stop("C++ exception bdNormalize_hdf5 : error with datset");
              return(lst_return);
          }
          
@@ -201,7 +201,7 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
          if( dsmean->getDatasetptr() != nullptr) {
             dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
          } else {
-            Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : error with "<<strdatasetmean<< " datset\n";
+            Rcpp::stop("C++ exception bdNormalize_hdf5 : error with datset");
             return(lst_return);
          }
          
@@ -210,7 +210,7 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
          if( dssd->getDatasetptr() != nullptr) {
             dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
          } else {
-            Rcpp::Rcerr<<"\nC++ exception bdNormalize_hdf5 : error with "<<strdatasetsd<< " datset\n";
+            Rcpp::stop("C++ exception bdNormalize_hdf5 : error with datset");
             return(lst_return);
          }
          
@@ -218,7 +218,8 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
          dsNormal->createDataset( dsA.get(), "real");
          
          if( dsA->getDatasetptr() != nullptr && dsNormal->getDatasetptr() != nullptr){
-             BigDataStatMeth::RcppNormalizeHdf5( dsA.get(), dsNormal.get(), datanormal, wsize, bc, bs, bbyrows, corrected);
+             BigDataStatMeth::RcppNormalizeHdf5( dsA.get(), dsNormal.get(), datanormal, wsize, bc, bs, bbyrows, false);
+             //..// BigDataStatMeth::RcppNormalizeHdf5( dsA.get(), dsNormal.get(), datanormal, wsize, bc, bs, bbyrows, corrected);
          }
 
          lst_return["fn"] = filename;
@@ -227,17 +228,17 @@ Rcpp::List bdNormalize_hdf5( std::string filename, std::string group, std::strin
          lst_return["sd"] = strgroupout + "/" + strdatasetsd;
          
      } catch( H5::FileIException& error ) {
-         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (File IException)";
+         Rcpp::stop("c++ exception bdNormalize_hdf5 (File IException)");
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (DataSet IException)";
+         Rcpp::stop("c++ exception bdNormalize_hdf5 (DataSet IException)");
      } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (DataSpace IException)";
+         Rcpp::stop("c++ exception bdNormalize_hdf5 (DataSpace IException)");
      } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 (DataType IException)";
+         Rcpp::stop("c++ exception bdNormalize_hdf5 (DataType IException)");
      } catch(std::exception &ex) {
-         Rcpp::Rcerr<<"c++ exception bdNormalize_hdf5 : "<< ex.what();
+         Rcpp::stop("c++ exception bdNormalize_hdf5: " + std::string(ex.what()));
      } catch (...) {
-         Rcpp::Rcerr<<"C++ exception bdNormalize_hdf5 (unknown reason)";
+         Rcpp::stop("C++ exception bdNormalize_hdf5 (unknown reason)");
      }
 
      return(lst_return);

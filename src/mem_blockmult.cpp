@@ -86,8 +86,7 @@
 //' @return Matrix or vector containing the result of A * B.
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Matrix-matrix multiplication
 //' N <- 2500
@@ -180,9 +179,9 @@ Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B,
         
         
     } catch(std::exception &ex) {
-        Rcpp::Rcerr << "c++ exception bdblockMult: " << ex.what();
+        Rcpp::stop("c++ exception bdblockMult: " + std::string(ex.what()));
     } catch (...) {
-        Rcpp::Rcerr << "c++ exception bdblockMult (unknown reason)";
+        Rcpp::stop("c++ exception bdblockMult (unknown reason)");
         
     }
 

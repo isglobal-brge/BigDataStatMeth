@@ -1,6 +1,8 @@
 /**
  * @file matrixSvdBlock.hpp
  * @brief Block-based Singular Value Decomposition for HDF5 matrices
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @details This header file provides implementations for computing the Singular
  * Value Decomposition of large matrices stored in HDF5 format using block-based
  * algorithms. The implementation includes:
@@ -117,11 +119,9 @@ inline svdeig RcppbdSVD_lapack( T X, bool bcenter, bool bscale, bool complete ) 
         retsvd.v = vt.transpose();
         
     } catch(std::exception &ex) {
-        Rcpp::Rcout<< "C++ exception RcppbdSVD_lapack : "<< ex.what();
-        return retsvd;
+        throw std::runtime_error(std::string("C++ exception RcppbdSVD_lapack: ") + ex.what());
     } catch (...) {
-        Rf_error("C++ exception RcppbdSVD_lapack (unknown reason)");
-        return retsvd;
+        throw std::runtime_error("C++ exception RcppbdSVD_lapack (unknown reason)");
     }
     
     return retsvd;
@@ -200,26 +200,19 @@ std::vector<svdPositions> prepareForParallelization( T* dsA, int M, int k, bool 
 
 
     } catch( H5::FileIException& error ) {
-        Rcpp::Rcerr<<"\nc++ exception prepareForParallelization (File IException)\n";
-        return(pos);
+        throw std::runtime_error("c++ exception prepareForParallelization (File IException)");
     } catch( H5::DataSetIException& error ) {
-        Rcpp::Rcerr<<"\nc++ exception prepareForParallelization (DataSet IException)\n";
-        return(pos);
+        throw std::runtime_error("c++ exception prepareForParallelization (DataSet IException)");
     } catch( H5::GroupIException& error ) {
-        Rcpp::Rcerr<<"\nc++ exception prepareForParallelization (Group IException)\n";
-        return(pos);
+        throw std::runtime_error("c++ exception prepareForParallelization (Group IException)");
     } catch( H5::DataTypeIException& error ) {
-        Rcpp::Rcerr<<"\nc++ exception prepareForParallelization (DataType IException)\n";
-        return(pos);
+        throw std::runtime_error("c++ exception prepareForParallelization (DataType IException)");
     } catch( H5::DataSpaceIException& error ) {
-        Rcpp::Rcerr<<"\nc++ exception prepareForParallelization (DataSpace IException)\n";
-        return(pos);
+        throw std::runtime_error("c++ exception prepareForParallelization (DataSpace IException)");
     } catch(std::exception &ex) {
-        Rcpp::Rcerr<<"c++ exception prepareForParallelization \n"<< ex.what();
-        return(pos);
+        throw std::runtime_error(std::string("c++ exception prepareForParallelization: ") + ex.what());
     } catch (...) {
-        Rcpp::Rcerr<<"\nC++ exception prepareForParallelization (unknown reason)";
-        return(pos);
+        throw std::runtime_error("C++ exception prepareForParallelization (unknown reason)");
     }
 
 
@@ -290,6 +283,7 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
             // normalizedData = new BigDataStatMeth::hdf5DatasetInternal (dsA->getFullPath(), strGroupName, "normalmatrix", true);
             normalizedData.reset( new BigDataStatMeth::hdf5DatasetInternal (dsA->getFullPath(), strGroupName, "normalmatrix", true) );
             // normalizedData->createDataset( irows, icols, "real");
+            normalizedData->inheritCompressionLevel(dsA->getCompressionLevel());
             normalizedData->createDataset( irows, icols, "real");
             //.Caldria revisar... .// normalizedData->createDataset( n, p, "real");
         }
@@ -312,10 +306,10 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                 Eigen::MatrixXd X;
                     
                 std::vector<double> vdX( paralPos[i].count[0] * paralPos[i].count[1] ); 
-                #pragma omp critical(accessFile)
-                {
-                    dsA->readDatasetBlock( {paralPos[i].totOffset[0], paralPos[i].totOffset[1]}, {paralPos[i].count[0], paralPos[i].count[1]}, paralPos[i].stride, paralPos[i].block, vdX.data() );
-                }
+                //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                //.. 20260325 - remove critical ..// {
+                dsA->readDatasetBlock( {paralPos[i].totOffset[0], paralPos[i].totOffset[1]}, {paralPos[i].count[0], paralPos[i].count[1]}, paralPos[i].stride, paralPos[i].block, vdX.data() );
+                //.. 20260325 - remove critical ..// }
                 
                 if(transp==false){    
                     X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdX.data(), paralPos[i].count[1], paralPos[i].count[0] );
@@ -338,10 +332,10 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                         // X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
                         X = RcppNormalizeColwise(X, bcenter, bscale);
                         
-                        #pragma omp critical(accessFile)
-                        {   
-                            normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
-                        }
+                        //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                        //.. 20260325 - remove critical ..// {   
+                        normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
+                        //.. 20260325 - remove critical ..// }
                         
                     } else {
                         
@@ -350,10 +344,10 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                         count_tmp = {(unsigned long long)X.cols(), (unsigned long long)X.rows()};
                         offset_tmp = {paralPos[i].totOffset[1], paralPos[i].totOffset[0]};
                         
-                        #pragma omp critical(accessFile)
-                        {   
-                            normalizedData->writeDatasetBlock( Rcpp::wrap(X.transpose()), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
-                        }
+                        //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                        //.. 20260325 - remove critical ..// {   
+                        normalizedData->writeDatasetBlock( Rcpp::wrap(X.transpose()), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
+                        //.. 20260325 - remove critical ..// }
                     }
                 }
                 
@@ -400,13 +394,14 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                 //    d) Write results to hdf5 file
                 #pragma omp ordered
                 {
-                    #pragma omp critical(accessFile)
+                    //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
                     {
 
                         if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !exists_HDF5_element(dsA->getFileptr(),  paralPos[i].strDatasetName )) ) )
                         {
                             // unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true );
                             unlimDataset.reset( new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true) );   
+                            unlimDataset->inheritCompressionLevel(dsA->getCompressionLevel());
                             unlimDataset->createUnlimitedDataset(paralPos[i].write_count[0], paralPos[i].write_count[1], "real");
                             // delete unlimDataset; unlimDataset = nullptr;
 
@@ -439,26 +434,19 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
         // }
         
     } catch( H5::FileIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception First_level_SvdBlock_decomposition_hdf5 (File IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception First_level_SvdBlock_decomposition_hdf5 (DataSet IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSet IException)");
     } catch( H5::GroupIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception First_level_SvdBlock_decomposition_hdf5 (Group IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (Group IException)");
     } catch( H5::DataTypeIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception First_level_SvdBlock_decomposition_hdf5 (DataType IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (DataType IException)");
     } catch( H5::DataSpaceIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception First_level_SvdBlock_decomposition_hdf5 (DataSpace IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSpace IException)");
     } catch(std::exception &ex) {
-        Rcpp::Rcerr<<"c++ exception First_level_SvdBlock_decomposition_hdf5 \n"<< ex.what();
-        return void();
+        throw std::runtime_error(std::string("c++ exception First_level_SvdBlock_decomposition_hdf5: ") + ex.what());
     } catch (...) {
-        Rcpp::Rcerr<<"\nC++ exception First_level_SvdBlock_decomposition_hdf5 (unknown reason)";
-        return void();
+        throw std::runtime_error("C++ exception First_level_SvdBlock_decomposition_hdf5 (unknown reason)");
     }
     
     return void();
@@ -523,7 +511,7 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
             Eigen::MatrixXd restmp;
             Eigen::MatrixXd X;
 
-            #pragma omp critical(accessFile)
+            //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
             {
                 //    a) Get dataset
                 // dsCur = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strGroupName + "/" + joindata[i], false);
@@ -579,13 +567,14 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
 
             #pragma omp ordered
             {
-                #pragma omp critical(accessFile)
+                //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
                 {
                     
                     if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !BigDataStatMeth::exists_HDF5_element(dsA->getFileptr(),  strDatasetName)) ) ) {
                         // Create unlimited dataset in hdf5 file
                         // unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true );
                         unlimDataset.reset( new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true) );
+                        unlimDataset->inheritCompressionLevel(dsA->getCompressionLevel());
                         unlimDataset->createUnlimitedDataset(count[0], count[1], "real");
                         // delete unlimDataset; unlimDataset = nullptr;
                         
@@ -612,26 +601,19 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
         }
 
     } catch( H5::FileIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception Next_level_SvdBlock_decomposition_hdf5 (File IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception Next_level_SvdBlock_decomposition_hdf5 (DataSet IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (DataSet IException)");
     } catch( H5::GroupIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception Next_level_SvdBlock_decomposition_hdf5 (Group IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (Group IException)");
     } catch( H5::DataTypeIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception Next_level_SvdBlock_decomposition_hdf5 (DataType IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (DataType IException)");
     } catch( H5::DataSpaceIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception Next_level_SvdBlock_decomposition_hdf5 (DataSpace IException)\n";
-        return void();
+        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (DataSpace IException)");
     } catch(std::exception &ex) {
-        Rcpp::Rcerr<<"c++ exception Next_level_SvdBlock_decomposition_hdf5 \n"<< ex.what();
-        return void();
+        throw std::runtime_error(std::string("c++ exception Next_level_SvdBlock_decomposition_hdf5: ") + ex.what());
     } catch (...) {
-        Rcpp::Rcerr<<"\nC++ exception Next_level_SvdBlock_decomposition_hdf5 (unknown reason)";
-        return void();
+        throw std::runtime_error("C++ exception Next_level_SvdBlock_decomposition_hdf5 (unknown reason)");
     }
     
     return void();

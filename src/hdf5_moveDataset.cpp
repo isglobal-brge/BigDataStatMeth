@@ -52,7 +52,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Move dataset to a different group
 //' success <- bdmove_hdf5_dataset("data.h5", 
 //'                          source_path = "/old_group/my_dataset",
@@ -98,22 +98,22 @@ Rcpp::List bdmove_hdf5_dataset(std::string filename,
          
          // Input validation
          if (filename.empty()) {
-             Rcpp::Rcerr << "Error: filename cannot be empty" << std::endl;
+             Rcpp::stop("Error: filename cannot be empty");
              return(lst_return);
          }
          
          if (source_path.empty()) {
-             Rcpp::Rcerr << "Error: source_path cannot be empty" << std::endl;
+             Rcpp::stop("Error: source_path cannot be empty");
              return(lst_return);
          }
          
          if (dest_path.empty()) {
-             Rcpp::Rcerr << "Error: dest_path cannot be empty" << std::endl;
+             Rcpp::stop("Error: dest_path cannot be empty");
              return(lst_return);
          }
          
          if (source_path == dest_path) {
-             Rcpp::Rcerr << "Error: source_path and dest_path cannot be the same" << std::endl;
+             Rcpp::stop("Error: source_path and dest_path cannot be the same");
              return(lst_return);
          }
          
@@ -134,10 +134,10 @@ Rcpp::List bdmove_hdf5_dataset(std::string filename,
          return(lst_return);
          
      } catch (const std::exception& e) {
-         Rcpp::Rcerr << "Exception in bdmove_hdf5_dataset: " << e.what() << std::endl;
+         Rcpp::stop("Exception in bdmove_hdf5_dataset: " + std::string(e.what()));
          return(lst_return);
      } catch (...) {
-         Rcpp::Rcerr << "Unknown exception in bdmove_hdf5_dataset" << std::endl;
+         Rcpp::stop("Unknown exception in bdmove_hdf5_dataset");
          return(lst_return);
      }
  }

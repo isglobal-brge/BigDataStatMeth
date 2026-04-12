@@ -93,15 +93,14 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test SNP data with missing values
 //' snps <- matrix(sample(c(0, 1, 2, NA), 100, replace = TRUE,
 //'                      prob = c(0.3, 0.3, 0.3, 0.1)), 10, 10)
 //' 
 //' # Save to HDF5
-//' fn <- "snp_data.hdf5"
+//' fn <- "snp_data.HDF5"
 //' bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
 //'                      overwriteFile = TRUE)
 //' 
@@ -181,7 +180,7 @@ Rcpp::List bdRemovelowdata_hdf5( std::string filename, std::string group,
             dsOut.reset( new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, outdataset, bforce) );
             
         } else {
-            Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5: " << "Input and output dataset must be different";
+            Rcpp::stop("c++ exception bdRemovelowdata_hdf5 Input and output dataset must be different");
             return(lst_return);
         }
         
@@ -189,7 +188,7 @@ Rcpp::List bdRemovelowdata_hdf5( std::string filename, std::string group,
             iremoved = Rcpp_Remove_Low_Data_hdf5( dsIn.get(), dsOut.get(), bcols, dpcent);
         } else {
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr << "c++ exception bdRemovelowdata_hdf5: " << "File does not exist";
+            Rcpp::stop("c++ exception bdRemovelowdata_hdf5 File does not exist");
             return(lst_return);
         }
         

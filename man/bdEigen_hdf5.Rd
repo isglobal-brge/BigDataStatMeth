@@ -94,16 +94,13 @@ The implementation automatically:
 }
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
-library(rhdf5)
-library(RSpectra)
+\donttest{
 
 # Create a sample matrix (can be non-symmetric)
 set.seed(123)
 A <- matrix(rnorm(2500), 50, 50)
 
-fn <- "test_eigen.hdf5"
+fn <- "test_eigen.HDF5"
 bdCreate_hdf5_matrix_file(filename = fn, object = A, group = "data", dataset = "matrix")
 
 # Compute eigendecomposition with BigDataStatMeth

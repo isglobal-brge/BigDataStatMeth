@@ -51,7 +51,6 @@ The implementation ensures:
 }
 }
 \examples{
-library(BigDataStatMeth)
 
 # Create test matrices
 n <- 500

@@ -193,7 +193,7 @@
     /**
      * @brief Threshold for switching to out-of-core algorithm
      */
-    const int CHOLESKY_OUTOFCORE_THRESHOLD = 250;
+    const int CHOLESKY_OUTOFCORE_THRESHOLD = 50000;
     // const int CHOLESKY_OUTOFCORE_THRESHOLD = 250000;
     
     /**
@@ -213,10 +213,6 @@
     #include "Utilities/Utilities.hpp"
     #include "hdf5Utilities/hdf5Utilities.hpp"
     
-    // #include "hdf5Omics/hdf5OmicsUtils.hpp"
-    
-
-    
 // =============================================================================
 // LEVEL 0 - CORE UTILITIES - Classes and related to classes
 // =============================================================================
@@ -226,14 +222,8 @@
     #include "hdf5Utilities/hdf5DatasetsInternal.hpp"
     #include "hdf5Utilities/hdf5Dims.hpp"
     #include "hdf5Utilities/hdf5Diagonal.hpp"
-    // #include "hdf5Utilities/hdf5RAII.hpp"
     #include "hdf5Utilities/hdf5CheckClose.hpp"
-    
-    
-    // #include "hdf5Utilities/hdf5DiagonalOperations.hpp"
-
-    // #include "hdf5Utilities/hdf5Diagonal.hpp"
-    
+    #include "Utilities/SystemInfo.hpp"
     
 // =============================================================================
 // LEVEL 0 - ON-MEMORY ALBEGRA AND OTHER FUNCTIONS
@@ -256,18 +246,14 @@
 // =============================================================================
     #include "hdf5Algebra/matrixTriangular.hpp"
     #include "hdf5Algebra/matrixDiagonal.hpp"
+    #include "hdf5Algebra/matrixAggregations.hpp"
 
     #include "hdf5Algebra/vectormatrix.hpp"
     #include "hdf5Algebra/vectorOperations.hpp"
     #include "hdf5Algebra/matrixSdMean.hpp"
     #include "hdf5Algebra/matrixNormalization.hpp"
-
-    
     #include "hdf5Algebra/multiplication.hpp"
-    
     #include "hdf5Algebra/matrixEquationSolver.hpp"
-    
-    
     #include "hdf5Algebra/matrixSvdBlock.hpp"
     #include "hdf5Algebra/matrixSvd.hpp"
     #include "hdf5Algebra/matrixPCA.hpp"
@@ -295,20 +281,11 @@
     #include "hdf5Utilities/hdf5ReduceDataset.hpp"
     #include "hdf5Utilities/hdf5SortDataset.hpp"
     #include "hdf5Utilities/hdf5ApplytoDatasets.hpp"
-    // #include "hdf5Utilities/hdf5MoveDatasets.hpp"
         
 // =============================================================================
 // LEVEL 1 - CORE UTILITIES - Classes and related to classes
 // =============================================================================
     #include "hdf5Utilities/hdf5DiagonalMethods.hpp"
-    // #include "hdf5Utilities/hdf5Diagonal.hpp"
-    
-
-// =============================================================================
-// LEVEL 1 -  HDF5 ALBEGRA
-// =============================================================================
-    
-
 
 // =============================================================================
 // HDF5 OMIC UTILITIES

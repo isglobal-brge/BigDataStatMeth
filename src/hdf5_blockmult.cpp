@@ -1,7 +1,7 @@
 #include <BigDataStatMeth.hpp>
 // #include "hdf5Algebra/multiplication.hpp"
 
-//' Hdf5 datasets multiplication
+//' HDF5 datasets multiplication
 //'
 //' The bdblockmult_hdf5 function performs block-wise matrix multiplication 
 //' between two matrices stored in an HDF5 file. This approach is also efficient 
@@ -55,8 +55,6 @@
 //'   }
 //'   
 //' @examples
-//' library("BigDataStatMeth")
-//' library("rhdf5")
 //' 
 //' N = 1000; M = 1000
 //' 
@@ -64,7 +62,7 @@
 //' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
 //' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
 //' 
-//' fn <- "test_temp.hdf5"
+//' fn <- "test_temp.HDF5"
 //' bdCreate_hdf5_matrix(filename = fn, 
 //'                      object = a, group = "groupA", 
 //'                      dataset = "datasetA",
@@ -192,16 +190,16 @@ Rcpp::List bdblockmult_hdf5(std::string filename,
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         // checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"\nc++ c++ exception blockmult_hdf5 (File IException)\n";
+        Rcpp::stop("c++ c++ exception blockmult_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         // checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"\nc++ exception blockmult_hdf5 (DataSet IException)\n";
+        Rcpp::stop("c++ exception blockmult_hdf5 (DataSet IException)");
     } catch(std::exception &ex) {
         // checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr << "c++ exception blockmult_hdf5: " << ex.what();
+        Rcpp::stop("c++ exception blockmult_hdf5: " + std::string(ex.what()));
     }  catch (...) {
         // checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"C++ exception blockmult_hdf5 (unknown reason)";
+        Rcpp::stop("C++ exception blockmult_hdf5 (unknown reason)");
     }
     
     return(lst_return);

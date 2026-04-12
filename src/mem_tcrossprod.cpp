@@ -81,7 +81,6 @@
 //' @return Numeric matrix containing the transposed cross-product result.
 //'
 //' @examples
-//' library(BigDataStatMeth)
 //' 
 //' # Single matrix transposed cross-product
 //' n <- 100
@@ -142,7 +141,7 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
         {
             try{  
                 mA = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(A);
-            } catch(std::exception &ex) { }
+            } catch(std::exception &ex) { Rcpp::stop("bdtCrossprod: %s", ex.what()); }
             
         } else {
             throw("Matrix A is not numeric - Only numeric matrix allowed");
@@ -156,7 +155,7 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
                 try{  
                     mB = Rcpp::as<Eigen::MatrixXd>(B); 
                 }
-                catch(std::exception &ex) { }
+                catch(std::exception &ex) {  Rcpp::stop("bdtCrossprod: %s", ex.what()); }
             } else {
                 throw("Matrix B is not numeric - Only numeric matrix allowed");
             }
@@ -172,11 +171,11 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
         }
         
     } catch(std::exception &ex) {   
-        Rcpp::Rcerr<<"c++ exception bdtCrossprod: ";
-        Rcpp::Rcerr << ex.what();
+        Rcpp::stop("c++ exception bdtCrossprod");
+        Rcpp::stop(": " + std::string(ex.what()));
         return(Eigen::MatrixXd(0,0));
     } catch (...) {
-        Rcpp::Rcerr<<"\nC++ exception bdtCrossprod (unknown reason)";
+        Rcpp::stop("C++ exception bdtCrossprod (unknown reason)");
         return(Eigen::MatrixXd(0,0));
     }
     

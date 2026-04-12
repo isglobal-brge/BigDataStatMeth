@@ -36,23 +36,30 @@ namespace BigDataStatMeth
     public:
         /**
          * @brief Constructs a dimension manager for an HDF5 dataset
-         * 
-         * @param pdataset Pointer to the HDF5 dataset to manage dimensions for
-         * 
-         * @note Creates a hidden group to store dimension information
-         * @note If dimension information already exists, it will be removed
+         *
+         * A single constructor serves both write mode (default) and read mode.
+         * In write mode the existing dimnames group is removed and a fresh one
+         * is created, matching the previous behaviour.  In read mode the group
+         * is left untouched so that @c readDimnames() can access it.
+         *
+         * @param pdataset Pointer to the open hdf5Dataset to manage dimensions for.
+         * @param bWrite   When @c true (default) the dimnames group is rebuilt for
+         *                 writing.  Pass @c false to open in read-only mode.
+         *
+         * @note In write mode any pre-existing dimnames group is deleted first.
          */
-        hdf5Dims(BigDataStatMeth::hdf5Dataset* pdataset) :
-        hdf5Group(pdataset->getFileName(), pdataset->getGroup() + "/." + pdataset->getDatasetName() + "_dimnames")
+        hdf5Dims(BigDataStatMeth::hdf5Dataset* pdataset, bool bWrite = true) :
+        hdf5Group(pdataset->getFullPath(), pdataset->getGroup() + "/." + pdataset->getDatasetName() + "_dimnames")
         {
             pmaindataset = pdataset;
-            
-            if( exists_HDF5_element(pfile, groupname) ) {
-                remove_elements(pmaindataset->getFileptr(), pmaindataset->getGroup(), "." + pmaindataset->getDatasetName() + "_dimnames" );
+
+            if (bWrite) {
+                if( exists_HDF5_element(pfile, groupname) ) {
+                    remove_elements(pmaindataset->getFileptr(), pmaindataset->getGroup(),
+                                    "." + pmaindataset->getDatasetName() + "_dimnames" );
+                }
+                create_HDF5_groups(groupname);
             }
-
-            create_HDF5_groups(groupname);
-
         }
 
         /**
@@ -99,7 +106,8 @@ namespace BigDataStatMeth
                 } else {
 
                     // Write rownames
-                    if( (unsigned)nrows == pmaindataset->nrows_file()) {
+                    //. 20260222 .// if( (unsigned)nrows == pmaindataset->nrows_file()) {
+                    if( (unsigned)nrows == pmaindataset->ncols()) {
                         
                         std::string fullDatasetPath = groupname + "/" + strrows;
 
@@ -116,7 +124,8 @@ namespace BigDataStatMeth
                     }
 
                     // Write colnames
-                    if( (unsigned)ncols == pmaindataset->ncols_file()) {
+                    //. 20260222 .// if( (unsigned)ncols == pmaindataset->ncols_file()) {
+                    if( (unsigned)ncols == pmaindataset->nrows()) {
                         
                         std::string fullDatasetPath = groupname + "/" + strcols;
 
@@ -136,24 +145,71 @@ namespace BigDataStatMeth
 
             } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
                 close_datasets();
-                Rf_error( "c++ exception writeDimnames (File IException)" );
+                throw std::runtime_error("c++ exception writeDimnames (File IException)");
             } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
                 close_datasets();
-                Rf_error( "c++ exception writeDimnames (DataSet IException)" );
+                throw std::runtime_error("c++ exception writeDimnames (DataSet IException)");
             } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
                 close_datasets();
-                Rf_error( "c++ exception writeDimnames (Group IException)" );
+                throw std::runtime_error("c++ exception writeDimnames (Group IException)");
             } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
                 close_datasets();
-                Rf_error( "c++ exception writeDimnames (DataSpace IException)" );
+                throw std::runtime_error("c++ exception writeDimnames (DataSpace IException)");
             } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
                 close_datasets();
-                Rf_error( "c++ exception writeDimnames (Data TypeIException)" );
+                throw std::runtime_error("c++ exception writeDimnames (Data TypeIException)");
             }
 
           return void();
 
         }
+
+
+        // /**
+        //  * @brief Reads dimension names stored alongside an HDF5 dataset
+        //  *
+        //  * Opens the hidden @c _dimnames group written by @c writeDimnames() and
+        //  * reads back the row-names vector (@c /1) and the column-names vector
+        //  * (@c /2).  If a vector does not exist an empty @c Rcpp::CharacterVector
+        //  * is returned for that component.
+        //  *
+        //  * @return Named @c Rcpp::List with two elements:
+        //  *   - @c "rownames" : @c CharacterVector of row names (length 0 if absent)
+        //  *   - @c "colnames" : @c CharacterVector of col names (length 0 if absent)
+        //  *
+        //  * @pre The @c hdf5Dims object must have been constructed with
+        //  *      @c bWrite = false (read mode).
+        //  * @pre The underlying hdf5Dataset must be open.
+        //  *
+        //  * @throws std::runtime_error on HDF5 I/O failures
+        //  */
+        // Rcpp::List readDimnames()
+        // {
+        //     Rcpp::CharacterVector rn(0), cn(0);
+        // 
+        //     try {
+        //         H5::Exception::dontPrint();
+        // 
+        //         const std::string path_rows = groupname + "/" + strrows;  // .ds_dimnames/1
+        //         const std::string path_cols = groupname + "/" + strcols;  // .ds_dimnames/2
+        // 
+        //         rn = readStringDataset(path_rows);
+        //         cn = readStringDataset(path_cols);
+        // 
+        //     } catch (H5::FileIException& error) {
+        //         throw std::runtime_error("c++ exception readDimnames (File IException)");
+        //     } catch (H5::DataSetIException& error) {
+        //         throw std::runtime_error("c++ exception readDimnames (DataSet IException)");
+        //     } catch (H5::GroupIException& error) {
+        //         throw std::runtime_error("c++ exception readDimnames (Group IException)");
+        //     } catch (std::exception& ex) {
+        //         throw std::runtime_error(std::string("c++ exception readDimnames: ") + ex.what());
+        //     }
+        // 
+        //     return Rcpp::List::create(Rcpp::Named("rownames") = rn,
+        //                               Rcpp::Named("colnames") = cn);
+        // }
+
 
         /**
          * @brief Virtual destructor
@@ -176,6 +232,54 @@ namespace BigDataStatMeth
         std::string strcols = "2";                   ///< Identifier for column names
         hsize_t dimcolnames[2];                      ///< Dimensions for column names
         hsize_t dimrownames[2];                      ///< Dimensions for row names
+
+
+        // /**
+        //  * @brief Reads one string-CompType dataset from the dimnames group
+        //  *
+        //  * Opens the dataset at @p path inside the current file and reads it as
+        //  * a @c CharacterVector using the same @c CompType layout used by
+        //  * @c writeStringVector().  Returns an empty vector when @p path does
+        //  * not exist.
+        //  *
+        //  * @param path  Full HDF5 path of the string dataset (e.g. group + "/1")
+        //  * @return      @c Rcpp::CharacterVector with the stored strings, or
+        //  *              @c CharacterVector(0) when the dataset is absent.
+        //  */
+        // Rcpp::CharacterVector readStringDataset(const std::string& path)
+        // {
+        //     if (!exists_HDF5_element(pfile, path))
+        //         return Rcpp::CharacterVector(0);
+        // 
+        //     // Mirror the CompType used in writeStringVector()
+        //     typedef struct name_t { char chr[MAXSTRING]; } name_t;
+        // 
+        //     H5::DataSet   hds  = pfile->openDataSet(path);
+        //     H5::DataSpace spc  = hds.getSpace();
+        // 
+        //     hsize_t dims[1] = {0};
+        //     spc.getSimpleExtentDims(dims);
+        //     const hsize_t n = dims[0];
+        // 
+        //     if (n == 0) {
+        //         hds.close();
+        //         return Rcpp::CharacterVector(0);
+        //     }
+        // 
+        //     H5::CompType mtype(sizeof(name_t));
+        //     mtype.insertMember("chr", HOFFSET(name_t, chr),
+        //                        H5::StrType(H5::PredType::C_S1, MAXSTRING));
+        // 
+        //     std::vector<name_t> buf(n);
+        //     hds.read(buf.data(), mtype);
+        //     hds.close();
+        // 
+        //     Rcpp::CharacterVector cv(n);
+        //     for (hsize_t i = 0; i < n; ++i)
+        //         cv[static_cast<int>(i)] = std::string(buf[i].chr);
+        //     return cv;
+        // }
+
 
         /**
          * @brief Closes all open datasets
@@ -357,23 +461,17 @@ namespace BigDataStatMeth
                 }
             } 
             catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-                Rcpp::Rcerr<<"c++ exception write_hdf5_string_vector (File IException)" << std::endl;
-                return void();
+                throw std::runtime_error("c++ exception write_hdf5_string_vector (File IException)");
             } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-                Rcpp::Rcerr<<"c++ exception write_hdf5_string_vector (DataSet IException)" << std::endl;
-                return void();
+                throw std::runtime_error("c++ exception write_hdf5_string_vector (DataSet IException)");
             } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-                Rcpp::Rcerr<<"c++ exception write_hdf5_string_vector (Group IException)" << std::endl;
-                return void();
+                throw std::runtime_error("c++ exception write_hdf5_string_vector (Group IException)");
             } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-                Rcpp::Rcerr<<"c++ exception write_hdf5_string_vector (DataSpace IException)" << std::endl;
-                return void();
+                throw std::runtime_error("c++ exception write_hdf5_string_vector (DataSpace IException)");
             } catch(std::exception &ex) {
-                Rcpp::Rcerr << "c++ exception write_hdf5_string_vector: " << ex.what();
-                return void();
+                throw std::runtime_error(std::string("c++ exception write_hdf5_string_vector: ") + ex.what());
             } catch (...) {
-                Rcpp::Rcerr<<"C++ exception write_hdf5_string_vector (unknown reason)";
-                return void();
+                throw std::runtime_error("C++ exception write_hdf5_string_vector (unknown reason)");
             }
             
             dataset->close();

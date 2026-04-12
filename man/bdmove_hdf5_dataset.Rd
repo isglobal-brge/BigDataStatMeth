@@ -65,7 +65,7 @@ Key features:
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Move dataset to a different group
 success <- bdmove_hdf5_dataset("data.h5", 
                          source_path = "/old_group/my_dataset",

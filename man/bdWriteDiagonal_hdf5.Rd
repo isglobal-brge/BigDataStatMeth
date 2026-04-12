@@ -46,29 +46,28 @@ This function provides efficient diagonal modification capabilities with:
 The function validates input types and dimensions before modification.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test matrix
 X <- matrix(rnorm(100), 10, 10)
 
 # Save to HDF5
-bdCreate_hdf5_matrix("test.hdf5", X, "data", "matrix1",
+bdCreate_hdf5_matrix("test.HDF5", X, "data", "matrix1",
                      overwriteFile = TRUE)
 
 # Create new diagonal
 new_diag <- seq(1, 10)
 
 # Update diagonal
-bdWriteDiagonal_hdf5(new_diag, "test.hdf5", "data", "matrix1")
+bdWriteDiagonal_hdf5(new_diag, "test.HDF5", "data", "matrix1")
 
 # Verify
-diag_elements <- bdgetDiagonal_hdf5("test.hdf5", "data", "matrix1")
+diag_elements <- bdgetDiagonal_hdf5("test.HDF5", "data", "matrix1")
 print(diag_elements)
 
 # Cleanup
-if (file.exists("test.hdf5")) {
-  file.remove("test.hdf5")
+if (file.exists("test.HDF5")) {
+  file.remove("test.HDF5")
 }
 }
 

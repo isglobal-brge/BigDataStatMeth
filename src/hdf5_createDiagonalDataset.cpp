@@ -56,8 +56,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create identity matrix (1M x 1M)
 //' bdCreate_diagonal_hdf5("identity.h5", "/", "I_matrix", 

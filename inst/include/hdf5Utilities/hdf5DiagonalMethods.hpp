@@ -1,6 +1,8 @@
 /**
  * @file diagonalOperations.hpp
  * @brief Namespace for diagonal operations between HDF5 datasets
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @details This file provides functionality for performing operations between
  * diagonal elements of matrices or vectors stored in HDF5 format.
  * 
@@ -142,8 +144,7 @@ namespace BigDataStatMeth {
         {
             try {
                 if (dsMatrix->nrows() != dsMatrix->ncols()) {
-                    Rf_error("extractDiagonalToVector: Matrix must be square");
-                    return;
+                    throw std::runtime_error("extractDiagonalToVector: Matrix must be square");
                 }
                 
                 hsize_t matrix_size = dsMatrix->nrows();
@@ -152,15 +153,18 @@ namespace BigDataStatMeth {
                 Rcpp::NumericVector diagonal = getDiagonalfromMatrix(dsMatrix);
                 
                 // Create vector dataset (1×N format)
-                dsVector->createDataset(matrix_size, 1, "numeric");
+                dsVector->inheritCompressionLevel(dsMatrix->getCompressionLevel());
+                //.. 17/03/2026 ..// dsVector->createDataset(matrix_size, 1, "numeric");
+                dsVector->createDataset(1, matrix_size, "numeric");
                 
                 // Write diagonal data
                 std::vector<double> diag_vector = Rcpp::as<std::vector<double>>(diagonal);
                 std::vector<hsize_t> stride = {1, 1}, block = {1, 1};
-                dsVector->writeDatasetBlock(diag_vector, {0, 0}, {1, matrix_size}, stride, block);
+                //.. 17/03/2026 ..// dsVector->writeDatasetBlock(diag_vector, {0, 0}, {1, matrix_size}, stride, block);
+                dsVector->writeDatasetBlock(diag_vector, {0, 0}, {matrix_size, 1}, stride, block);
                 
             } catch(std::exception& ex) {
-                Rf_error("Error in extractDiagonalToVector: %s", ex.what());
+                throw std::runtime_error(std::string("Error in extractDiagonalToVector: ") + ex.what());
             }
         }
         
@@ -191,22 +195,18 @@ namespace BigDataStatMeth {
         {
             try {
                 if (dsMatrix->nrows() != dsMatrix->ncols()) {
-                    Rf_error("writeDiagonalFromVector: Matrix must be square");
-                    return;
+                    throw std::runtime_error("writeDiagonalFromVector: Matrix must be square");
                 }
                 
                 hsize_t vector_size = validateVectorDataset(dsVector);
                 hsize_t matrix_size = dsMatrix->nrows();
                 
                 if (vector_size == 0) {
-                    Rf_error("writeDiagonalFromVector: Input is not a valid vector");
-                    return;
+                    throw std::runtime_error("writeDiagonalFromVector: Input is not a valid vector");
                 }
                 
                 if (vector_size != matrix_size) {
-                    Rf_error("writeDiagonalFromVector: Vector size (%llu) must match matrix diagonal size (%llu)", 
-                             vector_size, matrix_size);
-                    return;
+                    throw std::runtime_error("writeDiagonalFromVector: Vector size must match matrix diagonal size");
                 }
                 
                 // Read vector data
@@ -224,7 +224,7 @@ namespace BigDataStatMeth {
                 setDiagonalMatrix(dsMatrix, diagonal_values);
                 
             } catch(std::exception& ex) {
-                Rf_error("Error in writeDiagonalFromVector: %s", ex.what());
+                throw std::runtime_error(std::string("Error in writeDiagonalFromVector: ") + ex.what());
             }
         }
         
@@ -284,8 +284,7 @@ namespace BigDataStatMeth {
                 if (!isVectorA) {
                     if (dsA->nrows() != dsA->ncols()) {
                         // checkClose_file(tempA, tempB, tempResult);
-                        Rf_error("Matrix A must be square for diagonal operations");
-                        return;
+                        throw std::runtime_error("Matrix A must be square for diagonal operations");
                     }
                     std::string tempNameA = dsA->getDatasetName() + "_temp_diag_A";
                     // tempA = new BigDataStatMeth::hdf5Dataset(dsA->getFileptr(), dsA->getGroup(), tempNameA, true);
@@ -298,7 +297,7 @@ namespace BigDataStatMeth {
                 if (!isVectorB) {
                     if (dsB->nrows() != dsB->ncols()) {
                         // checkClose_file(tempA, tempB, tempResult);
-                        Rf_error("Matrix B must be square for diagonal operations");
+                        throw std::runtime_error("Matrix B must be square for diagonal operations");
                         // cleanup_temp_datasets(tempA, tempB);
                         return;
                     }
@@ -315,7 +314,7 @@ namespace BigDataStatMeth {
                 
                 if (sizeA == 0 || sizeB == 0 || sizeA != sizeB) {
                     // checkClose_file(tempA, tempB, tempResult);
-                    Rf_error("Invalid or incompatible diagonal dimensions: %llu vs %llu", sizeA, sizeB);
+                    throw std::runtime_error("Invalid or incompatible diagonal dimensions: vs");
                     // cleanup_temp_datasets(tempA, tempB);
                     return;
                 }
@@ -353,7 +352,7 @@ namespace BigDataStatMeth {
                     case 1: Rcpp_vector_subtract_hdf5(finalA, finalB, operationTarget, bparal, threads); break;
                     case 2: Rcpp_vector_multiply_hdf5(finalA, finalB, operationTarget, bparal, threads); break;
                     case 3: Rcpp_vector_divide_hdf5(finalA, finalB, operationTarget, bparal, threads); break;
-                    default: Rf_error("Unknown diagonal operation: %d", operation);
+                    throw std::runtime_error("Unknown diagonal operation");
                 }
                 
                 // Write result back to matrix diagonal if needed
@@ -363,7 +362,7 @@ namespace BigDataStatMeth {
                     writeDiagonalFromVector(tempResult.get(), dsB);
                 }
                 
-                delete operationTarget; operationTarget = nullptr;
+                //......// delete operationTarget; operationTarget = nullptr;
                 // Cleanup
                 // cleanup_temp_datasets(tempA, tempB);
                 // if (tempResult) { delete tempResult; tempResult = nullptr; }
@@ -373,7 +372,7 @@ namespace BigDataStatMeth {
                 // checkClose_file(tempA, tempB, tempResult);
                 // cleanup_temp_datasets(tempA, tempB);
                 // if (tempResult) { delete tempResult; tempResult = nullptr; }
-                Rf_error("Error in performMatrixDiagonalOperation: %s", ex.what());
+                throw std::runtime_error(std::string("Error in performMatrixDiagonalOperation: ") + ex.what());
             }
         }
         
@@ -413,7 +412,7 @@ namespace BigDataStatMeth {
                 if (isVectorA && isVectorB && (target == "A" || target == "B")) {
                     targetDataset = (target == "A") ? dsA : dsB;
                     Rcpp_vector_add_hdf5(dsA, dsB, targetDataset, bparal, threads);
-                    delete targetDataset; targetDataset = nullptr;
+                    // delete targetDataset; targetDataset = nullptr;
                 } else if (isVectorA && isVectorB && target == "new") {
                     Rcpp_vector_add_hdf5(dsA, dsB, dsResult, bparal, threads);
                 } else {
@@ -421,7 +420,7 @@ namespace BigDataStatMeth {
                 }
             } catch(std::exception& ex) {
                 checkClose_file(targetDataset);
-                Rf_error("Error in addDiagonals: %s", ex.what());
+                throw std::runtime_error(std::string("Error in addDiagonals: ") + ex.what());
             }
         }
         
@@ -455,7 +454,7 @@ namespace BigDataStatMeth {
                 if (isVectorA && isVectorB && (target == "A" || target == "B")) {
                     targetDataset = (target == "A") ? dsA : dsB;
                     Rcpp_vector_subtract_hdf5(dsA, dsB, targetDataset, bparal, threads);
-                    delete targetDataset; targetDataset = nullptr;
+                    // delete targetDataset; targetDataset = nullptr;
                 } else if (isVectorA && isVectorB && target == "new") {
                     Rcpp_vector_subtract_hdf5(dsA, dsB, dsResult, bparal, threads);
                 } else {
@@ -463,7 +462,7 @@ namespace BigDataStatMeth {
                 }
             } catch(std::exception& ex) {
                 checkClose_file(targetDataset);
-                Rf_error("Error in subtractDiagonals: %s", ex.what());
+                throw std::runtime_error(std::string("Error in subtractDiagonals: ") + ex.what());
             }
         }
         
@@ -499,7 +498,7 @@ namespace BigDataStatMeth {
                 if (isVectorA && isVectorB && (target == "A" || target == "B")) {
                     targetDataset = (target == "A") ? dsA : dsB;
                     Rcpp_vector_multiply_hdf5(dsA, dsB, targetDataset, bparal, threads);
-                    delete targetDataset; targetDataset = nullptr;
+                    // delete targetDataset; targetDataset = nullptr;
                 } else if (isVectorA && isVectorB && target == "new") {
                     Rcpp_vector_multiply_hdf5(dsA, dsB, dsResult, bparal, threads);
                 } else {
@@ -507,7 +506,7 @@ namespace BigDataStatMeth {
                 }
             } catch(std::exception& ex) {
                 checkClose_file(targetDataset);
-                Rf_error("Error in multiplyDiagonals: %s", ex.what());
+                throw std::runtime_error(std::string("Error in multiplyDiagonals: ") + ex.what());
             }
         }
         
@@ -544,7 +543,7 @@ namespace BigDataStatMeth {
                 if (isVectorA && isVectorB && (target == "A" || target == "B")) {
                     BigDataStatMeth::hdf5Dataset* targetDataset = (target == "A") ? dsA : dsB;
                     Rcpp_vector_divide_hdf5(dsA, dsB, targetDataset, bparal, threads);
-                    delete targetDataset; targetDataset = nullptr;
+                    // delete targetDataset; targetDataset = nullptr;
                 } else if (isVectorA && isVectorB && target == "new") {
                     Rcpp_vector_divide_hdf5(dsA, dsB, dsResult, bparal, threads);
                 } else {
@@ -552,7 +551,7 @@ namespace BigDataStatMeth {
                 }
             } catch(std::exception& ex) {
                 checkClose_file(targetDataset);
-                Rf_error("Error in divideDiagonals: %s", ex.what());
+                throw std::runtime_error(std::string("Error in divideDiagonals: ") + ex.what());
             }
         }
         
@@ -585,7 +584,7 @@ namespace BigDataStatMeth {
                 if (isVectorA && isVectorB && (target == "A" || target == "B")) {
                     targetDataset = (target == "A") ? dsA : dsB;
                     Rcpp_vector_power_hdf5(dsA, dsB, targetDataset, bparal, threads);
-                    delete targetDataset; targetDataset = nullptr;
+                    // delete targetDataset; targetDataset = nullptr;
                 } else if (isVectorA && isVectorB && target == "new") {
                     Rcpp_vector_power_hdf5(dsA, dsB, dsResult, bparal, threads);
                 } else {
@@ -593,7 +592,7 @@ namespace BigDataStatMeth {
                 }
             } catch(std::exception& ex) {
                 checkClose_file(targetDataset);
-                Rf_error("Error in powerDiagonals: %s", ex.what());
+                throw std::runtime_error(std::string("Error in powerDiagonals: ") + ex.what());
             }
         }
     
@@ -637,8 +636,7 @@ namespace BigDataStatMeth {
                 if (!isVectorInput) {
 
                     if (dsInput->nrows() != dsInput->ncols()) {
-                        Rf_error("Input matrix must be square for diagonal operations");
-                        return;
+                        throw std::runtime_error("Input matrix must be square for diagonal operations");
                     }
 
                     std::string tempNameInput = dsInput->getDatasetName() + "_temp_scalar_input";
@@ -651,7 +649,7 @@ namespace BigDataStatMeth {
                 // Validate input
                 hsize_t sizeInput = validateVectorDataset(finalInput);
                 if (sizeInput == 0) {
-                    Rf_error("Invalid input dimensions for scalar operation");
+                    throw std::runtime_error("Invalid input dimensions for scalar operation");
                     // cleanup_temp_datasets(tempInput, nullptr);
                     return;
                 }
@@ -662,6 +660,7 @@ namespace BigDataStatMeth {
                 if (target == "new") {
                     operationTarget = dsResult;
                     // operationTarget->createDataset(1, sizeInput, "real");  // Vector 1×N
+                    operationTarget->inheritCompressionLevel(operationTarget->getCompressionLevel());
                     operationTarget->createDataset( sizeInput, 1, "real");  // Vector 1×N
                 } else if (target == "input") {
                     if (isVectorInput) {
@@ -672,6 +671,7 @@ namespace BigDataStatMeth {
                         // tempResult = new BigDataStatMeth::hdf5Dataset(dsInput->getFileptr(), dsInput->getGroup(), tempNameResult, true);
                         tempResult.reset(new BigDataStatMeth::hdf5Dataset(dsInput->getFileptr(), dsInput->getGroup(), tempNameResult, true));
                         // tempResult->createDataset(1, sizeInput, "real");
+                        tempResult->inheritCompressionLevel(tempResult->getCompressionLevel());
                         tempResult->createDataset(sizeInput, 1, "real"); 
                         operationTarget = tempResult.get();
                     }
@@ -699,7 +699,7 @@ namespace BigDataStatMeth {
                             case 2: input_data[i] *= scalar; break;  // multiply
                             case 3: input_data[i] /= scalar; break;  // divide
                             case 4: input_data[i] = std::pow(input_data[i], scalar); break;  // power
-                            default: Rf_error("Unknown scalar operation: %d", operation);
+                            throw std::runtime_error("Unknown scalar operation");
                             }
                         }
                     }
@@ -711,7 +711,7 @@ namespace BigDataStatMeth {
                         case 2: input_data[i] *= scalar; break;
                         case 3: input_data[i] /= scalar; break;
                         case 4: input_data[i] = std::pow(input_data[i], scalar); break;
-                        default: Rf_error("Unknown scalar operation: %d", operation);
+                        throw std::runtime_error("Unknown scalar operation");
                         }
                     }
                 }
@@ -730,7 +730,7 @@ namespace BigDataStatMeth {
             } catch(std::exception& ex) {
                 // cleanup_temp_datasets(tempInput, nullptr);
                 // if (tempResult) { delete tempResult; tempResult = nullptr; }
-                Rf_error("Error in scalarOperation: %s", ex.what());
+                throw std::runtime_error(std::string("Error in scalarOperation: ") + ex.what());
             }
         }
     

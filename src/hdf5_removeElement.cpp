@@ -70,15 +70,14 @@
 //' @return No return value, called for side effects (element removal).
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrices
 //' matA <- matrix(1:15, nrow = 3, byrow = TRUE)
 //' matB <- matrix(15:1, nrow = 3, byrow = TRUE)
 //' 
 //' # Save to HDF5
-//' fn <- "test.hdf5"
+//' fn <- "test.HDF5"
 //' bdCreate_hdf5_matrix(fn, matA, "data", "matrix1",
 //'                      overwriteFile = TRUE)
 //' bdCreate_hdf5_matrix(fn, matB, "data", "matrix2",
@@ -119,27 +118,21 @@ void bdRemove_hdf5_element(std::string filename, std::vector<std::string> elemen
         if(objFile->getFileptr() != nullptr) { 
             BigDataStatMeth::RcppRemove_hdf5_elements(objFile.get(), elements);    
         } else {
-            Rcpp::Rcerr << "c++ exception bdRemove_hdf5_element: " << "File does not exist";
-            return void();
+            Rcpp::stop("c++ exception bdRemove_hdf5_element File does not exist");
         }
         
         // delete objFile; objFile = nullptr;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcerr << "c++ exception bdRemove_hdf5_element (File IException)";
-        return void();
+        Rcpp::stop("c++ exception bdRemove_hdf5_element (File IException)");
     } catch( H5::GroupIException & error ) { 
-        Rcpp::Rcerr << "c++ exception bdRemove_hdf5_element (Group IException)";
-        return void();
+        Rcpp::stop("c++ exception bdRemove_hdf5_element (Group IException)");
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::Rcerr << "c++ exception bdRemove_hdf5_element (DataSet IException)";
-        return void();
+        Rcpp::stop("c++ exception bdRemove_hdf5_element (DataSet IException)");
     } catch(std::exception& ex) {
-        Rcpp::Rcerr << "c++ exception bdRemove_hdf5_element" << ex.what();
-        return void();
+        Rcpp::stop("c++ exception bdRemove_hdf5_element: " + std::string(ex.what()));
     } catch (...) {
-        Rcpp::Rcerr << "c++ exception bdRemove_hdf5_element (unknown reason)";
-        return void();
+        Rcpp::stop("c++ exception bdRemove_hdf5_element (unknown reason)");
     }
     
     return void();

@@ -29,9 +29,8 @@ Intermediate groups are created when needed. The HDF5 file must
 exist prior to the call (create it with a writer function).
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
-fn <- "test.hdf5"
+\donttest{
+fn <- "test.HDF5"
 
 # Ensure file exists (e.g., by creating an empty dataset or via a helper)
 mat <- matrix(0, nrow = 1, ncol = 1)

@@ -96,19 +96,18 @@
 //'       order of combination
 //' 
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrices
 //' a <- matrix(1:12, 4, 3)
 //' b <- matrix(13:24, 4, 3)
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A")
-//' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B")
+//' bdCreate_hdf5_matrix("test.HDF5", a, "data", "A")
+//' bdCreate_hdf5_matrix("test.HDF5", b, "data", "B")
 //' 
 //' # Bind by rows
-//' bdBind_hdf5_datasets("test.hdf5", "data", 
+//' bdBind_hdf5_datasets("test.HDF5", "data", 
 //'                      c("A", "B"),
 //'                      "results", "combined",
 //'                      "bindRows")

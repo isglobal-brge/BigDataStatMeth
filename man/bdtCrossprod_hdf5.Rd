@@ -96,9 +96,7 @@ Mathematical operations:
 }
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
-library(rhdf5)
+\donttest{
 
 # Create test matrix
 N <- 1000
@@ -107,11 +105,11 @@ set.seed(555)
 a <- matrix(rnorm(N*M), N, M)
 
 # Save to HDF5
-bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A",
+bdCreate_hdf5_matrix("test.HDF5", a, "INPUT", "A",
                      overwriteFile = TRUE)
 
 # Compute transposed cross product
-bdtCrossprod_hdf5("test.hdf5", "INPUT", "A",
+bdtCrossprod_hdf5("test.HDF5", "INPUT", "A",
                   outgroup = "OUTPUT",
                   outdataset = "result",
                   block_size = 1024,

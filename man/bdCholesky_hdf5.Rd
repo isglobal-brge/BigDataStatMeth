@@ -86,8 +86,7 @@ The elements of L are computed using:
 \deqn{l_{ji} = \frac{1}{l_{ii}}(a_{ji} - \sum_{k=1}^{i-1} l_{ik}l_{jk})}
 }
 \examples{
-\dontrun{
-library(rhdf5)
+\donttest{
 
 # Create a symmetric positive-definite matrix
 set.seed(1234)

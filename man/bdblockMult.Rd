@@ -61,8 +61,7 @@ on input types and sizes. For large matrices (>2.25e+08 elements), block-based
 computation is used by default.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Matrix-matrix multiplication
 N <- 2500

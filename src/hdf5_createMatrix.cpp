@@ -2,15 +2,15 @@
 // #include "hdf5Utilities/hdf5Utilities.hpp"
 
 
-//' Create hdf5 data file and write data to it
+//' Create HDF5 data file and write data to it
 //'
-//' Creates a hdf5 file with numerical data matrix,
+//' Creates a HDF5 file with numerical data matrix,
 //' 
 //' @param filename, character array indicating the name of the file to create
 //' @param object numerical data matrix
-//' @param group, character array indicating folder name to put the matrix in hdf5 file
+//' @param group, character array indicating folder name to put the matrix in HDF5 file
 //' @param dataset, character array indicating the dataset name to store the matrix data
-//' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
+//' @param transp boolean, if trans=true matrix is stored transposed in HDF5 file
 //' @param overwriteFile, optional boolean by default overwriteFile = false, if 
 //' true and file exists, removes old file and creates a new file with de dataset 
 //' data.
@@ -27,7 +27,7 @@
 //' @examples
 //' 
 //' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+//' bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
 //'                     object = matA, group = "datasets", 
 //'                     dataset = "datasetA", transp = FALSE, 
 //'                     overwriteFile = TRUE, 
@@ -35,9 +35,9 @@
 //'                     unlimited = FALSE)
 //' 
 //' # Remove file (used as example)
-//'   if (file.exists("test_temp.hdf5")) {
+//'   if (file.exists("test_temp.HDF5")) {
 //'     # Delete file if it exist
-//'     file.remove("test_temp.hdf5")
+//'     file.remove("test_temp.HDF5")
 //'   }
 //' 
 //' @export
@@ -52,6 +52,11 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
                           Rcpp::Nullable<bool> unlimited = R_NilValue)
 {
     
+    
+    BigDataStatMeth::hdf5Dataset* objDataset = nullptr;
+    BigDataStatMeth::hdf5File* objFile = nullptr;
+    BigDataStatMeth::hdf5Dims* dsdims = nullptr;
+    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
     
@@ -59,11 +64,7 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
     {
         
         H5::Exception::dontPrint();
-
-        std::unique_ptr<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
-        std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
-        // BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
-        std::unique_ptr<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
+        
         
         Rcpp::IntegerVector dims(2);
         Rcpp::CharacterVector svrows, svrcols;
@@ -93,6 +94,7 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
         if(overwriteFile.isNull())  bforceFile = false ;
         else    bforceFile = Rcpp::as<bool>(overwriteFile);
         
+        
         strdatatype = BigDataStatMeth::getObjecDataType(object);
         
         if ( object.sexp_type()==0 ) {
@@ -109,8 +111,7 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
         
         dims = BigDataStatMeth::getObjectDims(object, strdatatype);
         
-        // objFile = new BigDataStatMeth::hdf5File(filename, bforceFile);
-        objFile.reset(new BigDataStatMeth::hdf5File(filename, bforceFile));
+        objFile = new BigDataStatMeth::hdf5File(filename, bforceFile);
         iRes = objFile->createFile();
         
         if( (iRes == EXEC_OK) | (iRes == EXEC_WARNING)) {
@@ -119,8 +120,7 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
                 objFile->openFile("rw");
             }
             
-            // objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforceDataset );
-            objDataset.reset(new BigDataStatMeth::hdf5Dataset(objFile.get(), strsubgroup, strdataset, bforceDataset ));
+            objDataset = new BigDataStatMeth::hdf5Dataset(objFile, strsubgroup, strdataset, bforceDataset );
             if( bunlimited == false){
                 objDataset->createDataset(dims[0], dims[1], strdatatype);
             } else{
@@ -142,8 +142,7 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
             
             if(dimnames.size()>0 ) {
                 
-                // dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
-                dsdims.reset(new BigDataStatMeth::hdf5Dims(objDataset.get()));
+                dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
                 
                 if(!Rf_isNull(dimnames[0])) {
                     svrows = rownames(object);
@@ -164,17 +163,30 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
                 }
             }
             
+            delete dsdims; dsdims = nullptr;
+            delete objDataset; objDataset = nullptr;
+            delete objFile; objFile = nullptr;
+            
             lst_return["fn"] = filename;
             lst_return["ds"] = strsubgroup + "/" + strdataset;
         } 
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rf_error("c++ exception bdCreate_hdf5_matrix (File IException)");
+        if(objFile != nullptr) delete objFile;
+        if(dsdims != nullptr) delete dsdims;
+        checkClose_file(objDataset);
+        Rf_error("c++ c++ exception bdCreate_hdf5_matrix (File IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+        if(objFile != nullptr) delete objFile;
+        if(dsdims != nullptr) delete dsdims;
+        checkClose_file(objDataset);
         Rf_error( "c++ exception bdCreate_hdf5_matrix (DataSet IException)");
         return(lst_return);
     } catch(std::exception &ex) {
+        if(objFile != nullptr) delete objFile;
+        if(dsdims != nullptr) delete dsdims;
+        checkClose_file(objDataset);
         Rf_error( "c++ exception bdCreate_hdf5_matrix %s", ex.what());
         return(lst_return);
     } 

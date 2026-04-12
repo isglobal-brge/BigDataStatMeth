@@ -1,6 +1,8 @@
 /**
  * @file crossprod.hpp
  * @brief Implementation of matrix cross-product operations using HDF5
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  *
  * This file provides functionality for computing matrix cross-products (A^T * B)
  * for large matrices stored in HDF5 format. The implementation uses block-wise
@@ -98,13 +100,15 @@ namespace BigDataStatMeth {
                     if (N != M) {
                         throw std::range_error("Symmetric crossprod requires square result matrix");
                     }
-                    if (dsA->getFileName() != dsB->getFileName() || 
+                    //.. 20260304 ..// if (dsA->getFileName() != dsB->getFileName() || 
+                    if (dsA->getFullPath() != dsB->getFullPath() || 
                         dsA->getGroup() != dsB->getGroup() || 
                         dsA->getDatasetName() != dsB->getDatasetName()) {
                         Rcpp::warning("isSymmetric=TRUE but different datasets provided. Results may be incorrect.");
                     }
                 }
                 
+                dsC->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsC->createDataset( N, M, "real");
 
 #ifdef _OPENMP // Configure parallel processing
@@ -222,8 +226,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception crossprod: "<<ex.what()<< " \n";
-            return(dsC);
+            throw std::runtime_error(std::string("c++ exception crossprod: ") + ex.what());
         }
         
         return(dsC);

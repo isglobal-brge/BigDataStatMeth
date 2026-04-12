@@ -90,8 +90,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(rhdf5)
+//' \donttest{
 //' 
 //' # Create a symmetric positive-definite matrix
 //' set.seed(1234)
@@ -183,7 +182,7 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
                 if( dstmp->getDatasetptr() != nullptr ) {
                     BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA.get(), dstmp.get(), bfull, dElementsBlock, threads);
                 } else {
-                    Rcpp::Rcerr << "c++ exception bdInvCholesky_hdf5: " << "Error creating temporary dataset";
+                    Rcpp::stop("c++ exception bdInvCholesky_hdf5 Error creating temporary dataset");
                     return(lst_return);
                 }
                 
@@ -192,7 +191,7 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
                 return(lst_return);
             }    
         } else {
-            Rcpp::Rcerr << "c++ exception bdInvCholesky_hdf5: " << "Error opening dataset";
+            Rcpp::stop("c++ exception bdInvCholesky_hdf5 Error opening dataset");
             return(lst_return);
         }
         
@@ -200,15 +199,15 @@ Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::stri
         lst_return["ds"] = strOutdataset;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (File IException)";
+        Rcpp::stop("c++ exception bdInvCholesky_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (Group IException)";
+        Rcpp::stop("c++ exception bdInvCholesky_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5 (DataSet IException)";
+        Rcpp::stop("c++ exception bdInvCholesky_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        Rcpp::Rcerr<<"\nc++ exception bdInvCholesky_hdf5: " << ex.what();
+        Rcpp::stop("c++ exception bdInvCholesky_hdf5: " + std::string(ex.what()));
     } catch (...) {
-        Rcpp::Rcerr<<"\nC++ exception bdInvCholesky_hdf5 (unknown reason)";
+        Rcpp::stop("C++ exception bdInvCholesky_hdf5 (unknown reason)");
     }
     
     return(lst_return);

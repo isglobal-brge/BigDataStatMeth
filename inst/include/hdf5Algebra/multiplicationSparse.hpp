@@ -1,6 +1,8 @@
 /**
  * @file multiplicationSparse.hpp
  * @brief Sparse matrix multiplication operations for HDF5 matrices
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @details This header file provides implementations for sparse matrix
  * multiplication operations on matrices stored in HDF5 format. The implementation
  * includes:
@@ -85,7 +87,9 @@ inline BigDataStatMeth::hdf5Dataset* multiplicationSparse( BigDataStatMeth::hdf5
                 std::vector<hsize_t> stride = {1, 1};
                 std::vector<hsize_t> block = {1, 1};
                 
-                dsC->createDataset( M, N, "real"); 
+                dsC->inheritCompressionLevel(dsA->getCompressionLevel());
+                //.. 20260408 ..// dsC->createDataset( M, N, "real");  
+                dsC->createDataset( N, M, "real");
                 
                 for (hsize_t ii = 0; ii < N; ii += hdf5_block)
                 {
@@ -116,22 +120,45 @@ inline BigDataStatMeth::hdf5Dataset* multiplicationSparse( BigDataStatMeth::hdf5
                             dsB->readDatasetBlock( {jj, kk}, {iRowsB, iColsB}, stride, block, vdB.data() );
                             Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), iRowsB, iColsB );
                             
-                            std::vector<double> vdC( iRowsB * iColsA ); 
-                            dsC->readDatasetBlock( {jj, ii}, {iRowsB, iColsA}, stride, block, vdC.data() );
-                            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C (vdC.data(), iRowsB, iColsA );
+                            //.. 20260408 ..// std::vector<double> vdC( iRowsB * iColsA ); 
+                            //.. 20260408 ..// dsC->readDatasetBlock( {jj, ii}, {iRowsB, iColsA}, stride, block, vdC.data() );
+                            //.. 20260408 ..// Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C (vdC.data(), iRowsB, iColsA );
+                            //.. 20260408 ..// 
+                            //.. 20260408 ..// // if( bparal == false) {
+                            //.. 20260408 ..// //     C = C + B * A;
+                            //.. 20260408 ..// // } else {
+                            //.. 20260408 ..// //     C = C + Bblock_matrix_mul_parallel(B, A, mem_block_size, threads);
+                            //.. 20260408 ..// // }
+                            //.. 20260408 ..// 
+                            //.. 20260408 ..// C = C + (B.sparseView() * A.sparseView()).toDense() ;
+                            //.. 20260408 ..// 
+                            //.. 20260408 ..// std::vector<hsize_t> offset = {jj,ii};
+                            //.. 20260408 ..// std::vector<hsize_t> count = {iRowsB, iColsA};
+                            //.. 20260408 ..// 
+                            //.. 20260408 ..// dsC->writeDatasetBlock(Rcpp::wrap(C), offset, count, stride, block, false);
                             
-                            // if( bparal == false) {
-                            //     C = C + B * A;
-                            // } else {
-                            //     C = C + Bblock_matrix_mul_parallel(B, A, mem_block_size, threads);
-                            // }
                             
-                            C = C + (B.sparseView() * A.sparseView()).toDense() ;
+                            Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> C_accumulator =
+                                Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>::Zero(iRowsB, iColsA);
                             
-                            std::vector<hsize_t> offset = {jj,ii};
-                            std::vector<hsize_t> count = {iRowsB, iColsA};
+                            if (kk == 0) {
+                                C_accumulator = (B.sparseView() * A.sparseView()).toDense();
+                            } else {
+                                std::vector<double> vdC(iRowsB * iColsA);
+                                dsC->readDatasetBlock({jj, ii}, {iRowsB, iColsA}, stride, block, vdC.data());
+                                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C_prev(vdC.data(), iRowsB, iColsA);
+                                C_accumulator = C_prev + (B.sparseView() * A.sparseView()).toDense();
+                            }
                             
-                            dsC->writeDatasetBlock(Rcpp::wrap(C), offset, count, stride, block, true);
+                            // Write using vector overload — same pattern as multiplication.hpp
+                            std::vector<double> vdC_final(iRowsB * iColsA);
+                            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> C_final_map(vdC_final.data(), iRowsB, iColsA);
+                            C_final_map = C_accumulator;
+                            
+                            std::vector<hsize_t> offset = {jj, ii};
+                            std::vector<hsize_t> count  = {iRowsB, iColsA};
+                            dsC->writeDatasetBlock(vdC_final, offset, count, stride, block);
+                            
                             
                             if( kk + hdf5_block > K ) ksize = hdf5_block + 1;
                         }
@@ -147,8 +174,7 @@ inline BigDataStatMeth::hdf5Dataset* multiplicationSparse( BigDataStatMeth::hdf5
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception multiplicationSparse: "<<ex.what()<< " \n";
-            return(dsC);
+            throw std::runtime_error(std::string("c++ exception multiplicationSparse: ") + ex.what());
         }
         
         return(dsC);

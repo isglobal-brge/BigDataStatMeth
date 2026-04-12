@@ -80,14 +80,13 @@ roughly equal-sized blocks
 }
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test data
 data <- matrix(rnorm(1000), 100, 10)
 
 # Save to HDF5
-fn <- "test.hdf5"
+fn <- "test.HDF5"
 bdCreate_hdf5_matrix(fn, data, "data", "matrix1",
                      overwriteFile = TRUE)
 

@@ -40,7 +40,7 @@ The dataset \code{group/dataset} must already exist. When non-empty,
 dataset dimensions.
 }
 \examples{
-\dontrun{
+\donttest{
 bdWrite_hdf5_dimnames(
   filename = "test.h5",
   group = "MGCCA_IN",

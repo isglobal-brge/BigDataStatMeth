@@ -70,11 +70,10 @@ The function handles:
 }
 }
 \examples{
-library(BigDataStatMeth)
 
 # Create a singular matrix
 X <- matrix(c(1,2,3,2,4,6), 2, 3)
-fn <- "test.hdf5"
+fn <- "test.HDF5"
 
 # Save to HDF5
 bdCreate_hdf5_matrix(filename = fn,

@@ -86,8 +86,7 @@ This function provides flexible diagonal multiplication with automatic optimizat
 }
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test matrices
 N <- 1000
@@ -96,13 +95,13 @@ A <- matrix(rnorm(N*N), N, N)
 B <- matrix(rnorm(N*N), N, N)
 
 # Save to HDF5
-bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+bdCreate_hdf5_matrix("test.HDF5", A, "data", "matrixA",
                      overwriteFile = TRUE)
-bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+bdCreate_hdf5_matrix("test.HDF5", B, "data", "matrixB",
                      overwriteFile = FALSE)
 
 # Multiply diagonals (element-wise)
-result <- bdDiag_multiply_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+result <- bdDiag_multiply_hdf5("test.HDF5", "data", "matrixA", "matrixB",
                               outgroup = "results",
                               outdataset = "diagonal_product",
                               paral = TRUE)

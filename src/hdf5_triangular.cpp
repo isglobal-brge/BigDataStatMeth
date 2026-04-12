@@ -86,7 +86,6 @@
 //' }
 //'
 //' @examples
-//' library(BigDataStatMeth)
 //' 
 //' # Create a matrix with upper triangular values
 //' X <- matrix(rnorm(100), 10, 10)
@@ -94,14 +93,14 @@
 //' X[lower.tri(X)] <- 0
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
+//' bdCreate_hdf5_matrix("test_file.HDF5", X, "data", "X", 
 //'                      overwriteFile = TRUE, 
 //'                      overwriteDataset = FALSE, 
 //'                      unlimited = FALSE)
 //'                      
 //' # Mirror upper triangular to lower
 //' bdWriteOppsiteTriangularMatrix_hdf5(
-//'   filename = "test_file.hdf5", 
+//'   filename = "test_file.HDF5", 
 //'   group = "data",
 //'   dataset = "X",
 //'   copytolower = TRUE,
@@ -113,14 +112,14 @@
 //' X[upper.tri(X)] <- 0
 //' 
 //' # Add to HDF5 file
-//' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "Y", 
+//' bdCreate_hdf5_matrix("test_file.HDF5", X, "data", "Y", 
 //'                      overwriteFile = FALSE, 
 //'                      overwriteDataset = FALSE, 
 //'                      unlimited = FALSE)
 //'                      
 //' # Mirror lower triangular to upper
 //' bdWriteOppsiteTriangularMatrix_hdf5(
-//'   filename = "test_file.hdf5", 
+//'   filename = "test_file.HDF5", 
 //'   group = "data",
 //'   dataset = "Y",
 //'   copytolower = FALSE,
@@ -128,8 +127,8 @@
 //' )
 //'
 //' # Cleanup
-//' if (file.exists("test_file.hdf5")) {
-//'   file.remove("test_file.hdf5")
+//' if (file.exists("test_file.HDF5")) {
+//'   file.remove("test_file.HDF5")
 //' }
 //'
 //' @references
@@ -197,16 +196,16 @@ Rcpp::List bdWriteOppsiteTriangularMatrix_hdf5(std::string filename,
          lst_return["ds"] = group + "/" + dataset;
          
      } catch( H5::FileIException& error ) { 
-         Rcpp::Rcerr<<"c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (File IException)";
+         Rcpp::stop("c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (File IException)");
          return(lst_return);
      } catch( H5::DataSetIException& error ) { 
-         Rcpp::Rcerr << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (DataSet IException)";
+         Rcpp::stop("c++ exception bdWriteOppsiteTriangularMatrix_hdf5 (DataSet IException)");
          return(lst_return);
      } catch(std::exception& ex) {
-         Rcpp::Rcerr << "c++ exception bdWriteOppsiteTriangularMatrix_hdf5" << ex.what();
+         Rcpp::stop("c++ exception bdWriteOppsiteTriangularMatrix_hdf5: " + std::string(ex.what()));
          return(lst_return);
      } catch (...) {
-         Rcpp::Rcerr<<"\nC++ exception bdWriteOppsiteTriangularMatrix_hdf5 (unknown reason)";
+         Rcpp::stop("C++ exception bdWriteOppsiteTriangularMatrix_hdf5 (unknown reason)");
          return(lst_return);
      }
      

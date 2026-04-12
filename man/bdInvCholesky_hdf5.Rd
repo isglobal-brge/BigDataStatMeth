@@ -79,8 +79,7 @@ Advantages of this method:
 }
 }
 \examples{
-\dontrun{
-library(rhdf5)
+\donttest{
 
 # Create a symmetric positive-definite matrix
 set.seed(1234)

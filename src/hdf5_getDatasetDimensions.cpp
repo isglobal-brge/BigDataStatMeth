@@ -71,11 +71,10 @@
 //'   - \[2\] Number of columns
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create a test HDF5 file
-//' fn <- "test.hdf5"
+//' fn <- "test.HDF5"
 //' X <- matrix(rnorm(100), 10, 10)
 //' 
 //' # Save matrix to HDF5
@@ -126,30 +125,30 @@ Rcpp::RObject  bdgetDim_hdf5( std::string filename, std::string dataset)
             dims[0] = ds->nrows_r();  
             dims[1] = ds->ncols_r();
         } else {
-            Rcpp::Rcerr << "c++ exception bdgetDim_hdf5: " << "Error opening dataset";
+            Rcpp::stop("c++ exception bdgetDim_hdf5 Error opening dataset");
         }
         
         // delete ds; ds = nullptr;
         
     } catch( H5::FileIException& error ) { 
         // checkClose_file(ds);
-        Rcpp::Rcerr << "c++ exception bdgetDim_hdf5 (File IException)";
+        Rcpp::stop("c++ exception bdgetDim_hdf5 (File IException)");
         return(dims);
     } catch( H5::GroupIException & error ) { 
         // checkClose_file(ds);
-        Rcpp::Rcerr<<"\nc++ exception bdgetDim_hdf5 (Group IException)";
+        Rcpp::stop("c++ exception bdgetDim_hdf5 (Group IException)");
         return(dims);
     } catch( H5::DataSetIException& error ) { 
         // checkClose_file(ds);
-        Rcpp::Rcerr << "c++ exception bdgetDim_hdf5 (DataSet IException)";
+        Rcpp::stop("c++ exception bdgetDim_hdf5 (DataSet IException)");
         return(dims);
     } catch(std::exception& ex) {
         // checkClose_file(ds);
-        Rcpp::Rcerr << "c++ exception bdgetDim_hdf5" << ex.what();
+        Rcpp::stop("c++ exception bdgetDim_hdf5: " + std::string(ex.what()));
         return(dims);
     } catch (...) {
         // checkClose_file(ds);
-        Rcpp::Rcerr << "c++ exception bdgetDim_hdf5 (unknown reason)";
+        Rcpp::stop("c++ exception bdgetDim_hdf5 (unknown reason)");
         return(dims);
     }
     

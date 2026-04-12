@@ -126,9 +126,11 @@ public:
             
             enable_hdf5_locking_once();
             
-            // bool bFileOpened = false;
+            bool bFileOpened = false;
             bool bFileExists = ResFileExist_filestream();
+            
             bool bInUse = bFileExists ? lockedByOtherProcess() : false;
+            // bool bInUse = (bFileExists && boverwrite) ? lockedByOtherProcess() : false;
             
             
             // if(bFileExists) {
@@ -139,7 +141,7 @@ public:
             if( !bFileExists || ( bFileExists && boverwrite) ) {
                 
                 if (bInUse) {
-                    Rcpp::stop("HDF5 file is in use by another process; cannot overwrite.");
+                    Rf_error("HDF5 file is in use by another process; cannot overwrite.");
                 }
                 
                 //.. 2025/08/13 ..// if(!bFileOpened) {
@@ -174,52 +176,15 @@ public:
      * @param opentype Access mode ("r" for read-only, "rw" for read-write)
      * @return Pointer to opened file or nullptr on error
      */
-    
-    // H5::H5File* openFile(std::string opentype)
-    // {
-    //     try
-    //     {
-    //         H5::Exception::dontPrint();
-    //         enable_hdf5_locking_once();
-    //         
-    //         bool bFileExists = ResFileExist_filestream();
-    //         
-    //         if (!bFileExists) {
-    //             if (opentype == "r") {
-    //                 return nullptr;  // NO lanzar, retornar nullptr
-    //             }
-    //             pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC);
-    //             return pfile;
-    //         }
-    //         
-    //         // Verificar lock - retornar nullptr si bloqueado
-    //         if (opentype != "r" && lockedByOtherProcess()) {
-    //             return nullptr;  // NO lanzar
-    //         }
-    //         
-    //         // Abrir archivo
-    //         if (opentype == "r") {
-    //             pfile = new H5::H5File(fullPath, H5F_ACC_RDONLY);
-    //         } else {
-    //             pfile = new H5::H5File(fullPath, H5F_ACC_RDWR);
-    //         }
-    //         
-    //     } catch (...) {
-    //         pfile = nullptr;
-    //     }
-    //     
-    //     return pfile;
-    // }
-    
     H5::H5File* openFile(std::string opentype)
     {
         try
         {
             H5::Exception::dontPrint();
-
+            
             enable_hdf5_locking_once();
-
-
+            
+            
             // bool bFileExists = ResFileExist_filestream();
             // checkHDF5File
             // if( bFileExists ) {
@@ -228,35 +193,37 @@ public:
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
                 } else {
                     if (lockedByOtherProcess()) {
-                        Rcpp::stop("HDF5 file is in use by another process.");
+                        Rf_error("HDF5 file is in use by another process.");
                     }
-
+                    
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
                 }
             } else {
-
+                
                 if (opentype == "r") {        //..2025/08/13..//
-                    Rcpp::stop("HDF5 file not found."); //..2025/08/13..//
+                    Rf_error("HDF5 file not found."); //..2025/08/13..//
                 }         //..2025/08/13..//
                 pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC); //..2025/08/13..//
-
+                
                 //..2025/08/13..// Rcpp::Rcerr<<"\n File does not exists, please create it before open it";
                 //..2025/08/13..// pfile = nullptr;
                 //..2025/08/13..// return(pfile);
             }
-
+            
         } catch (const H5::Exception& e) {
             pfile = nullptr;
-            Rcpp::stop(std::string("openFile HDF5 error: ") + e.getDetailMsg());
+            std::string error_msg = std::string("openFile HDF5 error: ") + e.getDetailMsg();
+            Rf_error("%s", error_msg.c_str());
         } catch (const std::exception& e) {
             pfile = nullptr;
-            Rcpp::stop(std::string("openFile error: ") + e.what());
+            std::string error_msg = std::string("openFile error: ") + e.what();
+            Rf_error("%s", error_msg.c_str());
         }
         //..2025/08/14..// catch(H5::FileIException& error) { // catch failure caused by the H5File operations
         //..2025/08/14..//      pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC);
         //..2025/08/14..//      // Rf_error("c++ exception hdf5File (File IException) " );
-        //..2025/08/14..//  }
-
+        //..2025/08/14..//  } 
+        
         return(pfile);
     }
 
@@ -309,7 +276,7 @@ public:
     void close_file() {
         try {
             
-            // Obtener el número de objetos abiertos
+            // Obtener el nÃºmero de objetos abiertos
             ssize_t sObjects = H5Fget_obj_count( pfile->getId(), H5F_OBJ_ALL);
             
             // if (sObjects < 0) {
@@ -323,7 +290,7 @@ public:
                 if (sOpenIds > 0) {
                     for (hid_t OpenId : vIds) {
                         if (H5Iis_valid(OpenId)) {
-                            H5Oclose(OpenId); // Cierra el objeto genérico (puede ser dataset, grupo, etc.)
+                            H5Oclose(OpenId); // Cierra el objeto genÃ©rico (puede ser dataset, grupo, etc.)
                         }
                     }
                 } 
@@ -370,10 +337,12 @@ public:
      * @details Closes the file and releases resources
      */
     ~hdf5File(){
-        if(pfile != nullptr) {
-            pfile->close();
-            pfile = nullptr;
-        }
+        try {
+            if(pfile != nullptr) {
+                pfile->close();
+                pfile = nullptr;
+            }
+        } catch (...) {}
     }
     
 protected:
@@ -577,6 +546,7 @@ private:
         // );
     }
     
+    
     /**
      * @brief Return true if existing HDF5 file appears locked/busy.
      * @note Requires HDF5 file locking enabled (env var set above).
@@ -594,7 +564,7 @@ private:
         #if H5_VERSION_GE(1,12,0)
                 H5Pset_file_locking(fapl, 1 , 0 );
         #endif
-        
+                
         hid_t fid = H5Fopen(fullPath.c_str(), H5F_ACC_RDWR, fapl);
         H5Pclose(fapl);
         
@@ -605,6 +575,11 @@ private:
         H5Fclose(fid);
         return false;
     }
+    
+    
+    
+    
+    
     
 
     /**

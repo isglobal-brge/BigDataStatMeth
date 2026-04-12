@@ -90,16 +90,14 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Create a sample large matrix in HDF5
 //'
-//' library(BigDataStatMeth)
-//' library(rhdf5)
 //' 
 //' # Create a sample large matrix in HDF5
 //' A <- matrix(rnorm(10000), 1000, 10)
 //' 
-//' fn <- "test_temp.hdf5"
+//' fn <- "test_temp.HDF5"
 //' bdCreate_hdf5_matrix(filename = fn, object = A, group = "data", dataset = "matrix")
 //'
 //' # Compute SVD with default parameters
@@ -194,7 +192,7 @@ Rcpp::List bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVe
          if(Rcpp::is<Rcpp::CharacterVector>(filename)) {
              str_filename = Rcpp::as<std::string>(filename);
          } else {
-             Rcpp::Rcout<< "File name must be character string";
+             Rcpp::stop("File name must be character string");
              // return Rcpp::List::create(Rcpp::Named("file") = "");
              return lst_return;
          }
@@ -207,7 +205,7 @@ Rcpp::List bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVe
                  return lst_return;
                  // return Rcpp::List::create(Rcpp::Named("file") = str_filename);
              } else if( Rcpp::as<double>(rankthreshold) < 0 ) {
-                 Rcpp::Rcout<< "Threshold must be a positive value near zero";
+                 Rcpp::stop("Threshold must be a positive value near zero");
                  return lst_return;
                  // return Rcpp::List::create(Rcpp::Named("file") = str_filename);
              } else {
@@ -228,19 +226,19 @@ Rcpp::List bdSVD_hdf5 ( Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVe
          lst_return["ds_v"] = "SVD/" + Rcpp::as<std::string>(strdataset) + "/v";
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (File IException)";
+         Rcpp::stop("c++ exception bdSVD_hdf5 (File IException)");
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
      } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-         Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (Group IException)";
+         Rcpp::stop("c++ exception bdSVD_hdf5 (Group IException)");
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5 (DataSet IException)";
+         Rcpp::stop("c++ exception bdSVD_hdf5 (DataSet IException)");
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
      } catch(std::exception& ex) {
-         Rcpp::Rcerr<<"\nc++ exception bdSVD_hdf5" << ex.what();
+         Rcpp::stop("c++ exception bdSVD_hdf5: " + std::string(ex.what()));
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
      } catch (...) {
-         Rcpp::Rcerr<<"\nC++ exception bdSVD_hdf5 (unknown reason)";
+         Rcpp::stop("C++ exception bdSVD_hdf5 (unknown reason)");
          // return Rcpp::List::create(Rcpp::Named("file") = R_NilValue);
      }
      

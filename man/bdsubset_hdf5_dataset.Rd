@@ -77,7 +77,7 @@ don't fit in memory.
 }
 
 \examples{
-\dontrun{
+\donttest{
 # Select specific rows (e.g., rows 1, 3, 5, 10-15)
 success <- bdsubset_dataset("data.h5", 
                            dataset_path = "/matrix/data",

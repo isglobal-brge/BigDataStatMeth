@@ -98,8 +98,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create a test CSV file
 //' data <- matrix(rnorm(100), 10, 10)
@@ -108,7 +107,7 @@
 //' # Import to HDF5
 //' bdImportTextFile_hdf5(
 //'   filename = "test.csv",
-//'   outputfile = "output.hdf5",
+//'   outputfile = "output.HDF5",
 //'   outGroup = "data",
 //'   outDataset = "matrix1",
 //'   sep = ",",
@@ -117,7 +116,7 @@
 //' )
 //' 
 //' # Cleanup
-//' unlink(c("test.csv", "output.hdf5"))
+//' unlink(c("test.csv", "output.HDF5"))
 //' }
 //'
 //' @references
@@ -140,8 +139,10 @@ Rcpp::List bdImportTextFile_hdf5( std::string filename,
                                   Rcpp::Nullable<bool> overwriteFile = R_NilValue)
 {
 
-    BigDataStatMeth::hdf5File* objFile = nullptr;
-    BigDataStatMeth::hdf5Dataset* datasetOut = nullptr;
+    // BigDataStatMeth::hdf5File* objFile = nullptr;
+    // BigDataStatMeth::hdf5Dataset* datasetOut = nullptr;
+    
+    
     
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "",
@@ -151,6 +152,9 @@ Rcpp::List bdImportTextFile_hdf5( std::string filename,
     try{
         
         H5::Exception::dontPrint();
+        
+        std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset>  datasetOut(nullptr);
         
         bool boverwrite, bforceFile;
         
@@ -162,32 +166,31 @@ Rcpp::List bdImportTextFile_hdf5( std::string filename,
         
         // Check if exists file to import
         if( BigDataStatMeth::Rcpp_FileExist(filename) ) {
-
+            
             // Create file if does not exists
-            objFile = new BigDataStatMeth::hdf5File(outputfile, bforceFile);
+            // objFile = new BigDataStatMeth::hdf5File(outputfile, bforceFile);
+            objFile.reset( new BigDataStatMeth::hdf5File(outputfile, bforceFile) );
             int iRes = objFile->createFile();
-
+            
             if(iRes == EXEC_WARNING) {
                 objFile->openFile("rw");
             } 
             
             if( objFile->getFileptr() != nullptr ) {
                 // Create dataset
-                datasetOut = new BigDataStatMeth::hdf5Dataset(objFile, outGroup, outDataset, boverwrite);
+                // datasetOut = new BigDataStatMeth::hdf5Dataset(objFile, outGroup, outDataset, boverwrite);
+                datasetOut.reset(new BigDataStatMeth::hdf5Dataset(objFile.get(), outGroup, outDataset, boverwrite));
+                
                 // datasetOut->openDataset();
-                
-                Rcpp_Import_File_to_hdf5( filename, datasetOut, sep, header, rownames, paral, threads) ;
-                
+                Rcpp_Import_File_to_hdf5( filename, datasetOut.get(), sep, header, rownames, paral, threads) ;
                 
             } else {
-                Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5: " << "Error opening file";
-                delete objFile; objFile = nullptr;
+                Rcpp::stop("c++ exception bdImportTextFile_hdf5 Error opening file");
                 return(lst_return);
             }
 
         } else {
-            Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5: " << "File "<<filename<<" doesn't exists, please, review location";
-            delete objFile; objFile = nullptr;
+            Rcpp::stop("c++ exception bdImportTextFile_hdf5 File doesn't exists, please, review location");
             return(lst_return);
         }
         
@@ -202,29 +205,18 @@ Rcpp::List bdImportTextFile_hdf5( std::string filename,
             lst_return["ds_rows"] = outGroup + "/." + outDataset + "_dimnames/1";
         }
 
-        delete datasetOut; datasetOut = nullptr;
-        delete objFile; objFile = nullptr;
-
     } catch(const std::runtime_error& re) {
-        checkClose_file(datasetOut);
-        if(objFile != nullptr) { delete objFile; objFile = nullptr; }
-        Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Runtime error: " << re.what() << std::endl;
+        Rcpp::stop("c++ exception bdImportTextFile_hdf5 - Runtime error: " + std::string(re.what()));
         return(lst_return);
     } catch(const std::exception& ex) {
-        checkClose_file(datasetOut);
-        if(objFile != nullptr) { delete objFile; objFile = nullptr; }
-        Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Error occurred: " << ex.what() << std::endl;
+        Rcpp::stop("c++ exception bdImportTextFile_hdf5 - Error occurred: " + std::string(ex.what()));
         return(lst_return);
     } catch(...) {
-        // catch any other errors (that we have no information about)
-        checkClose_file(datasetOut);
-        if(objFile != nullptr) { delete objFile; objFile = nullptr; }
-        Rcpp::Rcerr << "c++ exception bdImportTextFile_hdf5 - Unknown failure occurred. Possible memory corruption" << std::endl;
+        Rcpp::stop("c++ exception bdImportTextFile_hdf5 - Unknown failure occurred. Possible memory corruption");
         return(lst_return);
     }
     
     Rcpp::message(Rcpp::wrap("The file has been imported"));
     return(lst_return);
-    // return void();
 
 }

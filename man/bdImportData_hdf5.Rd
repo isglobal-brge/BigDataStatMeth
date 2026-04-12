@@ -62,7 +62,7 @@ if needed, then imports the data into an HDF5 file. It supports both local files
 and remote URLs as input sources.
 }
 \examples{
-\dontrun{
+\donttest{
 # Import from local file
 bdImportData_hdf5(
   inFile = "data.txt",
@@ -74,7 +74,7 @@ bdImportData_hdf5(
 )
 
 # Import from URL
-bdImportData_hdf5(
+bdImportData_hdf5(Pors
   inFile = "https://example.com/data.csv",
   destFile = "output.h5",
   destGroup = "downloaded",

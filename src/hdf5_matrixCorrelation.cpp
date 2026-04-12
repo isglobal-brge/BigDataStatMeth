@@ -91,7 +91,7 @@ using namespace BigDataStatMeth;
 //' }
 //' 
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Backward compatible - existing code works unchanged
 //' result_original <- bdCorr_hdf5("data.h5", "expression", "genes")
 //' 
@@ -200,11 +200,7 @@ Rcpp::List bdCorr_hdf5(std::string filename_x, std::string group_x, std::string 
              //             << dataset_x << "'" << std::endl;
              
              // Call single matrix correlation function
-             return RcppbdCorr_hdf5_single(
-                 filename_x, group_x, dataset_x,
-                 method, use_complete_obs, compute_pvalues, block_size, overwrite,
-                 out_group, out_dataset_corr, out_dataset_pval, !trans_x, num_threads
-             );
+             return RcppbdCorr_hdf5_single( filename_x, group_x, dataset_x, method, use_complete_obs, compute_pvalues, block_size, overwrite, out_group, out_dataset_corr, out_dataset_pval, !trans_x, num_threads);
              // return RcppbdCorr_hdf5_single(
              //     filename_x, group_x, dataset_x,
              //     method, use_complete_obs, compute_pvalues, block_size, overwrite,
@@ -217,7 +213,7 @@ Rcpp::List bdCorr_hdf5(std::string filename_x, std::string group_x, std::string 
          forward_exception_to_r(ex);
          return(lst_return);
      } catch(...) {
-         ::Rf_error("C++ exception bdCorr_hdf5 (unknown reason)");
+         Rcpp::stop("C++ exception bdCorr_hdf5 (unknown reason)");
      }
      return(lst_return);
  }

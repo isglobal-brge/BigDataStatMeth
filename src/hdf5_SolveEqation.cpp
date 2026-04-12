@@ -78,7 +78,6 @@
 //' @return Numeric matrix X, the solution to AX = B.
 //'
 //' @examples
-//' library(BigDataStatMeth)
 //' 
 //' # Create test matrices
 //' n <- 500
@@ -146,7 +145,7 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
         return(Rcpp::wrap(b));
         
     } catch(std::exception &ex) {
-        Rcpp::Rcerr << "c++ exception bdSolve" << ex.what(); 
+        Rcpp::stop("c++ exception bdSolve: " + std::string(ex.what()));
         return Rcpp::wrap(-1);
     }
     
@@ -224,12 +223,11 @@ Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B)
 //' }
 //'
 //' @examples
-//' library(BigDataStatMeth)
 //' 
 //' # Create test matrices
 //' N <- 1000
 //' M <- 1000
-//' fn <- "test_temp.hdf5"
+//' fn <- "test_temp.HDF5"
 //' 
 //' set.seed(555)
 //' Y <- matrix(rnorm(N*M), N, M)
@@ -335,7 +333,7 @@ Rcpp::List bdSolve_hdf5(std::string filename, std::string groupA, std::string da
             RcppSolveHdf5( dsA.get(), dsB.get(), dsRes.get() );
         } else {
             // checkClose_file(dsA, dsB, dsRes);
-            Rcpp::Rcerr << "c++ exception bdSolve_hdf5: " << "Error creating dataset";
+            Rcpp::stop("c++ exception bdSolve_hdf5 Error creating dataset");
             return(lst_return);
         }
         
@@ -347,19 +345,19 @@ Rcpp::List bdSolve_hdf5(std::string filename, std::string groupA, std::string da
         lst_return["ds"] = strOutgroup + "/" + strOutdataset;
         
     } catch( H5::FileIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5 (File IException)";
+        Rcpp::stop("c++ exception bdSolve_hdf5 (File IException)");
         return(lst_return);
     } catch( H5::GroupIException & error ) { 
-        Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5 (Group IException)";
+        Rcpp::stop("c++ exception bdSolve_hdf5 (Group IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5 (DataSet IException)";
+        Rcpp::stop("c++ exception bdSolve_hdf5 (DataSet IException)");
         return(lst_return);
     } catch(std::exception& ex) {
-        Rcpp::Rcerr<<"\nc++ exception bdSolve_hdf5" << ex.what();
+        Rcpp::stop("c++ exception bdSolve_hdf5: " + std::string(ex.what()));
         return(lst_return);
     } catch (...) {
-        Rcpp::Rcerr<<"\nC++ exception bdSolve_hdf5 (unknown reason)";
+        Rcpp::stop("C++ exception bdSolve_hdf5 (unknown reason)");
         return(lst_return);
     }
     

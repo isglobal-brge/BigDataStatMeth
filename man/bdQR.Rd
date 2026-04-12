@@ -40,7 +40,7 @@ into an orthogonal matrix Q and an upper triangular matrix R. This implementatio
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Create a random 100x50 matrix
 X <- matrix(rnorm(5000), 100, 50)
 

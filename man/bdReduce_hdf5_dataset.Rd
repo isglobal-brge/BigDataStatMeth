@@ -71,8 +71,7 @@ This function provides efficient dataset reduction capabilities with:
 The function processes datasets efficiently while maintaining data integrity.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test matrices
 X1 <- matrix(1:100, 10, 10)
@@ -80,7 +79,7 @@ X2 <- matrix(101:200, 10, 10)
 X3 <- matrix(201:300, 10, 10)
 
 # Save to HDF5
-fn <- "test.hdf5"
+fn <- "test.HDF5"
 bdCreate_hdf5_matrix(fn, X1, "data", "matrix1",
                      overwriteFile = TRUE)
 bdCreate_hdf5_matrix(fn, X2, "data", "matrix2",

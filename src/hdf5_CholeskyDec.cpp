@@ -96,8 +96,7 @@
 //' }
 //' 
 //' @examples
-//' \dontrun{
-//' library(rhdf5)
+//' \donttest{
 //' 
 //' # Create a symmetric positive-definite matrix
 //' set.seed(1234)
@@ -157,6 +156,7 @@ Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string 
          std::string strOutgroup, strIndataset, 
          strOutdataset, strOutdataset_tmp;
          int nrows = 0, ncols = 0;
+         bool bfullmatrix;
          
          
          if(outgroup.isNull()) { strOutgroup = group; } 
@@ -164,6 +164,9 @@ Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string 
          
          if(elementsBlock.isNull()) { dElementsBlock = MAXELEMSINBLOCK; } 
          else { dElementsBlock = Rcpp::as<long>(elementsBlock); }
+         
+         if(fullMatrix.isNull()) { bfullmatrix = MAXELEMSINBLOCK; } 
+         else { bfullmatrix = Rcpp::as<bool>(fullMatrix); }
          
          
          strIndataset = group + "/" + dataset;
@@ -186,41 +189,41 @@ Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string 
                  
                  int res = 0;
                 if( dstmp->getDatasetptr() != nullptr ) {
-                    res = Cholesky_decomposition_hdf5(dsA.get(), dstmp.get(), nrows, ncols, dElementsBlock, threads);
+                    res = Cholesky_decomposition_hdf5(dsA.get(), dstmp.get(), nrows, ncols, dElementsBlock, bfullmatrix, threads);
                     if(res != 0) {
-                        Rcpp::Rcout<<"\n Can't get Cholesky decomposition \n";
+                        Rcpp::stop("Can't get Cholesky decomposition");
                     } else{
                         lst_return["fn"] = filename;
                         lst_return["ds"] = strOutdataset;
                     }
                 } else {
                     // checkClose_file(dsA, dstmp);
-                    Rcpp::Rcerr << "c++ exception bdCholesky_hdf5: " << "Error creating dataset";
+                    Rcpp::stop("c++ exception bdCholesky_hdf5 Error creating dataset");
                     return(lst_return);
                 }
                 
                 // delete dstmp; dstmp = nullptr;
                  
              } else {
-                Rcpp::Rcout<<"\n Can't get Cholesky decomposition not a square matrix\n";
+                Rcpp::stop("Can't get Cholesky decomposition not a square matrix");
              }    
         } else {
-            Rcpp::Rcerr << "c++ exception bdCholesky_hdf5: " << "Error opening dataset";
+            Rcpp::stop("c++ exception bdCholesky_hdf5 Error opening dataset");
             // return void();
          }
          
          // delete dsA; dsA = nullptr;
          
      } catch( H5::FileIException& error ) { 
-         Rcpp::Rcerr<<"c++ exception bdCholesky_hdf5 (File IException)";
+         Rcpp::stop("c++ exception bdCholesky_hdf5 (File IException)");
      } catch( H5::GroupIException & error ) { 
-         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (Group IException)";
+         Rcpp::stop("c++ exception bdCholesky_hdf5 (Group IException)");
      } catch( H5::DataSetIException& error ) { 
-         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5 (DataSet IException)";
+         Rcpp::stop("c++ exception bdCholesky_hdf5 (DataSet IException)");
      } catch(std::exception& ex) {
-         Rcpp::Rcerr << "c++ exception bdCholesky_hdf5" << ex.what();
+         Rcpp::stop("c++ exception bdCholesky_hdf5: " + std::string(ex.what()));
      } catch (...) {
-         Rcpp::Rcerr<<"\nC++ exception bdCholesky_hdf5 (unknown reason)";
+         Rcpp::stop("C++ exception bdCholesky_hdf5 (unknown reason)");
      }
      
      // return void();

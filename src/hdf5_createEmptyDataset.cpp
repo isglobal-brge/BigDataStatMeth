@@ -63,7 +63,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' bdCreate_hdf5_emptyDataset("test.h5", "MGCCA_IN", "X", 1000, 500,
 //'                           overwriteFile = FALSE,
 //'                           overwriteDataset = TRUE,
@@ -82,17 +82,15 @@ Rcpp::List bdCreate_hdf5_emptyDataset(std::string filename, std::string group,
  {
      using namespace BigDataStatMeth;
      
+     hdf5Dataset* objDataset = nullptr;
+     hdf5File*    objFile    = nullptr;
+     
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("ds") = "");
      
      try {
          
          H5::Exception::dontPrint();
-
-        std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
-        std::unique_ptr<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
-        // hdf5Dataset* objDataset = nullptr;
-        // hdf5File*    objFile    = nullptr;
          
          if (nrows <= 0 || ncols <= 0)
              Rf_error("c++ exception bdCreate_hdf5_emptyDataset - "
@@ -103,34 +101,43 @@ Rcpp::List bdCreate_hdf5_emptyDataset(std::string filename, std::string group,
          bool bunlimited        = unlimited.isNull()        ? false : Rcpp::as<bool>(unlimited);
          std::string strdatatype= datatype.isNull()         ? "real": Rcpp::as<std::string>(datatype);
          
-         // objFile = new hdf5File(filename, bforceFile);
-        objFile.reset(new BigDataStatMeth::hdf5File(filename, bforceFile));
-        int iRes = objFile->createFile(); 
+         objFile = new hdf5File(filename, bforceFile);
+         int iRes = objFile->createFile(); 
          
-        if (iRes == EXEC_OK || iRes == EXEC_WARNING) {
-            if (iRes == EXEC_WARNING) objFile->openFile("rw");
+         if (iRes == EXEC_OK || iRes == EXEC_WARNING) {
+             if (iRes == EXEC_WARNING) objFile->openFile("rw");
              
-             // objDataset = new hdf5Dataset(objFile, group, dataset, bforceDataset);
-            objDataset.reset( new hdf5Dataset(objFile.get(), group, dataset, bforceDataset) );
+             objDataset = new hdf5Dataset(objFile, group, dataset, bforceDataset);
              
-            if (!bunlimited)
-                objDataset->createDataset(nrows, ncols, strdatatype);
-            else
-                objDataset->createUnlimitedDataset(nrows, ncols, strdatatype);
+             if (!bunlimited)
+                 objDataset->createDataset(nrows, ncols, strdatatype);
+             else
+                 objDataset->createUnlimitedDataset(nrows, ncols, strdatatype);
              
-            lst_return["fn"] = filename;
-            lst_return["ds"] = group + "/" + dataset;
-        }
+             // cleanup
+             checkClose_file(objDataset);
+             delete objDataset; objDataset = nullptr;
+             delete objFile; objFile = nullptr;
+             
+             lst_return["fn"] = filename;
+             lst_return["ds"] = group + "/" + dataset;
+         }
          
      } catch (H5::FileIException&) {
+         if (objFile)    { delete objFile; objFile = nullptr; }
+         checkClose_file(objDataset);    // null-safe
          Rcpp::stop("c++ exception bdCreate_hdf5_emptyDataset (File IException)");
          return(lst_return);
          
      } catch (H5::DataSetIException&) {
+         if (objFile)    { delete objFile; objFile = nullptr; }
+         checkClose_file(objDataset);
          Rcpp::stop("c++ exception bdCreate_hdf5_emptyDataset (DataSet IException)");
          return(lst_return);
          
      } catch (std::exception& ex) {
+         if (objFile)    { delete objFile; objFile = nullptr; }
+         checkClose_file(objDataset);
          Rcpp::stop("c++ exception bdCreate_hdf5_emptyDataset %s", ex.what());
          return(lst_return);
      }

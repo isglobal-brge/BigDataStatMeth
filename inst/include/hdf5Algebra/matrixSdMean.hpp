@@ -65,11 +65,13 @@ inline hsize_t get_block_size( Rcpp::Nullable<int> wsize, hsize_t reference_size
             bsize = std::ceil( MAXELEMSINBLOCK / maxsize);
         }
     } else {
-        if(reference_size > MAXELEMSINBLOCK){
-            bsize = 1;
-        } else {
-            bsize = Rcpp::as<int> (wsize);
-        }
+        //.. 20260224 ..// if(reference_size > MAXELEMSINBLOCK){
+        //.. 20260224 ..//     bsize = 1;
+        //.. 20260224 ..// } else {
+        //.. 20260224 ..//     bsize = Rcpp::as<int> (wsize);
+        //.. 20260224 ..// }
+        
+        bsize = Rcpp::as<int>(wsize); 
     }
     
     return(bsize);
@@ -105,14 +107,15 @@ inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA,
         block_size = get_block_size(wsize, dims_out[0], dims_out[1]);
 
         count[0] = dims_out[0];
-        if( block_size < dims_out[1] ) {
-            count[1] = block_size;
-        } else{
-            count[1] = dims_out[1];
-        }
+        //.. 20260224 ..// if( block_size < dims_out[1] ) {
+        //.. 20260224 ..//     count[1] = block_size;
+        //.. 20260224 ..// } else{
+        //.. 20260224 ..//     count[1] = dims_out[1];
+        //.. 20260224 ..// }
 
         // Read data in blocks of 500 columns
-        for( hsize_t i=0; (i <= floor(dims_out[1]/block_size)) || i==0 ; i++)
+        //.. 20260224 ..// for( hsize_t i=0; (i <= floor(dims_out[1]/block_size)) || i==0 ; i++)
+        for( hsize_t i=0; offset[1] < dims_out[1]; i++)
         {
             
             // if( i>0 ) {
@@ -146,14 +149,14 @@ inline void get_HDF5_mean_sd_by_row( BigDataStatMeth::hdf5Dataset* dsA,
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         // error.printErrorStack();
         // checkClose_file(dsA);
-        Rf_error("c++ exception get_HDF5_mean_sd_by_row (File IException)");
+        throw std::runtime_error("c++ exception get_HDF5_mean_sd_by_row (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         // error.printErrorStack();
         // checkClose_file(dsA);
-        Rf_error("c++ exception get_HDF5_mean_sd_by_row (DataSet IException)");
+        throw std::runtime_error("c++ exception get_HDF5_mean_sd_by_row (DataSet IException)");
     } catch(std::exception& error) {
         // checkClose_file(dsA);
-        Rf_error("c++ exception get_HDF5_mean_sd_by_row function: %s",error.what());
+        throw std::runtime_error(std::string("c++ exception get_HDF5_mean_sd_by_row function: ") + error.what());
     }
     
     return void(); 
@@ -195,13 +198,14 @@ inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA,
         block_size = get_block_size(wsize, dims_out[1], dims_out[0]);
 
         count[1] = dims_out[1];
-        if( block_size < dims_out[0] )
-            count[0] = block_size;
-        else
-            count[0] = dims_out[0];
+        //.. 20260224 ..// if( block_size < dims_out[0] )
+        //.. 20260224 ..//     count[0] = block_size;
+        //.. 20260224 ..//  else
+        //.. 20260224 ..//      count[0] = dims_out[0];
         
         // Read data in blocks of 500 columns
-        for(hsize_t i=0; (i <= floor(dims_out[0]/block_size)) || i==0; i++)
+        //.. 20260224 ..// for(hsize_t i=0; (i <= floor(dims_out[0]/block_size)) || i==0; i++)
+        for(hsize_t i=0; offset[0] < dims_out[0]; i++)
         {
 
             if( offset[0] + block_size <= dims_out[0] ) {
@@ -229,14 +233,14 @@ inline void get_HDF5_mean_sd_by_column( BigDataStatMeth::hdf5Dataset* dsA,
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         // error.printErrorStack();
         // checkClose_file(dsA);
-        Rf_error("c++ exception get_HDF5_mean_sd_by_column (File IException)");
+        throw std::runtime_error("c++ exception get_HDF5_mean_sd_by_column (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         // error.printErrorStack();
         // checkClose_file(dsA);
-        Rf_error("c++ exception get_HDF5_mean_sd_by_column (DataSet IException)");
+        throw std::runtime_error("c++ exception get_HDF5_mean_sd_by_column (DataSet IException)");
     } catch(std::exception& error) {
         // checkClose_file(dsA);
-        Rf_error("c++ exception get_HDF5_mean_sd_by_column function: %s",error.what());
+        throw std::runtime_error(std::string("c++ exception get_HDF5_mean_sd_by_column function: ") + error.what());
         // return void();
     }
     

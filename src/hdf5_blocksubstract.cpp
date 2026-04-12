@@ -122,8 +122,7 @@
 //' - Exception handling
 //' 
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrices
 //' N <- 1500
@@ -133,13 +132,13 @@
 //' b <- matrix(rnorm(N*M), N, M)
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+//' bdCreate_hdf5_matrix("test.HDF5", a, "data", "A",
 //'                      overwriteFile = TRUE)
-//' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+//' bdCreate_hdf5_matrix("test.HDF5", b, "data", "B",
 //'                      overwriteFile = FALSE)
 //' 
 //' # Perform subtraction
-//' bdblockSubstract_hdf5("test.hdf5", "data", "A", "B",
+//' bdblockSubstract_hdf5("test.HDF5", "data", "A", "B",
 //'                       outgroup = "results",
 //'                       outdataset = "diff",
 //'                       block_size = 1024,
@@ -260,19 +259,19 @@ Rcpp::List bdblockSubstract_hdf5(std::string filename,
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         // checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"c++ exception bdblockSubstract_hdf5 (File IException)";
+        Rcpp::stop("c++ exception bdblockSubstract_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
         // checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"c++ exception bdblockSubstract_hdf5 (Group IException)";
+        Rcpp::stop("c++ exception bdblockSubstract_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         // checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"c++ exception bdblockSubstract_hdf5 (DataSet IException)";
+        Rcpp::stop("c++ exception bdblockSubstract_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
         // checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"c++ exception bdblockSubstract_hdf5" << ex.what();
+        Rcpp::stop("c++ exception bdblockSubstract_hdf5: " + std::string(ex.what()));
     } catch (...) {
         // checkClose_file(dsA, dsB, dsC);
-        Rcpp::Rcerr<<"C++ exception bdblockSubstract_hdf5 (unknown reason)";
+        Rcpp::stop("C++ exception bdblockSubstract_hdf5 (unknown reason)");
     }
     
     return(lst_return);

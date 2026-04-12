@@ -1,6 +1,8 @@
 /**
  * @file hdf5SplitDataset.hpp
  * @brief Implementation of dataset splitting operations for HDF5 files
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  *
  * This file provides functionality for splitting large HDF5 datasets into
  * smaller, more manageable chunks. It supports both row-wise and column-wise
@@ -112,7 +114,9 @@ inline void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, boo
             dstosplit->readDatasetBlock( {kk, ii}, {incols, inrows}, stride, block, vdts.data() );
                 
             // dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, true);
-            dsOut.reset( new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, true) );
+            //.. 20260304 ..// dsOut.reset( new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, true) );
+            dsOut.reset( new BigDataStatMeth::hdf5Dataset(dstosplit->getFullPath(), newDatasetName, true) );
+            dsOut->inheritCompressionLevel(dstosplit->getCompressionLevel());
             dsOut->createDataset( inrows, incols, "real"); 
             
             if( dsOut->getDatasetptr() != nullptr ){
@@ -125,19 +129,19 @@ inline void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, boo
         
     } catch( H5::FileIException& error ) {
         // checkClose_file(dstosplit, dsOut);
-        Rf_error( "c++ exception RcppSplit_matrix_hdf5(File IException )");
+        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5(File IException )");
     } catch( H5::DataSetIException& error ) { 
         // checkClose_file(dstosplit, dsOut);
-        Rf_error( "c++ exception RcppSplit_matrix_hdf5 (DataSet IException )");
+        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5 (DataSet IException )");
     } catch( H5::DataSpaceIException& error ) { 
         // checkClose_file(dstosplit, dsOut);
-        Rf_error( "c++ exception RcppSplit_matrix_hdf5 (DataSpace IException )");
+        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5 (DataSpace IException )");
     } catch(std::exception &ex) {
         // checkClose_file(dstosplit, dsOut);
-        Rf_error( "\nC++ exception RcppSplit_matrix_hdf5 : %s", ex.what());
+        throw std::runtime_error(std::string("C++ exception RcppSplit_matrix_hdf5: ") + ex.what());
     } catch (...) {
         // checkClose_file(dstosplit, dsOut);
-        Rf_error( "\nC++ exception RcppSplit_matrix_hdf5 (unknown reason)");
+        throw std::runtime_error("C++ exception RcppSplit_matrix_hdf5 (unknown reason)");
     }
     
     return void();
@@ -220,13 +224,11 @@ inline void RcppSplit_matrix_hdf5_internal ( BigDataStatMeth::hdf5Dataset* dstos
         
         if( nblocks <= 0 && iblocksize <= 0 ){
             checkClose_file(dstosplit);
-            Rf_error( "\n Block size or number of blocks are needed to proceed with matrix split. Please, review parameters");
-            return void();
+            throw std::runtime_error("Block size or number of blocks are needed to proceed with matrix split. Please, review parameters");
             
         } else if (nblocks > 0 && iblocksize > 0 ) {
             checkClose_file(dstosplit);
-            Rf_error( "\nBlock size and number of blocks are defined, please define only one option, split by number of blocks or by block size");
-            return void();
+            throw std::runtime_error("Block size and number of blocks are defined, please define only one option, split by number of blocks or by block size");
             
         } else if( nblocks > 0 ) {
             double module;
@@ -271,7 +273,9 @@ inline void RcppSplit_matrix_hdf5_internal ( BigDataStatMeth::hdf5Dataset* dstos
             std::vector<double> vdts( inrows * incols );
             dstosplit->readDatasetBlock( {ii, kk}, {inrows, incols}, stride, block, vdts.data() );
             
-            dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, true);
+            //.. 20260304 ..// dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFileName(), newDatasetName, true);
+            dsOut = new BigDataStatMeth::hdf5Dataset(dstosplit->getFullPath(), newDatasetName, true);
+            dsOut->inheritCompressionLevel(dstosplit->getCompressionLevel());
             dsOut->createDataset(  incols, inrows, "real"); 
             
             if( dsOut->getDatasetptr() != nullptr ){
@@ -284,19 +288,19 @@ inline void RcppSplit_matrix_hdf5_internal ( BigDataStatMeth::hdf5Dataset* dstos
         
     } catch( H5::FileIException& error ) {
         checkClose_file(dsOut);
-        Rf_error( "c++ exception RcppSplit_matrix_hdf5_internal(File IException )");
+        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5_internal(File IException )");
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(dsOut);
-        Rf_error( "c++ exception RcppSplit_matrix_hdf5_internal (DataSet IException )");
+        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5_internal (DataSet IException )");
     } catch( H5::DataSpaceIException& error ) { 
         checkClose_file(dsOut);
-        Rf_error( "c++ exception RcppSplit_matrix_hdf5_internal (DataSpace IException )");
+        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5_internal (DataSpace IException )");
     } catch(std::exception &ex) {
         checkClose_file(dsOut);
-        Rf_error( "\nC++ exception RcppSplit_matrix_hdf5_internal : %s",ex.what());
+        throw std::runtime_error(std::string("C++ exception RcppSplit_matrix_hdf5_internal: ") + ex.what());
     } catch (...) {
         checkClose_file(dsOut);
-        Rf_error( "\nC++ exception RcppSplit_matrix_hdf5_internal (unknown reason)");
+        throw std::runtime_error("C++ exception RcppSplit_matrix_hdf5_internal (unknown reason)");
     }
     
     return void();

@@ -83,16 +83,14 @@ The implementation uses an incremental algorithm with two key parameters:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Create a sample large matrix in HDF5
 
-library(BigDataStatMeth)
-library(rhdf5)
 
 # Create a sample large matrix in HDF5
 A <- matrix(rnorm(10000), 1000, 10)
 
-fn <- "test_temp.hdf5"
+fn <- "test_temp.HDF5"
 bdCreate_hdf5_matrix(filename = fn, object = A, group = "data", dataset = "matrix")
 
 # Compute SVD with default parameters

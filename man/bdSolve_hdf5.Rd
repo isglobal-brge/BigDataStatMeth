@@ -71,12 +71,11 @@ The function handles:
 }
 }
 \examples{
-library(BigDataStatMeth)
 
 # Create test matrices
 N <- 1000
 M <- 1000
-fn <- "test_temp.hdf5"
+fn <- "test_temp.HDF5"
 
 set.seed(555)
 Y <- matrix(rnorm(N*M), N, M)

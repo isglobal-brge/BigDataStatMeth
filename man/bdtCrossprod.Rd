@@ -60,7 +60,6 @@ input size and available resources. For large matrices, block-based computation
 is used to improve cache utilization.
 }
 \examples{
-library(BigDataStatMeth)
 
 # Single matrix transposed cross-product
 n <- 100

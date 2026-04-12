@@ -84,18 +84,17 @@ Error handling:
 }
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test data
 data <- matrix(rnorm(1000*100), 1000, 100)
 
 # Save to HDF5
-bdCreate_hdf5_matrix("test.hdf5", data, "data", "matrix",
+bdCreate_hdf5_matrix("test.HDF5", data, "data", "matrix",
                      overwriteFile = TRUE)
 
 # Normalize data
-bdNormalize_hdf5("test.hdf5", "data", "matrix",
+bdNormalize_hdf5("test.HDF5", "data", "matrix",
                  bcenter = TRUE,
                  bscale = TRUE,
                  wsize = 1000)

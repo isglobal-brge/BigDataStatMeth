@@ -56,7 +56,7 @@
 //'   * R: The upper triangular matrix R
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Create a random 100x50 matrix
 //' X <- matrix(rnorm(5000), 100, 50)
 //' 
@@ -178,9 +178,8 @@ Rcpp::RObject bdQR( const Rcpp::RObject & X,
 //' }
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Create a sample HDF5 file with a matrix
-//' library(rhdf5)
 //' A <- matrix(rnorm(1000), 100, 10)
 //' h5createFile("example.h5")
 //' h5write(A, "example.h5", "mygroup/mymatrix")
@@ -268,7 +267,7 @@ Rcpp::List  bdQR_hdf5( std::string filename, std::string group, std::string data
             //                                 Rcpp::Named("ds_R") = strOutgroup + "/" + strOutdataset_R);
             
         } else {
-            Rcpp::Rcerr << "c++ exception bdQR_hdf5: " << "Error creating dataset";
+            Rcpp::stop("c++ exception bdQR_hdf5 Error creating dataset");
             return(lst_return);
         }
         
@@ -277,13 +276,13 @@ Rcpp::List  bdQR_hdf5( std::string filename, std::string group, std::string data
         // delete dsR; dsR = nullptr;
         
     } catch( H5::FileIException& error ) { 
-        Rcpp::Rcerr << "c++ exception bdQR_hdf5 (File IException)";
+        Rcpp::stop("c++ exception bdQR_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { 
-        Rcpp::Rcerr << "c++ exception bdQR_hdf5 (Group IException)";
+        Rcpp::stop("c++ exception bdQR_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) {
-        Rcpp::Rcerr << "c++ exception bdQR_hdf5 (DataSet IException)";
+        Rcpp::stop("c++ exception bdQR_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        Rcpp::Rcerr << "c++ exception bdQR_hdf5" << ex.what();
+        Rcpp::stop("c++ exception bdQR_hdf5: " + std::string(ex.what()));
     }
     
     // return void();

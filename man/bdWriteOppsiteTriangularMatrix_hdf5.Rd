@@ -55,7 +55,6 @@ making it suitable for big data applications. The block size can be adjusted
 based on available memory and performance requirements.
 }
 \examples{
-library(BigDataStatMeth)
 
 # Create a matrix with upper triangular values
 X <- matrix(rnorm(100), 10, 10)
@@ -63,14 +62,14 @@ X.1 <- X
 X[lower.tri(X)] <- 0
 
 # Save to HDF5
-bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
+bdCreate_hdf5_matrix("test_file.HDF5", X, "data", "X", 
                      overwriteFile = TRUE, 
                      overwriteDataset = FALSE, 
                      unlimited = FALSE)
                      
 # Mirror upper triangular to lower
 bdWriteOppsiteTriangularMatrix_hdf5(
-  filename = "test_file.hdf5", 
+  filename = "test_file.HDF5", 
   group = "data",
   dataset = "X",
   copytolower = TRUE,
@@ -82,14 +81,14 @@ X <- X.1
 X[upper.tri(X)] <- 0
 
 # Add to HDF5 file
-bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "Y", 
+bdCreate_hdf5_matrix("test_file.HDF5", X, "data", "Y", 
                      overwriteFile = FALSE, 
                      overwriteDataset = FALSE, 
                      unlimited = FALSE)
                      
 # Mirror lower triangular to upper
 bdWriteOppsiteTriangularMatrix_hdf5(
-  filename = "test_file.hdf5", 
+  filename = "test_file.HDF5", 
   group = "data",
   dataset = "Y",
   copytolower = FALSE,
@@ -97,8 +96,8 @@ bdWriteOppsiteTriangularMatrix_hdf5(
 )
 
 # Cleanup
-if (file.exists("test_file.hdf5")) {
-  file.remove("test_file.hdf5")
+if (file.exists("test_file.HDF5")) {
+  file.remove("test_file.HDF5")
 }
 
 }

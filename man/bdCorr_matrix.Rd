@@ -44,7 +44,7 @@ This function automatically detects whether to compute:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Backward compatible - existing code unchanged
 set.seed(123)
 X <- matrix(rnorm(1000), ncol = 10)

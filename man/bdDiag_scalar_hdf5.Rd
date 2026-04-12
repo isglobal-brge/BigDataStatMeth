@@ -78,8 +78,7 @@ This function provides flexible scalar operations on diagonals:
 }
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test matrix
 A <- matrix(rnorm(100), 10, 10)

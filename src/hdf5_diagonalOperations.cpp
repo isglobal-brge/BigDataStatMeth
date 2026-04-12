@@ -430,8 +430,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrices
 //' N <- 1000
@@ -440,13 +439,13 @@
 //' B <- matrix(rnorm(N*N), N, N)
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+//' bdCreate_hdf5_matrix("test.HDF5", A, "data", "matrixA",
 //'                      overwriteFile = TRUE)
-//' bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+//' bdCreate_hdf5_matrix("test.HDF5", B, "data", "matrixB",
 //'                      overwriteFile = FALSE)
 //' 
 //' # Subtract diagonals
-//' result <- bdDiag_subtract_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+//' result <- bdDiag_subtract_hdf5("test.HDF5", "data", "matrixA", "matrixB",
 //'                               outgroup = "results",
 //'                               outdataset = "diagonal_diff",
 //'                               paral = TRUE)
@@ -611,8 +610,7 @@ Rcpp::List bdDiag_subtract_hdf5(std::string filename,
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrices
 //' N <- 1000
@@ -621,13 +619,13 @@ Rcpp::List bdDiag_subtract_hdf5(std::string filename,
 //' B <- matrix(rnorm(N*N), N, N)
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+//' bdCreate_hdf5_matrix("test.HDF5", A, "data", "matrixA",
 //'                      overwriteFile = TRUE)
-//' bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+//' bdCreate_hdf5_matrix("test.HDF5", B, "data", "matrixB",
 //'                      overwriteFile = FALSE)
 //' 
 //' # Multiply diagonals (element-wise)
-//' result <- bdDiag_multiply_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+//' result <- bdDiag_multiply_hdf5("test.HDF5", "data", "matrixA", "matrixB",
 //'                               outgroup = "results",
 //'                               outdataset = "diagonal_product",
 //'                               paral = TRUE)
@@ -795,8 +793,7 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrices
 //' N <- 1000
@@ -805,13 +802,13 @@ Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group,
 //' B <- matrix(rnorm(N*N, mean=1), N, N)  # Avoid division by zero
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+//' bdCreate_hdf5_matrix("test.HDF5", A, "data", "matrixA",
 //'                      overwriteFile = TRUE)
-//' bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+//' bdCreate_hdf5_matrix("test.HDF5", B, "data", "matrixB",
 //'                      overwriteFile = FALSE)
 //' 
 //' # Divide diagonals
-//' result <- bdDiag_divide_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+//' result <- bdDiag_divide_hdf5("test.HDF5", "data", "matrixA", "matrixB",
 //'                             outgroup = "results",
 //'                             outdataset = "diagonal_ratio",
 //'                             paral = TRUE)
@@ -971,8 +968,7 @@ Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::stri
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrix
 //' A <- matrix(rnorm(100), 10, 10)

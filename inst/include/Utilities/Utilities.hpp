@@ -153,7 +153,7 @@ namespace BigDataStatMeth {
                 strtype = "unknown";
             }
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getObjecDataType: "<< ex.what() << "\n";
+            throw std::runtime_error(std::string("c++ exception getObjecDataType: ") + ex.what());
         }
         
         return(strtype);
@@ -221,7 +221,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getObjecDataType: "<<ex.what()<< " \n";
+            throw std::runtime_error(std::string("c++ exception getObjecDataType: ") + ex.what());
         }
         
         return(dims);
@@ -272,7 +272,7 @@ namespace BigDataStatMeth {
             }
                 
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getObjecDataType: "<<ex.what()<< " \n";
+            throw std::runtime_error(std::string("c++ exception getObjecDataType: ") + ex.what());
         }
         
         return(iblock_size);
@@ -310,7 +310,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getOptimBlockSize: "<<ex.what()<< " \n";
+            throw std::runtime_error(std::string("c++ exception getOptimBlockSize: ") + ex.what());
         }
         
         return(currentSize);
@@ -372,7 +372,7 @@ namespace BigDataStatMeth {
             blockSize[1] = maxCols;
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getMatrixBlockSize: "<<ex.what()<< " \n";
+            throw std::runtime_error(std::string("c++ exception getMatrixBlockSize: ") + ex.what());
         }
         
         return(blockSize);
@@ -408,7 +408,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception getVectorBlockSize: "<<ex.what()<< " \n";
+            throw std::runtime_error(std::string("c++ exception getVectorBlockSize: ") + ex.what());
         }
         
         return(blockSize);
@@ -526,34 +526,37 @@ namespace BigDataStatMeth {
     /**
      * @brief Determines number of threads for parallel operations
      *
-     * @param bparal Whether to use parallel processing
-     * @param threads Optional number of threads to use
+     * @param bparal   Whether to use parallel processing
+     * @param threads  Optional number of threads to use
      * @return unsigned int Number of threads to use
      *
      * @details Thread determination:
-     * - Considers hardware concurrency
-     * - Respects user-specified thread count
+     * - Respects OMP_THREAD_LIMIT and OMP_NUM_THREADS (CRAN compliance)
+     * - Respects user-specified thread count, capped at system limit
      * - Falls back to single thread if parallel disabled
-     * - Optimizes for system resources
      *
-     * @note Integrates with OpenMP thread management
+     * @note 20260304: replaced hardware_concurrency() with getDTthreads() so that
+     *   CRAN limits (OMP_THREAD_LIMIT=2) and server-specific limits are always honoured.
      */
     inline unsigned int get_threads(bool bparal, Rcpp::Nullable<int> threads = R_NilValue) 
     {
-        unsigned int ithreads = std::thread::hardware_concurrency();
+        //.. 20260304 ..// unsigned int ithreads = std::thread::hardware_concurrency();
+        // getDTthreads(INT_MAX, false) honours OMP_THREAD_LIMIT / OMP_NUM_THREADS
+        unsigned int ithreads = static_cast<unsigned int>(getDTthreads(INT_MAX, false));
         
         if(bparal == false) {
             ithreads = 1;
         } else {
             if(threads.isNotNull()) {
-                
-                if ((unsigned)Rcpp::as<int> (threads) <= ithreads){
-                    ithreads = Rcpp::as<int> (threads);
-                } 
-            
-            } else {
-                ithreads =  getDTthreads(ithreads, false);
-            }    
+                //.. 20260304 ..// if ((unsigned)Rcpp::as<int>(threads) <= ithreads) {
+                //.. 20260304 ..//     ithreads = Rcpp::as<int>(threads);
+                //.. 20260304 ..// }
+                // Cap user request against system limit (respects OMP_THREAD_LIMIT)
+                unsigned int req = static_cast<unsigned int>(Rcpp::as<int>(threads));
+                ithreads = std::min(req, ithreads);
+            }
+            //.. 20260304 ..// else { ithreads = getDTthreads(ithreads, false); }
+            // ithreads already holds the correct auto value from getDTthreads()
         }
         
         return(ithreads);

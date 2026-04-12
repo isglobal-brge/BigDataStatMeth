@@ -91,7 +91,6 @@ The function performs extensive validation:
 }
 }
 \examples{
-library(BigDataStatMeth)
     
 # Create test data
 set.seed(123)
@@ -99,17 +98,17 @@ Y <- matrix(rnorm(100), 10, 10)
 X <- matrix(rnorm(10), 10, 1)
         
 # Save to HDF5
-bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y",
+bdCreate_hdf5_matrix("test.HDF5", Y, "data", "Y",
                      overwriteFile = TRUE,
                      overwriteDataset = FALSE,
                      unlimited = FALSE)
-bdCreate_hdf5_matrix("test.hdf5", X, "data", "X",
+bdCreate_hdf5_matrix("test.HDF5", X, "data", "X",
                      overwriteFile = FALSE,
                      overwriteDataset = FALSE,
                      unlimited = FALSE)
             
 # Multiply matrix rows by vector
-bdcomputeMatrixVector_hdf5("test.hdf5",
+bdcomputeMatrixVector_hdf5("test.HDF5",
                            group = "data",
                            dataset = "Y",
                            vectorgroup = "data",
@@ -120,7 +119,7 @@ bdcomputeMatrixVector_hdf5("test.hdf5",
                            overwrite = TRUE)
     
 # Subtract vector from matrix rows
-bdcomputeMatrixVector_hdf5("test.hdf5",
+bdcomputeMatrixVector_hdf5("test.HDF5",
                            group = "data",
                            dataset = "Y",
                            vectorgroup = "data",
@@ -131,7 +130,7 @@ bdcomputeMatrixVector_hdf5("test.hdf5",
                            overwrite = TRUE)
     
 # Subtract vector from matrix columns
-bdcomputeMatrixVector_hdf5("test.hdf5",
+bdcomputeMatrixVector_hdf5("test.HDF5",
                            group = "data",
                            dataset = "Y",
                            vectorgroup = "data",
@@ -142,8 +141,8 @@ bdcomputeMatrixVector_hdf5("test.hdf5",
                            overwrite = TRUE)
                            
 # Cleanup
-if (file.exists("test.hdf5")) {
-  file.remove("test.hdf5")
+if (file.exists("test.HDF5")) {
+  file.remove("test.HDF5")
 }
 
 }

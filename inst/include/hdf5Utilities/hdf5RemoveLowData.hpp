@@ -1,6 +1,8 @@
 /**
  * @file hdf5RemoveLowData.hpp
  * @brief Quality control utilities for handling low-quality data in HDF5 datasets
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * 
  * This file provides functionality for removing rows or columns from HDF5 datasets
  * that contain a high percentage of missing or low-quality data. It implements
@@ -155,6 +157,7 @@ namespace BigDataStatMeth {
                 if( bcreated == false) {
                     
                     if( extendcols > 0 && extendrows > 0){
+                        dsOut->inheritCompressionLevel(dsIn->getCompressionLevel());
                         dsOut->createUnlimitedDataset(extendrows, extendcols, "real");
                         dsOut->openDataset();
                         bcreated = true;
@@ -188,32 +191,25 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error) { // catch failure caused by the H5File operations
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (File IException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (File IException)");
         } catch( H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSet IException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSet IException)");
         } catch( H5::GroupIException& error) { // catch failure caused by the Group operations
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (Group IException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (Group IException)");
         } catch( H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSpace IException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"c++ exception Rcpp_Remove_Low_Data_hdf5 (Data TypeIException)" << std::endl;
-            return -1;
+            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (Data TypeIException)");
         } catch(std::exception &ex) {
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr << "c++ exception Rcpp_Remove_Low_Data_hdf5: " << ex.what();
-            return -1;
+            throw std::runtime_error(std::string("c++ exception Rcpp_Remove_Low_Data_hdf5: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"C++ exception Rcpp_Remove_Low_Data_hdf5 (unknown reason)";
-            return -1;
+            throw std::runtime_error("C++ exception Rcpp_Remove_Low_Data_hdf5 (unknown reason)");
         }
         
         return(itotrem);

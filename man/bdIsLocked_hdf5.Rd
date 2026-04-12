@@ -23,7 +23,7 @@ Requires HDF5 file locking (HDF5 >= 1.12 recommended). The
 function sets \code{HDF5_USE_FILE_LOCKING=TRUE} for the process.
 }
 \examples{
-\dontrun{
+\donttest{
 if (bdIsFileLocked("data.h5")) stop("File in use")
 }
 }

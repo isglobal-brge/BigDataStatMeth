@@ -118,8 +118,7 @@
 //' - Exception handling
 //' 
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrices
 //' N <- 1500
@@ -129,13 +128,13 @@
 //' b <- matrix(rnorm(N*M), N, M)
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+//' bdCreate_hdf5_matrix("test.HDF5", a, "data", "A",
 //'                      overwriteFile = TRUE)
-//' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+//' bdCreate_hdf5_matrix("test.HDF5", b, "data", "B",
 //'                      overwriteFile = FALSE)
 //' 
 //' # Perform addition
-//' bdblockSum_hdf5("test.hdf5", "data", "A", "B",
+//' bdblockSum_hdf5("test.HDF5", "data", "A", "B",
 //'                 outgroup = "results",
 //'                 outdataset = "sum",
 //'                 block_size = 1024,
@@ -245,15 +244,15 @@ Rcpp::List bdblockSum_hdf5(std::string filename,
         lst_return["ds"] = strsubgroupOut + "/" + strdatasetOut;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (File IException)";
+        Rcpp::stop("c++ exception bdblockSum_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (Group IException)";
+        Rcpp::stop("c++ exception bdblockSum_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5 (DataSet IException)";
+        Rcpp::stop("c++ exception bdblockSum_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        Rcpp::Rcerr<<"c++ exception bdblockSum_hdf5: " << ex.what();
+        Rcpp::stop("c++ exception bdblockSum_hdf5: " + std::string(ex.what()));
     } catch (...) {
-        Rcpp::Rcerr<<"C++ exception bdblockSum_hdf5 (unknown reason)";
+        Rcpp::stop("C++ exception bdblockSum_hdf5 (unknown reason)");
     }
     
     // //..// return(C);

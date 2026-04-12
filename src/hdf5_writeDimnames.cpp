@@ -61,7 +61,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' bdWrite_hdf5_dimnames(
 //'   filename = "test.h5",
 //'   group = "MGCCA_IN",
@@ -114,7 +114,8 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
              Rcpp::CharacterVector svrcolnames(1);
              dsdims->writeDimnames( svrcolnames, rownames );
          } else {
-             dsdims->writeDimnames( colnames, rownames);
+             //. 20260222 .//dsdims->writeDimnames( colnames, rownames);
+             dsdims->writeDimnames( rownames, colnames);
          }
          
          lst_return["fn"] = filename;
@@ -122,13 +123,13 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
          lst_return["dscols"] = group + "/." + dataset + "/2";
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         Rf_error("c++ c++ exception bdWrite_hdf5_dimnames (File IException)");
+         Rcpp::stop("c++ c++ exception bdWrite_hdf5_dimnames (File IException)");
          return(lst_return);
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         Rf_error( "c++ exception bdWrite_hdf5_dimnames (DataSet IException)");
+         Rcpp::stop("c++ exception bdWrite_hdf5_dimnames (DataSet IException)");
          return(lst_return);
      } catch(std::exception &ex) {
-         Rf_error( "c++ exception bdWrite_hdf5_dimnames %s", ex.what());
+         Rcpp::stop("c++ exception bdWrite_hdf5_dimnames: " + std::string(ex.what()));
          return(lst_return);
      } 
      

@@ -67,7 +67,6 @@ The pseudoinverse satisfies the Moore-Penrose conditions:
 }
 
 \examples{
-library(BigDataStatMeth)
 
 # Create a singular matrix
 X <- matrix(c(1,2,3,2,4,6), 2, 3)  # rank-deficient matrix

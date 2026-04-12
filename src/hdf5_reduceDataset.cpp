@@ -93,8 +93,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrices
 //' X1 <- matrix(1:100, 10, 10)
@@ -102,7 +101,7 @@
 //' X3 <- matrix(201:300, 10, 10)
 //' 
 //' # Save to HDF5
-//' fn <- "test.hdf5"
+//' fn <- "test.HDF5"
 //' bdCreate_hdf5_matrix(fn, X1, "data", "matrix1",
 //'                      overwriteFile = TRUE)
 //' bdCreate_hdf5_matrix(fn, X2, "data", "matrix2",
@@ -181,16 +180,16 @@ Rcpp::List bdReduce_hdf5_dataset( std::string filename, std::string group,
         lst_return["func"] = reducefunction;
         
     } catch( H5::FileIException& error ) {  
-        Rcpp::Rcerr << "c++ exception bdReduce_hdf5_dataset (File IException)";
+        Rcpp::stop("c++ exception bdReduce_hdf5_dataset (File IException)");
         return(lst_return);
     } catch( H5::GroupIException & error ) { 
-        Rcpp::Rcerr << "c++ exception bdReduce_hdf5_dataset (Group IException)";
+        Rcpp::stop("c++ exception bdReduce_hdf5_dataset (Group IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::Rcerr << "c++ exception bdReduce_hdf5_dataset (DataSet IException)";
+        Rcpp::stop("c++ exception bdReduce_hdf5_dataset (DataSet IException)");
         return(lst_return);
     } catch(std::exception& ex) {
-        Rcpp::Rcerr << "c++ exception bdReduce_hdf5_dataset" << ex.what();
+        Rcpp::stop("c++ exception bdReduce_hdf5_dataset: " + std::string(ex.what()));
         return(lst_return);
     }
     

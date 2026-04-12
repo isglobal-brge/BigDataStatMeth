@@ -52,7 +52,7 @@ with name \code{dataset}, without writing data (allocation only).
 Honors file/dataset overwrite flags and supports unlimited datasets.
 }
 \examples{
-\dontrun{
+\donttest{
 bdCreate_hdf5_emptyDataset("test.h5", "MGCCA_IN", "X", 1000, 500,
                           overwriteFile = FALSE,
                           overwriteDataset = TRUE,

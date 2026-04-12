@@ -71,11 +71,10 @@
 //' @return Character vector containing dataset names.
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create a test HDF5 file
-//' fn <- "test.hdf5"
+//' fn <- "test.HDF5"
 //' X <- matrix(rnorm(100), 10, 10)
 //' Y <- matrix(rnorm(100), 10, 10)
 //' 
@@ -132,20 +131,20 @@ Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rc
             groupDatasets =  fQuery->getDatasetNames(group, strprefix, "");
         } else {
             delete fQuery; fQuery = nullptr;
-            Rcpp::Rcerr << "c++ exception bdgetDatasetsList_hdf5: " << "File does not exist";
+            Rcpp::stop("c++ exception bdgetDatasetsList_hdf5 File does not exist");
             return(R_NilValue);
         }
         
         delete fQuery; fQuery = nullptr;
         
     } catch( H5::FileIException& error ) { 
-        Rcpp::Rcerr << "c++ exception bdgetDatasetsList_hdf5 (File IException)\n";
+        Rcpp::stop("c++ exception bdgetDatasetsList_hdf5 (File IException)");
         return(R_NilValue);
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::Rcerr << "c++ exception bdgetDatasetsList_hdf5 (DataSet IException)\n";
+        Rcpp::stop("c++ exception bdgetDatasetsList_hdf5 (DataSet IException)");
         return(R_NilValue);
     } catch(std::exception &ex) {
-        Rcpp::Rcerr << "c++ exception bdgetDatasetsList_hdf5: " << ex.what();
+        Rcpp::stop("c++ exception bdgetDatasetsList_hdf5: " + std::string(ex.what()));
         return(R_NilValue);
     }
     

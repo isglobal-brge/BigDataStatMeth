@@ -1,6 +1,8 @@
 /**
  * @file matrixPseudoinverse.hpp
  * @brief Pseudoinverse computation for HDF5 matrices
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @details This header file provides implementations for computing the
  * Moore-Penrose pseudoinverse of matrices stored in HDF5 format. The
  * implementation includes:
@@ -178,6 +180,7 @@ inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA,
     }
     
     Eigen::MatrixXd pinv = Eigen::MatrixXd::Zero(n,m);
+    dsR->inheritCompressionLevel(dsA->getCompressionLevel());
     dsR->createDataset( n, m, "real" );
     
 #pragma omp parallel for num_threads(get_number_threads(threads, R_NilValue))

@@ -127,15 +127,14 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test data
 //' data <- matrix(rnorm(100), 10, 10)
 //' rownames(data) <- paste0("TCGA-OR-A5J", 1:10)
 //' 
 //' # Save to HDF5
-//' fn <- "test.hdf5"
+//' fn <- "test.HDF5"
 //' bdCreate_hdf5_matrix(fn, data, "data", "matrix1",
 //'                      overwriteFile = TRUE)
 //' 
@@ -204,7 +203,7 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
                 nrows = 0;
         
         if( blockedSortlist.length()<=0 ) {
-            Rcpp::Rcerr<<"\nList is empty, please create a list with the new sort";
+            Rcpp::stop("List is empty, please create a list with the new sort");
             return(lst_return);
         }
         
@@ -219,7 +218,7 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
         dsIn->openDataset();
         
         if( dsIn->getDatasetptr() == nullptr ) {
-            Rcpp::Rcerr<<"\nError opening dataset";
+            Rcpp::stop("Error opening dataset");
             return(lst_return);
         }
         
@@ -238,7 +237,7 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
             RcppSort_dataset_hdf5(dsIn.get(), dsOut.get(), blockedSortlist, func);
         } else {
             // checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"\nError creating dataset";
+            Rcpp::stop("Error creating dataset");
             return(lst_return);
         }
         
@@ -248,19 +247,19 @@ Rcpp::List bdSort_hdf5_dataset( std::string filename, std::string group,
         lst_return["ds"] = strOutgroup + "/" + outdataset;
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcerr<<"c++ exception bdSort_hdf5_dataset (File IException)";
+        Rcpp::stop("c++ exception bdSort_hdf5_dataset (File IException)");
         return(lst_return);
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset (Group IException)";
+        Rcpp::stop("c++ exception bdSort_hdf5_dataset (Group IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset (DataSet IException)";
+        Rcpp::stop("c++ exception bdSort_hdf5_dataset (DataSet IException)");
         return(lst_return);
     } catch(std::exception& ex) {
-        Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset" << ex.what();
+        Rcpp::stop("c++ exception bdSort_hdf5_dataset: " + std::string(ex.what()));
         return(lst_return);
     } catch (...) {
-        Rcpp::Rcerr << "c++ exception bdSort_hdf5_dataset (unknown reason)";
+        Rcpp::stop("c++ exception bdSort_hdf5_dataset (unknown reason)");
         return(lst_return);
     }
     

@@ -1,6 +1,8 @@
 /**
  * @file multiplication.hpp
  * @brief Matrix multiplication operations for HDF5 matrices
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @details This header file provides implementations for matrix multiplication
  * operations on matrices stored in HDF5 format. The implementation includes:
  * 
@@ -126,7 +128,8 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
             
         case SQUARE_SMALL: {
             hsize_t block = sqrt(MEMORY_BUDGET / (3 * bytes_per_element));
-            block = std::min({block, N/2, M/2, K/2});
+            // block = std::min({block, N/2, M/2, K/2});
+            block = std::min({block, N, M, K});
             result.inner_block = result.output_block = block;
             break;
         }
@@ -190,7 +193,7 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
             
             C = Eigen::MatrixXd::Zero(M,N) ;
             
-            if( A.rows() == B.cols())
+            if( A.cols() == B.rows())   // inner dimensions must match for A*B
             {
                 
                 if(block_size > std::min( N, std::min(M,K)) )
@@ -231,7 +234,7 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcerr<< "c++ exception Bblock_matrix_mul_parallel: "<<ex.what()<< " \n";
+            throw std::runtime_error(std::string("c++ exception Bblock_matrix_mul_parallel: ") + ex.what());
         }
         
         return(C);
@@ -248,19 +251,19 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
              hsize_t K, N, L, M;
             
             if (transpose_A) {
-                K = dsA->ncols();  // t(A): filas de A se vuelven columnas
-                N = dsA->nrows();  // t(A): columnas de A se vuelven filas
+                K = dsA->ncols();  // inner dim for t(A)*B = R's nrows(A) [HDF5 second dim]
+                N = dsA->nrows();  // output rows of t(A)*B = R's ncols(A) [HDF5 first dim]
             } else {
-                K = dsA->nrows();  // A normal
-                N = dsA->ncols();
+                K = dsA->nrows();  // inner dim for A*B = R's ncols(A) [HDF5 first dim]
+                N = dsA->ncols();  // output rows of A*B = R's nrows(A) [HDF5 second dim]
             }
             
             if (transpose_B) {
-                L = dsB->nrows();  // t(B): columnas de B se vuelven filas
-                M = dsB->ncols();  // t(B): filas de B se vuelven columnas
+                L = dsB->nrows();  // inner dim check: R's ncols(B) [HDF5 first dim]
+                M = dsB->ncols();  // output cols of A*t(B) = R's nrows(B) [HDF5 second dim]
             } else {
-                L = dsB->ncols();  // B normal
-                M = dsB->nrows();
+                L = dsB->ncols();  // inner dim check: R's nrows(B) [HDF5 second dim]
+                M = dsB->nrows();  // output cols of A*B = R's ncols(B) [HDF5 first dim]
             }
              
              int ihdf5_block_N, ihdf5_block_M, ihdf5_block_K;
@@ -281,6 +284,7 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                                      vsizetoReadM, vstartM,
                                      vsizetoReadK, vstartK;
                 
+                dsC->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsC->createDataset( N, M, "real");
                 
                 if( dsC->getDatasetptr() != nullptr) 
@@ -308,18 +312,18 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                                             iRowsB = vsizetoReadK[kk];
                                     
                                     std::vector<double> vdA( iRowsA * iColsA );
-                                    #pragma omp critical(accessFile)
-                                    {
+                                    //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                                    //.. 20260325 - remove critical ..// {
                                         dsA->readDatasetBlock( {vstartK[kk], vstart[ii]}, {vsizetoReadK[kk], vsizetoRead[ii]}, stride, block, vdA.data() );
-                                    }
+                                    //.. 20260325 - remove critical ..// }
                                     
                                     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), vsizetoReadK[kk], vsizetoRead[ii] );
                                     
                                     std::vector<double> vdB( iRowsB * iColsB );
-                                    #pragma omp critical(accessFile)
-                                    {
+                                    //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                                    //.. 20260325 - remove critical ..// {
                                         dsB->readDatasetBlock( {vstartM[jj], vstartK[kk]}, {vsizetoReadM[jj], vsizetoReadK[kk]}, stride, block, vdB.data() );
-                                    }
+                                    //.. 20260325 - remove critical ..// }
                                     
                                     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), vsizetoReadM[jj], vsizetoReadK[kk] );
                                     
@@ -343,10 +347,10 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
                                 std::vector<hsize_t> offset = {vstartM[jj], vstart[ii]};
                                 std::vector<hsize_t> count = {vsizetoReadM[jj], vsizetoRead[ii]};
                                                                 
-                                #pragma omp critical(accessFile)
-                                {
+                                //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                                //.. 20260325 - remove critical ..// {
                                     dsC->writeDatasetBlock(vdC_final, offset, count, stride, block);
-                                }
+                                //.. 20260325 - remove critical ..// }
                             }
                         }
                     }
@@ -358,19 +362,19 @@ inline void getBlockPositionsSizes_hdf5( hsize_t maxPosition, hsize_t blockSize,
 
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             // checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ c++ exception multiplication (File IException)\n";
+            throw std::runtime_error("c++ c++ exception multiplication (File IException)");
             // return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
             // checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception multiplication (DataSet IException)\n";
+            throw std::runtime_error("c++ exception multiplication (DataSet IException)");
             // return void();
         } catch(std::exception &ex) {
             // checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception multiplication " << ex.what();
+            throw std::runtime_error(std::string("c++ exception multiplication: ") + ex.what());
             // return void();
         }  catch (...) {
             // checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nC++ exception multiplication (unknown reason)";
+            throw std::runtime_error("C++ exception multiplication (unknown reason)");
             // return void();
         }
 

@@ -177,11 +177,10 @@ namespace BigDataStatMeth {
            
            
        } catch(std::exception &ex) {
-           Rcpp::Rcout<<"c++ error : Bblock_matrix_mul : " <<ex.what();
-           return(C);
+           throw std::runtime_error(std::string("c++ error : Bblock_matrix_mul: ") + ex.what());
            
        } catch(...) { 
-           Rf_error("c++ exception in Bblock_matrix_mul (unknown reason)"); 
+           throw std::runtime_error("c++ exception in Bblock_matrix_mul (unknown reason)");
        }
        
        return(C);
@@ -291,7 +290,7 @@ namespace BigDataStatMeth {
                 }
             }
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception Rcpp_block_matrix_mul_parallel: "<<ex.what()<< " \n";
+            throw std::runtime_error(std::string("c++ exception Rcpp_block_matrix_mul_parallel: ") + ex.what());
         }
         
         return(C);
@@ -335,7 +334,7 @@ namespace BigDataStatMeth {
             return(C);
             
         } else {
-            Rcpp::Rcout<<"Error: non-conformable arguments";
+            throw std::runtime_error("Error: non-conformable arguments");
         }
         
         return(R_NilValue);
@@ -475,13 +474,11 @@ namespace BigDataStatMeth {
 
             } else {
                 
-                Rcpp::Rcout<< "vector sum error: non-conformable arguments\n";
-                return(R_NilValue);
+                throw std::runtime_error("vector sum error: non-conformable arguments");
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception Rcpp_matrix_vector_blockMult: "<<ex.what()<< " \n";
-            return(R_NilValue);
+            throw std::runtime_error(std::string("c++ exception Rcpp_matrix_vector_blockMult: ") + ex.what());
         }
         
         if(btransposed == true){

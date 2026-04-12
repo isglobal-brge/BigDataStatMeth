@@ -39,15 +39,14 @@ This function provides safe element removal capabilities with:
 The function validates paths and performs safe removal operations.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test matrices
 matA <- matrix(1:15, nrow = 3, byrow = TRUE)
 matB <- matrix(15:1, nrow = 3, byrow = TRUE)
 
 # Save to HDF5
-fn <- "test.hdf5"
+fn <- "test.HDF5"
 bdCreate_hdf5_matrix(fn, matA, "data", "matrix1",
                      overwriteFile = TRUE)
 bdCreate_hdf5_matrix(fn, matB, "data", "matrix2",

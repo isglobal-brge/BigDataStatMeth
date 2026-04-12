@@ -95,8 +95,7 @@ This function provides efficient statistical computation capabilities with:
 Results are stored in a new group 'mean_sd' within the HDF5 file.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test matrices
 set.seed(123)
@@ -104,14 +103,14 @@ Y <- matrix(rnorm(100), 10, 10)
 X <- matrix(rnorm(10), 10, 1)
 
 # Save to HDF5
-bdCreate_hdf5_matrix("test.hdf5", Y, "data", "matrix1",
+bdCreate_hdf5_matrix("test.HDF5", Y, "data", "matrix1",
                      overwriteFile = TRUE)
-bdCreate_hdf5_matrix("test.hdf5", X, "data", "vector1",
+bdCreate_hdf5_matrix("test.HDF5", X, "data", "vector1",
                      overwriteFile = FALSE)
 
 # Compute statistics
 bdgetSDandMean_hdf5(
-  filename = "test.hdf5",
+  filename = "test.HDF5",
   group = "data",
   dataset = "matrix1",
   sd = TRUE,
@@ -121,8 +120,8 @@ bdgetSDandMean_hdf5(
 )
 
 # Cleanup
-if (file.exists("test.hdf5")) {
-  file.remove("test.hdf5")
+if (file.exists("test.HDF5")) {
+  file.remove("test.HDF5")
 }
 }
 

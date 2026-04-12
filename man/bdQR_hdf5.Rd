@@ -69,9 +69,8 @@ which is particularly useful for matrices too large to fit in memory. Features i
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Create a sample HDF5 file with a matrix
-library(rhdf5)
 A <- matrix(rnorm(1000), 100, 10)
 h5createFile("example.h5")
 h5write(A, "example.h5", "mygroup/mymatrix")

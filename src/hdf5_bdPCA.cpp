@@ -105,9 +105,8 @@
 //'   All results are written to the HDF5 file in the group 'PCA/`dataset`'.
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Create a sample large matrix in HDF5
-//' library(rhdf5)
 //' X <- matrix(rnorm(10000), 1000, 10)
 //' h5createFile("data.h5")
 //' h5write(X, "data.h5", "data/matrix")
@@ -195,7 +194,7 @@ Rcpp::List bdPCA_hdf5(std::string filename, std::string group, std::string datas
                 return(lst_return);
                 // return void();
             } else if( Rcpp::as<double>(rankthreshold) < 0 ) {
-                Rcpp::Rcout<< "Threshold must be a positive value near zero";
+                Rcpp::stop("Threshold must be a positive value near zero");
                 return(lst_return);
                 // return void();
             } else {
@@ -225,22 +224,22 @@ Rcpp::List bdPCA_hdf5(std::string filename, std::string group, std::string datas
         lst_return["ind.contrib"] = strPCAgroup + "/" +  "ind.contrib";
         
     } catch( H5::FileIException& error ) {
-        Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (File IException)";
+        Rcpp::stop("c++ exception bdPCA_hdf5 (File IException)");
         // return void();
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (DataSet IException)";
+        Rcpp::stop("c++ exception bdPCA_hdf5 (DataSet IException)");
         // return void();
     } catch( H5::DataSpaceIException& error ) { 
-        Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (DataSpace IException)";
+        Rcpp::stop("c++ exception bdPCA_hdf5 (DataSpace IException)");
         // return void();
     } catch( H5::DataTypeIException& error ) {
-        Rcpp::Rcerr<<"\nc++ exception bdPCA_hdf5 (DataType IException)";
+        Rcpp::stop("c++ exception bdPCA_hdf5 (DataType IException)");
         // return void();
     } catch(std::exception &ex) {
-        Rcpp::Rcerr<<"\nC++ exception bdPCA_hdf5 : "<< ex.what();
+        Rcpp::stop("C++ exception bdPCA_hdf5: " + std::string(ex.what()));
         // return void();
     } catch (...) {
-        Rcpp::Rcerr<<"\nC++ exception bdPCA_hdf5 (unknown reason)";
+        Rcpp::stop("C++ exception bdPCA_hdf5 (unknown reason)");
         // return void();
     }
     

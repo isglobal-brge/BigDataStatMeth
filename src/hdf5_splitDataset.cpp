@@ -100,14 +100,13 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test data
 //' data <- matrix(rnorm(1000), 100, 10)
 //' 
 //' # Save to HDF5
-//' fn <- "test.hdf5"
+//' fn <- "test.HDF5"
 //' bdCreate_hdf5_matrix(fn, data, "data", "matrix1",
 //'                      overwriteFile = TRUE)
 //' 
@@ -193,19 +192,19 @@ Rcpp::List bdSplit_matrix_hdf5( std::string filename, std::string group, std::st
             
             if( nblocks.isNull() && blocksize.isNull()){
                 // checkClose_file(dsIn);
-                Rf_error( "c++ exception bdSplit_matrix_hdf5: Block size or number of blocks are needed to proceed with matrix split. Please, review parameters");
+                Rcpp::stop("c++ exception bdSplit_matrix_hdf5: Block size or number of blocks are needed to proceed with matrix split. Please, review parameters");
                 return(lst_return);
                 
             } else if (!nblocks.isNull() && !blocksize.isNull()) {
                 // checkClose_file(dsIn);
-                Rf_error( "c++ exception bdSplit_matrix_hdf5: Block size and number of blocks are defined, please define only one option, split by number of blocks or by block size");
+                Rcpp::stop("c++ exception bdSplit_matrix_hdf5: Block size and number of blocks are defined, please define only one option, split by number of blocks or by block size");
                 return(lst_return);
                 
             } else if(!nblocks.isNull()) {
                 
                 if ( Rcpp::as<int>(nblocks) == 1) {
                     // checkClose_file(dsIn);
-                    Rf_error( "c++ exception bdSplit_matrix_hdf5: No data to split: Numbers of blocks = 1, no data to split");
+                    Rcpp::stop("c++ exception bdSplit_matrix_hdf5: No data to split: Numbers of blocks = 1, no data to split");
                     return(lst_return);
                     
                 } else {
@@ -225,13 +224,13 @@ Rcpp::List bdSplit_matrix_hdf5( std::string filename, std::string group, std::st
                 if( bcols == true ) {
                     if( iblocksize == nrows) {  
                         // checkClose_file(dsIn);
-                        Rf_error( "c++ exception bdSplit_matrix_hdf5: No data to split");
+                        Rcpp::stop("c++ exception bdSplit_matrix_hdf5: No data to split");
                         return(lst_return);
                     }
                 } else {
                     if( iblocksize == ncols) {  
                         // checkClose_file(dsIn);
-                        Rf_error( "c++ exception bdSplit_matrix_hdf5: No data to split");
+                        Rcpp::stop("c++ exception bdSplit_matrix_hdf5: No data to split");
                         return(lst_return);
                     }
                 }
@@ -241,7 +240,7 @@ Rcpp::List bdSplit_matrix_hdf5( std::string filename, std::string group, std::st
                 RcppSplit_matrix_hdf5 ( dsIn.get(), bcols, stroutgroup, stroutdataset, iblocksize, ncols, nrows );    
             } else {
                 // checkClose_file(dsIn);
-                Rf_error( "c++ exception bdSplit_matrix_hdf5: File %s does not exist", filename.c_str());
+                Rcpp::stop("c++ exception bdSplit_matrix_hdf5: File does not exist: " + std::string(filename.c_str()));
                 return(lst_return);
             }
         }
@@ -254,17 +253,17 @@ Rcpp::List bdSplit_matrix_hdf5( std::string filename, std::string group, std::st
         Rcpp::Rcout<<"Dataset has been splitted, results can be found in "<< stroutgroup + "/" + stroutdataset <<"\n";
         
     } catch( H5::FileIException& error ) { 
-        Rf_error( "c++ exception bdSplit_matrix_hdf5 (File IException)");
+        Rcpp::stop("c++ exception bdSplit_matrix_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { 
-        Rf_error( "c++ exception bdSplit_matrix_hdf5 (DataSet IException)");
+        Rcpp::stop("c++ exception bdSplit_matrix_hdf5 (DataSet IException)");
     } catch( H5::DataSpaceIException& error ) { 
-        Rf_error( "c++ exception bdSplit_matrix_hdf5 (DataSpace IException)");
+        Rcpp::stop("c++ exception bdSplit_matrix_hdf5 (DataSpace IException)");
     } catch( H5::DataTypeIException& error ) { 
-        Rf_error( "c++ exception bdSplit_matrix_hdf5 (DataType IException)");
+        Rcpp::stop("c++ exception bdSplit_matrix_hdf5 (DataType IException)");
     } catch(std::exception &ex) {
-        Rf_error( "c++ exception bdSplit_matrix_hdf5 : %s", ex.what());
+        Rcpp::stop("c++ exception bdSplit_matrix_hdf5: " + std::string(ex.what()));
     } catch (...) {
-        Rf_error( "c++ exception bdSplit_matrix_hdf5 (unknown reason)");
+        Rcpp::stop("c++ exception bdSplit_matrix_hdf5 (unknown reason)");
     }
     
     return(lst_return);

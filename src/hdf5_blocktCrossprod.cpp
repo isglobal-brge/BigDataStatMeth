@@ -121,9 +121,7 @@
 //' - Optimized for numerical stability
 //' 
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
-//' library(rhdf5)
+//' \donttest{
 //' 
 //' # Create test matrix
 //' N <- 1000
@@ -132,11 +130,11 @@
 //' a <- matrix(rnorm(N*M), N, M)
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A",
+//' bdCreate_hdf5_matrix("test.HDF5", a, "INPUT", "A",
 //'                      overwriteFile = TRUE)
 //' 
 //' # Compute transposed cross product
-//' bdtCrossprod_hdf5("test.hdf5", "INPUT", "A",
+//' bdtCrossprod_hdf5("test.HDF5", "INPUT", "A",
 //'                   outgroup = "OUTPUT",
 //'                   outdataset = "result",
 //'                   block_size = 1024,
@@ -239,13 +237,13 @@ Rcpp::List bdtCrossprod_hdf5( std::string filename,
          
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         Rcpp::Rcerr<<"c++ c++ exception bdtCrossprod_hdf5 (File IException)";
+         Rcpp::stop("c++ c++ exception bdtCrossprod_hdf5 (File IException)");
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         Rcpp::Rcerr<<"c++ exception bdtCrossprod_hdf5 (DataSet IException)";
+         Rcpp::stop("c++ exception bdtCrossprod_hdf5 (DataSet IException)");
      } catch(std::exception &ex) {
-         Rcpp::Rcerr << "c++ exception bdtCrossprod_hdf5: " << ex.what();
+         Rcpp::stop("c++ exception bdtCrossprod_hdf5: " + std::string(ex.what()));
      } catch (...) {
-         Rcpp::Rcerr<<"C++ exception bdtCrossprod_hdf5 (unknown reason)";
+         Rcpp::stop("C++ exception bdtCrossprod_hdf5 (unknown reason)");
      }
      
      // return List::create(Named("filename") = filename,

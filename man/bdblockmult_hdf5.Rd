@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdblockmult_hdf5}
 \alias{bdblockmult_hdf5}
-\title{Hdf5 datasets multiplication}
+\title{HDF5 datasets multiplication}
 \usage{
 bdblockmult_hdf5(
   filename,
@@ -91,8 +91,6 @@ maximum number of available threads
 }
 }
 \examples{
-library("BigDataStatMeth")
-library("rhdf5")
 
 N = 1000; M = 1000
 
@@ -100,7 +98,7 @@ set.seed(555)
 a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
 b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
 
-fn <- "test_temp.hdf5"
+fn <- "test_temp.HDF5"
 bdCreate_hdf5_matrix(filename = fn, 
                      object = a, group = "groupA", 
                      dataset = "datasetA",

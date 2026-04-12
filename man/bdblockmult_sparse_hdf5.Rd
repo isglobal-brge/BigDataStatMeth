@@ -84,9 +84,9 @@ Memory efficiency is achieved through:
 }
 }
 \examples{
-\dontrun{
-library(Matrix)
-library(BigDataStatMeth)
+\donttest{
+
+requireNamespace("Matrix", quietly=TRUE)
 
 # Create sparse test matrices
 k <- 1e3
@@ -105,11 +105,11 @@ y_sparse <- sparseMatrix(
 )
 
 # Save to HDF5
-bdCreate_hdf5_matrix("test.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
-bdCreate_hdf5_matrix("test.hdf5", as.matrix(y_sparse), "SPARSE", "y_sparse")
+bdCreate_hdf5_matrix("test.HDF5", as.matrix(x_sparse), "SPARSE", "x_sparse")
+bdCreate_hdf5_matrix("test.HDF5", as.matrix(y_sparse), "SPARSE", "y_sparse")
 
 # Perform multiplication
-bdblockmult_sparse_hdf5("test.hdf5", "SPARSE", "x_sparse", "y_sparse",
+bdblockmult_sparse_hdf5("test.HDF5", "SPARSE", "x_sparse", "y_sparse",
                         block_size = 1024,
                         paral = TRUE,
                         threads = 4)

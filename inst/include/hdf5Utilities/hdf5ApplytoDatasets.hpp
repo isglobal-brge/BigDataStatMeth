@@ -1,6 +1,8 @@
 /**
  * @file hdf5ApplytoDatasets.hpp
  * @brief Advanced mathematical operations on HDF5 datasets
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * 
  * This file provides a comprehensive set of mathematical and statistical operations
  * that can be applied to HDF5 datasets. It implements various matrix operations,
@@ -209,6 +211,7 @@ namespace BigDataStatMeth {
                             results = BigDataStatMeth::bdtcrossproduct(original);
                         }
                         
+                        dsOut->inheritCompressionLevel(dsA->getCompressionLevel());
                         dsOut->createDataset(results.rows(), results.cols(), "numeric"); 
                         dsOut->openDataset(); 
                         if( dsOut->getDatasetptr() != nullptr )  {
@@ -225,12 +228,13 @@ namespace BigDataStatMeth {
                             
                             // BigDataStatMeth::hdf5DatasetInternal* dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
                             std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  dsOut( new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce));
+                            dsOut->inheritCompressionLevel(dsA->getCompressionLevel());
                             dsOut->createDataset(nrows, ncols, "real");
                             
                             if(oper(oper.findName( func )) == 3 ) {
                                 BigDataStatMeth::Rcpp_InvCholesky_hdf5( dsA.get(), dsOut.get(), bfullMatrix, dElementsBlock, threads);    
                             } else {
-                                int res [[maybe_unused]] = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA.get(), dsOut.get(),  nrows, ncols, dElementsBlock, threads);
+                                int res [[maybe_unused]] = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA.get(), dsOut.get(),  nrows, ncols, dElementsBlock, bfullMatrix, threads);
                             }
                             
                         } else {
@@ -281,6 +285,7 @@ namespace BigDataStatMeth {
                                 
                                 // dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce);
                                 std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, outputdataset , bforce) );
+                                dsOut->inheritCompressionLevel(dsA->getCompressionLevel());
                                 dsOut->createDataset(results.rows(), results.cols(), "real");
                                 dsOut->writeDataset(Rcpp::wrap(results));
                                 
@@ -301,6 +306,7 @@ namespace BigDataStatMeth {
                         
                         // dsOut = new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + "_eq_" + Rcpp::as<std::string>(str_bdatasets(i)) , bforce);
                         std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  dsOut( new BigDataStatMeth::hdf5DatasetInternal(filename, outgroup, Rcpp::as<std::string>(datasets(i)) + "_eq_" + Rcpp::as<std::string>(str_bdatasets(i)) , bforce) );
+                        dsOut->inheritCompressionLevel(dsA->getCompressionLevel());
                         dsOut->createDataset( dsB->nrows(), dsB->ncols(), "real" );
                         
                         if( dsB->getDatasetptr() != nullptr )  {
@@ -325,41 +331,35 @@ namespace BigDataStatMeth {
                         
                         // BigDataStatMeth::hdf5Dataset* dsmean = new BigDataStatMeth::hdf5Dataset(filename, outgroup, "mean." + datasets(i) , bforce);
                         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean( new BigDataStatMeth::hdf5Dataset(filename, outgroup, "mean." + datasets(i) , bforce) );
+                        dsmean->inheritCompressionLevel(dsA->getCompressionLevel());
                         dsmean->createDataset(1, datanormal.cols(), "real");
                         dsmean->writeDataset(Rcpp::wrap(datanormal.row(0)));
                         
                         // BigDataStatMeth::hdf5Dataset* dssd = new BigDataStatMeth::hdf5Dataset(filename, outgroup, "sd." + datasets(i) , bforce);
                         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd( new BigDataStatMeth::hdf5Dataset(filename, outgroup, "sd." + datasets(i) , bforce) );
+                        dssd->inheritCompressionLevel(dsA->getCompressionLevel());
                         dssd->createDataset(1, datanormal.cols(), "real");
                         dssd->writeDataset(Rcpp::wrap(datanormal.row(1)));
                         
                     } else {
                         // delete dsA; dsA = nullptr;
-                        Rcpp::Rcout<< "Function does not exists, please use one of the following : \"QR\", \"CrossProd\","<<
-                            " \"tCrossProd\", \"invChol\", \"blockmult\", \"CrossProd_double\", \"tCrossProd_double\","<<
-                                " \"solve\", \"normalize\", \"sdmean\", \"descChol\" ";
-                        return void();
+                        throw std::runtime_error("Function does not exists, please use one of the following : \"QR\", \"CrossProd\", \"tCrossProd\", \"invChol\", \"blockmult\", \"CrossProd_double\", \"tCrossProd_double\", \"solve\", \"normalize\", \"sdmean\", \"descChol\"");
                     }    
                     
                 } else {
                     // checkClose_file(dsA);        
-                    Rcpp::Rcerr<<"\nc++ exception RcppApplyFunctionHdf5 error with "<<Rcpp::as<std::string>(datasets(i))<<" dataset\n";
-                    return void();
+                    throw std::runtime_error("c++ exception RcppApplyFunctionHdf5 error with dataset");
                 }
             }
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"c++ exception RcppApplyFunctionHdf5 (File IException)\n";
-            return void();
+            throw std::runtime_error("c++ exception RcppApplyFunctionHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"c++ exception RcppApplyFunctionHdf5 (DataSet IException)\n";
-            return void();
+            throw std::runtime_error("c++ exception RcppApplyFunctionHdf5 (DataSet IException)");
         } catch(std::exception &ex) {
-            Rcpp::Rcerr << "c++ exception blockmult_hdf5: " << ex.what();
-            return void();
+            throw std::runtime_error(std::string("c++ exception blockmult_hdf5: ") + ex.what());
         } catch (...) {
-            Rcpp::Rcerr<<"C++ exception RcppApplyFunctionHdf5 (unknown reason)";
-            return void();
+            throw std::runtime_error("C++ exception RcppApplyFunctionHdf5 (unknown reason)");
         }
         
         // Rcpp::Rcout<< func <<" function has been computed in all blocks\n";  

@@ -11,6 +11,15 @@
  * - Memory-efficient data access
  * - Automatic resource management
  * - Support for various data types
+ * 
+ * Compression level management (inherited from hdf5Dataset):
+ * - compression_level member is inherited; default = 6 (gzip balanced)
+ * - createDataset() / createUnlimitedDataset() use this->compression_level when no
+ *   explicit argument is passed (pass -1 or omit to use the instance default)
+ * - openDataset() (inherited, not overridden) reads the actual compression level from
+ *   the HDF5 dataset creation property list and updates compression_level accordingly
+ * - Use setCompressionLevel() / getCompressionLevel() (inherited) to propagate
+ *   compression settings from input to output datasets
  */
 
 #ifndef BIGDATASTATMETH_HDF5_DATASETINTERNAL_HPP
@@ -108,18 +117,27 @@ public:
     
     /**
      * @brief Create a new internal dataset with optional compression
-     * @details Creates a new HDF5 internal dataset with specified dimensions, data type, and compression.
-     * Internal datasets are marked with internal="1" attribute for specialized handling.
+     * @details Creates a new HDF5 internal dataset with specified dimensions, data type,
+     * and compression. Internal datasets are marked with an internal="1" attribute.
+     * 
+     * Compression behaviour:
+     * - Pass compression_level >= 0 to override the instance default for this call only.
+     * - Pass -1 (or omit) to use the value previously set via setCompressionLevel(),
+     *   which is updated automatically by openDataset() to match the on-disk level.
      * 
      * @param rows Number of rows
      * @param cols Number of columns
      * @param strdatatype Data type ("int", "numeric", "real", or "string")
-     * @param compression_level Compression level (0=none, 1-9=gzip level, 6=balanced default)
+     * @param compression_level Compression level override (-1 = use instance default,
+     *                          0 = no compression, 1-9 = gzip level)
      */
-    void createDataset(size_t rows, size_t cols, std::string strdatatype, int compression_level = 6) 
+    void createDataset(size_t rows, size_t cols, std::string strdatatype, int compression_level = -1) 
     {
         try
         {
+            // -1 means "use the instance default set via setCompressionLevel()"
+            int eff_compression = (compression_level < 0) ? this->compression_level : compression_level;
+
             H5::Exception::dontPrint();
             std::string fullDatasetPath = groupname + "/" + name;
             bool bRemoved = false;
@@ -139,8 +157,7 @@ public:
             
             bool bexists = exists_HDF5_element(pfile, fullDatasetPath);
             if( bexists == true && boverwrite == false) {
-                Rcpp::Rcerr<<"\nDataset exits, please set overwrite = true to overwrite the existing dataset (DataSet IException)";
-                return void();
+                throw std::runtime_error("Dataset exits, please set overwrite = true to overwrite the existing dataset (DataSet IException)");
             } else {
                 
                 if( boverwrite == true && bexists == true) {
@@ -152,7 +169,7 @@ public:
                 
                 // Configure compression and chunking
                 hid_t cparms = H5P_DEFAULT;
-                if (compression_level > 0) {
+                if (eff_compression > 0) {
                     cparms = H5Pcreate(H5P_DATASET_CREATE);
                     
                     // Configure chunking (required for compression)
@@ -163,8 +180,8 @@ public:
                     H5Pset_chunk(cparms, RANK2, chunk_dims);
                     
                     // Configure compression
-                    H5Pset_deflate(cparms, compression_level);  // gzip compression
-                    H5Pset_shuffle(cparms);                     // shuffle filter for better compression
+                    H5Pset_deflate(cparms, eff_compression);  // gzip compression
+                    H5Pset_shuffle(cparms);                    // shuffle filter for better compression
                 }
                 
                 if( type == "string") {
@@ -186,8 +203,7 @@ public:
                     }
                 } else {
                     if (cparms != H5P_DEFAULT) H5Pclose(cparms);
-                    Rcpp::Rcerr<<"\nDataset data type not allowed or no matrix defined (createDataset)";
-                    return void();
+                    throw std::runtime_error("Dataset data type not allowed or no matrix defined (createDataset)");
                 }
                 
                 // Clean up compression properties
@@ -198,11 +214,11 @@ public:
             addAttribute( "internal", Rcpp::wrap("1") );
             
         } catch(H5::FileIException& error) {
-            Rcpp::Rcerr<<"\nc++ exception createDataset_int (File IException)";
+            throw std::runtime_error("c++ exception createDataset_int (File IException)");
         } catch(H5::GroupIException& error) {
-            Rcpp::Rcerr<<"\nc++ exception createDataset_int (Group IException)";
+            throw std::runtime_error("c++ exception createDataset_int (Group IException)");
         } catch(H5::DataSetIException& error) {
-            Rcpp::Rcerr<<"\nc++ exception createDataset_int (DataSet IException)";
+            throw std::runtime_error("c++ exception createDataset_int (DataSet IException)");
         } 
         return void();
     }
@@ -241,16 +257,16 @@ public:
      * @param strdatatype Data type for the new dataset
      * @param compression_level Compression level (0=none, 1-9=gzip level, 6=balanced default)
      */
-    void createDataset(BigDataStatMeth::hdf5DatasetInternal* dsLike, std::string strdatatype, int compression_level = 6) 
+    void createDataset(BigDataStatMeth::hdf5DatasetInternal* dsLike, std::string strdatatype, int compression_level = -1) 
     {
         try{
             createDataset( dsLike->nrows(), dsLike->ncols(), strdatatype, compression_level);
         } catch(H5::FileIException& error) {
-            Rcpp::Rcerr<<"\nc++ exception createDataset (File IException)";
+            throw std::runtime_error("c++ exception createDataset (File IException)");
         } catch(H5::GroupIException& error) {
-            Rcpp::Rcerr<<"\nc++ exception createDataset (Group IException)";
+            throw std::runtime_error("c++ exception createDataset (Group IException)");
         } catch(H5::DataSetIException& error) {
-            Rcpp::Rcerr<<"\nc++ exception createDataset (DataSet IException)";
+            throw std::runtime_error("c++ exception createDataset (DataSet IException)");
         } 
         
         return void();
@@ -267,10 +283,13 @@ public:
      * @param strdatatype Data type for the dataset
      * @param compression_level Compression level (0=none, 1-9=gzip level, 6=balanced default)
      */
-    void createUnlimitedDataset(size_t rows, size_t cols, std::string strdatatype, int compression_level = 6) 
+    void createUnlimitedDataset(size_t rows, size_t cols, std::string strdatatype, int compression_level = -1) 
     {
         try
         {
+            // -1 means "use the instance default set via setCompressionLevel()"
+            int eff_compression = (compression_level < 0) ? this->compression_level : compression_level;
+
             H5::Exception::dontPrint();
             
             herr_t status;
@@ -301,14 +320,13 @@ public:
             status = H5Pset_chunk( cparms, RANK2, chunk_dims);
             
             if(status<0) {
-                Rf_error( "c++ exception createUnlimitedDataset (setting chunk IException)" );
-                return void();
+                throw std::runtime_error("c++ exception createUnlimitedDataset (setting chunk IException)");
             }
             
             // Configure compression
-            if (compression_level > 0) {
-                H5Pset_deflate(cparms, compression_level);  // gzip compression
-                H5Pset_shuffle(cparms);                     // shuffle filter for better compression
+            if (eff_compression > 0) {
+                H5Pset_deflate(cparms, eff_compression);  // gzip compression
+                H5Pset_shuffle(cparms);                    // shuffle filter for better compression
             }
             
             if( !exists_HDF5_element(pfile, groupname) ) {
@@ -338,11 +356,11 @@ public:
             addAttribute( "internal", Rcpp::wrap("1") );
             
         } catch(H5::FileIException& error) {
-            Rf_error( "c++ exception createUnlimitedDataset_internal (File IException) " );
+            throw std::runtime_error("c++ exception createUnlimitedDataset_internal (File IException)");
         } catch(H5::GroupIException& error) {
-            Rf_error( "c++ exception createUnlimitedDataset_internal (Group IException) " );
+            throw std::runtime_error("c++ exception createUnlimitedDataset_internal (Group IException)");
         } catch(H5::DataSetIException& error) {
-            Rf_error( "c++ exception createUnlimitedDataset_internal (Dataset IException) " );
+            throw std::runtime_error("c++ exception createUnlimitedDataset_internal (Dataset IException)");
         } 
         return void();
     }
@@ -382,14 +400,13 @@ public:
                 
                 pdataset->extend( dimDataset );    
             } else {
-                Rcpp::Rcout<<"\n Dataset is not an unlimited dataset, fixed datasets can't be extended\n";
-                return void();
+                throw std::runtime_error("Dataset is not an unlimited dataset, fixed datasets can't be extended");
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (File IException)" );
+            throw std::runtime_error("c++ exception extend_HDF5_matrix_subset_ptr (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            Rf_error( "c++ exception extend_HDF5_matrix_subset_ptr (DataSet IException)" );
+            throw std::runtime_error("c++ exception extend_HDF5_matrix_subset_ptr (DataSet IException)");
         }
         return void();
     }
@@ -471,24 +488,24 @@ public:
                 pdataset->write(convert_DataFrame_to_RangeList(DatasetValues, true), strtype);
                 
             } else {
-                Rf_error( "Matrix data type not allowed (writeDataset)" );
+                throw std::runtime_error("Matrix data type not allowed (writeDataset)");
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDataset_Internal (File IException)";
+            throw std::runtime_error("c++ exception writeDataset_Internal (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDataset_Internal (DataSet IException)";
+            throw std::runtime_error("c++ exception writeDataset_Internal (DataSet IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDataset_Internal (Group IException)";
+            throw std::runtime_error("c++ exception writeDataset_Internal (Group IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDataset_Internal (DataSpace IException)";
+            throw std::runtime_error("c++ exception writeDataset_Internal (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             close_dataset_file();
-            Rcpp::Rcerr<<"\nc++ exception writeDataset_Internal (Data TypeIException)";
+            throw std::runtime_error("c++ exception writeDataset_Internal (Data TypeIException)");
         }
         return void();
     }
@@ -768,8 +785,7 @@ public:
             if( type_class == H5T_INTEGER || type_class == H5T_FLOAT ) {
                 pdataset->read( rdatablock, H5::PredType::NATIVE_DOUBLE, memspace, dataspace );
             } else {
-                Rf_error( "c++ exception readDatasetBlock (Data type not allowed, maybe are trying to read string matrix?)" );
-                return(nullptr);
+                throw std::runtime_error("c++ exception readDatasetBlock (Data type not allowed, maybe are trying to read string matrix?)");
             }// else if (type_class == H5T_FLOAT) {
             //     pdataset->read( rdatablock, H5::PredType::NATIVE_DOUBLE, memspace, dataspace );
             // } 
@@ -779,28 +795,23 @@ public:
             
         } catch( H5::FileIException& error) { 
             close_dataset_file();
-            Rf_error("\nc++ exception readDatasetBlock_Internal (File IException)");
-            return(nullptr);
+            throw std::runtime_error("c++ exception readDatasetBlock_Internal (File IException)");
             // return void();
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rf_error("\nc++ exception readDatasetBlock_Internal (DataSet IException)");
-            return(nullptr);
+            throw std::runtime_error("c++ exception readDatasetBlock_Internal (DataSet IException)");
             // return void();
         } catch(H5::GroupIException& error) { 
             close_dataset_file();
-            Rf_error("\nc++ exception readDatasetBlock_Internal (Group IException)");
-            return(nullptr);
+            throw std::runtime_error("c++ exception readDatasetBlock_Internal (Group IException)");
             // return void();
         } catch(H5::DataSpaceIException& error) { 
             close_dataset_file();
-            Rf_error("\nc++ exception readDatasetBlock_Internal (DataSpace IException)");
-            return(nullptr);
+            throw std::runtime_error("c++ exception readDatasetBlock_Internal (DataSpace IException)");
             // return void();
         } catch(H5::DataTypeIException& error) { 
             close_dataset_file();
-            Rf_error("\nc++ exception readDatasetBlock_Internal (Data TypeIException)");
-            return(nullptr);
+            throw std::runtime_error("c++ exception readDatasetBlock_Internal (Data TypeIException)");
             // return void();
         }
         return(rdatablock);
@@ -945,13 +956,13 @@ private:
             }
             
         } catch( H5::FileIException& error) { 
-            Rf_error( "c++ exception getDimensExistingDataset (File IException)" );
+            throw std::runtime_error("c++ exception getDimensExistingDataset (File IException)");
         } catch(H5::DataSetIException& error) { 
-            Rf_error( "c++ exception getDimensExistingDataset (DataSet IException)" );
+            throw std::runtime_error("c++ exception getDimensExistingDataset (DataSet IException)");
         } catch(H5::GroupIException& error) { 
-            Rf_error( "c++ exception getDimensExistingDataset (Group IException)" );
+            throw std::runtime_error("c++ exception getDimensExistingDataset (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
-            Rf_error( "c++ exception getDimensExistingDataset (DataSpace IException)" );
+            throw std::runtime_error("c++ exception getDimensExistingDataset (DataSpace IException)");
         } 
         
         return void();

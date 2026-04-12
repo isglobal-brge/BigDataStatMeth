@@ -112,8 +112,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Create test matrices
 //' set.seed(123)
@@ -121,14 +120,14 @@
 //' X <- matrix(rnorm(10), 10, 1)
 //' 
 //' # Save to HDF5
-//' bdCreate_hdf5_matrix("test.hdf5", Y, "data", "matrix1",
+//' bdCreate_hdf5_matrix("test.HDF5", Y, "data", "matrix1",
 //'                      overwriteFile = TRUE)
-//' bdCreate_hdf5_matrix("test.hdf5", X, "data", "vector1",
+//' bdCreate_hdf5_matrix("test.HDF5", X, "data", "vector1",
 //'                      overwriteFile = FALSE)
 //' 
 //' # Compute statistics
 //' bdgetSDandMean_hdf5(
-//'   filename = "test.hdf5",
+//'   filename = "test.HDF5",
 //'   group = "data",
 //'   dataset = "matrix1",
 //'   sd = TRUE,
@@ -138,8 +137,8 @@
 //' )
 //' 
 //' # Cleanup
-//' if (file.exists("test.hdf5")) {
-//'   file.remove("test.hdf5")
+//' if (file.exists("test.HDF5")) {
+//'   file.remove("test.HDF5")
 //' }
 //' }
 //'
@@ -225,7 +224,7 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
                  datanormal = Eigen::MatrixXd::Zero(2,ncols);
                  get_HDF5_mean_sd_by_row( dsA.get(), datanormal, bsd, bmean, wsize);
              }
-             Rcpp::Rcout<<"Datanormal val:: \n"<<datanormal<<"\n";
+             
              if(bonmemory == true) {
                  
                 //  delete dsA; dsA = nullptr;
@@ -263,7 +262,7 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
                     dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
                 } else {
                     // checkClose_file(dsA, dsmean);
-                    Rf_error("c++ exception bdgetSDandMean_hdf5: Error creating %s dataset", strdatasetmean.c_str());
+                    Rcpp::stop("c++ exception bdgetSDandMean_hdf5: Error creating dataset: " + std::string(strdatasetmean.c_str()));
                     return(lst_return);
                     // return R_NilValue;
                 }    
@@ -278,7 +277,7 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
                     dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
                 } else {
                     // checkClose_file(dsA.get(), dssd.get(), dsmean.get());
-                    Rf_error("c++ exception bdgetSDandMean_hdf5: Error creating %s dataset", strdatasetsd.c_str());
+                    Rcpp::stop("c++ exception bdgetSDandMean_hdf5: Error creating dataset: " + std::string(strdatasetsd.c_str()));
                     return(lst_return);
                      // return R_NilValue;
                  }    
@@ -286,7 +285,7 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
              
          } else {
             //  checkClose_file(dsA);
-             Rf_error("c++ exception bdgetSDandMean_hdf5: Error opening %s dataset", dataset.c_str());
+             Rcpp::stop("c++ exception bdgetSDandMean_hdf5: Error opening dataset: " + std::string(dataset.c_str()));
              return R_NilValue;
          }
          
@@ -299,13 +298,13 @@ Rcpp::RObject bdgetSDandMean_hdf5( std::string filename,
          lst_return["sd"] = strgroupout + "/" + strdatasetsd;
      
      } catch( H5::FileIException& error ) { 
-         Rf_error("c++ exception bdgetSDandMean_hdf5 (File IException)");
+         Rcpp::stop("c++ exception bdgetSDandMean_hdf5 (File IException)");
      } catch( H5::DataSetIException& error ) { 
-         Rf_error("c++ exception bdgetSDandMean_hdf5 (DataSet IException)");
+         Rcpp::stop("c++ exception bdgetSDandMean_hdf5 (DataSet IException)");
      } catch(std::exception& ex) {
-         Rf_error("c++ exception bdgetSDandMean_hdf5: %s", ex.what());
+         Rcpp::stop("c++ exception bdgetSDandMean_hdf5: " + std::string(ex.what()));
      } catch (...) {
-         Rf_error("C++ exception bdgetSDandMean_hdf5 (unknown reason)");
+         Rcpp::stop("C++ exception bdgetSDandMean_hdf5 (unknown reason)");
      }
  
     return(lst_return);

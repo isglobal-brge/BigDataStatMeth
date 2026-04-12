@@ -117,32 +117,32 @@
 //' the function computes: `A1 %*% B1`, `A2 %*% B2`, and `A3 %*% B3`
 //' 
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Create a sample large matrix in HDF5
-//' # Create hdf5 datasets
-//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+//' # Create HDF5 datasets
+//' bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
 //'                     object = Y, group = "data", dataset = "Y",
 //'                     transp = FALSE,
 //'                     overwriteFile = TRUE, overwriteDataset = TRUE, 
 //'                     unlimited = FALSE)
 //' 
-//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+//' bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
 //'                     object = X,  group = "data",  dataset = "X",
 //'                     transp = FALSE,
 //'                     overwriteFile = FALSE, overwriteDataset = TRUE, 
 //'                     unlimited = FALSE)
 //' 
-//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
+//' bdCreate_hdf5_matrix(filename = "test_temp.HDF5",
 //'                     object = Z,  group = "data",  dataset = "Z",
 //'                     transp = FALSE,
 //'                     overwriteFile = FALSE, overwriteDataset = TRUE,
 //'                     unlimited = FALSE)
 //' 
-//' dsets <- bdgetDatasetsList_hdf5("test_temp.hdf5", group = "data")
+//' dsets <- bdgetDatasetsList_hdf5("test_temp.HDF5", group = "data")
 //' dsets
 //' 
 //' # Apply function :  QR Decomposition
-//' bdapply_Function_hdf5(filename = "test_temp.hdf5",
+//' bdapply_Function_hdf5(filename = "test_temp.HDF5",
 //'                      group = "data",datasets = dsets,
 //'                      outgroup = "QR",func = "QR",
 //'                      overwrite = TRUE)
@@ -326,7 +326,7 @@ void bdapply_Function_hdf5( std::string filename,
                             }
                             
                         } else {
-                            [[maybe_unused]] int res = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA.get(), dsOut.get(),  nrows, ncols, dElementsBlock, threads);
+                            [[maybe_unused]] int res = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA.get(), dsOut.get(),  nrows, ncols, dElementsBlock, bfullMatrix, threads);
                             //..// int res [[maybe_unused]] = BigDataStatMeth::Cholesky_decomposition_hdf5( dsA, dsOut,  nrows, ncols, dElementsBlock, threads);
                         }
                         
@@ -450,31 +450,23 @@ void bdapply_Function_hdf5( std::string filename,
                     
                 } else {
                     // delete dsA; dsA = nullptr;
-                    Rcpp::Rcout<< "Function does not exists, please use one of the following : \"QR\", \"CrossProd\","<<
-                        " \"tCrossProd\", \"invChol\", \"blockmult\", \"CrossProd_double\", \"tCrossProd_double\","<<
-                            " \"solve\", \"normalize\", \"sdmean\", \"descChol\" ";
-                    return void();
+                    Rcpp::stop("Function does not exists, please use one of the following : \"QR\", \"CrossProd\", \"tCrossProd\", \"invChol\", \"blockmult\", \"CrossProd_double\", \"tCrossProd_double\", \"solve\", \"normalize\", \"sdmean\", \"descChol\"");
                 }    
                 
             } else {
-                Rcpp::Rcerr<<"\nc++ exception bdapply_Function_hdf5 error with "<<Rcpp::as<std::string>(datasets(i))<<" dataset\n";
-                return void();
+                Rcpp::stop("c++ exception bdapply_Function_hdf5 error with dataset");
             }
             
         }
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::Rcerr<<"c++ exception bdapply_Function_hdf5 (File IException)";
-        return void();
+        Rcpp::stop("c++ exception bdapply_Function_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::Rcerr<<"c++ exception bdapply_Function_hdf5 (DataSet IException)";
-        return void();
+        Rcpp::stop("c++ exception bdapply_Function_hdf5 (DataSet IException)");
     } catch(std::exception &ex) {
-        Rcpp::Rcerr<<"c++ exception bdapply_Function_hdf5";
-        return void();
+        Rcpp::stop("c++ exception bdapply_Function_hdf5");
     } catch (...) {
-        Rcpp::Rcerr<<"C++ exception bdapply_Function_hdf5 (unknown reason)";
-        return void();
+        Rcpp::stop("C++ exception bdapply_Function_hdf5 (unknown reason)");
     }
     
     // Rcpp::Rcout<< func <<" function has been computed in all blocks\n";  

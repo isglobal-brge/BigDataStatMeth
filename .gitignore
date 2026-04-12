@@ -66,3 +66,7 @@ src/Makevars
 *.bck
 *.nofunciona
 *.ffs_db
+*.bak
+*.OLD__
+src/hdf5_r6_minimal_OLD2
+inst/include/hdf5Algebra/matrixDiagonal_OLD.hpp

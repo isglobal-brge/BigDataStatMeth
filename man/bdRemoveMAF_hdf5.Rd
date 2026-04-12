@@ -72,15 +72,14 @@ This function provides efficient MAF-based filtering capabilities with:
 The function supports both in-place modification and creation of new datasets.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create test SNP data
 snps <- matrix(sample(c(0, 1, 2), 1000, replace = TRUE,
                      prob = c(0.7, 0.2, 0.1)), 100, 10)
 
 # Save to HDF5
-fn <- "snp_data.hdf5"
+fn <- "snp_data.HDF5"
 bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
                      overwriteFile = TRUE)
 

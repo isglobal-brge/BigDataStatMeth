@@ -85,8 +85,7 @@
 //' @return Matrix or vector containing the result of A - B.
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Matrix-matrix subtraction
 //' N <- 2500
@@ -179,7 +178,7 @@ Rcpp::RObject bdblockSubstract(Rcpp::RObject A, Rcpp::RObject B,
         }
         
     } catch(std::exception &ex) {
-        Rcpp::Rcerr << "c++ exception bdblockSubstract: " << ex.what();
+        Rcpp::stop("c++ exception bdblockSubstract: " + std::string(ex.what()));
     }
 
     // return(Rcpp::wrap(C));

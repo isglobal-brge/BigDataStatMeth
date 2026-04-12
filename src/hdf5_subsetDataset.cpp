@@ -52,7 +52,7 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' # Select specific rows (e.g., rows 1, 3, 5, 10-15)
 //' success <- bdsubset_dataset("data.h5", 
 //'                            dataset_path = "/matrix/data",
@@ -107,17 +107,17 @@
          
          // Input validation
          if (filename.empty()) {
-             Rcpp::Rcerr << "Error: filename cannot be empty" << std::endl;
+             Rcpp::stop("Error: filename cannot be empty");
              return false;
          }
          
          if (dataset_path.empty()) {
-             Rcpp::Rcerr << "Error: dataset_path cannot be empty" << std::endl;
+             Rcpp::stop("Error: dataset_path cannot be empty");
              return false;
          }
          
          if (indices.size() == 0) {
-             Rcpp::Rcerr << "Error: indices vector cannot be empty" << std::endl;
+             Rcpp::stop("Error: indices vector cannot be empty");
              return false;
          }
          
@@ -128,7 +128,7 @@
          
          for (int i = 0; i < indices.size(); ++i) {
              if (indices[i] < 1) {
-                 Rcpp::Rcerr << "Error: indices must be >= 1 (R convention)" << std::endl;
+                 Rcpp::stop("Error: indices must be >= 1 (R convention)");
                  return false;
              }
              cpp_indices.push_back(indices[i] - 1);  // Convert to 0-based
@@ -149,8 +149,7 @@
          for (int idx : cpp_indices) {
              if (idx >= max_index) {
                  // delete dataset;
-                 Rcpp::Rcerr << "Error: index " << (idx + 1) << " exceeds dataset dimensions (R perspective: " 
-                             << max_rows_r << "x" << max_cols_r << ")" << std::endl;
+                 Rcpp::stop("Error: index exceeds dataset dimensions (R perspective x )");
                  return false;
              }
          }
@@ -167,8 +166,7 @@
          if (BigDataStatMeth::exists_HDF5_element(file, target_path)) {
              if (!overwrite) {
                  // delete dataset;
-                 Rcpp::Rcerr << "Error: destination dataset already exists: " << target_path 
-                             << ". Use overwrite=TRUE to replace it." << std::endl;
+                 Rcpp::stop("Error: destination dataset already exists . Use overwrite=TRUE to replace it.");
                  return false;
              } else {
                  // Remove existing destination
@@ -186,11 +184,11 @@
          
      } catch (const std::exception& e) {
         //  BigDataStatMeth::checkClose_file(dataset);
-         Rcpp::Rcerr << "Exception in bdsubset_hdf5_dataset: " << e.what() << std::endl;
+         Rcpp::stop("Exception in bdsubset_hdf5_dataset: " + std::string(e.what()));
          return false;
      } catch (...) {
         //  BigDataStatMeth::checkClose_file(dataset);
-         Rcpp::Rcerr << "Unknown exception in bdsubset_hdf5_dataset" << std::endl;
+         Rcpp::stop("Unknown exception in bdsubset_hdf5_dataset");
          return false;
      }
  }

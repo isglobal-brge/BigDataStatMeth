@@ -7,5 +7,4 @@
 #' @importFrom rhdf5 H5Fopen h5closeAll
 #' @importFrom data.table "%like%"
 #' @importFrom RCurl url.exists
-#' @exportPattern("^[[:alpha:]]+")
 NULL

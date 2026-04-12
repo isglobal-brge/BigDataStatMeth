@@ -35,7 +35,7 @@ using Spectra. The function verifies that the matrix is square and optionally ch
 for symmetry to recommend the best solver type.
 }
 \examples{
-\dontrun{
+\donttest{
 # Check matrix suitability
 check_result <- bdEigen_check_matrix("data.h5", "matrices", "my_matrix")
 

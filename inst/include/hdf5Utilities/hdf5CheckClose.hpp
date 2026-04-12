@@ -97,6 +97,25 @@ namespace BigDataStatMeth {
             } catch (...) {}
         }
     }
+    
+    /**
+     * @brief Close all open HDF5 handles at the C library level
+     * @details Uses HDF5 C API to find and close all open objects
+     * (files, datasets, groups, datatypes, attributes) regardless
+     * of how they were opened. Equivalent to rhdf5::h5closeAll().
+     * Safe to call at any time — invalid IDs are skipped silently.
+     */
+    inline void closeAllHDF5Handles() {
+        try {
+            ssize_t n = H5Fget_obj_count(H5F_OBJ_ALL, H5F_OBJ_ALL);
+            if (n <= 0) return;
+            std::vector<hid_t> ids(static_cast<size_t>(n));
+            H5Fget_obj_ids(H5F_OBJ_ALL, H5F_OBJ_ALL,
+                           static_cast<size_t>(n), ids.data());
+            for (hid_t id : ids)
+                if (H5Iis_valid(id) > 0) H5Oclose(id);
+        } catch (...) {}
+    }
 
 
 }

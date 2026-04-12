@@ -118,7 +118,7 @@ For omics data analysis:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Backward compatible - existing code works unchanged
 result_original <- bdCorr_hdf5("data.h5", "expression", "genes")
 

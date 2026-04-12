@@ -43,11 +43,10 @@ Key features:
 The function opens the HDF5 file in read-only mode to ensure data safety.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
 
 # Create a test HDF5 file
-fn <- "test.hdf5"
+fn <- "test.HDF5"
 X <- matrix(rnorm(100), 10, 10)
 Y <- matrix(rnorm(100), 10, 10)
 

@@ -34,7 +34,7 @@
 //' @details Requires HDF5 file locking (HDF5 >= 1.12 recommended). The
 //'   function sets \code{HDF5_USE_FILE_LOCKING=TRUE} for the process.
 //' @examples
-//' \dontrun{
+//' \donttest{
 //' if (bdIsFileLocked("data.h5")) stop("File in use")
 //' }
 //' @export
@@ -57,15 +57,15 @@
          
      } catch( H5::FileIException& error ) { 
          // if(objFile != nullptr) delete objFile;
-         Rf_error("c++ c++ exception bdIsLocked_hdf5 (File IException)");
+         Rcpp::stop("c++ c++ exception bdIsLocked_hdf5 (File IException)");
          return locked;
      } catch( H5::DataSetIException& error ) { 
          // if(objFile != nullptr) delete objFile;
-         Rf_error( "c++ exception bdIsLocked_hdf5 (DataSet IException)");
+         Rcpp::stop("c++ exception bdIsLocked_hdf5 (DataSet IException)");
          return locked;
      } catch(std::exception &ex) {
          // if(objFile != nullptr) delete objFile;
-         Rf_error( "c++ exception bdIsLocked_hdf5 %s", ex.what());
+         Rcpp::stop("c++ exception bdIsLocked_hdf5: " + std::string(ex.what()));
          return locked;
      } 
      

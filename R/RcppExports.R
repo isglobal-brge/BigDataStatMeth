@@ -57,8 +57,7 @@
 #' }
 #' 
 #' @examples
-#' \dontrun{
-#' library(rhdf5)
+#' \donttest{
 #' 
 #' # Create a symmetric positive-definite matrix
 #' set.seed(1234)
@@ -122,7 +121,7 @@ bdCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = NUL
 #'   * R: The upper triangular matrix R
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create a random 100x50 matrix
 #' X <- matrix(rnorm(5000), 100, 50)
 #' 
@@ -185,9 +184,8 @@ bdQR <- function(X, thin = NULL, block_size = NULL, threads = NULL) {
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create a sample HDF5 file with a matrix
-#' library(rhdf5)
 #' A <- matrix(rnorm(1000), 100, 10)
 #' h5createFile("example.h5")
 #' h5write(A, "example.h5", "mygroup/mymatrix")
@@ -256,16 +254,14 @@ bdQR_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NU
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create a sample large matrix in HDF5
 #'
-#' library(BigDataStatMeth)
-#' library(rhdf5)
 #' 
 #' # Create a sample large matrix in HDF5
 #' A <- matrix(rnorm(10000), 1000, 10)
 #' 
-#' fn <- "test_temp.hdf5"
+#' fn <- "test_temp.HDF5"
 #' bdCreate_hdf5_matrix(filename = fn, object = A, group = "data", dataset = "matrix")
 #'
 #' # Compute SVD with default parameters
@@ -350,7 +346,6 @@ bdSVD_hdf5 <- function(filename, group = NULL, dataset = NULL, k = 2L, q = 1L, b
 #' @return Numeric matrix X, the solution to AX = B.
 #'
 #' @examples
-#' library(BigDataStatMeth)
 #' 
 #' # Create test matrices
 #' n <- 500
@@ -425,12 +420,11 @@ bdSolve <- function(A, B) {
 #' }
 #'
 #' @examples
-#' library(BigDataStatMeth)
 #' 
 #' # Create test matrices
 #' N <- 1000
 #' M <- 1000
-#' fn <- "test_temp.hdf5"
+#' fn <- "test_temp.HDF5"
 #' 
 #' set.seed(555)
 #' Y <- matrix(rnorm(N*M), N, M)
@@ -540,32 +534,32 @@ bdSolve_hdf5 <- function(filename, groupA, datasetA, groupB, datasetB, outgroup 
 #' the function computes: `A1 %*% B1`, `A2 %*% B2`, and `A3 %*% B3`
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create a sample large matrix in HDF5
-#' # Create hdf5 datasets
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#' # Create HDF5 datasets
+#' bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
 #'                     object = Y, group = "data", dataset = "Y",
 #'                     transp = FALSE,
 #'                     overwriteFile = TRUE, overwriteDataset = TRUE, 
 #'                     unlimited = FALSE)
 #' 
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#' bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
 #'                     object = X,  group = "data",  dataset = "X",
 #'                     transp = FALSE,
 #'                     overwriteFile = FALSE, overwriteDataset = TRUE, 
 #'                     unlimited = FALSE)
 #' 
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5",
+#' bdCreate_hdf5_matrix(filename = "test_temp.HDF5",
 #'                     object = Z,  group = "data",  dataset = "Z",
 #'                     transp = FALSE,
 #'                     overwriteFile = FALSE, overwriteDataset = TRUE,
 #'                     unlimited = FALSE)
 #' 
-#' dsets <- bdgetDatasetsList_hdf5("test_temp.hdf5", group = "data")
+#' dsets <- bdgetDatasetsList_hdf5("test_temp.HDF5", group = "data")
 #' dsets
 #' 
 #' # Apply function :  QR Decomposition
-#' bdapply_Function_hdf5(filename = "test_temp.hdf5",
+#' bdapply_Function_hdf5(filename = "test_temp.HDF5",
 #'                      group = "data",datasets = dsets,
 #'                      outgroup = "QR",func = "QR",
 #'                      overwrite = TRUE)
@@ -644,9 +638,8 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #'   All results are written to the HDF5 file in the group 'PCA/`dataset`'.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create a sample large matrix in HDF5
-#' library(rhdf5)
 #' X <- matrix(rnorm(10000), 1000, 10)
 #' h5createFile("data.h5")
 #' h5write(X, "data.h5", "data/matrix")
@@ -717,19 +710,18 @@ bdPCA_hdf5 <- function(filename, group, dataset, ncomponents = 0L, bcenter = FAL
 #'       order of combination
 #' 
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrices
 #' a <- matrix(1:12, 4, 3)
 #' b <- matrix(13:24, 4, 3)
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A")
-#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B")
+#' bdCreate_hdf5_matrix("test.HDF5", a, "data", "A")
+#' bdCreate_hdf5_matrix("test.HDF5", b, "data", "B")
 #' 
 #' # Bind by rows
-#' bdBind_hdf5_datasets("test.hdf5", "data", 
+#' bdBind_hdf5_datasets("test.HDF5", "data", 
 #'                      c("A", "B"),
 #'                      "results", "combined",
 #'                      "bindRows")
@@ -740,7 +732,7 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
     .Call('_BigDataStatMeth_bdBind_hdf5_datasets', PACKAGE = 'BigDataStatMeth', filename, group, datasets, outgroup, outdataset, func, overwrite)
 }
 
-#' Crossprod with hdf5 matrix
+#' Crossprod with HDF5 matrix
 #' 
 #' Performs optimized cross product operations on matrices stored in HDF5 format.
 #' For a single matrix A, computes A^t * A. For two matrices A and B, computes
@@ -792,8 +784,7 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #' - Proper resource cleanup
 #' 
 #' @examples
-#' \dontrun{
-#'   library(BigDataStatMeth)
+#' \donttest{
 #'   
 #'   # Create test matrix
 #'   N = 1000
@@ -802,10 +793,10 @@ bdBind_hdf5_datasets <- function(filename, group, datasets, outgroup, outdataset
 #'   a <- matrix(rnorm(N*M), N, M)
 #'   
 #'   # Save to HDF5
-#'   bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A", overwriteFile = TRUE)
+#'   bdCreate_hdf5_matrix("test.HDF5", a, "INPUT", "A", overwriteFile = TRUE)
 #'   
 #'   # Compute cross product
-#'   bdCrossprod_hdf5("test.hdf5", "INPUT", "A", 
+#'   bdCrossprod_hdf5("test.HDF5", "INPUT", "A", 
 #'                    outgroup = "OUTPUT",
 #'                    outdataset = "result",
 #'                    block_size = 1024,
@@ -871,18 +862,17 @@ bdCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block_
 #' - Exception handling
 #' 
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test data
 #' data <- matrix(rnorm(1000*100), 1000, 100)
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", data, "data", "matrix",
+#' bdCreate_hdf5_matrix("test.HDF5", data, "data", "matrix",
 #'                      overwriteFile = TRUE)
 #' 
 #' # Normalize data
-#' bdNormalize_hdf5("test.hdf5", "data", "matrix",
+#' bdNormalize_hdf5("test.HDF5", "data", "matrix",
 #'                  bcenter = TRUE,
 #'                  bscale = TRUE,
 #'                  wsize = 1000)
@@ -948,8 +938,7 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' - Exception handling
 #' 
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrices
 #' N <- 1500
@@ -959,13 +948,13 @@ bdNormalize_hdf5 <- function(filename, group, dataset, bcenter = NULL, bscale = 
 #' b <- matrix(rnorm(N*M), N, M)
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+#' bdCreate_hdf5_matrix("test.HDF5", a, "data", "A",
 #'                      overwriteFile = TRUE)
-#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+#' bdCreate_hdf5_matrix("test.HDF5", b, "data", "B",
 #'                      overwriteFile = FALSE)
 #' 
 #' # Perform addition
-#' bdblockSum_hdf5("test.hdf5", "data", "A", "B",
+#' bdblockSum_hdf5("test.HDF5", "data", "A", "B",
 #'                 outgroup = "results",
 #'                 outdataset = "sum",
 #'                 block_size = 1024,
@@ -977,7 +966,7 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
     .Call('_BigDataStatMeth_bdblockSum_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite)
 }
 
-#' Hdf5 datasets multiplication
+#' HDF5 datasets multiplication
 #'
 #' The bdblockmult_hdf5 function performs block-wise matrix multiplication 
 #' between two matrices stored in an HDF5 file. This approach is also efficient 
@@ -1031,8 +1020,6 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #'   }
 #'   
 #' @examples
-#' library("BigDataStatMeth")
-#' library("rhdf5")
 #' 
 #' N = 1000; M = 1000
 #' 
@@ -1040,7 +1027,7 @@ bdblockSum_hdf5 <- function(filename, group, A, B, groupB = NULL, block_size = N
 #' a <- matrix( rnorm( N*M, mean=0, sd=1), N, M) 
 #' b <- matrix( rnorm( N*M, mean=0, sd=1), M, N) 
 #' 
-#' fn <- "test_temp.hdf5"
+#' fn <- "test_temp.HDF5"
 #' bdCreate_hdf5_matrix(filename = fn, 
 #'                      object = a, group = "groupA", 
 #'                      dataset = "datasetA",
@@ -1134,9 +1121,9 @@ bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, transpose_A =
 #' - Proper resource cleanup
 #' 
 #' @examples
-#' \dontrun{
-#' library(Matrix)
-#' library(BigDataStatMeth)
+#' \donttest{
+#' 
+#' requireNamespace("Matrix", quietly=TRUE)
 #' 
 #' # Create sparse test matrices
 #' k <- 1e3
@@ -1155,11 +1142,11 @@ bdblockmult_hdf5 <- function(filename, group, A, B, groupB = NULL, transpose_A =
 #' )
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", as.matrix(x_sparse), "SPARSE", "x_sparse")
-#' bdCreate_hdf5_matrix("test.hdf5", as.matrix(y_sparse), "SPARSE", "y_sparse")
+#' bdCreate_hdf5_matrix("test.HDF5", as.matrix(x_sparse), "SPARSE", "x_sparse")
+#' bdCreate_hdf5_matrix("test.HDF5", as.matrix(y_sparse), "SPARSE", "y_sparse")
 #' 
 #' # Perform multiplication
-#' bdblockmult_sparse_hdf5("test.hdf5", "SPARSE", "x_sparse", "y_sparse",
+#' bdblockmult_sparse_hdf5("test.HDF5", "SPARSE", "x_sparse", "y_sparse",
 #'                         block_size = 1024,
 #'                         paral = TRUE,
 #'                         threads = 4)
@@ -1225,8 +1212,7 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, groupB = NULL, block_
 #' - Exception handling
 #' 
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrices
 #' N <- 1500
@@ -1236,13 +1222,13 @@ bdblockmult_sparse_hdf5 <- function(filename, group, A, B, groupB = NULL, block_
 #' b <- matrix(rnorm(N*M), N, M)
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", a, "data", "A",
+#' bdCreate_hdf5_matrix("test.HDF5", a, "data", "A",
 #'                      overwriteFile = TRUE)
-#' bdCreate_hdf5_matrix("test.hdf5", b, "data", "B",
+#' bdCreate_hdf5_matrix("test.HDF5", b, "data", "B",
 #'                      overwriteFile = FALSE)
 #' 
 #' # Perform subtraction
-#' bdblockSubstract_hdf5("test.hdf5", "data", "A", "B",
+#' bdblockSubstract_hdf5("test.HDF5", "data", "A", "B",
 #'                       outgroup = "results",
 #'                       outdataset = "diff",
 #'                       block_size = 1024,
@@ -1311,9 +1297,7 @@ bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_si
 #' - Optimized for numerical stability
 #' 
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
-#' library(rhdf5)
+#' \donttest{
 #' 
 #' # Create test matrix
 #' N <- 1000
@@ -1322,11 +1306,11 @@ bdblockSubstract_hdf5 <- function(filename, group, A, B, groupB = NULL, block_si
 #' a <- matrix(rnorm(N*M), N, M)
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", a, "INPUT", "A",
+#' bdCreate_hdf5_matrix("test.HDF5", a, "INPUT", "A",
 #'                      overwriteFile = TRUE)
 #' 
 #' # Compute transposed cross product
-#' bdtCrossprod_hdf5("test.hdf5", "INPUT", "A",
+#' bdtCrossprod_hdf5("test.HDF5", "INPUT", "A",
 #'                   outgroup = "OUTPUT",
 #'                   outdataset = "result",
 #'                   block_size = 1024,
@@ -1390,8 +1374,7 @@ bdtCrossprod_hdf5 <- function(filename, group, A, B = NULL, groupB = NULL, block
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create identity matrix (1M x 1M)
 #' bdCreate_diagonal_hdf5("identity.h5", "/", "I_matrix", 
@@ -1447,7 +1430,7 @@ bdCreate_diagonal_hdf5 <- function(filename, group, dataset, size = NULL, scalar
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' bdCreate_hdf5_emptyDataset("test.h5", "MGCCA_IN", "X", 1000, 500,
 #'                           overwriteFile = FALSE,
 #'                           overwriteDataset = TRUE,
@@ -1482,9 +1465,8 @@ bdCreate_hdf5_emptyDataset <- function(filename, group, dataset, nrows = 0L, nco
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
-#' fn <- "test.hdf5"
+#' \donttest{
+#' fn <- "test.HDF5"
 #'
 #' # Ensure file exists (e.g., by creating an empty dataset or via a helper)
 #' mat <- matrix(0, nrow = 1, ncol = 1)
@@ -1506,15 +1488,15 @@ bdCreate_hdf5_group <- function(filename, group) {
     .Call('_BigDataStatMeth_bdCreate_hdf5_group', PACKAGE = 'BigDataStatMeth', filename, group)
 }
 
-#' Create hdf5 data file and write data to it
+#' Create HDF5 data file and write data to it
 #'
-#' Creates a hdf5 file with numerical data matrix,
+#' Creates a HDF5 file with numerical data matrix,
 #' 
 #' @param filename, character array indicating the name of the file to create
 #' @param object numerical data matrix
-#' @param group, character array indicating folder name to put the matrix in hdf5 file
+#' @param group, character array indicating folder name to put the matrix in HDF5 file
 #' @param dataset, character array indicating the dataset name to store the matrix data
-#' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
+#' @param transp boolean, if trans=true matrix is stored transposed in HDF5 file
 #' @param overwriteFile, optional boolean by default overwriteFile = false, if 
 #' true and file exists, removes old file and creates a new file with de dataset 
 #' data.
@@ -1531,7 +1513,7 @@ bdCreate_hdf5_group <- function(filename, group) {
 #' @examples
 #' 
 #' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-#' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
+#' bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
 #'                     object = matA, group = "datasets", 
 #'                     dataset = "datasetA", transp = FALSE, 
 #'                     overwriteFile = TRUE, 
@@ -1539,9 +1521,9 @@ bdCreate_hdf5_group <- function(filename, group) {
 #'                     unlimited = FALSE)
 #' 
 #' # Remove file (used as example)
-#'   if (file.exists("test_temp.hdf5")) {
+#'   if (file.exists("test_temp.HDF5")) {
 #'     # Delete file if it exist
-#'     file.remove("test_temp.hdf5")
+#'     file.remove("test_temp.HDF5")
 #'   }
 #' 
 #' @export
@@ -1631,8 +1613,7 @@ bdDiag_add_hdf5 <- function(filename, group, A, B, groupB = NULL, target = NULL,
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrices
 #' N <- 1000
@@ -1641,13 +1622,13 @@ bdDiag_add_hdf5 <- function(filename, group, A, B, groupB = NULL, target = NULL,
 #' B <- matrix(rnorm(N*N), N, N)
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+#' bdCreate_hdf5_matrix("test.HDF5", A, "data", "matrixA",
 #'                      overwriteFile = TRUE)
-#' bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+#' bdCreate_hdf5_matrix("test.HDF5", B, "data", "matrixB",
 #'                      overwriteFile = FALSE)
 #' 
 #' # Subtract diagonals
-#' result <- bdDiag_subtract_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+#' result <- bdDiag_subtract_hdf5("test.HDF5", "data", "matrixA", "matrixB",
 #'                               outgroup = "results",
 #'                               outdataset = "diagonal_diff",
 #'                               paral = TRUE)
@@ -1711,8 +1692,7 @@ bdDiag_subtract_hdf5 <- function(filename, group, A, B, groupB = NULL, target = 
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrices
 #' N <- 1000
@@ -1721,13 +1701,13 @@ bdDiag_subtract_hdf5 <- function(filename, group, A, B, groupB = NULL, target = 
 #' B <- matrix(rnorm(N*N), N, N)
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+#' bdCreate_hdf5_matrix("test.HDF5", A, "data", "matrixA",
 #'                      overwriteFile = TRUE)
-#' bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+#' bdCreate_hdf5_matrix("test.HDF5", B, "data", "matrixB",
 #'                      overwriteFile = FALSE)
 #' 
 #' # Multiply diagonals (element-wise)
-#' result <- bdDiag_multiply_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+#' result <- bdDiag_multiply_hdf5("test.HDF5", "data", "matrixA", "matrixB",
 #'                               outgroup = "results",
 #'                               outdataset = "diagonal_product",
 #'                               paral = TRUE)
@@ -1791,8 +1771,7 @@ bdDiag_multiply_hdf5 <- function(filename, group, A, B, groupB = NULL, target = 
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrices
 #' N <- 1000
@@ -1801,13 +1780,13 @@ bdDiag_multiply_hdf5 <- function(filename, group, A, B, groupB = NULL, target = 
 #' B <- matrix(rnorm(N*N, mean=1), N, N)  # Avoid division by zero
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", A, "data", "matrixA",
+#' bdCreate_hdf5_matrix("test.HDF5", A, "data", "matrixA",
 #'                      overwriteFile = TRUE)
-#' bdCreate_hdf5_matrix("test.hdf5", B, "data", "matrixB",
+#' bdCreate_hdf5_matrix("test.HDF5", B, "data", "matrixB",
 #'                      overwriteFile = FALSE)
 #' 
 #' # Divide diagonals
-#' result <- bdDiag_divide_hdf5("test.hdf5", "data", "matrixA", "matrixB",
+#' result <- bdDiag_divide_hdf5("test.HDF5", "data", "matrixA", "matrixB",
 #'                             outgroup = "results",
 #'                             outdataset = "diagonal_ratio",
 #'                             paral = TRUE)
@@ -1863,8 +1842,7 @@ bdDiag_divide_hdf5 <- function(filename, group, A, B, groupB = NULL, target = NU
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrix
 #' A <- matrix(rnorm(100), 10, 10)
@@ -1942,16 +1920,13 @@ bdDiag_scalar_hdf5 <- function(filename, group, dataset, scalar, operation, targ
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
-#' library(rhdf5)
-#' library(RSpectra)
+#' \donttest{
 #' 
 #' # Create a sample matrix (can be non-symmetric)
 #' set.seed(123)
 #' A <- matrix(rnorm(2500), 50, 50)
 #' 
-#' fn <- "test_eigen.hdf5"
+#' fn <- "test_eigen.HDF5"
 #' bdCreate_hdf5_matrix_file(filename = fn, object = A, group = "data", dataset = "matrix")
 #'
 #' # Compute eigendecomposition with BigDataStatMeth
@@ -1993,6 +1968,52 @@ bdEigen_hdf5 <- function(filename, group = NULL, dataset = NULL, k = NULL, which
     .Call('_BigDataStatMeth_bdEigen_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, k, which, ncv, bcenter, bscale, tolerance, max_iter, compute_vectors, overwrite, threads)
 }
 
+#' Check if HDF5 element exists
+#'
+#' @description
+#' Verifies if a group or dataset exists within an HDF5 file.
+#' Used for validation and conditional logic in HDF5 operations.
+#'
+#' @param filename Character. Path to HDF5 file.
+#' @param path Character. Full path to element (e.g., "data/matrix" or "group1/group2").
+#'   Can be a group path or a full dataset path.
+#'
+#' @return Logical. \code{TRUE} if element exists, \code{FALSE} otherwise.
+#'   Returns \code{FALSE} if file doesn't exist or cannot be opened.
+#'
+#' @details
+#' This function opens the HDF5 file in read-only mode, checks if the
+#' specified path exists, then closes the file automatically via destructor.
+#' It's safe to call on files that may not exist.
+#'
+#' **Note:** This checks for **both** groups and datasets. If you need to
+#' distinguish between them, use \code{\link{bdExists_hdf5_element}} with
+#' additional validation.
+#'
+#' @examples
+#' \donttest{
+#' # Create test file
+#' bdCreate_hdf5_matrix("test.h5", matrix(1:100, 10, 10), 
+#'                      "data", "X", overwriteFile = TRUE)
+#'
+#' # Check if elements exist
+#' hdf5_exists("test.h5", "data")         # TRUE (group exists)
+#' hdf5_exists("test.h5", "data/X")       # TRUE (dataset exists)
+#' hdf5_exists("test.h5", "data/Y")       # FALSE (doesn't exist)
+#' hdf5_exists("test.h5", "missing/path") # FALSE (doesn't exist)
+#' hdf5_exists("nonexistent.h5", "data")  # FALSE (file doesn't exist)
+#'
+#' # Cleanup
+#' unlink("test.h5")
+#' }
+#'
+#' @seealso \code{\link{bdExists_hdf5_element}} for the bd* equivalent
+#'
+#' @export
+hdf5_exists <- function(filename, path) {
+    .Call('_BigDataStatMeth_hdf5_exists', PACKAGE = 'BigDataStatMeth', filename, path)
+}
+
 #' Test whether an HDF5 file is locked (in use)
 #'
 #' @description
@@ -2006,7 +2027,7 @@ bdEigen_hdf5 <- function(filename, group = NULL, dataset = NULL, k = NULL, which
 #' @details Requires HDF5 file locking (HDF5 >= 1.12 recommended). The
 #'   function sets \code{HDF5_USE_FILE_LOCKING=TRUE} for the process.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' if (bdIsFileLocked("data.h5")) stop("File in use")
 #' }
 #' @export
@@ -2045,11 +2066,10 @@ bdIsLocked_hdf5 <- function(filename) {
 #'   - \[2\] Number of columns
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create a test HDF5 file
-#' fn <- "test.hdf5"
+#' fn <- "test.HDF5"
 #' X <- matrix(rnorm(100), 10, 10)
 #' 
 #' # Save matrix to HDF5
@@ -2110,11 +2130,10 @@ bdgetDim_hdf5 <- function(filename, dataset) {
 #' @return Character vector containing dataset names.
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create a test HDF5 file
-#' fn <- "test.hdf5"
+#' fn <- "test.HDF5"
 #' X <- matrix(rnorm(100), 10, 10)
 #' Y <- matrix(rnorm(100), 10, 10)
 #' 
@@ -2166,7 +2185,7 @@ bdgetDatasetsList_hdf5 <- function(filename, group, prefix = NULL) {
 #' @return A list with matrix properties and suitability assessment.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Check matrix suitability
 #' check_result <- bdEigen_check_matrix("data.h5", "matrices", "my_matrix")
 #' 
@@ -2235,8 +2254,7 @@ bdCheckMatrix_hdf5 <- function(filename, group = NULL, dataset = NULL, check_sym
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create a test CSV file
 #' data <- matrix(rnorm(100), 10, 10)
@@ -2245,7 +2263,7 @@ bdCheckMatrix_hdf5 <- function(filename, group = NULL, dataset = NULL, check_sym
 #' # Import to HDF5
 #' bdImportTextFile_hdf5(
 #'   filename = "test.csv",
-#'   outputfile = "output.hdf5",
+#'   outputfile = "output.HDF5",
 #'   outGroup = "data",
 #'   outDataset = "matrix1",
 #'   sep = ",",
@@ -2254,7 +2272,7 @@ bdCheckMatrix_hdf5 <- function(filename, group = NULL, dataset = NULL, check_sym
 #' )
 #' 
 #' # Cleanup
-#' unlink(c("test.csv", "output.hdf5"))
+#' unlink(c("test.csv", "output.HDF5"))
 #' }
 #'
 #' @references
@@ -2315,14 +2333,13 @@ bdImportTextFile_hdf5 <- function(filename, outputfile, outGroup, outDataset, se
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test data with missing values
 #' data <- matrix(sample(c(0, 1, 2, NA), 100, replace = TRUE), 10, 10)
 #' 
 #' # Save to HDF5
-#' fn <- "snp_data.hdf5"
+#' fn <- "snp_data.HDF5"
 #' bdCreate_hdf5_matrix(fn, data, "genotype", "snps",
 #'                      overwriteFile = TRUE)
 #' 
@@ -2405,8 +2422,7 @@ bdImputeSNPs_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdata
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(rhdf5)
+#' \donttest{
 #' 
 #' # Create a symmetric positive-definite matrix
 #' set.seed(1234)
@@ -2518,7 +2534,7 @@ bdInvCholesky_hdf5 <- function(filename, group, dataset, outdataset, outgroup = 
 #' }
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Backward compatible - existing code works unchanged
 #' result_original <- bdCorr_hdf5("data.h5", "expression", "genes")
 #' 
@@ -2573,24 +2589,23 @@ bdCorr_hdf5 <- function(filename_x, group_x, dataset_x, filename_y = "", group_y
 #' @return Numeric vector containing diagonal elements.
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrix
 #' X <- matrix(rnorm(100), 10, 10)
 #' diag(X) <- 0.5
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", X, "data", "matrix1",
+#' bdCreate_hdf5_matrix("test.HDF5", X, "data", "matrix1",
 #'                      overwriteFile = TRUE)
 #' 
 #' # Get diagonal
-#' diag_elements <- bdgetDiagonal_hdf5("test.hdf5", "data", "matrix1")
+#' diag_elements <- bdgetDiagonal_hdf5("test.HDF5", "data", "matrix1")
 #' print(diag_elements)
 #' 
 #' # Cleanup
-#' if (file.exists("test.hdf5")) {
-#'   file.remove("test.hdf5")
+#' if (file.exists("test.HDF5")) {
+#'   file.remove("test.HDF5")
 #' }
 #' }
 #'
@@ -2639,29 +2654,28 @@ bdgetDiagonal_hdf5 <- function(filename, group, dataset) {
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrix
 #' X <- matrix(rnorm(100), 10, 10)
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", X, "data", "matrix1",
+#' bdCreate_hdf5_matrix("test.HDF5", X, "data", "matrix1",
 #'                      overwriteFile = TRUE)
 #' 
 #' # Create new diagonal
 #' new_diag <- seq(1, 10)
 #' 
 #' # Update diagonal
-#' bdWriteDiagonal_hdf5(new_diag, "test.hdf5", "data", "matrix1")
+#' bdWriteDiagonal_hdf5(new_diag, "test.HDF5", "data", "matrix1")
 #' 
 #' # Verify
-#' diag_elements <- bdgetDiagonal_hdf5("test.hdf5", "data", "matrix1")
+#' diag_elements <- bdgetDiagonal_hdf5("test.HDF5", "data", "matrix1")
 #' print(diag_elements)
 #' 
 #' # Cleanup
-#' if (file.exists("test.hdf5")) {
-#'   file.remove("test.hdf5")
+#' if (file.exists("test.HDF5")) {
+#'   file.remove("test.HDF5")
 #' }
 #' }
 #'
@@ -2741,8 +2755,7 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrices
 #' set.seed(123)
@@ -2750,14 +2763,14 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' X <- matrix(rnorm(10), 10, 1)
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", Y, "data", "matrix1",
+#' bdCreate_hdf5_matrix("test.HDF5", Y, "data", "matrix1",
 #'                      overwriteFile = TRUE)
-#' bdCreate_hdf5_matrix("test.hdf5", X, "data", "vector1",
+#' bdCreate_hdf5_matrix("test.HDF5", X, "data", "vector1",
 #'                      overwriteFile = FALSE)
 #' 
 #' # Compute statistics
 #' bdgetSDandMean_hdf5(
-#'   filename = "test.hdf5",
+#'   filename = "test.HDF5",
 #'   group = "data",
 #'   dataset = "matrix1",
 #'   sd = TRUE,
@@ -2767,8 +2780,8 @@ bdWriteDiagonal_hdf5 <- function(diagonal, filename, group, dataset) {
 #' )
 #' 
 #' # Cleanup
-#' if (file.exists("test.hdf5")) {
-#'   file.remove("test.hdf5")
+#' if (file.exists("test.HDF5")) {
+#'   file.remove("test.HDF5")
 #' }
 #' }
 #'
@@ -2837,7 +2850,7 @@ bdgetSDandMean_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Move dataset to a different group
 #' success <- bdmove_hdf5_dataset("data.h5", 
 #'                          source_path = "/old_group/my_dataset",
@@ -2918,7 +2931,6 @@ bdmove_hdf5_dataset <- function(filename, source_path, dest_path, overwrite = FA
 #' @return The pseudoinverse matrix of X.
 #'
 #' @examples
-#' library(BigDataStatMeth)
 #' 
 #' # Create a singular matrix
 #' X <- matrix(c(1,2,3,2,4,6), 2, 3)  # rank-deficient matrix
@@ -2992,11 +3004,10 @@ bdpseudoinv <- function(X, threads = NULL) {
 #' }
 #'
 #' @examples
-#' library(BigDataStatMeth)
 #' 
 #' # Create a singular matrix
 #' X <- matrix(c(1,2,3,2,4,6), 2, 3)
-#' fn <- "test.hdf5"
+#' fn <- "test.HDF5"
 #' 
 #' # Save to HDF5
 #' bdCreate_hdf5_matrix(filename = fn,
@@ -3030,6 +3041,712 @@ bdpseudoinv <- function(X, threads = NULL) {
 #' @export
 bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdataset = NULL, overwrite = NULL, threads = NULL) {
     .Call('_BigDataStatMeth_bdpseudoinv_hdf5', PACKAGE = 'BigDataStatMeth', filename, group, dataset, outgroup, outdataset, overwrite, threads)
+}
+
+#' Column sums of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{colSums(X)} for an HDF5
+#' matrix referenced by an external pointer.
+#'
+#' @param ptr     External pointer (SEXP) to an open hdf5Dataset.
+#' @param paral   Logical or NULL; enable OpenMP parallelisation.
+#' @param wsize   Integer or NULL; block size (NULL = auto).
+#' @param threads Integer or NULL; thread count (NULL = auto).
+#'
+#' @return Numeric vector of length ncols_R.
+#'
+#' @keywords internal
+rcpp_hdf5dataset_colSums <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_colSums', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Column means of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{colMeans(X)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length ncols_R.
+#' @keywords internal
+rcpp_hdf5dataset_colMeans <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_colMeans', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Column minimums of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{apply(X, 2, min)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length ncols_R.
+#' @keywords internal
+rcpp_hdf5dataset_colMins <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_colMins', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Column maximums of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{apply(X, 2, max)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length ncols_R.
+#' @keywords internal
+rcpp_hdf5dataset_colMaxs <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_colMaxs', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Column variances of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{apply(X, 2, var)}.
+#' Uses Bessel's correction (n-1).
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length ncols_R.
+#' @keywords internal
+rcpp_hdf5dataset_colVars <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_colVars', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Column standard deviations of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{apply(X, 2, sd)}.
+#' Uses Bessel's correction (n-1).
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length ncols_R.
+#' @keywords internal
+rcpp_hdf5dataset_colSds <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_colSds', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Row sums of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{rowSums(X)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length nrows_R.
+#' @keywords internal
+rcpp_hdf5dataset_rowSums <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_rowSums', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Row means of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{rowMeans(X)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length nrows_R.
+#' @keywords internal
+rcpp_hdf5dataset_rowMeans <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_rowMeans', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Row minimums of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{apply(X, 1, min)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length nrows_R.
+#' @keywords internal
+rcpp_hdf5dataset_rowMins <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_rowMins', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Row maximums of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{apply(X, 1, max)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length nrows_R.
+#' @keywords internal
+rcpp_hdf5dataset_rowMaxs <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_rowMaxs', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Row variances of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{apply(X, 1, var)}.
+#' Uses Bessel's correction (n-1).
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length nrows_R.
+#' @keywords internal
+rcpp_hdf5dataset_rowVars <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_rowVars', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Row standard deviations of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise, OpenMP-parallel computation of \code{apply(X, 1, sd)}.
+#' Uses Bessel's correction (n-1).
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Numeric vector of length nrows_R.
+#' @keywords internal
+rcpp_hdf5dataset_rowSds <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_rowSds', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Sum of all elements of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise computation of \code{sum(X)}.  Equivalent to
+#' \code{sum(as.matrix(X))} but without loading the full matrix into RAM.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Scalar numeric.
+#' @keywords internal
+rcpp_hdf5dataset_scalar_sum <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_scalar_sum', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Mean of all elements of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise computation of \code{mean(X)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Scalar numeric.
+#' @keywords internal
+rcpp_hdf5dataset_scalar_mean <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_scalar_mean', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Minimum of all elements of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise computation of \code{min(X)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Scalar numeric.
+#' @keywords internal
+rcpp_hdf5dataset_scalar_min <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_scalar_min', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Maximum of all elements of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise computation of \code{max(X)}.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Scalar numeric.
+#' @keywords internal
+rcpp_hdf5dataset_scalar_max <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_scalar_max', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Variance of all elements of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise computation of \code{var(as.vector(X))}.
+#' Uses Bessel's correction (N-1) where N is the total number of elements.
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Scalar numeric.
+#' @keywords internal
+rcpp_hdf5dataset_scalar_var <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_scalar_var', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Standard deviation of all elements of an HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Block-wise computation of \code{sd(as.vector(X))}.
+#' Uses Bessel's correction (N-1).
+#'
+#' @inheritParams rcpp_hdf5dataset_colSums
+#' @return Scalar numeric.
+#' @keywords internal
+rcpp_hdf5dataset_scalar_sd <- function(ptr, paral = NULL, wsize = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_scalar_sd', PACKAGE = 'BigDataStatMeth', ptr, paral, wsize, threads)
+}
+
+#' Element-wise addition of two HDF5 datasets (R6 wrapper)
+#'
+#' @description
+#' Computes \code{A + B} element-wise for two HDF5 datasets referenced by
+#' external pointers, using a block-wise algorithm.
+#'
+#' @param ptr_a External pointer (SEXP) for matrix A
+#' @param ptr_b External pointer (SEXP) for matrix B
+#' @param paral Logical or NULL; enable OpenMP parallelisation
+#' @param block_size Integer or NULL; block size (NULL = auto)
+#' @param threads Integer or NULL; thread count
+#'
+#' @return Named list with \code{filename} and \code{path} of the result.
+#'
+#' @keywords internal
+rcpp_hdf5dataset_add <- function(ptr_a, ptr_b, paral = NULL, block_size = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_add', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, paral, block_size, threads, compression)
+}
+
+#' Element-wise subtraction of two HDF5 datasets (R6 wrapper)
+#'
+#' @description
+#' Computes \code{A - B} element-wise for two HDF5 datasets referenced by
+#' external pointers, using a block-wise algorithm.
+#'
+#' @param ptr_a External pointer (SEXP) for matrix A
+#' @param ptr_b External pointer (SEXP) for matrix B
+#' @param paral Logical or NULL; enable OpenMP parallelisation
+#' @param block_size Integer or NULL; block size (NULL = auto)
+#' @param threads Integer or NULL; thread count
+#'
+#' @return Named list with \code{filename} and \code{path} of the result.
+#'
+#' @keywords internal
+rcpp_hdf5dataset_subtract <- function(ptr_a, ptr_b, paral = NULL, block_size = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_subtract', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, paral, block_size, threads, compression)
+}
+
+#' Element-wise multiplication of two HDF5 datasets (R6 wrapper)
+#'
+#' @description
+#' Computes the Hadamard (element-wise) product \code{A * B} for two HDF5
+#' datasets referenced by external pointers, using a block-wise algorithm.
+#'
+#' @param ptr_a External pointer (SEXP) for matrix A
+#' @param ptr_b External pointer (SEXP) for matrix B
+#' @param paral Logical or NULL; enable OpenMP parallelisation
+#' @param block_size Integer or NULL; block size (NULL = auto)
+#' @param threads Integer or NULL; thread count
+#'
+#' @return Named list with \code{filename} and \code{path} of the result.
+#'
+#' @keywords internal
+rcpp_hdf5dataset_mul_ew <- function(ptr_a, ptr_b, paral = NULL, block_size = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_mul_ew', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, paral, block_size, threads, compression)
+}
+
+#' Element-wise division of two HDF5 datasets (R6 wrapper)
+#'
+#' @description
+#' Computes \code{A / B} element-wise for two HDF5 datasets referenced by
+#' external pointers, using a block-wise algorithm.  Division by zero
+#' produces \code{NaN} or \code{Inf}, matching base R behaviour.
+#'
+#' @param ptr_a External pointer (SEXP) for matrix A
+#' @param ptr_b External pointer (SEXP) for matrix B
+#' @param paral Logical or NULL; enable OpenMP parallelisation
+#' @param block_size Integer or NULL; block size (NULL = auto)
+#' @param threads Integer or NULL; thread count
+#'
+#' @return Named list with \code{filename} and \code{path} of the result.
+#'
+#' @keywords internal
+rcpp_hdf5dataset_div_ew <- function(ptr_a, ptr_b, paral = NULL, block_size = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_div_ew', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, paral, block_size, threads, compression)
+}
+
+rcpp_hdf5dataset_bind <- function(file_a, group_a, dataset_a, file_b, group_b, dataset_b, out_file, out_group, out_dataset, func, overwrite = FALSE, block_rows = 1000L, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_bind', PACKAGE = 'BigDataStatMeth', file_a, group_a, dataset_a, file_b, group_b, dataset_b, out_file, out_group, out_dataset, func, overwrite, block_rows, compression)
+}
+
+rcpp_hdf5dataset_chol <- function(filename, group, dataset, full_matrix = FALSE, overwrite = FALSE, threads = -1L, block_size = -1L, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_chol', PACKAGE = 'BigDataStatMeth', filename, group, dataset, full_matrix, overwrite, threads, block_size, compression)
+}
+
+rcpp_hdf5dataset_solve <- function(filename, group, dataset, full_matrix = TRUE, overwrite = FALSE, threads = -1L, block_size = -1L, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_solve', PACKAGE = 'BigDataStatMeth', filename, group, dataset, full_matrix, overwrite, threads, block_size, compression)
+}
+
+rcpp_hdf5dataset_cor <- function(in_file_x, in_group_x, in_dataset_x, in_file_y = "", in_group_y = "", in_dataset_y = "", out_file = "", out_group = "", trans_x = FALSE, trans_y = FALSE, method = "pearson", use_complete_obs = FALSE, compute_pvalues = TRUE, block_size = 1000L, copy_blockrows = 500L, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_cor', PACKAGE = 'BigDataStatMeth', in_file_x, in_group_x, in_dataset_x, in_file_y, in_group_y, in_dataset_y, out_file, out_group, trans_x, trans_y, method, use_complete_obs, compute_pvalues, block_size, copy_blockrows, threads, compression)
+}
+
+rcpp_hdf5dataset_eigen <- function(filename, group, dataset, k = 0L, which = "LM", ncv = 0L, bcenter = FALSE, bscale = FALSE, tolerance = 1e-10, max_iter = 1000L, compute_vectors = TRUE, overwrite = FALSE, threads = -1L) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_eigen', PACKAGE = 'BigDataStatMeth', filename, group, dataset, k, which, ncv, bcenter, bscale, tolerance, max_iter, compute_vectors, overwrite, threads)
+}
+
+rcpp_hdf5dataset_sweep <- function(ptr_mat, ptr_vec, func = "*", byrows = FALSE, paral = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_sweep', PACKAGE = 'BigDataStatMeth', ptr_mat, ptr_vec, func, byrows, paral, threads, compression)
+}
+
+rcpp_hdf5dataset_diag_get <- function(ptr_mat) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_diag_get', PACKAGE = 'BigDataStatMeth', ptr_mat)
+}
+
+rcpp_hdf5dataset_diag_set <- function(ptr_mat, values) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_diag_set', PACKAGE = 'BigDataStatMeth', ptr_mat, values)
+}
+
+rcpp_hdf5dataset_diag_op <- function(ptr_a, ptr_b, op = "+", paral = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_diag_op', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, op, paral, threads, compression)
+}
+
+rcpp_hdf5dataset_diag_scale <- function(ptr_mat, scalar, op_code = 2L, paral = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_diag_scale', PACKAGE = 'BigDataStatMeth', ptr_mat, scalar, op_code, paral, threads, compression)
+}
+
+#' Close all open HDF5Dataset objects and HDF5 handles
+#'
+#' @description
+#' Closes all C++ \code{hdf5Dataset} objects tracked in the live-pointer
+#' registry and then calls \code{BigDataStatMeth::closeAllHDF5Handles()}
+#' to close any remaining HDF5 handles at the C library level (files,
+#' datasets, groups, datatypes, attributes) that were not tracked by
+#' the registry. Equivalent in effect to \code{rhdf5::h5closeAll()}.
+#'
+#' Called automatically from \code{.onUnload()} when the package is
+#' unloaded. Can also be called manually for diagnostic purposes via
+#' \code{BigDataStatMeth:::rcpp_hdf5_close_all_registry()}.
+#'
+#' @return \code{NULL} invisibly.
+#'
+#' @keywords internal
+rcpp_hdf5_close_all_registry <- function() {
+    .Call('_BigDataStatMeth_rcpp_hdf5_close_all_registry', PACKAGE = 'BigDataStatMeth')
+}
+
+#' Open HDF5 dataset and return external pointer (R6 wrapper)
+#'
+#' @param filename Path to HDF5 file
+#' @param group Group path (e.g., "data" or "/data")
+#' @param dataset Dataset name within the group (e.g., "matrix")
+#'
+#' @return External pointer to hdf5Dataset object
+#'
+#' @keywords internal
+rcpp_hdf5dataset_open <- function(filename, group, dataset) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_open', PACKAGE = 'BigDataStatMeth', filename, group, dataset)
+}
+
+#' Get dimensions of HDF5 dataset (R6 wrapper)
+#'
+#' @param ptr_sexp External pointer to hdf5Dataset
+#'
+#' @return Integer vector c(nrows, ncols)
+#'
+#' @keywords internal
+rcpp_hdf5dataset_dim <- function(ptr_sexp) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_dim', PACKAGE = 'BigDataStatMeth', ptr_sexp)
+}
+
+#' Get dataset information (R6 wrapper)
+#'
+#' @param ptr_sexp External pointer to hdf5Dataset
+#'
+#' @return Named list with filename, group, dataset, datatype
+#'
+#' @keywords internal
+rcpp_hdf5dataset_info <- function(ptr_sexp) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_info', PACKAGE = 'BigDataStatMeth', ptr_sexp)
+}
+
+#' Check if dataset is valid and open (R6 wrapper)
+#'
+#' @param ptr_sexp External pointer to hdf5Dataset
+#'
+#' @return Logical: TRUE if valid and open, FALSE otherwise
+#'
+#' @keywords internal
+rcpp_hdf5dataset_is_valid <- function(ptr_sexp) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_is_valid', PACKAGE = 'BigDataStatMeth', ptr_sexp)
+}
+
+#' Read dimension names (rownames / colnames) from an HDF5 dataset
+#'
+#' @description
+#' Reads the row and column names stored alongside an HDF5 dataset following
+#' the BigDataStatMeth convention:
+#' \itemize{
+#'   \item rownames stored at \code{group/.<dataset>_dimnames/1}
+#'   \item colnames stored at \code{group/.<dataset>_dimnames/2}
+#' }
+#' When a component has not been written an empty \code{character(0)} is
+#' returned for it.  The function uses \code{BigDataStatMeth::hdf5Dims} in
+#' read mode (\code{bWrite = false}) so no data on disk is modified.
+#'
+#' @param ptr_sexp External pointer (SEXP) to an open \code{hdf5Dataset}
+#'   object managed by the R6 class.
+#'
+#' @return Named list with two \code{character} elements:
+#' \describe{
+#'   \item{rownames}{Row names, or \code{character(0)} if absent}
+#'   \item{colnames}{Column names, or \code{character(0)} if absent}
+#' }
+#'
+#' @keywords internal
+rcpp_hdf5dataset_read_dimnames <- function(ptr_sexp) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_read_dimnames', PACKAGE = 'BigDataStatMeth', ptr_sexp)
+}
+
+#' Write dimension names through the R6 dataset handle
+#'
+#' @description
+#' Writes row and/or column names for an HDF5 dataset using the existing
+#' open file handle managed by the R6 object.  Unlike
+#' \code{bdWrite_hdf5_dimnames()}, this function operates through
+#' \code{hdf5Dataset::writeDimnames()} so the long-lived R6 handle sees
+#' the changes immediately - no metadata cache staleness.
+#'
+#' @param ptr_sexp External pointer (SEXP) to an open \code{hdf5Dataset}.
+#' @param rownames Character vector of row names. Use \code{character(0)}
+#'   to skip writing row names.
+#' @param colnames Character vector of column names. Use \code{character(0)}
+#'   to skip writing column names.
+#'
+#' @return \code{NULL} invisibly.
+#'
+#' @keywords internal
+rcpp_hdf5dataset_write_dimnames <- function(ptr_sexp, rownames, colnames) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_write_dimnames', PACKAGE = 'BigDataStatMeth', ptr_sexp, rownames, colnames)
+}
+
+#' Close and destroy an HDF5 dataset handle immediately.
+#'
+#' Uses the live-pointer registry to prevent double-free: if the pointer
+#' is no longer in the registry (already closed by close() or GC), this
+#' is a safe no-op.  Clears the external pointer so the GC finalizer
+#' becomes a no-op too.
+#'
+#' @param ptr_sexp External pointer to hdf5Dataset
+#' @keywords internal
+rcpp_hdf5dataset_close <- function(ptr_sexp) {
+    invisible(.Call('_BigDataStatMeth_rcpp_hdf5dataset_close', PACKAGE = 'BigDataStatMeth', ptr_sexp))
+}
+
+#' Close all live HDF5Matrix handles pointing to specific dataset paths.
+#'
+#' @description
+#' Scans the live-pointer registry for any open \code{hdf5Dataset} objects
+#' that match the given \code{filename} and any of the \code{paths}.
+#' Each matching object is closed and its external pointer cleared, so
+#' that any R6 \code{HDF5Matrix} objects holding those pointers will
+#' return \code{FALSE} from \code{is_valid()} immediately.
+#'
+#' This is called automatically by R6 methods that use
+#' \code{overwrite = TRUE} (e.g. \code{$eigen()}, \code{$svd()},
+#' \code{$qr()}, \code{$chol()}, \code{$prcomp()}) to ensure that
+#' previous result objects are safely invalidated before the HDF5 datasets
+#' they reference are deleted and recreated.
+#'
+#' @param filename  Canonical filesystem path to the HDF5 file.
+#' @param paths     Character vector of HDF5-internal paths
+#'   (e.g. \code{c("EIGEN/sym/values", "EIGEN/sym/vectors")}).
+#'
+#' @return \code{NULL} invisibly.
+#'
+#' @keywords internal
+rcpp_hdf5_close_at_paths <- function(filename, paths) {
+    .Call('_BigDataStatMeth_rcpp_hdf5_close_at_paths', PACKAGE = 'BigDataStatMeth', filename, paths)
+}
+
+#' General matrix product for HDF5 datasets (R6 wrapper)
+#'
+#' @description
+#' Computes \code{A \%*\% B} (or transposed variants) for two HDF5 datasets
+#' referenced by external pointers, using the BigDataStatMeth block-wise
+#' multiplication algorithm.
+#'
+#' @param ptr_a External pointer (SEXP) for matrix A
+#' @param ptr_b External pointer (SEXP) for matrix B
+#' @param transpose_a Logical; transpose A before multiplying
+#' @param transpose_b Logical; transpose B before multiplying
+#' @param paral Logical or NULL; enable OpenMP parallelisation
+#' @param block_size Integer or NULL; block size (NULL = auto)
+#' @param threads Integer or NULL; thread count when \code{paral = TRUE}
+#'
+#' @return Named list with \code{filename} (character) and \code{path}
+#'   (character) locating the result dataset within the HDF5 file.
+#'
+#' @keywords internal
+rcpp_hdf5dataset_multiply <- function(ptr_a, ptr_b, transpose_a = FALSE, transpose_b = FALSE, paral = NULL, block_size = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_multiply', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, transpose_a, transpose_b, paral, block_size, threads, compression)
+}
+
+#' Cross product for HDF5 datasets (R6 wrapper)
+#'
+#' @description
+#' Computes \code{t(A) \%*\% B} using the dedicated BigDataStatMeth
+#' block-wise cross-product algorithm. When A and B refer to the same
+#' dataset, the symmetric optimisation (\code{bisSymetric = TRUE}) is
+#' applied automatically.
+#'
+#' @param ptr_a External pointer (SEXP) for matrix A
+#' @param ptr_b External pointer (SEXP) for matrix B
+#' @param paral Logical or NULL; enable OpenMP parallelisation
+#' @param block_size Integer or NULL; block size (NULL = auto)
+#' @param threads Integer or NULL; thread count when \code{paral = TRUE}
+#'
+#' @return Named list with \code{filename} and \code{path} of the result.
+#'
+#' @keywords internal
+rcpp_hdf5dataset_crossprod <- function(ptr_a, ptr_b, paral = NULL, block_size = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_crossprod', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, paral, block_size, threads, compression)
+}
+
+#' Transposed cross product for HDF5 datasets (R6 wrapper)
+#'
+#' @description
+#' Computes \code{A \%*\% t(B)} using the dedicated BigDataStatMeth
+#' block-wise transposed cross-product algorithm. When A and B refer to the
+#' same dataset, the symmetric optimisation is applied automatically.
+#'
+#' @param ptr_a External pointer (SEXP) for matrix A
+#' @param ptr_b External pointer (SEXP) for matrix B
+#' @param paral Logical or NULL; enable OpenMP parallelisation
+#' @param block_size Integer or NULL; block size (NULL = auto)
+#' @param threads Integer or NULL; thread count when \code{paral = TRUE}
+#'
+#' @return Named list with \code{filename} and \code{path} of the result.
+#'
+#' @keywords internal
+rcpp_hdf5dataset_tcrossprod <- function(ptr_a, ptr_b, paral = NULL, block_size = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_tcrossprod', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, paral, block_size, threads, compression)
+}
+
+rcpp_hdf5dataset_normalize <- function(in_file, in_group, in_dataset, out_file, out_group, out_dataset, center = TRUE, scale = TRUE, byrows = FALSE, wsize = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_normalize', PACKAGE = 'BigDataStatMeth', in_file, in_group, in_dataset, out_file, out_group, out_dataset, center, scale, byrows, wsize, compression)
+}
+
+rcpp_hdf5dataset_impute_snps <- function(in_file, in_group, in_dataset, out_group, out_dataset, by_cols = TRUE, threads = -1L, overwrite = FALSE, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_impute_snps', PACKAGE = 'BigDataStatMeth', in_file, in_group, in_dataset, out_group, out_dataset, by_cols, threads, overwrite, compression)
+}
+
+rcpp_hdf5dataset_filter_low_coverage <- function(in_file, in_group, in_dataset, out_group, out_dataset, pcent = 0.05, by_cols = TRUE, overwrite = FALSE, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_filter_low_coverage', PACKAGE = 'BigDataStatMeth', in_file, in_group, in_dataset, out_group, out_dataset, pcent, by_cols, overwrite, compression)
+}
+
+rcpp_hdf5dataset_filter_maf <- function(in_file, in_group, in_dataset, out_group, out_dataset, maf_threshold = 0.05, by_cols = FALSE, block_size = 100L, overwrite = FALSE, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_filter_maf', PACKAGE = 'BigDataStatMeth', in_file, in_group, in_dataset, out_group, out_dataset, maf_threshold, by_cols, block_size, overwrite, compression)
+}
+
+rcpp_hdf5dataset_pca <- function(filename, group, dataset, ncomponents = 0L, bcenter = FALSE, bscale = FALSE, k = 2L, q = 1L, rankthreshold = 0.0, svdgroup = "SVD/", overwrite = FALSE, method = "auto", threads = -1L) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_pca', PACKAGE = 'BigDataStatMeth', filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, svdgroup, overwrite, method, threads)
+}
+
+rcpp_hdf5dataset_pseudoinv <- function(filename, group, dataset, out_group = "PseudoInverse", out_dataset = "", overwrite = FALSE, threads = -1L, compression = -1L) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_pseudoinv', PACKAGE = 'BigDataStatMeth', filename, group, dataset, out_group, out_dataset, overwrite, threads, compression)
+}
+
+rcpp_hdf5dataset_qr <- function(filename, group, dataset, thin = FALSE, block_size = -1L, overwrite = FALSE, threads = -1L, method = "auto", compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_qr', PACKAGE = 'BigDataStatMeth', filename, group, dataset, thin, block_size, overwrite, threads, method, compression)
+}
+
+rcpp_hdf5dataset_reduce <- function(filename, group, out_group = "REDUCED", out_dataset = "reduced", func = "+", overwrite = FALSE, remove_input = FALSE) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_reduce', PACKAGE = 'BigDataStatMeth', filename, group, out_group, out_dataset, func, overwrite, remove_input)
+}
+
+rcpp_hdf5dataset_apply_function <- function(filename, group, datasets, out_group = "APPLIED", func = "QR", b_group = "", b_datasets = NULL, overwrite = FALSE, transp_a = FALSE, transp_b = FALSE, full_matrix = FALSE, byrows = FALSE, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_apply_function', PACKAGE = 'BigDataStatMeth', filename, group, datasets, out_group, func, b_group, b_datasets, overwrite, transp_a, transp_b, full_matrix, byrows, threads)
+}
+
+rcpp_hdf5dataset_multiply_sparse <- function(ptr_a, ptr_b, block_size = -1L, mix_block = -1L, paral = NULL, threads = NULL, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_multiply_sparse', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, block_size, mix_block, paral, threads, compression)
+}
+
+rcpp_hdf5dataset_split <- function(ptr, bycols = FALSE, n_blocks = -1L, block_size = -1L, out_group = "SPLIT", out_dataset = "", overwrite = FALSE) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_split', PACKAGE = 'BigDataStatMeth', ptr, bycols, n_blocks, block_size, out_group, out_dataset, overwrite)
+}
+
+#' Read block from HDF5 dataset (subsetting)
+#'
+#' @param ptr_sexp External pointer to hdf5Dataset
+#' @param rows Integer vector with row indices (1-based, as in R)
+#' @param cols Integer vector with column indices (1-based, as in R)
+#' @return Numeric matrix with requested data
+#' 
+#' @details 
+#' This function reads a subset of data from an HDF5 dataset.
+#' Indices are 1-based (R convention) and converted internally to 0-based (C++ convention).
+#' 
+#' The function handles:
+#' - Contiguous blocks (e.g., rows 1:10)
+#' - Non-contiguous indices (e.g., rows c(1,3,5,7))
+#' - Full dimensions (e.g., all rows, specific columns)
+#' 
+#' @keywords internal
+rcpp_hdf5dataset_subset <- function(ptr_sexp, rows, cols) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_subset', PACKAGE = 'BigDataStatMeth', ptr_sexp, rows, cols)
+}
+
+#' Get full dataset as matrix (convenience function)
+#'
+#' @param ptr_sexp External pointer to hdf5Dataset
+#' @return Numeric matrix with all data
+#' 
+#' @keywords internal
+rcpp_hdf5dataset_read_all <- function(ptr_sexp) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_read_all', PACKAGE = 'BigDataStatMeth', ptr_sexp)
+}
+
+rcpp_hdf5dataset_svd <- function(filename, group, dataset, k = 2L, q = 1L, nev = 0L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite = FALSE, method = "auto", threads = -1L) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_svd', PACKAGE = 'BigDataStatMeth', filename, group, dataset, k, q, nev, bcenter, bscale, rankthreshold, overwrite, method, threads)
+}
+
+#' Write data block to HDF5 dataset (R6 wrapper)
+#'
+#' @description
+#' Writes a block of data to an HDF5 dataset at specified offset.
+#' Supports writing scalars, vectors, and matrices.
+#'
+#' @param ptr_sexp External pointer (SEXP) to hdf5Dataset
+#' @param value Data to write (numeric scalar, vector, or matrix)
+#' @param row_offset Starting row (0-based in C++, but receives 1-based from R)
+#' @param col_offset Starting column (0-based in C++, but receives 1-based from R)
+#' @param nrows Number of rows to write
+#' @param ncols Number of columns to write
+#'
+#' @return NULL (invisible)
+#'
+#' @keywords internal
+rcpp_hdf5dataset_write_block <- function(ptr_sexp, value, row_offset, col_offset, nrows, ncols) {
+    invisible(.Call('_BigDataStatMeth_rcpp_hdf5dataset_write_block', PACKAGE = 'BigDataStatMeth', ptr_sexp, value, row_offset, col_offset, nrows, ncols))
+}
+
+#' Write entire dataset (R6 wrapper)
+#'
+#' @description
+#' Replaces entire HDF5 dataset contents with new data.
+#'
+#' @param ptr_sexp External pointer (SEXP) to hdf5Dataset
+#' @param value Data to write (numeric matrix)
+#'
+#' @return NULL (invisible)
+#'
+#' @keywords internal
+rcpp_hdf5dataset_write_all <- function(ptr_sexp, value) {
+    invisible(.Call('_BigDataStatMeth_rcpp_hdf5dataset_write_all', PACKAGE = 'BigDataStatMeth', ptr_sexp, value))
+}
+
+#' Create an HDF5 dataset with configurable compression (R6 wrapper)
+#'
+#' @description
+#' Creates an HDF5 dataset of size \code{nrows x ncols} and optionally writes
+#' data to it. Replaces \code{bdCreate_hdf5_matrix()} /
+#' \code{bdCreate_hdf5_emptyDataset()} in the R6+S3 interface so that
+#' compression can be controlled from R.
+#'
+#' @param filename Character. Path to the HDF5 file.
+#' @param group Character. Group path inside the file.
+#' @param dataset Character. Dataset name.
+#' @param nrows Integer. Number of rows (>= 1).
+#' @param ncols Integer. Number of columns (>= 1).
+#' @param data Optional numeric/integer matrix or data.frame; NULL creates
+#'   an empty (zero-filled) dataset.
+#' @param dtype Character. Element type: "real" (default), "int", "logical".
+#' @param overwrite_file Logical. Recreate file if it already exists.
+#' @param overwrite_dataset Logical. Replace dataset if it already exists.
+#' @param compression Integer 0-9. gzip compression level (0 = no compression,
+#'   6 = balanced default). Applied to the new dataset only.
+#'
+#' @return Named list with \code{filename} and \code{path} of the created dataset.
+#'
+#' @keywords internal
+rcpp_hdf5_create_matrix <- function(filename, group, dataset, nrows, ncols, data = NULL, dtype = "real", overwrite_file = FALSE, overwrite_dataset = FALSE, compression = 6L) {
+    .Call('_BigDataStatMeth_rcpp_hdf5_create_matrix', PACKAGE = 'BigDataStatMeth', filename, group, dataset, nrows, ncols, data, dtype, overwrite_file, overwrite_dataset, compression)
 }
 
 #' Reduce Multiple HDF5 Datasets
@@ -3078,8 +3795,7 @@ bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdatas
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrices
 #' X1 <- matrix(1:100, 10, 10)
@@ -3087,7 +3803,7 @@ bdpseudoinv_hdf5 <- function(filename, group, dataset, outgroup = NULL, outdatas
 #' X3 <- matrix(201:300, 10, 10)
 #' 
 #' # Save to HDF5
-#' fn <- "test.hdf5"
+#' fn <- "test.HDF5"
 #' bdCreate_hdf5_matrix(fn, X1, "data", "matrix1",
 #'                      overwriteFile = TRUE)
 #' bdCreate_hdf5_matrix(fn, X2, "data", "matrix2",
@@ -3150,15 +3866,14 @@ bdReduce_hdf5_dataset <- function(filename, group, reducefunction, outgroup = NU
 #' @return No return value, called for side effects (element removal).
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test matrices
 #' matA <- matrix(1:15, nrow = 3, byrow = TRUE)
 #' matB <- matrix(15:1, nrow = 3, byrow = TRUE)
 #' 
 #' # Save to HDF5
-#' fn <- "test.hdf5"
+#' fn <- "test.HDF5"
 #' bdCreate_hdf5_matrix(fn, matA, "data", "matrix1",
 #'                      overwriteFile = TRUE)
 #' bdCreate_hdf5_matrix(fn, matB, "data", "matrix2",
@@ -3227,15 +3942,14 @@ bdRemove_hdf5_element <- function(filename, elements) {
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test SNP data with missing values
 #' snps <- matrix(sample(c(0, 1, 2, NA), 100, replace = TRUE,
 #'                      prob = c(0.3, 0.3, 0.3, 0.1)), 10, 10)
 #' 
 #' # Save to HDF5
-#' fn <- "snp_data.hdf5"
+#' fn <- "snp_data.HDF5"
 #' bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
 #'                      overwriteFile = TRUE)
 #' 
@@ -3314,15 +4028,14 @@ bdRemovelowdata_hdf5 <- function(filename, group, dataset, outgroup, outdataset,
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test SNP data
 #' snps <- matrix(sample(c(0, 1, 2), 1000, replace = TRUE,
 #'                      prob = c(0.7, 0.2, 0.1)), 100, 10)
 #' 
 #' # Save to HDF5
-#' fn <- "snp_data.hdf5"
+#' fn <- "snp_data.HDF5"
 #' bdCreate_hdf5_matrix(fn, snps, "genotype", "raw_snps",
 #'                      overwriteFile = TRUE)
 #' 
@@ -3438,15 +4151,14 @@ bdRemoveMAF_hdf5 <- function(filename, group, dataset, outgroup, outdataset, maf
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test data
 #' data <- matrix(rnorm(100), 10, 10)
 #' rownames(data) <- paste0("TCGA-OR-A5J", 1:10)
 #' 
 #' # Save to HDF5
-#' fn <- "test.hdf5"
+#' fn <- "test.HDF5"
 #' bdCreate_hdf5_matrix(fn, data, "data", "matrix1",
 #'                      overwriteFile = TRUE)
 #' 
@@ -3542,14 +4254,13 @@ bdSort_hdf5_dataset <- function(filename, group, dataset, outdataset, blockedSor
 #' }
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Create test data
 #' data <- matrix(rnorm(1000), 100, 10)
 #' 
 #' # Save to HDF5
-#' fn <- "test.hdf5"
+#' fn <- "test.HDF5"
 #' bdCreate_hdf5_matrix(fn, data, "data", "matrix1",
 #'                      overwriteFile = TRUE)
 #' 
@@ -3643,7 +4354,7 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Select specific rows (e.g., rows 1, 3, 5, 10-15)
 #' success <- bdsubset_dataset("data.h5", 
 #'                            dataset_path = "/matrix/data",
@@ -3681,6 +4392,215 @@ bdSplit_matrix_hdf5 <- function(filename, group, dataset, outgroup = NULL, outda
 #' @export
 bdsubset_hdf5_dataset <- function(filename, dataset_path, indices, select_rows = TRUE, new_group = "", new_name = "", overwrite = FALSE) {
     .Call('_BigDataStatMeth_bdsubset_hdf5_dataset', PACKAGE = 'BigDataStatMeth', filename, dataset_path, indices, select_rows, new_group, new_name, overwrite)
+}
+
+#' Get total system RAM
+#'
+#' @description
+#' Returns the total physical RAM installed in the system.
+#'
+#' @return Numeric value with total RAM in gigabytes (GB)
+#'
+#' @details
+#' This function queries the operating system to determine total RAM.
+#' Works on Windows, Linux, and macOS.
+#'
+#' The value returned is the physical RAM available to the system:
+#' - On physical machines: actual installed RAM
+#' - On virtual machines: RAM allocated to the VM
+#' - On containers: RAM limit set for the container
+#'
+#' @examples
+#' \donttest{
+#' # Check total RAM
+#' total <- get_total_ram()
+#' cat("System has", total, "GB of RAM\n")
+#' 
+#' # Returns 16.0 on a 16GB system
+#' }
+#'
+#' @seealso \code{\link{get_available_ram}}, \code{\link{get_cpu_cores}}
+#'
+#' @export
+get_total_ram <- function() {
+    .Call('_BigDataStatMeth_get_total_ram', PACKAGE = 'BigDataStatMeth')
+}
+
+#' Get available (free) system RAM
+#'
+#' @description
+#' Returns the amount of RAM currently available for allocation.
+#'
+#' @return Numeric value with available RAM in gigabytes (GB)
+#'
+#' @details
+#' This function returns the RAM that can be allocated without swapping.
+#' The value changes dynamically as processes allocate and free memory.
+#'
+#' **Important notes:**
+#' - Value can change rapidly; don't cache it
+#' - On Linux, uses MemAvailable (more accurate than MemFree)
+#' - Includes memory that can be reclaimed from caches
+#' - Actual allocatable memory may be slightly less
+#'
+#' **Use case:**
+#' Check available RAM before loading large datasets into memory.
+#'
+#' @examples
+#' \donttest{
+#' # Check available RAM
+#' available <- get_available_ram()
+#' cat("Available RAM:", available, "GB\n")
+#' 
+#' # Example: decide whether to load data
+#' dataset_size_gb <- 5
+#' if (available > dataset_size_gb * 1.2) {  # 20 percent safety margin
+#'   data <- as.matrix(hdf5_dataset)
+#' } else {
+#'   message("Not enough RAM, working on-disk")
+#' }
+#' }
+#'
+#' @seealso \code{\link{get_total_ram}}, \code{\link{can_allocate}}
+#'
+#' @export
+get_available_ram <- function() {
+    .Call('_BigDataStatMeth_get_available_ram', PACKAGE = 'BigDataStatMeth')
+}
+
+#' Check if memory allocation is safe
+#'
+#' @description
+#' Checks whether a given amount of memory can be safely allocated
+#' while maintaining a safety margin.
+#'
+#' @param size_gb Size in gigabytes (GB) to check
+#' @param safety_margin_pct Percentage of available RAM to keep free
+#'   (default 20 percent)
+#'
+#' @return Logical. TRUE if allocation is likely safe, FALSE otherwise
+#'
+#' @details
+#' This function checks if the requested memory can be allocated while
+#' keeping a safety margin of free RAM. This helps prevent:
+#' - System instability from memory exhaustion
+#' - Swapping (which degrades performance)
+#' - Out-of-memory errors from other processes
+#'
+#' **Formula:**
+#' \code{can_allocate = (size_gb < available_ram * (1 - safety_margin / 100))}
+#'
+#' **Safety margin guidelines:**
+#' \itemize{
+#'   \item 20 percent (default): Conservative, recommended for most cases
+#'   \item 10 percent: Moderate, for controlled environments
+#'   \item 5 percent: Aggressive, only if you know what you're doing
+#'   \item 0 percent: Maximum risk, not recommended
+#' }
+#'
+#' @note
+#' This is a heuristic check, not a guarantee. Allocation can still fail
+#' due to memory fragmentation or competing processes.
+#'
+#' @examples
+#' \donttest{
+#' # Check if we can allocate 5GB
+#' if (can_allocate(5)) {
+#'   mat <- as.matrix(large_dataset)
+#' } else {
+#'   message("Not enough RAM for full conversion")
+#'   mat <- large_dataset[1:1000, ]  # Load subset
+#' }
+#'
+#' # More aggressive check (10 percent margin)
+#' if (can_allocate(8, safety_margin_pct = 10)) {
+#'   # Riskier allocation
+#' }
+#' }
+#'
+#' @seealso \code{\link{get_available_ram}}
+#'
+#' @export
+can_allocate <- function(size_gb, safety_margin_pct = 20.0) {
+    .Call('_BigDataStatMeth_can_allocate', PACKAGE = 'BigDataStatMeth', size_gb, safety_margin_pct)
+}
+
+#' Get number of CPU cores
+#'
+#' @description
+#' Returns the number of logical CPU cores (processors) available.
+#'
+#' @return Integer with number of CPU cores
+#'
+#' @details
+#' This function returns the number of logical processors, which includes
+#' cores from hyperthreading/SMT. Useful for configuring parallel processing.
+#'
+#' **Typical values:**
+#' - 4-core CPU without hyperthreading: 4
+#' - 4-core CPU with hyperthreading: 8
+#' - 8-core CPU with hyperthreading: 16
+#'
+#' **Usage for parallelization:**
+#' Don't blindly use all cores. A common practice is to use 80-90 percent of
+#' available cores to leave room for the OS and other processes.
+#'
+#' @note
+#' - Returns logical cores (with hyperthreading), not physical cores
+#' - On systems with CPU pinning, may return fewer cores
+#' - Value reflects cores available to the process
+#'
+#' @examples
+#' \donttest{
+#' # Get CPU cores
+#' cores <- get_cpu_cores()
+#' cat("System has", cores, "CPU cores\n")
+#'
+#' # Configure parallel processing (use 80 percent of cores)
+#' threads <- max(1, floor(cores * 0.8))
+#' options(BigDataStatMeth.threads = threads)
+#' }
+#'
+#' @seealso \code{\link{get_total_ram}}
+#'
+#' @export
+get_cpu_cores <- function() {
+    .Call('_BigDataStatMeth_get_cpu_cores', PACKAGE = 'BigDataStatMeth')
+}
+
+#' Get system information summary
+#'
+#' @description
+#' Returns a comprehensive summary of system resources.
+#'
+#' @return Named list with system information:
+#' \describe{
+#'   \item{os}{Operating system name}
+#'   \item{total_ram_gb}{Total RAM in GB}
+#'   \item{available_ram_gb}{Available RAM in GB}
+#'   \item{ram_used_pct}{Percentage of RAM currently used}
+#'   \item{cpu_cores}{Number of CPU cores}
+#' }
+#'
+#' @details
+#' Convenience function that calls all system info methods and
+#' returns a summary. Useful for debugging and logging.
+#'
+#' @examples
+#' \donttest{
+#' # Get full system info
+#' info <- system_info()
+#' print(info)
+#' # $os: "Linux"
+#' # $total_ram_gb: 16.0
+#' # $available_ram_gb: 8.2
+#' # $ram_used_pct: 48.75
+#' # $cpu_cores: 8
+#' }
+#'
+#' @export
+system_info <- function() {
+    .Call('_BigDataStatMeth_system_info', PACKAGE = 'BigDataStatMeth')
 }
 
 #' Write Upper/Lower Triangular Matrix
@@ -3721,7 +4641,6 @@ bdsubset_hdf5_dataset <- function(filename, dataset_path, indices, select_rows =
 #' }
 #'
 #' @examples
-#' library(BigDataStatMeth)
 #' 
 #' # Create a matrix with upper triangular values
 #' X <- matrix(rnorm(100), 10, 10)
@@ -3729,14 +4648,14 @@ bdsubset_hdf5_dataset <- function(filename, dataset_path, indices, select_rows =
 #' X[lower.tri(X)] <- 0
 #' 
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "X", 
+#' bdCreate_hdf5_matrix("test_file.HDF5", X, "data", "X", 
 #'                      overwriteFile = TRUE, 
 #'                      overwriteDataset = FALSE, 
 #'                      unlimited = FALSE)
 #'                      
 #' # Mirror upper triangular to lower
 #' bdWriteOppsiteTriangularMatrix_hdf5(
-#'   filename = "test_file.hdf5", 
+#'   filename = "test_file.HDF5", 
 #'   group = "data",
 #'   dataset = "X",
 #'   copytolower = TRUE,
@@ -3748,14 +4667,14 @@ bdsubset_hdf5_dataset <- function(filename, dataset_path, indices, select_rows =
 #' X[upper.tri(X)] <- 0
 #' 
 #' # Add to HDF5 file
-#' bdCreate_hdf5_matrix("test_file.hdf5", X, "data", "Y", 
+#' bdCreate_hdf5_matrix("test_file.HDF5", X, "data", "Y", 
 #'                      overwriteFile = FALSE, 
 #'                      overwriteDataset = FALSE, 
 #'                      unlimited = FALSE)
 #'                      
 #' # Mirror lower triangular to upper
 #' bdWriteOppsiteTriangularMatrix_hdf5(
-#'   filename = "test_file.hdf5", 
+#'   filename = "test_file.HDF5", 
 #'   group = "data",
 #'   dataset = "Y",
 #'   copytolower = FALSE,
@@ -3763,8 +4682,8 @@ bdsubset_hdf5_dataset <- function(filename, dataset_path, indices, select_rows =
 #' )
 #'
 #' # Cleanup
-#' if (file.exists("test_file.hdf5")) {
-#'   file.remove("test_file.hdf5")
+#' if (file.exists("test_file.HDF5")) {
+#'   file.remove("test_file.HDF5")
 #' }
 #'
 #' @references
@@ -3835,7 +4754,6 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #' }
 #'
 #' @examples
-#' library(BigDataStatMeth)
 #'     
 #' # Create test data
 #' set.seed(123)
@@ -3843,17 +4761,17 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #' X <- matrix(rnorm(10), 10, 1)
 #'         
 #' # Save to HDF5
-#' bdCreate_hdf5_matrix("test.hdf5", Y, "data", "Y",
+#' bdCreate_hdf5_matrix("test.HDF5", Y, "data", "Y",
 #'                      overwriteFile = TRUE,
 #'                      overwriteDataset = FALSE,
 #'                      unlimited = FALSE)
-#' bdCreate_hdf5_matrix("test.hdf5", X, "data", "X",
+#' bdCreate_hdf5_matrix("test.HDF5", X, "data", "X",
 #'                      overwriteFile = FALSE,
 #'                      overwriteDataset = FALSE,
 #'                      unlimited = FALSE)
 #'             
 #' # Multiply matrix rows by vector
-#' bdcomputeMatrixVector_hdf5("test.hdf5",
+#' bdcomputeMatrixVector_hdf5("test.HDF5",
 #'                            group = "data",
 #'                            dataset = "Y",
 #'                            vectorgroup = "data",
@@ -3864,7 +4782,7 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'                            overwrite = TRUE)
 #'     
 #' # Subtract vector from matrix rows
-#' bdcomputeMatrixVector_hdf5("test.hdf5",
+#' bdcomputeMatrixVector_hdf5("test.HDF5",
 #'                            group = "data",
 #'                            dataset = "Y",
 #'                            vectorgroup = "data",
@@ -3875,7 +4793,7 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'                            overwrite = TRUE)
 #'     
 #' # Subtract vector from matrix columns
-#' bdcomputeMatrixVector_hdf5("test.hdf5",
+#' bdcomputeMatrixVector_hdf5("test.HDF5",
 #'                            group = "data",
 #'                            dataset = "Y",
 #'                            vectorgroup = "data",
@@ -3886,8 +4804,8 @@ bdWriteOppsiteTriangularMatrix_hdf5 <- function(filename, group, dataset, copyto
 #'                            overwrite = TRUE)
 #'                            
 #' # Cleanup
-#' if (file.exists("test.hdf5")) {
-#'   file.remove("test.hdf5")
+#' if (file.exists("test.HDF5")) {
+#'   file.remove("test.HDF5")
 #' }
 #'
 #' @references
@@ -3933,7 +4851,7 @@ bdcomputeMatrixVector_hdf5 <- function(filename, group, dataset, vectorgroup, ve
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' bdWrite_hdf5_dimnames(
 #'   filename = "test.h5",
 #'   group = "MGCCA_IN",
@@ -3992,8 +4910,7 @@ bdWrite_hdf5_dimnames <- function(filename, group, dataset, rownames, colnames) 
 #' @return Matrix or vector containing the result of A * B.
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Matrix-matrix multiplication
 #' N <- 2500
@@ -4069,8 +4986,7 @@ bdblockMult <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, 
 #' @return Matrix or vector containing the result of A - B.
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Matrix-matrix subtraction
 #' N <- 2500
@@ -4147,8 +5063,7 @@ bdblockSubstract <- function(A, B, block_size = NULL, paral = NULL, byBlocks = T
 #' @return Matrix or vector containing the result of A + B.
 #'
 #' @examples
-#' \dontrun{
-#' library(BigDataStatMeth)
+#' \donttest{
 #' 
 #' # Matrix-matrix addition
 #' N <- 2500
@@ -4206,7 +5121,7 @@ bdblockSum <- function(A, B, block_size = NULL, paral = NULL, byBlocks = TRUE, t
 #' @return A list containing correlation results
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Backward compatible - existing code unchanged
 #' set.seed(123)
 #' X <- matrix(rnorm(1000), ncol = 10)
@@ -4275,7 +5190,6 @@ bdCorr_matrix <- function(X, Y = NULL, trans_x = NULL, trans_y = NULL, method = 
 #' @return Numeric matrix containing the cross-product result.
 #'
 #' @examples
-#' library(BigDataStatMeth)
 #' 
 #' # Single matrix cross-product
 #' n <- 100
@@ -4374,7 +5288,6 @@ bdScalarwproduct <- function(A, w) {
 #' @return Numeric matrix containing the transposed cross-product result.
 #'
 #' @examples
-#' library(BigDataStatMeth)
 #' 
 #' # Single matrix transposed cross-product
 #' n <- 100
