@@ -89,10 +89,6 @@ success <- bdmove_hdf5_dataset("data.h5",
 }
 
 }
-\seealso{
-Other BigDataStatMeth HDF5 utilities: 
-\code{\link{bdsubset_hdf5_dataset}()}
-}
 \author{
 BigDataStatMeth package authors
 }
