@@ -1302,47 +1302,6 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP _BigDataStatMeth_bdBind_hdf5_datasets(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdCheckMatrix_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdCholesky_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdCorr_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdCreate_diagonal_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdCreate_hdf5_emptyDataset(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdCrossprod_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdDiag_add_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdDiag_divide_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdDiag_multiply_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdDiag_scalar_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdDiag_subtract_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdEigen_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdImputeSNPs_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdInvCholesky_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdIsLocked_hdf5(SEXP);
-RcppExport SEXP _BigDataStatMeth_bdNormalize_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdPCA_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdQR(SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdQR_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdRemoveMAF_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdRemove_hdf5_element(SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdRemovelowdata_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdSVD_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdSolve(SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdSolve_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdSort_hdf5_dataset(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdSplit_matrix_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdWriteDiagonal_hdf5(SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdblockSubstract_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdblockSum_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdblockmult_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdblockmult_sparse_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdcomputeMatrixVector_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdgetDiagonal_hdf5(SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdgetDim_hdf5(SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdgetSDandMean_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdsubset_hdf5_dataset(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP _BigDataStatMeth_bdtCrossprod_hdf5(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-
 static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdapply_Function_hdf5", (DL_FUNC) &_BigDataStatMeth_bdapply_Function_hdf5, 13},
     {"_BigDataStatMeth_bdCreate_hdf5_group", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_group, 2},
@@ -1428,46 +1387,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_bdScalarwproduct", (DL_FUNC) &_BigDataStatMeth_bdScalarwproduct, 2},
     {"_BigDataStatMeth_bdtCrossprod", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod, 6},
     {"_BigDataStatMeth_bd_wproduct", (DL_FUNC) &_BigDataStatMeth_bd_wproduct, 3},
-    {"_BigDataStatMeth_bdBind_hdf5_datasets",                (DL_FUNC) &_BigDataStatMeth_bdBind_hdf5_datasets,                 7},
-    {"_BigDataStatMeth_bdCheckMatrix_hdf5",                  (DL_FUNC) &_BigDataStatMeth_bdCheckMatrix_hdf5,                   6},
-    {"_BigDataStatMeth_bdCholesky_hdf5",                     (DL_FUNC) &_BigDataStatMeth_bdCholesky_hdf5,                      9},
-    {"_BigDataStatMeth_bdCorr_hdf5",                         (DL_FUNC) &_BigDataStatMeth_bdCorr_hdf5,                         18},
-    {"_BigDataStatMeth_bdCreate_diagonal_hdf5",              (DL_FUNC) &_BigDataStatMeth_bdCreate_diagonal_hdf5,              12},
-    {"_BigDataStatMeth_bdCreate_hdf5_emptyDataset",          (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_emptyDataset,           9},
-    {"_BigDataStatMeth_bdCrossprod_hdf5",                    (DL_FUNC) &_BigDataStatMeth_bdCrossprod_hdf5,                    12},
-    {"_BigDataStatMeth_bdDiag_add_hdf5",                     (DL_FUNC) &_BigDataStatMeth_bdDiag_add_hdf5,                     11},
-    {"_BigDataStatMeth_bdDiag_divide_hdf5",                  (DL_FUNC) &_BigDataStatMeth_bdDiag_divide_hdf5,                  11},
-    {"_BigDataStatMeth_bdDiag_multiply_hdf5",                (DL_FUNC) &_BigDataStatMeth_bdDiag_multiply_hdf5,                11},
-    {"_BigDataStatMeth_bdDiag_scalar_hdf5",                  (DL_FUNC) &_BigDataStatMeth_bdDiag_scalar_hdf5,                  11},
-    {"_BigDataStatMeth_bdDiag_subtract_hdf5",                (DL_FUNC) &_BigDataStatMeth_bdDiag_subtract_hdf5,                11},
-    {"_BigDataStatMeth_bdEigen_hdf5",                        (DL_FUNC) &_BigDataStatMeth_bdEigen_hdf5,                        13},
-    {"_BigDataStatMeth_bdImputeSNPs_hdf5",                   (DL_FUNC) &_BigDataStatMeth_bdImputeSNPs_hdf5,                    9},
-    {"_BigDataStatMeth_bdInvCholesky_hdf5",                  (DL_FUNC) &_BigDataStatMeth_bdInvCholesky_hdf5,                   9},
-    {"_BigDataStatMeth_bdIsLocked_hdf5",                     (DL_FUNC) &_BigDataStatMeth_bdIsLocked_hdf5,                      1},
-    {"_BigDataStatMeth_bdNormalize_hdf5",                    (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5,                     8},
-    {"_BigDataStatMeth_bdPCA_hdf5",                          (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5,                          13},
-    {"_BigDataStatMeth_bdQR",                                (DL_FUNC) &_BigDataStatMeth_bdQR,                                 4},
-    {"_BigDataStatMeth_bdQR_hdf5",                           (DL_FUNC) &_BigDataStatMeth_bdQR_hdf5,                            9},
-    {"_BigDataStatMeth_bdRemoveMAF_hdf5",                    (DL_FUNC) &_BigDataStatMeth_bdRemoveMAF_hdf5,                     9},
-    {"_BigDataStatMeth_bdRemove_hdf5_element",               (DL_FUNC) &_BigDataStatMeth_bdRemove_hdf5_element,                2},
-    {"_BigDataStatMeth_bdRemovelowdata_hdf5",                (DL_FUNC) &_BigDataStatMeth_bdRemovelowdata_hdf5,                 8},
-    {"_BigDataStatMeth_bdSVD_hdf5",                          (DL_FUNC) &_BigDataStatMeth_bdSVD_hdf5,                          11},
-    {"_BigDataStatMeth_bdSolve",                             (DL_FUNC) &_BigDataStatMeth_bdSolve,                              2},
-    {"_BigDataStatMeth_bdSolve_hdf5",                        (DL_FUNC) &_BigDataStatMeth_bdSolve_hdf5,                         8},
-    {"_BigDataStatMeth_bdSort_hdf5_dataset",                 (DL_FUNC) &_BigDataStatMeth_bdSort_hdf5_dataset,                  8},
-    {"_BigDataStatMeth_bdSplit_matrix_hdf5",                 (DL_FUNC) &_BigDataStatMeth_bdSplit_matrix_hdf5,                  9},
-    {"_BigDataStatMeth_bdWriteDiagonal_hdf5",                (DL_FUNC) &_BigDataStatMeth_bdWriteDiagonal_hdf5,                 4},
-    {"_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5,  5},
-    {"_BigDataStatMeth_bdblockSubstract_hdf5",               (DL_FUNC) &_BigDataStatMeth_bdblockSubstract_hdf5,               11},
-    {"_BigDataStatMeth_bdblockSum_hdf5",                     (DL_FUNC) &_BigDataStatMeth_bdblockSum_hdf5,                     11},
-    {"_BigDataStatMeth_bdblockmult_hdf5",                    (DL_FUNC) &_BigDataStatMeth_bdblockmult_hdf5,                    13},
-    {"_BigDataStatMeth_bdblockmult_sparse_hdf5",             (DL_FUNC) &_BigDataStatMeth_bdblockmult_sparse_hdf5,             12},
-    {"_BigDataStatMeth_bdcomputeMatrixVector_hdf5",          (DL_FUNC) &_BigDataStatMeth_bdcomputeMatrixVector_hdf5,          12},
-    {"_BigDataStatMeth_bdgetDiagonal_hdf5",                  (DL_FUNC) &_BigDataStatMeth_bdgetDiagonal_hdf5,                   3},
-    {"_BigDataStatMeth_bdgetDim_hdf5",                       (DL_FUNC) &_BigDataStatMeth_bdgetDim_hdf5,                        2},
-    {"_BigDataStatMeth_bdgetSDandMean_hdf5",                 (DL_FUNC) &_BigDataStatMeth_bdgetSDandMean_hdf5,                 11},
-    {"_BigDataStatMeth_bdsubset_hdf5_dataset",               (DL_FUNC) &_BigDataStatMeth_bdsubset_hdf5_dataset,                7},
-    {"_BigDataStatMeth_bdtCrossprod_hdf5",                   (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_hdf5,                   12},
     {NULL, NULL, 0}
 };
 
