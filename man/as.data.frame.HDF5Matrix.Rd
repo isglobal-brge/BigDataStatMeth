@@ -39,8 +39,11 @@ size checks), then to data.frame. All memory warnings apply.
 }
 \examples{
 \donttest{
-X <- hdf5_create_matrix("test.h5", "data/X", nrow = 100, ncol = 5)
-df <- as.data.frame(X)
+    fn <- tempfile(fileext = ".h5")
+    X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 5)
+    df <- as.data.frame(X)
+    hdf5_close_all()
+    unlink(fn)
 }
 
 }

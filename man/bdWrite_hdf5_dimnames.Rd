@@ -41,18 +41,20 @@ dataset dimensions.
 }
 \examples{
 \donttest{
+fn <- tempfile(fileext = ".h5")
+mat <- matrix(rnorm(5000), 100, 50)
+bdCreate_hdf5_matrix(fn, mat, group = "MGCCA_IN", dataset = "X",
+                     overwriteFile = TRUE)
+
 bdWrite_hdf5_dimnames(
-  filename = "test.h5",
+  filename = fn,
   group = "MGCCA_IN",
   dataset = "X",
   rownames = paste0("r", seq_len(100)),
   colnames = paste0("c", seq_len(50))
 )
-
-# Skip column names:
-bdWrite_hdf5_dimnames("test.h5", "MGCCA_IN", "X",
-                      rownames = paste0("r", 1:100),
-                      colnames = character(0))
+hdf5_close_all()
+unlink(fn)
 }
 
 }

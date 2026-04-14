@@ -19,9 +19,12 @@ Estimates how much memory the dataset would occupy if loaded into RAM.
 }
 \examples{
 \donttest{
-X <- hdf5_create_matrix("test.h5", "data/X", nrow = 10000, ncol = 5000)
-object_size(X)              # 381.5 MB
-object_size(X, unit = "GB") # 0.37 GB
+    fn <- tempfile(fileext = ".h5")
+    X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 50)
+    object_size(X)
+    object_size(X, unit = "KB")
+    hdf5_close_all()
+    unlink(fn)
 }
 
 }

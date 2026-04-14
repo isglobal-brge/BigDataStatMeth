@@ -71,29 +71,28 @@ The function handles:
 }
 \examples{
 
-# Create a singular matrix
-X <- matrix(c(1,2,3,2,4,6), 2, 3)
-fn <- "test.HDF5"
+    # Create a singular matrix
+    X <- matrix(c(1,2,3,2,4,6), 2, 3)
+    fn <- tempfile(fileext = ".h5")
 
-# Save to HDF5
-bdCreate_hdf5_matrix(filename = fn,
-                     object = X,
-                     group = "data",
-                     dataset = "X",
-                     overwriteFile = TRUE)
+    # Save to HDF5
+    bdCreate_hdf5_matrix( filename = fn,
+                          object = X,
+                          group = "data",
+                          dataset = "X",
+                          overwriteFile = TRUE)
 
-# Compute pseudoinverse
-bdpseudoinv_hdf5(filename = fn,
-                 group = "data",
-                 dataset = "X",
-                 outgroup = "results",
-                 outdataset = "X_pinv",
-                 overwrite = TRUE)
+    # Compute pseudoinverse
+    bdpseudoinv_hdf5( filename = fn,
+                      group = "data",
+                      dataset = "X",
+                      outgroup = "results",
+                      outdataset = "X_pinv",
+                      overwrite = TRUE)
 
-# Cleanup
-if (file.exists(fn)) {
-  file.remove(fn)
-}
+    # Cleanup
+    hdf5_close_all()
+    unlink(fn)
 
 }
 \references{

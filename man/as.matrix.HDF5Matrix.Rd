@@ -54,20 +54,15 @@ Actual memory usage may be higher due to:
 }
 \examples{
 \donttest{
-# Small dataset - converts silently
-X <- hdf5_create_matrix("test.h5", "data/X", nrow = 100, ncol = 50)
-mat <- as.matrix(X)  # Works fine
+    fn <- tempfile(fileext = ".h5")
+    # Small dataset - converts silently
+    X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 50)
+    mat <- as.matrix(X)
 
-# Large dataset - shows warning
-Y <- hdf5_create_matrix("test.h5", "data/Y", nrow = 10000, ncol = 5000)
-mat <- as.matrix(Y)  # Warning: 381 MB - proceed? [y/N]
-
-# Very large - requires force=TRUE
-Z <- hdf5_create_matrix("test.h5", "data/Z", nrow = 50000, ncol = 10000)
-mat <- as.matrix(Z, force = TRUE)  # Explicitly allow
-
-# Better: Use subsetting for large datasets
-subset <- Z[1:1000, 1:100]  # Only 0.8 MB
+    # Better: Use subsetting for large datasets
+    subset <- X[1:10, 1:5]
+    hdf5_close_all()
+    unlink(fn)
 }
 
 }

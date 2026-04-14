@@ -40,7 +40,7 @@
 #' @return Modifies the HDF5 file in place, adding computed results
 #' 
 #' @details
-#' //' For matrix multiplication operations (`blockmult`, `CrossProd_double`, `tCrossProd_double`),
+#'//' For matrix multiplication operations (`blockmult`, `CrossProd_double`, `tCrossProd_double`),
 #' the `datasets` and `b_datasets` vectors must have the same length. Each operation is performed
 #' element-wise between the corresponding pairs of datasets. Specifically, the `b_datasets` vector
 #' defines the second operand for each matrix multiplication. For example, if
@@ -52,34 +52,35 @@
 #' 
 #' @examples
 #' \donttest{
-#' # Create a sample large matrix in HDF5
-#' # Create HDF5 datasets
-#' bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
+#' fn <- tempfile(fileext = ".h5")
+#' Y <- matrix(rnorm(100), 10, 10)
+#' X <- matrix(rnorm(100), 10, 10)
+#' Z <- matrix(rnorm(100), 10, 10)
+#' 
+#' bdCreate_hdf5_matrix(filename = fn, 
 #'                     object = Y, group = "data", dataset = "Y",
 #'                     transp = FALSE,
 #'                     overwriteFile = TRUE, overwriteDataset = TRUE, 
 #'                     unlimited = FALSE)
-#' 
-#' bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
-#'                     object = X,  group = "data",  dataset = "X",
+#' bdCreate_hdf5_matrix(filename = fn, 
+#'                     object = X, group = "data", dataset = "X",
 #'                     transp = FALSE,
 #'                     overwriteFile = FALSE, overwriteDataset = TRUE, 
 #'                     unlimited = FALSE)
-#' 
-#' bdCreate_hdf5_matrix(filename = "test_temp.HDF5",
-#'                     object = Z,  group = "data",  dataset = "Z",
+#' bdCreate_hdf5_matrix(filename = fn,
+#'                     object = Z, group = "data", dataset = "Z",
 #'                     transp = FALSE,
 #'                     overwriteFile = FALSE, overwriteDataset = TRUE,
 #'                     unlimited = FALSE)
 #' 
-#' dsets <- bdgetDatasetsList_hdf5("test_temp.HDF5", group = "data")
-#' dsets
+#' dsets <- list_datasets(fn, group = "data")
 #' 
-#' # Apply function :  QR Decomposition
-#' bdapply_Function_hdf5(filename = "test_temp.HDF5",
-#'                      group = "data",datasets = dsets,
-#'                      outgroup = "QR",func = "QR",
+#' bdapply_Function_hdf5(filename = fn,
+#'                      group = "data", datasets = dsets,
+#'                      outgroup = "QR", func = "QR",
 #'                      overwrite = TRUE)
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #' 
 #' @note Performance is optimized through:
@@ -115,15 +116,17 @@ bdapply_Function_hdf5 <- function(filename, group, datasets, outgroup, func, b_g
 #'
 #' @examples
 #' \donttest{
-#' fn <- "test.HDF5"
-#'
+#' fn <- tempfile(fileext = ".h5")
+#' 
 #' # Ensure file exists (e.g., by creating an empty dataset or via a helper)
 #' mat <- matrix(0, nrow = 1, ncol = 1)
 #' bdCreate_hdf5_matrix(fn, mat, group = "tmp", dataset = "seed",
 #'                      overwriteFile = TRUE)
-#'
+#' 
 #' # Create nested group
 #' bdCreate_hdf5_group(fn, "MGCCA_OUT/scores")
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @references
@@ -160,20 +163,18 @@ bdCreate_hdf5_group <- function(filename, group) {
 #' }
 #' 
 #' @examples
-#' 
-#' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-#' bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
-#'                     object = matA, group = "datasets", 
-#'                     dataset = "datasetA", transp = FALSE, 
-#'                     overwriteFile = TRUE, 
-#'                     overwriteDataset = TRUE,
-#'                     unlimited = FALSE)
-#' 
-#' # Remove file (used as example)
-#'   if (file.exists("test_temp.HDF5")) {
-#'     # Delete file if it exist
-#'     file.remove("test_temp.HDF5")
-#'   }
+#' \donttest{
+#'     fn <- tempfile(fileext = ".h5")
+#'     matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+#'     bdCreate_hdf5_matrix( filename = fn, 
+#'                           object = matA, group = "datasets", 
+#'                           dataset = "datasetA", transp = FALSE, 
+#'                           overwriteFile = TRUE, 
+#'                           overwriteDataset = TRUE,
+#'                           unlimited = FALSE)
+#'     hdf5_close_all()
+#'     unlink(fn)
+#' }
 #' 
 #' @export
 bdCreate_hdf5_matrix <- function(filename, object, group = NULL, dataset = NULL, transp = NULL, overwriteFile = NULL, overwriteDataset = NULL, unlimited = NULL) {
@@ -213,29 +214,28 @@ bdCreate_hdf5_matrix <- function(filename, object, group = NULL, dataset = NULL,
 #' @examples
 #' \donttest{
 #' 
-#' # Create a test HDF5 file
-#' fn <- "test.HDF5"
-#' X <- matrix(rnorm(100), 10, 10)
-#' Y <- matrix(rnorm(100), 10, 10)
+#'     # Create a test HDF5 file
+#'     fn <- tempfile(fileext = ".h5")
+#'     X <- matrix(rnorm(100), 10, 10)
+#'     Y <- matrix(rnorm(100), 10, 10)
 #' 
-#' # Save matrices to HDF5
-#' bdCreate_hdf5_matrix(fn, X, "data", "matrix1",
-#'                      overwriteFile = TRUE)
-#' bdCreate_hdf5_matrix(fn, Y, "data", "matrix2",
-#'                      overwriteFile = FALSE)
+#'     # Save matrices to HDF5
+#'     bdCreate_hdf5_matrix(fn, X, "data", "matrix1",
+#'                         overwriteFile = TRUE)
+#'     bdCreate_hdf5_matrix(fn, Y, "data", "matrix2",
+#'                         overwriteFile = FALSE)
 #' 
-#' # List all datasets in group
-#' datasets <- bdgetDatasetsList_hdf5(fn, "data")
-#' print(datasets)
+#'     # List all datasets in group
+#'     datasets <- bdgetDatasetsList_hdf5(fn, "data")
+#'     print(datasets)
 #' 
-#' # List datasets with prefix "matrix"
-#' filtered <- bdgetDatasetsList_hdf5(fn, "data", prefix = "matrix")
-#' print(filtered)
+#'     # List datasets with prefix "matrix"
+#'     filtered <- bdgetDatasetsList_hdf5(fn, "data", prefix = "matrix")
+#'     print(filtered)
 #' 
-#' # Cleanup
-#' if (file.exists(fn)) {
-#'   file.remove(fn)
-#' }
+#'     # Cleanup
+#'     hdf5_close_all()
+#'     unlink(fn)
 #' }
 #'
 #' @references
@@ -536,29 +536,28 @@ bdpseudoinv <- function(X, threads = NULL) {
 #'
 #' @examples
 #' 
-#' # Create a singular matrix
-#' X <- matrix(c(1,2,3,2,4,6), 2, 3)
-#' fn <- "test.HDF5"
+#'     # Create a singular matrix
+#'     X <- matrix(c(1,2,3,2,4,6), 2, 3)
+#'     fn <- tempfile(fileext = ".h5")
 #' 
-#' # Save to HDF5
-#' bdCreate_hdf5_matrix(filename = fn,
-#'                      object = X,
-#'                      group = "data",
-#'                      dataset = "X",
-#'                      overwriteFile = TRUE)
+#'     # Save to HDF5
+#'     bdCreate_hdf5_matrix( filename = fn,
+#'                           object = X,
+#'                           group = "data",
+#'                           dataset = "X",
+#'                           overwriteFile = TRUE)
 #' 
-#' # Compute pseudoinverse
-#' bdpseudoinv_hdf5(filename = fn,
-#'                  group = "data",
-#'                  dataset = "X",
-#'                  outgroup = "results",
-#'                  outdataset = "X_pinv",
-#'                  overwrite = TRUE)
+#'     # Compute pseudoinverse
+#'     bdpseudoinv_hdf5( filename = fn,
+#'                       group = "data",
+#'                       dataset = "X",
+#'                       outgroup = "results",
+#'                       outdataset = "X_pinv",
+#'                       overwrite = TRUE)
 #' 
-#' # Cleanup
-#' if (file.exists(fn)) {
-#'   file.remove(fn)
-#' }
+#'     # Cleanup
+#'     hdf5_close_all()
+#'     unlink(fn)
 #'
 #' @references
 #' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
@@ -1334,7 +1333,7 @@ rcpp_hdf5_create_matrix <- function(filename, group, dataset, nrows, ncols, data
 #' X3 <- matrix(201:300, 10, 10)
 #' 
 #' # Save to HDF5
-#' fn <- "test.HDF5"
+#' fn <- tempfile(fileext = ".h5")
 #' bdCreate_hdf5_matrix(fn, X1, "data", "matrix1",
 #'                      overwriteFile = TRUE)
 #' bdCreate_hdf5_matrix(fn, X2, "data", "matrix2",
@@ -1353,9 +1352,8 @@ rcpp_hdf5_create_matrix <- function(filename, group, dataset, nrows, ncols, data
 #' )
 #' 
 #' # Cleanup
-#' if (file.exists(fn)) {
-#'   file.remove(fn)
-#' }
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @references
@@ -1609,18 +1607,20 @@ system_info <- function() {
 #'
 #' @examples
 #' \donttest{
+#' fn <- tempfile(fileext = ".h5")
+#' mat <- matrix(rnorm(5000), 100, 50)
+#' bdCreate_hdf5_matrix(fn, mat, group = "MGCCA_IN", dataset = "X",
+#'                      overwriteFile = TRUE)
+#' 
 #' bdWrite_hdf5_dimnames(
-#'   filename = "test.h5",
+#'   filename = fn,
 #'   group = "MGCCA_IN",
 #'   dataset = "X",
 #'   rownames = paste0("r", seq_len(100)),
 #'   colnames = paste0("c", seq_len(50))
 #' )
-#'
-#' # Skip column names:
-#' bdWrite_hdf5_dimnames("test.h5", "MGCCA_IN", "X",
-#'                       rownames = paste0("r", 1:100),
-#'                       colnames = character(0))
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @export

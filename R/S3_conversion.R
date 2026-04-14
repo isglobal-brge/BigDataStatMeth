@@ -44,20 +44,15 @@
 #'
 #' @examples
 #' \donttest{
-#' # Small dataset - converts silently
-#' X <- hdf5_create_matrix("test.h5", "data/X", nrow = 100, ncol = 50)
-#' mat <- as.matrix(X)  # Works fine
+#'     fn <- tempfile(fileext = ".h5")
+#'     # Small dataset - converts silently
+#'     X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 50)
+#'     mat <- as.matrix(X)
 #'
-#' # Large dataset - shows warning
-#' Y <- hdf5_create_matrix("test.h5", "data/Y", nrow = 10000, ncol = 5000)
-#' mat <- as.matrix(Y)  # Warning: 381 MB - proceed? [y/N]
-#'
-#' # Very large - requires force=TRUE
-#' Z <- hdf5_create_matrix("test.h5", "data/Z", nrow = 50000, ncol = 10000)
-#' mat <- as.matrix(Z, force = TRUE)  # Explicitly allow
-#'
-#' # Better: Use subsetting for large datasets
-#' subset <- Z[1:1000, 1:100]  # Only 0.8 MB
+#'     # Better: Use subsetting for large datasets
+#'     subset <- X[1:10, 1:5]
+#'     hdf5_close_all()
+#'     unlink(fn)
 #' }
 #'
 #' @seealso 
@@ -216,8 +211,11 @@ as.matrix.HDF5Matrix <- function(x, force = FALSE, max_size_mb = NULL, ...) {
 #'
 #' @examples
 #' \donttest{
-#' X <- hdf5_create_matrix("test.h5", "data/X", nrow = 100, ncol = 5)
-#' df <- as.data.frame(X)
+#'     fn <- tempfile(fileext = ".h5")
+#'     X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 5)
+#'     df <- as.data.frame(X)
+#'     hdf5_close_all()
+#'     unlink(fn)
 #' }
 #'
 #' @seealso \code{\link{as.matrix.HDF5Matrix}}
@@ -254,9 +252,12 @@ as.data.frame.HDF5Matrix <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' X <- hdf5_create_matrix("test.h5", "data/X", nrow = 10000, ncol = 5000)
-#' object_size(X)              # 381.5 MB
-#' object_size(X, unit = "GB") # 0.37 GB
+#'     fn <- tempfile(fileext = ".h5")
+#'     X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 50)
+#'     object_size(X)
+#'     object_size(X, unit = "KB")
+#'     hdf5_close_all()
+#'     unlink(fn)
 #' }
 #'
 #' @export

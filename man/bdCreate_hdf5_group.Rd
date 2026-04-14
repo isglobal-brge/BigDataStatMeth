@@ -30,7 +30,7 @@ exist prior to the call (create it with a writer function).
 }
 \examples{
 \donttest{
-fn <- "test.HDF5"
+fn <- tempfile(fileext = ".h5")
 
 # Ensure file exists (e.g., by creating an empty dataset or via a helper)
 mat <- matrix(0, nrow = 1, ncol = 1)
@@ -39,6 +39,8 @@ bdCreate_hdf5_matrix(fn, mat, group = "tmp", dataset = "seed",
 
 # Create nested group
 bdCreate_hdf5_group(fn, "MGCCA_OUT/scores")
+hdf5_close_all()
+unlink(fn)
 }
 
 }

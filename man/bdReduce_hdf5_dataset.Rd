@@ -79,7 +79,7 @@ X2 <- matrix(101:200, 10, 10)
 X3 <- matrix(201:300, 10, 10)
 
 # Save to HDF5
-fn <- "test.HDF5"
+fn <- tempfile(fileext = ".h5")
 bdCreate_hdf5_matrix(fn, X1, "data", "matrix1",
                      overwriteFile = TRUE)
 bdCreate_hdf5_matrix(fn, X2, "data", "matrix2",
@@ -98,9 +98,8 @@ bdReduce_hdf5_dataset(
 )
 
 # Cleanup
-if (file.exists(fn)) {
-  file.remove(fn)
-}
+hdf5_close_all()
+unlink(fn)
 }
 
 }

@@ -73,29 +73,28 @@
 //' @examples
 //' \donttest{
 //' 
-//' # Create a test HDF5 file
-//' fn <- "test.HDF5"
-//' X <- matrix(rnorm(100), 10, 10)
-//' Y <- matrix(rnorm(100), 10, 10)
+//'     # Create a test HDF5 file
+//'     fn <- tempfile(fileext = ".h5")
+//'     X <- matrix(rnorm(100), 10, 10)
+//'     Y <- matrix(rnorm(100), 10, 10)
 //' 
-//' # Save matrices to HDF5
-//' bdCreate_hdf5_matrix(fn, X, "data", "matrix1",
-//'                      overwriteFile = TRUE)
-//' bdCreate_hdf5_matrix(fn, Y, "data", "matrix2",
-//'                      overwriteFile = FALSE)
+//'     # Save matrices to HDF5
+//'     bdCreate_hdf5_matrix(fn, X, "data", "matrix1",
+//'                         overwriteFile = TRUE)
+//'     bdCreate_hdf5_matrix(fn, Y, "data", "matrix2",
+//'                         overwriteFile = FALSE)
 //' 
-//' # List all datasets in group
-//' datasets <- bdgetDatasetsList_hdf5(fn, "data")
-//' print(datasets)
+//'     # List all datasets in group
+//'     datasets <- bdgetDatasetsList_hdf5(fn, "data")
+//'     print(datasets)
 //' 
-//' # List datasets with prefix "matrix"
-//' filtered <- bdgetDatasetsList_hdf5(fn, "data", prefix = "matrix")
-//' print(filtered)
+//'     # List datasets with prefix "matrix"
+//'     filtered <- bdgetDatasetsList_hdf5(fn, "data", prefix = "matrix")
+//'     print(filtered)
 //' 
-//' # Cleanup
-//' if (file.exists(fn)) {
-//'   file.remove(fn)
-//' }
+//'     # Cleanup
+//'     hdf5_close_all()
+//'     unlink(fn)
 //' }
 //'
 //' @references

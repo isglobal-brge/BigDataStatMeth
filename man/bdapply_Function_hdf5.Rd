@@ -90,34 +90,35 @@ Performance is optimized through:
 }
 \examples{
 \donttest{
-# Create a sample large matrix in HDF5
-# Create HDF5 datasets
-bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
+fn <- tempfile(fileext = ".h5")
+Y <- matrix(rnorm(100), 10, 10)
+X <- matrix(rnorm(100), 10, 10)
+Z <- matrix(rnorm(100), 10, 10)
+
+bdCreate_hdf5_matrix(filename = fn, 
                     object = Y, group = "data", dataset = "Y",
                     transp = FALSE,
                     overwriteFile = TRUE, overwriteDataset = TRUE, 
                     unlimited = FALSE)
-
-bdCreate_hdf5_matrix(filename = "test_temp.HDF5", 
-                    object = X,  group = "data",  dataset = "X",
+bdCreate_hdf5_matrix(filename = fn, 
+                    object = X, group = "data", dataset = "X",
                     transp = FALSE,
                     overwriteFile = FALSE, overwriteDataset = TRUE, 
                     unlimited = FALSE)
-
-bdCreate_hdf5_matrix(filename = "test_temp.HDF5",
-                    object = Z,  group = "data",  dataset = "Z",
+bdCreate_hdf5_matrix(filename = fn,
+                    object = Z, group = "data", dataset = "Z",
                     transp = FALSE,
                     overwriteFile = FALSE, overwriteDataset = TRUE,
                     unlimited = FALSE)
 
-dsets <- bdgetDatasetsList_hdf5("test_temp.HDF5", group = "data")
-dsets
+dsets <- list_datasets(fn, group = "data")
 
-# Apply function :  QR Decomposition
-bdapply_Function_hdf5(filename = "test_temp.HDF5",
-                     group = "data",datasets = dsets,
-                     outgroup = "QR",func = "QR",
+bdapply_Function_hdf5(filename = fn,
+                     group = "data", datasets = dsets,
+                     outgroup = "QR", func = "QR",
                      overwrite = TRUE)
+hdf5_close_all()
+unlink(fn)
 }
 
 }
