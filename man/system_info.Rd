@@ -28,11 +28,6 @@ returns a summary. Useful for debugging and logging.
 # Get full system info
 info <- system_info()
 print(info)
-# $os: "Linux"
-# $total_ram_gb: 16.0
-# $available_ram_gb: 8.2
-# $ram_used_pct: 48.75
-# $cpu_cores: 8
 }
 
 }

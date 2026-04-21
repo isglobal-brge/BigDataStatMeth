@@ -76,10 +76,10 @@ scale.default <- function(x, center = TRUE, scale = TRUE, ...)
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' X <- hdf5_create_matrix(tmp, "data", "M",
-#'                          data = matrix(rnorm(200), 20, 10))
-#' cs <- colSums(X)                                     # R vector
-#' X$close(); unlink(tmp)
+#' X <- hdf5_create_matrix(tmp, "data/M", data = matrix(rnorm(200), 20, 10))
+#' cs <- colSums(X)         # R vector
+#' hdf5_close_all()
+#' unlink(tmp)
 #' }
 #'
 #' @export
@@ -115,10 +115,10 @@ rowSums.default <- function(x, na.rm = FALSE, dims = 1L, ...)
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' X <- hdf5_create_matrix(tmp, "data", "M",
-#'                          data = matrix(rnorm(200), 20, 10))
+#' X <- hdf5_create_matrix(tmp, "data/M", data = matrix(rnorm(200), 20, 10))
 #' cm <- colMeans(X)
-#' X$close(); unlink(tmp)
+#' hdf5_close_all()
+#' unlink(tmp)
 #' }
 #'
 #' @export
@@ -240,10 +240,10 @@ sd.default <- function(x, na.rm = FALSE, ...)
 # @examples
 # \donttest{
 # tmp <- tempfile(fileext = ".h5")
-# X <- hdf5_create_matrix(tmp, "data", "M",
-#                          data = matrix(rnorm(200), 20, 10))
+# X <- hdf5_create_matrix(tmp, "data/M",data = matrix(rnorm(200), 20, 10))
 # cs <- colSums(X)                                     # R vector
-# X$close(); unlink(tmp)
+# hdf5_close_all()
+# unlink(tmp)
 # }
 #'
 # @export
@@ -294,10 +294,11 @@ rowSums.HDF5Matrix <- function(x, na.rm = FALSE, dims = 1,
 # @examples
 # \donttest{
 # tmp <- tempfile(fileext = ".h5")
-# X <- hdf5_create_matrix(tmp, "data", "M",
+# X <- hdf5_create_matrix(tmp, "data/M",
 #                          data = matrix(rnorm(200), 20, 10))
 # cm <- colMeans(X)
-# X$close(); unlink(tmp)
+# hdf5_close_all()
+# unlink(tmp)
 # }
 #
 # @export
@@ -615,11 +616,17 @@ Summary.HDF5Matrix <- function(..., na.rm = FALSE) {
 #'
 #' Equivalent to \code{var(as.vector(X))} — treats all matrix elements as a
 #' single sample and uses Bessel's correction (N-1).
+#' 
+#' @param y   Ignored. Present for compatibility with \code{stats::var}.
+#' @param use Ignored. Present for compatibility with \code{stats::var}.
 #'
 #' @inheritParams mean.HDF5Matrix
 #' @return Scalar numeric or an \code{HDF5Matrix} when \code{save_to} is set.
 #' @export
 var.HDF5Matrix <- function(x,
+                           y = NULL, 
+                           na.rm = FALSE,
+                           use,
                             paral   = NULL,
                             wsize   = NULL,
                             threads = NULL,
@@ -642,12 +649,13 @@ var.HDF5Matrix <- function(x,
 #' @return Scalar numeric or an \code{HDF5Matrix} when \code{save_to} is set.
 #' @export
 sd.HDF5Matrix <- function(x,
-                           paral   = NULL,
-                           wsize   = NULL,
-                           threads = NULL,
-                           save_to = NULL,
-                           overwrite = TRUE,
-                           ...) {
+                          na.rm = FALSE,
+                          paral   = NULL,
+                          wsize   = NULL,
+                          threads = NULL,
+                          save_to = NULL,
+                          overwrite = TRUE,
+                          ...) {
     if (!x$is_valid()) stop("Dataset is closed or invalid")
     result <- x$sd(paral, wsize, threads)
     if (is.null(save_to)) return(result)

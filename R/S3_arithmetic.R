@@ -36,28 +36,24 @@
 #'
 #' @examples
 #' \donttest{
-#' tmp <- tempfile(fileext = ".h5")
-#' bdCreate_hdf5_matrix(tmp, matrix(1:12, 3, 4), "data", "A")
-#' bdCreate_hdf5_matrix(tmp, matrix(2,    3, 4), "data", "B")
+#' fn <- tempfile(fileext = ".h5")
+#' A_hdf5 <- hdf5_create_matrix(fn, "data/A", data = matrix(1:12, 3, 4))
+#' B_hdf5 <- hdf5_create_matrix(fn, "data/B", data = matrix(2, 3, 4))
 #'
-#' A <- hdf5_matrix(tmp, "data/A")
-#' B <- hdf5_matrix(tmp, "data/B")
+#' C <- A_hdf5 + B_hdf5
+#' D <- A_hdf5 - B_hdf5
+#' E <- A_hdf5 * B_hdf5
+#' G <- A_hdf5 / B_hdf5
 #'
-#' C <- A + B     # element-wise addition
-#' D <- A - B     # element-wise subtraction
-#' E <- A * B     # Hadamard product
-#' F <- A / B     # element-wise division
+#' all.equal(as.matrix(C), matrix(1:12, 3, 4) + 2)
 #'
-#' # Verify against R
-#' all.equal(as.matrix(C), as.matrix(A) + as.matrix(B))
-#'
-#' A$close(); B$close(); C$close(); D$close(); E$close(); F$close()
-#' unlink(tmp)
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @seealso
 #' \code{\link{hdf5matrix_options}} for global performance settings,
-#' \code{\link{HDF5Matrix}} for R6 methods with explicit parameters
+#' \code{HDF5Matrix} for R6 methods with explicit parameters
 #'
 #' @export
 Ops.HDF5Matrix <- function(e1, e2) {

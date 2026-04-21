@@ -77,7 +77,12 @@ qr.default <- function(x, tol = 1e-07, LAPACK = FALSE, ...) {
 #'
 #' @examples
 #' \donttest{
-#' X   <- hdf5_matrix("data.h5", "data/A")
+#' 
+#' tmp <- tempfile(fileext = ".h5")
+#' 
+#' X  <- hdf5_create_matrix(tmp, "data/A", data = matrix(rnorm(10000), 100, 100))
+#' 
+#' X   <- hdf5_matrix(tmp, "data/A")
 #'
 #' # Default (auto method)
 #' res <- qr(X)
@@ -85,9 +90,13 @@ qr.default <- function(x, tol = 1e-07, LAPACK = FALSE, ...) {
 #' dim(res$R)   # m x n  (or min(m,n) x n)
 #'
 #' # Explicit TSQR for a tall-skinny matrix (recommended: thin = TRUE)
-#' res_tsqr <- qr(X, method = "tsqr", thin = TRUE, threads = 4L)
+#' res_tsqr <- qr(X, method = "tsqr", thin = TRUE, threads = 4L, overwrite = TRUE)
 #' dim(res_tsqr$Q)   # m x n
 #' dim(res_tsqr$R)   # n x n
+#' 
+#' hdf5_close_all()
+#' unlink(tmp)
+#' 
 #' }
 #'
 #' @note 20260304: Added \code{method} parameter and TSQR support.
@@ -135,10 +144,19 @@ qr.HDF5Matrix <- function(x,
 #'
 #' @examples
 #' \donttest{
+#' 
+#' tmp <- tempfile(fileext = ".h5")
+#' 
+#' X  <- hdf5_create_matrix(tmp, "data/X", data = matrix(rnorm(10000), 100, 100))
+#' 
 #' # Create a symmetric positive-definite matrix: A = t(X) %*% X
-#' X  <- hdf5_matrix("data.h5", "data/X")
+#' X  <- hdf5_matrix(tmp, "data/X")
 #' AtA <- crossprod(X)              # HDF5Matrix, square SPD
 #' L   <- chol(AtA)
+#' 
+#' hdf5_close_all()
+#' unlink(tmp)
+#' 
 #' }
 #'
 #' @exportS3Method base::chol HDF5Matrix
@@ -183,9 +201,16 @@ chol.HDF5Matrix <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' X   <- hdf5_matrix("data.h5", "data/X")
+#' tmp <- tempfile(fileext = ".h5")
+#' 
+#' X  <- hdf5_create_matrix(tmp, "data/X", data = matrix(rnorm(10000), 100, 100))
+#' 
+#' X   <- hdf5_matrix(tmp, "data/X")
 #' AtA <- crossprod(X)              # HDF5Matrix, square SPD
 #' inv <- solve(AtA)               # inverse of AtA
+#' 
+#' hdf5_close_all()
+#' unlink(tmp)
 #' }
 #'
 #' @exportS3Method base::solve HDF5Matrix

@@ -27,21 +27,18 @@
 #'   (default: same as \code{group}).
 #' @param overwrite  Logical. Overwrite existing output dataset.
 #' @param remove     Logical. Remove input datasets after reduction.
-#' @return An \code{\link{HDF5Matrix}} pointing to the result dataset.
+#' @return An \code{HDF5Matrix} pointing to the result dataset.
 #'
 #' @examples
 #' \donttest{
-#' tmp <- tempfile(fileext = ".h5")
-#' bdCreate_hdf5_matrix(tmp, matrix(1:6, 2, 3), "blocks", "A",
-#'                      overwriteFile = FALSE)
-#' bdCreate_hdf5_matrix(tmp, matrix(1:6, 2, 3), "blocks", "B",
-#'                      overwriteFile = FALSE)
-#' bdCreate_hdf5_matrix(tmp, matrix(1:6, 2, 3), "blocks", "C",
-#'                      overwriteFile = FALSE)
-#' result <- hdf5_reduce(tmp, group = "blocks", func = "+")
+#' fn <- tempfile(fileext = ".h5")
+#' hdf5_create_matrix(fn, "blocks/A", data = matrix(1:6, 2, 3))
+#' hdf5_create_matrix(fn, "blocks/B", data = matrix(1:6, 2, 3))
+#' hdf5_create_matrix(fn, "blocks/C", data = matrix(1:6, 2, 3))
+#' result <- hdf5_reduce(fn, group = "blocks", func = "+")
 #' as.matrix(result)
-#' close(result)
-#' unlink(tmp)
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @seealso \code{\link{hdf5_apply}}, \code{\link{cbind.HDF5Matrix}}
@@ -167,31 +164,4 @@ hdf5_apply <- function(filename,
     )
 
     invisible(NULL)
-}
-
-# ── list_datasets() ───────────────────────────────────────────────────────────
-
-#' List datasets in an HDF5 group
-#'
-#' @description
-#' Lists all datasets within a group of an \code{HDF5Matrix} file.
-#'
-#' @param x   An \code{HDF5Matrix} object, or a character string (file path).
-#' @param group Character. Group path inside the HDF5 file. If \code{x} is
-#'   an \code{HDF5Matrix}, defaults to the object's own group.
-#' @param prefix Optional character. Only return datasets starting with this prefix.
-#'
-#' @return Character vector of dataset names.
-#' @export
-list_datasets <- function(x, group = NULL, prefix = NULL) {
-    if (inherits(x, "HDF5Matrix")) {
-        filename <- x$get_filename()
-        if (is.null(group)) group <- x$get_group()
-    } else if (is.character(x)) {
-        filename <- x
-        if (is.null(group)) stop("group must be specified when x is a filename")
-    } else {
-        stop("x must be an HDF5Matrix or a file path")
-    }
-    bdgetDatasetsList_hdf5(filename, group, prefix = prefix)
 }

@@ -27,8 +27,13 @@
 #'
 #' @examples
 #' \donttest{
+#' 
+#' tmp <- tempfile(fileext = ".h5")
+#' 
 #' # Create a matrix
-#' X <- hdf5_matrix("file.h5", "data/X")
+#' X  <- hdf5_create_matrix(tmp, "data/X", data = matrix(rnorm(100), 10, 10))
+#' 
+#' X <- hdf5_matrix(tmp, "data/X")
 #'
 #' # Assign scalar
 #' X[1, 1] <- 42
@@ -38,6 +43,9 @@
 #'
 #' # Assign block
 #' X[1:3, 1:3] <- matrix(0, 3, 3)
+#' 
+#' hdf5_close_all()
+#' unlink(tmp)
 #' }
 #'
 #' @export

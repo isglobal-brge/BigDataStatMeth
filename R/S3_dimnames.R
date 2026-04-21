@@ -18,14 +18,20 @@
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
+#' 
 #' m <- matrix(1:6, 2, 3,
 #'             dimnames = list(c("r1","r2"), c("c1","c2","c3")))
-#' bdCreate_hdf5_matrix(tmp, m, "data", "mat")
-#' X <- hdf5_matrix(tmp, "data/mat")
+#' 
+#' X <- hdf5_create_matrix(tmp, "data/mat", data = m)
+#' 
 #' dimnames(X)
 #' rownames(X)
 #' colnames(X)
-#' X$close(); unlink(tmp)
+#' rownames(X) <- c("row1", "row2")
+#' rownames(X)
+#' hdf5_close_all()
+#' unlink(tmp)
+#' 
 #' }
 #'
 #' @export
@@ -39,7 +45,19 @@ dimnames.HDF5Matrix <- function(x) {
 }
 
 
+# #' @rdname dimnames.HDF5Matrix
+# #' @export
+# rownames.HDF5Matrix <- function(x, do.NULL = TRUE, prefix = "row") {
+#     dn <- dimnames(x)
+#     if (is.null(dn)) NULL else dn[[1]]
+# }
+
 #' @rdname dimnames.HDF5Matrix
+#' @param do.NULL Logical. If \code{FALSE} and names are \code{NULL},
+#'   generate names using \code{prefix}. Passed for compatibility with
+#'   \code{base::rownames}; currently ignored.
+#' @param prefix Character. Prefix for generated names when
+#'   \code{do.NULL = FALSE}. Currently ignored.
 #' @export
 rownames.HDF5Matrix <- function(x, do.NULL = TRUE, prefix = "row") {
     dn <- dimnames(x)
@@ -47,12 +65,21 @@ rownames.HDF5Matrix <- function(x, do.NULL = TRUE, prefix = "row") {
 }
 
 
+# #' @rdname dimnames.HDF5Matrix
+# #' @export
+# colnames.HDF5Matrix <- function(x, do.NULL = TRUE, prefix = "col") {
+#     dn <- dimnames(x)
+#     if (is.null(dn)) NULL else dn[[2]]
+# }
 #' @rdname dimnames.HDF5Matrix
+#' @param do.NULL Logical. Ignored; present for base compatibility.
+#' @param prefix Character. Ignored; present for base compatibility.
 #' @export
 colnames.HDF5Matrix <- function(x, do.NULL = TRUE, prefix = "col") {
     dn <- dimnames(x)
     if (is.null(dn)) NULL else dn[[2]]
 }
+
 
 
 #' Set dimension names on an HDF5Matrix
@@ -82,7 +109,8 @@ colnames.HDF5Matrix <- function(x, do.NULL = TRUE, prefix = "col") {
 
 
 #' @rdname dimnames.HDF5Matrix
-#' @param value Character vector of row names, or \code{NULL} to remove
+#' @param value Character vector of row names, or \code{NULL} to remove.
+#' @usage \method{rownames}{HDF5Matrix}(x) <- value
 #' @export
 `rownames<-.HDF5Matrix` <- function(x, value) {
     if (!x$is_valid()) stop("HDF5Matrix object is closed or invalid")
@@ -96,7 +124,8 @@ colnames.HDF5Matrix <- function(x, do.NULL = TRUE, prefix = "col") {
 
 
 #' @rdname dimnames.HDF5Matrix
-#' @param value Character vector of column names, or \code{NULL} to remove
+#' @param value Character vector of column names, or \code{NULL} to remove.
+#' @usage \method{colnames}{HDF5Matrix}(x) <- value 
 #' @export
 `colnames<-.HDF5Matrix` <- function(x, value) {
     if (!x$is_valid()) stop("HDF5Matrix object is closed or invalid")

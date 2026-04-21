@@ -74,11 +74,10 @@ n <- 100
 p <- 100
 Y <- matrix(rnorm(n*p), nrow=n)
 res <- bdCrossprod(X, Y)
+all.equal(crossprod(X, Y), res)
 
 # Parallel computation
-res_par <- bdCrossprod(X, Y,
-                       paral = TRUE,
-                       threads = 4)
+res_par <- bdCrossprod(X, paral = TRUE, threads = 2)
 
 }
 \references{

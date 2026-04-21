@@ -42,10 +42,19 @@ The input matrix must be square and symmetric positive-definite.
 }
 \examples{
 \donttest{
+
+tmp <- tempfile(fileext = ".h5")
+
+X  <- hdf5_create_matrix(tmp, "data/X", data = matrix(rnorm(10000), 100, 100))
+
 # Create a symmetric positive-definite matrix: A = t(X) \%*\% X
-X  <- hdf5_matrix("data.h5", "data/X")
+X  <- hdf5_matrix(tmp, "data/X")
 AtA <- crossprod(X)              # HDF5Matrix, square SPD
 L   <- chol(AtA)
+
+hdf5_close_all()
+unlink(tmp)
+
 }
 
 }

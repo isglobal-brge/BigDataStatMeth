@@ -99,11 +99,5 @@ hdf5matrix_options(compression = 0)
 # Reset to defaults
 hdf5matrix_options(paral = NULL, threads = NULL, block_size = NULL, compression = NULL)
 
-# Now all operations use these settings
-C <- A \%*\% B              # Uses options set above
-D <- crossprod(A)         # Uses options set above
-
-# Override for specific operation
-E <- A$multiply(B, paral = FALSE)  # Forces serial, ignores global option
 
 }

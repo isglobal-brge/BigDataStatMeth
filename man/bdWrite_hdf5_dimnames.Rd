@@ -42,14 +42,13 @@ dataset dimensions.
 \examples{
 \donttest{
 fn <- tempfile(fileext = ".h5")
-mat <- matrix(rnorm(5000), 100, 50)
-bdCreate_hdf5_matrix(fn, mat, group = "MGCCA_IN", dataset = "X",
-                     overwriteFile = TRUE)
+hdf5_create_matrix(fn, "MGCCA_IN/X",
+                   data = matrix(rnorm(5000), 100, 50))
 
 bdWrite_hdf5_dimnames(
   filename = fn,
-  group = "MGCCA_IN",
-  dataset = "X",
+  group    = "MGCCA_IN",
+  dataset  = "X",
   rownames = paste0("r", seq_len(100)),
   colnames = paste0("c", seq_len(50))
 )

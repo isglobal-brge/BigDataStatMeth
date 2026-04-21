@@ -2,9 +2,20 @@
 % Please edit documentation in R/S3_omics.R
 \name{filter_low_coverage}
 \alias{filter_low_coverage}
+\alias{filter_low_coverage.HDF5Matrix}
 \title{Remove high-missingness features from an HDF5Matrix}
 \usage{
 filter_low_coverage(x, ...)
+
+\method{filter_low_coverage}{HDF5Matrix}(
+  x,
+  out_group = NULL,
+  out_dataset = NULL,
+  pcent = 0.05,
+  by_cols = TRUE,
+  overwrite = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{HDF5Matrix} containing SNP data.}
@@ -34,9 +45,19 @@ is written alongside the input dataset with the suffix \code{"_filtered"}.
 }
 \examples{
 \donttest{
-X   <- hdf5_matrix("snp.h5", "geno/raw")
-out <- filter_low_coverage(X, pcent = 0.1)          # auto output path
-out <- filter_low_coverage(X, "geno", "filtered")   # explicit output
+fn <- tempfile(fileext = ".h5")
+snps <- matrix(sample(c(0, 1, 2, NA), 200, replace = TRUE,
+                       prob = c(.25, .25, .25, .25)), 20, 10)
+X   <- hdf5_create_matrix(fn, "geno/raw", data = snps)
+
+# Filter with auto output path (adds "_filtered" suffix)
+out <- filter_low_coverage(X, pcent = 0.1)
+
+# Filter with explicit output
+out2 <- filter_low_coverage(X, out_group = "geno",
+                             out_dataset = "filtered", overwrite = TRUE)
+hdf5_close_all()
+unlink(fn)
 }
 
 }

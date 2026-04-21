@@ -4,11 +4,29 @@
 
 
 
+# #' @rawNamespace export("%*%")
+# #' @rawNamespace S3method("%*%",default)
+# #' @rawNamespace S3method("%*%",HDF5Matrix)
+# `%*%` <- function(x, y) 
+#     UseMethod("%*%")
+
+#' Matrix multiplication for HDF5Matrix
+#'
+#' @description
+#' S3 generic for \code{\%*\%}. Dispatches to \code{\%*\%.HDF5Matrix}
+#' for \code{HDF5Matrix} objects, and to \code{base::\%*\%} for all others.
+#'
+#' @param x Left-hand side matrix.
+#' @param y Right-hand side matrix.
+#' @return Result matrix.
+#' @name %*%
+#' @rdname matmul
 #' @rawNamespace export("%*%")
 #' @rawNamespace S3method("%*%",default)
 #' @rawNamespace S3method("%*%",HDF5Matrix)
 `%*%` <- function(x, y) 
     UseMethod("%*%")
+
 
 #' @noRd
 `%*%.default` <- function(x, y) 
@@ -50,10 +68,6 @@
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5createGroup(tmp, "data")
-#' rhdf5::h5write(matrix(rnorm(100), 10, 10), tmp, "data/A")
-#' rhdf5::h5write(matrix(rnorm(100), 10, 10), tmp, "data/B")
 #'
 #' A <- hdf5_matrix(tmp, "data/A")
 #' B <- hdf5_matrix(tmp, "data/B")
@@ -72,7 +86,7 @@
 #'
 #' @seealso
 #' \code{\link{hdf5matrix_options}} for global performance settings,
-#' \code{\link{HDF5Matrix}} for the R6 \code{$multiply()} method with explicit parameters
+#' \code{HDF5Matrix} for the R6 \code{$multiply()} method with explicit parameters
 #'
 # #' @export
 #' @noRd
@@ -93,13 +107,42 @@
 }
 
 
+
+# -- crossprod.HDF5Matrix ------------------------------------------------------
+
 #' Cross product of HDF5Matrix objects
 #'
-#' @param x An \code{HDF5Matrix} object
-#' @param y An \code{HDF5Matrix} object, or \code{NULL} (default) to compute
-#'   \code{t(x) \%*\% x}
-#' @param ... Ignored
-#' @return A new \code{HDF5Matrix} containing the result
+#' @description
+#' S3 generic for \code{crossprod()}. Dispatches to
+#' \code{\link{crossprod.HDF5Matrix}} for \code{HDF5Matrix} objects,
+#' and to \code{base::crossprod()} for all others.
+#'
+#' @param x A matrix or \code{HDF5Matrix}.
+#' @param y A matrix, \code{HDF5Matrix}, or \code{NULL}.
+#' @param ... Additional arguments passed to the method.
+#' @return Result of the cross product.
+#' @name crossprod
+#' @rdname crossprod.HDF5Matrix
+#' @rawNamespace export(crossprod)
+#' @rawNamespace S3method(crossprod, HDF5Matrix)
+#' @rawNamespace S3method(crossprod, default)
+crossprod <- function(x, y = NULL, ...) UseMethod("crossprod")
+
+#' @noRd
+crossprod.default <- function(x, y = NULL, ...) base::crossprod(x, y)
+
+#' Cross product of HDF5Matrix objects
+#'
+#' @param x         An \code{HDF5Matrix} object.
+#' @param y         An \code{HDF5Matrix} object, or \code{NULL} (default) to
+#'   compute \code{t(x) \%*\% x}.
+#' @param outgroup  Character or \code{NULL}. HDF5 group where the result is
+#'   stored. Default \code{"OUTPUT"}.
+#' @param outdataset Character or \code{NULL}. Dataset name for the result.
+#'   Default \code{"CrossProd_x"} (single matrix) or
+#'   \code{"CrossProd_x_x_y"} (two matrices).
+#' @param ...       Ignored.
+#' @return A new \code{HDF5Matrix} pointing to the result dataset.
 #'
 #' @details
 #' Computes \eqn{t(x) \times y} (or \eqn{t(x) \times x} when \code{y = NULL}).
@@ -118,36 +161,29 @@
 #'
 #' @examples
 #' \donttest{
-#' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5createGroup(tmp, "data")
-#' rhdf5::h5write(matrix(rnorm(60), 6, 10), tmp, "data/X")
-#' rhdf5::h5write(matrix(rnorm(60), 6, 10), tmp, "data/Y")
+#' fn <- tempfile(fileext = ".h5")
+#' X <- hdf5_create_matrix(fn, "INPUT/X", data = matrix(rnorm(60), 6, 10))
+#' Y <- hdf5_create_matrix(fn, "INPUT/Y", data = matrix(rnorm(60), 6, 10))
 #'
-#' X <- hdf5_matrix(tmp, "data/X")
-#' Y <- hdf5_matrix(tmp, "data/Y")
-#'
-#' # t(X) %*% X  (10 x 10, symmetric)
+#' # t(X) %*% X  → stored in OUTPUT/CrossProd_X
 #' C1 <- crossprod(X)
 #' dim(C1)
 #'
-#' # t(X) %*% Y  (10 x 10)
+#' # t(X) %*% Y  → stored in OUTPUT/CrossProd_X_x_Y
 #' C2 <- crossprod(X, Y)
-#' dim(C2)
 #'
-#' # With parallelization
-#' hdf5matrix_options(paral = TRUE, threads = 8)
-#' C3 <- crossprod(X)  # Uses 8 threads
+#' # Custom output location
+#' C3 <- crossprod(X, outgroup = "RESULTS", outdataset = "my_crossprod")
 #'
-#' X$close(); Y$close(); C1$close(); C2$close(); C3$close()
-#' unlink(tmp)
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @seealso
 #' \code{\link{hdf5matrix_options}} for global performance settings
 #'
 #' @rawNamespace S3method(crossprod, HDF5Matrix)
-crossprod.HDF5Matrix <- function(x, y = NULL, ...) {
+crossprod.HDF5Matrix <- function(x, y = NULL, outgroup = NULL, outdataset = NULL, ...) {
   if (!x$is_valid()) stop("x is closed or invalid")
 
   if (is.null(y)) {
@@ -162,25 +198,55 @@ crossprod.HDF5Matrix <- function(x, y = NULL, ...) {
 
   # Use global options
   result_info <- rcpp_hdf5dataset_crossprod(
-    x_ptr, 
-    y_ptr, 
-    paral       = .get_option("paral"),
-    block_size  = .get_option("block_size"),
-    threads     = .get_option("threads"),
-    compression = .get_option("compression", default = NULL)
+      x_ptr, y_ptr,
+      paral       = .get_option("paral"),
+      block_size  = .get_option("block_size"),
+      threads     = .get_option("threads"),
+      compression = .get_option("compression", default = NULL),
+      outgroup    = outgroup,
+      outdataset  = outdataset
   )
   
   hdf5_matrix(result_info$filename, result_info$path)
 }
 
 
+
+# -- tcrossprod.HDF5Matrix -----------------------------------------------------
+
 #' Transposed cross product of HDF5Matrix objects
 #'
-#' @param x An \code{HDF5Matrix} object
-#' @param y An \code{HDF5Matrix} object, or \code{NULL} (default) to compute
-#'   \code{x \%*\% t(x)}
-#' @param ... Ignored
-#' @return A new \code{HDF5Matrix} containing the result
+#' @description
+#' S3 generic for \code{tcrossprod()}. Dispatches to
+#' \code{\link{tcrossprod.HDF5Matrix}} for \code{HDF5Matrix} objects,
+#' and to \code{base::tcrossprod()} for all others.
+#'
+#' @param x A matrix or \code{HDF5Matrix}.
+#' @param y A matrix, \code{HDF5Matrix}, or \code{NULL}.
+#' @param ... Additional arguments passed to the method.
+#' @return Result of the cross product.
+#' @name tcrossprod
+#' @rdname tcrossprod.HDF5Matrix
+#' @rawNamespace export(tcrossprod)
+#' @rawNamespace S3method(tcrossprod, HDF5Matrix)
+#' @rawNamespace S3method(tcrossprod, default)
+tcrossprod <- function(x, y = NULL, ...) UseMethod("tcrossprod")
+
+#' @noRd
+tcrossprod.default <- function(x, y = NULL, ...) base::tcrossprod(x, y)
+
+#' Transposed cross product of HDF5Matrix objects
+#'
+#' @param x         An \code{HDF5Matrix} object.
+#' @param y         An \code{HDF5Matrix} object, or \code{NULL} (default) to
+#'   compute \code{x \%*\% t(x)}.
+#' @param outgroup  Character or \code{NULL}. HDF5 group where the result is
+#'   stored. Default \code{"OUTPUT"}.
+#' @param outdataset Character or \code{NULL}. Dataset name for the result.
+#'   Default \code{"tCrossProd_x"} (single matrix) or
+#'   \code{"tCrossProd_x_x_y"} (two matrices).
+#' @param ...       Ignored.
+#' @return A new \code{HDF5Matrix} pointing to the result dataset.
 #'
 #' @details
 #' Computes \eqn{x \times t(y)} (or \eqn{x \times t(x)} when \code{y = NULL}).
@@ -198,36 +264,29 @@ crossprod.HDF5Matrix <- function(x, y = NULL, ...) {
 #'
 #' @examples
 #' \donttest{
-#' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5createGroup(tmp, "data")
-#' rhdf5::h5write(matrix(rnorm(60), 6, 10), tmp, "data/X")
-#' rhdf5::h5write(matrix(rnorm(40), 6, 4),  tmp, "data/Y")
+#' fn <- tempfile(fileext = ".h5")
+#' X <- hdf5_create_matrix(fn, "INPUT/X", data = matrix(rnorm(60), 6, 10))
+#' Y <- hdf5_create_matrix(fn, "INPUT/Y", data = matrix(rnorm(60), 6, 10))
 #'
-#' X <- hdf5_matrix(tmp, "data/X")
-#' Y <- hdf5_matrix(tmp, "data/Y")
-#'
-#' # X %*% t(X)  (6 x 6, symmetric)
+#' # t(X) %*% X  → stored in OUTPUT/CrossProd_X
 #' C1 <- tcrossprod(X)
 #' dim(C1)
 #'
-#' # X %*% t(Y)  (6 x 6)
+#' # t(X) %*% Y  → stored in OUTPUT/CrossProd_X_x_Y
 #' C2 <- tcrossprod(X, Y)
-#' dim(C2)
 #'
-#' # With custom block size
-#' hdf5matrix_options(block_size = 500)
-#' C3 <- tcrossprod(X)  # Uses block_size = 500
+#' # Custom output location
+#' C3 <- tcrossprod(X, outgroup = "RESULTS", outdataset = "my_tcrossprod")
 #'
-#' X$close(); Y$close(); C1$close(); C2$close(); C3$close()
-#' unlink(tmp)
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @seealso
 #' \code{\link{hdf5matrix_options}} for global performance settings
 #'
 #' @rawNamespace S3method(tcrossprod, HDF5Matrix)
-tcrossprod.HDF5Matrix <- function(x, y = NULL, ...) {
+tcrossprod.HDF5Matrix <- function(x, y = NULL, outgroup = NULL, outdataset = NULL, ...) {
   if (!x$is_valid()) stop("x is closed or invalid")
 
   if (is.null(y)) {
@@ -247,7 +306,9 @@ tcrossprod.HDF5Matrix <- function(x, y = NULL, ...) {
     paral       = .get_option("paral"),
     block_size  = .get_option("block_size"),
     threads     = .get_option("threads"),
-    compression = .get_option("compression", default = NULL)
+    compression = .get_option("compression", default = NULL),
+    outgroup    = outgroup,
+    outdataset  = outdataset
   )
   
   hdf5_matrix(result_info$filename, result_info$path)

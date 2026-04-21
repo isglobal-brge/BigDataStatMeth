@@ -66,26 +66,26 @@ Key features:
 
 \examples{
 \donttest{
+fn <- tempfile(fileext = ".h5")
+
+# Create a dataset to move
+hdf5_create_matrix(fn, "old_group/my_dataset",
+                   data = matrix(rnorm(100), 10, 10))
+
 # Move dataset to a different group
-success <- bdmove_hdf5_dataset("data.h5", 
-                         source_path = "/old_group/my_dataset",
-                         dest_path = "/new_group/my_dataset")
+res <- bdmove_hdf5_dataset(fn,
+                           source_path = "old_group/my_dataset",
+                           dest_path   = "new_group/my_dataset")
 
 # Rename dataset within the same group
-success <- bdmove_hdf5_dataset("data.h5",
-                         source_path = "/data/old_name", 
-                         dest_path = "/data/new_name",
-                         overwrite = TRUE)
+hdf5_create_matrix(fn, "data/old_name",
+                   data = matrix(rnorm(100), 10, 10))
+res <- bdmove_hdf5_dataset(fn,
+                           source_path = "data/old_name",
+                           dest_path   = "data/new_name")
 
-# Move dataset to root level
-success <- bdmove_hdf5_dataset("data.h5",
-                         source_path = "/deep/nested/dataset",
-                         dest_path = "/dataset")
-
-# Move with automatic group creation
-success <- bdmove_hdf5_dataset("data.h5",
-                         source_path = "/old_location/dataset",
-                         dest_path = "/new/deep/structure/dataset")
+hdf5_close_all()
+unlink(fn)
 }
 
 }

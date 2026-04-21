@@ -33,10 +33,9 @@ Objects inside functions or other environments are not affected.
 \donttest{
 tmp1 <- tempfile(fileext = ".h5")
 tmp2 <- tempfile(fileext = ".h5")
-rhdf5::h5createFile(tmp1)
-rhdf5::h5createFile(tmp2)
-rhdf5::h5write(matrix(1:100, 10, 10), tmp1, "data/A")
-rhdf5::h5write(matrix(1:100, 10, 10), tmp2, "data/B")
+
+X  <- hdf5_create_matrix(tmp1, "data/A", data = matrix(rnorm(100), 10, 10))
+Y  <- hdf5_create_matrix(tmp2, "data/B", data = matrix(rnorm(100), 10, 10))
 
 X <- hdf5_matrix(tmp1, "data/A")
 Y <- hdf5_matrix(tmp2, "data/B")

@@ -33,7 +33,7 @@ or \code{"-"}.}
 \item{remove}{Logical. Remove input datasets after reduction.}
 }
 \value{
-An \code{\link{HDF5Matrix}} pointing to the result dataset.
+An \code{HDF5Matrix} pointing to the result dataset.
 }
 \description{
 Applies a binary reduction (\code{"+"} or \code{"-"}) across all
@@ -42,17 +42,14 @@ dataset. Delegates to \code{bdReduce_hdf5_dataset()}.
 }
 \examples{
 \donttest{
-tmp <- tempfile(fileext = ".h5")
-bdCreate_hdf5_matrix(tmp, matrix(1:6, 2, 3), "blocks", "A",
-                     overwriteFile = FALSE)
-bdCreate_hdf5_matrix(tmp, matrix(1:6, 2, 3), "blocks", "B",
-                     overwriteFile = FALSE)
-bdCreate_hdf5_matrix(tmp, matrix(1:6, 2, 3), "blocks", "C",
-                     overwriteFile = FALSE)
-result <- hdf5_reduce(tmp, group = "blocks", func = "+")
+fn <- tempfile(fileext = ".h5")
+hdf5_create_matrix(fn, "blocks/A", data = matrix(1:6, 2, 3))
+hdf5_create_matrix(fn, "blocks/B", data = matrix(1:6, 2, 3))
+hdf5_create_matrix(fn, "blocks/C", data = matrix(1:6, 2, 3))
+result <- hdf5_reduce(fn, group = "blocks", func = "+")
 as.matrix(result)
-close(result)
-unlink(tmp)
+hdf5_close_all()
+unlink(fn)
 }
 
 }

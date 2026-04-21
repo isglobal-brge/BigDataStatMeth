@@ -61,7 +61,12 @@ Computes A = Q R block-wise on disk and returns Q and R as
 }
 \examples{
 \donttest{
-X   <- hdf5_matrix("data.h5", "data/A")
+
+tmp <- tempfile(fileext = ".h5")
+
+X  <- hdf5_create_matrix(tmp, "data/A", data = matrix(rnorm(10000), 100, 100))
+
+X   <- hdf5_matrix(tmp, "data/A")
 
 # Default (auto method)
 res <- qr(X)
@@ -69,9 +74,13 @@ dim(res$Q)   # m x m  (or m x min(m,n) if thin = TRUE)
 dim(res$R)   # m x n  (or min(m,n) x n)
 
 # Explicit TSQR for a tall-skinny matrix (recommended: thin = TRUE)
-res_tsqr <- qr(X, method = "tsqr", thin = TRUE, threads = 4L)
+res_tsqr <- qr(X, method = "tsqr", thin = TRUE, threads = 4L, overwrite = TRUE)
 dim(res_tsqr$Q)   # m x n
 dim(res_tsqr$R)   # n x n
+
+hdf5_close_all()
+unlink(tmp)
+
 }
 
 }

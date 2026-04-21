@@ -38,9 +38,8 @@ All standard R indexing modes are supported:
 \examples{
 \donttest{
 tmp <- tempfile(fileext = ".h5")
-rhdf5::h5createFile(tmp)
-rhdf5::h5createGroup(tmp, "data")
-rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
+
+X  <- hdf5_create_matrix(tmp, "data/matrix", data = matrix(rnorm(100), 10, 10))
 X <- hdf5_matrix(tmp, "data/matrix")
 
 X[1:5, 1:3]               # submatrix

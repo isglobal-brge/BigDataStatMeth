@@ -9,7 +9,8 @@
 # @param paral Logical or NULL. Enable OpenMP parallelisation.
 # @param block_size Integer or NULL. Block size for processing.
 # @param threads Integer or NULL. Number of OpenMP threads.
-# @return New HDF5Matrix containing the result.
+# @return New HDF5Matrix pointing to the result, stored in group "OUTPUT"
+#   with dataset name "A_plus_B" (resp. "A_minus_B", "A_times_B", "A_div_B").
 HDF5Matrix$set("public", "add", function(other,
                                           paral       = NULL,
                                           block_size  = NULL,
@@ -39,7 +40,8 @@ HDF5Matrix$set("public", "add", function(other,
 # @param paral Logical or NULL. Enable OpenMP parallelisation.
 # @param block_size Integer or NULL. Block size for processing.
 # @param threads Integer or NULL. Number of OpenMP threads.
-# @return New HDF5Matrix containing the result.
+# @return New HDF5Matrix pointing to the result, stored in group "OUTPUT"
+#   with dataset name "A_plus_B" (resp. "A_minus_B", "A_times_B", "A_div_B").
 HDF5Matrix$set("public", "subtract", function(other,
                                                paral       = NULL,
                                                block_size  = NULL,
@@ -69,7 +71,8 @@ HDF5Matrix$set("public", "subtract", function(other,
 # @param paral Logical or NULL. Enable OpenMP parallelisation.
 # @param block_size Integer or NULL. Block size for processing.
 # @param threads Integer or NULL. Number of OpenMP threads.
-# @return New HDF5Matrix containing the result.
+# @return New HDF5Matrix pointing to the result, stored in group "OUTPUT"
+#   with dataset name "A_plus_B" (resp. "A_minus_B", "A_times_B", "A_div_B").
 HDF5Matrix$set("public", "multiply_ew", function(other,
                                                    paral       = NULL,
                                                    block_size  = NULL,
@@ -101,7 +104,8 @@ HDF5Matrix$set("public", "multiply_ew", function(other,
 # @param paral Logical or NULL. Enable OpenMP parallelisation.
 # @param block_size Integer or NULL. Block size for processing.
 # @param threads Integer or NULL. Number of OpenMP threads.
-# @return New HDF5Matrix containing the result.
+# @return New HDF5Matrix pointing to the result, stored in group "OUTPUT"
+#   with dataset name "A_plus_B" (resp. "A_minus_B", "A_times_B", "A_div_B").
 HDF5Matrix$set("public", "divide_ew", function(other,
                                                 paral       = NULL,
                                                 block_size  = NULL,

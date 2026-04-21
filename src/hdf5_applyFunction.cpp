@@ -123,28 +123,16 @@
 //' X <- matrix(rnorm(100), 10, 10)
 //' Z <- matrix(rnorm(100), 10, 10)
 //' 
-//' bdCreate_hdf5_matrix(filename = fn, 
-//'                     object = Y, group = "data", dataset = "Y",
-//'                     transp = FALSE,
-//'                     overwriteFile = TRUE, overwriteDataset = TRUE, 
-//'                     unlimited = FALSE)
-//' bdCreate_hdf5_matrix(filename = fn, 
-//'                     object = X, group = "data", dataset = "X",
-//'                     transp = FALSE,
-//'                     overwriteFile = FALSE, overwriteDataset = TRUE, 
-//'                     unlimited = FALSE)
-//' bdCreate_hdf5_matrix(filename = fn,
-//'                     object = Z, group = "data", dataset = "Z",
-//'                     transp = FALSE,
-//'                     overwriteFile = FALSE, overwriteDataset = TRUE,
-//'                     unlimited = FALSE)
+//' hdf5_create_matrix(fn, "data/Y", data = Y)
+//' hdf5_create_matrix(fn, "data/X", data = X)
+//' hdf5_create_matrix(fn, "data/Z", data = Z)
 //' 
 //' dsets <- list_datasets(fn, group = "data")
 //' 
 //' bdapply_Function_hdf5(filename = fn,
-//'                      group = "data", datasets = dsets,
-//'                      outgroup = "QR", func = "QR",
-//'                      overwrite = TRUE)
+//'                       group = "data", datasets = dsets,
+//'                       outgroup = "QR", func = "QR",
+//'                       overwrite = TRUE)
 //' hdf5_close_all()
 //' unlink(fn)
 //' }

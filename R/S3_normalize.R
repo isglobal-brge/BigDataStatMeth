@@ -62,6 +62,9 @@
 #' X$close(); Xs$close(); unlink(tmp)
 #' }
 #'
+#' @name scale
+#' @rdname scale
+#' 
 #' @export
 scale.HDF5Matrix <- function(x,
                               center      = TRUE,

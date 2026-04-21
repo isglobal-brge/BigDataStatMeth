@@ -27,6 +27,24 @@
 # Generic override  (base::cor has no UseMethod → must mask)
 # ---------------------------------------------------------------------------
 
+# #' @export
+# cor <- function(x, y = NULL, use = "everything", method = "pearson", ...)
+#     UseMethod("cor")
+
+#' Correlation (generic)
+#'
+#' @description
+#' S3 generic for \code{cor()}. Dispatches to \code{\link{cor.HDF5Matrix}}
+#' for \code{HDF5Matrix} objects, and to \code{stats::cor()} for all others.
+#'
+#' @param x A matrix or \code{HDF5Matrix} object.
+#' @param y Optional second matrix.
+#' @param use Character. Method for handling missing values.
+#' @param method Character. Correlation method: \code{"pearson"} or \code{"spearman"}.
+#' @param ... Additional arguments passed to the method.
+#' @return Correlation matrix.
+#' @name cor
+#' @rdname cor
 #' @export
 cor <- function(x, y = NULL, use = "everything", method = "pearson", ...)
     UseMethod("cor")

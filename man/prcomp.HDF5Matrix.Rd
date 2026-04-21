@@ -35,6 +35,8 @@ coordinates (\code{x} slot).  If \code{FALSE} the \code{x} slot is
 
 \item{tol}{Ignored (present for interface compatibility with \code{prcomp()}).}
 
+\item{rank.}{Ignored. Present for compatibility with \code{stats::prcomp}.}
+
 \item{ncomponents}{Integer.  Number of PCs to compute (0 = all, default).}
 
 \item{k}{Number of local SVDs per incremental level (default 2).}
@@ -83,8 +85,7 @@ pca <- prcomp(X, center = TRUE, scale. = FALSE)
 cat("Variance explained (PC1-3):", pca$cumvar[1:3], "\n")
 dim(pca$rotation)   # 10 x nPC
 dim(pca$x)          # 100 x nPC
-X$close()
-pca$rotation$close(); pca$x$close()
+hdf5_close_all()
 unlink(tmp)
 }
 

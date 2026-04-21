@@ -7,7 +7,7 @@
 \usage{
 diag_op(x, diag, op = "+", ...)
 
-\method{diag_op}{HDF5Matrix}(x, diag, op = "+", ...)
+\method{diag_op}{HDF5Matrix}(x, diag, op = "+", outgroup = NULL, outdataset = NULL, ...)
 }
 \arguments{
 \item{x}{An \code{HDF5Matrix} (matrix, \eqn{m \times n}).}
@@ -20,13 +20,18 @@ diag_op(x, diag, op = "+", ...)
 \item{\dots}{Additional arguments passed to \code{x$diag_op()}:
 \code{outgroup}, \code{outdataset}, \code{overwrite},
 \code{threads}, \code{compression}.}
+
+\item{outgroup}{Character or \code{NULL}. HDF5 group where the result is
+stored. Default \code{"OUTPUT"}.}
+
+\item{outdataset}{Character or \code{NULL}. Dataset name for the result.}
 }
 \value{
 A new \code{HDF5Matrix}.
 }
 \description{
 Applies an element-wise binary operation between an
-\code{\link{HDF5Matrix}} and a diagonal vector (a 1-row or 1-column
+\code{HDF5Matrix} and a diagonal vector (a 1-row or 1-column
 \code{HDF5Matrix}). The vector is broadcast across each row of the
 matrix.
 
@@ -37,11 +42,11 @@ a 1-row or 1-column \code{HDF5Matrix}.
 \examples{
 \donttest{
 tmp <- tempfile(fileext = ".h5")
-M   <- hdf5_create_matrix(tmp, "data/M", data = matrix(1:12, 3, 4))
-d   <- hdf5_create_matrix(tmp, "data/d", data = matrix(c(1,2,3,4), 1, 4))
+M   <- hdf5_create_matrix(tmp, "data/M", data = matrix(rnorm(10000), 100, 100))
+d   <- hdf5_create_matrix(tmp, "data/d", data = matrix(rnorm(10000), 100, 100))
 R1  <- diag_op(M, d, "*")    # scale each column
 R2  <- M * d                  # same via operator auto-dispatch
-close(M); close(d); close(R1); close(R2)
+hdf5_close_all()
 unlink(tmp)
 }
 

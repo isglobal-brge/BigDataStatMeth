@@ -12,7 +12,9 @@ rcpp_hdf5dataset_multiply(
   paral = NULL,
   block_size = NULL,
   threads = NULL,
-  compression = NULL
+  compression = NULL,
+  outgroup = NULL,
+  outdataset = NULL
 )
 }
 \arguments{
@@ -29,6 +31,12 @@ rcpp_hdf5dataset_multiply(
 \item{block_size}{Integer or NULL; block size (NULL = auto)}
 
 \item{threads}{Integer or NULL; thread count when \code{paral = TRUE}}
+
+\item{outgroup}{Character or NULL. Output group in the HDF5 file.
+Default \code{"OUTPUT"}.}
+
+\item{outdataset}{Character or NULL. Output dataset name.
+Default \code{"A_x_B"} where A and B are the input dataset names.}
 }
 \value{
 Named list with \code{filename} (character) and \code{path}

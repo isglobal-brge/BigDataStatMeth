@@ -39,7 +39,7 @@ split_dataset(x, n_blocks = NULL, block_size = NULL, bycols = FALSE, ...)
 A named list of \code{HDF5Matrix} objects.
 }
 \description{
-Splits an \code{\link{HDF5Matrix}} into equal-sized sub-matrices
+Splits an \code{HDF5Matrix}into equal-sized sub-matrices
 stored as separate datasets in the same HDF5 file.
 
 Output datasets are named \code{<out_group>/<out_dataset>.0},

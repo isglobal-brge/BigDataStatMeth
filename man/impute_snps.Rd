@@ -2,9 +2,20 @@
 % Please edit documentation in R/S3_omics.R
 \name{impute_snps}
 \alias{impute_snps}
+\alias{impute_snps.HDF5Matrix}
 \title{Impute missing SNP values in an HDF5Matrix}
 \usage{
 impute_snps(x, ...)
+
+\method{impute_snps}{HDF5Matrix}(
+  x,
+  out_group = NULL,
+  out_dataset = NULL,
+  by_cols = TRUE,
+  threads = -1L,
+  overwrite = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{HDF5Matrix} containing SNP data with NAs.}
@@ -30,10 +41,20 @@ values. Intended for 0/1/2-coded diploid genotype matrices.
 }
 \examples{
 \donttest{
-snps <- matrix(sample(c(0,1,2,NA), 200, replace=TRUE, prob=c(.3,.3,.3,.1)),
-               20, 10)
-X   <- hdf5_create_matrix("snp.h5", "geno/raw", data = snps)
-imp <- impute_snps(X)   # in-place; or specify out_group/out_dataset
+tmp <- tempfile(fileext = ".h5")
+
+# SNP data: 0/1/2 coded, 3 = missing (not NA)
+snps <- matrix(sample(c(0L, 1L, 2L, 3L), 100 * 20,
+                       replace = TRUE,
+                       prob    = c(0.3, 0.3, 0.3, 0.1)),
+               nrow = 100, ncol = 20)
+
+X   <- hdf5_create_matrix(tmp, "geno/raw", data = snps)
+imp <- impute_snps(X, out_group = "geno", out_dataset = "imputed")
+dim(imp)
+
+hdf5_close_all()
+unlink(tmp)
 }
 
 }

@@ -45,12 +45,13 @@
 #' @examples
 #' \donttest{
 #'     fn <- tempfile(fileext = ".h5")
-#'     # Small dataset - converts silently
-#'     X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 50)
+#'     X <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(500), 100, 5))
 #'     mat <- as.matrix(X)
+#'     head(mat)
 #'
-#'     # Better: Use subsetting for large datasets
-#'     subset <- X[1:10, 1:5]
+#'     # Subsetting is more efficient for large datasets
+#'     subset <- X[1:10, 1:3]
+#'
 #'     hdf5_close_all()
 #'     unlink(fn)
 #' }
@@ -212,7 +213,7 @@ as.matrix.HDF5Matrix <- function(x, force = FALSE, max_size_mb = NULL, ...) {
 #' @examples
 #' \donttest{
 #'     fn <- tempfile(fileext = ".h5")
-#'     X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 5)
+#'     X <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(500), 100, 5))
 #'     df <- as.data.frame(X)
 #'     hdf5_close_all()
 #'     unlink(fn)
@@ -222,10 +223,10 @@ as.matrix.HDF5Matrix <- function(x, force = FALSE, max_size_mb = NULL, ...) {
 #'
 #' @export
 as.data.frame.HDF5Matrix <- function(x, 
+                                     row.names = NULL, 
+                                     optional = FALSE,
                                      force = FALSE, 
                                      max_size_mb = NULL,
-                                     row.names = NULL, 
-                                     optional = FALSE, 
                                      ...) {
   
   # Convert to matrix first (includes size checks)

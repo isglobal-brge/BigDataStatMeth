@@ -14,14 +14,18 @@ rownames.HDF5Matrix(x, do.NULL = TRUE, prefix = "row")
 
 colnames.HDF5Matrix(x, do.NULL = TRUE, prefix = "col")
 
-rownames.HDF5Matrix(x) <- value
+\method{rownames}{HDF5Matrix}(x) <- value
 
-colnames.HDF5Matrix(x) <- value
+\method{colnames}{HDF5Matrix}(x) <- value
 }
 \arguments{
 \item{x}{An \code{HDF5Matrix} object}
 
-\item{value}{Character vector of column names, or \code{NULL} to remove}
+\item{do.NULL}{Logical. Ignored; present for base compatibility.}
+
+\item{prefix}{Character. Ignored; present for base compatibility.}
+
+\item{value}{Character vector of column names, or \code{NULL} to remove.}
 }
 \value{
 A list of length 2 with elements \code{[[1]]} (rownames) and
@@ -36,14 +40,20 @@ names have been stored for a given dimension.
 \examples{
 \donttest{
 tmp <- tempfile(fileext = ".h5")
+
 m <- matrix(1:6, 2, 3,
             dimnames = list(c("r1","r2"), c("c1","c2","c3")))
-bdCreate_hdf5_matrix(tmp, m, "data", "mat")
-X <- hdf5_matrix(tmp, "data/mat")
+
+X <- hdf5_create_matrix(tmp, "data/mat", data = m)
+
 dimnames(X)
 rownames(X)
 colnames(X)
-X$close(); unlink(tmp)
+rownames(X) <- c("row1", "row2")
+rownames(X)
+hdf5_close_all()
+unlink(tmp)
+
 }
 
 }

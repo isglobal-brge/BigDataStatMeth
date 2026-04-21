@@ -24,10 +24,9 @@
 #' \donttest{
 #' tmp1 <- tempfile(fileext = ".h5")
 #' tmp2 <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp1)
-#' rhdf5::h5createFile(tmp2)
-#' rhdf5::h5write(matrix(1:100, 10, 10), tmp1, "data/A")
-#' rhdf5::h5write(matrix(1:100, 10, 10), tmp2, "data/B")
+#' 
+#' X  <- hdf5_create_matrix(tmp1, "data/A", data = matrix(rnorm(100), 10, 10))
+#' Y  <- hdf5_create_matrix(tmp2, "data/B", data = matrix(rnorm(100), 10, 10))
 #' 
 #' X <- hdf5_matrix(tmp1, "data/A")
 #' Y <- hdf5_matrix(tmp2, "data/B")
@@ -101,49 +100,120 @@ hdf5_close_all <- function(envir = .GlobalEnv, verbose = TRUE) {
 }
 
 
-#' List open HDF5 files
-#' 
+#' Close all HDF5 handles for a specific file
+#'
 #' @description
-#' List all currently open HDF5 files in the R session.
-#' Useful for debugging file locking issues.
-#' 
-#' @return Character vector of open file paths
-#' 
+#' Closes all open \code{HDF5Matrix} objects and HDF5 C library handles
+#' associated with a single HDF5 file, without affecting other open files.
+#'
+#' @param x An \code{HDF5Matrix} object, or a character string with the
+#'   path to the HDF5 file.
+#'
+#' @return Invisibly, the absolute path of the closed file.
+#'
 #' @examples
 #' \donttest{
-#' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
-#' 
-#' X <- hdf5_matrix(tmp, "data/matrix")
-#' 
-#' # Check open files
-#' hdf5_list_open()  # Shows tmp file
-#' 
-#' X$close()
-#' hdf5_list_open()  # Empty
-#' 
-#' unlink(tmp)
+#' fn1 <- tempfile(fileext = ".h5")
+#' fn2 <- tempfile(fileext = ".h5")
+#' A <- hdf5_create_matrix(fn1, "data/A", data = matrix(1:9, 3, 3))
+#' B <- hdf5_create_matrix(fn2, "data/B", data = matrix(1:9, 3, 3))
+#'
+#' # Close only fn1 — B remains open and usable
+#' hdf5_close_file(fn1)
+#' dim(B)   # still works
+#'
+#' hdf5_close_all()
+#' unlink(c(fn1, fn2))
 #' }
-#' 
+#'
+#' @seealso \code{\link{hdf5_close_all}} to close all files at once.
 #' @export
-hdf5_list_open <- function() {
-    # Use rhdf5 to list open files
-    open_files <- tryCatch({
-        rhdf5::h5listIdentifier()
-    }, error = function(e) {
-        list()
-    })
-    
-    if (length(open_files) == 0) {
-        message("No open HDF5 files")
-        return(character(0))
+hdf5_close_file <- function(x) {
+    if (inherits(x, "HDF5Matrix")) {
+        filename <- normalizePath(x$get_filename(), mustWork = FALSE)
+    } else if (is.character(x) && length(x) == 1) {
+        filename <- normalizePath(x, mustWork = FALSE)
+    } else {
+        stop("x must be an HDF5Matrix or a single file path")
     }
     
-    # Extract filenames
-    file_ids <- open_files[names(open_files) == "type" & open_files == "H5I_FILE"]
+    # Close all HDF5Matrix objects pointing to this file in global env
+    for (obj_name in ls(envir = .GlobalEnv)) {
+        obj <- tryCatch(get(obj_name, envir = .GlobalEnv), error = function(e) NULL)
+        if (inherits(obj, "HDF5Matrix") && obj$is_valid()) {
+            if (identical(normalizePath(obj$get_filename(), mustWork = FALSE),
+                          filename)) {
+                obj$close()
+            }
+        }
+    }
     
-    message(length(file_ids), " HDF5 file(s) open")
+    # Close remaining handles at C++ and HDF5 library level
+    tryCatch(
+        rcpp_hdf5_close_file_handles(filename),
+        error = function(e) invisible(NULL)
+    )
     
-    return(names(file_ids))
+    gc()
+    invisible(filename)
 }
+
+
+# #' List open HDF5 files
+# #' 
+# #' @description
+# #' List all currently open HDF5 files in the R session.
+# #' Useful for debugging file locking issues.
+# #' 
+# #' @return Character vector of open file paths
+# #' 
+# #' @examples
+# #' \donttest{
+# #' tmp <- tempfile(fileext = ".h5")
+# #' 
+# #' X <- hdf5_create_matrix(tmp, "data/matrix", data = matrix(1:100, 10, 10))
+# #' X <- hdf5_matrix(tmp, "data/matrix")
+# #' 
+# #' # Check open files
+# #' hdf5_list_open()  # Shows tmp file
+# #' 
+# #' X$close()
+# #' hdf5_list_open()  # Empty
+# #' 
+# #' unlink(tmp)
+# #' }
+# #' 
+# #' @export
+# hdf5_list_open <- function() {
+#     ids <- tryCatch({
+#         rcpp_hdf5_list_open_files()
+#     }, error = function(e) character(0))
+#     
+#     if (length(ids) == 0) {
+#         message("No open HDF5 files")
+#         return(character(0))
+#     }
+#     ids
+# }
+
+
+# hdf5_list_open <- function() {
+#     # Use rhdf5 to list open files
+#     open_files <- tryCatch({
+#         rhdf5::h5listIdentifier()
+#     }, error = function(e) {
+#         list()
+#     })
+#     
+#     if (length(open_files) == 0) {
+#         message("No open HDF5 files")
+#         return(character(0))
+#     }
+#     
+#     # Extract filenames
+#     file_ids <- open_files[names(open_files) == "type" & open_files == "H5I_FILE"]
+#     
+#     message(length(file_ids), " HDF5 file(s) open")
+#     
+#     return(names(file_ids))
+# }

@@ -9,6 +9,9 @@ var(x, y = NULL, na.rm = FALSE, use, ...)
 
 \method{var}{HDF5Matrix}(
   x,
+  y = NULL,
+  na.rm = FALSE,
+  use,
   paral = NULL,
   wsize = NULL,
   threads = NULL,
@@ -20,7 +23,11 @@ var(x, y = NULL, na.rm = FALSE, use, ...)
 \arguments{
 \item{x}{An \code{HDF5Matrix} object.}
 
+\item{y}{Ignored. Present for compatibility with \code{stats::var}.}
+
 \item{na.rm}{Ignored (included for generic compatibility).}
+
+\item{use}{Ignored. Present for compatibility with \code{stats::var}.}
 
 \item{...}{For \code{Summary} methods: additional objects (currently
 not supported; raises an error if supplied).}

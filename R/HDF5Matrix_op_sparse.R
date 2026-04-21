@@ -12,6 +12,10 @@ HDF5Matrix$set("public", "multiply_sparse",
 # Both matrices must be in the same HDF5 file.
 #
 # @param other      An HDF5Matrix. Must be in the same HDF5 file.
+# @param outgroup  Character or \code{NULL}. Output group in the HDF5 file.
+#   Default \code{"OUTPUT"}.
+# @param outdataset Character or \code{NULL}. Output dataset name.
+#   Default is constructed from the operation and input nam
 # @param block_size Integer. Block size hint; -1 = auto (recommended).
 # @param mix_block  Integer. Memory block size for parallel path; -1 = auto.
 # @param paral      Logical or NULL. Enable OpenMP parallelisation.
@@ -19,6 +23,8 @@ HDF5Matrix$set("public", "multiply_sparse",
 # @param compression Integer (0-9) or NULL. gzip level; NULL inherits from self.
 # @return A new HDF5Matrix with the product A x B.
 function(other,
+         outgroup    = NULL,
+         outdataset  = NULL,
          block_size  = -1L,
          mix_block   = -1L,
          paral       = NULL,
@@ -44,7 +50,9 @@ function(other,
         mix_block   = as.integer(mix_block),
         paral       = paral_eff,
         threads     = threads_eff,
-        compression = compression_eff
+        compression = compression_eff,
+        outgroup   = outgroup,
+        outdataset = outdataset
     )
 
     hdf5_matrix(res$filename, res$path)

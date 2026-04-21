@@ -38,16 +38,6 @@
 #include <ctime>
 #include <cstdlib>
 
-// ---------------------------------------------------------------------------
-// Internal helper
-// ---------------------------------------------------------------------------
-static std::string matvec_temp_name(const char* prefix)
-{
-    std::ostringstream ss;
-    ss << prefix << "_" << std::time(nullptr) << "_" << std::rand();
-    return ss.str();
-}
-
 
 // ---------------------------------------------------------------------------
 // rcpp_hdf5dataset_sweep
@@ -135,8 +125,9 @@ Rcpp::List rcpp_hdf5dataset_sweep(SEXP ptr_mat,
                           ? Rcpp::as<int>(compression)
                           : static_cast<int>(dsA->getCompressionLevel());
 
-        const std::string out_name = matvec_temp_name("tmp_sweep");
-        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC( new BigDataStatMeth::hdf5Dataset(filename, groupA, out_name, true));
+        const std::string out_name = "sweep_" + nameA;
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
+                new BigDataStatMeth::hdf5Dataset(filename, "OUTPUT", out_name, true));
         dsC->setCompressionLevel(comp_level);
 
         // FLIP byrows: R MARGIN convention is opposite to HDF5 row convention.
@@ -146,7 +137,7 @@ Rcpp::List rcpp_hdf5dataset_sweep(SEXP ptr_mat,
         // BigDataStatMeth::hdf5_matrixVector_calculus( dsA.get(), dsB.get(), dsC.get(), ioper, byrows, bparal, threads);
         
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + out_name;
+        lst["path"] = "OUTPUT/" + out_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("c++ exception rcpp_hdf5dataset_sweep (File IException): %s",
@@ -267,6 +258,9 @@ bool rcpp_hdf5dataset_diag_set(SEXP ptr_mat, Rcpp::NumericVector values)
  * @param paral       Logical or NULL; enable parallelisation.
  * @param threads     Integer or NULL; thread count.
  * @param compression Integer or NULL; gzip level (NULL = inherit from A).
+ * @param outgroup   Character or NULL. Output group. Default \code{"OUTPUT"}.
+ * @param outdataset Character or NULL. Output dataset name.
+ *   Default \code{"diag_OP_A_B"} where OP is the operation and A, B the input names.
  * @return Named list with elements "filename" and "path" of the result dataset.
  */
 // [[Rcpp::export]]
@@ -275,7 +269,9 @@ Rcpp::List rcpp_hdf5dataset_diag_op(SEXP ptr_a,
                                      std::string op        = "+",
                                      Rcpp::Nullable<bool> paral       = R_NilValue,
                                      Rcpp::Nullable<int>  threads     = R_NilValue,
-                                     Rcpp::Nullable<int>  compression = R_NilValue)
+                                     Rcpp::Nullable<int>  compression = R_NilValue,
+                                     Rcpp::Nullable<std::string> outgroup    = R_NilValue,
+                                     Rcpp::Nullable<std::string> outdataset  = R_NilValue)
 {
     Rcpp::List lst = Rcpp::List::create(
         Rcpp::Named("filename") = "",
@@ -319,9 +315,14 @@ Rcpp::List rcpp_hdf5dataset_diag_op(SEXP ptr_a,
         if (dsA->getDatasetptr() == nullptr || dsB->getDatasetptr() == nullptr)
             throw std::runtime_error("Failed to open datasets");
 
-        const std::string out_name = matvec_temp_name("tmp_diagop");
+        const std::string out_grp  = outgroup.isNull()
+            ? std::string("OUTPUT")
+                : Rcpp::as<std::string>(outgroup);
+        const std::string out_name = outdataset.isNull()
+            ? ("diag_" + op + "_" + nameA + "_" + nameB)
+            : Rcpp::as<std::string>(outdataset);
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, out_name, true));
+                new BigDataStatMeth::hdf5Dataset(filename, out_grp, out_name, true));
         dsC->setCompressionLevel(comp_level);
 
         if      (op == "+") BigDataStatMeth::DiagonalOps::addDiagonals     (dsA.get(), dsB.get(), dsC.get(), "new", bparal, threads);
@@ -331,7 +332,7 @@ Rcpp::List rcpp_hdf5dataset_diag_op(SEXP ptr_a,
         else throw std::runtime_error("diag_op: op must be one of '+', '-', '*', '/'");
 
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + out_name;
+        lst["path"] = out_grp + "/" + out_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("c++ exception rcpp_hdf5dataset_diag_op (File IException): %s",
@@ -366,6 +367,9 @@ Rcpp::List rcpp_hdf5dataset_diag_op(SEXP ptr_a,
  * @param paral       Logical or NULL; enable parallelisation.
  * @param threads     Integer or NULL; thread count.
  * @param compression Integer or NULL; gzip level (NULL = inherit from input).
+ * @param outgroup   Character or NULL. Output group. Default \code{"OUTPUT"}.
+ * @param outdataset Character or NULL. Output dataset name.
+ *  Default \code{"diagscale_OP_A"} where OP is the operation and A the input name.
  * @return Named list with elements "filename" and "path" of the result dataset.
  */
 // [[Rcpp::export]]
@@ -374,7 +378,9 @@ Rcpp::List rcpp_hdf5dataset_diag_scale(SEXP ptr_mat,
                                         int         op_code     = 2,
                                         Rcpp::Nullable<bool> paral       = R_NilValue,
                                         Rcpp::Nullable<int>  threads     = R_NilValue,
-                                        Rcpp::Nullable<int>  compression = R_NilValue)
+                                        Rcpp::Nullable<int>  compression = R_NilValue,
+                                        Rcpp::Nullable<std::string> outgroup   = R_NilValue,
+                                        Rcpp::Nullable<std::string> outdataset = R_NilValue)
 {
     Rcpp::List lst = Rcpp::List::create(
         Rcpp::Named("filename") = "",
@@ -410,8 +416,16 @@ Rcpp::List rcpp_hdf5dataset_diag_scale(SEXP ptr_mat,
         if (dsIn->getDatasetptr() == nullptr)
             throw std::runtime_error("Failed to open dataset");
 
-        const std::string out_name = matvec_temp_name("tmp_diagscale");
-        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut( new BigDataStatMeth::hdf5Dataset(filename, group, out_name, true));
+        static const char* op_names[] = {"add","sub","mul","div"};
+        const std::string out_grp  = outgroup.isNull()
+            ? std::string("OUTPUT")
+                : Rcpp::as<std::string>(outgroup);
+        const std::string out_name = outdataset.isNull()
+            ? ("diagscale_" + std::string(op_names[op_code]) + "_" + name)
+            : Rcpp::as<std::string>(outdataset);
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut(
+                new BigDataStatMeth::hdf5Dataset(filename, out_grp, out_name, true));
+        
         dsOut->setCompressionLevel(comp_level);
 
         
@@ -478,7 +492,7 @@ Rcpp::List rcpp_hdf5dataset_diag_scale(SEXP ptr_mat,
         // BigDataStatMeth::setDiagonalMatrix(dsOut.get(), diag_vals);
         
         lst["filename"] = filename;
-        lst["path"]     = group + "/" + out_name;
+        lst["path"] = out_grp + "/" + out_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("c++ exception rcpp_hdf5dataset_diag_scale (File IException): %s",

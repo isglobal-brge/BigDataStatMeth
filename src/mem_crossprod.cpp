@@ -95,11 +95,10 @@
 //' p <- 100
 //' Y <- matrix(rnorm(n*p), nrow=n)
 //' res <- bdCrossprod(X, Y)
+//' all.equal(crossprod(X, Y), res)
 //' 
 //' # Parallel computation
-//' res_par <- bdCrossprod(X, Y,
-//'                        paral = TRUE,
-//'                        threads = 4)
+//' res_par <- bdCrossprod(X, paral = TRUE, threads = 2)
 //'
 //' @references
 //' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
@@ -161,26 +160,24 @@ Eigen::MatrixXd bdCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B = 
                 throw("Matrix B is not numeric - Only numeric matrix allowed");
             }
                 
-            Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mTrans(mA.data(), mA.cols(), mA.rows());
-            
-            if(bparal == true) {
+                Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mTrans(mA.data(), mA.cols(), mA.rows());
+                
+                if(bparal == true) {
                 C = BigDataStatMeth::Rcpp_block_matrix_mul_parallel(mTrans, mB, false, false, block_size, threads);
                 // C = Bblock_matrix_mul_parallel(mTrans, mB, iblock_size, threads);
                 
-            } else if (bparal == false)  {
+                } else if (bparal == false)  {
                 C = BigDataStatMeth::Rcpp_block_matrix_mul(mTrans, mB, block_size);
                 // C = Bblock_matrix_mul(mTrans, mB, iblock_size);
-            }
+                }
+
             
         }
-        
+    
     } catch(std::exception &ex) {
-        Rcpp::stop("c++ exception bdCrossprod: " + std::string(ex.what()));
-        return(Eigen::MatrixXd(0,0));
-        // return(Rcpp::IntegerMatrix(0,0));
+        Rf_error("c++ exception bdCrossprod: %s", ex.what());
     } catch (...) {
-        Rcpp::stop("c++ exception bdCrossprod (unknown reason)");
-        return(Eigen::MatrixXd(0,0));
+        Rf_error("c++ exception bdCrossprod (unknown reason)");
     }
     
     return(C);

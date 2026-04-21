@@ -25,18 +25,30 @@ Useful for batch importing related datasets.
 }
 \examples{
 \donttest{
-files <- c("exp1.csv", "exp2.csv", "exp3.csv")
-datasets <- c("data/exp1", "data/exp2", "data/exp3")
+# Create temporary CSV files
+f1 <- tempfile(fileext = ".csv")
+f2 <- tempfile(fileext = ".csv")
+f3 <- tempfile(fileext = ".csv")
+hdf5_file <- tempfile(fileext = ".h5")
+
+write.table(matrix(rnorm(20), 4, 5), f1, sep = ",",
+            row.names = FALSE, col.names = TRUE)
+write.table(matrix(rnorm(20), 4, 5), f2, sep = ",",
+            row.names = FALSE, col.names = TRUE)
+write.table(matrix(rnorm(20), 4, 5), f3, sep = ",",
+            row.names = FALSE, col.names = TRUE)
 
 mats <- hdf5_import_multiple(
-  sources = files,
-  filename = "experiments.h5",
-  datasets = datasets
+  sources  = c(f1, f2, f3),
+  filename = hdf5_file,
+  datasets = c("data/exp1", "data/exp2", "data/exp3"),
+  sep      = ","
 )
 
-# Access each dataset
-mats$exp1
-mats$exp2
+dim(mats$exp1)
+
+hdf5_close_all()
+unlink(c(f1, f2, f3, hdf5_file))
 }
 
 }

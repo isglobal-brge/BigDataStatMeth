@@ -51,36 +51,24 @@
 #'
 #' @examples
 #' \donttest{
-#' # Import local CSV
+#' csv_file  <- tempfile(fileext = ".csv")
+#' hdf5_file <- tempfile(fileext = ".h5")
+#' 
+#' # Write sample numeric data
+#' write.table(matrix(rnorm(50), nrow = 10, ncol = 5),
+#'             csv_file, sep = ",", row.names = FALSE, col.names = TRUE)
+#' 
+#' # Import CSV to HDF5
 #' mat <- hdf5_import(
-#'   source = "data.csv",
-#'   filename = "analysis.h5",
-#'   dataset = "raw/data"
+#'   source   = csv_file,
+#'   filename = hdf5_file,
+#'   dataset  = "raw/data",
+#'   sep      = ","
 #' )
-#' dim(mat)  # Ready to use
-#'
-#' # Import from URL
-#' mat <- hdf5_import(
-#'   source = "https://example.com/data.tsv.gz",
-#'   filename = "downloaded.h5",
-#'   dataset = "external/dataset",
-#'   sep = "\t"
-#' )
-#'
-#' # Custom options
-#' mat <- hdf5_import(
-#'   source = "experiment.txt",
-#'   filename = "results.h5",
-#'   dataset = "exp1/measurements",
-#'   sep = ";",
-#'   header = c("time", "value1", "value2"),
-#'   rownames = TRUE,
-#'   overwrite = TRUE
-#' )
-#'
-#' # Work with imported data immediately
-#' subset <- mat[1:100, ]
-#' result <- cor(mat)
+#' dim(mat)
+#' 
+#' hdf5_close_all()
+#' unlink(c(csv_file, hdf5_file))
 #' }
 #'
 #' @seealso
@@ -130,6 +118,10 @@ hdf5_import <- function(source,
   # Check if source is a URL
   is_url <- grepl("^(http://|https://|ftp://)", source, ignore.case = TRUE)
   
+  # Check source file exists (only for local files)
+  if (!is_url && !file.exists(source)) {
+      stop("Source file not found: ", source)
+  }
   
   # Use appropriate import function
   if (is_url || grepl("\\.(gz|tar\\.gz|zip|bz2|tgz)$", source, ignore.case = TRUE)) {
@@ -199,18 +191,30 @@ hdf5_import <- function(source,
 #'
 #' @examples
 #' \donttest{
-#' files <- c("exp1.csv", "exp2.csv", "exp3.csv")
-#' datasets <- c("data/exp1", "data/exp2", "data/exp3")
+#' # Create temporary CSV files
+#' f1 <- tempfile(fileext = ".csv")
+#' f2 <- tempfile(fileext = ".csv")
+#' f3 <- tempfile(fileext = ".csv")
+#' hdf5_file <- tempfile(fileext = ".h5")
+#' 
+#' write.table(matrix(rnorm(20), 4, 5), f1, sep = ",",
+#'             row.names = FALSE, col.names = TRUE)
+#' write.table(matrix(rnorm(20), 4, 5), f2, sep = ",",
+#'             row.names = FALSE, col.names = TRUE)
+#' write.table(matrix(rnorm(20), 4, 5), f3, sep = ",",
+#'             row.names = FALSE, col.names = TRUE)
 #' 
 #' mats <- hdf5_import_multiple(
-#'   sources = files,
-#'   filename = "experiments.h5",
-#'   datasets = datasets
+#'   sources  = c(f1, f2, f3),
+#'   filename = hdf5_file,
+#'   datasets = c("data/exp1", "data/exp2", "data/exp3"),
+#'   sep      = ","
 #' )
 #' 
-#' # Access each dataset
-#' mats$exp1
-#' mats$exp2
+#' dim(mats$exp1)
+#' 
+#' hdf5_close_all()
+#' unlink(c(f1, f2, f3, hdf5_file))
 #' }
 #'
 #' @export

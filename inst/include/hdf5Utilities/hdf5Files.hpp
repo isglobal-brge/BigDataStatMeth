@@ -68,6 +68,7 @@ public:
         filename = filen;
         boverwrite = overwrite;
         pfile = file;
+        bOwnsFile = false;
         
         if( route.substr(route.length(), route.length()) == "/" ) {
             path = route.substr( 0, route.length()-1);
@@ -106,6 +107,7 @@ public:
     hdf5File(H5::H5File* file)
     {
         pfile = file;
+        bOwnsFile = false;
     }
 
 
@@ -146,6 +148,7 @@ public:
                 
                 //.. 2025/08/13 ..// if(!bFileOpened) {
                 pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC ); 
+                bOwnsFile = true;
                 iExec = EXEC_OK; //.. 2025/08/13 ..//
                 //.. 2025/08/13 ..// } else {
                 //.. 2025/08/13 ..//    Rcpp::Rcerr<<"\nThe file is being used, close it before proceed.\n";
@@ -191,12 +194,14 @@ public:
             if( checkHDF5File() ) {
                 if(opentype == "r") {
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
+                    bOwnsFile = true;
                 } else {
                     if (lockedByOtherProcess()) {
                         Rf_error("HDF5 file is in use by another process.");
                     }
                     
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
+                    bOwnsFile = true;
                 }
             } else {
                 
@@ -204,6 +209,7 @@ public:
                     Rf_error("HDF5 file not found."); //..2025/08/13..//
                 }         //..2025/08/13..//
                 pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC); //..2025/08/13..//
+                bOwnsFile = true;
                 
                 //..2025/08/13..// Rcpp::Rcerr<<"\n File does not exists, please create it before open it";
                 //..2025/08/13..// pfile = nullptr;
@@ -267,6 +273,28 @@ public:
     Rcpp::StringVector getDatasetNames( std::string strgroup, std::string strprefix, std::string strsufix){ 
         return(get_dataset_names_from_group( strgroup, strprefix, strsufix)); 
     } // Return a dataset name list with all the datasets inside
+    
+    
+    /**
+     * @brief List datasets in a group, optionally recursing into subgroups.
+     *
+     * @param strgroup  HDF5 group path. Use "/" for the file root.
+     * @param strprefix Only return names starting with this prefix (empty = all).
+     * @param recursive If true, recurse into every subgroup and return full paths
+     *                  relative to \p strgroup (e.g. "SUB/dataset").
+     * @return StringVector of dataset names (or relative paths when recursive).
+     */
+    Rcpp::StringVector getAllDatasetNames(std::string strgroup,
+                                          std::string strprefix,
+                                          bool        recursive) {
+        if (!recursive) {
+            return get_dataset_names_from_group(strgroup, strprefix, "");
+        }
+        Rcpp::StringVector results;
+        collect_datasets_recursive(strgroup, "", strprefix, results);
+        return results;
+    }
+    
     
     
     /**
@@ -338,7 +366,7 @@ public:
      */
     ~hdf5File(){
         try {
-            if(pfile != nullptr) {
+            if(pfile != nullptr && bOwnsFile) {
                 pfile->close();
                 pfile = nullptr;
             }
@@ -350,6 +378,7 @@ protected:
     H5::H5File* pfile = nullptr;
     std::string filename;
     std::string path;
+    bool bOwnsFile = false;
     
 private:
     
@@ -607,6 +636,57 @@ private:
         
         return bCorrupt;
         
+    }
+    
+    
+    /**
+     * @brief Recursive helper: walk \p group_path and collect dataset paths.
+     *
+     * @param group_path   Current group being visited.
+     * @param rel_prefix   Path prefix accumulated so far (empty at root call).
+     * @param strprefix    User-supplied name filter (empty = accept all).
+     * @param results      Accumulator vector — paths appended in-place.
+     */
+    void collect_datasets_recursive(const std::string&  group_path,
+                                    const std::string&  rel_prefix,
+                                    const std::string&  strprefix,
+                                    Rcpp::StringVector& results)
+    {
+        try {
+            H5::Exception::dontPrint();
+            
+            hsize_t nobj = 0;
+            char    memb_name[MAX_NAME];
+            
+            H5::Group grp = pfile->openGroup(group_path);
+            hid_t     gid = grp.getId();
+            
+            H5Gget_num_objs(gid, &nobj);
+            
+            for (hsize_t i = 0; i < nobj; ++i) {
+                ssize_t len = H5Gget_objname_by_idx(gid, i, memb_name,
+                                                    (size_t)MAX_NAME);
+                if (len <= 0) continue;
+                
+                int otype = H5Gget_objtype_by_idx(gid, (size_t)i);
+                std::string name(memb_name);
+                std::string rel_path = rel_prefix.empty()
+                    ? name
+                : rel_prefix + "/" + name;
+                
+                if (otype == H5G_DATASET) {
+                    if (strprefix.empty() || starts_with(name, strprefix)) {
+                        results.push_back(rel_path);
+                    }
+                } else if (otype == H5G_GROUP) {
+                    std::string child_path = (group_path == "/")
+                    ? "/" + name
+                    : group_path + "/" + name;
+                    collect_datasets_recursive(child_path, rel_path,
+                                               strprefix, results);
+                }
+            }
+        } catch (...) { /* skip unreadable groups */ }
     }
     
     

@@ -52,9 +52,6 @@ HDF5Matrix <- R6::R6Class("HDF5Matrix",
     #' @examples
     #' \donttest{
     #' tmp <- tempfile(fileext = ".h5")
-    #' rhdf5::h5createFile(tmp)
-    #' rhdf5::h5createGroup(tmp, "data")
-    #' rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
     #'
     #' X <- HDF5Matrix$new(tmp, "data/matrix")
     #' dim(X)

@@ -18,7 +18,8 @@
 # @param compression Integer (0-9) or NULL. gzip compression level for the
 #   result dataset. NULL uses the global option (default 6). Use 0 to disable.
 #
-# @return New HDF5Matrix containing the result, stored in the same HDF5 file
+# @return HDF5Matrix pointing to the result in group "OUTPUT",
+#   dataset named "A_x_B" where A and B are the input dataset names.
 HDF5Matrix$set("public", "multiply", function(other,
                                                transpose_self  = FALSE,
                                                transpose_other = FALSE,

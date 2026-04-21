@@ -6,7 +6,7 @@
 #' Split an HDF5Matrix into multiple block datasets
 #'
 #' @description
-#' Splits an \code{\link{HDF5Matrix}} into equal-sized sub-matrices
+#' Splits an \code{HDF5Matrix}into equal-sized sub-matrices
 #' stored as separate datasets in the same HDF5 file.
 #'
 #' Output datasets are named \code{<out_group>/<out_dataset>.0},

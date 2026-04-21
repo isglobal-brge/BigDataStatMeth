@@ -45,9 +45,16 @@ using Cholesky decomposition + back-substitution.  Equivalent to
 }
 \examples{
 \donttest{
-X   <- hdf5_matrix("data.h5", "data/X")
+tmp <- tempfile(fileext = ".h5")
+
+X  <- hdf5_create_matrix(tmp, "data/X", data = matrix(rnorm(10000), 100, 100))
+
+X   <- hdf5_matrix(tmp, "data/X")
 AtA <- crossprod(X)              # HDF5Matrix, square SPD
 inv <- solve(AtA)               # inverse of AtA
+
+hdf5_close_all()
+unlink(tmp)
 }
 
 }

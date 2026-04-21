@@ -36,10 +36,20 @@
 #'
 #' @examples
 #' \donttest{
-#' A <- hdf5_matrix("data.h5", "grp/A")
-#' B <- hdf5_matrix("data.h5", "grp/B")
+#' 
+#' fn <- tempfile(fileext = ".h5")
+#' 
+#' A  <- hdf5_create_matrix(fn, "grp/A", data = matrix(rnorm(100), 10, 10))
+#' B  <- hdf5_create_matrix(fn, "grp/B", data = matrix(rnorm(100), 10, 10))
+#' 
+#' A <- hdf5_matrix(fn, "grp/A")
+#' B <- hdf5_matrix(fn, "grp/B")
 #' C <- cbind(A, B)          # columns of A followed by columns of B
 #' dim(C)                    # nrow(A) x (ncol(A) + ncol(B))
+#' 
+#' hdf5_close_all()
+#' unlink(fn)
+#' 
 #' }
 #'
 #' @export
@@ -113,10 +123,20 @@ cbind.HDF5Matrix <- function(...,
 #'
 #' @examples
 #' \donttest{
-#' A <- hdf5_matrix("data.h5", "grp/A")
-#' B <- hdf5_matrix("data.h5", "grp/B")
+#' 
+#' fn <- tempfile(fileext = ".h5")
+#' 
+#' A  <- hdf5_create_matrix(fn, "grp/A", data = matrix(rnorm(100), 10, 10))
+#' B  <- hdf5_create_matrix(fn, "grp/B", data = matrix(rnorm(100), 10, 10))
+#' 
+#' A <- hdf5_matrix(fn, "grp/A")
+#' B <- hdf5_matrix(fn, "grp/B")
 #' C <- rbind(A, B)          # rows of A followed by rows of B
 #' dim(C)                    # (nrow(A) + nrow(B)) x ncol(A)
+#' 
+#' hdf5_close_all()
+#' unlink(fn)
+#' 
 #' }
 #'
 #' @export

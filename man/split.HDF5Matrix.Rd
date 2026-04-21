@@ -7,13 +7,13 @@
 \method{split}{HDF5Matrix}(
   x,
   f = NULL,
+  drop = FALSE,
   n_blocks = -1L,
   block_size = -1L,
   bycols = FALSE,
   out_group = "SPLIT",
   out_dataset = NULL,
   overwrite = FALSE,
-  drop = FALSE,
   ...
 )
 }
@@ -21,6 +21,8 @@
 \item{x}{An \code{HDF5Matrix}.}
 
 \item{f}{Ignored (kept for S3 signature compatibility).}
+
+\item{drop}{Ignored (S3 compatibility).}
 
 \item{n_blocks}{Integer. Number of (roughly equal) blocks; -1 = unused.}
 
@@ -33,8 +35,6 @@
 \item{out_dataset}{Character or NULL. Base dataset name.}
 
 \item{overwrite}{Logical. Overwrite existing blocks (default \code{FALSE}).}
-
-\item{drop}{Ignored (S3 compatibility).}
 
 \item{...}{Ignored.}
 }
@@ -50,7 +50,11 @@ Provide exactly ONE of \code{n_blocks} or \code{block_size}.
 }
 \examples{
 \donttest{
-X      <- hdf5_matrix("data.h5", "data/X")   # 20000 × 1000
+
+fn <- tempfile(fileext = ".h5")
+X  <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(2000000), 20000, 100))
+
+X      <- hdf5_matrix( fn, "data/X")   # 20000 × 1000
 blocks <- split(X, n_blocks = 4)             # 4 row-blocks of ~5000 rows each
 }
 

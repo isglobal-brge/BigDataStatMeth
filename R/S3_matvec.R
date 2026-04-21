@@ -16,6 +16,25 @@
 
 # -- sweep.HDF5Matrix ---------------------------------------------------------
 
+# #' @export
+# sweep <- function(x, MARGIN, STATS, FUN = "-", check.margin = TRUE, ...)
+#     UseMethod("sweep")
+
+#' Sweep out array summaries (generic)
+#'
+#' @description
+#' S3 generic for \code{sweep()}. Dispatches to \code{\link{sweep.HDF5Matrix}}
+#' for \code{HDF5Matrix} objects, and to \code{base::sweep()} for all others.
+#'
+#' @param x A matrix or \code{HDF5Matrix} object.
+#' @param MARGIN Integer. \code{1} for rows, \code{2} for columns.
+#' @param STATS Numeric vector to sweep out.
+#' @param FUN Character. Function to apply: \code{"-"}, \code{"+"}, etc.
+#' @param check.margin Logical. Check that \code{STATS} length matches margin.
+#' @param ... Additional arguments passed to the method.
+#' @return A new \code{HDF5Matrix} or matrix with \code{STATS} swept out.
+#' @name sweep
+#' @rdname sweep
 #' @export
 sweep <- function(x, MARGIN, STATS, FUN = "-", check.margin = TRUE, ...)
     UseMethod("sweep")
@@ -51,9 +70,26 @@ sweep.default <- function(x, MARGIN, STATS, FUN = "-", check.margin = TRUE, ...)
 #'
 #' @examples
 #' \donttest{
-#' X         <- hdf5_matrix("data.h5", "data/X")   # 5000 x 800
-#' col_means <- colMeans(X)                         # HDF5Matrix (1 x 800)
-#' X_c       <- sweep(X, 2, col_means, "-")         # column-center X
+#' fn <- tempfile(fileext = ".h5")
+#' 
+#' mat <- matrix(rnorm(100), 10, 10)
+#' X   <- hdf5_create_matrix(fn, "data/X", data = mat)
+#' 
+#' # STATS must be an HDF5Matrix with one row or one column
+#' # Create a 1-row vector with column means
+#' col_means_vec <- colMeans(as.matrix(X))
+#' stats_hdf5    <- hdf5_create_matrix(fn, "data/col_means",
+#'                                      data = matrix(col_means_vec, 1, 10))
+#' 
+#' # Column-center X (MARGIN = 2)
+#' X_c <- sweep(X, 2, stats_hdf5, "-")
+#' 
+#' # Verify first column is centered
+#' all.equal(as.matrix(X_c)[, 1],
+#'           mat[, 1] - col_means_vec[1])
+#' 
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @export 
@@ -128,6 +164,17 @@ diag.HDF5Matrix <- function(x, ...) {
 }
 
 # -- diag<-() ----------------------------------------------------------------
+#' Set diagonal of an HDF5Matrix (generic)
+#'
+#' @description
+#' S3 generic for \code{diag<-}. Dispatches to the \code{diag<-.HDF5Matrix} method
+#' for \code{HDF5Matrix} objects, and to \code{base::diag<-} for all others.
+#'
+#' @param x A matrix or \code{HDF5Matrix} object.
+#' @param value Numeric vector of replacement values for the diagonal.
+#' @return The modified object with the diagonal replaced.
+#' @name diag<-
+#' @rdname diag-replace
 #' @rawNamespace export("diag<-")
 #' @rawNamespace S3method("diag<-",HDF5Matrix)
 #' @rawNamespace S3method("diag<-",default)

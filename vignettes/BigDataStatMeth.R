@@ -5,23 +5,18 @@ library(BiocStyle)
 knitr::opts_chunk$set(collapse = TRUE, comment = "", cache = FALSE, message = FALSE, width = 180, crop = NULL)
 
 ## ----cleanup, echo=FALSE, include=FALSE---------------------------------------
-if( isTRUE(file.exists('delayed.hdf5'))) {
-    file.remove('delayed.hdf5')
+hdf5_close_all <- function(...) invisible(NULL)  # safe no-op before package loads
+for (f in c('delayed.hdf5', 'robject.hdf5', 'colesterol_file.hdf5',
+            'subtraction_example.hdf5', 'addition_example.hdf5')) {
+  if (isTRUE(file.exists(f))) unlink(f)
 }
-if( isTRUE(file.exists('robject.hdf5'))){
-    file.remove('robject.hdf5')
-}
-# if( isTRUE(file.exists('rna_file.hdf5'))){
-#     file.remove('rna_file.hdf5')
-# }
 
 ## ----install_required, eval=FALSE---------------------------------------------
 # # Install BiocManager (if not previously installed)
 # install.packages("BiocManager")
 # 
 # # Install required packages
-# BiocManager::install(c("Matrix", "RcppEigen", "RSpectra",
-#                        "HDF5Array", "rhdf5"))
+# BiocManager::install(c("Matrix", "RcppEigen", "RSpectra", "HDF5Array"))
 
 ## ----install, eval=FALSE------------------------------------------------------
 # # Install devtools and load library (if not previously installed)
@@ -32,26 +27,20 @@ if( isTRUE(file.exists('robject.hdf5'))){
 # install_github("isglobal-brge/BigDataStatMeth")
 
 ## ----load, cache=FALSE--------------------------------------------------------
-library(rhdf5)
 library(BigDataStatMeth)
 
 ## ----hdf5Img, out.width = '100%', fig.align = 'center', fig.cap = "HDF5 hierarchical structure", echo=FALSE----
 knitr::include_graphics("imgs/hdf5_squema.jpg")
 
 ## ----hdf5Create---------------------------------------------------------------
-library(rhdf5)
-
 set.seed(5234)
 n <- 500
 m <- 600
 A <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
-# We also can create a dataset from R matrix object
-bdCreate_hdf5_matrix(filename = "robject.hdf5", 
-                     object = A,
-                     group = "INPUT", 
-                     dataset = "A",
-                     overwriteFile = TRUE)
+# Create a dataset from R matrix object; returns an HDF5Matrix
+A_hdf5 <- hdf5_create_matrix("robject.hdf5", "INPUT/A", data = A)
+A_hdf5
 
 ## ----ls-----------------------------------------------------------------------
 list.files(pattern = "*.hdf5")
@@ -70,80 +59,61 @@ B <- matrix(rnorm(n*m,mean=3,sd=0.5), n, m)
 # Path to HDF5 file
 example_fn <- "delayed.hdf5"
 
-# We create another data file (delayed.hdf5) with a matrix A.
-# The group is called INPUT, overwriteFile is set to true to 
-# overwrite a file if exists
-bdCreate_hdf5_matrix(filename = example_fn, 
-                     object = A, 
-                     group = "INPUT", 
-                     dataset = "A", 
-                     overwriteFile = TRUE)
+# Create file with matrix A in group INPUT
+A_hdf5 <- hdf5_create_matrix(example_fn, "INPUT/A", data = A)
 
-# And them, we add another matrix B to the same group
-bdCreate_hdf5_matrix(object = B, 
-                filename = example_fn, 
-                group = "INPUT", 
-                dataset = "B")
+# Add matrix B to the same file and group
+B_hdf5 <- hdf5_create_matrix(example_fn, "INPUT/B", data = B)
 
 ## ----hdf5Show-----------------------------------------------------------------
-# Examine hierarchy before open file
-h5ls(example_fn)
+# List datasets in the file
+list_datasets(example_fn, group = "/", recursive = TRUE)
 
 ## ----hdf5Open, cache=FALSE----------------------------------------------------
-# Open file
-h5fdelay <- H5Fopen(example_fn)
-# Show hdf5 hierarchy (groups)
-h5fdelay
+# Open an existing dataset from file — returns an HDF5Matrix
+A_hdf5 <- hdf5_matrix("robject.hdf5", "INPUT/A")
+A_hdf5
 
 ## ----hdf5Dataset--------------------------------------------------------------
-bdata <- h5fdelay$INPUT$B
-bdata[1:3,1:5]
+B_hdf5[1:3, 1:5]
 
 ## ----hdf5DatasetClose---------------------------------------------------------
-h5closeAll()
+hdf5_close_all()
 
 ## ----convert_HDF5, cache=FALSE------------------------------------------------
-import_hdf5 <- bdImportTextFile_hdf5(filename = "colesterol.csv",
-                                     sep=',', 
-                                     outputfile = "colesterol_file.hdf5", 
-                                     outGroup = "COLESTEROL", 
-                                     outDataset = "COLESTEROLDATA", 
-                                     header = TRUE,
-                                     overwrite = TRUE)
-
+import_hdf5 <- hdf5_import(
+  source   = "colesterol.csv",
+  filename = "colesterol_file.hdf5",
+  dataset  = "COLESTEROL/COLESTEROLDATA",
+  sep      = ",",
+  header   = TRUE,
+  overwrite = TRUE
+)
 
 ## ----read_data_col_HDF5-------------------------------------------------------
-
 # Show content
-h5ls(import_hdf5$fn)
+list_datasets(import_hdf5)
 
-# We can open the file and have access to the data
-res_hdf5 <- h5read(import_hdf5$fn, import_hdf5$ds)
-colnames_hdf5 <- h5read(import_hdf5$fn, import_hdf5$ds_cols)[,1]
+# Show first rows and columns
+import_hdf5[1:5, 1:6]
 
-# Show hdf5 content dataset
-res_hdf5[1:5, 1:6]
-
-# Show colnames 
-head(colnames_hdf5)
-
-# Show data with colnames
-colnames(res_hdf5) <- colnames_hdf5
-res_hdf5[1:5, 1:6]
-
+# Show colnames
+head(colnames(import_hdf5))
 
 ## ----blockmult_hdf5_exec------------------------------------------------------
+# Reopen datasets (handles were closed above)
+A_hdf5 <- hdf5_matrix(example_fn, "INPUT/A")
+B_hdf5 <- hdf5_matrix(example_fn, "INPUT/B")
 
 # Perform blockwise matrix multiplication
-res <- bdblockmult_hdf5(filename = example_fn, group = "INPUT",
-                        A = "A", B = "B", outgroup = "HDF5_RES")
+res <- A_hdf5 %*% B_hdf5
 
 # Show the content of the HDF5 file
-h5ls(res$fn)
+list_datasets(res)
 
 ## ----blockmult_hdf5_res-------------------------------------------------------
-# Extract the result from HDF5
-result_hdf5 <- h5read(res$fn, res$ds)[1:3, 1:5]
+# Extract a subset of the result from HDF5
+result_hdf5 <- res[1:3, 1:5]
 result_hdf5
 
 # Compute the same multiplication in R
@@ -151,91 +121,66 @@ result_r <- (A %*% B)[1:3, 1:5]
 result_r
 
 # Compare both results
-all.equal((A %*% B), h5read(res$fn, res$ds))
+all.equal(A %*% B, as.matrix(res))
 
 ## ----crossprod_sing-----------------------------------------------------------
-
 # Create example matrices
 set.seed(123)
 A <- matrix(rnorm(1000 * 200), nrow = 1000, ncol = 200)
 B <- matrix(rnorm(1000 * 150), nrow = 1000, ncol = 150)
 C <- matrix(rnorm(800 * 200),  nrow = 800,  ncol = 200) 
 
-# Save matrices to HDF5 file using BigDataStatMeth
-example_fn <- "delayed.hdf5"
+# Save matrices to HDF5 file
+hdf5_close_all()
+unlink(example_fn)
 
-bdCreate_hdf5_matrix(filename = example_fn, 
-                     object = A,
-                     group = "INPUT", 
-                     dataset =  "A", 
-                     overwriteFile = TRUE)
-
-bdCreate_hdf5_matrix(filename = example_fn,
-                     object = B,
-                     group = "INPUT", 
-                     dataset =  "B", 
-                     overwriteFile = FALSE)
-
-bdCreate_hdf5_matrix(filename = example_fn,
-                     object = C,
-                     group = "INPUT", 
-                     dataset = "C", 
-                     overwriteFile = FALSE)
+A_hdf5 <- hdf5_create_matrix(example_fn, "INPUT/A", data = A)
+B_hdf5 <- hdf5_create_matrix(example_fn, "INPUT/B", data = B)
+C_hdf5 <- hdf5_create_matrix(example_fn, "INPUT/C", data = C)
 
 # Compute t(A) %*% A
-res_cross <- bdCrossprod_hdf5(filename = example_fn, 
-                              group = "INPUT", 
-                              A = "A")
+res_cross <- crossprod(A_hdf5)
 
 # Show where the result is stored
-h5ls(res_cross$fn)
+list_datasets(res_cross)
 
 # Compare with R's crossprod
-res_hdf5 <- h5read(res_cross$fn, res_cross$ds)
+res_hdf5 <- as.matrix(res_cross)
 res_r <- crossprod(A)
 
 all.equal(res_r, res_hdf5)
 
 ## ----crossprod_dbl------------------------------------------------------------
 # Compute t(A) %*% B
-res_cross2 <- bdCrossprod_hdf5(filename = example_fn, 
-                               group = "INPUT", 
-                               A = "A", 
-                               B = "B")
+res_cross2 <- crossprod(A_hdf5, B_hdf5)
 
 # Compare with R
-res_hdf5 <- h5read(res_cross2$fn, res_cross2$ds)
+res_hdf5 <- as.matrix(res_cross2)
 res_r <- crossprod(A, B)
 
 all.equal(res_r, res_hdf5)
 
 ## ----tcrossprod_sing----------------------------------------------------------
 # Compute A %*% t(A)
-res_tcross <- bdtCrossprod_hdf5(filename = example_fn, 
-                                group = "INPUT", 
-                                A = "A")
+res_tcross <- tcrossprod(A_hdf5)
 
-h5ls(res_tcross$fn)
+list_datasets(res_tcross)
 
-res_hdf5_t <- h5read(res_tcross$fn, res_tcross$ds)
+res_hdf5_t <- as.matrix(res_tcross)
 res_r_t <- tcrossprod(A)
 
 all.equal(res_r_t, res_hdf5_t)
 
 ## ----tcrossprod_dbl-----------------------------------------------------------
-# Compute A %*% t(B)
-res_tcross2 <- bdtCrossprod_hdf5(filename = example_fn, 
-                                 group = "INPUT", 
-                                 A = "A", 
-                                 B = "C")
+# Compute A %*% t(C)
+res_tcross2 <- tcrossprod(A_hdf5, C_hdf5)
 
-res_hdf5_t <- h5read(res_tcross2$fn, res_tcross2$ds)
+res_hdf5_t <- as.matrix(res_tcross2)
 res_r_t <- tcrossprod(A, C)
 
 all.equal(res_r_t, res_hdf5_t)
 
 ## ----substract_init-----------------------------------------------------------
-
 # Create two matrices of the same dimensions
 set.seed(42)
 A_sub <- matrix(rnorm(1000 * 300), nrow = 1000, ncol = 300)
@@ -244,21 +189,14 @@ B_sub <- matrix(rnorm(1000 * 300), nrow = 1000, ncol = 300)
 # Save them to HDF5
 fn_sub <- "subtraction_example.hdf5"
 
-bdCreate_hdf5_matrix(filename = fn_sub, object = A_sub,
-                     group = "INPUT", dataset = "A_sub",
-                     overwriteFile = TRUE)
-
-bdCreate_hdf5_matrix(filename = fn_sub, object = B_sub,
-                     group = "INPUT", dataset = "B_sub",
-                     overwriteFile = FALSE)
+A_sub_hdf5 <- hdf5_create_matrix(fn_sub, "INPUT/A_sub", data = A_sub)
+B_sub_hdf5 <- hdf5_create_matrix(fn_sub, "INPUT/B_sub", data = B_sub)
 
 # Perform subtraction: A - B
-res_sub <- bdblockSubstract_hdf5(filename = fn_sub,
-                                  group = "INPUT",
-                                  A = "A_sub", B = "B_sub")
+res_sub <- A_sub_hdf5 - B_sub_hdf5
 
 # Compare a subset with R
-result_hdf5 <- h5read(res_sub$fn, res_sub$ds)
+result_hdf5 <- as.matrix(res_sub)
 result_r <- A_sub - B_sub
 
 all.equal(result_r, result_hdf5)
@@ -272,21 +210,14 @@ B_add <- matrix(rnorm(800 * 250), nrow = 800, ncol = 250)
 # Save them to HDF5
 fn_add <- "addition_example.hdf5"
 
-bdCreate_hdf5_matrix(filename = fn_add, object = A_add,
-                     group = "INPUT", dataset = "A",
-                     overwriteFile = TRUE)
-
-bdCreate_hdf5_matrix(filename = fn_add, object = B_add,
-                     group = "INPUT", dataset = "B",
-                     overwriteFile = FALSE)
+A_add_hdf5 <- hdf5_create_matrix(fn_add, "INPUT/A", data = A_add)
+B_add_hdf5 <- hdf5_create_matrix(fn_add, "INPUT/B", data = B_add)
 
 # Perform addition: A + B
-res_add <- bdblockSum_hdf5(filename = fn_add,
-                            group = "INPUT",
-                            A = "A", B = "B")
+res_add <- A_add_hdf5 + B_add_hdf5
 
 # Compare result with R
-result_hdf5 <- h5read(res_add$fn, res_add$ds)
+result_hdf5 <- as.matrix(res_add)
 result_r <- A_add + B_add
 
 all.equal(result_r, result_hdf5)
@@ -295,73 +226,44 @@ all.equal(result_r, result_hdf5)
 knitr::include_graphics("imgs/blocksvd.png")
 
 ## ----BlockSVDNorm-------------------------------------------------------------
-# Create dataframe data with 'odata' matrix in delayed hdf5 file at OMIC group
+# Create dataframe data with 'omicdata' matrix in delayed hdf5 file at OMICS group
 set.seed(5234)
 n <- 100
 m <- 15000
-omicdata <- matrix(rnorm(n*m, mean=0, sd=1), n,m)
+omicdata <- matrix(rnorm(n*m, mean=0, sd=1), n, m)
 
-bdCreate_hdf5_matrix(filename = example_fn, 
-                     object = omicdata, 
-                     group = "OMICS", 
-                     dataset = "data", 
-                     overwriteDataset = TRUE)
+omic_hdf5 <- hdf5_create_matrix(example_fn, "OMICS/data", data = omicdata, overwrite = TRUE)
 
-# Direct from hdf5 data file
-svdh5 <- bdSVD_hdf5( filename = example_fn, 
-                     group = "OMICS", 
-                     dataset = "data", 
-                     overwrite  = TRUE)
+# SVD directly on HDF5Matrix — d is returned as a numeric vector
+svdh5 <- svd(omic_hdf5)
 
-# get results svd (d) from hdf5 data file
-svd_hdf5_d <- h5read(svdh5$fn, svdh5$ds_d)
+# Results: d is already a numeric vector, no need to read from file
+svdh5$d[1:7]
 
-# Results in hdf5 file for d
-svd_hdf5_d[1:7]
-
-svd <- svd(scale(omicdata))
-svd$d[1:7]
-
+svd_r <- svd(scale(omicdata))
+svd_r$d[1:7]
 
 ## ----BlockSVDNotNorm----------------------------------------------------------
-# Direct from hdf5 data file (using only one thread, serial execution)
-svdh5 <- bdSVD_hdf5( filename = example_fn, 
-                     group = "OMICS", 
-                     dataset = "data",
-                     bcenter = FALSE, 
-                     bscale = FALSE,
-                     overwrite  = TRUE)
+# SVD without normalization
+svdh5 <- svd(omic_hdf5, center = FALSE, scale = FALSE, overwrite = TRUE)
 
 ## ----BlockSVDNotNormResults---------------------------------------------------
-# get results svd (d)
-svd_hdf5_d <- h5read(svdh5$fn, svdh5$ds_d)[1:7]
 # SVD (d) from file - data not normalized
-svd_hdf5_d
+svdh5$d[1:7]
 
 # with R implementation from data in memory
-svd <- svd(omicdata)
-svd$d[1:7]
+svd(omicdata)$d[1:7]
 
 ## ----BlockSVDk4---------------------------------------------------------------
 # Block decomposition with 1 level and 4 local SVDs at each level using 
 # two threads (as maximum)
-svdh5 <- bdSVD_hdf5( filename = example_fn, 
-                     group = "OMICS", 
-                     dataset = "data",
-                     q = 1, 
-                     k = 4, 
-                     threads = 2,
-                     overwrite  = TRUE)
+svdh5 <- svd(omic_hdf5, k = 4, q = 1, threads = 2, overwrite = TRUE)
 
-# get results svd (d)
-svd_hdf5_d <- h5read(svdh5$fn, svdh5$ds_d)[1:7]
-
-# SVD (d) from file - data not normalized
-svd_hdf5_d
+# SVD (d) — data centered and scaled by default
+svdh5$d[1:7]
 
 # with R implementation from data in memory
-svd <- svd(scale(omicdata))
-svd$d[1:7]
+svd(scale(omicdata))$d[1:7]
 
 ## ----cholDesc-----------------------------------------------------------------
 N <- 100
@@ -369,132 +271,90 @@ set.seed(5234)
 Y <- matrix(rnorm(N*N), N, N)
 Ycp <- crossprod(Y)
 
-bdCreate_hdf5_matrix(filename = example_fn, 
-                     object = Ycp, 
-                     group = "chol", 
-                     dataset = "data",
-                     transp = FALSE,
-                     overwriteFile = TRUE, overwriteDataset = TRUE, 
-                     unlimited = FALSE)
+hdf5_close_all()
+unlink(example_fn)
 
-cholh5 <- bdCholesky_hdf5(filename = example_fn, 
-                          group = "chol", 
-                          dataset = "data",
-                          outdataset = "matrixDec", 
-                          outgroup = "Cholesky_Dec",
-                          overwrite = TRUE)
-choldesc_hdf5 <-  h5read(cholh5$fn, cholh5$ds)
-choldesc_hdf5[1:3,1:5]
+Ycp_hdf5 <- hdf5_create_matrix(example_fn, "chol/data", data = Ycp)
+
+cholh5 <- chol(Ycp_hdf5)
+choldesc_hdf5 <- as.matrix(cholh5)
+choldesc_hdf5[1:3, 1:5]
 
 choldesc_r <- chol(Ycp)
-choldesc_r[1:3,1:5]
+choldesc_r[1:3, 1:5]
 
 all.equal(choldesc_hdf5, choldesc_r)
-
 
 ## ----cholDesc_50--------------------------------------------------------------
-cholh5 <- bdCholesky_hdf5(filename = example_fn, 
-                          group = "chol", 
-                          dataset = "data",
-                          outdataset = "matrixDec_50", 
-                          outgroup = "Cholesky_Dec",
-                          elementsBlock = 50,
-                          overwrite = TRUE)
+cholh5 <- chol(Ycp_hdf5,
+               block_size = 50,
+               overwrite  = TRUE)
 
-# Result dataset
-cholh5$ds
-
-choldesc_hdf5 <-  h5read(cholh5$fn, cholh5$ds)
-choldesc_hdf5[1:3,1:5]
+choldesc_hdf5 <- as.matrix(cholh5)
+choldesc_hdf5[1:3, 1:5]
 
 choldesc_r <- chol(Ycp)
-choldesc_r[1:3,1:5]
+choldesc_r[1:3, 1:5]
 
 all.equal(choldesc_hdf5, choldesc_r)
 
-
 ## ----QRdec--------------------------------------------------------------------
-QRh5 <- bdQR_hdf5(filename = example_fn,
-                  group = "chol",
-                  dataset = "data",
-                  outgroup = "QR_Dec",thin = TRUE,
-                  overwrite = TRUE)
+Ycp_hdf5 <- hdf5_matrix(example_fn, "chol/data")
 
-# Result dataset
-QR_Q_hdf5 <-  h5read(QRh5$fn, QRh5$ds_Q)
-QR_R_hdf5 <-  h5read(QRh5$fn, QRh5$ds_R)
+QRh5 <- qr(Ycp_hdf5, thin = TRUE)
+
+QR_Q_hdf5 <- as.matrix(QRh5$Q)
+QR_R_hdf5 <- as.matrix(QRh5$R)
 
 # Q matrix
-QR_Q_hdf5[1:3,1:5]
+QR_Q_hdf5[1:3, 1:5]
 
 # R matrix
-QR_R_hdf5[1:3,1:5]
+QR_R_hdf5[1:3, 1:5]
 
 # Q matrix in R
 QR_Q_r <- qr.Q(qr(Ycp))
-QR_Q_r[1:3,1:5]
+QR_Q_r[1:3, 1:5]
 
 all.equal(QR_Q_hdf5, QR_Q_r)
-
 
 ## ----QRdec_blocksize----------------------------------------------------------
-QRh5 <- bdQR_hdf5(filename = example_fn,
-                  group = "chol",
-                  dataset = "data",
-                  outgroup = "QR_Dec",
-                  block_size = 256,
-                  overwrite = TRUE)
+QRh5 <- qr(Ycp_hdf5,
+            block_size = 256,
+            overwrite  = TRUE)
 
-# Result dataset
-QR_Q_hdf5 <-  h5read(QRh5$fn, QRh5$ds_Q)
-QR_R_hdf5 <-  h5read(QRh5$fn, QRh5$ds_R)
+QR_Q_hdf5 <- as.matrix(QRh5$Q)
+QR_R_hdf5 <- as.matrix(QRh5$R)
 
 # Q matrix
-QR_Q_hdf5[1:3,1:5]
+QR_Q_hdf5[1:3, 1:5]
 
 # R matrix
-QR_R_hdf5[1:3,1:5]
+QR_R_hdf5[1:3, 1:5]
 
 # Q matrix in R
 QR_Q_r <- qr.Q(qr(Ycp))
-QR_Q_r[1:3,1:5]
+QR_Q_r[1:3, 1:5]
 
 all.equal(QR_Q_hdf5, QR_Q_r)
 
-
 ## ----CholInv------------------------------------------------------------------
-invCholh5 <- bdInvCholesky_hdf5( filename = example_fn,
-                                 group = "chol",
-                                 dataset = "data",
-                                 outdataset = "invmatrix", 
-                                 outgroup = "InvCholesky", 
-                                 fullMatrix = FALSE, 
-                                 overwrite = TRUE)
+invCholh5 <- solve(Ycp_hdf5)
 
-# Result dataset
-invChol_hdf5 <-  h5read(invCholh5$fn, invCholh5$ds)
-invChol_hdf5[1:5,1:5]
-
+invChol_hdf5 <- as.matrix(invCholh5)
+invChol_hdf5[1:5, 1:5]
 
 ## ----CholInv_full-------------------------------------------------------------
-invCholh5 <- bdInvCholesky_hdf5( filename = example_fn,
-                                 group = "chol",
-                                 dataset = "data",
-                                 outdataset = "invmatrix", 
-                                 outgroup = "InvCholesky", 
-                                 fullMatrix = TRUE, 
-                                 overwrite = TRUE)
+invCholh5 <- solve(Ycp_hdf5, full_matrix = TRUE, overwrite = TRUE)
 
-# Result dataset
-invChol_hdf5 <-  h5read(invCholh5$fn, invCholh5$ds)
-invChol_hdf5[1:5,1:5]
+invChol_hdf5 <- as.matrix(invCholh5)
+invChol_hdf5[1:5, 1:5]
 
-# Inverse Cholesky matrix in R
+# Inverse matrix in R
 invChol_r <- solve(Ycp)
-invChol_r[1:5,1:5]
+invChol_r[1:5, 1:5]
 
 all.equal(invChol_hdf5, invChol_r)
-
 
 ## ----sesinfo------------------------------------------------------------------
 sessionInfo()

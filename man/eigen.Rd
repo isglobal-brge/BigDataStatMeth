@@ -19,34 +19,24 @@ eigen(x, symmetric, ...)
 \method{eigen}{HDF5Matrix}(x, symmetric = TRUE, ...)
 }
 \arguments{
-\item{x}{An \code{\link{HDF5Matrix}} or any R object accepted
+\item{x}{An \code{HDF5Matrix} or any R object accepted
 by \code{base::eigen()}.}
 
 \item{symmetric}{Logical. Whether to assume \code{x} is symmetric.
 Passed to \code{base::eigen()} for plain R objects.}
 
-\item{\dots}{For \code{HDF5Matrix}: additional arguments forwarded
-to \code{x$eigen()} — \code{k}, \code{which}, \code{compute_vectors},
-\code{tolerance}, \code{max_iter}, \code{overwrite}, \code{threads}.
-Ignored for \code{eigen.default}.}
+\item{\dots}{For \code{HDF5Matrix}: named arguments forwarded to
+\code{x$eigen()} — \code{k} (integer, number of eigenvalues),
+\code{which} (character, \code{"LM"}/\code{"SM"}/etc.),
+\code{compute_vectors} (logical), \code{tolerance} (numeric),
+\code{max_iter} (integer), \code{overwrite} (logical),
+\code{threads} (integer). Ignored for \code{eigen.default}.}
 
-\item{k}{Integer or \code{NULL}. Number of eigenvalues
-to compute (default: all).}
+\item{only.values}{Logical. Ignored; present for compatibility with
+\code{base::eigen}.}
 
-\item{which}{Character. Which eigenvalues to return:
-\code{"LM"} (largest magnitude, default), \code{"SM"}, \code{"LR"},
-\code{"SR"}, \code{"LI"}, \code{"SI"}.}
-
-\item{compute_vectors}{Logical. Also compute eigenvectors
-(default \code{TRUE}).}
-
-\item{tolerance}{Numeric or \code{NULL}. Convergence tolerance.}
-
-\item{max_iter}{Integer or \code{NULL}. Maximum Lanczos iterations.}
-
-\item{overwrite}{Logical. Overwrite existing output datasets.}
-
-\item{threads}{Integer or \code{NULL}. OpenMP threads.}
+\item{EISPACK}{Logical. Ignored; present for compatibility with
+\code{base::eigen}.}
 }
 \value{
 For \code{HDF5Matrix}: a named list with elements
@@ -56,17 +46,9 @@ For \code{HDF5Matrix}: a named list with elements
 For other objects: the result of \code{base::eigen()}.
 }
 \description{
-Overrides \code{base::eigen()} to dispatch on \code{\link{HDF5Matrix}}
+Overrides \code{base::eigen()} to dispatch on \code{HDF5Matrix}
 objects. For plain R matrices the call is forwarded to
 \code{base::eigen()}.
-
-Computes eigenvalues (and optionally eigenvectors) of an
-\code{\link{HDF5Matrix}} stored on disk. All computation is block-wise;
-the full matrix is never loaded into RAM.
-
-Delegates to \code{bdEigen_hdf5()} (Spectra / Eigen backend). Output
-datasets are written to the same HDF5 file under
-\code{EIGEN/<dataset>/values} and \code{EIGEN/<dataset>/vectors}.
 }
 \examples{
 \donttest{

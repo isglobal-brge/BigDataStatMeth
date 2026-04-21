@@ -29,17 +29,23 @@ Check available RAM before loading large datasets into memory.
 }
 \examples{
 \donttest{
-# Check available RAM
 available <- get_available_ram()
-cat("Available RAM:", available, "GB\n")
+cat("Available RAM:", round(available, 2), "GB\n")
 
-# Example: decide whether to load data
-dataset_size_gb <- 5
-if (available > dataset_size_gb * 1.2) {  # 20 percent safety margin
-  data <- as.matrix(hdf5_dataset)
+# Use it to decide how much data to load
+fn <- tempfile(fileext = ".h5")
+X  <- hdf5_create_matrix(fn, "data/M",
+                          data = matrix(rnorm(1000), 100, 10))
+
+size_gb <- prod(dim(X)) * 8 / 1e9
+if (get_available_ram() > size_gb * 1.2) {
+  mat <- as.matrix(X)
 } else {
-  message("Not enough RAM, working on-disk")
+  mat <- X[1:50, ]
 }
+
+hdf5_close_all()
+unlink(fn)
 }
 
 }

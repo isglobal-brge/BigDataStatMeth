@@ -49,9 +49,26 @@ across every row or column of the matrix, element-wise.
 }
 \examples{
 \donttest{
-X         <- hdf5_matrix("data.h5", "data/X")   # 5000 x 800
-col_means <- colMeans(X)                         # HDF5Matrix (1 x 800)
-X_c       <- sweep(X, 2, col_means, "-")         # column-center X
+fn <- tempfile(fileext = ".h5")
+
+mat <- matrix(rnorm(100), 10, 10)
+X   <- hdf5_create_matrix(fn, "data/X", data = mat)
+
+# STATS must be an HDF5Matrix with one row or one column
+# Create a 1-row vector with column means
+col_means_vec <- colMeans(as.matrix(X))
+stats_hdf5    <- hdf5_create_matrix(fn, "data/col_means",
+                                     data = matrix(col_means_vec, 1, 10))
+
+# Column-center X (MARGIN = 2)
+X_c <- sweep(X, 2, stats_hdf5, "-")
+
+# Verify first column is centered
+all.equal(as.matrix(X_c)[, 1],
+          mat[, 1] - col_means_vec[1])
+
+hdf5_close_all()
+unlink(fn)
 }
 
 }

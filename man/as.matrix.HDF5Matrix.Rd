@@ -55,12 +55,13 @@ Actual memory usage may be higher due to:
 \examples{
 \donttest{
     fn <- tempfile(fileext = ".h5")
-    # Small dataset - converts silently
-    X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 50)
+    X <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(500), 100, 5))
     mat <- as.matrix(X)
+    head(mat)
 
-    # Better: Use subsetting for large datasets
-    subset <- X[1:10, 1:5]
+    # Subsetting is more efficient for large datasets
+    subset <- X[1:10, 1:3]
+
     hdf5_close_all()
     unlink(fn)
 }

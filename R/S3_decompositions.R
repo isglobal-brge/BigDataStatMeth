@@ -6,12 +6,12 @@
 # so HDF5Matrix methods are registered through the standard mechanism
 # without any masking of the base generic.
 #
-#   svd()    → base::svd    (UseMethod in base)
-#   prcomp() → stats::prcomp (UseMethod in stats)
+#   svd() -> base::svd    (UseMethod in base)
+#   prcomp() -> stats::prcomp (UseMethod in stats)
 #
 # User-facing interface follows base R conventions:
-#   svd(X, nu, nv, ...)  → list(d, u, v) where d is numeric, u/v are HDF5Matrix
-#   prcomp(X, retx, center, scale., ...) → HDF5PCA object
+#   svd(X, nu, nv, ...)  -> list(d, u, v) where d is numeric, u/v are HDF5Matrix
+#   prcomp(X, retx, center, scale., ...) -> HDF5PCA object
 #
 # NOTE: nu and nv (number of left/right vectors to return) are passed
 # as nev = max(nu, nv) to the underlying block-wise algorithm.  The
@@ -19,15 +19,32 @@
 
 
 # ---------------------------------------------------------------------------
-# Generic override  (base::cor has no UseMethod → must mask)
+# Generic override  (base::cor has no UseMethod -> must mask)
 # ---------------------------------------------------------------------------
 
 
-# svd() override — base::svd() has no '...' so extra args fail before S3 dispatch.
+# svd() override - base::svd() has no '...' so extra args fail before S3 dispatch.
 # We create our own generic that routes HDF5Matrix to svd.HDF5Matrix and
 # everything else to base::svd().
+# #' @export
+# svd <- function(x, nu = min(dim(x)), nv = min(dim(x)), ...) UseMethod("svd")
+
+#' Singular Value Decomposition (generic)
+#'
+#' @description
+#' S3 generic for \code{svd()}. Dispatches to \code{\link{svd.HDF5Matrix}}
+#' for \code{HDF5Matrix} objects, and to \code{base::svd()} for all others.
+#'
+#' @param x A matrix or \code{HDF5Matrix} object.
+#' @param nu Number of left singular vectors to compute.
+#' @param nv Number of right singular vectors to compute.
+#' @param ... Additional arguments passed to the method.
+#' @return Named list with components \code{d}, \code{u}, \code{v}.
+#' @name svd
+#' @rdname svd
 #' @export
 svd <- function(x, nu = min(dim(x)), nv = min(dim(x)), ...) UseMethod("svd")
+
 
 #' @exportS3Method
 svd.default <- function(x, nu = min(dim(x)), nv = min(dim(x)), ...) {
@@ -35,7 +52,7 @@ svd.default <- function(x, nu = min(dim(x)), nv = min(dim(x)), ...) {
 }
 
 
-# ── svd.HDF5Matrix ───────────────────────────────────────────────────────────
+# -- svd.HDF5Matrix ------------------------------------------------------------
 
 #' Singular Value Decomposition of an HDF5Matrix
 #'
@@ -64,8 +81,8 @@ svd.default <- function(x, nu = min(dim(x)), nv = min(dim(x)), ...) {
 #' @return Named list with:
 #'   \describe{
 #'     \item{\code{d}}{Numeric vector of non-negative singular values, decreasing.}
-#'     \item{\code{u}}{HDF5Matrix of left  singular vectors, \code{nrow(x) × nu}.}
-#'     \item{\code{v}}{HDF5Matrix of right singular vectors, \code{ncol(x) × nv}.}
+#'     \item{\code{u}}{HDF5Matrix of left  singular vectors, \code{nrow(x) x nu}.}
+#'     \item{\code{v}}{HDF5Matrix of right singular vectors, \code{ncol(x) x nv}.}
 #'   }
 #'
 #' @examples
@@ -116,14 +133,14 @@ svd.HDF5Matrix <- function(x,
         threads       = threads
     )
 
-    # ── Truncate d ───────────────────────────────────────────────────────────
+    # -- Truncate d ------------------------------------------------------------
     k_out <- max(nu_int, nv_int)
     d_full <- res$d
     if (k_out > 0L && k_out < length(d_full))
         res$d <- d_full[seq_len(k_out)]
 
-    # ── Truncate U to nu columns ─────────────────────────────────────────────
-    # u is a HDF5Matrix of shape nrow(x) × r where r = min(dim(x)).
+    # -- Truncate U to nu columns ----------------------------------------------
+    # u is a HDF5Matrix of shape nrow(x) x r where r = min(dim(x)).
     # When nu < r, select only the first nu columns via the existing [r,c] method.
     if (nu_int > 0L && nu_int < ncol(res$u)) {
         u_mat  <- res$u[, seq_len(nu_int)]    # reads into memory (nu cols only)
@@ -133,7 +150,7 @@ svd.HDF5Matrix <- function(x,
                                      data = u_mat, overwrite = TRUE)
     }
 
-    # ── Truncate V to nv columns ─────────────────────────────────────────────
+    # -- Truncate V to nv columns ----------------------------------------------
     if (nv_int > 0L && nv_int < ncol(res$v)) {
         v_mat  <- res$v[, seq_len(nv_int)]
         v_path <- paste0(res$v$get_group(), "/", res$v$get_dataset(), "_nv")
@@ -146,7 +163,7 @@ svd.HDF5Matrix <- function(x,
 }
 
 
-# ── prcomp.HDF5Matrix ────────────────────────────────────────────────────────
+# -- prcomp.HDF5Matrix ---------------------------------------------------------
 
 #' Principal Component Analysis of an HDF5Matrix
 #'
@@ -161,6 +178,7 @@ svd.HDF5Matrix <- function(x,
 #' @param center   Logical.  Subtract column means before PCA (default \code{TRUE}).
 #' @param scale.   Logical.  Divide by column SDs before PCA (default \code{FALSE}).
 #' @param tol      Ignored (present for interface compatibility with \code{prcomp()}).
+#' @param rank. Ignored. Present for compatibility with \code{stats::prcomp}.
 #' @param ncomponents Integer.  Number of PCs to compute (0 = all, default).
 #' @param k        Number of local SVDs per incremental level (default 2).
 #' @param q        Number of incremental levels (default 1).
@@ -195,8 +213,7 @@ svd.HDF5Matrix <- function(x,
 #' cat("Variance explained (PC1-3):", pca$cumvar[1:3], "\n")
 #' dim(pca$rotation)   # 10 x nPC
 #' dim(pca$x)          # 100 x nPC
-#' X$close()
-#' pca$rotation$close(); pca$x$close()
+#' hdf5_close_all()
 #' unlink(tmp)
 #' }
 #'
@@ -204,9 +221,10 @@ svd.HDF5Matrix <- function(x,
 prcomp.HDF5Matrix <- function(x,
                                retx          = TRUE,
                                center        = TRUE,
+                              
                                scale.        = FALSE,
                                tol           = NULL,
-                               rank.         = NULL,       # base R alias → ncomponents
+                               rank.         = NULL,       # base R alias -> ncomponents
                                ncomponents   = 0L,
                                k             = 2L,
                                q             = 1L,
@@ -241,15 +259,16 @@ prcomp.HDF5Matrix <- function(x,
 }
 
 
-# ── print method for HDF5PCA ─────────────────────────────────────────────────
+# -- print method for HDF5PCA --------------------------------------------------
 
 #' Print method for HDF5PCA objects
 #'
 #' @param x   An \code{HDF5PCA} object returned by \code{prcomp()} or \code{$pca()}.
 #' @param ... Ignored.
 #' @exportS3Method base::print HDF5PCA
+#' @importFrom utils head
 print.HDF5PCA <- function(x, ...) {
-    cat("HDF5PCA — Principal Component Analysis (on-disk)\n")
+    cat("HDF5PCA - Principal Component Analysis (on-disk)\n")
     cat(sprintf("  File     : %s\n", x$file))
     cat(sprintf("  PCs      : %d\n", length(x$sdev)))
     cat(sprintf("  center   : %s  |  scale: %s\n",
@@ -260,10 +279,10 @@ print.HDF5PCA <- function(x, ...) {
         cat(sprintf("  cumvar%%  : %s ...\n",
                     paste(round(head(x$cumvar, 3), 2), collapse = ", ")))
     if (!is.null(x$rotation) && inherits(x$rotation, "HDF5Matrix"))
-        cat(sprintf("  rotation : %d × %d  [HDF5Matrix]\n",
+        cat(sprintf("  rotation : %d x %d  [HDF5Matrix]\n",
                     dim(x$rotation)[1], dim(x$rotation)[2]))
     if (!is.null(x$x) && inherits(x$x, "HDF5Matrix"))
-        cat(sprintf("  x (ind.) : %d × %d  [HDF5Matrix]\n",
+        cat(sprintf("  x (ind.) : %d x %d  [HDF5Matrix]\n",
                     dim(x$x)[1], dim(x$x)[2]))
     invisible(x)
 }

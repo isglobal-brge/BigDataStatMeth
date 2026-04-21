@@ -180,6 +180,9 @@ static void block_elementwise_hdf5(BigDataStatMeth::hdf5Dataset* dsA,
 //' @param threads Integer or NULL; thread count
 //'
 //' @return Named list with \code{filename} and \code{path} of the result.
+//'   The result is stored in group \code{"OUTPUT"} with dataset name
+//'   \code{"A_plus_B"} (resp. \code{"A_minus_B"}, \code{"A_times_B"},
+//'   \code{"A_div_B"}) where A and B are the input dataset names.
 //'
 //' @keywords internal
 // [[Rcpp::export]]
@@ -227,9 +230,9 @@ Rcpp::List rcpp_hdf5dataset_add(SEXP ptr_a,
         const int iblock_size = resolve_block_size(dsA.get(), block_size);
         bool bparal = paral.isNotNull() ? Rcpp::as<bool>(paral) : false;
 
-        const std::string result_name = arith_temp_name("tmp_add");
+        const std::string result_name = nameA + "_plus_" + nameB;
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(filename, "OUTPUT", result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         BigDataStatMeth::Rcpp_block_matrix_sum_hdf5(
@@ -237,7 +240,7 @@ Rcpp::List rcpp_hdf5dataset_add(SEXP ptr_a,
             static_cast<hsize_t>(iblock_size), bparal, threads);
 
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + result_name;
+        lst["path"] = "OUTPUT/" + result_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("HDF5 file error in add: %s", e.getDetailMsg().c_str());
@@ -268,6 +271,9 @@ Rcpp::List rcpp_hdf5dataset_add(SEXP ptr_a,
 //' @param threads Integer or NULL; thread count
 //'
 //' @return Named list with \code{filename} and \code{path} of the result.
+//'   The result is stored in group \code{"OUTPUT"} with dataset name
+//'   \code{"A_plus_B"} (resp. \code{"A_minus_B"}, \code{"A_times_B"},
+//'   \code{"A_div_B"}) where A and B are the input dataset names.
 //'
 //' @keywords internal
 // [[Rcpp::export]]
@@ -315,9 +321,9 @@ Rcpp::List rcpp_hdf5dataset_subtract(SEXP ptr_a,
         const int iblock_size = resolve_block_size(dsA.get(), block_size);
         bool bparal = paral.isNotNull() ? Rcpp::as<bool>(paral) : false;
 
-        const std::string result_name = arith_temp_name("tmp_sub");
+        const std::string result_name = nameA + "_minus_" + nameB;
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(filename, "OUTPUT", result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         BigDataStatMeth::Rcpp_block_matrix_substract_hdf5(
@@ -325,7 +331,7 @@ Rcpp::List rcpp_hdf5dataset_subtract(SEXP ptr_a,
             static_cast<hsize_t>(iblock_size), bparal, threads);
 
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + result_name;
+        lst["path"] = "OUTPUT/" + result_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("HDF5 file error in subtract: %s", e.getDetailMsg().c_str());
@@ -356,6 +362,9 @@ Rcpp::List rcpp_hdf5dataset_subtract(SEXP ptr_a,
 //' @param threads Integer or NULL; thread count
 //'
 //' @return Named list with \code{filename} and \code{path} of the result.
+//'   The result is stored in group \code{"OUTPUT"} with dataset name
+//'   \code{"A_plus_B"} (resp. \code{"A_minus_B"}, \code{"A_times_B"},
+//'   \code{"A_div_B"}) where A and B are the input dataset names.
 //'
 //' @keywords internal
 // [[Rcpp::export]]
@@ -403,9 +412,9 @@ Rcpp::List rcpp_hdf5dataset_mul_ew(SEXP ptr_a,
         const int iblock_size = resolve_block_size(dsA.get(), block_size);
         bool bparal = paral.isNotNull() ? Rcpp::as<bool>(paral) : false;
 
-        const std::string result_name = arith_temp_name("tmp_mulew");
+        const std::string result_name = nameA + "_times_" + nameB;
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(filename, "OUTPUT", result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         block_elementwise_hdf5(dsA.get(), dsB.get(), dsC.get(),
@@ -414,7 +423,7 @@ Rcpp::List rcpp_hdf5dataset_mul_ew(SEXP ptr_a,
                                 std::multiplies<double>());
 
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + result_name;
+        lst["path"] = "OUTPUT/" + result_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("HDF5 file error in multiply_ew: %s", e.getDetailMsg().c_str());
@@ -446,6 +455,9 @@ Rcpp::List rcpp_hdf5dataset_mul_ew(SEXP ptr_a,
 //' @param threads Integer or NULL; thread count
 //'
 //' @return Named list with \code{filename} and \code{path} of the result.
+//'   The result is stored in group \code{"OUTPUT"} with dataset name
+//'   \code{"A_plus_B"} (resp. \code{"A_minus_B"}, \code{"A_times_B"},
+//'   \code{"A_div_B"}) where A and B are the input dataset names.
 //'
 //' @keywords internal
 // [[Rcpp::export]]
@@ -493,9 +505,9 @@ Rcpp::List rcpp_hdf5dataset_div_ew(SEXP ptr_a,
         const int iblock_size = resolve_block_size(dsA.get(), block_size);
         bool bparal = paral.isNotNull() ? Rcpp::as<bool>(paral) : false;
 
-        const std::string result_name = arith_temp_name("tmp_divew");
+        const std::string result_name = nameA + "_div_" + nameB;
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(filename, "OUTPUT", result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         block_elementwise_hdf5(dsA.get(), dsB.get(), dsC.get(),
@@ -504,7 +516,7 @@ Rcpp::List rcpp_hdf5dataset_div_ew(SEXP ptr_a,
                                 std::divides<double>());
 
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + result_name;
+        lst["path"] = "OUTPUT/" + result_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("HDF5 file error in divide_ew: %s", e.getDetailMsg().c_str());

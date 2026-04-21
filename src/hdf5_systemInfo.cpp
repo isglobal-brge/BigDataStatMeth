@@ -64,17 +64,23 @@ double get_total_ram() {
 //'
 //' @examples
 //' \donttest{
-//' # Check available RAM
 //' available <- get_available_ram()
-//' cat("Available RAM:", available, "GB\n")
+//' cat("Available RAM:", round(available, 2), "GB\n")
 //' 
-//' # Example: decide whether to load data
-//' dataset_size_gb <- 5
-//' if (available > dataset_size_gb * 1.2) {  # 20 percent safety margin
-//'   data <- as.matrix(hdf5_dataset)
+//' # Use it to decide how much data to load
+//' fn <- tempfile(fileext = ".h5")
+//' X  <- hdf5_create_matrix(fn, "data/M",
+//'                           data = matrix(rnorm(1000), 100, 10))
+//' 
+//' size_gb <- prod(dim(X)) * 8 / 1e9
+//' if (get_available_ram() > size_gb * 1.2) {
+//'   mat <- as.matrix(X)
 //' } else {
-//'   message("Not enough RAM, working on-disk")
+//'   mat <- X[1:50, ]
 //' }
+//' 
+//' hdf5_close_all()
+//' unlink(fn)
 //' }
 //'
 //' @seealso \code{\link{get_total_ram}}, \code{\link{can_allocate}}
@@ -123,18 +129,27 @@ double get_available_ram() {
 //'
 //' @examples
 //' \donttest{
-//' # Check if we can allocate 5GB
-//' if (can_allocate(5)) {
-//'   mat <- as.matrix(large_dataset)
+//' # Check if 1 GB can be safely allocated
+//' if (can_allocate(1)) {
+//'   message("1 GB allocation is safe")
 //' } else {
-//'   message("Not enough RAM for full conversion")
-//'   mat <- large_dataset[1:1000, ]  # Load subset
+//'   message("Not enough RAM for 1 GB allocation")
 //' }
-//'
-//' # More aggressive check (10 percent margin)
-//' if (can_allocate(8, safety_margin_pct = 10)) {
-//'   # Riskier allocation
+//' 
+//' # Use it to decide how much data to load
+//' fn <- tempfile(fileext = ".h5")
+//' X  <- hdf5_create_matrix(fn, "data/M",
+//'                           data = matrix(rnorm(1000), 100, 10))
+//' 
+//' size_gb <- prod(dim(X)) * 8 / 1e9   # estimate in GB
+//' if (can_allocate(size_gb)) {
+//'   mat <- as.matrix(X)
+//' } else {
+//'   mat <- X[1:50, ]   # load subset
 //' }
+//' 
+//' hdf5_close_all()
+//' unlink(fn)
 //' }
 //'
 //' @seealso \code{\link{get_available_ram}}
@@ -216,11 +231,6 @@ int get_cpu_cores() {
 //' # Get full system info
 //' info <- system_info()
 //' print(info)
-//' # $os: "Linux"
-//' # $total_ram_gb: 16.0
-//' # $available_ram_gb: 8.2
-//' # $ram_used_pct: 48.75
-//' # $cpu_cores: 8
 //' }
 //'
 //' @export

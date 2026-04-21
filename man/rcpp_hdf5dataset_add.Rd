@@ -26,6 +26,9 @@ rcpp_hdf5dataset_add(
 }
 \value{
 Named list with \code{filename} and \code{path} of the result.
+The result is stored in group \code{"OUTPUT"} with dataset name
+\code{"A_plus_B"} (resp. \code{"A_minus_B"}, \code{"A_times_B"},
+\code{"A_div_B"}) where A and B are the input dataset names.
 }
 \description{
 Computes \code{A + B} element-wise for two HDF5 datasets referenced by

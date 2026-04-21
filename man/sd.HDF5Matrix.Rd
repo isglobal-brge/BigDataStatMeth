@@ -9,6 +9,7 @@ sd(x, na.rm = FALSE, ...)
 
 \method{sd}{HDF5Matrix}(
   x,
+  na.rm = FALSE,
   paral = NULL,
   wsize = NULL,
   threads = NULL,

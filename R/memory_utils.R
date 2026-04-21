@@ -105,12 +105,7 @@ get_memory_thresholds <- function(total_ram = NULL) {
 #' @examples
 #' \donttest{
 #' memory_info()
-#' # System Memory Information:
-#' #   OS: Linux
-#' #   CPU Cores: 8
-#' #   Total RAM: 16.0 GB
-#' #   Available: 8.2 GB (51%)
-#' #   
+#' 
 #' # Conversion Thresholds:
 #' #   Silent:  2.4 GB
 #' #   Warning: 4.8 GB

@@ -71,10 +71,10 @@ matrix into RAM.  Results can optionally be persisted to an HDF5 file.
 \examples{
 \donttest{
 tmp <- tempfile(fileext = ".h5")
-X <- hdf5_create_matrix(tmp, "data", "M",
-                         data = matrix(rnorm(200), 20, 10))
-cs <- colSums(X)                                     # R vector
-X$close(); unlink(tmp)
+X <- hdf5_create_matrix(tmp, "data/M", data = matrix(rnorm(200), 20, 10))
+cs <- colSums(X)         # R vector
+hdf5_close_all()
+unlink(tmp)
 }
 
 }

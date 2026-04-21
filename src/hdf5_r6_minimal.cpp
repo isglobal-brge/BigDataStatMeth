@@ -102,17 +102,17 @@ namespace {
 //' @keywords internal
 // [[Rcpp::export]]
 SEXP rcpp_hdf5_close_all_registry() {
+    
     try {
-        // 1. Close all C++ objects tracked in the live-pointer registry
         std::vector<void*> all_ptrs;
         for (auto& kv : live_ptrs())
             all_ptrs.push_back(kv.first);
         for (void* vp : all_ptrs)
             if (claim_ptr(vp))
                 delete static_cast<BigDataStatMeth::hdf5Dataset*>(vp);
-            
-            // 2. Close any remaining HDF5 handles not tracked by the registry
-            BigDataStatMeth::closeAllHDF5Handles();
+            // closeAllHDF5Handles() deliberately NOT called here:
+            // it is reserved for .onUnload() only, where library state
+            // does not matter. Calling it here corrupts HDF5 pre-defined types.
     } catch (...) {}
     return R_NilValue;
 }
@@ -454,4 +454,38 @@ SEXP rcpp_hdf5_close_at_paths(std::string filename, Rcpp::StringVector paths)
     }
 
     return R_NilValue;
+}
+
+
+//' Close all HDF5 handles for a specific file (R6 wrapper)
+//'
+//' @description
+//' Closes all C++ objects tracked in the live-pointer registry that
+//' belong to \code{filename}, then closes any remaining HDF5 handles
+//' for that file at the HDF5 C library level.
+//'
+//' @param filename Absolute path to the HDF5 file (use
+//'   \code{normalizePath()} in R before calling).
+//'
+//' @keywords internal
+// [[Rcpp::export]]
+void rcpp_hdf5_close_file_handles(std::string filename) {
+     try {
+         // 1. Close tracked C++ objects for this file
+         std::vector<void*> to_close;
+         for (auto& kv : live_ptrs()) {
+             auto* ds = static_cast<BigDataStatMeth::hdf5Dataset*>(kv.first);
+             try {
+                 if (ds && ds->getFullPath() == filename)
+                     to_close.push_back(kv.first);
+             } catch (...) {}
+         }
+         for (void* vp : to_close)
+             if (claim_ptr(vp))
+                 delete static_cast<BigDataStatMeth::hdf5Dataset*>(vp);
+             
+             // 2. Close any remaining HDF5 handles for this file at C library level
+             BigDataStatMeth::closeHDF5HandlesForFile(filename);
+             
+     } catch (...) {}
 }

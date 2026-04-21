@@ -24,9 +24,18 @@ blocks and is more efficient when one or both matrices are highly sparse.
 }
 \examples{
 \donttest{
-A <- hdf5_matrix("data.h5", "data/A")
-B <- hdf5_matrix("data.h5", "data/B")
+fn <- tempfile(fileext = ".h5")
+X  <- hdf5_create_matrix(fn, "data/A", data = matrix(rnorm(100), 10, 10))
+X  <- hdf5_create_matrix(fn, "data/B", data = matrix(rnorm(100), 10, 10))
+
+
+A <- hdf5_matrix(fn, "data/A")
+B <- hdf5_matrix(fn, "data/B")
 C <- multiply_sparse(A, B)
+
+hdf5_close_all()
+unlink(fn)
+
 }
 
 }

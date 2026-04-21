@@ -45,18 +45,27 @@ due to memory fragmentation or competing processes.
 }
 \examples{
 \donttest{
-# Check if we can allocate 5GB
-if (can_allocate(5)) {
-  mat <- as.matrix(large_dataset)
+# Check if 1 GB can be safely allocated
+if (can_allocate(1)) {
+  message("1 GB allocation is safe")
 } else {
-  message("Not enough RAM for full conversion")
-  mat <- large_dataset[1:1000, ]  # Load subset
+  message("Not enough RAM for 1 GB allocation")
 }
 
-# More aggressive check (10 percent margin)
-if (can_allocate(8, safety_margin_pct = 10)) {
-  # Riskier allocation
+# Use it to decide how much data to load
+fn <- tempfile(fileext = ".h5")
+X  <- hdf5_create_matrix(fn, "data/M",
+                          data = matrix(rnorm(1000), 100, 10))
+
+size_gb <- prod(dim(X)) * 8 / 1e9   # estimate in GB
+if (can_allocate(size_gb)) {
+  mat <- as.matrix(X)
+} else {
+  mat <- X[1:50, ]   # load subset
 }
+
+hdf5_close_all()
+unlink(fn)
 }
 
 }

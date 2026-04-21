@@ -123,7 +123,7 @@
 //' * The HDF Group. (2000-2010). HDF5 User's Guide.
 //'
 //' @seealso
-//' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices directly
+//' * \code{hdf5_create_matrix} for creating HDF5 matrices directly
 //'
 //' @export
 // [[Rcpp::export]]
@@ -190,7 +190,7 @@ Rcpp::List bdImportTextFile_hdf5( std::string filename,
             }
 
         } else {
-            Rcpp::stop("c++ exception bdImportTextFile_hdf5 File doesn't exists, please, review location");
+            Rf_error("c++ exception bdImportTextFile_hdf5 File doesn't exists, please, review location");
             return(lst_return);
         }
         

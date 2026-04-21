@@ -26,9 +26,8 @@
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5createGroup(tmp, "data")
-#' rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
+#' 
+#' X  <- hdf5_create_matrix(tmp, "data/matrix", data = matrix(rnorm(100), 10, 10))
 #' X <- hdf5_matrix(tmp, "data/matrix")
 #'
 #' X[1:5, 1:3]               # submatrix
@@ -55,14 +54,22 @@
     if (missing(j)) j <- seq_len(ncols)
     
     # Logical -> numeric
+    
+    ##.. 20260419 ..##  if (is.logical(i)) {
+    ##.. 20260419 ..##     if (length(i) != nrows) stop("Logical row index must have length ", nrows)
+    ##.. 20260419 ..##     i <- which(i)
+    ##.. 20260419 ..## }
+    ##.. 20260419 ..## if (is.logical(j)) {
+    ##.. 20260419 ..##     if (length(j) != ncols) stop("Logical column index must have length ", ncols)
+    ##.. 20260419 ..##     j <- which(j)
+    ##.. 20260419 ..## }
     if (is.logical(i)) {
-        if (length(i) != nrows) stop("Logical row index must have length ", nrows)
-        i <- which(i)
+        i <- which(rep_len(i, nrows))
     }
     if (is.logical(j)) {
-        if (length(j) != ncols) stop("Logical column index must have length ", ncols)
-        j <- which(j)
+        j <- which(rep_len(j, ncols))
     }
+    
     
     # Negative indices
     if (is.numeric(i) && any(i < 0)) {

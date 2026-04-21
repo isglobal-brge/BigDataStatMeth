@@ -110,6 +110,6 @@ unlink(c("test.csv", "output.HDF5"))
 }
 \seealso{
 \itemize{
-\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices directly
+\item \code{hdf5_create_matrix} for creating HDF5 matrices directly
 }
 }

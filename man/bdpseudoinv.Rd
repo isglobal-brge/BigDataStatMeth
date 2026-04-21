@@ -90,9 +90,3 @@ Johns Hopkins University Press.
 Theory and Applications, 2nd Edition. Springer.
 }
 }
-\seealso{
-\itemize{
-\item \code{\link{bdpseudoinv_hdf5}} for HDF5-stored matrices
-\item \code{\link{bdSVD_hdf5}} for singular value decomposition
-}
-}

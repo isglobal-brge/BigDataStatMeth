@@ -355,12 +355,9 @@ namespace BigDataStatMeth {
                 double *p = doubleVector.data();
                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, count[1] );
                 
-                Rcpp::Rcout<<"\n"<<resMat.transpose()<<"\n";
                 dsOut-> writeDatasetBlock( Rcpp::wrap(resMat.transpose()), offset, count, stride, block, false);
             }
             
-            // BigDataStatMeth::hdf5Dims* dsdims;
-            // dsdims = new BigDataStatMeth::hdf5Dims(dsOut);
             std::unique_ptr<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
             dsdims.reset(new BigDataStatMeth::hdf5Dims(dsOut));
             

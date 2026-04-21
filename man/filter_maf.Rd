@@ -2,9 +2,21 @@
 % Please edit documentation in R/S3_omics.R
 \name{filter_maf}
 \alias{filter_maf}
+\alias{filter_maf.HDF5Matrix}
 \title{Remove SNPs by Minor Allele Frequency from an HDF5Matrix}
 \usage{
 filter_maf(x, ...)
+
+\method{filter_maf}{HDF5Matrix}(
+  x,
+  out_group = NULL,
+  out_dataset = NULL,
+  maf_threshold = 0.05,
+  by_cols = FALSE,
+  block_size = 100L,
+  overwrite = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{HDF5Matrix} containing SNP data.}
@@ -36,9 +48,19 @@ result is written alongside the input dataset with suffix \code{"_maf_filtered"}
 }
 \examples{
 \donttest{
-X   <- hdf5_matrix("snp.h5", "geno/raw")
-out <- filter_maf(X, maf_threshold = 0.05)          # auto output path
-out <- filter_maf(X, "geno", "maf_filtered")        # explicit output
+fn <- tempfile(fileext = ".h5")
+snps <- matrix(sample(c(0, 1, 2), 200, replace = TRUE,
+                       prob = c(.6, .3, .1)), 20, 10)
+X   <- hdf5_create_matrix(fn, "geno/raw", data = snps)
+
+# Filter with auto output path (adds "_maf_filtered" suffix)
+out <- filter_maf(X, maf_threshold = 0.05)
+
+# Filter with explicit output
+out2 <- filter_maf(X, out_group = "geno",
+                   out_dataset = "maf_filtered", overwrite = TRUE)
+hdf5_close_all()
+unlink(fn)
 }
 
 }

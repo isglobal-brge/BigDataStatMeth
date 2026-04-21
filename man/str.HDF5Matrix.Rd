@@ -20,9 +20,8 @@ Structure of an HDF5Matrix object
 \examples{
 \donttest{
 tmp <- tempfile(fileext = ".h5")
-rhdf5::h5createFile(tmp)
-rhdf5::h5createGroup(tmp, "data")
-rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
+
+X  <- hdf5_create_matrix(tmp, "data/matrix", data = matrix(rnorm(100), 10, 10))
 X <- hdf5_matrix(tmp, "data/matrix")
 
 str(X)

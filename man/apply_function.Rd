@@ -27,11 +27,21 @@ Valid \code{func} values: \code{"QR"}, \code{"CrossProd"},
 }
 \examples{
 \donttest{
-X   <- hdf5_matrix("data.h5", "data/A")
+fn <- tempfile(fileext = ".h5")
+
+# Create two datasets in the same group
+hdf5_create_matrix(fn, "data/A", data = matrix(rnorm(50), 5, 10))
+hdf5_create_matrix(fn, "data/B", data = matrix(rnorm(50), 5, 10))
+
+# Apply CrossProd to all datasets in the group
+X   <- hdf5_matrix(fn, "data/A")
 res <- apply_function(X, func = "CrossProd", out_group = "RESULTS")
+
+hdf5_close_all()
+unlink(fn)
 }
 
 }
 \seealso{
-\code{\link{apply_function.HDF5Matrix}}
+\code{hdf5_apply}
 }

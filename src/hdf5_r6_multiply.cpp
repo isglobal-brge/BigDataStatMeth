@@ -73,6 +73,10 @@ static std::string make_temp_name(const char* prefix)
 //' @param paral Logical or NULL; enable OpenMP parallelisation
 //' @param block_size Integer or NULL; block size (NULL = auto)
 //' @param threads Integer or NULL; thread count when \code{paral = TRUE}
+//' @param outgroup   Character or NULL. Output group in the HDF5 file.
+//'   Default \code{"OUTPUT"}.
+//' @param outdataset Character or NULL. Output dataset name.
+//'   Default \code{"A_x_B"} where A and B are the input dataset names.
 //'
 //' @return Named list with \code{filename} (character) and \code{path}
 //'   (character) locating the result dataset within the HDF5 file.
@@ -83,10 +87,12 @@ Rcpp::List rcpp_hdf5dataset_multiply(SEXP ptr_a,
                                      SEXP ptr_b,
                                      bool transpose_a = false,
                                      bool transpose_b = false,
-                                     Rcpp::Nullable<bool> paral       = R_NilValue,
-                                     Rcpp::Nullable<int>  block_size  = R_NilValue,
-                                     Rcpp::Nullable<int>  threads     = R_NilValue,
-                                     Rcpp::Nullable<int>  compression = R_NilValue)
+                                     Rcpp::Nullable<bool>        paral       = R_NilValue,
+                                     Rcpp::Nullable<int>         block_size  = R_NilValue,
+                                     Rcpp::Nullable<int>         threads     = R_NilValue,
+                                     Rcpp::Nullable<int>         compression = R_NilValue,
+                                     Rcpp::Nullable<std::string> outgroup    = R_NilValue,
+                                     Rcpp::Nullable<std::string> outdataset  = R_NilValue)
 {
     Rcpp::List lst = Rcpp::List::create(
         Rcpp::Named("filename") = "", Rcpp::Named("path") = "");
@@ -125,9 +131,14 @@ Rcpp::List rcpp_hdf5dataset_multiply(SEXP ptr_a,
         if (dsA->getDatasetptr() == nullptr || dsB->getDatasetptr() == nullptr)
             throw std::runtime_error("Failed to open datasets");
 
-        const std::string result_name  = make_temp_name("tmp_mult");
+        const std::string out_group = outgroup.isNull()
+            ? std::string("OUTPUT")
+                : Rcpp::as<std::string>(outgroup);
+        const std::string result_name = outdataset.isNull()
+            ? (nameA + "_x_" + nameB)
+            : Rcpp::as<std::string>(outdataset);
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(filename, out_group, result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         BigDataStatMeth::multiplication(dsA.get(), dsB.get(), dsC.get(),
@@ -135,7 +146,7 @@ Rcpp::List rcpp_hdf5dataset_multiply(SEXP ptr_a,
                                         paral, block_size, threads);
 
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + result_name;
+        lst["path"] = out_group + "/" + result_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("HDF5 file error: %s", e.getDetailMsg().c_str());
@@ -166,6 +177,11 @@ Rcpp::List rcpp_hdf5dataset_multiply(SEXP ptr_a,
 //' @param paral Logical or NULL; enable OpenMP parallelisation
 //' @param block_size Integer or NULL; block size (NULL = auto)
 //' @param threads Integer or NULL; thread count when \code{paral = TRUE}
+//' @param outgroup   Character or NULL. Output group in the HDF5 file.
+//'   Default \code{"OUTPUT"}.
+//' @param outdataset Character or NULL. Output dataset name.
+//'   Default \code{"CrossProd_A"} (single matrix) or
+//'   \code{"CrossProd_A_x_B"} (two matrices).
 //'
 //' @return Named list with \code{filename} and \code{path} of the result.
 //'
@@ -176,7 +192,9 @@ Rcpp::List rcpp_hdf5dataset_crossprod(SEXP ptr_a,
                                       Rcpp::Nullable<bool> paral       = R_NilValue,
                                       Rcpp::Nullable<int>  block_size  = R_NilValue,
                                       Rcpp::Nullable<int>  threads     = R_NilValue,
-                                      Rcpp::Nullable<int>  compression = R_NilValue)
+                                      Rcpp::Nullable<int>  compression = R_NilValue,
+                                      Rcpp::Nullable<std::string> outgroup    = R_NilValue,
+                                      Rcpp::Nullable<std::string> outdataset  = R_NilValue)
 {
     Rcpp::List lst = Rcpp::List::create(Rcpp::Named("filename") = "",
                                         Rcpp::Named("path")     = "");
@@ -217,9 +235,15 @@ Rcpp::List rcpp_hdf5dataset_crossprod(SEXP ptr_a,
             dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(),
             iblockfactor, block_size);
 
-        const std::string result_name  = make_temp_name("tmp_cprod");
+        const std::string out_group = outgroup.isNull()
+            ? std::string("OUTPUT")
+                : Rcpp::as<std::string>(outgroup);
+        const std::string result_name = outdataset.isNull()
+            ? (bisSymetric ? ("CrossProd_" + nameA)
+                   : ("CrossProd_" + nameA + "_x_" + nameB))
+            : Rcpp::as<std::string>(outdataset);
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(filename, out_group, result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         bool bparal = false;
@@ -237,7 +261,7 @@ Rcpp::List rcpp_hdf5dataset_crossprod(SEXP ptr_a,
         }
 
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + result_name;
+        lst["path"] = out_group + "/" + result_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("HDF5 file error: %s", e.getDetailMsg().c_str());
@@ -267,6 +291,11 @@ Rcpp::List rcpp_hdf5dataset_crossprod(SEXP ptr_a,
 //' @param paral Logical or NULL; enable OpenMP parallelisation
 //' @param block_size Integer or NULL; block size (NULL = auto)
 //' @param threads Integer or NULL; thread count when \code{paral = TRUE}
+//' @param outgroup   Character or NULL. Output group in the HDF5 file.
+//'   Default \code{"OUTPUT"}.
+//' @param outdataset Character or NULL. Output dataset name.
+//'   Default \code{"tCrossProd_A"} (single matrix) or
+//'   \code{"tCrossProd_A_x_B"} (two matrices).
 //'
 //' @return Named list with \code{filename} and \code{path} of the result.
 //'
@@ -277,7 +306,9 @@ Rcpp::List rcpp_hdf5dataset_tcrossprod(SEXP ptr_a,
                                        Rcpp::Nullable<bool> paral       = R_NilValue,
                                        Rcpp::Nullable<int>  block_size  = R_NilValue,
                                        Rcpp::Nullable<int>  threads     = R_NilValue,
-                                       Rcpp::Nullable<int>  compression = R_NilValue)
+                                       Rcpp::Nullable<int>  compression = R_NilValue,
+                                       Rcpp::Nullable<std::string> outgroup   = R_NilValue,
+                                       Rcpp::Nullable<std::string> outdataset = R_NilValue)
 {
     Rcpp::List lst = Rcpp::List::create(Rcpp::Named("filename") = "",
                                         Rcpp::Named("path")     = "");
@@ -318,9 +349,15 @@ Rcpp::List rcpp_hdf5dataset_tcrossprod(SEXP ptr_a,
             dsA->nrows(), dsA->ncols(), dsB->nrows(), dsB->ncols(),
             iblockfactor, block_size);
 
-        const std::string result_name  = make_temp_name("tmp_tcprod");
+        const std::string out_group = outgroup.isNull()
+            ? std::string("OUTPUT")
+                : Rcpp::as<std::string>(outgroup);
+        const std::string result_name = outdataset.isNull()
+            ? (bisSymetric ? ("tCrossProd_" + nameA)
+                   : ("tCrossProd_" + nameA + "_x_" + nameB))
+            : Rcpp::as<std::string>(outdataset);
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(filename, out_group, result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         bool bparal = false;
@@ -338,7 +375,7 @@ Rcpp::List rcpp_hdf5dataset_tcrossprod(SEXP ptr_a,
         }
 
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + result_name;
+        lst["path"] = out_group + "/" + result_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("HDF5 file error: %s", e.getDetailMsg().c_str());

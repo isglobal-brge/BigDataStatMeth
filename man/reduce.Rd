@@ -20,11 +20,23 @@ group as \code{x} into a single dataset using a binary operation.
 }
 \examples{
 \donttest{
-partial <- hdf5_matrix("data.h5", "partials/chunk_0")
-total   <- reduce(partial, func = "+")   # sums all datasets in "partials/"
+fn <- tempfile(fileext = ".h5")
+
+# Create three matrices in the same group
+hdf5_create_matrix(fn, "partials/chunk_0", data = matrix(1:100, 10, 10))
+hdf5_create_matrix(fn, "partials/chunk_1", data = matrix(1:100, 10, 10))
+hdf5_create_matrix(fn, "partials/chunk_2", data = matrix(1:100, 10, 10))
+
+# Open one as entry point — reduce() operates on its whole group
+partial <- hdf5_matrix(fn, "partials/chunk_0")
+total   <- reduce(partial, func = "+")
+dim(total)
+
+hdf5_close_all()
+unlink(fn)
 }
 
 }
 \seealso{
-\code{\link{reduce.HDF5Matrix}}
+\code{\link{hdf5_reduce}} for the standalone group-level version.
 }

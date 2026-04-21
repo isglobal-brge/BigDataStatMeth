@@ -63,49 +63,51 @@
 //'
 //' The function opens the HDF5 file in read-only mode to ensure data safety.
 //'
-//' @param filename Character string. Path to the HDF5 file.
-//' @param group Character string. Path to the group within the HDF5 file.
-//' @param prefix Optional character string. If provided, only returns datasets
-//'   starting with this prefix.
+//' @param filename  Character string. Path to the HDF5 file.
+//' @param group     Character string or \code{NULL}. Group path within the
+//'   HDF5 file. If \code{NULL} (default), the entire file is traversed
+//'   recursively and dataset paths are returned relative to the root
+//'   (e.g. \code{"INPUT/A"}, \code{"RESULTS/SVD/d"}).
+//' @param prefix    Optional character string. Only return datasets whose
+//'   name starts with this prefix.
+//' @param recursive Logical. If \code{TRUE}, recurse into subgroups and
+//'   return full relative paths. Ignored when \code{group = NULL} (always
+//'   recursive). Default \code{FALSE}.
 //'
 //' @return Character vector containing dataset names.
 //'
 //' @examples
 //' \donttest{
-//' 
-//'     # Create a test HDF5 file
-//'     fn <- tempfile(fileext = ".h5")
-//'     X <- matrix(rnorm(100), 10, 10)
-//'     Y <- matrix(rnorm(100), 10, 10)
-//' 
-//'     # Save matrices to HDF5
-//'     bdCreate_hdf5_matrix(fn, X, "data", "matrix1",
-//'                         overwriteFile = TRUE)
-//'     bdCreate_hdf5_matrix(fn, Y, "data", "matrix2",
-//'                         overwriteFile = FALSE)
-//' 
-//'     # List all datasets in group
-//'     datasets <- bdgetDatasetsList_hdf5(fn, "data")
-//'     print(datasets)
-//' 
-//'     # List datasets with prefix "matrix"
-//'     filtered <- bdgetDatasetsList_hdf5(fn, "data", prefix = "matrix")
-//'     print(filtered)
-//' 
-//'     # Cleanup
-//'     hdf5_close_all()
-//'     unlink(fn)
+//' fn <- tempfile(fileext = ".h5")
+//' X  <- hdf5_create_matrix(fn, "INPUT/A",  data = matrix(rnorm(100), 10, 10))
+//' Y  <- hdf5_create_matrix(fn, "INPUT/B",  data = matrix(rnorm(100), 10, 10))
+//' Z  <- hdf5_create_matrix(fn, "RESULTS/C",data = matrix(rnorm(100), 10, 10))
+//'
+//' # All datasets in the file (recursive from root)
+//' bdgetDatasetsList_hdf5(fn)
+//'
+//' # Only datasets in INPUT group
+//' bdgetDatasetsList_hdf5(fn, group = "INPUT")
+//'
+//' # INPUT group, recursive (same result here, no subgroups)
+//' bdgetDatasetsList_hdf5(fn, group = "INPUT", recursive = TRUE)
+//'
+//' # Filter by prefix
+//' bdgetDatasetsList_hdf5(fn, group = "INPUT", prefix = "A")
+//'
+//' hdf5_close_all()
+//' unlink(fn)
 //' }
 //'
 //' @references
 //' * The HDF Group. (2000-2010). HDF5 User's Guide.
 //'
-//' @seealso
-//' * \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
-//'
 //' @export
 // [[Rcpp::export]]
-Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix = R_NilValue)
+Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename,
+                             Rcpp::Nullable<std::string> group = R_NilValue,
+                             Rcpp::Nullable<std::string> prefix = R_NilValue,
+                             bool  recursive = false)
 {
     
     // H5File* file = nullptr;
@@ -117,17 +119,17 @@ Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rc
         
         H5::Exception::dontPrint();
         
-        std::string strprefix;
+        std::string strgroup  = group.isNull()  ? "/"  : Rcpp::as<std::string>(group);
+        std::string strprefix = prefix.isNull() ? ""   : Rcpp::as<std::string>(prefix);
         
-        if(prefix.isNull()){  strprefix = "" ;
-        } else {   strprefix = Rcpp::as<std::string>(prefix);}
+        // When no group is specified, recurse by default so the user sees everything
+        bool brecursive = group.isNull() ? true : recursive;
         
         fQuery = new BigDataStatMeth::hdf5File(filename, false);
         fQuery->openFile("r");
         
         if( fQuery->getFileptr() != nullptr) {
-            // Get dataset names without prefix, all datasets inside the group
-            groupDatasets =  fQuery->getDatasetNames(group, strprefix, "");
+            groupDatasets = fQuery->getAllDatasetNames(strgroup, strprefix, brecursive);
         } else {
             delete fQuery; fQuery = nullptr;
             Rcpp::stop("c++ exception bdgetDatasetsList_hdf5 File does not exist");

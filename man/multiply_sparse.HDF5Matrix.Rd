@@ -7,6 +7,8 @@
 \method{multiply_sparse}{HDF5Matrix}(
   x,
   y,
+  outgroup = NULL,
+  outdataset = NULL,
   block_size = -1L,
   mix_block = -1L,
   paral = NULL,
@@ -19,6 +21,12 @@
 \item{x}{An \code{HDF5Matrix}.}
 
 \item{y}{An \code{HDF5Matrix}. Same HDF5 file as \code{x}.}
+
+\item{outgroup}{Character or \code{NULL}. Output group in the HDF5 file.
+Default \code{"OUTPUT"}.}
+
+\item{outdataset}{Character or \code{NULL}. Output dataset name.
+Default is constructed from the operation and input names.}
 
 \item{block_size}{Integer. Block size hint; -1 = auto (default).}
 

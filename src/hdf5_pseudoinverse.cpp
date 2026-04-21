@@ -113,9 +113,6 @@
 //' * Ben-Israel, A., & Greville, T. N. E. (2003). Generalized Inverses:
 //'   Theory and Applications, 2nd Edition. Springer.
 //'
-//' @seealso
-//' * \code{\link{bdpseudoinv_hdf5}} for HDF5-stored matrices
-//' * \code{\link{bdSVD_hdf5}} for singular value decomposition
 //'
 //' @export
 // [[Rcpp::export]]
@@ -215,29 +212,20 @@ Rcpp::RObject bdpseudoinv( Rcpp::RObject X,
 //' }
 //'
 //' @examples
-//' 
-//'     # Create a singular matrix
-//'     X <- matrix(c(1,2,3,2,4,6), 2, 3)
+//' \donttest{
 //'     fn <- tempfile(fileext = ".h5")
+//'     X <- matrix(c(1,2,3,2,4,6), 2, 3)
+//'     hdf5_create_matrix(fn, "data/X", data = X)
 //' 
-//'     # Save to HDF5
-//'     bdCreate_hdf5_matrix( filename = fn,
-//'                           object = X,
-//'                           group = "data",
-//'                           dataset = "X",
-//'                           overwriteFile = TRUE)
-//' 
-//'     # Compute pseudoinverse
-//'     bdpseudoinv_hdf5( filename = fn,
-//'                       group = "data",
-//'                       dataset = "X",
-//'                       outgroup = "results",
-//'                       outdataset = "X_pinv",
-//'                       overwrite = TRUE)
-//' 
-//'     # Cleanup
+//'     bdpseudoinv_hdf5(filename = fn,
+//'                      group = "data",
+//'                      dataset = "X",
+//'                      outgroup = "results",
+//'                      outdataset = "X_pinv",
+//'                      overwrite = TRUE)
 //'     hdf5_close_all()
 //'     unlink(fn)
+//' }
 //'
 //' @references
 //' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.

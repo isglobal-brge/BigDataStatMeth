@@ -32,9 +32,18 @@
 #'
 #' @examples
 #' \donttest{
-#' A <- hdf5_matrix("data.h5", "data/A")
-#' B <- hdf5_matrix("data.h5", "data/B")
+#' fn <- tempfile(fileext = ".h5")
+#' X  <- hdf5_create_matrix(fn, "data/A", data = matrix(rnorm(100), 10, 10))
+#' X  <- hdf5_create_matrix(fn, "data/B", data = matrix(rnorm(100), 10, 10))
+#' 
+#' 
+#' A <- hdf5_matrix(fn, "data/A")
+#' B <- hdf5_matrix(fn, "data/B")
 #' C <- multiply_sparse(A, B)
+#' 
+#' hdf5_close_all()
+#' unlink(fn)
+#' 
 #' }
 #'
 #' @seealso \code{\link{multiply_sparse.HDF5Matrix}}
@@ -51,6 +60,10 @@ multiply_sparse <- function(x, y, ...) UseMethod("multiply_sparse")
 #'
 #' @param x           An \code{HDF5Matrix}.
 #' @param y           An \code{HDF5Matrix}. Same HDF5 file as \code{x}.
+#' @param outgroup  Character or \code{NULL}. Output group in the HDF5 file.
+#'   Default \code{"OUTPUT"}.
+#' @param outdataset Character or \code{NULL}. Output dataset name.
+#'   Default is constructed from the operation and input names.
 #' @param block_size  Integer. Block size hint; -1 = auto (default).
 #' @param mix_block   Integer. Memory block size for parallel path; -1 = auto.
 #' @param paral       Logical or NULL.
@@ -61,6 +74,8 @@ multiply_sparse <- function(x, y, ...) UseMethod("multiply_sparse")
 #'
 #' @exportS3Method
 multiply_sparse.HDF5Matrix <- function(x, y,
+                                       outgroup     = NULL,
+                                       outdataset   = NULL,
                                         block_size  = -1L,
                                         mix_block   = -1L,
                                         paral       = NULL,
@@ -68,6 +83,8 @@ multiply_sparse.HDF5Matrix <- function(x, y,
                                         compression = NULL,
                                         ...) {
     x$multiply_sparse(y,
+                      outgroup    = outgroup,
+                      outdataset  = outdataset,
                       block_size  = block_size,
                       mix_block   = mix_block,
                       paral       = paral,
@@ -101,20 +118,24 @@ multiply_sparse.HDF5Matrix <- function(x, y,
 #'
 #' @examples
 #' \donttest{
-#' X      <- hdf5_matrix("data.h5", "data/X")   # 20000 × 1000
+#' 
+#' fn <- tempfile(fileext = ".h5")
+#' X  <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(2000000), 20000, 100))
+#' 
+#' X      <- hdf5_matrix( fn, "data/X")   # 20000 × 1000
 #' blocks <- split(X, n_blocks = 4)             # 4 row-blocks of ~5000 rows each
 #' }
 #'
 #' @exportS3Method
-split.HDF5Matrix <- function(x,
+split.HDF5Matrix <- function( x,
                               f            = NULL,
+                              drop = FALSE,
                               n_blocks     = -1L,
                               block_size   = -1L,
                               bycols       = FALSE,
                               out_group    = "SPLIT",
                               out_dataset  = NULL,
                               overwrite    = FALSE,
-                              drop         = FALSE,
                               ...) {
     x$split(n_blocks   = n_blocks,
             block_size = block_size,
@@ -139,11 +160,23 @@ split.HDF5Matrix <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' partial <- hdf5_matrix("data.h5", "partials/chunk_0")
-#' total   <- reduce(partial, func = "+")   # sums all datasets in "partials/"
+#' fn <- tempfile(fileext = ".h5")
+#' 
+#' # Create three matrices in the same group
+#' hdf5_create_matrix(fn, "partials/chunk_0", data = matrix(1:100, 10, 10))
+#' hdf5_create_matrix(fn, "partials/chunk_1", data = matrix(1:100, 10, 10))
+#' hdf5_create_matrix(fn, "partials/chunk_2", data = matrix(1:100, 10, 10))
+#' 
+#' # Open one as entry point — reduce() operates on its whole group
+#' partial <- hdf5_matrix(fn, "partials/chunk_0")
+#' total   <- reduce(partial, func = "+")
+#' dim(total)
+#' 
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
-#' @seealso \code{\link{reduce.HDF5Matrix}}
+#' @seealso \code{\link{hdf5_reduce}} for the standalone group-level version.
 #'
 #' @export
 reduce <- function(x, ...) UseMethod("reduce")
@@ -156,6 +189,7 @@ reduce.HDF5Matrix <- function(x,
                                func         = "+",
                                overwrite    = FALSE,
                                remove_input = FALSE,
+                               drop = FALSE,
                                ...) {
     x$reduce(out_group    = out_group,
              out_dataset  = out_dataset,
@@ -186,11 +220,21 @@ reduce.HDF5Matrix <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' X   <- hdf5_matrix("data.h5", "data/A")
+#' fn <- tempfile(fileext = ".h5")
+#' 
+#' # Create two datasets in the same group
+#' hdf5_create_matrix(fn, "data/A", data = matrix(rnorm(50), 5, 10))
+#' hdf5_create_matrix(fn, "data/B", data = matrix(rnorm(50), 5, 10))
+#' 
+#' # Apply CrossProd to all datasets in the group
+#' X   <- hdf5_matrix(fn, "data/A")
 #' res <- apply_function(X, func = "CrossProd", out_group = "RESULTS")
+#' 
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
-#' @seealso \code{\link{apply_function.HDF5Matrix}}
+#' @seealso \code{hdf5_apply}
 #'
 #' @export
 apply_function <- function(x, ...) UseMethod("apply_function")

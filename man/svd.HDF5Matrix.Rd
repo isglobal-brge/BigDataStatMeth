@@ -50,8 +50,8 @@ threshold (default 0).}
 Named list with:
 \describe{
 \item{\code{d}}{Numeric vector of non-negative singular values, decreasing.}
-\item{\code{u}}{HDF5Matrix of left  singular vectors, \code{nrow(x) × nu}.}
-\item{\code{v}}{HDF5Matrix of right singular vectors, \code{ncol(x) × nv}.}
+\item{\code{u}}{HDF5Matrix of left  singular vectors, \code{nrow(x) x nu}.}
+\item{\code{v}}{HDF5Matrix of right singular vectors, \code{ncol(x) x nv}.}
 }
 }
 \description{

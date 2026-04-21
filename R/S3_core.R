@@ -16,9 +16,8 @@ NULL
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5createGroup(tmp, "data")
-#' rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
+#' 
+#' X  <- hdf5_create_matrix(tmp, "data/matrix", data = matrix(rnorm(100), 10, 10))
 #' X <- hdf5_matrix(tmp, "data/matrix")
 #'
 #' dim(X)    # c(10, 10)
@@ -66,9 +65,8 @@ length.HDF5Matrix <- function(x) {
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5createGroup(tmp, "data")
-#' rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
+#' 
+#' X  <- hdf5_create_matrix(tmp, "data/matrix", data = matrix(rnorm(100), 10, 10))
 #' X <- hdf5_matrix(tmp, "data/matrix")
 #'
 #' print(X)
@@ -93,9 +91,8 @@ print.HDF5Matrix <- function(x, ...) {
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5createGroup(tmp, "data")
-#' rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
+#' 
+#' X  <- hdf5_create_matrix(tmp, "data/matrix", data = matrix(rnorm(100), 10, 10))
 #' X <- hdf5_matrix(tmp, "data/matrix")
 #'
 #' str(X)
@@ -151,10 +148,9 @@ str.HDF5Matrix <- function(object, ...) {
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5createGroup(tmp, "data")
-#' rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
 #'
+#' X  <- hdf5_create_matrix(tmp, "data/matrix", data = matrix(rnorm(100), 10, 10))
+#' 
 #' # Open matrix
 #' X <- hdf5_matrix(tmp, "data/matrix")
 #' data <- X[1:5, 1:5]
@@ -199,9 +195,8 @@ close.HDF5Matrix <- function(con, ...) {
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' rhdf5::h5createFile(tmp)
-#' rhdf5::h5createGroup(tmp, "data")
-#' rhdf5::h5write(matrix(1:100, 10, 10), tmp, "data/matrix")
+#' 
+#' X  <- hdf5_create_matrix(tmp, "data/matrix", data = matrix(rnorm(100), 10, 10))
 #'
 #' X <- hdf5_matrix(tmp, "data/matrix")
 #' is_open(X)  # TRUE

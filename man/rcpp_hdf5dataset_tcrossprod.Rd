@@ -10,7 +10,9 @@ rcpp_hdf5dataset_tcrossprod(
   paral = NULL,
   block_size = NULL,
   threads = NULL,
-  compression = NULL
+  compression = NULL,
+  outgroup = NULL,
+  outdataset = NULL
 )
 }
 \arguments{
@@ -23,6 +25,13 @@ rcpp_hdf5dataset_tcrossprod(
 \item{block_size}{Integer or NULL; block size (NULL = auto)}
 
 \item{threads}{Integer or NULL; thread count when \code{paral = TRUE}}
+
+\item{outgroup}{Character or NULL. Output group in the HDF5 file.
+Default \code{"OUTPUT"}.}
+
+\item{outdataset}{Character or NULL. Output dataset name.
+Default \code{"tCrossProd_A"} (single matrix) or
+\code{"tCrossProd_A_x_B"} (two matrices).}
 }
 \value{
 Named list with \code{filename} and \code{path} of the result.

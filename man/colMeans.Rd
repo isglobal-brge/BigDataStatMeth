@@ -71,10 +71,10 @@ matrix into RAM.
 \examples{
 \donttest{
 tmp <- tempfile(fileext = ".h5")
-X <- hdf5_create_matrix(tmp, "data", "M",
-                         data = matrix(rnorm(200), 20, 10))
+X <- hdf5_create_matrix(tmp, "data/M", data = matrix(rnorm(200), 20, 10))
 cm <- colMeans(X)
-X$close(); unlink(tmp)
+hdf5_close_all()
+unlink(tmp)
 }
 
 }

@@ -6,23 +6,23 @@
 \usage{
 \method{as.data.frame}{HDF5Matrix}(
   x,
-  force = FALSE,
-  max_size_mb = NULL,
   row.names = NULL,
   optional = FALSE,
+  force = FALSE,
+  max_size_mb = NULL,
   ...
 )
 }
 \arguments{
 \item{x}{An \code{HDF5Matrix} object}
 
-\item{force}{Logical. If \code{TRUE}, skip size warnings.}
-
-\item{max_size_mb}{Numeric. Maximum size in MB to convert without warning.}
-
 \item{row.names}{Logical or character vector. Row names to use.}
 
 \item{optional}{Logical. Passed to \code{as.data.frame}.}
+
+\item{force}{Logical. If \code{TRUE}, skip size warnings.}
+
+\item{max_size_mb}{Numeric. Maximum size in MB to convert without warning.}
 
 \item{...}{Additional arguments passed to \code{as.data.frame}}
 }
@@ -40,7 +40,7 @@ size checks), then to data.frame. All memory warnings apply.
 \examples{
 \donttest{
     fn <- tempfile(fileext = ".h5")
-    X <- hdf5_create_matrix(fn, "data/X", nrow = 100, ncol = 5)
+    X <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(500), 100, 5))
     df <- as.data.frame(X)
     hdf5_close_all()
     unlink(fn)

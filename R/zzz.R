@@ -15,6 +15,11 @@
         rcpp_hdf5_close_all_registry(),
         error = function(e) invisible(NULL)
     )
+    
+    # tryCatch(
+    #     rcpp_hdf5_close_all_handles_unsafe(), 
+    #     error = function(e) invisible(NULL)
+    # )
     # Force GC to trigger any remaining finalizers while C++ is still loaded
     gc()
 }

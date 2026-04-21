@@ -25,15 +25,26 @@
 #'
 #' @examples
 #' \donttest{
-#' snps <- matrix(sample(c(0,1,2,NA), 200, replace=TRUE, prob=c(.3,.3,.3,.1)),
-#'                20, 10)
-#' X   <- hdf5_create_matrix("snp.h5", "geno/raw", data = snps)
-#' imp <- impute_snps(X)   # in-place; or specify out_group/out_dataset
+#' tmp <- tempfile(fileext = ".h5")
+#' 
+#' # SNP data: 0/1/2 coded, 3 = missing (not NA)
+#' snps <- matrix(sample(c(0L, 1L, 2L, 3L), 100 * 20,
+#'                        replace = TRUE,
+#'                        prob    = c(0.3, 0.3, 0.3, 0.1)),
+#'                nrow = 100, ncol = 20)
+#' 
+#' X   <- hdf5_create_matrix(tmp, "geno/raw", data = snps)
+#' imp <- impute_snps(X, out_group = "geno", out_dataset = "imputed")
+#' dim(imp)
+#' 
+#' hdf5_close_all()
+#' unlink(tmp)
 #' }
 #'
 #' @export
 impute_snps <- function(x, ...) UseMethod("impute_snps")
 
+#' @rdname impute_snps
 #' @export
 impute_snps.HDF5Matrix <- function(x,
                                     out_group   = NULL,
@@ -73,14 +84,25 @@ impute_snps.HDF5Matrix <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' X   <- hdf5_matrix("snp.h5", "geno/raw")
-#' out <- filter_low_coverage(X, pcent = 0.1)          # auto output path
-#' out <- filter_low_coverage(X, "geno", "filtered")   # explicit output
+#' fn <- tempfile(fileext = ".h5")
+#' snps <- matrix(sample(c(0, 1, 2, NA), 200, replace = TRUE,
+#'                        prob = c(.25, .25, .25, .25)), 20, 10)
+#' X   <- hdf5_create_matrix(fn, "geno/raw", data = snps)
+#' 
+#' # Filter with auto output path (adds "_filtered" suffix)
+#' out <- filter_low_coverage(X, pcent = 0.1)
+#' 
+#' # Filter with explicit output
+#' out2 <- filter_low_coverage(X, out_group = "geno",
+#'                              out_dataset = "filtered", overwrite = TRUE)
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @export
 filter_low_coverage <- function(x, ...) UseMethod("filter_low_coverage")
 
+#' @rdname filter_low_coverage
 #' @export
 filter_low_coverage.HDF5Matrix <- function(x,
                                             out_group   = NULL,
@@ -124,14 +146,25 @@ filter_low_coverage.HDF5Matrix <- function(x,
 #'
 #' @examples
 #' \donttest{
-#' X   <- hdf5_matrix("snp.h5", "geno/raw")
-#' out <- filter_maf(X, maf_threshold = 0.05)          # auto output path
-#' out <- filter_maf(X, "geno", "maf_filtered")        # explicit output
+#' fn <- tempfile(fileext = ".h5")
+#' snps <- matrix(sample(c(0, 1, 2), 200, replace = TRUE,
+#'                        prob = c(.6, .3, .1)), 20, 10)
+#' X   <- hdf5_create_matrix(fn, "geno/raw", data = snps)
+#' 
+#' # Filter with auto output path (adds "_maf_filtered" suffix)
+#' out <- filter_maf(X, maf_threshold = 0.05)
+#' 
+#' # Filter with explicit output
+#' out2 <- filter_maf(X, out_group = "geno",
+#'                    out_dataset = "maf_filtered", overwrite = TRUE)
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
 #' @export
 filter_maf <- function(x, ...) UseMethod("filter_maf")
 
+#' @rdname filter_maf
 #' @export
 filter_maf.HDF5Matrix <- function(x,
                                    out_group     = NULL,

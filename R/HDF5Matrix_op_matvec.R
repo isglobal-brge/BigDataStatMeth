@@ -112,12 +112,17 @@ HDF5Matrix$set("public", "diag_op",
 #
 # @param other       An HDF5Matrix. Must be in the same HDF5 file.
 # @param op          Character. "+" (default), "-", "*", "/".
+# @param outgroup  Character or \code{NULL}. HDF5 group where the result is
+#   stored. Default \code{"OUTPUT"}.
+# @param outdataset Character or \code{NULL}. Dataset name for the result.
 # @param paral       Logical or NULL.
 # @param threads     Integer or NULL.
 # @param compression Integer (0-9) or NULL.
 # @return A new HDF5Matrix containing the diagonal result.
 function(other,
          op          = "+",
+         outgroup    = NULL,
+         outdataset  = NULL,
          paral       = NULL,
          threads     = NULL,
          compression = NULL) {
@@ -143,7 +148,9 @@ function(other,
         op          = op,
         paral       = paral_eff,
         threads     = threads_eff,
-        compression = compression_eff
+        compression = compression_eff,
+        outgroup   = outgroup,
+        outdataset = outdataset
     )
 
     hdf5_matrix(res$filename, res$path)
@@ -160,12 +167,17 @@ HDF5Matrix$set("public", "diag_scale",
 #
 # @param scalar      Numeric scalar.
 # @param op          Character. "multiply" (default), "add", "subtract", "divide".
+# @param outgroup  Character or \code{NULL}. HDF5 group where the result is
+#   stored. Default \code{"OUTPUT"}.
+# @param outdataset Character or \code{NULL}. Dataset name for the result.
 # @param paral       Logical or NULL.
 # @param threads     Integer or NULL.
 # @param compression Integer (0-9) or NULL.
 # @return A new HDF5Matrix with scaled diagonal.
 function(scalar,
          op          = "multiply",
+         outgroup    = NULL,
+         outdataset  = NULL,
          overwrite   = FALSE, 
          paral       = NULL,
          threads     = NULL,
@@ -189,7 +201,9 @@ function(scalar,
         op_code     = op_code,
         paral       = paral_eff,
         threads     = threads_eff,
-        compression = compression_eff
+        compression = compression_eff,
+        outgroup   = outgroup,
+        outdataset = outdataset
     )
 
     hdf5_matrix(res$filename, res$path)

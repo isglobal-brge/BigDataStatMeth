@@ -7,7 +7,15 @@
 \usage{
 diag_scale(x, scalar, op = "multiply", ...)
 
-\method{diag_scale}{HDF5Matrix}(x, scalar, op = "multiply", overwrite = FALSE, ...)
+\method{diag_scale}{HDF5Matrix}(
+  x,
+  scalar,
+  op = "multiply",
+  outgroup = NULL,
+  outdataset = NULL,
+  overwrite = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{HDF5Matrix}.}
@@ -20,13 +28,21 @@ diag_scale(x, scalar, op = "multiply", ...)
 \item{\dots}{Additional arguments passed to \code{x$diag_scale()}:
 \code{outgroup}, \code{outdataset}, \code{overwrite},
 \code{threads}, \code{compression}.}
+
+\item{outgroup}{Character or \code{NULL}. HDF5 group where the result is
+stored. Default \code{"OUTPUT"}.}
+
+\item{outdataset}{Character or \code{NULL}. Dataset name for the result.}
+
+\item{overwrite}{Logical. If \code{TRUE}, overwrite the existing result
+dataset. Default \code{FALSE}.}
 }
 \value{
 A new \code{HDF5Matrix}.
 }
 \description{
 Applies a scalar arithmetic operation to the diagonal elements of an
-\code{\link{HDF5Matrix}}. Off-diagonal elements are not modified.
+\code{HDF5Matrix}. Off-diagonal elements are not modified.
 Delegates to \code{bdDiag_scalar_hdf5()}.
 }
 \examples{
@@ -34,7 +50,7 @@ Delegates to \code{bdDiag_scalar_hdf5()}.
 tmp <- tempfile(fileext = ".h5")
 M   <- hdf5_create_matrix(tmp, "data/M", data = diag(5))
 R   <- diag_scale(M, scalar = 3, op = "multiply")
-close(M); close(R)
+hdf5_close_all()
 unlink(tmp)
 }
 

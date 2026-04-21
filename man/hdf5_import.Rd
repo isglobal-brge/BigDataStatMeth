@@ -74,36 +74,24 @@ without loading them entirely into memory.
 }
 \examples{
 \donttest{
-# Import local CSV
-mat <- hdf5_import(
-  source = "data.csv",
-  filename = "analysis.h5",
-  dataset = "raw/data"
-)
-dim(mat)  # Ready to use
+csv_file  <- tempfile(fileext = ".csv")
+hdf5_file <- tempfile(fileext = ".h5")
 
-# Import from URL
-mat <- hdf5_import(
-  source = "https://example.com/data.tsv.gz",
-  filename = "downloaded.h5",
-  dataset = "external/dataset",
-  sep = "\t"
-)
+# Write sample numeric data
+write.table(matrix(rnorm(50), nrow = 10, ncol = 5),
+            csv_file, sep = ",", row.names = FALSE, col.names = TRUE)
 
-# Custom options
+# Import CSV to HDF5
 mat <- hdf5_import(
-  source = "experiment.txt",
-  filename = "results.h5",
-  dataset = "exp1/measurements",
-  sep = ";",
-  header = c("time", "value1", "value2"),
-  rownames = TRUE,
-  overwrite = TRUE
+  source   = csv_file,
+  filename = hdf5_file,
+  dataset  = "raw/data",
+  sep      = ","
 )
+dim(mat)
 
-# Work with imported data immediately
-subset <- mat[1:100, ]
-result <- cor(mat)
+hdf5_close_all()
+unlink(c(csv_file, hdf5_file))
 }
 
 }

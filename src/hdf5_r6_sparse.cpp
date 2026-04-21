@@ -37,6 +37,9 @@ static std::string sparse_temp_name(const char* prefix)
  * @param paral      Logical or NULL; enable OpenMP parallelisation.
  * @param threads    Integer or NULL; thread count.
  * @param compression Integer or NULL; gzip level (NULL = inherit from A).
+ * @param outgroup   Character or NULL. Output group. Default \code{"OUTPUT"}.
+ * @param outdataset Character or NULL. Output dataset name.
+ *      Default \code{"A_sparse_x_B"} where A and B are the input dataset names.
  * @return Named list with elements "filename" and "path" of the result dataset.
  */
 // [[Rcpp::export]]
@@ -46,7 +49,9 @@ Rcpp::List rcpp_hdf5dataset_multiply_sparse(SEXP ptr_a,
                                              int  mix_block   = -1,
                                              Rcpp::Nullable<bool> paral       = R_NilValue,
                                              Rcpp::Nullable<int>  threads     = R_NilValue,
-                                             Rcpp::Nullable<int>  compression = R_NilValue)
+                                             Rcpp::Nullable<int>  compression = R_NilValue,
+                                             Rcpp::Nullable<std::string> outgroup   = R_NilValue,
+                                             Rcpp::Nullable<std::string> outdataset = R_NilValue)
 {
     Rcpp::List lst = Rcpp::List::create(
         Rcpp::Named("filename") = "",
@@ -107,9 +112,15 @@ Rcpp::List rcpp_hdf5dataset_multiply_sparse(SEXP ptr_a,
                         ? (bparal ? iblock / 2 : 0)
                         : static_cast<hsize_t>(mix_block);
 
-        const std::string out_name = sparse_temp_name("tmp_sparse");
+        const std::string out_grp  = outgroup.isNull()
+            ? std::string("OUTPUT")
+                : Rcpp::as<std::string>(outgroup);
+        const std::string out_name = outdataset.isNull()
+            ? (nameA + "_sparse_x_" + nameB)
+            : Rcpp::as<std::string>(outdataset);
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, out_name, true));
+                new BigDataStatMeth::hdf5Dataset(filename, out_grp, out_name, true));
+        
         dsC->setCompressionLevel(comp_level);
 
         // Delegate (Rule 1.4)
@@ -118,7 +129,7 @@ Rcpp::List rcpp_hdf5dataset_multiply_sparse(SEXP ptr_a,
             iblock, imem, bparal, /*browmajor=*/true, threads);
 
         lst["filename"] = filename;
-        lst["path"]     = groupA + "/" + out_name;
+        lst["path"] = out_grp + "/" + out_name;
 
     } catch (H5::FileIException& e) {
         Rf_error("c++ exception rcpp_hdf5dataset_multiply_sparse (File IException): %s",

@@ -14,3 +14,11 @@ claude.md
 ^.*\.DS_Store$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^.*\removed.*\.bck
+^doc$
+^Meta$
+^vignettes/.*\.bck$
+^vignettes/.*\.bck2$
+^vignettes/BigDataStatMeth_OLD\.html$
+^\.sync\.ffs_db$
+^fix_error_handling\.py$
