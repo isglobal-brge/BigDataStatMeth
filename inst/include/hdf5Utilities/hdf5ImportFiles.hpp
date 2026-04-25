@@ -303,7 +303,19 @@ namespace BigDataStatMeth {
                 btowrite = true;
                 
                 // Get splitted values
-                boost::split(strValues, line, boost::is_any_of(delim), boost::token_compress_on);
+                //.. 20260425 ..// boost::split(strValues, line, boost::is_any_of(delim), boost::token_compress_on);
+                // boost::split(strValues, line, boost::is_any_of(delim), boost::token_compress_on);
+                
+                strValues.clear();
+                std::string::size_type start = 0, pos = 0;
+                while ((pos = line.find_first_of(delim, start)) != std::string::npos) {
+                    if (pos > start)             // token_compress_on: skip empty
+                        strValues.push_back(line.substr(start, pos - start));
+                    start = pos + 1;
+                }
+                if (start < line.size())         // último token tras el último delimitador
+                    strValues.push_back(line.substr(start));
+                
                 
                 if( Rcpp::as<bool>(rownames) == true ) {
                     

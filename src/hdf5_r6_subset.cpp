@@ -48,7 +48,7 @@ Rcpp::NumericMatrix rcpp_hdf5dataset_subset(SEXP ptr_sexp,
         
         // Validate indices
         for (int i = 0; i < rows.length(); i++) {
-            if (rows[i] < 1 || rows[i] > nrows_total) {
+            if (rows[i] < 1 || rows[i] > static_cast<hsize_t>(nrows_total)) {
                 std::string msg = "Row index out of bounds: " + std::to_string(rows[i]) + 
                                   " (dataset has " + std::to_string(nrows_total) + " rows)";
                 Rf_error("%s", msg.c_str());
@@ -56,7 +56,7 @@ Rcpp::NumericMatrix rcpp_hdf5dataset_subset(SEXP ptr_sexp,
         }
         
         for (int j = 0; j < cols.length(); j++) {
-            if (cols[j] < 1 || cols[j] > ncols_total) {
+            if (cols[j] < 1 || cols[j] > static_cast<hsize_t>(ncols_total)) {
                 std::string msg = "Column index out of bounds: " + std::to_string(cols[j]) + 
                     " (dataset has " + std::to_string(ncols_total) + " columns)";
                 Rf_error("%s", msg.c_str());

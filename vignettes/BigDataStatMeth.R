@@ -2,7 +2,7 @@
 library(knitr)
 library(BiocStyle)
 
-knitr::opts_chunk$set(collapse = TRUE, comment = "", cache = FALSE, message = FALSE, width = 180, crop = NULL)
+# knitr::opts_chunk$set(collapse = TRUE, comment = "", cache = FALSE, message = FALSE, width = 180, crop = NULL)
 
 ## ----cleanup, echo=FALSE, include=FALSE---------------------------------------
 hdf5_close_all <- function(...) invisible(NULL)  # safe no-op before package loads
@@ -30,8 +30,8 @@ for (f in c('delayed.hdf5', 'robject.hdf5', 'colesterol_file.hdf5',
 library(BigDataStatMeth)
 
 ## ----hdf5Img, out.width = '100%', fig.align = 'center', fig.cap = "HDF5 hierarchical structure", echo=FALSE----
-knitr::include_graphics("imgs/hdf5_squema.jpg")
-
+# knitr::include_graphics("imgs/hdf5_squema.jpg")
+# 
 ## ----hdf5Create---------------------------------------------------------------
 set.seed(5234)
 n <- 500
@@ -82,7 +82,7 @@ hdf5_close_all()
 
 ## ----convert_HDF5, cache=FALSE------------------------------------------------
 import_hdf5 <- hdf5_import(
-  source   = "colesterol.csv",
+  source   = "/Users/mailos/PhD/TREBALLANT/BigDataStatMeth_20250822/vignettes/colesterol.csv",
   filename = "colesterol_file.hdf5",
   dataset  = "COLESTEROL/COLESTEROLDATA",
   sep      = ",",
@@ -223,7 +223,7 @@ result_r <- A_add + B_add
 all.equal(result_r, result_hdf5)
 
 ## ----BSVDImg, out.width = '100%', fig.align = 'center', fig.cap = "Flowchart for a two-level hierarchical Block SVD algorithm", echo=FALSE----
-knitr::include_graphics("imgs/blocksvd.png")
+# knitr::include_graphics("imgs/blocksvd.png")
 
 ## ----BlockSVDNorm-------------------------------------------------------------
 # Create dataframe data with 'omicdata' matrix in delayed hdf5 file at OMICS group

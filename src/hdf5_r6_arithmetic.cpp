@@ -43,12 +43,12 @@
 // Internal helpers
 // ---------------------------------------------------------------------------
 
-static std::string arith_temp_name(const char* prefix)
-{
-    std::ostringstream ss;
-    ss << prefix << "_" << std::time(nullptr) << "_" << std::rand();
-    return ss.str();
-}
+// static std::string arith_temp_name(const char* prefix)
+// {
+//     std::ostringstream ss;
+//     ss << prefix << "_" << std::time(nullptr) << "_" << std::rand();
+//     return ss.str();
+// }
 
 /**
  * @brief Resolve block size for elementwise operations.

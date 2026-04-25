@@ -47,12 +47,12 @@
 // ---------------------------------------------------------------------------
 // Internal helper: generate a unique temporary dataset name
 // ---------------------------------------------------------------------------
-static std::string make_temp_name(const char* prefix)
-{
-    std::ostringstream ss;
-    ss << prefix << "_" << std::time(nullptr) << "_" << std::rand();
-    return ss.str();
-}
+// static std::string make_temp_name(const char* prefix)
+// {
+//     std::ostringstream ss;
+//     ss << prefix << "_" << std::time(nullptr) << "_" << std::rand();
+//     return ss.str();
+// }
 
 
 // ---------------------------------------------------------------------------

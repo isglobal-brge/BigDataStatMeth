@@ -128,41 +128,24 @@ public:
             
             enable_hdf5_locking_once();
             
-            bool bFileOpened = false;
             bool bFileExists = ResFileExist_filestream();
-            
             bool bInUse = bFileExists ? lockedByOtherProcess() : false;
-            // bool bInUse = (bFileExists && boverwrite) ? lockedByOtherProcess() : false;
+
             
-            
-            // if(bFileExists) {
-            //     bFileOpened = isHDF5FileOpen();
-            // }
-            
-            // if(!bFileOpened) {
             if( !bFileExists || ( bFileExists && boverwrite) ) {
                 
                 if (bInUse) {
                     Rf_error("HDF5 file is in use by another process; cannot overwrite.");
                 }
                 
-                //.. 2025/08/13 ..// if(!bFileOpened) {
                 pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC ); 
                 bOwnsFile = true;
                 iExec = EXEC_OK; //.. 2025/08/13 ..//
-                //.. 2025/08/13 ..// } else {
-                //.. 2025/08/13 ..//    Rcpp::Rcerr<<"\nThe file is being used, close it before proceed.\n";
-                //.. 2025/08/13 ..//    iExec = EXEC_ERROR;
-                //.. 2025/08/13 ..// }
             } else if ( bFileExists && !boverwrite){
                 iExec = EXEC_WARNING;
             } else {
                 Rcpp::Rcout<<"\n File exits, please set force = TRUE";
             }    
-            // } else {
-            //     Rcpp::Rcerr<<"\nThe file is being used, close it before proceed.\n";
-            //     iExec = EXEC_ERROR;
-            // }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             Rf_error("c++ exception hdf5File (File IException) " );
@@ -187,10 +170,6 @@ public:
             
             enable_hdf5_locking_once();
             
-            
-            // bool bFileExists = ResFileExist_filestream();
-            // checkHDF5File
-            // if( bFileExists ) {
             if( checkHDF5File() ) {
                 if(opentype == "r") {
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
@@ -210,10 +189,6 @@ public:
                 }         //..2025/08/13..//
                 pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC); //..2025/08/13..//
                 bOwnsFile = true;
-                
-                //..2025/08/13..// Rcpp::Rcerr<<"\n File does not exists, please create it before open it";
-                //..2025/08/13..// pfile = nullptr;
-                //..2025/08/13..// return(pfile);
             }
             
         } catch (const H5::Exception& e) {
@@ -225,10 +200,6 @@ public:
             std::string error_msg = std::string("openFile error: ") + e.what();
             Rf_error("%s", error_msg.c_str());
         }
-        //..2025/08/14..// catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-        //..2025/08/14..//      pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC);
-        //..2025/08/14..//      // Rf_error("c++ exception hdf5File (File IException) " );
-        //..2025/08/14..//  } 
         
         return(pfile);
     }
@@ -307,9 +278,6 @@ public:
             // Obtener el nÃºmero de objetos abiertos
             ssize_t sObjects = H5Fget_obj_count( pfile->getId(), H5F_OBJ_ALL);
             
-            // if (sObjects < 0) {
-            //     Rcpp::Rcerr << "Error getting number of open objects\n";
-            // } else 
             if (sObjects > 0) {
                 // Get the Ids of opened objects 
                 std::vector<hid_t> vIds(sObjects);
@@ -460,9 +428,6 @@ private:
     bool checkHDF5File() {
         
         bool is_accessible = false;
-        // bool is_open = false;
-        // bool is_corrupt = false;
-        // bool has_valid_structure = false;
         std::string error_message = "";
         
         try {
@@ -476,21 +441,13 @@ private:
                     is_accessible = true;
                 } else {
                     Rf_error("c++ exception File is not in HDF5 format" );
-                    // error_message = "File is not in HDF5 format";
-                    // is_corrupt = true;
                 }
             } catch (const H5::FileIException& e) {
                 error_message = "c++ exception File access error: " + std::string(e.getCDetailMsg());
                 Rf_error("%s", error_message.c_str() );
-                // ::Rf_error( error_message.c_str() );
-                // error_message = "File access error: " + std::string(e.getCDetailMsg());
-                // is_corrupt = true;
             } catch (const H5::Exception& e) {
                 error_message = "c++ exception HDF5 Exception during accessibility check: " + std::string(e.getCDetailMsg());
                 Rf_error("%s", error_message.c_str() );
-                // ::Rf_error( error_message.c_str() );
-                // error_message = "HDF5 Exception during accessibility check: " + std::string(e.getCDetailMsg());
-                // is_corrupt = true;
             }
             
             // Method 2: Try to open the file if accessible
@@ -504,26 +461,14 @@ private:
                         // Try to access root group
                         H5::Group root_group = file->openGroup("/");
                         
-                        // Get file info to check integrity
-                        // hsize_t file_size = file->getFileSize();
-                        // if (file_size > 0) {
-                        //     // has_valid_structure = true;
-                        // }
-                        
                         root_group.close();
                         
                     } catch (const H5::GroupIException& e) {
                         error_message =  "c++ exception (checkHDF5File) Root group access failed: " + std::string(e.getCDetailMsg());
                         Rf_error("%s", error_message.c_str() );
-                        // ::Rf_error( error_message.c_str() );
-                        // error_message = "Root group access failed: " + std::string(e.getCDetailMsg());
-                        // is_corrupt = true;
                     } catch (const H5::Exception& e) {
                         error_message =  "c++ exception (checkHDF5File) Structure validation failed: " + std::string(e.getCDetailMsg() );
                         Rf_error("%s", error_message.c_str() );
-                        // ::Rf_error( error_message.c_str() );
-                        // error_message = "Structure validation failed: " + std::string(e.getCDetailMsg());
-                        // is_corrupt = true;
                     }
                     
                     // Close the file
@@ -533,17 +478,9 @@ private:
                 } catch (const H5::FileIException& e) {
                     error_message = "c++ exception (checkHDF5File) Cannot open file: " + std::string(e.getCDetailMsg());
                     Rf_error("%s", error_message.c_str() );
-                    // ::Rf_error( error_message.c_str() );
-                    // error_message = "Cannot open file: " + std::string(e.getCDetailMsg());
-                    // is_corrupt = true;
-                    // is_open = false;
                 } catch (const H5::Exception& e) {
                     error_message ="c++ exception HDF5 Exception during file opening: " + std::string(e.getCDetailMsg() );
                     Rf_error("%s", error_message.c_str() );
-                    // ::Rf_error( error_message.c_str() );
-                    // error_message = "HDF5 Exception during file opening: " + std::string(e.getCDetailMsg());
-                    // is_corrupt = true;
-                    // is_open = false;
                 }
             }
             
@@ -557,22 +494,10 @@ private:
         } catch (...) {
             error_message = "c++ exception (checkHDF5File): Unknown exception occurred" ;
             Rf_error("%s", error_message.c_str() );
-            // ::Rf_error( error_message.c_str() );
-            // error_message = "Unknown exception occurred";
-            // is_corrupt = true;
         }
         
         return(true);
         
-        // Create result list
-        // return List::create(
-        //     Named("filename") = filename,
-        //     Named("is_accessible") = is_accessible,
-        //     Named("is_open") = is_open,
-        //     Named("is_corrupt") = is_corrupt,
-        //     Named("has_valid_structure") = has_valid_structure,
-        //     Named("error_message") = error_message
-        // );
     }
     
     
@@ -732,17 +657,6 @@ private:
                     }
                     
                     otype =  H5Gget_objtype_by_idx(gid, (size_t)i );
-                    
-                    // // 202109
-                    // if( strprefix.compare("")!=0 ){
-                    //     if(otype == H5G_DATASET && (memb_name[0] == strprefix[0])) {
-                    //         datasetnames.push_back(memb_name);
-                    //     }
-                    // } else {
-                    //     if(otype == H5G_DATASET ) {
-                    //         datasetnames.push_back(memb_name);
-                    //     }
-                    // }
                     
                     // 202505
                     if( strprefix.compare("")!=0 && strsufix.compare("")==0 ){

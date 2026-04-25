@@ -15,12 +15,12 @@
 #include <ctime>
 #include <cstdlib>
 
-static std::string sparse_temp_name(const char* prefix)
-{
-    std::ostringstream ss;
-    ss << prefix << "_" << std::time(nullptr) << "_" << std::rand();
-    return ss.str();
-}
+// static std::string sparse_temp_name(const char* prefix)
+// {
+//     std::ostringstream ss;
+//     ss << prefix << "_" << std::time(nullptr) << "_" << std::rand();
+//     return ss.str();
+// }
 
 
 /**

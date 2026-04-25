@@ -139,9 +139,10 @@ namespace BigDataStatMeth {
                     count[0] = original.cols();
                     count[1] = original.rows();
                     
-                    if(i == 0) 
+                    if(i == 0) { 
                         dsOut->inheritCompressionLevel(dsIn->getCompressionLevel());
                         dsOut->createUnlimitedDataset(count[0], count[1], "real");
+                    }
                     dsOut->openDataset();
                     
                     if( func == 1 && i!=0) {

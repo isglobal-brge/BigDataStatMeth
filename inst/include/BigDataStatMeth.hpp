@@ -43,7 +43,8 @@
     #include "H5Cpp.h" //1.8.18
     #include <iostream>
     #include <sstream>
-    #include <boost/algorithm/string.hpp>
+    #include <algorithm>
+    // #include <boost/algorithm/string.hpp>
     #include <fstream>
     #include <sys/stat.h>
     #include <string>

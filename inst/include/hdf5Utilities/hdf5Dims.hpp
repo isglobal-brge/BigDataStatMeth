@@ -404,7 +404,8 @@ namespace BigDataStatMeth
                                 Rcpp::String wchrom = Rcpp::as<Rcpp::StringVector>(DatasetValues)((i*MAXSTRBLOCK) + row);
                                 std::string word = wchrom.get_cstring();
                                 
-                                boost::erase_all(word, "\"");
+                                //.. 20260423..//// boost::algorithm::erase_all(word, "\"");
+                                word.erase(std::remove(word.begin(), word.end(), '"'), word.end());
                                 
                                 int j=0;
                                 for( j = 0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ){
@@ -442,7 +443,8 @@ namespace BigDataStatMeth
                             Rcpp::String wchrom = Rcpp::as<Rcpp::StringVector>(DatasetValues)(i);
                             std::string word = wchrom.get_cstring();
                             
-                            boost::erase_all(word, "\"");
+                            //.. 20260423..////  boost::erase_all(word, "\"");
+                            word.erase(std::remove(word.begin(), word.end(), '"'), word.end());
                             
                             int j=0;
                             for( j=0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ) {

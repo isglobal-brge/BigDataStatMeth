@@ -480,12 +480,14 @@ void rcpp_hdf5_close_file_handles(std::string filename) {
                      to_close.push_back(kv.first);
              } catch (...) {}
          }
-         for (void* vp : to_close)
-             if (claim_ptr(vp))
+         for (void* vp : to_close) {
+             if (claim_ptr(vp)) {
                  delete static_cast<BigDataStatMeth::hdf5Dataset*>(vp);
+            }
+        }
              
-             // 2. Close any remaining HDF5 handles for this file at C library level
-             BigDataStatMeth::closeHDF5HandlesForFile(filename);
+         // 2. Close any remaining HDF5 handles for this file at C library level
+         BigDataStatMeth::closeHDF5HandlesForFile(filename);
              
      } catch (...) {}
 }

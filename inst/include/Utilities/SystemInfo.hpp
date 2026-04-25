@@ -34,6 +34,7 @@
     #include <unistd.h>
     #include <fstream>
 #elif defined(__APPLE__)
+    #include <unistd.h>
     #include <sys/types.h>
     #include <sys/sysctl.h>
     #include <mach/mach.h>
