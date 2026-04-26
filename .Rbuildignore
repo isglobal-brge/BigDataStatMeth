@@ -5,10 +5,9 @@
 ^pkg\.*
 ^.*\.hdf5$
 ^\.github$
+^\.html$
 ^.*\ 2*
 ^.*\.hide$
-^.*Spectra_old
-claude.md
 ^.*\.log$
 ^.*\.ffs_gui$
 ^.*\.DS_Store$
@@ -17,8 +16,7 @@ claude.md
 ^.*\removed.*\.bck
 ^doc$
 ^Meta$
-^vignettes/.*\.bck$
-^vignettes/.*\.bck2$
-^vignettes/BigDataStatMeth_OLD\.html$
+^vignettes/.*\.bck*$
 ^\.sync\.ffs_db$
 ^fix_error_handling\.py$
+^\.positai$
