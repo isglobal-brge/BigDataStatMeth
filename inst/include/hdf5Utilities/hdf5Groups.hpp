@@ -128,14 +128,29 @@ namespace BigDataStatMeth {
          * @param objFile HDF5 file object
          * @param group Group name/path
          */
+        //.. 20260426 ..// hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group) : 
+        //.. 20260426 ..// hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
+        //.. 20260426 ..// {
+        //.. 20260426 ..//     if( pfile != nullptr ){
+        //.. 20260426 ..//         openFile("rw");
+        //.. 20260426 ..//     } else {
+        //.. 20260426 ..//         throw std::runtime_error("c++ exception Please create file before proceed");
+        //.. 20260426 ..//     }
+        //.. 20260426 ..//     
+        //.. 20260426 ..//     if( !exists_HDF5_element(pfile, group) ) {
+        //.. 20260426 ..//         create_HDF5_groups(group);    
+        //.. 20260426 ..//     }
+        //.. 20260426 ..//     
+        //.. 20260426 ..//     groupname = group;
+        //.. 20260426 ..// }
+        
         hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group) : 
         hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
         {
-            if( pfile != nullptr ){
-                openFile("rw");
-            } else {
+            if( pfile == nullptr ){
                 throw std::runtime_error("c++ exception Please create file before proceed");
             }
+            // pfile already set from objFile — no need to re-open
             
             if( !exists_HDF5_element(pfile, group) ) {
                 create_HDF5_groups(group);    
