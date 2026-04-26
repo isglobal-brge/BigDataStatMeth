@@ -29,7 +29,7 @@ Description: A framework for 'scalable' statistical computing on large on-disk
 License: MIT + file LICENSE
 Depends: R (>= 4.1.0)
 Imports: data.table, Rcpp (>= 1.0.6), RCurl, utils, R6
-LinkingTo: Rcpp, RcppEigen, Rhdf5lib, BH
+LinkingTo: Rcpp, RcppEigen, Rhdf5lib
 Suggests: HDF5Array, Matrix, BiocStyle, knitr, rmarkdown, ggplot2, microbenchmark
 SystemRequirements: GNU make, C++17
 Encoding: UTF-8

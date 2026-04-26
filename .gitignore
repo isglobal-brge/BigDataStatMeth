@@ -70,3 +70,5 @@ src/Makevars
 *.OLD__
 *.Rproj
 inst/cc
+.positai
+*.html

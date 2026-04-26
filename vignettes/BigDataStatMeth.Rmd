@@ -37,14 +37,6 @@ library(BiocStyle)
 knitr::opts_chunk$set(collapse = TRUE, comment = "", cache = FALSE, message = FALSE, width = 180, crop = NULL)
 ```
 
-```{r, cleanup, echo=FALSE, include=FALSE}
-hdf5_close_all <- function(...) invisible(NULL)  # safe no-op before package loads
-for (f in c('delayed.hdf5', 'robject.hdf5', 'colesterol_file.hdf5',
-            'subtraction_example.hdf5', 'addition_example.hdf5')) {
-  if (isTRUE(file.exists(f))) unlink(f)
-}
-```
-
 # Overview
 
 This package implements several matrix operations using `Matrix` objects as well as HDF5 data files. Some basic algebra operations that can also be computed that are useful to implement  statistical analyses using standard methodologies such as principal component analyses (PCA) or least squares estimation. The package also contains specific statistical methods mainly used in `omic` data analysis such as lasso regression.
@@ -131,17 +123,20 @@ knitr::include_graphics("imgs/hdf5_squema.jpg")
 We have implemented the `hdf5_create_matrix()` function to create an HDF5 file with a group and a dataset in a single step. This function allows creating datasets from standard R matrices and returns an `HDF5Matrix` object ready for use.
 
 ```{r hdf5Create}
+
+fn_robject   <- tempfile(fileext = ".hdf5")
+
 set.seed(5234)
 n <- 500
 m <- 600
 A <- matrix(rnorm(n*m,mean=0,sd=1), n,m)
 
 # Create a dataset from R matrix object; returns an HDF5Matrix
-A_hdf5 <- hdf5_create_matrix("robject.hdf5", "INPUT/A", data = A)
+A_hdf5 <- hdf5_create_matrix(fn_robject, "INPUT/A", data = A)
 A_hdf5
 ```
 
-Notice that a file called "robject.hdf5" will be created in the working directory
+Notice that a temporary HDF5 file will be created for this session at `r fn_robject`
 
 ```{r ls}
 list.files(pattern = "*.hdf5")
@@ -164,7 +159,7 @@ m <- 12000
 B <- matrix(rnorm(n*m,mean=3,sd=0.5), n, m)
 
 # Path to HDF5 file
-example_fn <- "delayed.hdf5"
+example_fn  <- tempfile(fileext = ".hdf5")
 
 # Create file with matrix A in group INPUT
 A_hdf5 <- hdf5_create_matrix(example_fn, "INPUT/A", data = A)
@@ -187,7 +182,7 @@ To open an existing dataset from an HDF5 file and obtain an `HDF5Matrix` object,
 
 ```{r hdf5Open, cache=FALSE}
 # Open an existing dataset from file — returns an HDF5Matrix
-A_hdf5 <- hdf5_matrix("robject.hdf5", "INPUT/A")
+A_hdf5 <- hdf5_matrix(fn_robject, "INPUT/A")
 A_hdf5
 ```
 
@@ -223,9 +218,11 @@ You can easily import your text files into HDF5 using the function `hdf5_import(
 In this example we convert the "colesterol.csv" file and we will save the data to a file 'colesterol_file.hdf5' under the group 'COLESTEROL' in the dataset 'COLESTEROLDATA'. The function returns an `HDF5Matrix` object ready for use.
 
 ```{r convert_HDF5, cache=FALSE}
+fn_colest    <- tempfile(fileext = ".hdf5")
+
 import_hdf5 <- hdf5_import(
   source   = "colesterol.csv",
-  filename = "colesterol_file.hdf5",
+  filename = fn_colest,
   dataset  = "COLESTEROL/COLESTEROLDATA",
   sep      = ",",
   header   = TRUE,
@@ -398,7 +395,8 @@ A_sub <- matrix(rnorm(1000 * 300), nrow = 1000, ncol = 300)
 B_sub <- matrix(rnorm(1000 * 300), nrow = 1000, ncol = 300)
 
 # Save them to HDF5
-fn_sub <- "subtraction_example.hdf5"
+# fn_sub <- "subtraction_example.hdf5"
+fn_sub <- tempfile(fileext = ".hdf5")
 
 A_sub_hdf5 <- hdf5_create_matrix(fn_sub, "INPUT/A_sub", data = A_sub)
 B_sub_hdf5 <- hdf5_create_matrix(fn_sub, "INPUT/B_sub", data = B_sub)
@@ -428,7 +426,8 @@ A_add <- matrix(rnorm(800 * 250), nrow = 800, ncol = 250)
 B_add <- matrix(rnorm(800 * 250), nrow = 800, ncol = 250)
 
 # Save them to HDF5
-fn_add <- "addition_example.hdf5"
+# fn_add <- "addition_example.hdf5"
+fn_add <- tempfile(fileext = ".hdf5")
 
 A_add_hdf5 <- hdf5_create_matrix(fn_add, "INPUT/A", data = A_add)
 B_add_hdf5 <- hdf5_create_matrix(fn_add, "INPUT/B", data = B_add)
@@ -675,6 +674,14 @@ invChol_r <- solve(Ycp)
 invChol_r[1:5, 1:5]
 
 all.equal(invChol_hdf5, invChol_r)
+```
+
+
+```{r, final_cleanup, echo=FALSE, include=FALSE}
+hdf5_close_all()
+for (f in c(fn_robject, example_fn, fn_colest, fn_sub, fn_add)) {
+  if (file.exists(f)) unlink(f)
+}
 ```
 
 # Session information
