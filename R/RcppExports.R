@@ -900,9 +900,6 @@ rcpp_hdf5dataset_diag_scale <- function(ptr_mat, scalar, op_code = 2L, paral = N
     .Call('_BigDataStatMeth_rcpp_hdf5dataset_diag_scale', PACKAGE = 'BigDataStatMeth', ptr_mat, scalar, op_code, paral, threads, compression, outgroup, outdataset)
 }
 
-#' Safely close all remaining HDF5 file handles (mid-session safe)
-NULL
-
 #' Close all open HDF5Dataset objects and HDF5 handles
 #'
 #' @description
@@ -1072,6 +1069,8 @@ rcpp_hdf5_close_file_handles <- function(filename) {
     invisible(.Call('_BigDataStatMeth_rcpp_hdf5_close_file_handles', PACKAGE = 'BigDataStatMeth', filename))
 }
 
+#' Safely close all remaining HDF5 file handles (mid-session safe)
+#' @keywords internal
 rcpp_hdf5_close_file_handles_safe <- function() {
     .Call('_BigDataStatMeth_rcpp_hdf5_close_file_handles_safe', PACKAGE = 'BigDataStatMeth')
 }
