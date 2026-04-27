@@ -900,6 +900,9 @@ rcpp_hdf5dataset_diag_scale <- function(ptr_mat, scalar, op_code = 2L, paral = N
     .Call('_BigDataStatMeth_rcpp_hdf5dataset_diag_scale', PACKAGE = 'BigDataStatMeth', ptr_mat, scalar, op_code, paral, threads, compression, outgroup, outdataset)
 }
 
+#' Safely close all remaining HDF5 file handles (mid-session safe)
+NULL
+
 #' Close all open HDF5Dataset objects and HDF5 handles
 #'
 #' @description
@@ -1067,6 +1070,24 @@ rcpp_hdf5_close_at_paths <- function(filename, paths) {
 #' @keywords internal
 rcpp_hdf5_close_file_handles <- function(filename) {
     invisible(.Call('_BigDataStatMeth_rcpp_hdf5_close_file_handles', PACKAGE = 'BigDataStatMeth', filename))
+}
+
+rcpp_hdf5_close_file_handles_safe <- function() {
+    .Call('_BigDataStatMeth_rcpp_hdf5_close_file_handles_safe', PACKAGE = 'BigDataStatMeth')
+}
+
+#' Close all open HDF5 file handles mid-session (safe)
+#'
+#' @description
+#' Iterates over all currently open HDF5 file handles and calls
+#' closeHDF5HandlesForFile() on each — closes datasets/groups/attrs
+#' belonging to each file before closing the file handle itself.
+#' Pre-defined HDF5 library types are never touched.
+#'
+#' @return NULL invisibly.
+#' @keywords internal
+rcpp_hdf5_close_all_file_handles <- function() {
+    .Call('_BigDataStatMeth_rcpp_hdf5_close_all_file_handles', PACKAGE = 'BigDataStatMeth')
 }
 
 #' General matrix product for HDF5 datasets (R6 wrapper)

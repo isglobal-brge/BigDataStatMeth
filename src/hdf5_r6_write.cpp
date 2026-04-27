@@ -168,7 +168,7 @@ Rcpp::List rcpp_hdf5_create_matrix(std::string filename,
                                     bool overwrite_dataset              = false,
                                     int compression                     = 6)
 {
-    Rcpp::List lst = Rcpp::List::create(
+    Rcpp::List lst = Rcpp::List::create( 
         Rcpp::Named("filename") = "",
         Rcpp::Named("path")     = "");
 
@@ -201,12 +201,23 @@ Rcpp::List rcpp_hdf5_create_matrix(std::string filename,
         if (data.isNotNull()) {
             Rcpp::RObject robj = Rcpp::as<Rcpp::RObject>(data);
 
+            //.. 20260426 ..// if (Rf_inherits(robj, "data.frame")) {
+            //.. 20260426 ..//     SEXP mat = Rcpp::Language("as.matrix", robj).eval();
+            //.. 20260426 ..//     if (Rf_isMatrix(mat))
+            //.. 20260426 ..//         objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(mat));
+            //.. 20260426 ..//     else
+            //.. 20260426 ..//         Rf_error("rcpp_hdf5_create_matrix: cannot coerce data.frame to matrix");
+            //.. 20260426 ..// } else {
+            //.. 20260426 ..//     objDataset->writeDataset(robj);
+            //.. 20260426 ..// }
+            
             if (Rf_inherits(robj, "data.frame")) {
-                SEXP mat = Rcpp::Language("as.matrix", robj).eval();
-                if (Rf_isMatrix(mat))
-                    objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(mat));
-                else
+                Rcpp::RObject matObj = Rcpp::Language("as.matrix", robj).eval();
+                if (Rcpp::is<Rcpp::NumericMatrix>(matObj) ||  Rcpp::is<Rcpp::IntegerMatrix>(matObj)) {
+                    objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(matObj));
+                } else {
                     Rf_error("rcpp_hdf5_create_matrix: cannot coerce data.frame to matrix");
+                }
             } else {
                 objDataset->writeDataset(robj);
             }

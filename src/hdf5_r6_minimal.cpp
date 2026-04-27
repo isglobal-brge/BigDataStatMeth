@@ -491,3 +491,60 @@ void rcpp_hdf5_close_file_handles(std::string filename) {
              
      } catch (...) {}
 }
+
+//' Safely close all remaining HDF5 file handles (mid-session safe)
+ //' @keywords internal
+ // [[Rcpp::export]]
+ SEXP rcpp_hdf5_close_file_handles_safe() {
+     try {
+         // Only H5F_OBJ_FILE — safe mid-session, does NOT touch pre-defined types
+         ssize_t count = H5Fget_obj_count(H5F_OBJ_ALL, H5F_OBJ_FILE);
+         if (count <= 0) return R_NilValue;
+         
+         std::vector<hid_t> ids(static_cast<size_t>(count));
+         H5Fget_obj_ids(H5F_OBJ_ALL, H5F_OBJ_FILE,
+                        static_cast<size_t>(count), ids.data());
+         
+         for (hid_t fid : ids) {
+             if (H5Iis_valid(fid)) {
+                 H5Fflush(fid, H5F_SCOPE_GLOBAL);  // flush before close
+                 H5Fclose(fid);
+             }
+         }
+     } catch (...) {}
+     return R_NilValue;
+ }
+
+
+//' Close all open HDF5 file handles mid-session (safe)
+//'
+//' @description
+//' Iterates over all currently open HDF5 file handles and calls
+//' closeHDF5HandlesForFile() on each — closes datasets/groups/attrs
+//' belonging to each file before closing the file handle itself.
+//' Pre-defined HDF5 library types are never touched.
+//'
+//' @return NULL invisibly.
+//' @keywords internal
+// [[Rcpp::export]]
+SEXP rcpp_hdf5_close_all_file_handles() {
+ try {
+     ssize_t n_files = H5Fget_obj_count(H5F_OBJ_ALL, H5F_OBJ_FILE);
+     if (n_files <= 0) return R_NilValue;
+     
+     std::vector<hid_t> file_ids(static_cast<size_t>(n_files));
+     H5Fget_obj_ids(H5F_OBJ_ALL, H5F_OBJ_FILE,
+                    static_cast<size_t>(n_files), file_ids.data());
+     
+     for (hid_t fid : file_ids) {
+         if (H5Iis_valid(fid) <= 0) continue;
+         ssize_t len = H5Fget_name(fid, nullptr, 0);
+         if (len <= 0) continue;
+         std::string fname(static_cast<size_t>(len + 1), '\0');
+         H5Fget_name(fid, &fname[0], static_cast<size_t>(len + 1));
+         fname.resize(static_cast<size_t>(len));
+         BigDataStatMeth::closeHDF5HandlesForFile(fname);
+     }
+ } catch (...) {}
+ return R_NilValue;
+}

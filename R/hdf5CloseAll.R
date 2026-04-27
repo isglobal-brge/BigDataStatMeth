@@ -78,6 +78,13 @@ hdf5_close_all <- function(envir = .GlobalEnv, verbose = TRUE) {
         error = function(e) invisible(NULL)
     )
     
+    # Safety net: close any handles that escaped the registry
+    # Closes datasets/groups/attrs per file, then file handle — releases lock
+    tryCatch(
+        rcpp_hdf5_close_all_file_handles(),
+        error = function(e) invisible(NULL)
+    )
+    
     # Force garbage collection
     gc()
     

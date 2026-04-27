@@ -131,7 +131,7 @@ hdf5_create_matrix <- function(filename,
                        "real")
 
     # --- delegate to C++ R6 wrapper ---
-    rcpp_hdf5_create_matrix(
+    rcpp_hdf5_create_matrix( 
         filename          = filename,
         group             = group_path,
         dataset           = dataset_name,

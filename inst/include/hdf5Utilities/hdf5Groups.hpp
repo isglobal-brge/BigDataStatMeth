@@ -145,17 +145,16 @@ namespace BigDataStatMeth {
         //.. 20260426 ..// }
         
         hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group) : 
-        hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
+        hdf5File(objFile->getPath(), objFile->getFilename(), objFile->getFileptr(), false)
         {
+            // pfile is already set from objFile — do NOT call openFile()
+            // bOwnsFile = false is already set by the hdf5File constructor above
             if( pfile == nullptr ){
-                throw std::runtime_error("c++ exception Please create file before proceed");
+                throw std::runtime_error("c++ exception: file pointer is null");
             }
-            // pfile already set from objFile — no need to re-open
-            
             if( !exists_HDF5_element(pfile, group) ) {
                 create_HDF5_groups(group);    
             }
-            
             groupname = group;
         }
         

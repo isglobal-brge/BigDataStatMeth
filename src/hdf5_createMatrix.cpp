@@ -126,9 +126,15 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
             }
             
             if(Rf_inherits(object, "data.frame")){
-                SEXP mat = Rcpp::Language("as.matrix", object).eval();
-                if ( Rf_isMatrix(mat) ){
-                    objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(mat));
+                //.. 20260426 ..//     SEXP mat = Rcpp::Language("as.matrix", object).eval();
+                //.. 20260426 ..//     if ( Rf_isMatrix(mat) ){
+                //.. 20260426 ..//     objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(mat));
+                //.. 20260426 ..// } else{
+                //.. 20260426 ..//     Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
+                //.. 20260426 ..// }
+                Rcpp::RObject matObj = Rcpp::Language("as.matrix", object).eval();
+                if (Rcpp::is<Rcpp::NumericMatrix>(matObj) || Rcpp::is<Rcpp::IntegerMatrix>(matObj)){
+                    objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(matObj));
                 } else{
                     Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
                 }

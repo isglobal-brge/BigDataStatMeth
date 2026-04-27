@@ -754,6 +754,26 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// rcpp_hdf5_close_file_handles_safe
+SEXP rcpp_hdf5_close_file_handles_safe();
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_close_file_handles_safe() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5_close_file_handles_safe());
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5_close_all_file_handles
+SEXP rcpp_hdf5_close_all_file_handles();
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_close_all_file_handles() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5_close_all_file_handles());
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hdf5dataset_multiply
 Rcpp::List rcpp_hdf5dataset_multiply(SEXP ptr_a, SEXP ptr_b, bool transpose_a, bool transpose_b, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
 RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_multiply(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP transpose_aSEXP, SEXP transpose_bSEXP, SEXP paralSEXP, SEXP block_sizeSEXP, SEXP threadsSEXP, SEXP compressionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
@@ -1376,6 +1396,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_rcpp_hdf5dataset_close", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_close, 1},
     {"_BigDataStatMeth_rcpp_hdf5_close_at_paths", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_at_paths, 2},
     {"_BigDataStatMeth_rcpp_hdf5_close_file_handles", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_file_handles, 1},
+    {"_BigDataStatMeth_rcpp_hdf5_close_file_handles_safe", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_file_handles_safe, 0},
+    {"_BigDataStatMeth_rcpp_hdf5_close_all_file_handles", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_all_file_handles, 0},
     {"_BigDataStatMeth_rcpp_hdf5dataset_multiply", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_multiply, 10},
     {"_BigDataStatMeth_rcpp_hdf5dataset_crossprod", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_crossprod, 8},
     {"_BigDataStatMeth_rcpp_hdf5dataset_tcrossprod", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_tcrossprod, 8},

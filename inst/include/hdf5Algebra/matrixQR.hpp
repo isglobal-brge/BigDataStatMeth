@@ -525,44 +525,25 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
             Q_thin.block(row_start, 0, brows, n) =
                 local_Q[b] * Q_top.block(b * n, 0, n, n);
         }
-
-        // ── Step 4: write R ───────────────────────────────────────────────────
-        dsR->inheritCompressionLevel(dsA->getCompressionLevel());
-        dsR->createDataset(n, n, "real");
-        dsR->writeDataset(Rcpp::wrap(R_final));
-
-        // ── Step 5: write Q ───────────────────────────────────────────────────
+        
+        // ── Step 4 + 5: write Q and R ─────────────────────────────────────────────
+        // R is written ONCE with the correct final dimensions — never twice.
         if (bthin) {
+            // Thin R: n × n
+            dsR->inheritCompressionLevel(dsA->getCompressionLevel());
+            dsR->createDataset(n, n, "real");
+            dsR->writeDataset(Rcpp::wrap(R_final));
+            
             // Thin Q: m × n
             dsQ->inheritCompressionLevel(dsA->getCompressionLevel());
             dsQ->createDataset(m, n, "real");
             dsQ->writeDataset(Rcpp::wrap(Q_thin));
+            
         } else {
-            // Full Q: m × m
-            // Basis completion: compute QR of Q_thin directly.
-            // Since Q_thin already has orthonormal columns, its Householder QR
-            // has R = I_n, so householderQ() returns a full m×m orthogonal matrix
-            // whose first n columns ARE Q_thin.  This guarantees:
-            //   Q_full[:, 1:n]  = Q_thin
-            //   Q_full %*% R_padded = Q_thin %*% R_final = A  (exact reconstruction)
-            //
-            // Previous approach (QR of [Q_thin | random]) was INCORRECT because
-            // Householder reorders column pivots and Q_thin is not preserved
-            // as the first n columns of the result. (20260304)
-            //
-            // Cost: O(m² n) — expensive for large m; use thin=TRUE when possible.
-            
-            //.. 20260304 ..// Eigen::HouseholderQR<Eigen::MatrixXd> qr_full(Q_thin);
-            //.. 20260304 ..// const Eigen::MatrixXd Q_full = qr_full.householderQ();
-
-            // Gram-Schmidt: Q_full[:,1:n] = Q_thin por construcción → garantiza
-            // Q_full * R_padded = Q_thin * R_final = A  (20260304)
-            
+            // Full Q: m × m via basis completion
             Eigen::HouseholderQR<Eigen::MatrixXd> qr_full(Q_thin);
             Eigen::MatrixXd Q_full = qr_full.householderQ()
                 * Eigen::MatrixXd::Identity(m, m);
-            // Correct sign flips: Q_full[:,i] *= sign(R_ii) for i=0..n-1
-            // This makes Q_full[:,1:n] == Q_thin exactly (R diagonal is ±1 since Q_thin is orthonormal)
             const Eigen::VectorXd diag_signs =
             qr_full.matrixQR().diagonal().head(n).array().sign().matrix();
             for (int i = 0; i < n; ++i)
@@ -571,15 +552,69 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
             dsQ->inheritCompressionLevel(dsA->getCompressionLevel());
             dsQ->createDataset(m, m, "real");
             dsQ->writeDataset(Rcpp::wrap(Q_full));
-
-            // Pad R to m × n (zeros below row n) to match full-QR convention
+            
+            // Full R: m × n (padded with zeros below row n) — created ONCE
             Eigen::MatrixXd R_padded = Eigen::MatrixXd::Zero(m, n);
             R_padded.topRows(n) = R_final;
-            // Re-create R dataset with updated dimensions
             dsR->inheritCompressionLevel(dsA->getCompressionLevel());
             dsR->createDataset(m, n, "real");
             dsR->writeDataset(Rcpp::wrap(R_padded));
         }
+
+        // // ── Step 4: write R ───────────────────────────────────────────────────
+        // dsR->inheritCompressionLevel(dsA->getCompressionLevel());
+        // dsR->createDataset(n, n, "real");
+        // dsR->writeDataset(Rcpp::wrap(R_final));
+        // 
+        // // ── Step 5: write Q ───────────────────────────────────────────────────
+        // if (bthin) {
+        //     // Thin Q: m × n
+        //     dsQ->inheritCompressionLevel(dsA->getCompressionLevel());
+        //     dsQ->createDataset(m, n, "real");
+        //     dsQ->writeDataset(Rcpp::wrap(Q_thin));
+        // } else {
+        //     // Full Q: m × m
+        //     // Basis completion: compute QR of Q_thin directly.
+        //     // Since Q_thin already has orthonormal columns, its Householder QR
+        //     // has R = I_n, so householderQ() returns a full m×m orthogonal matrix
+        //     // whose first n columns ARE Q_thin.  This guarantees:
+        //     //   Q_full[:, 1:n]  = Q_thin
+        //     //   Q_full %*% R_padded = Q_thin %*% R_final = A  (exact reconstruction)
+        //     //
+        //     // Previous approach (QR of [Q_thin | random]) was INCORRECT because
+        //     // Householder reorders column pivots and Q_thin is not preserved
+        //     // as the first n columns of the result. (20260304)
+        //     //
+        //     // Cost: O(m² n) — expensive for large m; use thin=TRUE when possible.
+        //     
+        //     //.. 20260304 ..// Eigen::HouseholderQR<Eigen::MatrixXd> qr_full(Q_thin);
+        //     //.. 20260304 ..// const Eigen::MatrixXd Q_full = qr_full.householderQ();
+        // 
+        //     // Gram-Schmidt: Q_full[:,1:n] = Q_thin por construcción → garantiza
+        //     // Q_full * R_padded = Q_thin * R_final = A  (20260304)
+        //     
+        //     Eigen::HouseholderQR<Eigen::MatrixXd> qr_full(Q_thin);
+        //     Eigen::MatrixXd Q_full = qr_full.householderQ()
+        //         * Eigen::MatrixXd::Identity(m, m);
+        //     // Correct sign flips: Q_full[:,i] *= sign(R_ii) for i=0..n-1
+        //     // This makes Q_full[:,1:n] == Q_thin exactly (R diagonal is ±1 since Q_thin is orthonormal)
+        //     const Eigen::VectorXd diag_signs =
+        //     qr_full.matrixQR().diagonal().head(n).array().sign().matrix();
+        //     for (int i = 0; i < n; ++i)
+        //         Q_full.col(i) *= diag_signs(i);
+        //     
+        //     dsQ->inheritCompressionLevel(dsA->getCompressionLevel());
+        //     dsQ->createDataset(m, m, "real");
+        //     dsQ->writeDataset(Rcpp::wrap(Q_full));
+        // 
+        //     // Pad R to m × n (zeros below row n) to match full-QR convention
+        //     Eigen::MatrixXd R_padded = Eigen::MatrixXd::Zero(m, n);
+        //     R_padded.topRows(n) = R_final;
+        //     // Re-create R dataset with updated dimensions
+        //     dsR->inheritCompressionLevel(dsA->getCompressionLevel());
+        //     dsR->createDataset(m, n, "real");
+        //     dsR->writeDataset(Rcpp::wrap(R_padded));
+        // }
 
     } catch( H5::FileIException& error ) {
         throw std::runtime_error("c++ exception RcppTSQRHdf5 (File IException)");

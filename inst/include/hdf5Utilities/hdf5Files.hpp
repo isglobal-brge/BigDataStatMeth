@@ -162,12 +162,51 @@ public:
      * @param opentype Access mode ("r" for read-only, "rw" for read-write)
      * @return Pointer to opened file or nullptr on error
      */
+    // H5::H5File* openFile(std::string opentype)
+    // {
+    //     try
+    //     {
+    //         H5::Exception::dontPrint();
+    //         
+    //         enable_hdf5_locking_once();
+    //         
+    //         if( checkHDF5File() ) {
+    //             if(opentype == "r") {
+    //                 pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
+    //                 bOwnsFile = true;
+    //             } else {
+    //                 if (lockedByOtherProcess()) {
+    //                     Rf_error("HDF5 file is in use by another process.");
+    //                 }
+    //                 
+    //                 pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
+    //                 bOwnsFile = true;
+    //             }
+    //         } else {
+    //             
+    //             if (opentype == "r") {        //..2025/08/13..//
+    //                 Rf_error("HDF5 file not found."); //..2025/08/13..//
+    //             }         //..2025/08/13..//
+    //             pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC); //..2025/08/13..//
+    //             bOwnsFile = true;
+    //         }
+    //         
+    //     } catch (const H5::Exception& e) {
+    //         pfile = nullptr;
+    //         std::string error_msg = std::string("openFile HDF5 error: ") + e.getDetailMsg();
+    //         Rf_error("%s", error_msg.c_str());
+    //     } catch (const std::exception& e) {
+    //         pfile = nullptr;
+    //         std::string error_msg = std::string("openFile error: ") + e.what();
+    //         Rf_error("%s", error_msg.c_str());
+    //     }
+    //     
+    //     return(pfile);
+    // }
     H5::H5File* openFile(std::string opentype)
     {
-        try
-        {
+        try {
             H5::Exception::dontPrint();
-            
             enable_hdf5_locking_once();
             
             if( checkHDF5File() ) {
@@ -175,35 +214,32 @@ public:
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
                     bOwnsFile = true;
                 } else {
-                    if (lockedByOtherProcess()) {
+                    // Check if already open in THIS process before lock check
+                    if (!isOpenInCurrentProcess() && lockedByOtherProcess()) {
                         Rf_error("HDF5 file is in use by another process.");
                     }
-                    
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
                     bOwnsFile = true;
                 }
             } else {
-                
-                if (opentype == "r") {        //..2025/08/13..//
-                    Rf_error("HDF5 file not found."); //..2025/08/13..//
-                }         //..2025/08/13..//
-                pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC); //..2025/08/13..//
+                if (opentype == "r") {
+                    Rf_error("HDF5 file not found.");
+                }
+                pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC);
                 bOwnsFile = true;
             }
-            
         } catch (const H5::Exception& e) {
             pfile = nullptr;
-            std::string error_msg = std::string("openFile HDF5 error: ") + e.getDetailMsg();
-            Rf_error("%s", error_msg.c_str());
+            Rf_error("%s", (std::string("openFile HDF5 error: ") + e.getDetailMsg()).c_str());
         } catch (const std::exception& e) {
             pfile = nullptr;
-            std::string error_msg = std::string("openFile error: ") + e.what();
-            Rf_error("%s", error_msg.c_str());
+            Rf_error("%s", (std::string("openFile error: ") + e.what()).c_str());
         }
-        
         return(pfile);
     }
-
+    
+    
+    
     /**
      * @brief Get file pointer
      * @return Pointer to HDF5 file
@@ -530,6 +566,36 @@ private:
         return false;
     }
     
+    
+    /**
+     * @brief Check if file is already open in the current process.
+     * @details Uses HDF5 C API to enumerate all file IDs open in this
+     *          process and compare their paths against fullPath.
+     *          This avoids false positives from lockedByOtherProcess()
+     *          when the same R session already has the file open via
+     *          another HDF5Matrix object.
+     * @return true if this process already has the file open.
+     */
+    bool isOpenInCurrentProcess() {
+        // Get count of all open HDF5 file handles in this process
+        ssize_t count = H5Fget_obj_count(H5F_OBJ_ALL, H5F_OBJ_FILE);
+        if (count <= 0) return false;
+        
+        std::vector<hid_t> ids(static_cast<size_t>(count));
+        H5Fget_obj_ids(H5F_OBJ_ALL, H5F_OBJ_FILE, 
+                       static_cast<size_t>(count), ids.data());
+        
+        char name_buf[2048];
+        for (hid_t fid : ids) {
+            if (H5Iis_valid(fid)) {
+                ssize_t len = H5Fget_name(fid, name_buf, sizeof(name_buf));
+                if (len > 0 && fullPath == std::string(name_buf)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
     
     
