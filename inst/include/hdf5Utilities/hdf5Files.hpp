@@ -209,6 +209,14 @@ public:
             H5::Exception::dontPrint();
             enable_hdf5_locking_once();
             
+            // If already open in this process, skip checkHDF5File() entirely —
+            // it tries H5F_ACC_RDONLY which fails on Windows when file is open RDWR.
+            if (isOpenInCurrentProcess()) {
+                pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
+                bOwnsFile = true;
+                return pfile;
+            }
+            
             if( checkHDF5File() ) {
                 if(opentype == "r") {
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
