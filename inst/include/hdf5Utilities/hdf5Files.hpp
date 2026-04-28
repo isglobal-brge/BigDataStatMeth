@@ -585,20 +585,32 @@ private:
      * @return true if this process already has the file open.
      */
     bool isOpenInCurrentProcess() {
-        // Get count of all open HDF5 file handles in this process
         ssize_t count = H5Fget_obj_count(H5F_OBJ_ALL, H5F_OBJ_FILE);
         if (count <= 0) return false;
         
         std::vector<hid_t> ids(static_cast<size_t>(count));
-        H5Fget_obj_ids(H5F_OBJ_ALL, H5F_OBJ_FILE, 
+        H5Fget_obj_ids(H5F_OBJ_ALL, H5F_OBJ_FILE,
                        static_cast<size_t>(count), ids.data());
         
-        char name_buf[2048];
+        // Normalize fullPath once — replace backslashes, lowercase on Windows
+        std::string my_path = fullPath;
+        std::replace(my_path.begin(), my_path.end(), '\\', '/');
+        #ifdef _WIN32
+            std::transform(my_path.begin(), my_path.end(), my_path.begin(), ::tolower);
+        #endif
+        
+        char name_buf[4096];
         for (hid_t fid : ids) {
-            if (H5Iis_valid(fid)) {
+            if (H5Iis_valid(fid) > 0) {
                 ssize_t len = H5Fget_name(fid, name_buf, sizeof(name_buf));
-                if (len > 0 && fullPath == std::string(name_buf)) {
-                    return true;
+                if (len > 0) {
+                    std::string hdf5_path(name_buf, static_cast<size_t>(len));
+                    std::replace(hdf5_path.begin(), hdf5_path.end(), '\\', '/');
+                    #ifdef _WIN32
+                        std::transform(hdf5_path.begin(), hdf5_path.end(),
+                                       hdf5_path.begin(), ::tolower);
+                    #endif
+                    if (my_path == hdf5_path) return true;
                 }
             }
         }
