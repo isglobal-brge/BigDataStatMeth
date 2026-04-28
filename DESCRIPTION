@@ -1,7 +1,7 @@
 Package: BigDataStatMeth
 Type: Package
 Title: Tools and Infrastructure for Developing 'Scalable' 'HDF5'-Based Methods
-Version: 2.0.29
+Version: 2.0.30
 Date: 2026-04-26
 Authors@R: 
     c(
