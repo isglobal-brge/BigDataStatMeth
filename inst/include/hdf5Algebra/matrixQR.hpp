@@ -441,18 +441,31 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         if (m < n)
             throw std::runtime_error(
                 "RcppTSQRHdf5: matrix must have m >= n (use method='lapack' for wide/square matrices)");
+        
+        if (m < n)
+            throw std::runtime_error("RcppTSQRHdf5: matrix must have m >= n");
+        
+        // Warn if not genuinely tall-skinny — LAPACK will be more efficient
+        if (m < 2 * n)
+            Rf_warning("method='tsqr' is inefficient for nearly-square matrices "
+                           "(m < 2*n); consider method='lapack' or method='auto'");
+        
 
         // ── Thread count (CRAN-compliant via get_number_threads) ──────────────
-        const int nthreads = static_cast<int>(
-            get_number_threads(threads, R_NilValue));
-
+        const int nthreads = static_cast<int>( get_number_threads(threads, R_NilValue));
+        
+        // Guard: nthreads must be >= 1
+        // get_number_threads returns unsigned; if cast gives <= 0, clamp to 1
+        const int safe_nthreads = (nthreads > 0) ? nthreads : 1;
+        
         // ── Block size: each block needs at least n rows for a rank-n local QR ─
         int bsize;
         if (block_size.isNotNull()) {
             bsize = std::max(n, Rcpp::as<int>(block_size));
         } else {
             // Auto: spread m rows evenly across threads, min n rows per block
-            bsize = std::max(n, static_cast<int>((m + nthreads - 1) / nthreads));
+            //.. 20260428 ..// bsize = std::max(n, static_cast<int>((m + nthreads - 1) / nthreads));
+            bsize = std::max(n, static_cast<int>((m + safe_nthreads - 1) / safe_nthreads));
         }
 
         const int nblocks = (m + bsize - 1) / bsize;
@@ -464,7 +477,8 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         const std::vector<hsize_t> stride = {1, 1}, blk = {1, 1};
 
         // ── Step 1: parallel local QR per row block ───────────────────────────
-        #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+        //.. 20260428 ..// #pragma omp parallel for num_threads(nthreads) schedule(dynamic)
+        #pragma omp parallel for num_threads(safe_nthreads) schedule(dynamic)
         for (int b = 0; b < nblocks; ++b) {
             const int row_start = b * bsize;
             const int brows     = std::min(bsize, m - row_start);

@@ -74,9 +74,6 @@ dim(res$Q)   # m x m  (or m x min(m,n) if thin = TRUE)
 dim(res$R)   # m x n  (or min(m,n) x n)
 
 # Explicit TSQR for a tall-skinny matrix (recommended: thin = TRUE)
-res_tsqr <- qr(X, method = "tsqr", thin = TRUE, threads = 4L, overwrite = TRUE)
-dim(res_tsqr$Q)   # m x n
-dim(res_tsqr$R)   # n x n
 
 hdf5_close_all()
 unlink(tmp)

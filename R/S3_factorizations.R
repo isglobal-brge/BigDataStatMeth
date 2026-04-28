@@ -90,9 +90,11 @@ qr.default <- function(x, tol = 1e-07, LAPACK = FALSE, ...) {
 #' dim(res$R)   # m x n  (or min(m,n) x n)
 #'
 #' # Explicit TSQR for a tall-skinny matrix (recommended: thin = TRUE)
-#' res_tsqr <- qr(X, method = "tsqr", thin = TRUE, threads = 4L, overwrite = TRUE)
-#' dim(res_tsqr$Q)   # m x n
-#' dim(res_tsqr$R)   # n x n
+# Explicit TSQR for a tall-skinny matrix (recommended: thin = TRUE)
+# X_tall <- hdf5_create_matrix(tmp, "data/B", data = matrix(rnorm(200000), 2000, 100))
+# X_tall <- hdf5_matrix(tmp, "data/B")
+# res_tsqr <- qr(X_tall, method = "tsqr", thin = TRUE, overwrite = TRUE)
+# dim(res_tsqr$Q)   # 2000 x 10dim(res_tsqr$R)   # 100 x 100
 #' 
 #' hdf5_close_all()
 #' unlink(tmp)
