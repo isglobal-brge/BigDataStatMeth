@@ -116,15 +116,19 @@ svd.HDF5Matrix <- function(x,
     nu_int <- as.integer(nu)
     nv_int <- as.integer(nv)
 
-    # NOTE: nev in the C++ block-SVD algorithm controls eigenvalues *per block*,
-    # not the output rank.  The algorithm always writes min(m,n) singular triplets
-    # to disk.  We compute the full decomposition and then truncate d/u/v here
-    # in R so the caller gets exactly nu left vectors and nv right vectors,
-    # matching base::svd() semantics.
+    # NOTE: nev controls per-block truncation in the block-SVD algorithm.
+    # Passing max(nu,nv) when the user requests fewer than full rank keeps
+    # B_i = U_i * d_i compact, reducing the cost of the final joined SVD.
+    # Pass nev to the block algorithm so per-block U matrices are truncated
+    # to the requested rank, reducing the cost of the final joined SVD.
+    # nev=0 means full rank (no truncation) — only truncate when the user
+    # explicitly requests fewer vectors than the full decomposition.
+    nev_blk <- if (max(nu_int, nv_int) < min(dim(x))) as.integer(max(nu_int, nv_int)) else 0L
     res <- x$svd(
         k             = k,
         q             = q,
-        nev           = 0L,   # 0 = all; nev as block param is unused in C++
+        nev           = nev_blk,
+        ##..## nev           = 0L,   # 0 = all; nev as block param is unused in C++
         center        = center,
         scale         = scale,
         method        = method,

@@ -138,7 +138,17 @@ public:
                     Rf_error("HDF5 file is in use by another process; cannot overwrite.");
                 }
                 
-                pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC ); 
+                //.. 2026/05/02 ..// pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC ); 
+                #if H5_VERSION_GE(1, 10, 1)
+                {
+                    H5::FileCreatPropList fcpl;
+                    fcpl.setFileSpaceStrategy(H5F_FSPACE_STRATEGY_FSM_AGGR, true, (hsize_t)0);
+                    pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC, fcpl );
+                }
+                #else
+                pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC );
+                #endif
+                
                 bOwnsFile = true;
                 iExec = EXEC_OK; //.. 2025/08/13 ..//
             } else if ( bFileExists && !boverwrite){
@@ -233,7 +243,16 @@ public:
                 if (opentype == "r") {
                     Rf_error("HDF5 file not found.");
                 }
+                //.. 2026/05/02 ..// pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC);
+                #if H5_VERSION_GE(1, 10, 1)
+                {
+                    H5::FileCreatPropList fcpl;
+                    fcpl.setFileSpaceStrategy(H5F_FSPACE_STRATEGY_FSM_AGGR, true, (hsize_t)0);
+                    pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC, fcpl );
+                }
+                #else
                 pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC);
+                #endif
                 bOwnsFile = true;
             }
         } catch (const H5::Exception& e) {

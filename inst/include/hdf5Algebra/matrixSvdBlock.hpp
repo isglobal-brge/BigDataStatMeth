@@ -363,19 +363,27 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
 
                     if( (retsvd.d)[size_d - 1] <= dthreshold ){
                         nzeros = 1;
-                        for( int j = (size_d - 2); ( j>1 && (retsvd.d)[i] <= dthreshold ); j-- ) {
+                        //..  2026/05/02 ..// for( int j = (size_d - 2); ( j>1 && (retsvd.d)[i] <= dthreshold ); j-- ) {
+                        for( int j = (size_d - 2); ( j>1 && (retsvd.d)[j] <= dthreshold ); j-- ) {
                             nzeros++;
                         }
                     }
 
                     //    c)  U*d
                     // Create diagonal matrix from svd decomposition d
-                    int isize = (retsvd.d).size() - nzeros;
+                    //.. 2026/05/02 ..// int isize = (retsvd.d).size() - nzeros;
 
+                    //.. 2026/05/02 ..// if( isize < 2 ) {
+                    //.. 2026/05/02 ..//     isize = 2;
+                    //.. 2026/05/02 ..// }
+
+                    int isize = (retsvd.d).size() - nzeros;
+                    if( nev > 0 ) isize = std::min(isize, nev);   // ← añadir esta línea
+                    
                     if( isize < 2 ) {
                         isize = 2;
                     }
-
+                    
                     Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
                     d.diagonal() = (retsvd.d).head(isize);
 
@@ -401,7 +409,8 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                         {
                             // unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true );
                             unlimDataset.reset( new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true) );   
-                            unlimDataset->inheritCompressionLevel(dsA->getCompressionLevel());
+                            //.. 2026/05/02 ..//unlimDataset->inheritCompressionLevel(dsA->getCompressionLevel());
+                            unlimDataset->setCompressionLevel(0); 
                             unlimDataset->createUnlimitedDataset(paralPos[i].write_count[0], paralPos[i].write_count[1], "real");
                             // delete unlimDataset; unlimDataset = nullptr;
 
@@ -499,10 +508,10 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
         
         // ithreads = get_number_threads(threads, R_NilValue);
         
-        #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) )
+        //.. 2026/05/02 ..// #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) )
 
-        // Get data from M blocks in initial matrix
-        #pragma omp for ordered schedule (dynamic)
+        //.. 2026/05/02 ..// // Get data from M blocks in initial matrix
+        //.. 2026/05/02 ..// #pragma omp for ordered schedule (dynamic)
         for( int i = 0; i< M ; i++)
         {
             
@@ -565,8 +574,8 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
             count[0] = restmp.rows();
             count[1] = restmp.cols();
 
-            #pragma omp ordered
-            {
+            //.. 2026/05/02 ..// #pragma omp ordered
+            //.. 2026/05/02 ..// {
                 //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
                 {
                     
@@ -574,7 +583,9 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
                         // Create unlimited dataset in hdf5 file
                         // unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true );
                         unlimDataset.reset( new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true) );
-                        unlimDataset->inheritCompressionLevel(dsA->getCompressionLevel());
+                        
+                        //.. 2026/05/02 ..//unlimDataset->inheritCompressionLevel(dsA->getCompressionLevel());
+                        unlimDataset->setCompressionLevel(0); 
                         unlimDataset->createUnlimitedDataset(count[0], count[1], "real");
                         // delete unlimDataset; unlimDataset = nullptr;
                         
@@ -598,7 +609,7 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
                     // delete unlimDataset; unlimDataset = nullptr;
                 }
             }
-        }
+        //.. 2026/05/02 ..// }
 
     } catch( H5::FileIException& error ) { 
         throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (File IException)");
