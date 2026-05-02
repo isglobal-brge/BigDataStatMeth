@@ -543,7 +543,7 @@ Here's how to use `chol()`:
 
 
 ```{r cholDesc}
-N <- 100
+N <- 512
 set.seed(5234)
 Y <- matrix(rnorm(N*N), N, N)
 Ycp <- crossprod(Y)
