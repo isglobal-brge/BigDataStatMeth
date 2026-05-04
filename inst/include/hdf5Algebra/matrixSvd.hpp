@@ -67,6 +67,7 @@ namespace BigDataStatMeth {
      * @see BigDataStatMeth::svdeig
      * @see Spectra::SymEigsSolver
      */
+    /** <<<<<< ======== 2026/05/04
     inline svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale )
     {
         
@@ -134,6 +135,71 @@ namespace BigDataStatMeth {
             }
         }
         
+        return retsvd;
+    }
+     ===== >>>> */
+    inline svdeig RcppbdSVD( Eigen::MatrixXd& X, int k, int ncv, bool bcenter, bool bscale )
+    {
+        svdeig retsvd;
+        
+        Eigen::MatrixXd nX;
+        const Eigen::MatrixXd& Xref = (bcenter || bscale)
+            ? (nX = RcppNormalize_Data(X, bcenter, bscale, false), nX)
+            : X;
+        
+        const int m   = static_cast<int>(Xref.rows());
+        const int n   = static_cast<int>(Xref.cols());
+        const int kmax = std::min(m, n);
+        
+        // ── Full SVD: delegate to LAPACK dgesdd (fastest for full decomposition) ──
+        if (k <= 0 || k >= kmax) {
+            // RcppbdSVD_lapack accepts a const ref-compatible T; pass a copy if needed
+            Eigen::MatrixXd Xcopy = Xref;   // dgesdd_ overwrites the input
+            return RcppbdSVD_lapack(Xcopy, false, false, false);
+        }
+        
+        // ── Truncated SVD: one Spectra solve on the smaller Gram matrix ──
+        // Choose the side that produces the smaller Gram matrix.
+        // Then recover the other factor analytically: V = Xref^T * U * D^{-1}
+        // (or U = Xref * V * D^{-1} for the m<n case).
+        if (ncv <= 0)  ncv = std::min(k + std::max(k, 10), kmax);
+        if (ncv <= k)  ncv = k + 1;
+        ncv = std::min(ncv, kmax);
+        
+        if (m >= n) {
+            // Smaller Gram: X^T * X  (n × n). Solve for V, recover U.
+            Eigen::MatrixXd XTX = Xref.transpose() * Xref;
+            Spectra::DenseSymMatProd<double> op(XTX);
+            Spectra::SymEigsSolver<Spectra::DenseSymMatProd<double>> eigs(op, k, ncv);
+            eigs.init();
+            eigs.compute(Spectra::SortRule::LargestAlge);
+            if (eigs.info() != Spectra::CompInfo::Successful) {
+                retsvd.bokuv = false; retsvd.bokd = false; return retsvd;
+            }
+            retsvd.d = eigs.eigenvalues().cwiseSqrt();   // singular values
+            retsvd.v = eigs.eigenvectors();               // n × k
+            // U = X * V * D^{-1}
+            retsvd.u = (Xref * retsvd.v).array().rowwise()
+                / retsvd.d.transpose().array();    // m × k
+        } else {
+            // Smaller Gram: X * X^T  (m × m). Solve for U, recover V.
+            Eigen::MatrixXd XXT = Xref * Xref.transpose();
+            Spectra::DenseSymMatProd<double> op(XXT);
+            Spectra::SymEigsSolver<Spectra::DenseSymMatProd<double>> eigs(op, k, ncv);
+            eigs.init();
+            eigs.compute(Spectra::SortRule::LargestAlge);
+            if (eigs.info() != Spectra::CompInfo::Successful) {
+                retsvd.bokuv = false; retsvd.bokd = false; return retsvd;
+            }
+            retsvd.d = eigs.eigenvalues().cwiseSqrt();
+            retsvd.u = eigs.eigenvectors();               // m × k
+            // V = X^T * U * D^{-1}
+            retsvd.v = (Xref.transpose() * retsvd.u).array().rowwise()
+                / retsvd.d.transpose().array();    // n × k
+        }
+        
+        retsvd.bokuv = true;
+        retsvd.bokd  = true;
         return retsvd;
     }
     
@@ -240,7 +306,7 @@ namespace BigDataStatMeth {
             dsd->writeDataset( Rcpp::wrap(retsvd.d) );
             
             // 3.- crossprod initial matrix and svdA$u
-            
+/** 2026/05/03  < < = = = = =             
             if( bcenter == true || bscale == true || (dsA->getGroupName().find("NORMALIZED_T") != std::string::npos) ) {
                 
                 if(bcenter == true || bscale == true) {
@@ -297,10 +363,99 @@ namespace BigDataStatMeth {
                     v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads); // multiplication
                 }
             }
-            
+ = = = = = > > */
+
+
+            // 3.- Compute v = source * (u / d) block-wise — never loads full matrix into RAM
+            {
+                // Pre-divide u by d (tiny operation, u is n_small × k)
+                Eigen::MatrixXd u_div_d = retsvd.u.array().rowwise() /
+                    Eigen::Map<Eigen::RowVectorXd>(retsvd.d.data(), retsvd.d.size()).array();
+                
+                // Write u_div_d to a small temp HDF5 dataset
+                std::unique_ptr<BigDataStatMeth::hdf5Dataset> ds_udivd(nullptr);
+                ds_udivd.reset( new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strGroupName, "udivd", true) );
+                ds_udivd->setCompressionLevel(0);
+                ds_udivd->createDataset( u_div_d.rows(), u_div_d.cols(), "real" );
+                ds_udivd->writeDataset( Rcpp::wrap(u_div_d) );
+                
+                // Temp dataset for the product result (also small: n_small × k)
+                std::unique_ptr<BigDataStatMeth::hdf5Dataset> ds_vtmp(nullptr);
+                ds_vtmp.reset( new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strGroupName, "vtmp", true) );
+                
+                // if( bcenter == true || bscale == true ) {
+                //     dsnormalizedData.reset( new BigDataStatMeth::hdf5Dataset( dsA->getFullPath(), strGroupName, "normalmatrix", false) );
+                //     dsnormalizedData->openDataset();
+                //     
+                //     multiplication( dsnormalizedData.get(), ds_udivd.get(), ds_vtmp.get(),
+                //                     transp, false, R_NilValue, R_NilValue, threads );
+                // } else if( dsA->getGroupName().find("NORMALIZED_T") != std::string::npos ) {
+                //     dsnormalizedData_i.reset( new BigDataStatMeth::hdf5DatasetInternal( dsA->getFullPath(), dsA->getGroupName(), dsA->getDatasetName(), false) );
+                //     dsnormalizedData_i->openDataset();
+                //     multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(),
+                //                     false, false, R_NilValue, R_NilValue, threads );
+                // } else {
+                //     multiplication( dsA, ds_udivd.get(), ds_vtmp.get(),
+                //                     !transp, false, R_NilValue, R_NilValue, threads );
+                // }
+                // 
+                // // Read result back — it is n_small × k, always fits in RAM
+                // hsize_t* vdims = ds_vtmp->dim();
+                // std::vector<double> vdbuf( vdims[0] * vdims[1] );
+                // ds_vtmp->readDatasetBlock( {0,0}, {vdims[0], vdims[1]}, stride, block, vdbuf.data() );
+                // v = Eigen::Map<Eigen::MatrixXd>( vdbuf.data(), vdims[1], vdims[0] );
+                
+                
+                if( bcenter == true || bscale == true ) {
+                    dsnormalizedData.reset( new BigDataStatMeth::hdf5Dataset( dsA->getFullPath(), strGroupName, "normalmatrix", false) );
+                    dsnormalizedData->openDataset();
+                    
+                    if( transp == false ) {
+                        // normalmatrix dims [R_nrows, R_ncols] — multiplication() works correctly here
+                        multiplication( dsnormalizedData.get(), ds_udivd.get(), ds_vtmp.get(),
+                                        false, false, R_NilValue, R_NilValue, threads );
+                    } else {
+                        // transp=true: multiplication() reads out of bounds for this storage convention.
+                        // v = normalmatrix_R * u_div_d = (R_nrows × R_ncols) * (R_ncols × k).
+                        // Read normalmatrix in row-blocks — never fully in RAM.
+                        const hsize_t nR  = dsnormalizedData->nrows();  // R_nrows
+                        const hsize_t nC  = dsnormalizedData->ncols();  // R_ncols
+                        const hsize_t blk = std::max( (hsize_t)1, MAXELEMSINBLOCK / nC );
+                        v = Eigen::MatrixXd::Zero( nR, u_div_d.cols() );
+                        for( hsize_t off = 0; off < nR; off += blk ) {
+                            const hsize_t cnt = std::min( blk, nR - off );
+                            std::vector<double> buf( cnt * nC );
+                            dsnormalizedData->readDatasetBlock( {off, 0}, {cnt, nC}, stride, block, buf.data() );
+                            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
+                                Ablock( buf.data(), cnt, nC );
+                            v.middleRows( off, cnt ).noalias() = Ablock * u_div_d;
+                        }
+                    }
+                } else if( dsA->getGroupName().find("NORMALIZED_T") != std::string::npos ) {
+                    dsnormalizedData_i.reset( new BigDataStatMeth::hdf5DatasetInternal( dsA->getFullPath(), dsA->getGroupName(), dsA->getDatasetName(), false) );
+                    dsnormalizedData_i->openDataset();
+                    multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(),
+                                    false, false, R_NilValue, R_NilValue, threads );
+                } else {
+                    multiplication( dsA, ds_udivd.get(), ds_vtmp.get(),
+                                    !transp, false, R_NilValue, R_NilValue, threads );
+                }
+                
+                // Read result back from ds_vtmp — only when populated by multiplication()
+                if( !( (bcenter == true || bscale == true) && transp == true ) ) {
+                    hsize_t* vdims = ds_vtmp->dim();
+                    std::vector<double> vdbuf( vdims[0] * vdims[1] );
+                    ds_vtmp->readDatasetBlock( {0,0}, {vdims[0], vdims[1]}, stride, block, vdbuf.data() );
+                    v = Eigen::Map<Eigen::MatrixXd>( vdbuf.data(), vdims[1], vdims[0] );
+                }
+                
+                
+            }
+
+
             // 4.- resuls / svdA$d
             // v = v.array().rowwise()/(retsvd.d).transpose().array();
-            v = v.array().rowwise() / Eigen::Map<Eigen::RowVectorXd>(retsvd.d.data(), (retsvd.d).size()).array();
+            //..  2026/05/03 ..//v = v.array().rowwise() / Eigen::Map<Eigen::RowVectorXd>(retsvd.d.data(), (retsvd.d).size()).array();
             
             if (transp == true)  {
                 dsu->inheritCompressionLevel(dsA->getCompressionLevel());
