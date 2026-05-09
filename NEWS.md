@@ -1,100 +1,119 @@
-# BigDataStatMeth 2.0.26
+# BigDataStatMeth 2.0.0
 
-## Bug fixes
-
-* Fixed `multiply_sparse()`: three bugs in `multiplicationSparse.hpp` —
-  incorrect output dataset dimensions (`createDataset(M,N)` → `createDataset(N,M)`),
-  accumulation reading uninitialised data on first k-block (`kk==0` guard),
-  and incorrect write path via `Rcpp::wrap` (replaced with `std::vector<double>`
-  overload, matching `multiplication.hpp` pattern).
-* Fixed `diag.default`: removed `names` parameter from `base::diag()` call
-  that caused incorrect dispatch returning 1×1 instead of N×N identity.
-* Fixed `%*%.default`: added S3 default method for plain R matrices when
-  package is loaded; `@rawNamespace` directives prevent malformed NAMESPACE.
-* Fixed `~hdf5Dataset()` destructor: `H5Iis_valid(pdataset->getId())` guard
-  before `close()` prevents crash when handles are invalidated externally.
-* Fixed `rcpp_hdf5dataset_close()`: `R_ExternalPtrAddr(ptr)==nullptr` guard
-  prevents double-close after `R_ClearExternalPtr()`.
-* Fixed `svd.HDF5Matrix`: `center`/`scale` parameters were silently ignored
-  (passed to `...`) — now correctly forwarded to the R6 `$svd()` method.
-* Fixed `rcpp_hdf5dataset_diag_scale()`: coordinate mismatch for 1×N vector
-  datasets — now uses HDF5-native coords for read/write and R coords for
-  `createDataset`.
-* Fixed `getAvailableMemoryMB()`: `memory.size()` call wrapped in
-  `#ifdef _WIN32` to eliminate 35 cross-platform warnings.
-
-## New features
-
-* `length.HDF5Matrix`: new S3 method returning `prod(dim(x))`, consistent
-  with `base::length()` for R matrices.
-* `list_datasets()`: new S3 function wrapping `bdgetDatasetsList_hdf5()` —
-  lists datasets in an HDF5 group from an `HDF5Matrix` object or file path.
-* `rcpp_hdf5_close_all_registry()`: extended to call
-  `BigDataStatMeth::closeAllHDF5Handles()` (new function in
-  `hdf5CheckClose.hpp`) which closes all HDF5 C-library handles not tracked
-  by the R6 registry, equivalent to `rhdf5::h5closeAll()`.
-* `.onUnload()`: now calls `rcpp_hdf5_close_all_registry()` before unloading
-  the shared library, preventing finalizer crashes on package reload.
-* `hdf5_close_all()`: now calls `rcpp_hdf5_close_all_registry()` at the end,
-  closing all HDF5 handles including those not tracked as `HDF5Matrix` objects.
-
-## CRAN compliance
-
-* Eliminated 35 `memory.size() is Windows-specific` warnings via
-  `#ifdef _WIN32` guard.
-* Fixed `mem_tcrossprod.cpp`: two empty `catch{}` blocks now re-throw via
-  `Rf_error()`, propagating `non-conformable` errors correctly to R.
-
-
-# BigDataStatMeth 2.0.25
+This is a major release of BigDataStatMeth. It introduces a new
+`HDF5Matrix` user-facing interface, standard S3 methods for
+HDF5-backed matrices, and an extended C++ infrastructure for block-wise
+statistical computing with HDF5 files.
 
 ## Major changes
 
-* New hybrid R6+S3 architecture: all operations are now accessible via a
-  standard S3 interface. Users interact exclusively through S3 generics
-  (`dim`, `[`, `%*%`, `crossprod`, `svd`, `qr`, `cor`, `scale`, etc.);
-  the R6 layer is internal.
-* Phase 17: implemented S3/R6 wrappers for `eigen()`, `pseudoinverse()`,
-  `diag()`/`diag<-()`, `diag_op()`, `diag_scale()`, `sweep()`,
-  matrix-vector product, `multiply_sparse()`, `split_dataset()`,
-  `reduce()`, and `apply_function()`.
-* Phase 16: automatic compression inheritance — all output datasets inherit
-  the compression level of their input when not explicitly specified.
-  Global override via `hdf5matrix_options(compression = 0..9)`.
-* Phase 18: removed 46 redundant `#pragma omp critical(accessFile)`
-  directives (double serialisation with internal `HDF5ThreadSafety::LockGuard`).
-  One intentional critical section retained in TSQR (`hdf5_tsqr_read`).
-* HDF5 pointer safety: live-pointer registry changed from
-  `unordered_set<void*>` to `unordered_map<void*, SEXP>`; `claim_ptr()`
-  invalidates XPtr handles via `R_ClearExternalPtr()`; new
-  `rcpp_hdf5_close_at_paths()` closes stale handles before overwrite.
-  Sentinel-based R6 finalizer ensures deterministic handle closure.
-* TSQR (Tall-Skinny QR): new parallel block QR algorithm for tall-skinny
-  matrices (`m/n > 5` and `m > 1000`). Selectable via `method = "tsqr"`
-  or automatically dispatched with `method = "auto"`.
+* Added the `HDF5Matrix` interface for working with matrices stored in
+  HDF5 files.
+* Added S3 methods that allow HDF5-backed matrices to be used with
+  familiar R calls such as `dim()`, `[`, `[<-`, `%*%`, `crossprod()`,
+  `tcrossprod()`, `scale()`, `cor()`, `svd()`, `prcomp()`, `qr()`,
+  `chol()`, and `solve()`.
+* Reorganized the package around a standard R interface backed by a C++
+  computational infrastructure for block-wise statistical computing.
+* Added global configuration through `hdf5matrix_options()` for common
+  settings such as parallel execution, number of threads, block size,
+  and HDF5 compression.
 
-## Bug fixes
+## User-facing functionality
 
-* Fixed double-serialisation in parallel HDF5 I/O by removing redundant
-  `omp_critical` sections (Phases 18).
-* Fixed `ARM64` heap corruption from Eigen expression templates in
-  eigendecomposition (replaced `.reverse()` with explicit index loops).
-* Fixed HDF5 file corruption from `writeDataset(Rcpp::wrap(VectorXd))`
-  using wrong dataspace rank.
-* Fixed `ncomponents` truncation in `prcomp()` for large matrices.
-* Fixed `SQUARE_SMALL` block sizing in `multiplication.hpp` (removed
-  erroneous `/2` divisor).
-* Fixed `diag<-` S3 dispatch via `@rawNamespace` directives.
+* Added or extended support for creating, opening, inspecting, and
+  closing HDF5-backed matrices.
+* Added support for subsetting, assignment, dimension names, and
+  conversion to in-memory R objects.
+* Added S3 methods for element-wise arithmetic operations on
+  `HDF5Matrix` objects.
+* Added S3 support for matrix algebra operations, including `%*%`,
+  `crossprod()`, `tcrossprod()`, `cbind()`, and `rbind()`.
+* Added aggregation and summary methods, including `colSums()`,
+  `rowSums()`, `colMeans()`, `rowMeans()`, `colVars()`, `rowVars()`,
+  `colSds()`, `rowSds()`, `colMins()`, `rowMins()`, `colMaxs()`,
+  `rowMaxs()`, `mean()`, `var()`, and `sd()`.
+* Added support for statistical transformations including `scale()`,
+  `sweep()`, and `cor()`.
+* Added or extended methods for matrix decompositions and
+  factorizations, including `svd()`, `prcomp()`, `qr()`, `chol()`,
+  `solve()`, `eigen()`, and `pseudoinverse()`.
+* Added diagonal operations and utilities, including `diag()`,
+  `diag<-()`, `diag_op()`, and `diag_scale()`.
+* Added split, reduce, and apply utilities for HDF5-backed workflows.
+* Retained additional high-level `bd*` utilities for specialized
+  workflows that do not map directly to standard R generics.
 
-## CRAN compliance
+## HDF5 storage and resource management
 
-* Thread compliance: all thread-count selection now respects
-  `OMP_THREAD_LIMIT` via `getDTthreads(INT_MAX, false)` (Fixes A–E).
-* Removed `exportPattern` from `NAMESPACE`.
-* All new examples use `tempfile()`/`tempdir()`.
-* Corrected HDF5 capitalisation across all 175 man pages.
-* Removed `library(SeqArray)` from vignette.
-* Removed dead code (`S3_subset_old.R`, `rcpp_hdf5_count_open_datasets`).
+* Added `list_datasets()` for inspecting datasets stored in HDF5 files.
+* Added `hdf5_close_all()` for closing open HDF5 handles managed by the
+  package.
+* Improved HDF5 handle and pointer management, including safer behavior
+  when overwriting datasets and when unloading or reloading the package.
+* Added HDF5 compression handling and propagation of compression
+  settings across output datasets.
+* Added support for HDF5 file space management so that free space
+  released by deleted datasets can be reused by subsequent writes in
+  files created by the package.
+
+## Performance and numerical methods
+
+* Added support for block-wise and parallel execution settings through
+  `hdf5matrix_options()`.
+* Added TSQR support for tall-skinny QR decompositions, with automatic
+  method selection when appropriate.
+* Improved SVD and PCA handling for HDF5-backed matrices, including
+  support for truncated outputs and block-wise computation.
+* Improved QR, Cholesky, inverse, eigen decomposition, and
+  pseudoinverse workflows for HDF5-backed matrices.
+* Removed redundant OpenMP critical sections where HDF5 locking already
+  provides the required synchronization.
+* Improved thread handling for CRAN-compatible execution.
+
+## C++ infrastructure
+
+* Extended the C++ backend with classes and routines for managing HDF5
+  files, groups, and datasets.
+* Exposed reusable block-wise computational infrastructure through the
+  package headers for developers implementing new Rcpp-based methods.
+* Improved integration between the R interface and the C++ backend for
+  matrix operations, decompositions, and HDF5 resource management.
+* Added or improved C++ implementations used by the R/S3 interface for
+  matrix algebra, decompositions, transformations, and HDF5-backed
+  statistical operations.
+
+## Documentation and examples
+
+* Reworked the main package vignette around the `HDF5Matrix` interface
+  and standard R methods.
+* Improved the package-level help page opened by
+  `help("BigDataStatMeth")`.
+* Cleaned examples to use temporary files and avoid writing to the
+  user's working directory.
+* Removed obsolete vignette material and outdated installation examples.
+* Moved example data to the package `extdata` directory.
+* Improved documentation consistency for HDF5 terminology and package
+  usage.
+
+## Bug fixes and reliability
+
+* Fixed error propagation in matrix multiplication and crossproduct
+  paths.
+* Fixed several HDF5 pointer, handle, and finalizer edge cases.
+* Fixed portability issues related to platform-specific memory queries.
+* Fixed several edge cases in diagonal operations, matrix-vector
+  operations, sparse multiplication internals, and SVD/PCA parameter
+  handling.
+* Improved cleanup of HDF5 handles during package unloading.
+* Improved behavior when repeatedly creating, overwriting, closing, and
+  reopening HDF5-backed datasets.
+
+
+# BigDataStatMeth 1.0.3
+
+* Minor documentation and example updates.
+* Version previously available on CRAN before the 2.0.0 redesign.
 
 
 # BigDataStatMeth 1.0.2

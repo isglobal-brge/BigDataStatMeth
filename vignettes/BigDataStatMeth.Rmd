@@ -861,9 +861,11 @@ operations from scratch.
 
 This makes the package useful not only as an end-user R package, but
 also as a development framework for extending HDF5-backed statistical
-computing in C++. The present vignette does not document the C++ API in
-detail, but highlights its role as the backend that supports and extends
-the R interface.
+computing in C++. Since the purpose of this vignette is to introduce the
+standard R interface, the C++ API is not discussed in detail here.
+Nevertheless, it is an important part of the package architecture and
+provides the computational infrastructure behind the R/S3 methods shown
+above.
 
 # Session information
 

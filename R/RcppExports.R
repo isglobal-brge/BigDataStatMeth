@@ -280,14 +280,17 @@ bdgetDatasetsList_hdf5 <- function(filename, group = NULL, prefix = NULL, recurs
 #' @examples
 #' \donttest{
 #' 
+#' hdf5_file <- tempfile(fileext = ".h5")
+#' csv_file <- tempfile(fileext = ".csv")
+#' 
 #' # Create a test CSV file
 #' data <- matrix(rnorm(100), 10, 10)
-#' write.csv(data, "test.csv", row.names = FALSE)
+#' write.csv(data, csv_file, row.names = FALSE)
 #' 
 #' # Import to HDF5
 #' bdImportTextFile_hdf5(
-#'   filename = "test.csv",
-#'   outputfile = "output.HDF5",
+#'   filename = csv_file,
+#'   outputfile = hdf5_file,
 #'   outGroup = "data",
 #'   outDataset = "matrix1",
 #'   sep = ",",
@@ -296,7 +299,7 @@ bdgetDatasetsList_hdf5 <- function(filename, group = NULL, prefix = NULL, recurs
 #' )
 #' 
 #' # Cleanup
-#' unlink(c("test.csv", "output.HDF5"))
+#' unlink(c(csv_file, hdf5_file))
 #' }
 #'
 #' @references
