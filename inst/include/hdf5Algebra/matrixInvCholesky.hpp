@@ -347,9 +347,11 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
         
         int dimensionSize = idim0,
             readedRows = 0,
-            rowstoRead,
-            minimumBlockSize;
+            rowstoRead;
+            // minimumBlockSize;
             // chunk = 1,
+            
+        long minimumBlockSize;
             
         bool bcancel = false;
         double sum = 0;
@@ -723,8 +725,9 @@ inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth
         
         int dimensionSize = idim0, 
             readedCols = 0,
-            colstoRead,
-            minimumBlockSize;
+            colstoRead;
+            // minimumBlockSize;
+        long minimumBlockSize;
         
         std::vector<hsize_t> offset = {0,0},
                              count = {1,1},
