@@ -1,3 +1,121 @@
+# BigDataStatMeth 2.0.0
+
+This is a major release of BigDataStatMeth. It introduces a new
+`HDF5Matrix` user-facing interface, standard S3 methods for
+HDF5-backed matrices, and an extended C++ infrastructure for block-wise
+statistical computing with HDF5 files.
+
+## Major changes
+
+* Added the `HDF5Matrix` interface for working with matrices stored in
+  HDF5 files.
+* Added S3 methods that allow HDF5-backed matrices to be used with
+  familiar R calls such as `dim()`, `[`, `[<-`, `%*%`, `crossprod()`,
+  `tcrossprod()`, `scale()`, `cor()`, `svd()`, `prcomp()`, `qr()`,
+  `chol()`, and `solve()`.
+* Reorganized the package around a standard R interface backed by a C++
+  computational infrastructure for block-wise statistical computing.
+* Added global configuration through `hdf5matrix_options()` for common
+  settings such as parallel execution, number of threads, block size,
+  and HDF5 compression.
+
+## User-facing functionality
+
+* Added or extended support for creating, opening, inspecting, and
+  closing HDF5-backed matrices.
+* Added support for subsetting, assignment, dimension names, and
+  conversion to in-memory R objects.
+* Added S3 methods for element-wise arithmetic operations on
+  `HDF5Matrix` objects.
+* Added S3 support for matrix algebra operations, including `%*%`,
+  `crossprod()`, `tcrossprod()`, `cbind()`, and `rbind()`.
+* Added aggregation and summary methods, including `colSums()`,
+  `rowSums()`, `colMeans()`, `rowMeans()`, `colVars()`, `rowVars()`,
+  `colSds()`, `rowSds()`, `colMins()`, `rowMins()`, `colMaxs()`,
+  `rowMaxs()`, `mean()`, `var()`, and `sd()`.
+* Added support for statistical transformations including `scale()`,
+  `sweep()`, and `cor()`.
+* Added or extended methods for matrix decompositions and
+  factorizations, including `svd()`, `prcomp()`, `qr()`, `chol()`,
+  `solve()`, `eigen()`, and `pseudoinverse()`.
+* Added diagonal operations and utilities, including `diag()`,
+  `diag<-()`, `diag_op()`, and `diag_scale()`.
+* Added split, reduce, and apply utilities for HDF5-backed workflows.
+* Retained additional high-level `bd*` utilities for specialized
+  workflows that do not map directly to standard R generics.
+
+## HDF5 storage and resource management
+
+* Added `list_datasets()` for inspecting datasets stored in HDF5 files.
+* Added `hdf5_close_all()` for closing open HDF5 handles managed by the
+  package.
+* Improved HDF5 handle and pointer management, including safer behavior
+  when overwriting datasets and when unloading or reloading the package.
+* Added HDF5 compression handling and propagation of compression
+  settings across output datasets.
+* Added support for HDF5 file space management so that free space
+  released by deleted datasets can be reused by subsequent writes in
+  files created by the package.
+
+## Performance and numerical methods
+
+* Added support for block-wise and parallel execution settings through
+  `hdf5matrix_options()`.
+* Added TSQR support for tall-skinny QR decompositions, with automatic
+  method selection when appropriate.
+* Improved SVD and PCA handling for HDF5-backed matrices, including
+  support for truncated outputs and block-wise computation.
+* Improved QR, Cholesky, inverse, eigen decomposition, and
+  pseudoinverse workflows for HDF5-backed matrices.
+* Removed redundant OpenMP critical sections where HDF5 locking already
+  provides the required synchronization.
+* Improved thread handling for CRAN-compatible execution.
+
+## C++ infrastructure
+
+* Extended the C++ backend with classes and routines for managing HDF5
+  files, groups, and datasets.
+* Exposed reusable block-wise computational infrastructure through the
+  package headers for developers implementing new Rcpp-based methods.
+* Improved integration between the R interface and the C++ backend for
+  matrix operations, decompositions, and HDF5 resource management.
+* Added or improved C++ implementations used by the R/S3 interface for
+  matrix algebra, decompositions, transformations, and HDF5-backed
+  statistical operations.
+
+## Documentation and examples
+
+* Reworked the main package vignette around the `HDF5Matrix` interface
+  and standard R methods.
+* Improved the package-level help page opened by
+  `help("BigDataStatMeth")`.
+* Cleaned examples to use temporary files and avoid writing to the
+  user's working directory.
+* Removed obsolete vignette material and outdated installation examples.
+* Moved example data to the package `extdata` directory.
+* Improved documentation consistency for HDF5 terminology and package
+  usage.
+
+## Bug fixes and reliability
+
+* Fixed error propagation in matrix multiplication and crossproduct
+  paths.
+* Fixed several HDF5 pointer, handle, and finalizer edge cases.
+* Fixed portability issues related to platform-specific memory queries.
+* Fixed several edge cases in diagonal operations, matrix-vector
+  operations, sparse multiplication internals, and SVD/PCA parameter
+  handling.
+* Improved cleanup of HDF5 handles during package unloading.
+* Improved behavior when repeatedly creating, overwriting, closing, and
+  reopening HDF5-backed datasets.
+
+
+# BigDataStatMeth 1.0.3
+
+* Minor documentation and example updates.
+* Version previously available on CRAN before the 2.0.0 redesign.
+
+
 # BigDataStatMeth 1.0.2
 
 ## Major changes

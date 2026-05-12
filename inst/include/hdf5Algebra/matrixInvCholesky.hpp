@@ -1,6 +1,8 @@
 /**
  * @file matrixInvCholesky.hpp
  * @brief Implementation of Cholesky decomposition and matrix inversion using HDF5
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  *
  * This file provides functionality for computing matrix inverses using the Cholesky
  * decomposition method, specifically designed for large matrices stored in HDF5 format.
@@ -80,7 +82,7 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
 inline int Cholesky_decomposition_hdf5(BigDataStatMeth::hdf5Dataset* inDataset,  
                                        BigDataStatMeth::hdf5Dataset* outDataset, 
                                        int idim0, int idim1, long dElementsBlock, 
-                                       Rcpp::Nullable<int> threads);
+                                       bool full_matrix, Rcpp::Nullable<int> threads);
 
 /**
  * @brief Computes inverse of Cholesky factor with automatic algorithm selection
@@ -269,7 +271,7 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
         int ncols = inDataset->ncols();
         
         // Rcpp::Rcout<<"\nIniciem cholesky";
-        int res = Cholesky_decomposition_hdf5(inDataset, outDataset, nrows, ncols, dElementsBlock, threads);
+        int res = Cholesky_decomposition_hdf5(inDataset, outDataset, nrows, ncols, dElementsBlock, false, threads);
         
         if(res == 0)
         {
@@ -284,30 +286,21 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
         }
         
     } catch( H5::FileIException& error ) { 
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr<<"c++ exception Rcpp_InvCholesky_hdf5 (File IException)";
-        return void();
+        throw std::runtime_error("c++ exception Rcpp_InvCholesky_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { 
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Rcpp_InvCholesky_hdf5 (Group IException)";
-        return void();
+        throw std::runtime_error("c++ exception Rcpp_InvCholesky_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { 
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Rcpp_InvCholesky_hdf5 (DataSet IException)";
-        return void();
+        // checkClose_file(inDataset, outDataset);
+        // inDataset = outDataset = nullptr;
+        throw std::runtime_error("c++ exception Rcpp_InvCholesky_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Rcpp_InvCholesky_hdf5" << ex.what();
-        return void();
+        // checkClose_file(inDataset, outDataset);
+        // inDataset = outDataset = nullptr;
+        throw std::runtime_error(std::string("c++ exception Rcpp_InvCholesky_hdf5: ") + ex.what());
     } catch (...) {
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr<<"\nC++ exception Rcpp_InvCholesky_hdf5 (unknown reason)";
-        return void();
+        // checkClose_file(inDataset, outDataset);
+        // inDataset = outDataset = nullptr;
+        throw std::runtime_error("C++ exception Rcpp_InvCholesky_hdf5 (unknown reason)");
     }
     
     return void();
@@ -320,15 +313,27 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
 inline int Cholesky_decomposition_hdf5(BigDataStatMeth::hdf5Dataset* inDataset,  
                                        BigDataStatMeth::hdf5Dataset* outDataset, 
                                        int idim0, int idim1, long dElementsBlock, 
-                                       Rcpp::Nullable<int> threads = R_NilValue)
+                                       bool full_matrix, Rcpp::Nullable<int> threads = R_NilValue)
 {
-    // Detect matrix size and select algorithm
+    //.. 20260302 ..// // Detect matrix size and select algorithm
+    //.. 20260302 ..//  // if (idim0 >= CHOLESKY_OUTOFCORE_THRESHOLD) {
+    //.. 20260302 ..//  //     Rcpp::Rcout << "\nUsing out-of-core Cholesky for large matrix (" << idim0 << "x" << idim1 << ")\n";
+    //.. 20260302 ..//  //     return Cholesky_decomposition_outofcore_hdf5(inDataset, outDataset, idim0, idim1, dElementsBlock, threads);
+    //.. 20260302 ..//  // } else {
+    //.. 20260302 ..//  //     return Cholesky_decomposition_intermediate_hdf5(inDataset, outDataset, idim0, idim1, dElementsBlock, threads);
+    //.. 20260302 ..//  // }
+
+    int res;
     if (idim0 >= CHOLESKY_OUTOFCORE_THRESHOLD) {
-        Rcpp::Rcout << "\nUsing out-of-core Cholesky for large matrix (" << idim0 << "x" << idim1 << ")\n";
-        return Cholesky_decomposition_outofcore_hdf5(inDataset, outDataset, idim0, idim1, dElementsBlock, threads);
+        res = Cholesky_decomposition_outofcore_hdf5(inDataset, outDataset, idim0, idim1, dElementsBlock, threads);
     } else {
-        return Cholesky_decomposition_intermediate_hdf5(inDataset, outDataset, idim0, idim1, dElementsBlock, threads);
+        res = Cholesky_decomposition_intermediate_hdf5(inDataset, outDataset, idim0, idim1, dElementsBlock, threads);
     }
+    if (res == 0 && full_matrix) {
+        setLowerTriangularMatrix(outDataset, static_cast<hsize_t>(dElementsBlock));
+    }
+    return res;
+    
 }
 
 
@@ -342,9 +347,11 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
         
         int dimensionSize = idim0,
             readedRows = 0,
-            rowstoRead,
-            minimumBlockSize;
+            rowstoRead;
+            // minimumBlockSize;
             // chunk = 1,
+            
+        long minimumBlockSize;
             
         bool bcancel = false;
         double sum = 0;
@@ -467,7 +474,7 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
                             if( j + static_cast<int>(offset[0]) > 0) {
                                 sum = (L.block(i, 0, 1, j + static_cast<int>(offset[0])).array() * L.block(j, 0, 1, j + static_cast<int>(offset[0])).array()).array().sum();
                                 if( sum != sum ) {
-                                    Rcpp::Rcout<<"\n Can't get inverse matrix using Cholesky decomposition matrix is not positive definite\n";
+                                    throw std::runtime_error("Can't get inverse matrix using Cholesky decomposition matrix is not positive definite");
                                     bcancel = true;
                                 }
                             } else {
@@ -508,30 +515,25 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
         
         
     } catch( H5::FileIException& error ) { 
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr<<"c++ exception Cholesky_decomposition_intermediate_hdf5 (File IException)";
-        return(2);
+        // checkClose_file(inDataset, outDataset);
+        // inDataset = outDataset = nullptr;
+        throw std::runtime_error("c++ exception Cholesky_decomposition_intermediate_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { 
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_intermediate_hdf5 (Group IException)";
-        return(2);
+        // checkClose_file(inDataset, outDataset);
+        // inDataset = outDataset = nullptr;
+        throw std::runtime_error("c++ exception Cholesky_decomposition_intermediate_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { 
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_intermediate_hdf5 (DataSet IException)";
-        return(2);
+        // checkClose_file(inDataset, outDataset);
+        // inDataset = outDataset = nullptr;
+        throw std::runtime_error("c++ exception Cholesky_decomposition_intermediate_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_intermediate_hdf5" << ex.what();
-        return(2);
+        // checkClose_file(inDataset, outDataset);
+        // inDataset = outDataset = nullptr;
+        throw std::runtime_error(std::string("c++ exception Cholesky_decomposition_intermediate_hdf5: ") + ex.what());
     } catch (...) {
-        checkClose_file(inDataset, outDataset);
-        inDataset = outDataset = nullptr;
-        Rcpp::Rcerr<<"\nC++ exception Cholesky_decomposition_intermediate_hdf5 (unknown reason)";
-        return(2);
+        // checkClose_file(inDataset, outDataset);
+        // inDataset = outDataset = nullptr;
+        throw std::runtime_error("C++ exception Cholesky_decomposition_intermediate_hdf5 (unknown reason)");
     }
     return(0);
     
@@ -551,6 +553,9 @@ inline int Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* i
     // BigDataStatMeth::hdf5DatasetInternal* tmpA = nullptr;
     
     try {
+
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> tempA(nullptr);
+
         int dimensionSize = idim0;
         int tileSize = 10000; // Fixed tile size for predictable memory usage
         int numTiles = (dimensionSize + tileSize - 1) / tileSize;
@@ -560,9 +565,11 @@ inline int Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* i
         // Create temporary working copy of input matrix
         // Block-wise algorithm requires modification of A during computation
         std::string tempAPath = inDataset->getGroup() + "/.tmp_chol_A_" + inDataset->getDatasetName();
-        BigDataStatMeth::hdf5DatasetInternal tempA(inDataset->getFileName(), tempAPath, true);
-        
-        tempA.createDataset(idim0, idim1, "real");
+        // BigDataStatMeth::hdf5DatasetInternal tempA(inDataset->getFileName(), tempAPath, true);
+        //.. 20260302 ..// tempA.reset( new BigDataStatMeth::hdf5DatasetInternal(inDataset->getFileName(), tempAPath, true) );
+        tempA.reset( new BigDataStatMeth::hdf5DatasetInternal(inDataset->getFullPath(), tempAPath, true) );
+        tempA->inheritCompressionLevel(inDataset->getCompressionLevel());
+        tempA->createDataset(idim0, idim1, "real");
 
         // Copy complete symmetric matrix to temporary working dataset
         // Need full matrix for proper block-wise updates
@@ -590,7 +597,7 @@ inline int Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* i
                     Aij = Aji.transpose();
                 }
                 
-                tempA.writeDatasetBlock(Rcpp::wrap(Aij), {iStart, jStart}, {iSize, jSize}, stride, block, false);
+                tempA->writeDatasetBlock(Rcpp::wrap(Aij), {iStart, jStart}, {iSize, jSize}, stride, block, false);
             }
         }
         
@@ -604,13 +611,14 @@ inline int Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* i
             // Step 1: Diagonal factorization - L(k,k) = cholesky(A(k,k))
             Eigen::MatrixXd Akk(kSize, kSize);
             std::vector<double> vAkk(kSize * kSize);
-            tempA.readDatasetBlock({kStart, kStart}, {kSize, kSize}, stride, block, vAkk.data());
+            tempA->readDatasetBlock({kStart, kStart}, {kSize, kSize}, stride, block, vAkk.data());
             Akk = Eigen::Map<Eigen::MatrixXd>(vAkk.data(), kSize, kSize);
             
             // In-place Cholesky factorization of diagonal tile
             Eigen::LLT<Eigen::MatrixXd> llt(Akk);
             if (llt.info() != Eigen::Success) {
-                tempA.remove();
+                // tempA->remove();
+                tempA->remove(); //..  20260303 ..//
                 Rcpp::Rcout << "\nMatrix not positive definite at tile " << k << "\n";
                 return 1;
             }
@@ -629,7 +637,7 @@ inline int Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* i
                 
                 Eigen::MatrixXd Aik(iSize, kSize);
                 std::vector<double> vAik(iSize * kSize);
-                tempA.readDatasetBlock({iStart, kStart}, {iSize, kSize}, stride, block, vAik.data());
+                tempA->readDatasetBlock({iStart, kStart}, {iSize, kSize}, stride, block, vAik.data());
                 Aik = Eigen::Map<Eigen::MatrixXd>(vAik.data(), iSize, kSize);
                 
                 // Solve triangular system: Lkk^T * Lik^T = Aik^T
@@ -668,24 +676,24 @@ inline int Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hdf5Dataset* i
                     // Load current A(i,j) tile for update
                     Eigen::MatrixXd Aij(iSize, jSize);
                     std::vector<double> vAij(iSize * jSize);
-                    tempA.readDatasetBlock({iStart, jStart}, {iSize, jSize}, stride, block, vAij.data());
+                    tempA->readDatasetBlock({iStart, jStart}, {iSize, jSize}, stride, block, vAij.data());
                     Aij = Eigen::Map<Eigen::MatrixXd>(vAij.data(), iSize, jSize);
                     
                     // Apply rank-k update: A(i,j) -= L(i,k) * L(j,k)^T
                     Aij -= Lik * Ljk.transpose();
                     
                     // Write updated tile back to working matrix
-                    tempA.writeDatasetBlock(Rcpp::wrap(Aij), {iStart, jStart}, {iSize, jSize}, stride, block, false);
+                    tempA->writeDatasetBlock(Rcpp::wrap(Aij), {iStart, jStart}, {iSize, jSize}, stride, block, false);
                 }
             }
         }
         
         // Clean up temporary working dataset
-        tempA.remove();
+        tempA->remove(); //..  20260303 ..//
+        // tempA.remove();
         
     } catch(std::exception& ex) {
-        Rcpp::Rcerr << "c++ exception Cholesky_decomposition_outofcore_hdf5: " << ex.what();
-        return 2;
+        throw std::runtime_error(std::string("c++ exception Cholesky_decomposition_outofcore_hdf5: ") + ex.what());
     }
     
     return 0;
@@ -717,8 +725,9 @@ inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth
         
         int dimensionSize = idim0, 
             readedCols = 0,
-            colstoRead,
-            minimumBlockSize;
+            colstoRead;
+            // minimumBlockSize;
+        long minimumBlockSize;
         
         std::vector<hsize_t> offset = {0,0},
                              count = {1,1},
@@ -842,30 +851,25 @@ inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth
         // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> Bye Bye...";
         
     } catch( H5::FileIException& error ) { 
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr<<"c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (File IException)";
-        return void();
+        throw std::runtime_error("c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { 
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (Group IException)";
-        return void();
+        throw std::runtime_error("c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { 
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (DataSet IException)";
-        return void();
+        throw std::runtime_error("c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5" << ex.what();
-        return void();
+        throw std::runtime_error(std::string("c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5: ") + ex.what());
     } catch (...) {
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr<<"\nC++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (unknown reason)";
-        return void();
+        throw std::runtime_error("C++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (unknown reason)");
     }
     
     return void();
@@ -936,8 +940,7 @@ inline void Inverse_of_Cholesky_decomposition_outofcore_hdf5(BigDataStatMeth::hd
         }
         
     } catch(std::exception& ex) {
-        Rcpp::Rcerr << "c++ exception Inverse_of_Cholesky_decomposition_outofcore_hdf5: " << ex.what();
-        return void();
+        throw std::runtime_error(std::string("c++ exception Inverse_of_Cholesky_decomposition_outofcore_hdf5: ") + ex.what());
     }
     
     return void();
@@ -1098,30 +1101,25 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
         // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel -> Bye Bye...";
         
     } catch( H5::FileIException& error ) { 
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr<<"c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (File IException)";
-        return void();
+        throw std::runtime_error("c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { 
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (Group IException)";
-        return void();
+        throw std::runtime_error("c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { 
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (DataSet IException)";
-        return void();
+        throw std::runtime_error("c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5: " << ex.what();
-        return void();
+        throw std::runtime_error(std::string("c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5: ") + ex.what());
     } catch (...) {
-        checkClose_file(InOutDataset);
+        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
-        Rcpp::Rcerr<<"\nC++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (unknown reason)";
-        return void();
+        throw std::runtime_error("C++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (unknown reason)");
     }
     
     return void();
@@ -1150,7 +1148,9 @@ inline void Inverse_Matrix_Cholesky_outofcore_hdf5(BigDataStatMeth::hdf5Dataset*
         
         // Create temporary dataset to avoid overwriting L^-1 during computation
         std::string tempDatasetPath = InOutDataset->getGroup() + "/.tmp_inverse_" + InOutDataset->getDatasetName();
-        BigDataStatMeth::hdf5DatasetInternal tempDataset(InOutDataset->getFileName(), tempDatasetPath, true);
+        //..20260203 ..// BigDataStatMeth::hdf5DatasetInternal tempDataset(InOutDataset->getFileName(), tempDatasetPath, true);
+        BigDataStatMeth::hdf5DatasetInternal tempDataset(InOutDataset->getFullPath(), tempDatasetPath, true);
+        tempDataset.setCompressionLevel(InOutDataset->getCompressionLevel());
         tempDataset.createDataset(idim0, idim1, "real");
         
         // Parallel computation over result tiles (i,j)
@@ -1229,8 +1229,7 @@ inline void Inverse_Matrix_Cholesky_outofcore_hdf5(BigDataStatMeth::hdf5Dataset*
         tempDataset.remove();
         
     } catch(std::exception& ex) {
-        Rcpp::Rcerr << "c++ exception Inverse_Matrix_Cholesky_outofcore_hdf5: " << ex.what();
-        return void();
+        throw std::runtime_error(std::string("c++ exception Inverse_Matrix_Cholesky_outofcore_hdf5: ") + ex.what());
     }
     
     return void();

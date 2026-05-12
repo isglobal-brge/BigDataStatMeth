@@ -28,6 +28,8 @@
  * @author BigDataStatMeth Development Team
  * @date 2025
  * @version 1.1 - Optimized
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @since 1.0.0
  * 
  * @see matrixCorrelation.hpp
@@ -935,7 +937,7 @@ namespace BigDataStatMeth {
             result.bcomputed = true;
             
         } catch (std::exception &ex) {
-            Rcpp::Rcerr << "C++ exception RcppbdCorr_matrix_single: " << ex.what() << std::endl;
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_matrix_single: ") + ex.what());
             result.bcomputed = false;
         }
         
@@ -1077,7 +1079,7 @@ namespace BigDataStatMeth {
             
             // Validate dimensions after transposition
             if (n_obs_x != n_obs_y) {
-                Rcpp::Rcerr << "Matrices must have the same number of observations after transposition" << std::endl;
+                throw std::runtime_error("Matrices must have the same number of observations after transposition");
                 result.bcomputed = false;
                 return result;
             }
@@ -1145,7 +1147,7 @@ namespace BigDataStatMeth {
             result.bcomputed = true;
             
         } catch (std::exception &ex) {
-            Rcpp::Rcerr << "C++ exception RcppbdCorr_matrix_cross: " << ex.what() << std::endl;
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_matrix_cross: ") + ex.what());
             result.bcomputed = false;
         }
         
@@ -1277,16 +1279,18 @@ namespace BigDataStatMeth {
                 corr_result result = RcppbdCorr_matrix_single(X, method, use_complete_obs, compute_pvalues, trans_x, threads);
                 
                 if (!result.bcomputed) {
-                    checkClose_file(dsA, dsCorr, dsPval);
+                    // checkClose_file(dsA, dsCorr, dsPval);
                     throw std::runtime_error("In-memory correlation computation failed");
                 }
                 
                 // Write results
+                dsCorr->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsCorr->createDataset(result.correlation_matrix.rows(), result.correlation_matrix.cols(), "real");
                 dsCorr->writeDataset(Rcpp::wrap(result.correlation_matrix));
                 
                 // Write p-values matrix if computed (vectorized result)
                 if (compute_pvalues && result.has_pvalues && dsPval && result.pvalues.rows() > 0 && result.pvalues.cols() > 0) {
+                    dsPval->inheritCompressionLevel(dsA->getCompressionLevel());
                     dsPval->createDataset(result.pvalues.rows(), result.pvalues.cols(), "real");
                     dsPval->writeDataset(Rcpp::wrap(result.pvalues));
                 }
@@ -1298,7 +1302,8 @@ namespace BigDataStatMeth {
                 
                 
 #ifdef _OPENMP
-                int num_threads = std::min(2, omp_get_max_threads());
+                //.. 20260304 ..// int num_threads = std::min(2, omp_get_max_threads());
+                int num_threads = static_cast<int>(get_number_threads(threads, R_NilValue));
             #pragma omp parallel for num_threads(num_threads) schedule(dynamic, 1)
 #endif
                 for (hsize_t i = 0; i < n_cols; ++i) {
@@ -1347,11 +1352,13 @@ namespace BigDataStatMeth {
                     }
                 }
                 
+                dsCorr->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsCorr->createDataset(corr_matrix.rows(), corr_matrix.cols(), "real");
                 dsCorr->writeDataset(Rcpp::wrap(corr_matrix));
                 
                 if (compute_pvalues && dsPval) {
                     Eigen::MatrixXd pvalues_matrix = compute_pvalues_optimized(corr_matrix, n_rows, true);
+                    dsPval->inheritCompressionLevel(dsA->getCompressionLevel());
                     dsPval->createDataset(pvalues_matrix.rows(), pvalues_matrix.cols(), "real");
                     dsPval->writeDataset(Rcpp::wrap(pvalues_matrix));
                 }
@@ -1359,8 +1366,8 @@ namespace BigDataStatMeth {
             
             
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsCorr, dsPval);
-            Rcpp::Rcerr << "C++ exception RcppbdCorr_hdf5_Block_single: " << ex.what() << std::endl;
+            // // checkClose_file(dsA, dsCorr, dsPval);
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_Block_single: ") + ex.what());
             throw;
         }
     }
@@ -1412,22 +1419,28 @@ namespace BigDataStatMeth {
                                              const Rcpp::Nullable<Rcpp::CharacterVector>& output_dataset_corr,
                                              const Rcpp::Nullable<Rcpp::CharacterVector>& output_dataset_pval,
                                              bool trans_x,
-                                             const Rcpp::Nullable<int>& threads) {
-        
-        BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsCorr = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsPval = nullptr;
+                                             const Rcpp::Nullable<int>& threads,
+                                             int compression = 6) {
         
         try {
+
+            // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
+            // BigDataStatMeth::hdf5Dataset* dsCorr = nullptr;
+            // BigDataStatMeth::hdf5Dataset* dsPval = nullptr;
+
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsCorr(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsPval(nullptr);
             
             std::vector<hsize_t> stride = {1, 1}, block = {1, 1}, offset = {0, 0}, count = {0, 0};
             
             // Open input dataset
-            dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroup, strdataset, false);
+            // dsA = new BigDataStatMeth::hdf5Dataset(filename, strsubgroup, strdataset, false);
+            dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, strsubgroup, strdataset, false) );
             dsA->openDataset();
             
             if (dsA->getDatasetptr() == nullptr) {
-                checkClose_file(dsA);
+                // // checkClose_file(dsA);
                 throw std::runtime_error("Failed to open input dataset");
             }
             
@@ -1468,13 +1481,18 @@ namespace BigDataStatMeth {
             
             // Create output datasets
             try {
-                dsCorr = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, corr_dataset_name, bforce);
+                // dsCorr = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, corr_dataset_name, bforce);
+                dsCorr.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, corr_dataset_name, bforce) );
+                dsCorr->setCompressionLevel(compression);
+                
                 if (compute_pvalues) {
-                    dsPval = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, pval_dataset_name, bforce);
+                    // dsPval = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, pval_dataset_name, bforce);
+                    dsPval.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, pval_dataset_name, bforce) );
+                    dsPval->setCompressionLevel(compression);
                 }
             } catch (const std::exception& e) {
-                Rcpp::Rcerr << "Error creating output datasets: " << e.what() << std::endl;
-                checkClose_file(dsA, dsCorr, dsPval);
+                throw std::runtime_error(std::string("Error creating output datasets: ") + e.what());
+                // // checkClose_file(dsA, dsCorr, dsPval);
                 return R_NilValue;
             }
             
@@ -1495,12 +1513,13 @@ namespace BigDataStatMeth {
                 corr_result result = RcppbdCorr_matrix_single(X, method, use_complete_obs, compute_pvalues, trans_x, threads);
                 
                 if (!result.bcomputed) {
-                    checkClose_file(dsA, dsCorr, dsPval);
+                    // checkClose_file(dsA, dsCorr, dsPval);
                     throw std::runtime_error("Single matrix correlation computation failed");
                 }
                 
                 // Write correlation matrix
                 if (dsCorr->getDatasetptr() == nullptr) {
+                    dsCorr->inheritCompressionLevel(dsA->getCompressionLevel());
                     dsCorr->createDataset(result.correlation_matrix.rows(), result.correlation_matrix.cols(), "real");
                 }
                 dsCorr->writeDataset(Rcpp::wrap(result.correlation_matrix));
@@ -1509,6 +1528,7 @@ namespace BigDataStatMeth {
                 // Write p-values matrix if computed
                 if (compute_pvalues && result.has_pvalues && dsPval && result.pvalues.rows() > 0 && result.pvalues.cols() > 0) {
                     if (dsPval->getDatasetptr() == nullptr) {
+                        dsPval->inheritCompressionLevel(dsA->getCompressionLevel());
                         dsPval->createDataset(result.pvalues.rows(), result.pvalues.cols(), "real");
                     }
                     dsPval->writeDataset(Rcpp::wrap(result.pvalues));
@@ -1518,15 +1538,15 @@ namespace BigDataStatMeth {
                 
                 // Block-wise computation for large matrices - CRITICAL path for big-omics
                 if (dsA->getDatasetptr() != nullptr) {
-                    RcppbdCorr_hdf5_Block_single(dsA, dsCorr, dsPval, method, use_complete_obs, 
+                    RcppbdCorr_hdf5_Block_single(dsA.get(), dsCorr.get(), dsPval.get(), method, use_complete_obs, 
                                                            compute_pvalues, trans_x, block_size, threads);
                 }
             }
             
             // Clean up datasets
-            delete dsA; dsA = nullptr;
-            delete dsCorr; dsCorr = nullptr;
-            delete dsPval; dsPval = nullptr;
+            // delete dsA; dsA = nullptr;
+            // delete dsCorr; dsCorr = nullptr;
+            // delete dsPval; dsPval = nullptr;
             
             // Return comprehensive result list
             return Rcpp::List::create(
@@ -1543,21 +1563,17 @@ namespace BigDataStatMeth {
             );
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsCorr, dsPval);
-            Rcpp::Rcerr << "\nC++ exception RcppbdCorr_hdf5_single (File IException): " << error.getDetailMsg() << std::endl;
-            return R_NilValue;
+            // checkClose_file(dsA, dsCorr, dsPval);
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_single (File IException): ") + error.getDetailMsg());
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsCorr, dsPval);
-            Rcpp::Rcerr << "\nC++ exception RcppbdCorr_hdf5_single (DataSet IException): " << error.getDetailMsg() << std::endl;
-            return R_NilValue;
+            // checkClose_file(dsA, dsCorr, dsPval);
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_single (DataSet IException): ") + error.getDetailMsg());
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsCorr, dsPval);
-            Rcpp::Rcerr << "C++ exception RcppbdCorr_hdf5_single: " << ex.what() << std::endl;
-            return R_NilValue;
+            // checkClose_file(dsA, dsCorr, dsPval);
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_single: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsA, dsCorr, dsPval);
-            Rcpp::Rcerr << "\nC++ exception RcppbdCorr_hdf5_single (unknown reason)" << std::endl;
-            return R_NilValue;
+            // checkClose_file(dsA, dsCorr, dsPval);
+            throw std::runtime_error("C++ exception RcppbdCorr_hdf5_single (unknown reason)");
         }
     }
     
@@ -1634,7 +1650,7 @@ namespace BigDataStatMeth {
             
             // Validate dimensions
             if (n_rows_a != n_rows_b) {
-                checkClose_file(dsA, dsB, dsCorr, dsPval);
+                // checkClose_file(dsA, dsB, dsCorr, dsPval);
                 throw std::runtime_error("Matrices must have same number of observations after transposition");
             }
             
@@ -1667,14 +1683,16 @@ namespace BigDataStatMeth {
                 corr_result result = RcppbdCorr_matrix_cross(X, Y, method, use_complete_obs, compute_pvalues, effective_trans_x, effective_trans_y, threads);
                 
                 if (!result.bcomputed) {
-                    checkClose_file(dsA, dsB, dsCorr, dsPval);
+                    // checkClose_file(dsA, dsB, dsCorr, dsPval);
                     throw std::runtime_error("Cross-correlation computation failed");
                 }
                 
+                dsCorr->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsCorr->createDataset(result.correlation_matrix.rows(), result.correlation_matrix.cols(), "real");
                 dsCorr->writeDataset(Rcpp::wrap(result.correlation_matrix));
                 
                 if (compute_pvalues && result.has_pvalues && dsPval && result.pvalues.rows() > 0 && result.pvalues.cols() > 0) {
+                    dsPval->inheritCompressionLevel(dsA->getCompressionLevel());
                     dsPval->createDataset(result.pvalues.rows(), result.pvalues.cols(), "real");
                     dsPval->writeDataset(Rcpp::wrap(result.pvalues));
                 }
@@ -1807,20 +1825,22 @@ namespace BigDataStatMeth {
                 }
                 
                 // Write correlation matrix
+                dsCorr->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsCorr->createDataset(corr_matrix.rows(), corr_matrix.cols(), "real");
                 dsCorr->writeDataset(Rcpp::wrap(corr_matrix));
                 
                 // VECTORIZED P-VALUES: Compute on complete correlation matrix
                 if (compute_pvalues && dsPval) {
                     Eigen::MatrixXd pvalues_matrix = compute_pvalues_optimized(corr_matrix, n_rows_a, false);  // Use n_rows_a (effective observations)
+                    dsPval->inheritCompressionLevel(dsA->getCompressionLevel());
                     dsPval->createDataset(pvalues_matrix.rows(), pvalues_matrix.cols(), "real");
                     dsPval->writeDataset(Rcpp::wrap(pvalues_matrix));
                 }
             }
             
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsB, dsCorr, dsPval);
-            Rcpp::Rcerr << "C++ exception RcppbdCorr_hdf5_Block_cross: " << ex.what() << std::endl;
+            // checkClose_file(dsA, dsB, dsCorr, dsPval);
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_Block_cross: ") + ex.what());
             throw;
         }
     }
@@ -1873,31 +1893,35 @@ namespace BigDataStatMeth {
                                             const Rcpp::Nullable<Rcpp::CharacterVector>& output_dataset_pval,
                                             bool trans_x,
                                             bool trans_y,
-                                            const Rcpp::Nullable<int>& threads) {
-        
-        BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsB = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsCorr = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsPval = nullptr;
+                                            const Rcpp::Nullable<int>& threads,
+                                            int compression = 6) 
+{
         
         try {
+
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsCorr(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsPval(nullptr);
             
             // std::vector<hsize_t> stride = {1, 1}, block = {1, 1}, offset = {0, 0};
             
             // Open input datasets
-            dsA = new BigDataStatMeth::hdf5Dataset(filename_a, strsubgroup_a, strdataset_a, false);
+            // dsA = new BigDataStatMeth::hdf5Dataset(filename_a, strsubgroup_a, strdataset_a, false);
+            dsA.reset( new BigDataStatMeth::hdf5Dataset(filename_a, strsubgroup_a, strdataset_a, false) );  
             dsA->openDataset();
             
             if (dsA->getDatasetptr() == nullptr) {
-                checkClose_file(dsA);
+                // checkClose_file(dsA);
                 throw std::runtime_error("Failed to open first input dataset");
             }
             
-            dsB = new BigDataStatMeth::hdf5Dataset(filename_b, strsubgroup_b, strdataset_b, false);
+            // dsB = new BigDataStatMeth::hdf5Dataset(filename_b, strsubgroup_b, strdataset_b, false);
+            dsB.reset( new BigDataStatMeth::hdf5Dataset(filename_b, strsubgroup_b, strdataset_b, false) );
             dsB->openDataset();
             
             if (dsB->getDatasetptr() == nullptr) {
-                checkClose_file(dsA, dsB);
+                // checkClose_file(dsA, dsB);
                 throw std::runtime_error("Failed to open second input dataset");
             }
             
@@ -1915,7 +1939,7 @@ namespace BigDataStatMeth {
             
             // Validate dimensions
             if (n_rows_a != n_rows_b) {
-                checkClose_file(dsA, dsB);
+                // checkClose_file(dsA, dsB);
                 throw std::runtime_error("Matrices must have same number of observations after transposition");
             }
             
@@ -1953,13 +1977,17 @@ namespace BigDataStatMeth {
             
             // Create output datasets
             try {
-                dsCorr = new BigDataStatMeth::hdf5Dataset(output_filename, stroutgroup, corr_dataset_name, bforce);
+                // dsCorr = new BigDataStatMeth::hdf5Dataset(output_filename, stroutgroup, corr_dataset_name, bforce);
+                dsCorr.reset( new BigDataStatMeth::hdf5Dataset(output_filename, stroutgroup, corr_dataset_name, bforce) );
+                dsCorr->setCompressionLevel(compression);
                 if (compute_pvalues) {
-                    dsPval = new BigDataStatMeth::hdf5Dataset(output_filename, stroutgroup, pval_dataset_name, bforce);
+                    // dsPval = new BigDataStatMeth::hdf5Dataset(output_filename, stroutgroup, pval_dataset_name, bforce);
+                    dsPval.reset( new BigDataStatMeth::hdf5Dataset(output_filename, stroutgroup, pval_dataset_name, bforce) );
+                    dsPval->setCompressionLevel(compression);
                 }
             } catch (const std::exception& e) {
-                Rcpp::Rcerr << "Error creating output datasets: " << e.what() << std::endl;
-                checkClose_file(dsA, dsB, dsCorr, dsPval);
+                throw std::runtime_error(std::string("Error creating output datasets: ") + e.what());
+                // checkClose_file(dsA, dsB, dsCorr, dsPval);
                 return R_NilValue;
             }
             
@@ -1985,18 +2013,20 @@ namespace BigDataStatMeth {
                 corr_result result = RcppbdCorr_matrix_cross(X, Y, method, use_complete_obs, compute_pvalues, trans_x, trans_y, threads);
                 
                 if (!result.bcomputed) {
-                    checkClose_file(dsA, dsB, dsCorr, dsPval);
+                    // checkClose_file(dsA, dsB, dsCorr, dsPval);
                     throw std::runtime_error("Cross-correlation computation failed");
                 }
                 
                 // Write results
                 if (dsCorr->getDatasetptr() == nullptr) {
+                    dsCorr->inheritCompressionLevel(dsA->getCompressionLevel());
                     dsCorr->createDataset(result.correlation_matrix.rows(), result.correlation_matrix.cols(), "real");
                 }
                 dsCorr->writeDataset(Rcpp::wrap(result.correlation_matrix));
                 
                 if (compute_pvalues && result.has_pvalues && dsPval && result.pvalues.rows() > 0 && result.pvalues.cols() > 0) {
                     if (dsPval->getDatasetptr() == nullptr) {
+                        dsPval->inheritCompressionLevel(dsA->getCompressionLevel());
                         dsPval->createDataset(result.pvalues.rows(), result.pvalues.cols(), "real");
                     }
                     dsPval->writeDataset(Rcpp::wrap(result.pvalues));
@@ -2006,16 +2036,10 @@ namespace BigDataStatMeth {
                 
                 // Block-wise computation for large matrices
                 if (dsA->getDatasetptr() != nullptr && dsB->getDatasetptr() != nullptr) {
-                    RcppbdCorr_hdf5_Block_cross(dsA, dsB, dsCorr, dsPval, method, use_complete_obs, 
+                    RcppbdCorr_hdf5_Block_cross(dsA.get(), dsB.get(), dsCorr.get(), dsPval.get(), method, use_complete_obs, 
                                                 compute_pvalues, block_size, trans_x, trans_y, threads);
                 }
             }
-            
-            // Clean up datasets
-            delete dsA; dsA = nullptr;
-            delete dsB; dsB = nullptr;
-            delete dsCorr; dsCorr = nullptr;
-            delete dsPval; dsPval = nullptr;
             
             // Return comprehensive result list
             return Rcpp::List::create(
@@ -2034,21 +2058,13 @@ namespace BigDataStatMeth {
             );
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsCorr, dsPval);
-            Rcpp::Rcerr << "\nC++ exception RcppbdCorr_hdf5_cross (File IException): " << error.getDetailMsg() << std::endl;
-            return R_NilValue;
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_cross (File IException): ") + error.getDetailMsg());
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsCorr, dsPval);
-            Rcpp::Rcerr << "\nC++ exception RcppbdCorr_hdf5_cross (DataSet IException): " << error.getDetailMsg() << std::endl;
-            return R_NilValue;
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_cross (DataSet IException): ") + error.getDetailMsg());
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsB, dsCorr, dsPval);
-            Rcpp::Rcerr << "C++ exception RcppbdCorr_hdf5_cross: " << ex.what() << std::endl;
-            return R_NilValue;
+            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_cross: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsA, dsB, dsCorr, dsPval);
-            Rcpp::Rcerr << "\nC++ exception RcppbdCorr_hdf5_cross (unknown reason)" << std::endl;
-            return R_NilValue;
+            throw std::runtime_error("C++ exception RcppbdCorr_hdf5_cross (unknown reason)");
         }
     }
     

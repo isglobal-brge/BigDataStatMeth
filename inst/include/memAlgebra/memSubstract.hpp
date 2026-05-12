@@ -157,7 +157,7 @@ namespace BigDataStatMeth {
             return(C);
             
         } else {
-            Rcpp::Rcout<<"Error: non-conformable arguments";
+            throw std::runtime_error("Error: non-conformable arguments");
         }
         
         return(R_NilValue);
@@ -203,7 +203,7 @@ namespace BigDataStatMeth {
             return(C);
             
         } else {
-            Rcpp::Rcout<<"Error: non-conformable arguments";
+            throw std::runtime_error("Error: non-conformable arguments");
         }
         
         return(R_NilValue);
@@ -314,13 +314,11 @@ namespace BigDataStatMeth {
                     }
     
                 } else {
-                    Rcpp::Rcout<<"matrix sum error: non-conformable arguments\n";
-                    return(R_NilValue);
+                    throw std::runtime_error("matrix sum error: non-conformable arguments");
                 }
                 
             } else{
-                Rcpp::Rcout<<"matrix sum error: Error whent computing block sizes\n";
-                return(R_NilValue);
+                throw std::runtime_error("matrix sum error: Error whent computing block sizes");
             }
             
         } catch(std::exception &ex) {
@@ -437,13 +435,11 @@ namespace BigDataStatMeth {
     
             } else {
                 
-                Rcpp::Rcout<< "vector sum error: non-conformable arguments\n";
-                return(R_NilValue);
+                throw std::runtime_error("vector sum error: non-conformable arguments");
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception Rcpp_matrix_vector_blockSubstract: "<<ex.what()<< " \n";
-            return(R_NilValue);
+            throw std::runtime_error(std::string("c++ exception Rcpp_matrix_vector_blockSubstract: ") + ex.what());
         }
         
         if(btransposed == true){

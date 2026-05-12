@@ -52,27 +52,27 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
+//' fn <- tempfile(fileext = ".h5")
+//' 
+//' # Create a dataset to move
+//' hdf5_create_matrix(fn, "old_group/my_dataset",
+//'                    data = matrix(rnorm(100), 10, 10))
+//' 
 //' # Move dataset to a different group
-//' success <- bdmove_hdf5_dataset("data.h5", 
-//'                          source_path = "/old_group/my_dataset",
-//'                          dest_path = "/new_group/my_dataset")
-//'
+//' res <- bdmove_hdf5_dataset(fn,
+//'                            source_path = "old_group/my_dataset",
+//'                            dest_path   = "new_group/my_dataset")
+//' 
 //' # Rename dataset within the same group
-//' success <- bdmove_hdf5_dataset("data.h5",
-//'                          source_path = "/data/old_name", 
-//'                          dest_path = "/data/new_name",
-//'                          overwrite = TRUE)
-//'
-//' # Move dataset to root level
-//' success <- bdmove_hdf5_dataset("data.h5",
-//'                          source_path = "/deep/nested/dataset",
-//'                          dest_path = "/dataset")
-//'
-//' # Move with automatic group creation
-//' success <- bdmove_hdf5_dataset("data.h5",
-//'                          source_path = "/old_location/dataset",
-//'                          dest_path = "/new/deep/structure/dataset")
+//' hdf5_create_matrix(fn, "data/old_name",
+//'                    data = matrix(rnorm(100), 10, 10))
+//' res <- bdmove_hdf5_dataset(fn,
+//'                            source_path = "data/old_name",
+//'                            dest_path   = "data/new_name")
+//' 
+//' hdf5_close_all()
+//' unlink(fn)
 //' }
 //'
 //' @family BigDataStatMeth HDF5 utilities
@@ -85,46 +85,48 @@ Rcpp::List bdmove_hdf5_dataset(std::string filename,
                      bool overwrite = false)
 {
     
-    BigDataStatMeth::hdf5Dataset* dataset = nullptr;
+    
     Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                Rcpp::Named("ds") = "");
      
      try {
          
          H5::Exception::dontPrint();
+
+        //  BigDataStatMeth::hdf5Dataset* dataset = nullptr;
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dataset(nullptr);
          
          // Input validation
          if (filename.empty()) {
-             Rcpp::Rcerr << "Error: filename cannot be empty" << std::endl;
+             Rcpp::stop("Error: filename cannot be empty");
              return(lst_return);
          }
          
          if (source_path.empty()) {
-             Rcpp::Rcerr << "Error: source_path cannot be empty" << std::endl;
+             Rcpp::stop("Error: source_path cannot be empty");
              return(lst_return);
          }
          
          if (dest_path.empty()) {
-             Rcpp::Rcerr << "Error: dest_path cannot be empty" << std::endl;
+             Rcpp::stop("Error: dest_path cannot be empty");
              return(lst_return);
          }
          
          if (source_path == dest_path) {
-             Rcpp::Rcerr << "Error: source_path and dest_path cannot be the same" << std::endl;
+             Rcpp::stop("Error: source_path and dest_path cannot be the same");
              return(lst_return);
          }
          
          // Create hdf5Dataset object with current path
-         dataset = new BigDataStatMeth::hdf5Dataset(filename, source_path, false);
+        //  dataset = new BigDataStatMeth::hdf5Dataset(filename, source_path, false);
+        dataset.reset( new BigDataStatMeth::hdf5Dataset(filename, source_path, false) );
+        dataset->openDataset();
          
-         // Open the existing dataset
-         dataset->openDataset();
+        // Perform the move operation
+        dataset->moveDataset(dest_path, overwrite);
          
-         // Perform the move operation
-         dataset->moveDataset(dest_path, overwrite);
-         
-         // Clean up
-         delete dataset; dataset = nullptr;
+        //  // Clean up
+        //  delete dataset; dataset = nullptr;
          
          lst_return["fn"] = filename;
          lst_return["ds"] = dest_path;
@@ -132,16 +134,10 @@ Rcpp::List bdmove_hdf5_dataset(std::string filename,
          return(lst_return);
          
      } catch (const std::exception& e) {
-         if (dataset) {
-             delete dataset; dataset = nullptr;
-         }
-         Rcpp::Rcerr << "Exception in bdmove_hdf5_dataset: " << e.what() << std::endl;
+         Rcpp::stop("Exception in bdmove_hdf5_dataset: " + std::string(e.what()));
          return(lst_return);
      } catch (...) {
-         if (dataset) {
-             delete dataset; dataset = nullptr;
-         }
-         Rcpp::Rcerr << "Unknown exception in bdmove_hdf5_dataset" << std::endl;
+         Rcpp::stop("Unknown exception in bdmove_hdf5_dataset");
          return(lst_return);
      }
  }

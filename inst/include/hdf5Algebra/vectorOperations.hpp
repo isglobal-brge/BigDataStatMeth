@@ -1,6 +1,8 @@
 /**
  * @file vectorOperations.hpp
  * @brief Pure vector operations for HDF5 vectors
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @details This header file provides implementations for pure vector arithmetic
  * operations on vectors stored in HDF5 format. The implementation includes:
  * 
@@ -110,18 +112,17 @@ namespace BigDataStatMeth {
             hsize_t sizeB = validateVector(dsB);
             
             if (sizeA == 0 || sizeB == 0) {
-                Rcpp::Rcout << "vector add error: inputs are not vectors\n";
-                return dsC;
+                throw std::runtime_error("vector add error: inputs are not vectors");
             }
             
             if (sizeA != sizeB) {
-                Rcpp::Rcout << "vector add error: non-conformable vector dimensions\n";
-                return dsC;
+                throw std::runtime_error("vector add error: non-conformable vector dimensions");
             }
             
             // Create output vector with same dimensions as input
             hsize_t rowsA = dsA->nrows();
             hsize_t colsA = dsA->ncols();
+            dsC->inheritCompressionLevel(dsA->getCompressionLevel());
             dsC->createDataset(colsA, rowsA, "real");
             
             // Direct vector I/O - no block processing needed
@@ -154,20 +155,20 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_add_hdf5 (File IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_add_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_add_hdf5 (DataSet IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_add_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_add_hdf5: " << ex.what();
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error(std::string("c++ exception Rcpp_vector_add_hdf5: ") + ex.what());
             // return dsC;
         } catch (...) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nC++ exception Rcpp_vector_add_hdf5 (unknown reason)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("C++ exception Rcpp_vector_add_hdf5 (unknown reason)");
             // return dsC;
         }
         
@@ -195,17 +196,16 @@ namespace BigDataStatMeth {
             hsize_t sizeB = validateVector(dsB);
             
             if (sizeA == 0 || sizeB == 0) {
-                Rcpp::Rcout << "vector subtract error: inputs are not vectors\n";
-                return dsC;
+                throw std::runtime_error("vector subtract error: inputs are not vectors");
             }
             
             if (sizeA != sizeB) {
-                Rcpp::Rcout << "vector subtract error: non-conformable vector dimensions\n";
-                return dsC;
+                throw std::runtime_error("vector subtract error: non-conformable vector dimensions");
             }
             
             hsize_t rowsA = dsA->nrows();
             hsize_t colsA = dsA->ncols();
+            dsC->inheritCompressionLevel(dsA->getCompressionLevel());
             dsC->createDataset(colsA, rowsA, "real");
             
             std::vector<hsize_t> stride = {1, 1};
@@ -232,16 +232,16 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_subtract_hdf5 (File IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_subtract_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_subtract_hdf5 (DataSet IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_subtract_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_subtract_hdf5: " << ex.what();
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error(std::string("c++ exception Rcpp_vector_subtract_hdf5: ") + ex.what());
             // return dsC;
         }
         
@@ -269,17 +269,16 @@ namespace BigDataStatMeth {
             hsize_t sizeB = validateVector(dsB);
             
             if (sizeA == 0 || sizeB == 0) {
-                Rcpp::Rcout << "vector multiply error: inputs are not vectors\n";
-                return dsC;
+                throw std::runtime_error("vector multiply error: inputs are not vectors");
             }
             
             if (sizeA != sizeB) {
-                Rcpp::Rcout << "vector multiply error: non-conformable vector dimensions\n";
-                return dsC;
+                throw std::runtime_error("vector multiply error: non-conformable vector dimensions");
             }
             
             hsize_t rowsA = dsA->nrows();
             hsize_t colsA = dsA->ncols();
+            dsC->inheritCompressionLevel(dsA->getCompressionLevel());
             dsC->createDataset(colsA, rowsA, "real");
             
             std::vector<hsize_t> stride = {1, 1};
@@ -306,16 +305,16 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_multiply_hdf5 (File IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_multiply_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_multiply_hdf5 (DataSet IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_multiply_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_multiply_hdf5: " << ex.what();
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error(std::string("c++ exception Rcpp_vector_multiply_hdf5: ") + ex.what());
             // return dsC;
         }
         
@@ -345,17 +344,16 @@ namespace BigDataStatMeth {
             hsize_t sizeB = validateVector(dsB);
             
             if (sizeA == 0 || sizeB == 0) {
-                Rcpp::Rcout << "vector divide error: inputs are not vectors\n";
-                return dsC;
+                throw std::runtime_error("vector divide error: inputs are not vectors");
             }
             
             if (sizeA != sizeB) {
-                Rcpp::Rcout << "vector divide error: non-conformable vector dimensions\n";
-                return dsC;
+                throw std::runtime_error("vector divide error: non-conformable vector dimensions");
             }
             
             hsize_t rowsA = dsA->nrows();
             hsize_t colsA = dsA->ncols();
+            dsC->inheritCompressionLevel(dsA->getCompressionLevel());
             dsC->createDataset(colsA, rowsA, "real");
             
             std::vector<hsize_t> stride = {1, 1};
@@ -382,16 +380,16 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_divide_hdf5 (File IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_divide_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_divide_hdf5 (DataSet IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_divide_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_divide_hdf5: " << ex.what();
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error(std::string("c++ exception Rcpp_vector_divide_hdf5: ") + ex.what());
             // return dsC;
         }
         
@@ -423,17 +421,16 @@ namespace BigDataStatMeth {
             hsize_t sizeB = validateVector(dsB);
             
             if (sizeA == 0 || sizeB == 0) {
-                Rcpp::Rcout << "vector power error: inputs are not vectors\n";
-                return dsC;
+                throw std::runtime_error("vector power error: inputs are not vectors");
             }
             
             if (sizeA != sizeB) {
-                Rcpp::Rcout << "vector power error: non-conformable vector dimensions\n";
-                return dsC;
+                throw std::runtime_error("vector power error: non-conformable vector dimensions");
             }
             
             hsize_t rowsA = dsA->nrows();
             hsize_t colsA = dsA->ncols();
+            dsC->inheritCompressionLevel(dsA->getCompressionLevel());
             dsC->createDataset(colsA, rowsA, "real");
             
             std::vector<hsize_t> stride = {1, 1};
@@ -460,16 +457,16 @@ namespace BigDataStatMeth {
             dsC->writeDatasetBlock(vdA, {0, 0}, {rowsA, colsA}, stride, block);
             
         } catch(H5::FileIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_power_hdf5 (File IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_power_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_power_hdf5 (DataSet IException)";
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_vector_power_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr << "\nc++ exception Rcpp_vector_power_hdf5: " << ex.what();
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error(std::string("c++ exception Rcpp_vector_power_hdf5: ") + ex.what());
             // return dsC;
         }
         

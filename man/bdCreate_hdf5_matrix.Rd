@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bdCreate_hdf5_matrix}
 \alias{bdCreate_hdf5_matrix}
-\title{Create hdf5 data file and write data to it}
+\title{Create HDF5 data file and write data to it}
 \usage{
 bdCreate_hdf5_matrix(
   filename,
@@ -20,11 +20,11 @@ bdCreate_hdf5_matrix(
 
 \item{object}{numerical data matrix}
 
-\item{group, }{character array indicating folder name to put the matrix in hdf5 file}
+\item{group, }{character array indicating folder name to put the matrix in HDF5 file}
 
 \item{dataset, }{character array indicating the dataset name to store the matrix data}
 
-\item{transp}{boolean, if trans=true matrix is stored transposed in hdf5 file}
+\item{transp}{boolean, if trans=true matrix is stored transposed in HDF5 file}
 
 \item{overwriteFile, }{optional boolean by default overwriteFile = false, if
 true and file exists, removes old file and creates a new file with de dataset
@@ -44,22 +44,20 @@ List with components:
 }
 }
 \description{
-Creates a hdf5 file with numerical data matrix,
+Creates a HDF5 file with numerical data matrix,
 }
 \examples{
-
-matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-                    object = matA, group = "datasets", 
-                    dataset = "datasetA", transp = FALSE, 
-                    overwriteFile = TRUE, 
-                    overwriteDataset = TRUE,
-                    unlimited = FALSE)
-
-# Remove file (used as example)
-  if (file.exists("test_temp.hdf5")) {
-    # Delete file if it exist
-    file.remove("test_temp.hdf5")
-  }
+\donttest{
+    fn <- tempfile(fileext = ".h5")
+    matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+    bdCreate_hdf5_matrix(filename = fn,
+                         object = matA, group = "datasets",
+                         dataset = "datasetA", transp = FALSE,
+                         overwriteFile = TRUE,
+                         overwriteDataset = TRUE,
+                         unlimited = FALSE)
+    hdf5_close_all()
+    unlink(fn)
+}
 
 }

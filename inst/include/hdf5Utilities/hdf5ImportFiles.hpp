@@ -253,7 +253,7 @@ namespace BigDataStatMeth {
             if( get_NewLineEnding(path.c_str()) == false ) {
                 irows = irows + 1;
             }
-
+            
             // Restore counter after read first line to get number of cols
             if( Rcpp::as<bool>(header)==false ){
                 irows = irows + 1;
@@ -297,13 +297,25 @@ namespace BigDataStatMeth {
             
             while( !inFile.eof()  )
             {
-
+                
                 std::stringstream is(line); // take the line into a stringstream
 
                 btowrite = true;
                 
                 // Get splitted values
-                boost::split(strValues, line, boost::is_any_of(delim), boost::token_compress_on);
+                //.. 20260425 ..// boost::split(strValues, line, boost::is_any_of(delim), boost::token_compress_on);
+                // boost::split(strValues, line, boost::is_any_of(delim), boost::token_compress_on);
+                
+                strValues.clear();
+                std::string::size_type start = 0, pos = 0;
+                while ((pos = line.find_first_of(delim, start)) != std::string::npos) {
+                    if (pos > start)             // token_compress_on: skip empty
+                        strValues.push_back(line.substr(start, pos - start));
+                    start = pos + 1;
+                }
+                if (start < line.size())         // último token tras el último delimitador
+                    strValues.push_back(line.substr(start));
+                
                 
                 if( Rcpp::as<bool>(rownames) == true ) {
                     
@@ -347,7 +359,7 @@ namespace BigDataStatMeth {
             }
             
             count[1] = strBlockValues.size() / incols;
-
+            
             if((irows - (floor(irows/blockCounter)*blockCounter)>0 && strBlockValues.size()>0) || btowrite == true)
             {
                 std::vector<double> doubleVector = get_data_as_Matrix(strBlockValues);
@@ -356,12 +368,10 @@ namespace BigDataStatMeth {
                 Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> resMat (p, incols, count[1] );
                 
                 dsOut-> writeDatasetBlock( Rcpp::wrap(resMat.transpose()), offset, count, stride, block, false);
-                    
             }
-
             
-            BigDataStatMeth::hdf5Dims* dsdims;
-            dsdims = new BigDataStatMeth::hdf5Dims(dsOut);
+            std::unique_ptr<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
+            dsdims.reset(new BigDataStatMeth::hdf5Dims(dsOut));
             
             if( Rcpp::as<bool>(rownames) == true || Rcpp::as<bool>(header) == true ) {
                 if( Rcpp::as<bool>(rownames) == false){
@@ -376,26 +386,20 @@ namespace BigDataStatMeth {
                 }
             }
             
-            delete dsdims;
+            // delete dsdims;
 
         } catch( H5::FileIException& error ) {
-            Rcpp::Rcerr<<"c++ exception Convert_text_to_HDF5 (File IException)" << std::endl;
-            return void();
+            throw std::runtime_error("c++ exception Convert_text_to_HDF5 (File IException)");
         } catch( H5::GroupIException& error ) {
-            Rcpp::Rcerr<<"c++ exception Convert_text_to_HDF5 (Group IException)" << std::endl;
-            return void();
+            throw std::runtime_error("c++ exception Convert_text_to_HDF5 (Group IException)");
         } catch( H5::DataSetIException& error ) {
-            Rcpp::Rcerr<<"c++ exception Convert_text_to_HDF5 (DataSet IException)" << std::endl;
-            return void();
+            throw std::runtime_error("c++ exception Convert_text_to_HDF5 (DataSet IException)");
         } catch(const std::runtime_error& re) {
-            Rcpp::Rcerr << "Runtime error: " << re.what() << std::endl;
-            return void();
+            throw std::runtime_error(std::string("Runtime error: ") + re.what());
         } catch(const std::exception& ex) {
-            Rcpp::Rcerr << "Error occurred: " << ex.what() << std::endl;
-            return void();
+            throw std::runtime_error(std::string("Error occurred: ") + ex.what());
         } catch(...) {
-            Rcpp::Rcerr << "Unknown failure occurred. Possible memory corruption" << std::endl;
-            return void();
+            throw std::runtime_error("Unknown failure occurred. Possible memory corruption");
         }
 
         return void();

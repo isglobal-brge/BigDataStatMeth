@@ -44,31 +44,19 @@ This function automatically detects whether to compute:
 }
 }
 \examples{
-\dontrun{
-# Backward compatible - existing code unchanged
+\donttest{
 set.seed(123)
-X <- matrix(rnorm(1000), ncol = 10)
-result_original <- bdCorr_matrix(X)
+X <- matrix(rnorm(1000), nrow = 100, ncol = 10)
 
-# Create omics-style data
-gene_expr <- matrix(rnorm(5000), nrow = 100, ncol = 50)  # 100 samples × 50 genes
+# Single matrix correlation
+res <- bdCorr_matrix(X)
 
-# Gene-gene correlations (variables)
-gene_corr <- bdCorr_matrix(gene_expr, trans_x = FALSE)
+# Transposed (sample-sample correlations)
+res_t <- bdCorr_matrix(X, trans_x = TRUE)
 
-# Sample-sample correlations (individuals)  
-sample_corr <- bdCorr_matrix(gene_expr, trans_x = TRUE)
-
-# Cross-correlation examples
-methylation <- matrix(rnorm(4000), nrow = 100, ncol = 40)  # 100 samples × 40 CpGs
-
-# Variables vs variables (genes vs CpGs)
-vars_vs_vars <- bdCorr_matrix(gene_expr, methylation, 
-                             trans_x = FALSE, trans_y = FALSE)
-
-# Samples vs variables (individuals vs CpGs)
-samples_vs_vars <- bdCorr_matrix(gene_expr, methylation,
-                                trans_x = TRUE, trans_y = FALSE)
+# Cross-correlation with a second matrix
+Y <- matrix(rnorm(400), nrow = 100, ncol = 4)
+res_xy <- bdCorr_matrix(X, Y)
 }
 
 }

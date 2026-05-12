@@ -217,7 +217,7 @@ static const char *mygetenv(const char *name, const char *unset) {
  */
 inline SEXP getDTthreads_R(SEXP verbose) {
     if(!IS_TRUE_OR_FALSE(verbose))
-        Rf_error(("%s must be TRUE or FALSE"), "verbose");
+        throw std::runtime_error("verbose must be TRUE or FALSE");
     if (LOGICAL(verbose)[0]) {
 #ifndef _OPENMP
         Rprintf(("This installation of BigDataStatMeth has not been compiled with OpenMP support.\n"));
@@ -291,7 +291,8 @@ inline SEXP getDTthreads_R(SEXP verbose) {
                 ithreads = Rcpp::as<int> (threads);
             }
         } else {
-            ithreads =  getDTthreads(0, false);
+            //.. 20260304 ..// ithreads =  getDTthreads(0, false);
+            ithreads = static_cast<unsigned int>(getDTthreads(INT_MAX, false));
         }    
         
         return(ithreads);

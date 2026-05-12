@@ -67,7 +67,6 @@ The pseudoinverse satisfies the Moore-Penrose conditions:
 }
 
 \examples{
-library(BigDataStatMeth)
 
 # Create a singular matrix
 X <- matrix(c(1,2,3,2,4,6), 2, 3)  # rank-deficient matrix
@@ -89,11 +88,5 @@ all.equal(X_pinv \%*\% X \%*\% X_pinv, X_pinv)
 Johns Hopkins University Press.
 \item Ben-Israel, A., & Greville, T. N. E. (2003). Generalized Inverses:
 Theory and Applications, 2nd Edition. Springer.
-}
-}
-\seealso{
-\itemize{
-\item \code{\link{bdpseudoinv_hdf5}} for HDF5-stored matrices
-\item \code{\link{bdSVD_hdf5}} for singular value decomposition
 }
 }

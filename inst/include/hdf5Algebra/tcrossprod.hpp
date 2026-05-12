@@ -1,6 +1,8 @@
 /**
  * @file tcrossprod.hpp
  * @brief Transposed cross-product operations for HDF5 matrices
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @details This header file provides implementations for transposed cross-product
  * operations on matrices stored in HDF5 format. The implementation includes:
  * 
@@ -80,24 +82,13 @@ namespace BigDataStatMeth {
                     if (N != M) {
                         throw std::range_error("Symmetric tcrossprod requires square result matrix");
                     }
-                    if (dsA->getFileName() != dsB->getFileName() || 
+                    //.. 20260304 ..// if (dsA->getFileName() != dsB->getFileName() || 
+                    if (dsA->getFullPath() != dsB->getFullPath() || 
                         dsA->getGroup() != dsB->getGroup() || 
                         dsA->getDatasetName() != dsB->getDatasetName()) {
                         Rcpp::warning("isSymmetric=TRUE but different datasets provided. Results may be incorrect.");
                     }
                 }
-
-                
-/** 2025/11/25
-                // Configure parallel processing
-                int num_threads = 1;
-                if (bparal) {
-                    num_threads = get_number_threads(threads, Rcpp::wrap(bparal));
-#ifdef _OPENMP
-                    omp_set_num_threads(num_threads);
-#endif
-                }
- Fi 2025/11/25 **/
 
 #ifdef _OPENMP  // Configure parallel processing
                 int num_threads = 1;
@@ -120,6 +111,7 @@ namespace BigDataStatMeth {
                     total_blocks = blocks_i * blocks_j;
                 }
                 
+                dsC->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsC->createDataset( N, M, "real");
                 
 #ifdef _OPENMP
@@ -203,8 +195,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception tcrossprod: "<<ex.what()<< " \n";
-            return(dsC);
+            throw std::runtime_error(std::string("c++ exception tcrossprod: ") + ex.what());
         }
         
         return(dsC);

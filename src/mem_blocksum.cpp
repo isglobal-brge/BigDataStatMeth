@@ -90,8 +90,7 @@
 //' @return Matrix or vector containing the result of A + B.
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
+//' \donttest{
 //' 
 //' # Matrix-matrix addition
 //' N <- 2500
@@ -184,7 +183,7 @@ Rcpp::RObject bdblockSum(Rcpp::RObject A, Rcpp::RObject B,
         }
         
     } catch(std::exception &ex) {
-        Rcpp::Rcerr << "c++ exception bdblockSum: " << ex.what();
+        Rcpp::stop("c++ exception bdblockSum: " + std::string(ex.what()));
         Rcpp::Rcout<< ex.what();
         return(R_NilValue);
     }

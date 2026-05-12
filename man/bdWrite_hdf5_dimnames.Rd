@@ -40,19 +40,20 @@ The dataset \code{group/dataset} must already exist. When non-empty,
 dataset dimensions.
 }
 \examples{
-\dontrun{
+\donttest{
+fn <- tempfile(fileext = ".h5")
+hdf5_create_matrix(fn, "MGCCA_IN/X",
+                   data = matrix(rnorm(5000), 100, 50))
+
 bdWrite_hdf5_dimnames(
-  filename = "test.h5",
-  group = "MGCCA_IN",
-  dataset = "X",
+  filename = fn,
+  group    = "MGCCA_IN",
+  dataset  = "X",
   rownames = paste0("r", seq_len(100)),
   colnames = paste0("c", seq_len(50))
 )
-
-# Skip column names:
-bdWrite_hdf5_dimnames("test.h5", "MGCCA_IN", "X",
-                      rownames = paste0("r", 1:100),
-                      colnames = character(0))
+hdf5_close_all()
+unlink(fn)
 }
 
 }

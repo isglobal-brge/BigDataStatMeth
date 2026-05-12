@@ -97,6 +97,77 @@ namespace BigDataStatMeth {
             } catch (...) {}
         }
     }
+    
+    /**
+     * @brief Close all open HDF5 handles at the C library level
+     * @details Uses HDF5 C API to find and close all open objects
+     * (files, datasets, groups, datatypes, attributes) regardless
+     * of how they were opened. Equivalent to rhdf5::h5closeAll().
+     * Safe to call at any time — invalid IDs are skipped silently.
+     */
+    inline void closeAllHDF5Handles() {
+        try {
+            // Exclude H5F_OBJ_DATATYPE: the HDF5 library keeps pre-defined types
+            // (H5T_NATIVE_DOUBLE, etc.) permanently open as library-level objects.
+            // Closing them corrupts the library state for subsequent operations.
+            const unsigned types = H5F_OBJ_FILE | H5F_OBJ_DATASET |
+                H5F_OBJ_GROUP | H5F_OBJ_ATTR;
+            ssize_t n = H5Fget_obj_count(H5F_OBJ_ALL, types);
+            if (n <= 0) return;
+            std::vector<hid_t> ids(static_cast<size_t>(n));
+            H5Fget_obj_ids(H5F_OBJ_ALL, types,
+                           static_cast<size_t>(n), ids.data());
+            for (hid_t id : ids)
+                if (H5Iis_valid(id) > 0) H5Oclose(id);
+        } catch (...) {}
+    }
+    
+    
+    /**
+     * @brief Close all HDF5 handles associated with a specific file.
+     *
+     * Finds all open HDF5 file handles matching \p filename (by absolute path),
+     * closes their associated datasets/groups/attributes, then closes the file
+     * handles themselves. Pre-defined HDF5 library types are never touched.
+     *
+     * @param filename Absolute path to the HDF5 file.
+     */
+    inline void closeHDF5HandlesForFile(const std::string& filename) {
+        try {
+            // Get all open file handles
+            ssize_t n_files = H5Fget_obj_count(H5F_OBJ_ALL, H5F_OBJ_FILE);
+            if (n_files <= 0) return;
+            
+            std::vector<hid_t> file_ids(static_cast<size_t>(n_files));
+            H5Fget_obj_ids(H5F_OBJ_ALL, H5F_OBJ_FILE,
+                           static_cast<size_t>(n_files), file_ids.data());
+            
+            for (hid_t fid : file_ids) {
+                if (H5Iis_valid(fid) <= 0) continue;
+                
+                // Get the absolute path HDF5 stored for this handle
+                ssize_t len = H5Fget_name(fid, nullptr, 0);
+                if (len <= 0) continue;
+                std::string hdf5_name(static_cast<size_t>(len + 1), '\0');
+                H5Fget_name(fid, &hdf5_name[0], static_cast<size_t>(len + 1));
+                hdf5_name.resize(static_cast<size_t>(len));
+                
+                if (hdf5_name != filename) continue;
+                
+                // Close datasets, groups, attributes for this file only
+                // Never touch H5F_OBJ_DATATYPE — pre-defined types are library-internal
+                const unsigned types = H5F_OBJ_DATASET | H5F_OBJ_GROUP | H5F_OBJ_ATTR;
+                ssize_t n = H5Fget_obj_count(fid, types);
+                if (n > 0) {
+                    std::vector<hid_t> ids(static_cast<size_t>(n));
+                    H5Fget_obj_ids(fid, types, static_cast<size_t>(n), ids.data());
+                    for (hid_t id : ids)
+                        if (H5Iis_valid(id) > 0) H5Oclose(id);
+                }
+                H5Fclose(fid);
+            }
+        } catch (...) {}
+    }
 
 
 }

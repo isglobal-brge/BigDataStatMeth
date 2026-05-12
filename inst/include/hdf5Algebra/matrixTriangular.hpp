@@ -121,14 +121,11 @@ namespace BigDataStatMeth {
             
         }
         catch( H5::FileIException& error ) {
-            Rcpp::Rcout<<"c++ exception setUpperTriangularMatrix (File IException)";
-            return void();
+            throw std::runtime_error("c++ exception setUpperTriangularMatrix (File IException)");
         } catch( H5::DataSetIException& error ) {
-            Rcpp::Rcout << "c++ exception setUpperTriangularMatrix (DataSet IException)";
-            return void();
+            throw std::runtime_error("c++ exception setUpperTriangularMatrix (DataSet IException)");
         } catch(std::exception& ex) {
-            Rcpp::Rcout << "c++ exception setUpperTriangularMatrix: " << ex.what();
-            return void();
+            throw std::runtime_error(std::string("c++ exception setUpperTriangularMatrix: ") + ex.what());
         }
         
         return void();
@@ -214,14 +211,11 @@ namespace BigDataStatMeth {
             }
         }
         catch( H5::FileIException& error ) {
-            Rcpp::Rcout<<"c++ exception setLowerTriangularMatrix (File IException)";
-            return void();
+            throw std::runtime_error("c++ exception setLowerTriangularMatrix (File IException)");
         } catch( H5::DataSetIException& error ) {
-            Rcpp::Rcout << "c++ exception setLowerTriangularMatrix (DataSet IException)";
-            return void();
+            throw std::runtime_error("c++ exception setLowerTriangularMatrix (DataSet IException)");
         } catch(std::exception& ex) {
-            Rcpp::Rcout << "c++ exception setLowerTriangularMatrix: " << ex.what();
-            return void();
+            throw std::runtime_error(std::string("c++ exception setLowerTriangularMatrix: ") + ex.what());
         }
         
         return void();

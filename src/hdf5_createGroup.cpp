@@ -64,24 +64,19 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
-//' library(BigDataStatMeth)
-//' fn <- "test.hdf5"
-//'
-//' # Ensure file exists (e.g., by creating an empty dataset or via a helper)
-//' mat <- matrix(0, nrow = 1, ncol = 1)
-//' bdCreate_hdf5_matrix(fn, mat, group = "tmp", dataset = "seed",
-//'                      overwriteFile = TRUE)
-//'
-//' # Create nested group
+//' \donttest{
+//' fn <- tempfile(fileext = ".h5")
+//' hdf5_create_matrix(fn, "tmp/seed", data = matrix(0, 1, 1))
 //' bdCreate_hdf5_group(fn, "MGCCA_OUT/scores")
+//' hdf5_close_all()
+//' unlink(fn)
 //' }
 //'
 //' @references
 //' The HDF Group. HDF5 User's Guide.
 //'
 //' @seealso
-//' \code{\link{bdCreate_hdf5_matrix}}, \code{\link{bdRemove_hdf5_element}}
+//' \code{\link{hdf5_create_matrix}}.
 //'
 //' @export
 // [[Rcpp::export]]
@@ -89,7 +84,7 @@
 Rcpp::List bdCreate_hdf5_group(std::string filename, std::string group)
  {
      
-     BigDataStatMeth::hdf5File* objFile = nullptr;
+     // BigDataStatMeth::hdf5File* objFile = nullptr;
      
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("gr") = "");
@@ -99,7 +94,9 @@ Rcpp::List bdCreate_hdf5_group(std::string filename, std::string group)
          
          H5::Exception::dontPrint();
          
-         objFile = new BigDataStatMeth::hdf5File(filename, false);
+         // objFile = new BigDataStatMeth::hdf5File(filename, false);
+         // BigDataStatMeth::HDF5Handle objFile( new BigDataStatMeth::hdf5File(filename, false) );
+        std::unique_ptr<BigDataStatMeth::hdf5File> objFile( new BigDataStatMeth::hdf5File(filename, false) );
          objFile->openFile("rw");
          
          if( BigDataStatMeth::exists_HDF5_element(objFile->getFileptr(),  group))  {
@@ -124,30 +121,25 @@ Rcpp::List bdCreate_hdf5_group(std::string filename, std::string group)
              }
          }
          
-         delete objFile; objFile = nullptr;
+         // delete objFile; objFile = nullptr;
          
          lst_return["fn"] = filename;
          lst_return["gr"] = group;
          
      } catch( H5::FileIException& error ) { 
-         delete objFile; objFile = nullptr;
-         Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group (File IException)";
+         Rcpp::stop("c++ exception bdCreate_hdf5_group (File IException)");
          return(lst_return);
      } catch( H5::GroupIException & error ) { 
-         delete objFile; objFile = nullptr;
-         Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group (Group IException)";
+         Rcpp::stop("c++ exception bdCreate_hdf5_group (Group IException)");
          return(lst_return);
      } catch( H5::DataSetIException& error ) { 
-         delete objFile; objFile = nullptr;
-         Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group (DataSet IException)";
+         Rcpp::stop("c++ exception bdCreate_hdf5_group (DataSet IException)");
          return(lst_return);
      } catch(std::exception& ex) {
-         delete objFile; objFile = nullptr;
-         Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group" << ex.what();
+         Rcpp::stop("c++ exception bdCreate_hdf5_group: " + std::string(ex.what()));
          return(lst_return);
      } catch (...) {
-         delete objFile; objFile = nullptr;
-         Rcpp::Rcerr << "c++ exception bdCreate_hdf5_group (unknown reason)";
+         Rcpp::stop("c++ exception bdCreate_hdf5_group (unknown reason)");
          return(lst_return);
      }
      

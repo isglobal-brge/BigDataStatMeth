@@ -2,15 +2,15 @@
 // #include "hdf5Utilities/hdf5Utilities.hpp"
 
 
-//' Create hdf5 data file and write data to it
+//' Create HDF5 data file and write data to it
 //'
-//' Creates a hdf5 file with numerical data matrix,
+//' Creates a HDF5 file with numerical data matrix,
 //' 
 //' @param filename, character array indicating the name of the file to create
 //' @param object numerical data matrix
-//' @param group, character array indicating folder name to put the matrix in hdf5 file
+//' @param group, character array indicating folder name to put the matrix in HDF5 file
 //' @param dataset, character array indicating the dataset name to store the matrix data
-//' @param transp boolean, if trans=true matrix is stored transposed in hdf5 file
+//' @param transp boolean, if trans=true matrix is stored transposed in HDF5 file
 //' @param overwriteFile, optional boolean by default overwriteFile = false, if 
 //' true and file exists, removes old file and creates a new file with de dataset 
 //' data.
@@ -25,20 +25,18 @@
 //' }
 //' 
 //' @examples
-//' 
-//' matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
-//' bdCreate_hdf5_matrix(filename = "test_temp.hdf5", 
-//'                     object = matA, group = "datasets", 
-//'                     dataset = "datasetA", transp = FALSE, 
-//'                     overwriteFile = TRUE, 
-//'                     overwriteDataset = TRUE,
-//'                     unlimited = FALSE)
-//' 
-//' # Remove file (used as example)
-//'   if (file.exists("test_temp.hdf5")) {
-//'     # Delete file if it exist
-//'     file.remove("test_temp.hdf5")
-//'   }
+//' \donttest{
+//'     fn <- tempfile(fileext = ".h5")
+//'     matA <- matrix(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15), nrow = 3, byrow = TRUE)
+//'     bdCreate_hdf5_matrix(filename = fn,
+//'                          object = matA, group = "datasets",
+//'                          dataset = "datasetA", transp = FALSE,
+//'                          overwriteFile = TRUE,
+//'                          overwriteDataset = TRUE,
+//'                          unlimited = FALSE)
+//'     hdf5_close_all()
+//'     unlink(fn)
+//' }
 //' 
 //' @export
 // [[Rcpp::export]]
@@ -128,9 +126,15 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
             }
             
             if(Rf_inherits(object, "data.frame")){
-                SEXP mat = Rcpp::Language("as.matrix", object).eval();
-                if ( Rf_isMatrix(mat) ){
-                    objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(mat));
+                //.. 20260426 ..//     SEXP mat = Rcpp::Language("as.matrix", object).eval();
+                //.. 20260426 ..//     if ( Rf_isMatrix(mat) ){
+                //.. 20260426 ..//     objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(mat));
+                //.. 20260426 ..// } else{
+                //.. 20260426 ..//     Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
+                //.. 20260426 ..// }
+                Rcpp::RObject matObj = Rcpp::Language("as.matrix", object).eval();
+                if (Rcpp::is<Rcpp::NumericMatrix>(matObj) || Rcpp::is<Rcpp::IntegerMatrix>(matObj)){
+                    objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(matObj));
                 } else{
                     Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
                 }

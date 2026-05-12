@@ -5,12 +5,18 @@
 ^pkg\.*
 ^.*\.hdf5$
 ^\.github$
+^\.html$
 ^.*\ 2*
 ^.*\.hide$
-^.*Spectra_old
-claude.md
 ^.*\.log$
 ^.*\.ffs_gui$
 ^.*\.DS_Store$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^.*\removed.*\.bck
+^doc$
+^Meta$
+^vignettes/.*\.bck*$
+^\.sync\.ffs_db$
+^fix_error_handling\.py$
+^\.positai$

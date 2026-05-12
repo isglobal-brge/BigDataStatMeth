@@ -1,6 +1,8 @@
 /**
  * @file crossprod.hpp
  * @brief Implementation of matrix cross-product operations using HDF5
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  *
  * This file provides functionality for computing matrix cross-products (A^T * B)
  * for large matrices stored in HDF5 format. The implementation uses block-wise
@@ -91,10 +93,6 @@ namespace BigDataStatMeth {
             
             if( K == L)
             {
-                // hsize_t isize = hdf5_block + 1,
-                //     ksize = hdf5_block + 1,
-                //     jsize = hdf5_block + 1;
-                
                 std::vector<hsize_t> stride = {1, 1};
                 std::vector<hsize_t> block = {1, 1};
                 
@@ -102,24 +100,16 @@ namespace BigDataStatMeth {
                     if (N != M) {
                         throw std::range_error("Symmetric crossprod requires square result matrix");
                     }
-                    if (dsA->getFileName() != dsB->getFileName() || 
+                    //.. 20260304 ..// if (dsA->getFileName() != dsB->getFileName() || 
+                    if (dsA->getFullPath() != dsB->getFullPath() || 
                         dsA->getGroup() != dsB->getGroup() || 
                         dsA->getDatasetName() != dsB->getDatasetName()) {
                         Rcpp::warning("isSymmetric=TRUE but different datasets provided. Results may be incorrect.");
                     }
                 }
                 
+                dsC->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsC->createDataset( N, M, "real");
-/** 2025/11/25                
-                // Configure parallel processing
-                int num_threads = 1;
-                if (bparal) {
-                    num_threads = get_number_threads(threads, Rcpp::wrap(bparal));  
-#ifdef _OPENMP
-                    omp_set_num_threads(num_threads);
-#endif
-                }
- Fi 2025/11/25 **/
 
 #ifdef _OPENMP // Configure parallel processing
                 int num_threads = 1;
@@ -128,17 +118,6 @@ namespace BigDataStatMeth {
                     omp_set_num_threads(num_threads);
                 }
 #endif                
-                                
-//                 // HDF5 thread safety: Initialize lock for I/O serialization
-// #ifdef _OPENMP
-//                 static omp_lock_t hdf5_lock;
-//                 static bool hdf5_lock_initialized = false;
-//                 
-//                 if (bparal && !hdf5_lock_initialized) {
-//                     omp_init_lock(&hdf5_lock);
-//                     hdf5_lock_initialized = true;
-//                 }
-// #endif
                 
                 // Calculate total blocks for parallelization
                 hsize_t blocks_i = (N + hdf5_block - 1) / hdf5_block;
@@ -214,18 +193,9 @@ namespace BigDataStatMeth {
                         std::vector<double> vdA(iRowsA * iColsA);
                         std::vector<double> vdB(iRowsB * iColsB);
                         
-//                         // Thread-safe I/O: Serialize all HDF5 operations
-// #ifdef _OPENMP
-//                         if (bparal) omp_set_lock(&hdf5_lock);
-// #endif
-                        
                         // HDF5 read operations (inside critical section)
                         dsA->readDatasetBlock( {ii, kk}, {iRowsA,iColsA}, stride, block, vdA.data() );
                         dsB->readDatasetBlock( {jj, kk}, {iRowsB, iColsB}, stride, block, vdB.data() );
-                        
-// #ifdef _OPENMP
-//                         if (bparal) omp_unset_lock(&hdf5_lock);
-// #endif
                         
                         // Parallel computation (outside critical section)
                         Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), iRowsA, iColsA );
@@ -241,11 +211,6 @@ namespace BigDataStatMeth {
                         }
                     }
                     
-//                     // Thread-safe I/O: Serialize all HDF5 write operations
-// #ifdef _OPENMP
-//                     if (bparal) omp_set_lock(&hdf5_lock);
-// #endif
-                    
                     dsC->writeDatasetBlock(Rcpp::wrap(C_accum), offset, count, stride, block, false);
                     
                     if (isSymmetric && ii != jj) {
@@ -254,9 +219,6 @@ namespace BigDataStatMeth {
                         dsC->writeDatasetBlock(Rcpp::wrap(C_accum.transpose()), offset_sym, count_sym, stride, block, false);
                     }
                     
-// #ifdef _OPENMP
-//                     if (bparal) omp_unset_lock(&hdf5_lock);
-// #endif
                 }
                 
             } else {
@@ -264,8 +226,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::Rcout<< "c++ exception crossprod: "<<ex.what()<< " \n";
-            return(dsC);
+            throw std::runtime_error(std::string("c++ exception crossprod: ") + ex.what());
         }
         
         return(dsC);

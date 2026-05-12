@@ -81,17 +81,19 @@ The function supports parallel processing for large files and provides
 memory-efficient import capabilities.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
+
+hdf5_file <- tempfile(fileext = ".h5")
+csv_file <- tempfile(fileext = ".csv")
 
 # Create a test CSV file
 data <- matrix(rnorm(100), 10, 10)
-write.csv(data, "test.csv", row.names = FALSE)
+write.csv(data, csv_file, row.names = FALSE)
 
 # Import to HDF5
 bdImportTextFile_hdf5(
-  filename = "test.csv",
-  outputfile = "output.hdf5",
+  filename = csv_file,
+  outputfile = hdf5_file,
   outGroup = "data",
   outDataset = "matrix1",
   sep = ",",
@@ -100,7 +102,7 @@ bdImportTextFile_hdf5(
 )
 
 # Cleanup
-unlink(c("test.csv", "output.hdf5"))
+unlink(c(csv_file, hdf5_file))
 }
 
 }
@@ -111,6 +113,6 @@ unlink(c("test.csv", "output.hdf5"))
 }
 \seealso{
 \itemize{
-\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices directly
+\item \code{hdf5_create_matrix} for creating HDF5 matrices directly
 }
 }

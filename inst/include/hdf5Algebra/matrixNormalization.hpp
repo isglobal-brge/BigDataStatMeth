@@ -1,6 +1,8 @@
 /**
  * @file matrixNormalization.hpp
  * @brief Matrix normalization operations for HDF5 matrices
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @details This header file provides implementations for matrix normalization
  * operations on matrices stored in HDF5 format. The implementation includes:
  * 
@@ -260,6 +262,8 @@ namespace BigDataStatMeth {
                 rX = (X.colwise() - normdata.row(0).transpose());
             }  else if ( bc == false && bs == true)   {
                 rX = X.array().colwise() / normdata.row(1).transpose().array();
+            } else {
+                rX = X;   // bc=FALSE, bs=FALSE: identity — return unchanged
             }
         } else {
             if( bc==true && bs==true )  {
@@ -268,6 +272,8 @@ namespace BigDataStatMeth {
                 rX = (X.rowwise() - normdata.row(0));
             }  else if ( bc == false && bs == true)   {
                 rX = X.array().rowwise() / normdata.row(1).array();
+            } else {
+                rX = X;   // bc=FALSE, bs=FALSE: identity — return unchanged
             }
         }
 
@@ -326,7 +332,8 @@ namespace BigDataStatMeth {
                 }    
             }
             
-            for(hsize_t i=0; i*blocksize <= nRowsCols ; i++)
+            //.. 20260224 ..// for(hsize_t i=0; i*blocksize <= nRowsCols ; i++)
+            for(hsize_t i=0; i*blocksize < nRowsCols ; i++)
             {
                 std::vector<hsize_t> offset, 
                 count;
@@ -366,28 +373,23 @@ namespace BigDataStatMeth {
             }
             
         }catch( H5::FileIException& error ) {
-            checkClose_file(dsA, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (File IException)";
-            return void();
+            // checkClose_file(dsA, dsNormal);
+            throw std::runtime_error("c++ exception RcppNormalizeHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            checkClose_file(dsA, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (DataSet IException)";
-            return void();
+            // checkClose_file(dsA, dsNormal);
+            throw std::runtime_error("c++ exception RcppNormalizeHdf5 (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsA, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (DataSpace IException)";
-            return void();
+            // checkClose_file(dsA, dsNormal);
+            throw std::runtime_error("c++ exception RcppNormalizeHdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsA, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5 (DataType IException)";
-            return void();
+            // checkClose_file(dsA, dsNormal);
+            throw std::runtime_error("c++ exception RcppNormalizeHdf5 (DataType IException)");
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsNormal);
-            Rcpp::Rcerr<<"\nC++ exception RcppNormalizeHdf5 : "<< ex.what();
+            // checkClose_file(dsA, dsNormal);
+            throw std::runtime_error(std::string("C++ exception RcppNormalizeHdf5: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsA, dsNormal);
-            Rcpp::Rcerr<<"\nC++ exception RcppNormalizeHdf5 (unknown reason)";
-            return void();
+            // checkClose_file(dsA, dsNormal);
+            throw std::runtime_error("C++ exception RcppNormalizeHdf5 (unknown reason)");
         }
         
         return void();
@@ -401,11 +403,17 @@ namespace BigDataStatMeth {
                                                 bool bc, bool bs, bool bbyrows)
     {
         
-        BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
-        BigDataStatMeth::hdf5Dataset* dssd = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
+        
         
         try{
+
+            // BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
+            // BigDataStatMeth::hdf5Dataset* dssd = nullptr;
+            // BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
+
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsNormal(nullptr);
             
             Rcpp::Nullable<int> wsize = R_NilValue;
             Eigen::MatrixXd datanormal;
@@ -429,48 +437,47 @@ namespace BigDataStatMeth {
                 get_HDF5_mean_sd_by_row( dsA, datanormal, true, true, wsize);
             }
             
-            dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout, strdatasetmean, true);
+            // dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout, strdatasetmean, true);
+            dsmean.reset(new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout, strdatasetmean, true));
+            dsmean->inheritCompressionLevel(dsA->getCompressionLevel());
             dsmean->createDataset( datanormal.cols(), 1, "real");
             dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
-            delete dsmean; dsmean = nullptr;
+            dsmean.reset(nullptr);
+            // delete dsmean; dsmean = nullptr;
             
-            dssd = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout, strdatasetsd, true);
+            // dssd = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout, strdatasetsd, true);
+            dssd.reset(new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout, strdatasetsd, true));
+            dssd->inheritCompressionLevel(dsA->getCompressionLevel());
             dssd->createDataset( datanormal.cols(), 1, "real");
             dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
-            delete dssd; dssd = nullptr;
+            dssd.reset(nullptr);
+            // delete dssd; dssd = nullptr;
             
-            dsNormal = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout, dsA->getDatasetName(), true);
+            // dsNormal = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout, dsA->getDatasetName(), true);
+            dsNormal.reset(new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout, dsA->getDatasetName(), true));
+            dsNormal->inheritCompressionLevel(dsA->getCompressionLevel());
             dsNormal->createDataset( dsA, "real");
             
             if( dsA->getDatasetptr() != nullptr && dsNormal->getDatasetptr() != nullptr){
-                BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal, datanormal, wsize, bc, bs, bbyrows, bcorrected);
+                BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal.get(), datanormal, wsize, bc, bs, bbyrows, bcorrected);
+            } else {
+                Rcpp::stop("C++ exception bdNormalize_hdf5: failed to create output dataset");
             }
             
-            delete dsNormal; dsNormal = nullptr;
+            // delete dsNormal; dsNormal = nullptr;
             
         } catch( H5::FileIException& error ) {
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5_F (File IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppNormalizeHdf5_F (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5_F (DataSet IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppNormalizeHdf5_F (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5_F (DataSpace IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppNormalizeHdf5_F (DataSpace IException)");
         } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppNormalizeHdf5_F (DataType IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppNormalizeHdf5_F (DataType IException)");
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nC++ exception RcppNormalizeHdf5_F : "<< ex.what();
+            throw std::runtime_error(std::string("C++ exception RcppNormalizeHdf5_F: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nC++ exception RcppNormalizeHdf5_F (unknown reason)";
-            return void();
+            throw std::runtime_error("C++ exception RcppNormalizeHdf5_F (unknown reason)");
         }
         
         return void();
@@ -484,11 +491,15 @@ namespace BigDataStatMeth {
                                                 bool bc, bool bs, bool bbyrows)
     {
         
-        BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
-        BigDataStatMeth::hdf5Dataset* dssd = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
-        
         try{
+
+            // BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
+            // BigDataStatMeth::hdf5Dataset* dssd = nullptr;
+            // BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
+
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsNormal(nullptr);
             
             Rcpp::Nullable<int> wsize = R_NilValue;
             Eigen::MatrixXd datanormal;
@@ -513,47 +524,42 @@ namespace BigDataStatMeth {
                 get_HDF5_mean_sd_by_row( dsA, datanormal, true, true, wsize);
             }
             
-            dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout_ms, strdatasetmean, true);
+            // dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout_ms, strdatasetmean, true);
+            dsmean.reset(new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout_ms, strdatasetmean, true));
+            dsmean->inheritCompressionLevel(dsA->getCompressionLevel());
             dsmean->createDataset( datanormal.cols(), 1, "real");
             dsmean->writeDataset( Rcpp::wrap(datanormal.row(0)) );
-            delete dsmean; dsmean = nullptr;
+            // delete dsmean; dsmean = nullptr;
             
-            dssd = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout_ms, strdatasetsd, true);
+            // dssd = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout_ms, strdatasetsd, true);
+            dssd.reset(new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout_ms, strdatasetsd, true));
+            dssd->inheritCompressionLevel(dsA->getCompressionLevel());
             dssd->createDataset( datanormal.cols(), 1, "real");
             dssd->writeDataset( Rcpp::wrap(datanormal.row(1)) );
-            delete dssd; dssd = nullptr;
+            // delete dssd; dssd = nullptr;
             
-            dsNormal = new BigDataStatMeth::hdf5Dataset(dsA->getFileName(), strgroupout, dsA->getDatasetName(), true);
+            // dsNormal = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout, dsA->getDatasetName(), true);
+            dsNormal.reset(new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout, dsA->getDatasetName(), true));
+            dsNormal->inheritCompressionLevel(dsA->getCompressionLevel());
             dsNormal->createDataset( dsA, "real");
             
             if( dsA->getDatasetptr() != nullptr && dsNormal->getDatasetptr() != nullptr){
-                BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal, datanormal, wsize, bc, bs, bbyrows, corrected);    
+                BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal.get(), datanormal, wsize, bc, bs, bbyrows, corrected);    
             }
-            delete dsNormal; dsNormal = nullptr;
+            // delete dsNormal; dsNormal = nullptr;
             
         } catch( H5::FileIException& error ) {
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppTypifyNormalizeHdf5 (File IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppTypifyNormalizeHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppTypifyNormalizeHdf5 (DataSet IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppTypifyNormalizeHdf5 (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppTypifyNormalizeHdf5 (DataSpace IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppTypifyNormalizeHdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nc++ exception RcppTypifyNormalizeHdf5 (DataType IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppTypifyNormalizeHdf5 (DataType IException)");
         } catch(std::exception &ex) {
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nC++ exception RcppTypifyNormalizeHdf5 : "<< ex.what();
+            throw std::runtime_error(std::string("C++ exception RcppTypifyNormalizeHdf5: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsA, dsmean, dssd, dsNormal);
-            Rcpp::Rcerr<<"\nC++ exception RcppTypifyNormalizeHdf5 (unknown reason)";
-            return void();
+            throw std::runtime_error("C++ exception RcppTypifyNormalizeHdf5 (unknown reason)");
         }
         
         return void();

@@ -1,6 +1,8 @@
 /**
  * @file hdf5ImputeData.hpp
  * @brief Data imputation utilities for HDF5 datasets
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * 
  * This file provides functionality for imputing missing values in HDF5 datasets,
  * particularly focused on SNP (Single Nucleotide Polymorphism) data. It implements
@@ -74,7 +76,7 @@ namespace BigDataStatMeth {
             
             return (d(gen));
         } catch(const std::exception& e) {
-            Rf_error( "c++ exception get_value_to_impute_discrete : %s", e.what());
+            throw std::runtime_error(std::string("c++ exception get_value_to_impute_discrete: ") + e.what());
             // std::cerr << e.what() << '\n';
             return(3);
         }
@@ -117,11 +119,9 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception &ex) {
-            Rf_error( "c++ exception VectortoOrderedMap_SNP_counts : %s", ex.what());
-            return std::map<double, double>();
+            throw std::runtime_error(std::string("c++ exception VectortoOrderedMap_SNP_counts: ") + ex.what());
         } catch(...) { 
-            Rf_error("c++ exception VectortoOrderedMap_SNP_counts (unknown reason)"); 
-            return std::map<double, double>();
+            throw std::runtime_error("c++ exception VectortoOrderedMap_SNP_counts (unknown reason)");
         } 
         
         return mapv;
@@ -196,13 +196,15 @@ namespace BigDataStatMeth {
             
             
             if( stroutdataset.compare("")!=0) {
+                dsOut->inheritCompressionLevel(dsIn->getCompressionLevel());
                 dsOut->createDataset(dims_out[0], dims_out[1], "real");
             } 
             
             dsOut->openDataset();
             
             int chunks = (ilimit + (blocksize - 1)) / blocksize; //(ilimit/blocksize);
-
+            std::atomic<bool> found_nan(false); //.. 20260304 ..//
+            
             #pragma omp parallel num_threads(get_number_threads(threads, R_NilValue)) shared(dsIn, dsOut, chunks)
             {
                 #pragma omp for schedule(auto)
@@ -230,11 +232,17 @@ namespace BigDataStatMeth {
                     
                     // read block
                     std::vector<double> vdIn( count[0] * count[1] ); 
-                    #pragma omp critical(accessFile)
-                    {
+                    //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                    //.. 20260325 - remove critical ..// {
                         dsIn->readDatasetBlock( { offset[0], offset[1]}, { count[0], count[1]}, stride, block, vdIn.data() );
-                    }
+                    //.. 20260325 - remove critical ..// }
                     Eigen::MatrixXd data = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdIn.data(), count[0], count[1] );
+                    
+                    //.. 20260304 ..//
+                    if (data.hasNaN()) { found_nan = true; }
+                    #pragma omp flush(found_nan) 
+                        if (found_nan) { continue; }
+                    
                     
                     if(bycols == true) // We have to do it by rows
                     {
@@ -279,35 +287,42 @@ namespace BigDataStatMeth {
                         }
                     }
                     
-                    #pragma omp critical(accessFile)
-                    {
+                    //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                    //.. 20260325 - remove critical ..// {
                         dsOut->writeDatasetBlock( Rcpp::wrap(data), offset, count, stride, block, false);
-                    }
+                    //.. 20260325 - remove critical ..// }
                 }
                 
             }
             
+            //.. 20260304 ..//
+            if (found_nan)
+                throw std::runtime_error(
+                        "impute_snps: dataset contains NA/NaN values. "
+                        "This function expects 0/1/2/3-coded SNP data where 3 indicates missing. "
+                        "Replace NA values with 3 before calling impute_snps().");
+            
         } catch( H5::FileIException& error) { // catch failure caused by the H5File operations
-            checkClose_file(dsIn, dsOut);
-            Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (File IException)");
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("c++ exception Rcpp_Impute_snps_hdf5 (File IException)");
         } catch( H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            checkClose_file(dsIn, dsOut);
-            Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (DataSet IException)");
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("c++ exception Rcpp_Impute_snps_hdf5 (DataSet IException)");
         } catch( H5::GroupIException& error) { // catch failure caused by the Group operations
-            checkClose_file(dsIn, dsOut);
-            Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (Group IException)");
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("c++ exception Rcpp_Impute_snps_hdf5 (Group IException)");
         } catch( H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsIn, dsOut);
-            Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (DataSpace IException)");
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("c++ exception Rcpp_Impute_snps_hdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsIn, dsOut);
-            Rf_error("c++ exception Rcpp_Impute_snps_hdf5 (Data TypeIException)");
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("c++ exception Rcpp_Impute_snps_hdf5 (Data TypeIException)");
         } catch(std::exception &ex) {
-            checkClose_file(dsIn, dsOut);
-            Rf_error( "c++ exception Rcpp_Impute_snps_hdf5 : %s", ex.what());
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error(std::string("c++ exception Rcpp_Impute_snps_hdf5: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsIn, dsOut);
-            Rf_error("C++ exception Rcpp_Impute_snps_hdf5 (unknown reason)");
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("C++ exception Rcpp_Impute_snps_hdf5 (unknown reason)");
         }
         
         return void();

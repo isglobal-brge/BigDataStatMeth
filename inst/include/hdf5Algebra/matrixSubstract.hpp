@@ -1,6 +1,8 @@
 /**
  * @file matrixSubstract.hpp
  * @brief Matrix subtraction operations for HDF5 matrices
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  * @details This header file provides implementations for matrix subtraction
  * operations on matrices stored in HDF5 format. The implementation includes:
  * 
@@ -86,6 +88,7 @@ namespace BigDataStatMeth {
                                      vstart, vsizetoRead;
                 // hsize_t isize = hdf5_block + 1;
                 
+                dsC->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsC->createDataset( N, K, "real"); 
                 
                 // ithreads = get_threads(bparal, threads);
@@ -102,25 +105,25 @@ namespace BigDataStatMeth {
                         {
                             
                             std::vector<double> vdA( K * vsizetoRead[ii] ); 
-                            #pragma omp critical (accessFile)
-                            {
+                            //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
+                            //.. 20260325 - remove critical ..// {
                             dsA->readDatasetBlock( {0, vstart[ii]}, { K, vsizetoRead[ii]}, stride, block, vdA.data() );
-                            }
+                            //.. 20260325 - remove critical ..// }
                             
                             std::vector<double> vdB( K * vsizetoRead[ii] ); 
-                            #pragma omp critical (accessFile)
-                            {
+                            //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
+                            //.. 20260325 - remove critical ..// {
                             dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
-                            }
+                            //.. 20260325 - remove critical ..// }
                             std::transform (vdA.begin(), vdA.end(),
                                             vdB.begin(), vdA.begin(), std::minus<double>());
                             
                             std::vector<hsize_t> offset = { 0, vstart[ii] };
                             std::vector<hsize_t> count = { K, vsizetoRead[ii] };
-                            #pragma omp critical  (accessFile)
-                            {
-                                dsC->writeDatasetBlock(vdA, offset, count, stride, block);
-                            }
+                            //.. 20260325 - remove critical ..// #pragma omp critical  (accessFile)
+                            //.. 20260325 - remove critical ..// {
+                            dsC->writeDatasetBlock(vdA, offset, count, stride, block);
+                            //.. 20260325 - remove critical ..// }
                         }
                     }
     
@@ -135,53 +138,48 @@ namespace BigDataStatMeth {
                         for (hsize_t ii = 0; ii < vstart.size(); ii++)
                         {
                             std::vector<double> vdA( vsizetoRead[ii] * N ); 
-                            #pragma omp critical (accessFile)
-                            {
-                                dsA->readDatasetBlock( {vstart[ii], 0}, { vsizetoRead[ii], N}, stride, block, vdA.data() );
-                            }
+                            //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
+                            //.. 20260325 - remove critical ..// {
+                            dsA->readDatasetBlock( {vstart[ii], 0}, { vsizetoRead[ii], N}, stride, block, vdA.data() );
+                            //.. 20260325 - remove critical ..// }
                             
                             std::vector<double> vdB( vsizetoRead[ii] * N); 
-                            #pragma omp critical (accessFile)
-                            {
-                                dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], N}, stride, block, vdB.data() );
-                            }
+                            //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
+                            //.. 20260325 - remove critical ..// {
+                            dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], N}, stride, block, vdB.data() );
+                            //.. 20260325 - remove critical ..// }
                             
                             std::transform (vdA.begin(), vdA.end(),
                                             vdB.begin(), vdA.begin(), std::minus<double>());
                             
                             std::vector<hsize_t> offset = { vstart[ii], 0 };
                             std::vector<hsize_t> count = { vsizetoRead[ii], N };
-                            #pragma omp critical (accessFile)
-                            {
-                                dsC->writeDatasetBlock(vdA, offset, count, stride, block);
-                            }
+                            //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
+                            //.. 20260325 - remove critical ..// {
+                            dsC->writeDatasetBlock(vdA, offset, count, stride, block);
+                            //.. 20260325 - remove critical ..// }
                         }
                     }
                 }
             } else {
-                Rcpp::Rcout<<"matrix substract error: non-conformable arguments\n";
+                throw std::runtime_error("matrix substract error: non-conformable arguments");
             }
             
         } catch( H5::FileIException& error ) { 
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5 (File IException)";
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_block_matrix_substract_hdf5 (File IException)");
         } catch( H5::GroupIException & error ) { 
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5 (Group IException)";
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_block_matrix_substract_hdf5 (Group IException)");
         } catch( H5::DataSetIException& error ) { 
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5 (DataSet IException)";
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_block_matrix_substract_hdf5 (DataSet IException)");
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_substract_hdf5" << ex.what();
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error(std::string("c++ exception Rcpp_block_matrix_substract_hdf5: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nC++ exception Rcpp_block_matrix_substract_hdf5 (unknown reason)";
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("C++ exception Rcpp_block_matrix_substract_hdf5 (unknown reason)");
         }
         
         return(dsC);
@@ -229,6 +227,7 @@ namespace BigDataStatMeth {
             std::vector<hsize_t> stride = {1, 1},
                                  block = {1, 1};
             
+            dsC->inheritCompressionLevel(dsA->getCompressionLevel());
             dsC->createDataset( L, M, "real");
             
             std::vector<double> vdA( K * N );
@@ -248,10 +247,10 @@ namespace BigDataStatMeth {
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( K * vsizetoRead[ii] );
-                        #pragma omp critical (accessFile)
-                        {
-                            dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
-                        }
+                        //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
+                        //.. 20260325 - remove critical ..// {
+                        dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
+                        //.. 20260325 - remove critical ..// }
                         
                         // Duplicate vector
                         std::size_t const no_of_duplicates = (K * vsizetoRead[ii]) / vdA.size();
@@ -271,10 +270,10 @@ namespace BigDataStatMeth {
                         std::vector<hsize_t> offset = { 0, vstart[ii]};
                         std::vector<hsize_t> count = { K, vsizetoRead[ii]};
                         
-                        #pragma omp critical (accessFile)
-                        {
-                            dsC->writeDatasetBlock( vdB, offset, count, stride, block);
-                        }
+                        //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
+                        //.. 20260325 - remove critical ..// {
+                        dsC->writeDatasetBlock( vdB, offset, count, stride, block);
+                        //.. 20260325 - remove critical ..// }
                     }
                 }
     
@@ -289,10 +288,10 @@ namespace BigDataStatMeth {
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( L * vsizetoRead[ii] );
-                        #pragma omp critical (accessFile)
-                        {
-                            dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], K}, stride, block, vdB.data() );
-                        }
+                        //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
+                        //.. 20260325 - remove critical ..// {
+                        dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], K}, stride, block, vdB.data() );
+                        //.. 20260325 - remove critical ..// }
                         Rcpp::NumericMatrix B (vsizetoRead[ii], K, vdB.begin());
                         
                         Rcpp::transpose(B);
@@ -314,36 +313,31 @@ namespace BigDataStatMeth {
                         std::vector<hsize_t> offset = { vstart[ii], 0};
                         std::vector<hsize_t> count = { vsizetoRead[ii], K};
                         
-                        #pragma omp critical (accessFile)
-                        {
-                            dsC->writeDatasetBlock( vdB, offset, count, stride, block);
-                        }
+                        //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
+                        //.. 20260325 - remove critical ..// {
+                        dsC->writeDatasetBlock( vdB, offset, count, stride, block);
+                        //.. 20260325 - remove critical ..// }
                     }
                 }
             } else {
-                Rcpp::Rcout<< "vector substract error: non-conformable arguments\n";
+                throw std::runtime_error("vector substract error: non-conformable arguments");
             }
             
         } catch( H5::FileIException& error ) { 
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 (File IException)";
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_block_matrix_vector_substract_hdf5 (File IException)");
         } catch( H5::GroupIException & error ) { 
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 (Group IException)";
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_block_matrix_vector_substract_hdf5 (Group IException)");
         } catch( H5::DataSetIException& error ) { 
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 (DataSet IException)";
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("c++ exception Rcpp_block_matrix_vector_substract_hdf5 (DataSet IException)");
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nc++ exception Rcpp_block_matrix_vector_substract_hdf5 " << ex.what();
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error(std::string("c++ exception Rcpp_block_matrix_vector_substract_hdf5: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsA, dsB, dsC);
-            Rcpp::Rcerr<<"\nC++ exception Rcpp_block_matrix_vector_substract_hdf5 (unknown reason)";
-            return(dsC);
+            // checkClose_file(dsA, dsB, dsC);
+            throw std::runtime_error("C++ exception Rcpp_block_matrix_vector_substract_hdf5 (unknown reason)");
         }
         
         return(dsC);

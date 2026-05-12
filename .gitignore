@@ -66,3 +66,9 @@ src/Makevars
 *.bck
 *.nofunciona
 *.ffs_db
+*.bak
+*.OLD__
+*.Rproj
+inst/cc
+.positai
+*.html

@@ -159,25 +159,20 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) {
-            checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"c++ exception RcppSort_dataset_hdf5 (File IException )" << std::endl;
-            return void();
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("c++ exception RcppSort_dataset_hdf5 (File IException )");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
-            checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"c++ exception RcppSort_dataset_hdf5 (dstosplit IException )" << std::endl;
-            return void();
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("c++ exception RcppSort_dataset_hdf5 (dstosplit IException )");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"c++ exception RcppSort_dataset_hdf5 (DataSpace IException )" << std::endl;
-            return void();
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("c++ exception RcppSort_dataset_hdf5 (DataSpace IException )");
         } catch(std::exception &ex) {
-            checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr << "c++ exception RcppSort_dataset_hdf5: " << ex.what();
-            return void();
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error(std::string("c++ exception RcppSort_dataset_hdf5: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsIn, dsOut);
-            Rcpp::Rcerr<<"C++ exception RcppSort_dataset_hdf5 (unknown reason)";
-            return void();
+            // checkClose_file(dsIn, dsOut);
+            throw std::runtime_error("C++ exception RcppSort_dataset_hdf5 (unknown reason)");
         } 
         
         return void();

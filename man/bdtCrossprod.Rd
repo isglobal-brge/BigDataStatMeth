@@ -60,27 +60,24 @@ input size and available resources. For large matrices, block-based computation
 is used to improve cache utilization.
 }
 \examples{
-library(BigDataStatMeth)
 
 # Single matrix transposed cross-product
 n <- 100
 p <- 60
 X <- matrix(rnorm(n*p), nrow=n, ncol=p)
 res <- bdtCrossprod(X)
-
-# Verify against base R
 all.equal(tcrossprod(X), res)
 
 # Two-matrix transposed cross-product
+# Both matrices must have the same number of columns
 n <- 100
-p <- 100
-Y <- matrix(rnorm(n*p), nrow=n)
+p <- 60
+Y <- matrix(rnorm(n*p), nrow=n, ncol=p)
 res <- bdtCrossprod(X, Y)
+all.equal(tcrossprod(X, Y), res)
 
 # Parallel computation
-res_par <- bdtCrossprod(X, Y,
-                        paral = TRUE,
-                        threads = 4)
+res_par <- bdtCrossprod(X, paral = TRUE, threads = 2)
 
 }
 \references{

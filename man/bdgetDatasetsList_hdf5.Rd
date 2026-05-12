@@ -4,15 +4,27 @@
 \alias{bdgetDatasetsList_hdf5}
 \title{List Datasets in HDF5 Group}
 \usage{
-bdgetDatasetsList_hdf5(filename, group, prefix = NULL)
+bdgetDatasetsList_hdf5(
+  filename,
+  group = NULL,
+  prefix = NULL,
+  recursive = FALSE
+)
 }
 \arguments{
 \item{filename}{Character string. Path to the HDF5 file.}
 
-\item{group}{Character string. Path to the group within the HDF5 file.}
+\item{group}{Character string or \code{NULL}. Group path within the
+HDF5 file. If \code{NULL} (default), the entire file is traversed
+recursively and dataset paths are returned relative to the root
+(e.g. \code{"INPUT/A"}, \code{"RESULTS/SVD/d"}).}
 
-\item{prefix}{Optional character string. If provided, only returns datasets
-starting with this prefix.}
+\item{prefix}{Optional character string. Only return datasets whose
+name starts with this prefix.}
+
+\item{recursive}{Logical. If \code{TRUE}, recurse into subgroups and
+return full relative paths. Ignored when \code{group = NULL} (always
+recursive). Default \code{FALSE}.}
 }
 \value{
 Character vector containing dataset names.
@@ -43,42 +55,31 @@ Key features:
 The function opens the HDF5 file in read-only mode to ensure data safety.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
+fn <- tempfile(fileext = ".h5")
+X  <- hdf5_create_matrix(fn, "INPUT/A",  data = matrix(rnorm(100), 10, 10))
+Y  <- hdf5_create_matrix(fn, "INPUT/B",  data = matrix(rnorm(100), 10, 10))
+Z  <- hdf5_create_matrix(fn, "RESULTS/C",data = matrix(rnorm(100), 10, 10))
 
-# Create a test HDF5 file
-fn <- "test.hdf5"
-X <- matrix(rnorm(100), 10, 10)
-Y <- matrix(rnorm(100), 10, 10)
+# All datasets in the file (recursive from root)
+bdgetDatasetsList_hdf5(fn)
 
-# Save matrices to HDF5
-bdCreate_hdf5_matrix(fn, X, "data", "matrix1",
-                     overwriteFile = TRUE)
-bdCreate_hdf5_matrix(fn, Y, "data", "matrix2",
-                     overwriteFile = FALSE)
+# Only datasets in INPUT group
+bdgetDatasetsList_hdf5(fn, group = "INPUT")
 
-# List all datasets in group
-datasets <- bdgetDatasetsList_hdf5(fn, "data")
-print(datasets)
+# INPUT group, recursive (same result here, no subgroups)
+bdgetDatasetsList_hdf5(fn, group = "INPUT", recursive = TRUE)
 
-# List datasets with prefix "matrix"
-filtered <- bdgetDatasetsList_hdf5(fn, "data", prefix = "matrix")
-print(filtered)
+# Filter by prefix
+bdgetDatasetsList_hdf5(fn, group = "INPUT", prefix = "A")
 
-# Cleanup
-if (file.exists(fn)) {
-  file.remove(fn)
-}
+hdf5_close_all()
+unlink(fn)
 }
 
 }
 \references{
 \itemize{
 \item The HDF Group. (2000-2010). HDF5 User's Guide.
-}
-}
-\seealso{
-\itemize{
-\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
 }
 }

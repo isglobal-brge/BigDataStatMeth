@@ -11,109 +11,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// bdCholesky_hdf5
-Rcpp::List bdCholesky_hdf5(std::string filename, std::string group, std::string dataset, std::string outdataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> fullMatrix, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<int> threads, Rcpp::Nullable<long> elementsBlock);
-RcppExport SEXP _BigDataStatMeth_bdCholesky_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outdatasetSEXP, SEXP outgroupSEXP, SEXP fullMatrixSEXP, SEXP overwriteSEXP, SEXP threadsSEXP, SEXP elementsBlockSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type fullMatrix(fullMatrixSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<long> >::type elementsBlock(elementsBlockSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdCholesky_hdf5(filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdQR
-Rcpp::RObject bdQR(const Rcpp::RObject& X, Rcpp::Nullable<bool> thin, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdQR(SEXP XSEXP, SEXP thinSEXP, SEXP block_sizeSEXP, SEXP threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdQR(X, thin, block_size, threads));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdQR_hdf5
-Rcpp::List bdQR_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> thin, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdQR_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP thinSEXP, SEXP block_sizeSEXP, SEXP overwriteSEXP, SEXP threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type thin(thinSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdQR_hdf5(filename, group, dataset, outgroup, outdataset, thin, block_size, overwrite, threads));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdSVD_hdf5
-Rcpp::List bdSVD_hdf5(Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group, Rcpp::Nullable<Rcpp::CharacterVector> dataset, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<double> rankthreshold, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<Rcpp::CharacterVector> method, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdSVD_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP kSEXP, SEXP qSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP rankthresholdSEXP, SEXP overwriteSEXP, SEXP methodSEXP, SEXP threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type k(kSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type q(qSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type rankthreshold(rankthresholdSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type method(methodSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSVD_hdf5(filename, group, dataset, k, q, bcenter, bscale, rankthreshold, overwrite, method, threads));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdSolve
-Rcpp::RObject bdSolve(const Rcpp::RObject A, const Rcpp::RObject B);
-RcppExport SEXP _BigDataStatMeth_bdSolve(SEXP ASEXP, SEXP BSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::RObject >::type A(ASEXP);
-    Rcpp::traits::input_parameter< const Rcpp::RObject >::type B(BSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSolve(A, B));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdSolve_hdf5
-Rcpp::List bdSolve_hdf5(std::string filename, std::string groupA, std::string datasetA, std::string groupB, std::string datasetB, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdSolve_hdf5(SEXP filenameSEXP, SEXP groupASEXP, SEXP datasetASEXP, SEXP groupBSEXP, SEXP datasetBSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type groupA(groupASEXP);
-    Rcpp::traits::input_parameter< std::string >::type datasetA(datasetASEXP);
-    Rcpp::traits::input_parameter< std::string >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< std::string >::type datasetB(datasetBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSolve_hdf5(filename, groupA, datasetA, groupB, datasetB, outgroup, outdataset, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
 // bdapply_Function_hdf5
 void bdapply_Function_hdf5(std::string filename, std::string group, Rcpp::StringVector datasets, std::string outgroup, std::string func, Rcpp::Nullable<std::string> b_group, Rcpp::Nullable<Rcpp::StringVector> b_datasets, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<bool> transp_dataset, Rcpp::Nullable<bool> transp_bdataset, Rcpp::Nullable<bool> fullMatrix, Rcpp::Nullable<bool> byrows, Rcpp::Nullable<int> threads);
 RcppExport SEXP _BigDataStatMeth_bdapply_Function_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetsSEXP, SEXP outgroupSEXP, SEXP funcSEXP, SEXP b_groupSEXP, SEXP b_datasetsSEXP, SEXP overwriteSEXP, SEXP transp_datasetSEXP, SEXP transp_bdatasetSEXP, SEXP fullMatrixSEXP, SEXP byrowsSEXP, SEXP threadsSEXP) {
@@ -134,235 +31,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
     bdapply_Function_hdf5(filename, group, datasets, outgroup, func, b_group, b_datasets, overwrite, transp_dataset, transp_bdataset, fullMatrix, byrows, threads);
     return R_NilValue;
-END_RCPP
-}
-// bdPCA_hdf5
-Rcpp::List bdPCA_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<int> ncomponents, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<int> k, Rcpp::Nullable<int> q, Rcpp::Nullable<double> rankthreshold, Rcpp::Nullable<std::string> SVDgroup, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<Rcpp::CharacterVector> method, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdPCA_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP ncomponentsSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP kSEXP, SEXP qSEXP, SEXP rankthresholdSEXP, SEXP SVDgroupSEXP, SEXP overwriteSEXP, SEXP methodSEXP, SEXP threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type ncomponents(ncomponentsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type k(kSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type q(qSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type rankthreshold(rankthresholdSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type SVDgroup(SVDgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type method(methodSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdPCA_hdf5(filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, SVDgroup, overwrite, method, threads));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdBind_hdf5_datasets
-Rcpp::List bdBind_hdf5_datasets(std::string filename, std::string group, Rcpp::StringVector datasets, std::string outgroup, std::string outdataset, std::string func, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdBind_hdf5_datasets(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetsSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP funcSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::StringVector >::type datasets(datasetsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdBind_hdf5_datasets(filename, group, datasets, outgroup, outdataset, func, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdCrossprod_hdf5
-Rcpp::List bdCrossprod_hdf5(std::string filename, std::string group, std::string A, Rcpp::Nullable<std::string> B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> mixblock_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdCrossprod_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP block_sizeSEXP, SEXP mixblock_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type mixblock_size(mixblock_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdCrossprod_hdf5(filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdNormalize_hdf5
-Rcpp::List bdNormalize_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<bool> byrows, Rcpp::Nullable<int> wsize, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdNormalize_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP byrowsSEXP, SEXP wsizeSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type byrows(byrowsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdNormalize_hdf5(filename, group, dataset, bcenter, bscale, byrows, wsize, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdblockSum_hdf5
-Rcpp::List bdblockSum_hdf5(std::string filename, std::string group, std::string A, std::string B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdblockSum_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< std::string >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdblockSum_hdf5(filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdblockmult_hdf5
-Rcpp::List bdblockmult_hdf5(std::string filename, std::string group, std::string A, std::string B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<bool> transpose_A, Rcpp::Nullable<bool> transpose_B, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdblockmult_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP transpose_ASEXP, SEXP transpose_BSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< std::string >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type transpose_A(transpose_ASEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type transpose_B(transpose_BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdblockmult_hdf5(filename, group, A, B, groupB, transpose_A, transpose_B, block_size, paral, threads, outgroup, outdataset, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdblockmult_sparse_hdf5
-void bdblockmult_sparse_hdf5(std::string filename, std::string group, std::string A, std::string B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> mixblock_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdblockmult_sparse_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP block_sizeSEXP, SEXP mixblock_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< std::string >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type mixblock_size(mixblock_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    bdblockmult_sparse_hdf5(filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite);
-    return R_NilValue;
-END_RCPP
-}
-// bdblockSubstract_hdf5
-Rcpp::List bdblockSubstract_hdf5(std::string filename, std::string group, std::string A, std::string B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<int> block_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdblockSubstract_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP block_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< std::string >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdblockSubstract_hdf5(filename, group, A, B, groupB, block_size, paral, threads, outgroup, outdataset, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdtCrossprod_hdf5
-Rcpp::List bdtCrossprod_hdf5(std::string filename, std::string group, std::string A, Rcpp::Nullable<std::string> B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> mixblock_size, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdtCrossprod_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP block_sizeSEXP, SEXP mixblock_sizeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type mixblock_size(mixblock_sizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdtCrossprod_hdf5(filename, group, A, B, groupB, block_size, mixblock_size, paral, threads, outgroup, outdataset, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdCreate_diagonal_hdf5
-Rcpp::List bdCreate_diagonal_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<int> size, double scalar, Rcpp::NumericVector diagonal_values, std::string output_type, int block_size, int compression, Rcpp::Nullable<bool> overwriteFile, Rcpp::Nullable<bool> overwriteDataset, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdCreate_diagonal_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP sizeSEXP, SEXP scalarSEXP, SEXP diagonal_valuesSEXP, SEXP output_typeSEXP, SEXP block_sizeSEXP, SEXP compressionSEXP, SEXP overwriteFileSEXP, SEXP overwriteDatasetSEXP, SEXP threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type size(sizeSEXP);
-    Rcpp::traits::input_parameter< double >::type scalar(scalarSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type diagonal_values(diagonal_valuesSEXP);
-    Rcpp::traits::input_parameter< std::string >::type output_type(output_typeSEXP);
-    Rcpp::traits::input_parameter< int >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< int >::type compression(compressionSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwriteFile(overwriteFileSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwriteDataset(overwriteDatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdCreate_diagonal_hdf5(filename, group, dataset, size, scalar, diagonal_values, output_type, block_size, compression, overwriteFile, overwriteDataset, threads));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdCreate_hdf5_emptyDataset
-Rcpp::List bdCreate_hdf5_emptyDataset(std::string filename, std::string group, std::string dataset, int nrows, int ncols, Rcpp::Nullable<bool> overwriteFile, Rcpp::Nullable<bool> overwriteDataset, Rcpp::Nullable<bool> unlimited, Rcpp::Nullable<std::string> datatype);
-RcppExport SEXP _BigDataStatMeth_bdCreate_hdf5_emptyDataset(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP overwriteFileSEXP, SEXP overwriteDatasetSEXP, SEXP unlimitedSEXP, SEXP datatypeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
-    Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwriteFile(overwriteFileSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwriteDataset(overwriteDatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type unlimited(unlimitedSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type datatype(datatypeSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdCreate_hdf5_emptyDataset(filename, group, dataset, nrows, ncols, overwriteFile, overwriteDataset, unlimited, datatype));
-    return rcpp_result_gen;
 END_RCPP
 }
 // bdCreate_hdf5_group
@@ -395,183 +63,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// bdDiag_add_hdf5
-Rcpp::List bdDiag_add_hdf5(std::string filename, std::string group, std::string A, std::string B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<std::string> target, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdDiag_add_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP targetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< std::string >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type target(targetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdDiag_add_hdf5(filename, group, A, B, groupB, target, outgroup, outdataset, paral, threads, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdDiag_subtract_hdf5
-Rcpp::List bdDiag_subtract_hdf5(std::string filename, std::string group, std::string A, std::string B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<std::string> target, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdDiag_subtract_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP targetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< std::string >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type target(targetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdDiag_subtract_hdf5(filename, group, A, B, groupB, target, outgroup, outdataset, paral, threads, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdDiag_multiply_hdf5
-Rcpp::List bdDiag_multiply_hdf5(std::string filename, std::string group, std::string A, std::string B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<std::string> target, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdDiag_multiply_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP targetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< std::string >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type target(targetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdDiag_multiply_hdf5(filename, group, A, B, groupB, target, outgroup, outdataset, paral, threads, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdDiag_divide_hdf5
-Rcpp::List bdDiag_divide_hdf5(std::string filename, std::string group, std::string A, std::string B, Rcpp::Nullable<std::string> groupB, Rcpp::Nullable<std::string> target, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdDiag_divide_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP ASEXP, SEXP BSEXP, SEXP groupBSEXP, SEXP targetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type A(ASEXP);
-    Rcpp::traits::input_parameter< std::string >::type B(BSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type groupB(groupBSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type target(targetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdDiag_divide_hdf5(filename, group, A, B, groupB, target, outgroup, outdataset, paral, threads, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdDiag_scalar_hdf5
-Rcpp::List bdDiag_scalar_hdf5(std::string filename, std::string group, std::string dataset, double scalar, std::string operation, Rcpp::Nullable<std::string> target, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdDiag_scalar_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP scalarSEXP, SEXP operationSEXP, SEXP targetSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< double >::type scalar(scalarSEXP);
-    Rcpp::traits::input_parameter< std::string >::type operation(operationSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type target(targetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdDiag_scalar_hdf5(filename, group, dataset, scalar, operation, target, paral, threads, outgroup, outdataset, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdEigen_hdf5
-Rcpp::List bdEigen_hdf5(Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group, Rcpp::Nullable<Rcpp::CharacterVector> dataset, Rcpp::Nullable<int> k, Rcpp::Nullable<Rcpp::CharacterVector> which, Rcpp::Nullable<int> ncv, Rcpp::Nullable<bool> bcenter, Rcpp::Nullable<bool> bscale, Rcpp::Nullable<double> tolerance, Rcpp::Nullable<int> max_iter, Rcpp::Nullable<bool> compute_vectors, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<int> threads);
-RcppExport SEXP _BigDataStatMeth_bdEigen_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP kSEXP, SEXP whichSEXP, SEXP ncvSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP toleranceSEXP, SEXP max_iterSEXP, SEXP compute_vectorsSEXP, SEXP overwriteSEXP, SEXP threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type k(kSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type which(whichSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type ncv(ncvSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bcenter(bcenterSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bscale(bscaleSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type tolerance(toleranceSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type max_iter(max_iterSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type compute_vectors(compute_vectorsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdEigen_hdf5(filename, group, dataset, k, which, ncv, bcenter, bscale, tolerance, max_iter, compute_vectors, overwrite, threads));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdIsLocked_hdf5
-bool bdIsLocked_hdf5(std::string filename);
-RcppExport SEXP _BigDataStatMeth_bdIsLocked_hdf5(SEXP filenameSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdIsLocked_hdf5(filename));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdgetDim_hdf5
-Rcpp::RObject bdgetDim_hdf5(std::string filename, std::string dataset);
-RcppExport SEXP _BigDataStatMeth_bdgetDim_hdf5(SEXP filenameSEXP, SEXP datasetSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdgetDim_hdf5(filename, dataset));
-    return rcpp_result_gen;
-END_RCPP
-}
 // bdgetDatasetsList_hdf5
-Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, std::string group, Rcpp::Nullable<std::string> prefix);
-RcppExport SEXP _BigDataStatMeth_bdgetDatasetsList_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP prefixSEXP) {
+Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename, Rcpp::Nullable<std::string> group, Rcpp::Nullable<std::string> prefix, bool recursive);
+RcppExport SEXP _BigDataStatMeth_bdgetDatasetsList_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP prefixSEXP, SEXP recursiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type group(groupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type prefix(prefixSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdgetDatasetsList_hdf5(filename, group, prefix));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdCheckMatrix_hdf5
-Rcpp::List bdCheckMatrix_hdf5(Rcpp::RObject filename, Rcpp::Nullable<Rcpp::CharacterVector> group, Rcpp::Nullable<Rcpp::CharacterVector> dataset, Rcpp::Nullable<bool> check_symmetry, Rcpp::Nullable<double> tolerance, Rcpp::Nullable<int> sample_size);
-RcppExport SEXP _BigDataStatMeth_bdCheckMatrix_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP check_symmetrySEXP, SEXP toleranceSEXP, SEXP sample_sizeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type check_symmetry(check_symmetrySEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type tolerance(toleranceSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type sample_size(sample_sizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdCheckMatrix_hdf5(filename, group, dataset, check_symmetry, tolerance, sample_size));
+    Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
+    rcpp_result_gen = Rcpp::wrap(bdgetDatasetsList_hdf5(filename, group, prefix, recursive));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -593,120 +95,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwriteFile(overwriteFileSEXP);
     rcpp_result_gen = Rcpp::wrap(bdImportTextFile_hdf5(filename, outputfile, outGroup, outDataset, sep, header, rownames, overwrite, paral, threads, overwriteFile));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdImputeSNPs_hdf5
-Rcpp::List bdImputeSNPs_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdImputeSNPs_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP bycolsSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdImputeSNPs_hdf5(filename, group, dataset, outgroup, outdataset, bycols, paral, threads, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdInvCholesky_hdf5
-Rcpp::List bdInvCholesky_hdf5(std::string filename, std::string group, std::string dataset, std::string outdataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> fullMatrix, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<int> threads, Rcpp::Nullable<long> elementsBlock);
-RcppExport SEXP _BigDataStatMeth_bdInvCholesky_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outdatasetSEXP, SEXP outgroupSEXP, SEXP fullMatrixSEXP, SEXP overwriteSEXP, SEXP threadsSEXP, SEXP elementsBlockSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type fullMatrix(fullMatrixSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<long> >::type elementsBlock(elementsBlockSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdInvCholesky_hdf5(filename, group, dataset, outdataset, outgroup, fullMatrix, overwrite, threads, elementsBlock));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdCorr_hdf5
-Rcpp::List bdCorr_hdf5(std::string filename_x, std::string group_x, std::string dataset_x, std::string filename_y, std::string group_y, std::string dataset_y, bool trans_x, bool trans_y, std::string method, bool use_complete_obs, bool compute_pvalues, int block_size, bool overwrite, std::string output_filename, std::string output_group, std::string output_dataset_corr, std::string output_dataset_pval, int threads);
-RcppExport SEXP _BigDataStatMeth_bdCorr_hdf5(SEXP filename_xSEXP, SEXP group_xSEXP, SEXP dataset_xSEXP, SEXP filename_ySEXP, SEXP group_ySEXP, SEXP dataset_ySEXP, SEXP trans_xSEXP, SEXP trans_ySEXP, SEXP methodSEXP, SEXP use_complete_obsSEXP, SEXP compute_pvaluesSEXP, SEXP block_sizeSEXP, SEXP overwriteSEXP, SEXP output_filenameSEXP, SEXP output_groupSEXP, SEXP output_dataset_corrSEXP, SEXP output_dataset_pvalSEXP, SEXP threadsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename_x(filename_xSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group_x(group_xSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset_x(dataset_xSEXP);
-    Rcpp::traits::input_parameter< std::string >::type filename_y(filename_ySEXP);
-    Rcpp::traits::input_parameter< std::string >::type group_y(group_ySEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset_y(dataset_ySEXP);
-    Rcpp::traits::input_parameter< bool >::type trans_x(trans_xSEXP);
-    Rcpp::traits::input_parameter< bool >::type trans_y(trans_ySEXP);
-    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
-    Rcpp::traits::input_parameter< bool >::type use_complete_obs(use_complete_obsSEXP);
-    Rcpp::traits::input_parameter< bool >::type compute_pvalues(compute_pvaluesSEXP);
-    Rcpp::traits::input_parameter< int >::type block_size(block_sizeSEXP);
-    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
-    Rcpp::traits::input_parameter< std::string >::type output_filename(output_filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type output_group(output_groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type output_dataset_corr(output_dataset_corrSEXP);
-    Rcpp::traits::input_parameter< std::string >::type output_dataset_pval(output_dataset_pvalSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdCorr_hdf5(filename_x, group_x, dataset_x, filename_y, group_y, dataset_y, trans_x, trans_y, method, use_complete_obs, compute_pvalues, block_size, overwrite, output_filename, output_group, output_dataset_corr, output_dataset_pval, threads));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdgetDiagonal_hdf5
-Rcpp::RObject bdgetDiagonal_hdf5(std::string filename, std::string group, std::string dataset);
-RcppExport SEXP _BigDataStatMeth_bdgetDiagonal_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdgetDiagonal_hdf5(filename, group, dataset));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdWriteDiagonal_hdf5
-Rcpp::List bdWriteDiagonal_hdf5(Rcpp::RObject diagonal, std::string filename, std::string group, std::string dataset);
-RcppExport SEXP _BigDataStatMeth_bdWriteDiagonal_hdf5(SEXP diagonalSEXP, SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type diagonal(diagonalSEXP);
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdWriteDiagonal_hdf5(diagonal, filename, group, dataset));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdgetSDandMean_hdf5
-Rcpp::RObject bdgetSDandMean_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> sd, Rcpp::Nullable<bool> mean, Rcpp::Nullable<bool> byrows, Rcpp::Nullable<bool> onmemory, Rcpp::Nullable<int> wsize, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdgetSDandMean_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP sdSEXP, SEXP meanSEXP, SEXP byrowsSEXP, SEXP onmemorySEXP, SEXP wsizeSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type sd(sdSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type mean(meanSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type byrows(byrowsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type onmemory(onmemorySEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdgetSDandMean_hdf5(filename, group, dataset, outgroup, outdataset, sd, mean, byrows, onmemory, wsize, overwrite));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -753,6 +141,1002 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_hdf5dataset_colSums
+Rcpp::NumericVector rcpp_hdf5dataset_colSums(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_colSums(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_colSums(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_colMeans
+Rcpp::NumericVector rcpp_hdf5dataset_colMeans(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_colMeans(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_colMeans(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_colMins
+Rcpp::NumericVector rcpp_hdf5dataset_colMins(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_colMins(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_colMins(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_colMaxs
+Rcpp::NumericVector rcpp_hdf5dataset_colMaxs(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_colMaxs(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_colMaxs(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_colVars
+Rcpp::NumericVector rcpp_hdf5dataset_colVars(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_colVars(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_colVars(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_colSds
+Rcpp::NumericVector rcpp_hdf5dataset_colSds(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_colSds(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_colSds(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_rowSums
+Rcpp::NumericVector rcpp_hdf5dataset_rowSums(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_rowSums(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_rowSums(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_rowMeans
+Rcpp::NumericVector rcpp_hdf5dataset_rowMeans(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_rowMeans(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_rowMeans(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_rowMins
+Rcpp::NumericVector rcpp_hdf5dataset_rowMins(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_rowMins(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_rowMins(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_rowMaxs
+Rcpp::NumericVector rcpp_hdf5dataset_rowMaxs(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_rowMaxs(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_rowMaxs(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_rowVars
+Rcpp::NumericVector rcpp_hdf5dataset_rowVars(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_rowVars(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_rowVars(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_rowSds
+Rcpp::NumericVector rcpp_hdf5dataset_rowSds(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_rowSds(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_rowSds(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_scalar_sum
+double rcpp_hdf5dataset_scalar_sum(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_scalar_sum(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_scalar_sum(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_scalar_mean
+double rcpp_hdf5dataset_scalar_mean(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_scalar_mean(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_scalar_mean(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_scalar_min
+double rcpp_hdf5dataset_scalar_min(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_scalar_min(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_scalar_min(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_scalar_max
+double rcpp_hdf5dataset_scalar_max(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_scalar_max(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_scalar_max(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_scalar_var
+double rcpp_hdf5dataset_scalar_var(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_scalar_var(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_scalar_var(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_scalar_sd
+double rcpp_hdf5dataset_scalar_sd(SEXP ptr, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_scalar_sd(SEXP ptrSEXP, SEXP paralSEXP, SEXP wsizeSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_scalar_sd(ptr, paral, wsize, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_add
+Rcpp::List rcpp_hdf5dataset_add(SEXP ptr_a, SEXP ptr_b, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_add(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP paralSEXP, SEXP block_sizeSEXP, SEXP threadsSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_a(ptr_aSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_b(ptr_bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_add(ptr_a, ptr_b, paral, block_size, threads, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_subtract
+Rcpp::List rcpp_hdf5dataset_subtract(SEXP ptr_a, SEXP ptr_b, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_subtract(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP paralSEXP, SEXP block_sizeSEXP, SEXP threadsSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_a(ptr_aSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_b(ptr_bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_subtract(ptr_a, ptr_b, paral, block_size, threads, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_mul_ew
+Rcpp::List rcpp_hdf5dataset_mul_ew(SEXP ptr_a, SEXP ptr_b, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_mul_ew(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP paralSEXP, SEXP block_sizeSEXP, SEXP threadsSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_a(ptr_aSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_b(ptr_bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_mul_ew(ptr_a, ptr_b, paral, block_size, threads, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_div_ew
+Rcpp::List rcpp_hdf5dataset_div_ew(SEXP ptr_a, SEXP ptr_b, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_div_ew(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP paralSEXP, SEXP block_sizeSEXP, SEXP threadsSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_a(ptr_aSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_b(ptr_bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_div_ew(ptr_a, ptr_b, paral, block_size, threads, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_bind
+Rcpp::List rcpp_hdf5dataset_bind(std::string file_a, std::string group_a, std::string dataset_a, std::string file_b, std::string group_b, std::string dataset_b, std::string out_file, std::string out_group, std::string out_dataset, std::string func, bool overwrite, int block_rows, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_bind(SEXP file_aSEXP, SEXP group_aSEXP, SEXP dataset_aSEXP, SEXP file_bSEXP, SEXP group_bSEXP, SEXP dataset_bSEXP, SEXP out_fileSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP funcSEXP, SEXP overwriteSEXP, SEXP block_rowsSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type file_a(file_aSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group_a(group_aSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset_a(dataset_aSEXP);
+    Rcpp::traits::input_parameter< std::string >::type file_b(file_bSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group_b(group_bSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset_b(dataset_bSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_file(out_fileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< int >::type block_rows(block_rowsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_bind(file_a, group_a, dataset_a, file_b, group_b, dataset_b, out_file, out_group, out_dataset, func, overwrite, block_rows, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_chol
+Rcpp::List rcpp_hdf5dataset_chol(std::string filename, std::string group, std::string dataset, bool full_matrix, bool overwrite, int threads, long block_size, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_chol(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP full_matrixSEXP, SEXP overwriteSEXP, SEXP threadsSEXP, SEXP block_sizeSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< bool >::type full_matrix(full_matrixSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< long >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_chol(filename, group, dataset, full_matrix, overwrite, threads, block_size, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_solve
+Rcpp::List rcpp_hdf5dataset_solve(std::string filename, std::string group, std::string dataset, bool full_matrix, bool overwrite, int threads, long block_size, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_solve(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP full_matrixSEXP, SEXP overwriteSEXP, SEXP threadsSEXP, SEXP block_sizeSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< bool >::type full_matrix(full_matrixSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< long >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_solve(filename, group, dataset, full_matrix, overwrite, threads, block_size, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_cor
+Rcpp::List rcpp_hdf5dataset_cor(std::string in_file_x, std::string in_group_x, std::string in_dataset_x, std::string in_file_y, std::string in_group_y, std::string in_dataset_y, std::string out_file, std::string out_group, bool trans_x, bool trans_y, std::string method, bool use_complete_obs, bool compute_pvalues, int block_size, int copy_blockrows, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_cor(SEXP in_file_xSEXP, SEXP in_group_xSEXP, SEXP in_dataset_xSEXP, SEXP in_file_ySEXP, SEXP in_group_ySEXP, SEXP in_dataset_ySEXP, SEXP out_fileSEXP, SEXP out_groupSEXP, SEXP trans_xSEXP, SEXP trans_ySEXP, SEXP methodSEXP, SEXP use_complete_obsSEXP, SEXP compute_pvaluesSEXP, SEXP block_sizeSEXP, SEXP copy_blockrowsSEXP, SEXP threadsSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type in_file_x(in_file_xSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_group_x(in_group_xSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_dataset_x(in_dataset_xSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_file_y(in_file_ySEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_group_y(in_group_ySEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_dataset_y(in_dataset_ySEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_file(out_fileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< bool >::type trans_x(trans_xSEXP);
+    Rcpp::traits::input_parameter< bool >::type trans_y(trans_ySEXP);
+    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_complete_obs(use_complete_obsSEXP);
+    Rcpp::traits::input_parameter< bool >::type compute_pvalues(compute_pvaluesSEXP);
+    Rcpp::traits::input_parameter< int >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< int >::type copy_blockrows(copy_blockrowsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_cor(in_file_x, in_group_x, in_dataset_x, in_file_y, in_group_y, in_dataset_y, out_file, out_group, trans_x, trans_y, method, use_complete_obs, compute_pvalues, block_size, copy_blockrows, threads, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_eigen
+Rcpp::List rcpp_hdf5dataset_eigen(std::string filename, std::string group, std::string dataset, int k, std::string which, int ncv, bool bcenter, bool bscale, double tolerance, int max_iter, bool compute_vectors, bool overwrite, int threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_eigen(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP kSEXP, SEXP whichSEXP, SEXP ncvSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP toleranceSEXP, SEXP max_iterSEXP, SEXP compute_vectorsSEXP, SEXP overwriteSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< std::string >::type which(whichSEXP);
+    Rcpp::traits::input_parameter< int >::type ncv(ncvSEXP);
+    Rcpp::traits::input_parameter< bool >::type bcenter(bcenterSEXP);
+    Rcpp::traits::input_parameter< bool >::type bscale(bscaleSEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< bool >::type compute_vectors(compute_vectorsSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_eigen(filename, group, dataset, k, which, ncv, bcenter, bscale, tolerance, max_iter, compute_vectors, overwrite, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_sweep
+Rcpp::List rcpp_hdf5dataset_sweep(SEXP ptr_mat, SEXP ptr_vec, std::string func, bool byrows, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_sweep(SEXP ptr_matSEXP, SEXP ptr_vecSEXP, SEXP funcSEXP, SEXP byrowsSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_mat(ptr_matSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_vec(ptr_vecSEXP);
+    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
+    Rcpp::traits::input_parameter< bool >::type byrows(byrowsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_sweep(ptr_mat, ptr_vec, func, byrows, paral, threads, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_diag_get
+Rcpp::NumericVector rcpp_hdf5dataset_diag_get(SEXP ptr_mat);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_diag_get(SEXP ptr_matSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_mat(ptr_matSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_diag_get(ptr_mat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_diag_set
+bool rcpp_hdf5dataset_diag_set(SEXP ptr_mat, Rcpp::NumericVector values);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_diag_set(SEXP ptr_matSEXP, SEXP valuesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_mat(ptr_matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type values(valuesSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_diag_set(ptr_mat, values));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_diag_op
+Rcpp::List rcpp_hdf5dataset_diag_op(SEXP ptr_a, SEXP ptr_b, std::string op, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_diag_op(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP opSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP compressionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_a(ptr_aSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_b(ptr_bSEXP);
+    Rcpp::traits::input_parameter< std::string >::type op(opSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_diag_op(ptr_a, ptr_b, op, paral, threads, compression, outgroup, outdataset));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_diag_scale
+Rcpp::List rcpp_hdf5dataset_diag_scale(SEXP ptr_mat, double scalar, int op_code, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_diag_scale(SEXP ptr_matSEXP, SEXP scalarSEXP, SEXP op_codeSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP compressionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_mat(ptr_matSEXP);
+    Rcpp::traits::input_parameter< double >::type scalar(scalarSEXP);
+    Rcpp::traits::input_parameter< int >::type op_code(op_codeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_diag_scale(ptr_mat, scalar, op_code, paral, threads, compression, outgroup, outdataset));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5_close_all_registry
+SEXP rcpp_hdf5_close_all_registry();
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_close_all_registry() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5_close_all_registry());
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_open
+SEXP rcpp_hdf5dataset_open(std::string filename, std::string group, std::string dataset);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_open(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_open(filename, group, dataset));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_dim
+Rcpp::IntegerVector rcpp_hdf5dataset_dim(SEXP ptr_sexp);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_dim(SEXP ptr_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_dim(ptr_sexp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_info
+Rcpp::List rcpp_hdf5dataset_info(SEXP ptr_sexp);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_info(SEXP ptr_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_info(ptr_sexp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_is_valid
+bool rcpp_hdf5dataset_is_valid(SEXP ptr_sexp);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_is_valid(SEXP ptr_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_is_valid(ptr_sexp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_read_dimnames
+Rcpp::List rcpp_hdf5dataset_read_dimnames(SEXP ptr_sexp);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_read_dimnames(SEXP ptr_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_read_dimnames(ptr_sexp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_write_dimnames
+SEXP rcpp_hdf5dataset_write_dimnames(SEXP ptr_sexp, Rcpp::StringVector rownames, Rcpp::StringVector colnames);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_write_dimnames(SEXP ptr_sexpSEXP, SEXP rownamesSEXP, SEXP colnamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type rownames(rownamesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type colnames(colnamesSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_write_dimnames(ptr_sexp, rownames, colnames));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_close
+void rcpp_hdf5dataset_close(SEXP ptr_sexp);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_close(SEXP ptr_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    rcpp_hdf5dataset_close(ptr_sexp);
+    return R_NilValue;
+END_RCPP
+}
+// rcpp_hdf5_close_at_paths
+SEXP rcpp_hdf5_close_at_paths(std::string filename, Rcpp::StringVector paths);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_close_at_paths(SEXP filenameSEXP, SEXP pathsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type paths(pathsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5_close_at_paths(filename, paths));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5_close_file_handles
+void rcpp_hdf5_close_file_handles(std::string filename);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_close_file_handles(SEXP filenameSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    rcpp_hdf5_close_file_handles(filename);
+    return R_NilValue;
+END_RCPP
+}
+// rcpp_hdf5_close_file_handles_safe
+SEXP rcpp_hdf5_close_file_handles_safe();
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_close_file_handles_safe() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5_close_file_handles_safe());
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5_close_all_file_handles
+SEXP rcpp_hdf5_close_all_file_handles();
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_close_all_file_handles() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5_close_all_file_handles());
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_multiply
+Rcpp::List rcpp_hdf5dataset_multiply(SEXP ptr_a, SEXP ptr_b, bool transpose_a, bool transpose_b, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_multiply(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP transpose_aSEXP, SEXP transpose_bSEXP, SEXP paralSEXP, SEXP block_sizeSEXP, SEXP threadsSEXP, SEXP compressionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_a(ptr_aSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_b(ptr_bSEXP);
+    Rcpp::traits::input_parameter< bool >::type transpose_a(transpose_aSEXP);
+    Rcpp::traits::input_parameter< bool >::type transpose_b(transpose_bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_multiply(ptr_a, ptr_b, transpose_a, transpose_b, paral, block_size, threads, compression, outgroup, outdataset));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_crossprod
+Rcpp::List rcpp_hdf5dataset_crossprod(SEXP ptr_a, SEXP ptr_b, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_crossprod(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP paralSEXP, SEXP block_sizeSEXP, SEXP threadsSEXP, SEXP compressionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_a(ptr_aSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_b(ptr_bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_crossprod(ptr_a, ptr_b, paral, block_size, threads, compression, outgroup, outdataset));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_tcrossprod
+Rcpp::List rcpp_hdf5dataset_tcrossprod(SEXP ptr_a, SEXP ptr_b, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> block_size, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_tcrossprod(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP paralSEXP, SEXP block_sizeSEXP, SEXP threadsSEXP, SEXP compressionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_a(ptr_aSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_b(ptr_bSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_tcrossprod(ptr_a, ptr_b, paral, block_size, threads, compression, outgroup, outdataset));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_normalize
+Rcpp::List rcpp_hdf5dataset_normalize(std::string in_file, std::string in_group, std::string in_dataset, std::string out_file, std::string out_group, std::string out_dataset, bool center, bool scale, bool byrows, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_normalize(SEXP in_fileSEXP, SEXP in_groupSEXP, SEXP in_datasetSEXP, SEXP out_fileSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP centerSEXP, SEXP scaleSEXP, SEXP byrowsSEXP, SEXP wsizeSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type in_file(in_fileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_group(in_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_dataset(in_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_file(out_fileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< bool >::type center(centerSEXP);
+    Rcpp::traits::input_parameter< bool >::type scale(scaleSEXP);
+    Rcpp::traits::input_parameter< bool >::type byrows(byrowsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_normalize(in_file, in_group, in_dataset, out_file, out_group, out_dataset, center, scale, byrows, wsize, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_impute_snps
+Rcpp::List rcpp_hdf5dataset_impute_snps(std::string in_file, std::string in_group, std::string in_dataset, std::string out_group, std::string out_dataset, bool by_cols, int threads, bool overwrite, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_impute_snps(SEXP in_fileSEXP, SEXP in_groupSEXP, SEXP in_datasetSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP by_colsSEXP, SEXP threadsSEXP, SEXP overwriteSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type in_file(in_fileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_group(in_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_dataset(in_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< bool >::type by_cols(by_colsSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_impute_snps(in_file, in_group, in_dataset, out_group, out_dataset, by_cols, threads, overwrite, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_filter_low_coverage
+Rcpp::List rcpp_hdf5dataset_filter_low_coverage(std::string in_file, std::string in_group, std::string in_dataset, std::string out_group, std::string out_dataset, double pcent, bool by_cols, bool overwrite, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_filter_low_coverage(SEXP in_fileSEXP, SEXP in_groupSEXP, SEXP in_datasetSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP pcentSEXP, SEXP by_colsSEXP, SEXP overwriteSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type in_file(in_fileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_group(in_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_dataset(in_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< double >::type pcent(pcentSEXP);
+    Rcpp::traits::input_parameter< bool >::type by_cols(by_colsSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_filter_low_coverage(in_file, in_group, in_dataset, out_group, out_dataset, pcent, by_cols, overwrite, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_filter_maf
+Rcpp::List rcpp_hdf5dataset_filter_maf(std::string in_file, std::string in_group, std::string in_dataset, std::string out_group, std::string out_dataset, double maf_threshold, bool by_cols, int block_size, bool overwrite, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_filter_maf(SEXP in_fileSEXP, SEXP in_groupSEXP, SEXP in_datasetSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP maf_thresholdSEXP, SEXP by_colsSEXP, SEXP block_sizeSEXP, SEXP overwriteSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type in_file(in_fileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_group(in_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_dataset(in_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< double >::type maf_threshold(maf_thresholdSEXP);
+    Rcpp::traits::input_parameter< bool >::type by_cols(by_colsSEXP);
+    Rcpp::traits::input_parameter< int >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_filter_maf(in_file, in_group, in_dataset, out_group, out_dataset, maf_threshold, by_cols, block_size, overwrite, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_pca
+Rcpp::List rcpp_hdf5dataset_pca(std::string filename, std::string group, std::string dataset, int ncomponents, bool bcenter, bool bscale, int k, int q, double rankthreshold, std::string svdgroup, bool overwrite, std::string method, int threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_pca(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP ncomponentsSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP kSEXP, SEXP qSEXP, SEXP rankthresholdSEXP, SEXP svdgroupSEXP, SEXP overwriteSEXP, SEXP methodSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< int >::type ncomponents(ncomponentsSEXP);
+    Rcpp::traits::input_parameter< bool >::type bcenter(bcenterSEXP);
+    Rcpp::traits::input_parameter< bool >::type bscale(bscaleSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type rankthreshold(rankthresholdSEXP);
+    Rcpp::traits::input_parameter< std::string >::type svdgroup(svdgroupSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_pca(filename, group, dataset, ncomponents, bcenter, bscale, k, q, rankthreshold, svdgroup, overwrite, method, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_pseudoinv
+Rcpp::List rcpp_hdf5dataset_pseudoinv(std::string filename, std::string group, std::string dataset, std::string out_group, std::string out_dataset, bool overwrite, int threads, int compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_pseudoinv(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP overwriteSEXP, SEXP threadsSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< int >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_pseudoinv(filename, group, dataset, out_group, out_dataset, overwrite, threads, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_qr
+Rcpp::List rcpp_hdf5dataset_qr(std::string filename, std::string group, std::string dataset, bool thin, int block_size, bool overwrite, int threads, std::string method, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_qr(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP thinSEXP, SEXP block_sizeSEXP, SEXP overwriteSEXP, SEXP threadsSEXP, SEXP methodSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< bool >::type thin(thinSEXP);
+    Rcpp::traits::input_parameter< int >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_qr(filename, group, dataset, thin, block_size, overwrite, threads, method, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_reduce
+Rcpp::List rcpp_hdf5dataset_reduce(std::string filename, std::string group, std::string out_group, std::string out_dataset, std::string func, bool overwrite, bool remove_input);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_reduce(SEXP filenameSEXP, SEXP groupSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP funcSEXP, SEXP overwriteSEXP, SEXP remove_inputSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< bool >::type remove_input(remove_inputSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_reduce(filename, group, out_group, out_dataset, func, overwrite, remove_input));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_apply_function
+Rcpp::List rcpp_hdf5dataset_apply_function(std::string filename, std::string group, Rcpp::StringVector datasets, std::string out_group, std::string func, std::string b_group, Rcpp::Nullable<Rcpp::StringVector> b_datasets, bool overwrite, bool transp_a, bool transp_b, bool full_matrix, bool byrows, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_apply_function(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetsSEXP, SEXP out_groupSEXP, SEXP funcSEXP, SEXP b_groupSEXP, SEXP b_datasetsSEXP, SEXP overwriteSEXP, SEXP transp_aSEXP, SEXP transp_bSEXP, SEXP full_matrixSEXP, SEXP byrowsSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type datasets(datasetsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
+    Rcpp::traits::input_parameter< std::string >::type b_group(b_groupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::StringVector> >::type b_datasets(b_datasetsSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< bool >::type transp_a(transp_aSEXP);
+    Rcpp::traits::input_parameter< bool >::type transp_b(transp_bSEXP);
+    Rcpp::traits::input_parameter< bool >::type full_matrix(full_matrixSEXP);
+    Rcpp::traits::input_parameter< bool >::type byrows(byrowsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_apply_function(filename, group, datasets, out_group, func, b_group, b_datasets, overwrite, transp_a, transp_b, full_matrix, byrows, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_multiply_sparse
+Rcpp::List rcpp_hdf5dataset_multiply_sparse(SEXP ptr_a, SEXP ptr_b, int block_size, int mix_block, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> compression, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_multiply_sparse(SEXP ptr_aSEXP, SEXP ptr_bSEXP, SEXP block_sizeSEXP, SEXP mix_blockSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP compressionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_a(ptr_aSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr_b(ptr_bSEXP);
+    Rcpp::traits::input_parameter< int >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< int >::type mix_block(mix_blockSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_multiply_sparse(ptr_a, ptr_b, block_size, mix_block, paral, threads, compression, outgroup, outdataset));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_split
+Rcpp::List rcpp_hdf5dataset_split(SEXP ptr, bool bycols, int n_blocks, int block_size, std::string out_group, std::string out_dataset, bool overwrite);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_split(SEXP ptrSEXP, SEXP bycolsSEXP, SEXP n_blocksSEXP, SEXP block_sizeSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP overwriteSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    Rcpp::traits::input_parameter< bool >::type bycols(bycolsSEXP);
+    Rcpp::traits::input_parameter< int >::type n_blocks(n_blocksSEXP);
+    Rcpp::traits::input_parameter< int >::type block_size(block_sizeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_split(ptr, bycols, n_blocks, block_size, out_group, out_dataset, overwrite));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_subset
+Rcpp::NumericMatrix rcpp_hdf5dataset_subset(SEXP ptr_sexp, Rcpp::IntegerVector rows, Rcpp::IntegerVector cols);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_subset(SEXP ptr_sexpSEXP, SEXP rowsSEXP, SEXP colsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type rows(rowsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type cols(colsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_subset(ptr_sexp, rows, cols));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_read_all
+Rcpp::NumericMatrix rcpp_hdf5dataset_read_all(SEXP ptr_sexp);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_read_all(SEXP ptr_sexpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_read_all(ptr_sexp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_svd
+Rcpp::List rcpp_hdf5dataset_svd(std::string filename, std::string group, std::string dataset, int k, int q, int nev, bool bcenter, bool bscale, double rankthreshold, bool overwrite, std::string method, int threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_svd(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP kSEXP, SEXP qSEXP, SEXP nevSEXP, SEXP bcenterSEXP, SEXP bscaleSEXP, SEXP rankthresholdSEXP, SEXP overwriteSEXP, SEXP methodSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type q(qSEXP);
+    Rcpp::traits::input_parameter< int >::type nev(nevSEXP);
+    Rcpp::traits::input_parameter< bool >::type bcenter(bcenterSEXP);
+    Rcpp::traits::input_parameter< bool >::type bscale(bscaleSEXP);
+    Rcpp::traits::input_parameter< double >::type rankthreshold(rankthresholdSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_svd(filename, group, dataset, k, q, nev, bcenter, bscale, rankthreshold, overwrite, method, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_hdf5dataset_write_block
+void rcpp_hdf5dataset_write_block(SEXP ptr_sexp, Rcpp::RObject value, int row_offset, int col_offset, int nrows, int ncols);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_write_block(SEXP ptr_sexpSEXP, SEXP valueSEXP, SEXP row_offsetSEXP, SEXP col_offsetSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< int >::type row_offset(row_offsetSEXP);
+    Rcpp::traits::input_parameter< int >::type col_offset(col_offsetSEXP);
+    Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
+    Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
+    rcpp_hdf5dataset_write_block(ptr_sexp, value, row_offset, col_offset, nrows, ncols);
+    return R_NilValue;
+END_RCPP
+}
+// rcpp_hdf5dataset_write_all
+void rcpp_hdf5dataset_write_all(SEXP ptr_sexp, Rcpp::RObject value);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_write_all(SEXP ptr_sexpSEXP, SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr_sexp(ptr_sexpSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type value(valueSEXP);
+    rcpp_hdf5dataset_write_all(ptr_sexp, value);
+    return R_NilValue;
+END_RCPP
+}
+// rcpp_hdf5_create_matrix
+Rcpp::List rcpp_hdf5_create_matrix(std::string filename, std::string group, std::string dataset, int nrows, int ncols, Rcpp::Nullable<Rcpp::RObject> data, std::string dtype, bool overwrite_file, bool overwrite_dataset, int compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_create_matrix(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP, SEXP dataSEXP, SEXP dtypeSEXP, SEXP overwrite_fileSEXP, SEXP overwrite_datasetSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< int >::type nrows(nrowsSEXP);
+    Rcpp::traits::input_parameter< int >::type ncols(ncolsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::RObject> >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dtype(dtypeSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite_file(overwrite_fileSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite_dataset(overwrite_datasetSEXP);
+    Rcpp::traits::input_parameter< int >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5_create_matrix(filename, group, dataset, nrows, ncols, data, dtype, overwrite_file, overwrite_dataset, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bdReduce_hdf5_dataset
 Rcpp::List bdReduce_hdf5_dataset(std::string filename, std::string group, std::string reducefunction, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<bool> overwrite, Rcpp::Nullable<bool> remove);
 RcppExport SEXP _BigDataStatMeth_bdReduce_hdf5_dataset(SEXP filenameSEXP, SEXP groupSEXP, SEXP reducefunctionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP overwriteSEXP, SEXP removeSEXP) {
@@ -770,142 +1154,55 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// bdRemove_hdf5_element
-void bdRemove_hdf5_element(std::string filename, std::vector<std::string> elements);
-RcppExport SEXP _BigDataStatMeth_bdRemove_hdf5_element(SEXP filenameSEXP, SEXP elementsSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type elements(elementsSEXP);
-    bdRemove_hdf5_element(filename, elements);
-    return R_NilValue;
-END_RCPP
-}
-// bdRemovelowdata_hdf5
-Rcpp::List bdRemovelowdata_hdf5(std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, Rcpp::Nullable<double> pcent, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdRemovelowdata_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP pcentSEXP, SEXP bycolsSEXP, SEXP overwriteSEXP) {
+// get_total_ram
+double get_total_ram();
+RcppExport SEXP _BigDataStatMeth_get_total_ram() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type pcent(pcentSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdRemovelowdata_hdf5(filename, group, dataset, outgroup, outdataset, pcent, bycols, overwrite));
+    rcpp_result_gen = Rcpp::wrap(get_total_ram());
     return rcpp_result_gen;
 END_RCPP
 }
-// bdRemoveMAF_hdf5
-Rcpp::List bdRemoveMAF_hdf5(std::string filename, std::string group, std::string dataset, std::string outgroup, std::string outdataset, Rcpp::Nullable<double> maf, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<int> blocksize, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdRemoveMAF_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP mafSEXP, SEXP bycolsSEXP, SEXP blocksizeSEXP, SEXP overwriteSEXP) {
+// get_available_ram
+double get_available_ram();
+RcppExport SEXP _BigDataStatMeth_get_available_ram() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<double> >::type maf(mafSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type blocksize(blocksizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdRemoveMAF_hdf5(filename, group, dataset, outgroup, outdataset, maf, bycols, blocksize, overwrite));
+    rcpp_result_gen = Rcpp::wrap(get_available_ram());
     return rcpp_result_gen;
 END_RCPP
 }
-// bdSort_hdf5_dataset
-Rcpp::List bdSort_hdf5_dataset(std::string filename, std::string group, std::string dataset, std::string outdataset, Rcpp::List blockedSortlist, std::string func, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdSort_hdf5_dataset(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outdatasetSEXP, SEXP blockedSortlistSEXP, SEXP funcSEXP, SEXP outgroupSEXP, SEXP overwriteSEXP) {
+// can_allocate
+bool can_allocate(double size_gb, double safety_margin_pct);
+RcppExport SEXP _BigDataStatMeth_can_allocate(SEXP size_gbSEXP, SEXP safety_margin_pctSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type blockedSortlist(blockedSortlistSEXP);
-    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSort_hdf5_dataset(filename, group, dataset, outdataset, blockedSortlist, func, outgroup, overwrite));
+    Rcpp::traits::input_parameter< double >::type size_gb(size_gbSEXP);
+    Rcpp::traits::input_parameter< double >::type safety_margin_pct(safety_margin_pctSEXP);
+    rcpp_result_gen = Rcpp::wrap(can_allocate(size_gb, safety_margin_pct));
     return rcpp_result_gen;
 END_RCPP
 }
-// bdSplit_matrix_hdf5
-Rcpp::List bdSplit_matrix_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset, Rcpp::Nullable<int> nblocks, Rcpp::Nullable<int> blocksize, Rcpp::Nullable<bool> bycols, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdSplit_matrix_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP, SEXP nblocksSEXP, SEXP blocksizeSEXP, SEXP bycolsSEXP, SEXP overwriteSEXP) {
+// get_cpu_cores
+int get_cpu_cores();
+RcppExport SEXP _BigDataStatMeth_get_cpu_cores() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type nblocks(nblocksSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type blocksize(blocksizeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type bycols(bycolsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdSplit_matrix_hdf5(filename, group, dataset, outgroup, outdataset, nblocks, blocksize, bycols, overwrite));
+    rcpp_result_gen = Rcpp::wrap(get_cpu_cores());
     return rcpp_result_gen;
 END_RCPP
 }
-// bdsubset_hdf5_dataset
-bool bdsubset_hdf5_dataset(std::string filename, std::string dataset_path, Rcpp::IntegerVector indices, bool select_rows, std::string new_group, std::string new_name, bool overwrite);
-RcppExport SEXP _BigDataStatMeth_bdsubset_hdf5_dataset(SEXP filenameSEXP, SEXP dataset_pathSEXP, SEXP indicesSEXP, SEXP select_rowsSEXP, SEXP new_groupSEXP, SEXP new_nameSEXP, SEXP overwriteSEXP) {
+// system_info
+Rcpp::List system_info();
+RcppExport SEXP _BigDataStatMeth_system_info() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset_path(dataset_pathSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type indices(indicesSEXP);
-    Rcpp::traits::input_parameter< bool >::type select_rows(select_rowsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type new_group(new_groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type new_name(new_nameSEXP);
-    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdsubset_hdf5_dataset(filename, dataset_path, indices, select_rows, new_group, new_name, overwrite));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdWriteOppsiteTriangularMatrix_hdf5
-Rcpp::List bdWriteOppsiteTriangularMatrix_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<bool> copytolower, Rcpp::Nullable<long> elementsBlock);
-RcppExport SEXP _BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP copytolowerSEXP, SEXP elementsBlockSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type copytolower(copytolowerSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<long> >::type elementsBlock(elementsBlockSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdWriteOppsiteTriangularMatrix_hdf5(filename, group, dataset, copytolower, elementsBlock));
-    return rcpp_result_gen;
-END_RCPP
-}
-// bdcomputeMatrixVector_hdf5
-Rcpp::List bdcomputeMatrixVector_hdf5(std::string filename, std::string group, std::string dataset, std::string vectorgroup, std::string vectordataset, std::string outdataset, std::string func, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<bool> byrows, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads, Rcpp::Nullable<int> overwrite);
-RcppExport SEXP _BigDataStatMeth_bdcomputeMatrixVector_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP vectorgroupSEXP, SEXP vectordatasetSEXP, SEXP outdatasetSEXP, SEXP funcSEXP, SEXP outgroupSEXP, SEXP byrowsSEXP, SEXP paralSEXP, SEXP threadsSEXP, SEXP overwriteSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type vectorgroup(vectorgroupSEXP);
-    Rcpp::traits::input_parameter< std::string >::type vectordataset(vectordatasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type outdataset(outdatasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type byrows(byrowsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(bdcomputeMatrixVector_hdf5(filename, group, dataset, vectorgroup, vectordataset, outdataset, func, outgroup, byrows, paral, threads, overwrite));
+    rcpp_result_gen = Rcpp::wrap(system_info());
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1049,55 +1346,84 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_BigDataStatMeth_bdCholesky_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCholesky_hdf5, 9},
-    {"_BigDataStatMeth_bdQR", (DL_FUNC) &_BigDataStatMeth_bdQR, 4},
-    {"_BigDataStatMeth_bdQR_hdf5", (DL_FUNC) &_BigDataStatMeth_bdQR_hdf5, 9},
-    {"_BigDataStatMeth_bdSVD_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSVD_hdf5, 11},
-    {"_BigDataStatMeth_bdSolve", (DL_FUNC) &_BigDataStatMeth_bdSolve, 2},
-    {"_BigDataStatMeth_bdSolve_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSolve_hdf5, 8},
     {"_BigDataStatMeth_bdapply_Function_hdf5", (DL_FUNC) &_BigDataStatMeth_bdapply_Function_hdf5, 13},
-    {"_BigDataStatMeth_bdPCA_hdf5", (DL_FUNC) &_BigDataStatMeth_bdPCA_hdf5, 13},
-    {"_BigDataStatMeth_bdBind_hdf5_datasets", (DL_FUNC) &_BigDataStatMeth_bdBind_hdf5_datasets, 7},
-    {"_BigDataStatMeth_bdCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCrossprod_hdf5, 12},
-    {"_BigDataStatMeth_bdNormalize_hdf5", (DL_FUNC) &_BigDataStatMeth_bdNormalize_hdf5, 8},
-    {"_BigDataStatMeth_bdblockSum_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockSum_hdf5, 11},
-    {"_BigDataStatMeth_bdblockmult_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockmult_hdf5, 13},
-    {"_BigDataStatMeth_bdblockmult_sparse_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockmult_sparse_hdf5, 12},
-    {"_BigDataStatMeth_bdblockSubstract_hdf5", (DL_FUNC) &_BigDataStatMeth_bdblockSubstract_hdf5, 11},
-    {"_BigDataStatMeth_bdtCrossprod_hdf5", (DL_FUNC) &_BigDataStatMeth_bdtCrossprod_hdf5, 12},
-    {"_BigDataStatMeth_bdCreate_diagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCreate_diagonal_hdf5, 12},
-    {"_BigDataStatMeth_bdCreate_hdf5_emptyDataset", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_emptyDataset, 9},
     {"_BigDataStatMeth_bdCreate_hdf5_group", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_group, 2},
     {"_BigDataStatMeth_bdCreate_hdf5_matrix", (DL_FUNC) &_BigDataStatMeth_bdCreate_hdf5_matrix, 8},
-    {"_BigDataStatMeth_bdDiag_add_hdf5", (DL_FUNC) &_BigDataStatMeth_bdDiag_add_hdf5, 11},
-    {"_BigDataStatMeth_bdDiag_subtract_hdf5", (DL_FUNC) &_BigDataStatMeth_bdDiag_subtract_hdf5, 11},
-    {"_BigDataStatMeth_bdDiag_multiply_hdf5", (DL_FUNC) &_BigDataStatMeth_bdDiag_multiply_hdf5, 11},
-    {"_BigDataStatMeth_bdDiag_divide_hdf5", (DL_FUNC) &_BigDataStatMeth_bdDiag_divide_hdf5, 11},
-    {"_BigDataStatMeth_bdDiag_scalar_hdf5", (DL_FUNC) &_BigDataStatMeth_bdDiag_scalar_hdf5, 11},
-    {"_BigDataStatMeth_bdEigen_hdf5", (DL_FUNC) &_BigDataStatMeth_bdEigen_hdf5, 13},
-    {"_BigDataStatMeth_bdIsLocked_hdf5", (DL_FUNC) &_BigDataStatMeth_bdIsLocked_hdf5, 1},
-    {"_BigDataStatMeth_bdgetDim_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDim_hdf5, 2},
-    {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 3},
-    {"_BigDataStatMeth_bdCheckMatrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCheckMatrix_hdf5, 6},
+    {"_BigDataStatMeth_bdgetDatasetsList_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDatasetsList_hdf5, 4},
     {"_BigDataStatMeth_bdImportTextFile_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImportTextFile_hdf5, 11},
-    {"_BigDataStatMeth_bdImputeSNPs_hdf5", (DL_FUNC) &_BigDataStatMeth_bdImputeSNPs_hdf5, 9},
-    {"_BigDataStatMeth_bdInvCholesky_hdf5", (DL_FUNC) &_BigDataStatMeth_bdInvCholesky_hdf5, 9},
-    {"_BigDataStatMeth_bdCorr_hdf5", (DL_FUNC) &_BigDataStatMeth_bdCorr_hdf5, 18},
-    {"_BigDataStatMeth_bdgetDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetDiagonal_hdf5, 3},
-    {"_BigDataStatMeth_bdWriteDiagonal_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteDiagonal_hdf5, 4},
-    {"_BigDataStatMeth_bdgetSDandMean_hdf5", (DL_FUNC) &_BigDataStatMeth_bdgetSDandMean_hdf5, 11},
     {"_BigDataStatMeth_bdmove_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdmove_hdf5_dataset, 4},
     {"_BigDataStatMeth_bdpseudoinv", (DL_FUNC) &_BigDataStatMeth_bdpseudoinv, 2},
     {"_BigDataStatMeth_bdpseudoinv_hdf5", (DL_FUNC) &_BigDataStatMeth_bdpseudoinv_hdf5, 7},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_colSums", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_colSums, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_colMeans", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_colMeans, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_colMins", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_colMins, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_colMaxs", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_colMaxs, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_colVars", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_colVars, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_colSds", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_colSds, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_rowSums", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_rowSums, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_rowMeans", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_rowMeans, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_rowMins", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_rowMins, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_rowMaxs", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_rowMaxs, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_rowVars", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_rowVars, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_rowSds", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_rowSds, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_scalar_sum", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_scalar_sum, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_scalar_mean", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_scalar_mean, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_scalar_min", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_scalar_min, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_scalar_max", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_scalar_max, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_scalar_var", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_scalar_var, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_scalar_sd", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_scalar_sd, 4},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_add", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_add, 6},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_subtract", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_subtract, 6},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_mul_ew", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_mul_ew, 6},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_div_ew", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_div_ew, 6},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_bind", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_bind, 13},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_chol", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_chol, 8},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_solve", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_solve, 8},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_cor", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_cor, 17},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_eigen", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_eigen, 13},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_sweep", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_sweep, 7},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_diag_get", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_diag_get, 1},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_diag_set", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_diag_set, 2},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_diag_op", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_diag_op, 8},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_diag_scale", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_diag_scale, 8},
+    {"_BigDataStatMeth_rcpp_hdf5_close_all_registry", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_all_registry, 0},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_open", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_open, 3},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_dim", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_dim, 1},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_info", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_info, 1},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_is_valid", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_is_valid, 1},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_read_dimnames", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_read_dimnames, 1},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_write_dimnames", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_write_dimnames, 3},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_close", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_close, 1},
+    {"_BigDataStatMeth_rcpp_hdf5_close_at_paths", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_at_paths, 2},
+    {"_BigDataStatMeth_rcpp_hdf5_close_file_handles", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_file_handles, 1},
+    {"_BigDataStatMeth_rcpp_hdf5_close_file_handles_safe", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_file_handles_safe, 0},
+    {"_BigDataStatMeth_rcpp_hdf5_close_all_file_handles", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_all_file_handles, 0},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_multiply", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_multiply, 10},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_crossprod", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_crossprod, 8},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_tcrossprod", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_tcrossprod, 8},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_normalize", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_normalize, 11},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_impute_snps", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_impute_snps, 9},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_filter_low_coverage", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_filter_low_coverage, 9},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_filter_maf", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_filter_maf, 10},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_pca", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_pca, 13},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_pseudoinv", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_pseudoinv, 8},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_qr", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_qr, 9},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_reduce", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_reduce, 7},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_apply_function", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_apply_function, 13},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_multiply_sparse", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_multiply_sparse, 9},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_split", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_split, 7},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_subset", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_subset, 3},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_read_all", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_read_all, 1},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_svd", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_svd, 12},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_write_block", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_write_block, 6},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_write_all", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_write_all, 2},
+    {"_BigDataStatMeth_rcpp_hdf5_create_matrix", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_create_matrix, 10},
     {"_BigDataStatMeth_bdReduce_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdReduce_hdf5_dataset, 7},
-    {"_BigDataStatMeth_bdRemove_hdf5_element", (DL_FUNC) &_BigDataStatMeth_bdRemove_hdf5_element, 2},
-    {"_BigDataStatMeth_bdRemovelowdata_hdf5", (DL_FUNC) &_BigDataStatMeth_bdRemovelowdata_hdf5, 8},
-    {"_BigDataStatMeth_bdRemoveMAF_hdf5", (DL_FUNC) &_BigDataStatMeth_bdRemoveMAF_hdf5, 9},
-    {"_BigDataStatMeth_bdSort_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdSort_hdf5_dataset, 8},
-    {"_BigDataStatMeth_bdSplit_matrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdSplit_matrix_hdf5, 9},
-    {"_BigDataStatMeth_bdsubset_hdf5_dataset", (DL_FUNC) &_BigDataStatMeth_bdsubset_hdf5_dataset, 7},
-    {"_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5", (DL_FUNC) &_BigDataStatMeth_bdWriteOppsiteTriangularMatrix_hdf5, 5},
-    {"_BigDataStatMeth_bdcomputeMatrixVector_hdf5", (DL_FUNC) &_BigDataStatMeth_bdcomputeMatrixVector_hdf5, 12},
+    {"_BigDataStatMeth_get_total_ram", (DL_FUNC) &_BigDataStatMeth_get_total_ram, 0},
+    {"_BigDataStatMeth_get_available_ram", (DL_FUNC) &_BigDataStatMeth_get_available_ram, 0},
+    {"_BigDataStatMeth_can_allocate", (DL_FUNC) &_BigDataStatMeth_can_allocate, 2},
+    {"_BigDataStatMeth_get_cpu_cores", (DL_FUNC) &_BigDataStatMeth_get_cpu_cores, 0},
+    {"_BigDataStatMeth_system_info", (DL_FUNC) &_BigDataStatMeth_system_info, 0},
     {"_BigDataStatMeth_bdWrite_hdf5_dimnames", (DL_FUNC) &_BigDataStatMeth_bdWrite_hdf5_dimnames, 5},
     {"_BigDataStatMeth_bdblockMult", (DL_FUNC) &_BigDataStatMeth_bdblockMult, 6},
     {"_BigDataStatMeth_bdblockSubstract", (DL_FUNC) &_BigDataStatMeth_bdblockSubstract, 6},

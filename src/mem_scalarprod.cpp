@@ -50,10 +50,10 @@
          return( Rcpp::wrap(w*mA) );
          
      }  catch(std::exception &ex) {
-         Rcpp::Rcerr << "c++ exception bdblockMult: " << ex.what();
+         Rcpp::stop("c++ exception bdblockMult: " + std::string(ex.what()));
          return(R_NilValue);
      } catch (...) {
-         Rcpp::Rcerr << "c++ exception bdblockMult (unknown reason)";
+         Rcpp::stop("c++ exception bdblockMult (unknown reason)");
          return(R_NilValue);    
      }
      

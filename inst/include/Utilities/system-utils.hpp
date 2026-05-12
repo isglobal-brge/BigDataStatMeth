@@ -36,23 +36,49 @@ namespace BigDataStatMeth {
  */
 inline size_t getAvailableMemoryMB() {
     try {
-        // Use R's internal memory functions (CRAN-safe)
-        SEXP memCall = PROTECT(Rf_lang1(Rf_install("memory.size")));
-        SEXP memResult = PROTECT(Rf_eval(memCall, R_GlobalEnv));
-        
-        if (Rf_isReal(memResult) && Rf_length(memResult) > 0) {
-            double memMB = REAL(memResult)[0];
-            UNPROTECT(2);
-            return static_cast<size_t>(memMB * 0.6); // Use 60% of available
-        }
-        UNPROTECT(2);
-    } catch(...) {
-        // Fallback silently - no error throwing for robustness
-    }
-    
-    // Conservative fallback for any system (safe minimum)
-    return 4000; // Assume 4GB available memory
+        #ifdef _WIN32
+            Rcpp::Function memSize("memory.size");
+            Rcpp::NumericVector memResult = memSize();
+            if (memResult.size() > 0 && !Rcpp::NumericVector::is_na(memResult[0]))
+                return static_cast<size_t>(memResult[0] * 0.6);
+        #endif
+    } catch(...) {}
+    return 4000;
 }
+
+
+// inline size_t getAvailableMemoryMB() {
+//     try {
+// 
+//                 
+//         // Use R's internal memory functions (CRAN-safe)
+//         // // Use R's internal memory functions (CRAN-safe)
+//         // SEXP memCall = PROTECT(Rf_lang1(Rf_install("memory.size")));
+//         // SEXP memResult = PROTECT(Rf_eval(memCall, R_GlobalEnv));
+//         // 
+//         // if (Rf_isReal(memResult) && Rf_length(memResult) > 0) {
+//         //     double memMB = REAL(memResult)[0];
+//         //     UNPROTECT(2);
+//         //     return static_cast<size_t>(memMB * 0.6); // Use 60% of available
+//         // }
+//         // UNPROTECT(2);
+//         
+//         Rcpp::Function memSize("memory.size");
+//         Rcpp::NumericVector memResult = memSize();
+//         
+//         if (memResult.size() > 0) {
+//             double memMB = memResult[0];
+//             return static_cast<size_t>(memMB * 0.6); // Use 60% of available
+//         }
+//         
+// 
+//     } catch(...) {
+//         // Fallback silently - no error throwing for robustness
+//     }
+//     
+//     // Conservative fallback for any system (safe minimum)
+//     return 4000; // Assume 4GB available memory
+// }
 
 /**
  * @brief Calculates optimal block size for memory-efficient matrix operations

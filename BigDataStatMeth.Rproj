@@ -1,6 +1,6 @@
 Version: 1.0
 
-RestoreWorkspace: Default
+RestoreWorkspace: No
 SaveWorkspace: Default
 AlwaysSaveHistory: Default
 
@@ -12,7 +12,13 @@ Encoding: UTF-8
 RnwWeave: Sweave
 LaTeX: pdfLaTeX
 
+LineEndingConversion: Posix
+
 BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
+PackageBuildArgs: --no-build-vignettes
 PackageCheckArgs: --as-cran
+PackageRoxygenize: vignette
+
+ProjectName: BigDataStatMeth_LOCAL

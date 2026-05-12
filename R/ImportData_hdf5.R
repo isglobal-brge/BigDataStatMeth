@@ -31,25 +31,27 @@
 #'         HDF5 file.
 #'
 #' @examples
-#' \dontrun{
-#' # Import from local file
+#' \donttest{
+#' # Create a temporary CSV file to import
+#' csv_file <- tempfile(fileext = ".csv")
+#' hdf5_file <- tempfile(fileext = ".h5")
+#' 
+#' # Write sample data
+#' data <- matrix(rnorm(50), nrow = 10, ncol = 5)
+#' write.table(data, csv_file, sep = ",", row.names = FALSE, col.names = TRUE)
+#' 
+#' # Import CSV to HDF5
 #' bdImportData_hdf5(
-#'   inFile = "data.txt",
-#'   destFile = "output.h5",
-#'   destGroup = "mydata",
+#'   inFile      = csv_file,
+#'   destFile    = hdf5_file,
+#'   destGroup   = "mydata",
 #'   destDataset = "matrix1",
-#'   header = TRUE,
-#'   sep = "\t"
+#'   header      = TRUE,
+#'   sep         = ","
 #' )
 #' 
-#' # Import from URL
-#' bdImportData_hdf5(
-#'   inFile = "https://example.com/data.csv",
-#'   destFile = "output.h5",
-#'   destGroup = "downloaded",
-#'   destDataset = "remote_data",
-#'   sep = ","
-#' )
+#' hdf5_close_all()
+#' unlink(c(csv_file, hdf5_file))
 #' }
 #'    
 #' @export

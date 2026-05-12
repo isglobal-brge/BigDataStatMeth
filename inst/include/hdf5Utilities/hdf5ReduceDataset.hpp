@@ -1,6 +1,8 @@
 /**
  * @file hdf5ReduceDataset.hpp
  * @brief Implementation of dataset reduction operations for HDF5 files
+ * @note 2026-03-07 Output datasets now inherit compression level from input datasets
+ *         via setCompressionLevel() called before every createDataset() invocation.
  *
  * This file provides functionality for reducing multiple HDF5 datasets into
  * a single dataset using specified reduction operations. It supports
@@ -108,10 +110,18 @@ namespace BigDataStatMeth {
                                    bool binternal)
     {
         
-        BigDataStatMeth::hdf5File* objFile = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
-        BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
+        
         try {
+
+
+            H5::Exception::dontPrint();
+
+            // BigDataStatMeth::hdf5File* objFile = nullptr;
+            // BigDataStatMeth::hdf5Dataset* dsIn = nullptr;
+            // BigDataStatMeth::hdf5Dataset* dsOut = nullptr;
+            std::unique_ptr<BigDataStatMeth::hdf5File> objFile(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsIn(nullptr);
+            std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut(nullptr);
             
             hsize_t* dims_out;
             std::vector<hsize_t> stride = {1, 1},
@@ -122,25 +132,26 @@ namespace BigDataStatMeth {
             Eigen::MatrixXd newRead;
             int ndatasets;
             
-            objFile = new BigDataStatMeth::hdf5File(filename, false);
+            // objFile = new BigDataStatMeth::hdf5File(filename, false);
+            objFile.reset( new BigDataStatMeth::hdf5File(filename, false) );
             objFile->openFile("r");
             
             // Get dataset names without prefix, all datasets inside the group
             Rcpp::StringVector joindata =  objFile->getDatasetNames(stringroup, "", "");
             
-            delete objFile; // Close file 
+            // delete objFile; // Close file 
             
             ndatasets = joindata.size();
             
             for ( int i=0; i< ndatasets; i++)
             {
-                dsIn = new BigDataStatMeth::hdf5Dataset(filename, stringroup + "/" + joindata[i], false);
+                // dsIn = new BigDataStatMeth::hdf5Dataset(filename, stringroup + "/" + joindata[i], false);
+                dsIn.reset(new BigDataStatMeth::hdf5Dataset(filename, stringroup + "/" + joindata[i], false));
                 dsIn->openDataset();
 
                 if( dsIn->getDatasetptr() == nullptr) {
-                    checkClose_file(dsIn);
-                    Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
-                    return void();
+                    // checkClose_file(dsIn);
+                    throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (Dataset IException )");
                 }
                 
                 dims_out =   dsIn->dim();
@@ -195,12 +206,14 @@ namespace BigDataStatMeth {
                     dsIn->remove();
                 }
                 
-                delete dsIn; dsIn = nullptr;
+                // delete dsIn; dsIn = nullptr;
             }
             
-            dsOut = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, stroutdataset, boverwrite);
+            // dsOut = new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, stroutdataset, boverwrite);
+            dsOut.reset( new BigDataStatMeth::hdf5Dataset(filename, stroutgroup, stroutdataset, boverwrite) );
             
             if(binternal == true) {
+                dsOut->inheritCompressionLevel(dsIn->getCompressionLevel());
                 dsOut->createDataset( fullReduced.rows() , fullReduced.cols(), "real");
                 // if( dsOut->getDatasetptr() != nullptr) {
                 //     dsOut->writeDataset(Rcpp::wrap(fullReduced));
@@ -210,6 +223,7 @@ namespace BigDataStatMeth {
                 //     return void();
                 // }
             } else {
+                dsOut->inheritCompressionLevel(dsIn->getCompressionLevel());
                 dsOut->createDataset( fullReduced.cols() , fullReduced.rows(), "real");
                 fullReduced.transposeInPlace();
                 
@@ -227,28 +241,24 @@ namespace BigDataStatMeth {
             if( dsOut->getDatasetptr() != nullptr) {
                 dsOut->writeDataset(Rcpp::wrap(fullReduced));
             } else {
-                checkClose_file(dsOut);
-                Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
-                return void();
+                // checkClose_file(dsOut);
+                throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (Dataset IException )");
             }
             
-            delete dsOut; dsOut = nullptr;
+            // delete dsOut; dsOut = nullptr;
             
         }catch( H5::FileIException& error ) {
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             // ::Rf_error( "c++ exception RcppReduce_dataset_hdf5 (File IException )" );
-            Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (File IException )" << std::endl;
-            return void();
+            throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (File IException )");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             // ::Rf_error( "c++ exception RcppReduce_dataset_hdf5 (dstosplit IException )" );
-            Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (dstosplit IException )" << std::endl;
-            return void();
+            throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (dstosplit IException )");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            checkClose_file(dsIn, dsOut);
+            // checkClose_file(dsIn, dsOut);
             // ::Rf_error( "c++ exception RcppReduce_dataset_hdf5 (DataSpace IException )" );
-            Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (DataSpace IException )" << std::endl;
-            return void();
+            throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (DataSpace IException )");
         } 
         return void();
     }

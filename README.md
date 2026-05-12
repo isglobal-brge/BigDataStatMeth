@@ -6,22 +6,52 @@
 [![Documentation](https://img.shields.io/badge/docs-online-blue.svg)](https://isglobal-brge.github.io/BigDataStatMeth/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
-<!--[![R-CMD-check](https://github.com/isglobal-brge/BigDataStatMeth/workflows/R-CMD-check/badge.svg)](https://github.com/isglobal-brge/BigDataStatMeth/actions) -->
 
 ## Overview
 
-**BigDataStatMeth** provides efficient statistical methods and linear algebra operations for large-scale data analysis using block-wise algorithms and HDF5 storage. Designed for genomic, transcriptomic, and multi-omic data analysis, it enables processing datasets that exceed available RAM through intelligent data partitioning and disk-based computation.
+**BigDataStatMeth** provides scalable statistical computing for matrices stored
+in HDF5 files. The package is designed as a two-level tool: it provides a
+standard R interface for users working with HDF5-backed matrices, and a reusable
+C++ infrastructure for developers implementing new block-wise statistical methods.
 
-The package offers both **R** and **C++** APIs, allowing flexible integration into existing workflows while maintaining high performance for computationally intensive operations.
+The R interface is based on `HDF5Matrix` objects and S3 methods, so users can
+work with familiar R calls such as `dim()`, `[`, `%*%`, `crossprod()`, `scale()`,
+`cor()`, `svd()`, `prcomp()`, `qr()`, `chol()`, and `solve()`. The C++
+infrastructure provides classes and routines for managing HDF5 files, groups, and
+datasets, together with block-wise numerical methods that can be reused from
+Rcpp-based code.
+
+```mermaid
+flowchart LR
+    subgraph R["R interface"]
+        A["HDF5Matrix objects"] --> B["S3 generics: scale, crossprod, svd, qr, prcomp ..."]
+    end
+    subgraph CPP["C++ infrastructure"]
+        C["C++ classes: files, groups, datasets"] --> D["Block-wise numerical routines"]
+    end
+    B --> D
+    D --> E["HDF5 storage on-disk matrices"]
+    C --> E
+```
+
+Most users will interact with the R/S3 interface. Developers can build on the C++
+headers to extend the package with new HDF5-backed methods while retaining
+efficient execution through compiled code.
 
 ### Key Features
 
-- **Block-wise algorithms**: Process data larger than memory through intelligent partitioning
-- **HDF5 integration**: Seamless storage and computation with hierarchical data format
-- **Parallel processing**: Multi-threaded operations for enhanced performance
-- **Dual API**: Complete R interface with underlying C++ implementation for performance
-- **Statistical methods**: PCA, SVD, CCA, regression models, and more
-- **Production-ready**: Extensively tested on genomic datasets with millions of features
+- **HDF5-backed matrices** through a familiar `HDF5Matrix`/S3 interface
+- **Block-wise algorithms** — process matrices larger than available RAM through
+  intelligent partitioning
+- **Parallel processing** — multi-threaded operations for enhanced performance
+- **Comprehensive decompositions** — SVD, PCA, QR, Cholesky, eigendecomposition,
+  and pseudoinverse
+- **Statistical transformations** — centering, scaling, correlation, sweep, and
+  aggregations by row/column
+- **C++ developer infrastructure** — reusable classes and routines for building
+  new scalable methods without reimplementing HDF5 management or block iteration
+- **HDF5 compression and file-space reuse** — controlled disk usage across
+  iterative workflows
 
 ## Installation
 
@@ -37,233 +67,116 @@ install.packages("BigDataStatMeth")
 # Install devtools if needed
 install.packages("devtools")
 
-# Install BigDataStatMeth
 devtools::install_github("isglobal-brge/BigDataStatMeth")
 ```
 
 ### System Requirements
 
 **R packages:**
-- Matrix
-- rhdf5 (Bioconductor)
-- RcppEigen
-- RSpectra
+
+- `Matrix`
+- `RcppEigen`
+- `RSpectra`
 
 **System dependencies:**
+
 - HDF5 library (>= 1.8)
-- C++11 compatible compiler
+- C++17 compatible compiler
 - For Windows: [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
-
-Install Bioconductor dependencies:
-
-```r
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-    
-BiocManager::install(c("rhdf5", "HDF5Array"))
-```
 
 ## Quick Start
 
-### Basic Workflow: PCA on Large Genomic Data
-
 ```r
 library(BigDataStatMeth)
-library(rhdf5)
 
-# Create HDF5 file from matrix
-genotype_matrix <- matrix(rnorm(5000 * 10000), 5000, 10000)
-bdCreate_hdf5_matrix(
-  filename = "genomics.hdf5",
-  object = genotype_matrix,
-  group = "data",
-  dataset = "genotypes"
+h5file <- tempfile(fileext = ".h5")
+
+set.seed(1)
+X <- matrix(rnorm(500 * 100), nrow = 500, ncol = 100)
+
+# Write an in-memory matrix to HDF5
+X_h5 <- hdf5_create_matrix(
+  filename = h5file,
+  dataset  = "data/X",
+  data     = X,
+  overwrite = TRUE
 )
 
-# Perform block-wise PCA
-pca_result <- bdPCA_hdf5(
-  filename = "genomics.hdf5",
-  group = "data",
-  dataset = "genotypes",
-  k = 4,              # Number of blocks
-  bcenter = TRUE,     # Center data
-  bscale = FALSE,     # Don't scale
-  threads = 4         # Use 4 threads
-)
+dim(X_h5)
+colMeans(X_h5)
 
-# Access results
-components <- pca_result$components
-variance_explained <- pca_result$variance_prop
-```
+# Standard R operations on the HDF5-backed matrix
+XtX_h5  <- crossprod(X_h5)
+X_sc_h5 <- scale(X_h5)
 
-### Working with HDF5 Files
+# Decompositions
+svd_res <- svd(X_h5, nu = 5, nv = 5, center = TRUE, scale = TRUE)
+pca_res <- prcomp(X_h5, center = TRUE, scale. = TRUE, ncomponents = 5)
 
-```r
-# Matrix operations directly on HDF5
-result <- bdblockmult_hdf5(
-  filename = "data.hdf5",
-  group = "matrices",
-  A = "matrix_A",
-  B = "matrix_B"
-)
-
-# Cross-product
-crossp <- bdCrossprod_hdf5(
-  filename = "data.hdf5",
-  group = "matrices",
-  A = "matrix_A"
-)
-
-# SVD decomposition
-svd_result <- bdSVD_hdf5(
-  filename = "data.hdf5",
-  group = "matrices",
-  dataset = "matrix_A",
-  k = 8,
-  threads = 4
-)
+close(X_h5)
+hdf5_close_all()
 ```
 
 ## Core Functionality
 
-### Linear Algebra Operations
+### Standard R interface (`HDF5Matrix`/S3)
 
-| Operation | R Function | Features |
-|-----------|------------|----------|
-| Matrix multiplication | `bdblockmult_hdf5()` | Block-wise, parallel, HDF5 |
-| Cross-product | `bdCrossprod_hdf5()` | t(A) %*% A, t(A) %*% B |
-| Transposed cross-product | `bdtCrossprod_hdf5()` | A %*% t(A), A %*% t(B) |
-| SVD | `bdSVD_hdf5()` | Block-wise, hierarchical |
-| QR decomposition | `bdQR_hdf5()` | Block-wise |
-| Cholesky | `bdCholesky_hdf5()` | For positive-definite matrices |
-| Matrix inversion | `bdInvCholesky_hdf5()` | Via Cholesky decomposition |
+| Category | Representative calls |
+|:---|:---|
+| Core object handling | `hdf5_create_matrix()`, `hdf5_matrix()`, `dim()`, `nrow()`, `ncol()`, `is_open()`, `close()` |
+| HDF5 inspection and I/O | `list_datasets()`, `hdf5_import()`, `hdf5_import_multiple()`, `as.matrix()`, `as.data.frame()` |
+| Subsetting and assignment | `X[i, j]`, `X[i, j] <- value` |
+| Dimension names | `rownames()`, `colnames()`, `dimnames()` |
+| Element-wise arithmetic | `X + Y`, `X - Y`, `X * Y`, `X / Y` |
+| Matrix algebra | `%*%`, `crossprod()`, `tcrossprod()`, `cbind()`, `rbind()` |
+| Aggregations | `colSums()`, `rowSums()`, `colMeans()`, `rowMeans()`, `colVars()`, `rowVars()`, `colSds()`, `rowSds()`, `colMins()`, `rowMins()`, `colMaxs()`, `rowMaxs()` |
+| Scalar summaries | `mean()`, `var()`, `sd()` |
+| Normalization and transformations | `scale()`, `sweep()` |
+| Correlation | `cor()` |
+| Decompositions | `svd()`, `prcomp()`, `eigen()`, `pseudoinverse()` |
+| Factorizations and solvers | `qr()`, `chol()`, `solve()` |
+| Diagonal operations | `diag()`, `diag<-()`, `diag_op()`, `diag_scale()` |
+| Split, reduce, and apply | `split_dataset()`, `split()`, `reduce()`, `apply_function()` |
+| Resource management and options | `hdf5matrix_options()`, `show_hdf5matrix_options()`, `hdf5_close_all()` |
 
-### Statistical Methods
+### Specialized helpers (`bd*`)
 
-| Method | R Function | Description |
-|--------|------------|-------------|
-| Principal Component Analysis | `bdPCA_hdf5()` | Block-wise PCA with centering/scaling |
-| Singular Value Decomposition | `bdSVD_hdf5()` | Hierarchical block-wise SVD |
-| Canonical Correlation Analysis | `bdCCA_hdf5()` | Multi-omic data integration |
-| Linear Regression | `bdlm_hdf5()` | Large-scale regression models |
+Some utilities do not map directly to an existing base R generic and retain the
+`bd*` prefix. Examples include `bdCreate_hdf5_group()`,
+`bdmove_hdf5_dataset()`, and `bdWrite_hdf5_dimnames()`. These functions are
+part of the package API and are documented in their corresponding help pages.
 
-### Data Management
+## Global Options
 
-| Operation | R Function | Purpose |
-|-----------|------------|---------|
-| Create HDF5 dataset | `bdCreate_hdf5_matrix()` | Initialize HDF5 files |
-| Normalize data | `bdNormalize_hdf5()` | Center and/or scale |
-| Remove low-quality data | `bdRemovelowdata_hdf5()` | Filter by missing values |
-| Impute missing values | `bdImputeSNPs_hdf5()` | Mean/median imputation |
-| Split datasets | `bdSplit_matrix_hdf5()` | Partition into blocks |
-| Merge datasets | `bdBind_hdf5_datasets()` | Combine by rows/columns |
-
-### Utility Functions
-
-| Function | Purpose |
-|----------|---------|
-| `bdgetDim_hdf5()` | Get dataset dimensions |
-| `bdExists_hdf5_element()` | Check if dataset exists |
-| `bdgetDatasetsList_hdf5()` | List all datasets in group |
-| `bdRemove_hdf5_element()` | Delete dataset or group |
-| `bdImportTextFile_hdf5()` | Import text files to HDF5 |
-
-## Documentation
-
-Comprehensive documentation is available at **[https://isglobal-brge.github.io/BigDataStatMeth/](https://isglobal-brge.github.io/BigDataStatMeth/)**
-
-### Sections
-
-- **[Getting Started](https://isglobal-brge.github.io/BigDataStatMeth/tutorials/getting-started.html)**: Installation and first steps
-- **[Fundamentals](https://isglobal-brge.github.io/BigDataStatMeth/fundamentals/)**: HDF5 storage and block-wise computing concepts
-- **[Workflows](https://isglobal-brge.github.io/BigDataStatMeth/workflows/)**: Complete analysis examples (PCA, CCA, cross-platform integration)
-- **[Developing Methods](https://isglobal-brge.github.io/BigDataStatMeth/developing-methods/)**: Building new statistical methods with BigDataStatMeth
-- **[API Reference](https://isglobal-brge.github.io/BigDataStatMeth/api-reference/)**: Complete function documentation (R and C++)
-- **[Technical Guide](https://isglobal-brge.github.io/BigDataStatMeth/technical/performance.html)**: Performance optimization and benchmarking
-
-### Vignettes
+Common settings for HDF5-backed computations can be configured with
+`hdf5matrix_options()`. These include parallel execution, number of threads,
+block size, and HDF5 compression level.
 
 ```r
-# List available vignettes
-vignette(package = "BigDataStatMeth")
-
-# View specific vignette
-vignette("getting-started", package = "BigDataStatMeth")
-vignette("pca-genomics", package = "BigDataStatMeth")
-```
-
-## Performance
-
-BigDataStatMeth is designed for efficiency:
-
-- **Block-wise computation**: Process 100+ GB datasets with 8-16 GB RAM
-- **Parallel algorithms**: Multi-core support for matrix operations
-- **Optimized I/O**: Efficient HDF5 chunking and access patterns
-- **Memory management**: Controlled memory usage through block size tuning
-
-## Use Cases
-
-BigDataStatMeth is particularly suited for:
-
-- **Genomics**: GWAS, eQTL analysis, population genetics
-- **Transcriptomics**: RNA-seq analysis, differential expression
-- **Multi-omics**: Data integration (CCA, MOFA-style analyses)
-- **Large-scale statistics**: Any analysis requiring matrix operations on big data
-- **Method development**: Building new statistical methods for big data
-
-## Examples
-
-### Example 1: Genomic PCA with Quality Control
-
-```r
-library(BigDataStatMeth)
-
-# Load genomic data
-bdCreate_hdf5_matrix("gwas.hdf5", genotypes, "data", "snps")
-
-# Quality control
-bdRemovelowdata_hdf5("gwas.hdf5", "data", "snps", 
-                     pcent = 0.05, bycols = TRUE)  # Remove SNPs >5% missing
-
-# Impute remaining missing values
-bdImputeSNPs_hdf5("gwas.hdf5", "data", "snps_filtered")
-
-# Perform PCA
-pca <- bdPCA_hdf5("gwas.hdf5", "data", "snps_filtered", 
-                  k = 8, bcenter = TRUE, threads = 4)
-
-# Plot results
-plot(pca$components[,1], pca$components[,2],
-     xlab = "PC1", ylab = "PC2",
-     main = "Population Structure")
-```
-
-### Example 2: Multi-Omic CCA
-
-```r
-# Prepare data
-bdCreate_hdf5_matrix("multi_omic.hdf5", gene_expression, "data", "genes")
-bdCreate_hdf5_matrix("multi_omic.hdf5", methylation, "data", "cpgs")
-
-# Normalize
-bdNormalize_hdf5("multi_omic.hdf5", "data", "genes", 
-                 bcenter = TRUE, bscale = TRUE)
-bdNormalize_hdf5("multi_omic.hdf5", "data", "cpgs",
-                 bcenter = TRUE, bscale = TRUE)
-
-# Canonical Correlation Analysis
-cca <- bdCCA_hdf5(
-  filename = "multi_omic.hdf5",
-  X = "NORMALIZED/data/genes",
-  Y = "NORMALIZED/data/cpgs",
-  m = 10  # Number of blocks
+hdf5matrix_options(
+  paral       = TRUE,
+  threads     = 4L,
+  block_size  = 512L,
+  compression = 6L
 )
-
-# Extract canonical correlations
-correlations <- h5read("multi_omic.hdf5", "Results/cor")
 ```
 
-### Example 3: Custom Method Development (C++ API)
+These settings are especially useful for operations dispatched through standard R
+generics, where the usual R call does not always expose all low-level execution
+parameters. Operation-specific parameters can also be passed directly when a
+method supports them (see `?svd.HDF5Matrix`, `?prcomp.HDF5Matrix`,
+`?qr.HDF5Matrix`).
+
+## C++ Infrastructure for New Methods
+
+The C++ API is a central part of `BigDataStatMeth`. The package exposes C++
+classes for HDF5 files, groups, and datasets, and implements block-wise routines
+for matrix algebra, decompositions, and statistical operations. These are the same
+building blocks used internally by the R/S3 interface.
+
+This design allows developers to focus on the statistical or numerical method
+itself, rather than reimplementing HDF5 file handling, block iteration, or data
+movement.
 
 ```cpp
 #include <Rcpp.h>
@@ -273,26 +186,92 @@ using namespace BigDataStatMeth;
 
 // [[Rcpp::export]]
 void custom_analysis(std::string filename, std::string dataset) {
-  
-  hdf5Dataset* ds = new hdf5Dataset(filename, dataset, false);
-  ds->openDataset();
-  
-  // Your custom algorithm using BigDataStatMeth functions
-  // Block-wise processing, matrix operations, etc.
-  
-  delete ds;
+
+    std::unique_ptr<BigDataStatMeth::hdf5Dataset> ds(nullptr);
+         
+    ds.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false ) );
+    ds->openDataset();
+
+    // Block-wise processing using BigDataStatMeth routines
+    // ...
+
+    delete ds;
 }
 ```
 
-See [Developing Methods](https://isglobal-brge.github.io/BigDataStatMeth/developing-methods/) for complete examples.
+See [Developing Methods](https://isglobal-brge.github.io/BigDataStatMeth/developing-methods/)
+for complete examples in both R and C++.
+
+## Documentation
+
+Comprehensive documentation is available at
+**[https://isglobal-brge.github.io/BigDataStatMeth/](https://isglobal-brge.github.io/BigDataStatMeth/)**
+
+- **[Getting Started](https://isglobal-brge.github.io/BigDataStatMeth/tutorials/getting-started.html)** — installation and first steps
+- **[Fundamentals](https://isglobal-brge.github.io/BigDataStatMeth/fundamentals/)** — HDF5 storage and block-wise computing concepts
+- **[Workflows](https://isglobal-brge.github.io/BigDataStatMeth/workflows/)** — complete analysis examples
+- **[Developing Methods](https://isglobal-brge.github.io/BigDataStatMeth/developing-methods/)** — building new statistical methods using the R and C++ APIs
+- **[API Reference](https://isglobal-brge.github.io/BigDataStatMeth/api-reference/)** — complete function documentation (R and C++)
+
+```r
+# List available vignettes
+vignette(package = "BigDataStatMeth")
+
+# View the main vignette
+vignette("BigDataStatMeth")
+```
+
+## Performance
+
+BigDataStatMeth is designed for efficiency at scale:
+
+- **Block-wise computation** — process very large matrices with a controlled,
+  fixed memory footprint
+- **Parallel algorithms** — multi-core support for matrix operations and
+  decompositions
+- **Optimized I/O** — efficient HDF5 chunking and access patterns
+- **File-space reuse** — space released by removed or overwritten intermediate
+  datasets is tracked and reused within the same file
+
+## Use Cases
+
+BigDataStatMeth is suited for any analytical workflow that involves large matrix
+operations. Typical scenarios include:
+
+- **Large-scale matrix computations** — multiplication, crossproducts, and
+  element-wise operations on matrices that exceed available RAM
+- **Dimensionality reduction** — PCA and SVD on wide or tall matrices stored on
+  disk
+- **Statistical inference** — regression, Cholesky-based solvers, and correlation
+  analysis at scale
+- **Multi-dataset integration** — canonical correlation analysis (CCA) across
+  multiple data sources
+- **Method development** — building and prototyping new scalable statistical
+  methods using the C++ infrastructure without reimplementing HDF5 management or
+  block iteration
+
+## HDF5 Resource Management
+
+HDF5-backed objects keep file handles open while they are in use. Objects can be
+closed individually with `close()`, and all open HDF5 handles managed by the
+package can be closed with `hdf5_close_all()`.
+
+```r
+close(X_h5)
+hdf5_close_all()
+```
+
+After calling `hdf5_close_all()`, HDF5-backed objects that were open should be
+reopened before being used again. Calling `gc()` may also help trigger R
+finalizers for objects that are no longer referenced.
 
 ## Citation
 
 If you use BigDataStatMeth in your research, please cite:
 
 ```
-Pelegri-Siso D, Gonzalez JR (2024). BigDataStatMeth: Statistical Methods 
-for Big Data Using Block-wise Algorithms and HDF5 Storage. 
+Pelegri-Siso D, Gonzalez JR (2024). BigDataStatMeth: Statistical Methods
+for Big Data Using Block-wise Algorithms and HDF5 Storage.
 R package version X.X.X, https://github.com/isglobal-brge/BigDataStatMeth
 ```
 
@@ -300,29 +279,29 @@ BibTeX entry:
 
 ```bibtex
 @Manual{bigdatastatmeth,
-  title = {BigDataStatMeth: Statistical Methods for Big Data},
+  title  = {BigDataStatMeth: Statistical Methods for Big Data},
   author = {Dolors Pelegri-Siso and Juan R. Gonzalez},
-  year = {2024},
-  note = {R package version X.X.X},
-  url = {https://github.com/isglobal-brge/BigDataStatMeth},
+  year   = {2024},
+  note   = {R package version X.X.X},
+  url    = {https://github.com/isglobal-brge/BigDataStatMeth},
 }
 ```
 
 ## Contributing
 
-Contributions are welcome! Please:
+Contributions are welcome. Please:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -m 'Add new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
 5. Open a Pull Request
 
 ### Development Guidelines
 
-- Follow existing code style (Rcpp coding standards)
+- Follow existing code style (Rcpp coding standards for C++, tidyverse style for R)
 - Add tests for new functionality
-- Update documentation (Roxygen2 for R, Doxygen for C++)
+- Update documentation — Roxygen2 for R functions, Doxygen for C++ headers
 - Run `R CMD check` before submitting
 
 ## Getting Help
@@ -332,18 +311,19 @@ Contributions are welcome! Please:
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License — see [LICENSE](LICENSE) file for details.
 
 ## Authors
 
-**Dolors Pelegri-Siso**  
-Bioinformatics Research Group in Epidemiology (BRGE)  
-ISGlobal - Barcelona Institute for Global Health
+**Dolors Pelegri-Siso**
+Bioinformatics Research Group in Epidemiology (BRGE)
+ISGlobal — Barcelona Institute for Global Health
 
-**Juan R. Gonzalez**  
-Bioinformatics Research Group in Epidemiology (BRGE)  
-ISGlobal - Barcelona Institute for Global Health
+**Juan R. Gonzalez**
+Bioinformatics Research Group in Epidemiology (BRGE)
+ISGlobal — Barcelona Institute for Global Health
 
 ## Acknowledgments
 
-Development of BigDataStatMeth was supported by ISGlobal and the Bioinformatics Research Group in Epidemiology (BRGE).
+Development of BigDataStatMeth was supported by ISGlobal and the Bioinformatics
+Research Group in Epidemiology (BRGE).

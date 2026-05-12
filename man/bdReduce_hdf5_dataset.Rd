@@ -71,47 +71,27 @@ This function provides efficient dataset reduction capabilities with:
 The function processes datasets efficiently while maintaining data integrity.
 }
 \examples{
-\dontrun{
-library(BigDataStatMeth)
+\donttest{
+fn <- tempfile(fileext = ".h5")
+hdf5_create_matrix(fn, "data/matrix1", data = matrix(1:100, 10, 10))
+hdf5_create_matrix(fn, "data/matrix2", data = matrix(101:200, 10, 10))
+hdf5_create_matrix(fn, "data/matrix3", data = matrix(201:300, 10, 10))
 
-# Create test matrices
-X1 <- matrix(1:100, 10, 10)
-X2 <- matrix(101:200, 10, 10)
-X3 <- matrix(201:300, 10, 10)
-
-# Save to HDF5
-fn <- "test.hdf5"
-bdCreate_hdf5_matrix(fn, X1, "data", "matrix1",
-                     overwriteFile = TRUE)
-bdCreate_hdf5_matrix(fn, X2, "data", "matrix2",
-                     overwriteFile = FALSE)
-bdCreate_hdf5_matrix(fn, X3, "data", "matrix3",
-                     overwriteFile = FALSE)
-
-# Reduce datasets by addition
 bdReduce_hdf5_dataset(
-  filename = fn,
-  group = "data",
+  filename   = fn,
+  group      = "data",
   reducefunction = "+",
-  outgroup = "results",
+  outgroup   = "results",
   outdataset = "sum_matrix",
-  overwrite = TRUE
+  overwrite  = TRUE
 )
-
-# Cleanup
-if (file.exists(fn)) {
-  file.remove(fn)
-}
+hdf5_close_all()
+unlink(fn)
 }
 
 }
 \references{
 \itemize{
 \item The HDF Group. (2000-2010). HDF5 User's Guide.
-}
-}
-\seealso{
-\itemize{
-\item \code{\link{bdCreate_hdf5_matrix}} for creating HDF5 matrices
 }
 }

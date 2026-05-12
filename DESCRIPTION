@@ -1,8 +1,8 @@
 Package: BigDataStatMeth
 Type: Package
-Title: Tools and Infrastructure for Developing 'Scalable' 'HDF5'-Based Methods
-Version: 1.0.3
-Date: 2025-11-28
+Title: Title: Scalable Statistical Computing with HDF5-Backed Matrices
+Version: 2.0.0.32
+Date: 2026-05-08
 Authors@R: 
     c(
         person( given = "Dolors", 
@@ -28,9 +28,9 @@ Description: A framework for 'scalable' statistical computing on large on-disk
     precision-medicine research.
 License: MIT + file LICENSE
 Depends: R (>= 4.1.0)
-Imports: data.table, Rcpp (>= 1.0.6), RCurl, rhdf5, utils
-LinkingTo: Rcpp, RcppEigen, Rhdf5lib, BH
-Suggests: HDF5Array, Matrix, BiocStyle, knitr, rmarkdown, ggplot2, microbenchmark
+Imports: data.table, Rcpp (>= 1.0.6), RCurl, utils, R6
+LinkingTo: Rcpp, RcppEigen, Rhdf5lib
+Suggests: Matrix, BiocStyle, knitr, rmarkdown, ggplot2, MASS
 SystemRequirements: GNU make, C++17
 Encoding: UTF-8
 VignetteBuilder: knitr

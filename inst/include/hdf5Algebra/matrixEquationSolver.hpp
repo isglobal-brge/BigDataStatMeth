@@ -192,36 +192,20 @@ namespace BigDataStatMeth {
                     // dgesv( int N, int NRHS, double A, int LDA, int IPIV, double B, int LDB, int INFO);
                     dgesv_( &n, &nrhs, a.data(), &lda, ipiv.data(), b.data(), &ldb, &info );
                 }
-                
             }
             
             dsX->writeDataset(b.data());
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            checkClose_file(dsA, dsB, dsX);
-            dsA = dsB = dsX = nullptr;
-            Rcpp::Rcerr<<"\nc++ exception RcppSolveHdf5 (File IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppSolveHdf5 (File IException)");
         } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-            checkClose_file(dsA, dsB, dsX);
-            dsA = dsB = dsX = nullptr;
-            Rcpp::Rcerr<<"\nc++ exception RcppSolveHdf5 (Group IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppSolveHdf5 (Group IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            checkClose_file(dsA, dsB, dsX);
-            dsA = dsB = dsX = nullptr;
-            Rcpp::Rcerr<<"\nc++ exception RcppSolveHdf5 (DataSet IException)";
-            return void();
+            throw std::runtime_error("c++ exception RcppSolveHdf5 (DataSet IException)");
         } catch(std::exception& ex) {
-            checkClose_file(dsA, dsB, dsX);
-            dsA = dsB = dsX = nullptr;
-            Rcpp::Rcerr<<"\nc++ exception RcppSolveHdf5" << ex.what();
-            return void();
+            throw std::runtime_error(std::string("c++ exception RcppSolveHdf5: ") + ex.what());
         } catch (...) {
-            checkClose_file(dsA, dsB, dsX);
-            dsA = dsB = dsX = nullptr;
-            Rcpp::Rcerr<<"\nC++ exception RcppSolveHdf5 (unknown reason)";
-            return void();
+            throw std::runtime_error("C++ exception RcppSolveHdf5 (unknown reason)");
         }
         
         return void();

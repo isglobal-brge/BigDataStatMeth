@@ -81,27 +81,24 @@
 //' @return Numeric matrix containing the transposed cross-product result.
 //'
 //' @examples
-//' library(BigDataStatMeth)
 //' 
 //' # Single matrix transposed cross-product
 //' n <- 100
 //' p <- 60
 //' X <- matrix(rnorm(n*p), nrow=n, ncol=p)
 //' res <- bdtCrossprod(X)
-//' 
-//' # Verify against base R
 //' all.equal(tcrossprod(X), res)
 //' 
 //' # Two-matrix transposed cross-product
+//' # Both matrices must have the same number of columns
 //' n <- 100
-//' p <- 100
-//' Y <- matrix(rnorm(n*p), nrow=n)
+//' p <- 60
+//' Y <- matrix(rnorm(n*p), nrow=n, ncol=p)
 //' res <- bdtCrossprod(X, Y)
+//' all.equal(tcrossprod(X, Y), res)
 //' 
 //' # Parallel computation
-//' res_par <- bdtCrossprod(X, Y,
-//'                         paral = TRUE,
-//'                         threads = 4)
+//' res_par <- bdtCrossprod(X, paral = TRUE, threads = 2)
 //'
 //' @references
 //' * Golub, G. H., & Van Loan, C. F. (2013). Matrix Computations, 4th Edition.
@@ -142,7 +139,7 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
         {
             try{  
                 mA = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(A);
-            } catch(std::exception &ex) { }
+            } catch(std::exception &ex) { Rcpp::stop("bdtCrossprod: %s", ex.what()); }
             
         } else {
             throw("Matrix A is not numeric - Only numeric matrix allowed");
@@ -156,7 +153,7 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
                 try{  
                     mB = Rcpp::as<Eigen::MatrixXd>(B); 
                 }
-                catch(std::exception &ex) { }
+                catch(std::exception &ex) {  Rcpp::stop("bdtCrossprod: %s", ex.what()); }
             } else {
                 throw("Matrix B is not numeric - Only numeric matrix allowed");
             }
@@ -169,15 +166,13 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
             } else if (bparal == false)  {
                 C = BigDataStatMeth::Rcpp_block_matrix_mul(mA, mTrans, block_size);
             }
+           
         }
         
-    } catch(std::exception &ex) {   
-        Rcpp::Rcerr<<"c++ exception bdtCrossprod: ";
-        Rcpp::Rcerr << ex.what();
-        return(Eigen::MatrixXd(0,0));
+    } catch(std::exception &ex) {
+        Rf_error("c++ exception bdtCrossprod: %s", ex.what());
     } catch (...) {
-        Rcpp::Rcerr<<"\nC++ exception bdtCrossprod (unknown reason)";
-        return(Eigen::MatrixXd(0,0));
+        Rf_error("c++ exception bdtCrossprod (unknown reason)");
     }
     
     return(C);

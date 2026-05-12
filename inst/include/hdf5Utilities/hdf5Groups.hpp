@@ -21,183 +21,209 @@
 
 namespace BigDataStatMeth {
 
-/**
- * @class hdf5Group
- * @brief Class for managing HDF5 groups
- * @details Provides functionality for creating and managing HDF5 groups.
- * Inherits from hdf5File to handle file operations.
- */
-class hdf5Group : public hdf5File
-{
-    
-public:
-    
     /**
-     * @brief Constructor with filename and group name
-     * @param filename Name of HDF5 file
-     * @param group Group name/path
+     * @class hdf5Group
+     * @brief Class for managing HDF5 groups
+     * @details Provides functionality for creating and managing HDF5 groups.
+     * Inherits from hdf5File to handle file operations.
      */
-    hdf5Group(std::string filename, std::string group) :
-    hdf5File(filename, false)
+    class hdf5Group : public hdf5File
     {
-        // Rcpp::Rcout<<"\nPassa per 1";
-        // if( pfile != nullptr ){
-            openFile("rw");
-            groupname = group;
-        // } else {
-        //     Rf_error("c++ exception Please create or close the file before proceeding." );
-        // }
-    }
-    
-    
-    /**
-     * @brief Constructor with file pointer and group name
-     * @param file HDF5 file pointer
-     * @param group Group name/path
-     */
-    hdf5Group(H5::H5File* file, std::string group) : 
-    hdf5File(file)
-    {
-        // Rcpp::Rcout<<"\nPassa per 2";
         
-        if (pfile == nullptr) openFile("rw");  //..2025/08/13..// 
-        groupname = group;          //..2025/08/13..// 
+    public:
         
-        //..2025/08/13..// if( pfile != nullptr ){
-        //..2025/08/13..//     openFile("rw");
-        //..2025/08/13..//     groupname = group;
-        //..2025/08/13..// } else {
-        //..2025/08/13..//     Rf_error("c++ exception Please create or close the file before proceeding");
-        //..2025/08/13..// }
-    }
-    
-    /**
-     * @brief Constructor with file object and group name
-     * @details Creates a new group, with option to force creation by removing existing group
-     * 
-     * @param objFile HDF5 file object
-     * @param group Group name/path
-     * @param forceGroup Whether to force group creation by removing existing group
-     */
-    hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group, bool forceGroup) : 
-    hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
-    {
-        Rcpp::Rcout<<"\nPassa per 3";
-        if( pfile != nullptr ){
-            openFile("rw");
-        } else {
-            Rf_error("c++ exception Please create or close the file before proceeding." );
+        /**
+         * @brief Constructor with filename and group name
+         * @param filename Name of HDF5 file
+         * @param group Group name/path
+         */
+        hdf5Group(std::string filename, std::string group) :
+        hdf5File(filename, false)
+        {
+            
+            try  {
+                
+                openFile("rw");
+                groupname = group;
+                
+            } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+                throw std::runtime_error("c++ exception hdf5Group (File IException)");
+            } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+                throw std::runtime_error("c++ exception hdf5Group (DataSet IException)");
+            } catch(std::exception &ex) {
+                throw std::runtime_error(std::string("c++ exception hdf5Group: ") + ex.what());
+            } 
+            
         }
         
-        if( exists_HDF5_element(pfile, group) ) {
-            if( forceGroup == true) {
-                remove_elements(pfile, getGroupName(), {}); 
+        /**
+         * @brief Constructor with file pointer and group name
+         * @param file HDF5 file pointer
+         * @param group Group name/path
+         */
+        hdf5Group(H5::H5File* file, std::string group) : 
+        hdf5File(file)
+        {
+            // Rcpp::Rcout<<"\nPassa per 2";
+            
+            try  {
+                
+                if (pfile == nullptr) openFile("rw");  //..2025/08/13..// 
+                groupname = group;          //..2025/08/13..// 
+                
+            } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
+                throw std::runtime_error("c++ exception hdf5Group (File IException)");
+            } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
+                throw std::runtime_error("c++ exception hdf5Group (DataSet IException)");
+            } catch(std::exception &ex) {
+                throw std::runtime_error(std::string("c++ exception hdf5Group: ") + ex.what());
+            } 
+            
+            //..2025/08/13..// if( pfile != nullptr ){
+            //..2025/08/13..//     openFile("rw");
+            //..2025/08/13..//     groupname = group;
+            //..2025/08/13..// } else {
+            //..2025/08/13..//     Rf_error("c++ exception Please create or close the file before proceeding");
+            //..2025/08/13..// }
+        }
+        
+        /**
+         * @brief Constructor with file object and group name
+         * @details Creates a new group, with option to force creation by removing existing group
+         * 
+         * @param objFile HDF5 file object
+         * @param group Group name/path
+         * @param forceGroup Whether to force group creation by removing existing group
+         */
+        hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group, bool forceGroup) : 
+        hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
+        {
+            Rcpp::Rcout<<"\nPassa per 3";
+            if( pfile != nullptr ){
+                openFile("rw");
             } else {
-                Rf_error("c++ exception. Data already exists in the file. Please set overwrite = true to proceed." );
+                throw std::runtime_error("c++ exception Please create or close the file before proceeding.");
             }
             
-        }
-        create_HDF5_groups(group);    
-        
-        groupname = group;
-        
-        
-    }
-    
-    
-    /**
-     * @brief Constructor with file object and group name
-     * @details Creates a new group if it doesn't exist
-     * 
-     * @param objFile HDF5 file object
-     * @param group Group name/path
-     */
-    hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group) : 
-    hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
-    {
-        if( pfile != nullptr ){
-            openFile("rw");
-        } else {
-            Rf_error("c++ exception Please create file before proceed" );
-        }
-        
-        if( !exists_HDF5_element(pfile, group) ) {
-            create_HDF5_groups(group);    
-        }
-        
-        groupname = group;
-    }
-    
-    
-    /**
-     * @brief Create multiple nested groups
-     * @details Creates a hierarchy of groups based on path separated by "/"
-     * 
-     * @param mGroup Group path with groups separated by "/"
-     */
-    // Create multiple group in hdf5 data file, groups must be separated by "/"
-    void create_HDF5_groups( H5std_string mGroup)
-    {
-        try
-        {
-            H5::Exception::dontPrint();
-            
-            char * pch;
-            std::string strgroup = mGroup;
-            char*  cpgroup = &strgroup[0];
-            std::string results = "";
-            
-            pch = strtok(cpgroup, "/"); 
-            
-            while (pch != NULL)  
-            {  
-                if( results.compare("") == 0 ) {
-                    results = pch;
+            if( exists_HDF5_element(pfile, group) ) {
+                if( forceGroup == true) {
+                    remove_elements(pfile, getGroupName(), {}); 
                 } else {
-                    results = results + "/" + pch;
+                    throw std::runtime_error("c++ exception. Data already exists in the file. Please set overwrite = true to proceed.");
                 }
                 
-                if(!pathExists( pfile->getId(), results )) {
-                    pfile->createGroup(results);
-                }
-                pch = strtok (NULL, "/");  
-            }  
+            }
+            create_HDF5_groups(group);    
             
-        } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            // pfile->close();
-            Rf_error("c++ exception create_HDF5_groups_ptr (File IException)" );
-            return void();
-        } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-            // pfile->close();
-            Rf_error("c++ exception create_HDF5_groups_ptr (Group IException)" );
-            return void();
-        } 
+            groupname = group;
+            
+            
+        }
         
-        groupname = mGroup;
-        return void();
-    }
-    
-    
-    std::string getGroupName() { return(groupname); }  // Return group name
-    
-    
-    // Destructor
-    ~hdf5Group(){
-    }
-    
-protected:
-    // Variables declaration
-    std::string groupname;
-    
-private:
-    
-    // Variables declaration
-    
-    // Function declarations
-    
-    
-    
-};
+        
+        /**
+         * @brief Constructor with file object and group name
+         * @details Creates a new group if it doesn't exist
+         * 
+         * @param objFile HDF5 file object
+         * @param group Group name/path
+         */
+        //.. 20260426 ..// hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group) : 
+        //.. 20260426 ..// hdf5File(objFile->getPath() , objFile->getFilename(), objFile->getFileptr(), false)
+        //.. 20260426 ..// {
+        //.. 20260426 ..//     if( pfile != nullptr ){
+        //.. 20260426 ..//         openFile("rw");
+        //.. 20260426 ..//     } else {
+        //.. 20260426 ..//         throw std::runtime_error("c++ exception Please create file before proceed");
+        //.. 20260426 ..//     }
+        //.. 20260426 ..//     
+        //.. 20260426 ..//     if( !exists_HDF5_element(pfile, group) ) {
+        //.. 20260426 ..//         create_HDF5_groups(group);    
+        //.. 20260426 ..//     }
+        //.. 20260426 ..//     
+        //.. 20260426 ..//     groupname = group;
+        //.. 20260426 ..// }
+        
+        hdf5Group(BigDataStatMeth::hdf5File* objFile, std::string group) : 
+        hdf5File(objFile->getPath(), objFile->getFilename(), objFile->getFileptr(), false)
+        {
+            // pfile is already set from objFile — do NOT call openFile()
+            // bOwnsFile = false is already set by the hdf5File constructor above
+            if( pfile == nullptr ){
+                throw std::runtime_error("c++ exception: file pointer is null");
+            }
+            if( !exists_HDF5_element(pfile, group) ) {
+                create_HDF5_groups(group);    
+            }
+            groupname = group;
+        }
+        
+        
+        /**
+         * @brief Create multiple nested groups
+         * @details Creates a hierarchy of groups based on path separated by "/"
+         * 
+         * @param mGroup Group path with groups separated by "/"
+         */
+        // Create multiple group in hdf5 data file, groups must be separated by "/"
+        void create_HDF5_groups( H5std_string mGroup)
+        {
+            try
+            {
+                H5::Exception::dontPrint();
+                
+                char * pch;
+                std::string strgroup = mGroup;
+                char*  cpgroup = &strgroup[0];
+                std::string results = "";
+                
+                pch = strtok(cpgroup, "/"); 
+                
+                while (pch != NULL)  
+                {  
+                    if( results.compare("") == 0 ) {
+                        results = pch;
+                    } else {
+                        results = results + "/" + pch;
+                    }
+                    
+                    if(!pathExists( pfile->getId(), results )) {
+                        pfile->createGroup(results);
+                    }
+                    pch = strtok (NULL, "/");  
+                }  
+                
+            } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+                // pfile->close();
+                throw std::runtime_error("c++ exception create_HDF5_groups_ptr (File IException)");
+            } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
+                // pfile->close();
+                throw std::runtime_error("c++ exception create_HDF5_groups_ptr (Group IException)");
+            } 
+            
+            groupname = mGroup;
+            return void();
+        }
+        
+        
+        std::string getGroupName() { return(groupname); }  // Return group name
+        
+        
+        // Destructor
+        ~hdf5Group(){
+        }
+        
+    protected:
+        // Variables declaration
+        std::string groupname;
+        
+    private:
+        
+        // Variables declaration
+        // Function declarations
+        
+        
+    };
 }
 
 #endif // BIGDATASTATMETH_HDF5_GROUPS_HPP

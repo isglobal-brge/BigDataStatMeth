@@ -61,19 +61,20 @@
 //' }
 //'
 //' @examples
-//' \dontrun{
+//' \donttest{
+//' fn <- tempfile(fileext = ".h5")
+//' hdf5_create_matrix(fn, "MGCCA_IN/X",
+//'                    data = matrix(rnorm(5000), 100, 50))
+//' 
 //' bdWrite_hdf5_dimnames(
-//'   filename = "test.h5",
-//'   group = "MGCCA_IN",
-//'   dataset = "X",
+//'   filename = fn,
+//'   group    = "MGCCA_IN",
+//'   dataset  = "X",
 //'   rownames = paste0("r", seq_len(100)),
 //'   colnames = paste0("c", seq_len(50))
 //' )
-//'
-//' # Skip column names:
-//' bdWrite_hdf5_dimnames("test.h5", "MGCCA_IN", "X",
-//'                       rownames = paste0("r", 1:100),
-//'                       colnames = character(0))
+//' hdf5_close_all()
+//' unlink(fn)
 //' }
 //'
 //' @export
@@ -84,9 +85,6 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
                             Rcpp::StringVector colnames)
  { 
      
-     BigDataStatMeth::hdf5Dataset* objDataset = nullptr;
-     BigDataStatMeth::hdf5Dims* dsdims = nullptr;
-     
      Rcpp::List lst_return = Rcpp::List::create(Rcpp::Named("fn") = "",
                                                 Rcpp::Named("dsrows") = "",
                                                 Rcpp::Named("dscols") = "");
@@ -95,13 +93,20 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
      {
          
          H5::Exception::dontPrint();
+
+        //  BigDataStatMeth::hdf5Dataset* objDataset = nullptr;
+        //  BigDataStatMeth::hdf5Dims* dsdims = nullptr;
+         std::unique_ptr<BigDataStatMeth::hdf5Dataset> objDataset(nullptr);
+        // BigDataStatMeth::HDF5Handle<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
+        std::unique_ptr<BigDataStatMeth::hdf5Dims> dsdims(nullptr);
          
-         objDataset = new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false );
+         objDataset.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false ) );
          objDataset->openDataset();
          
          hsize_t* dims = objDataset->dim(); 
          
-         dsdims = new BigDataStatMeth::hdf5Dims(objDataset);
+         // dsdims = new BigDataStatMeth::hdf5Dims(objDataset.get());
+         dsdims.reset( new BigDataStatMeth::hdf5Dims(objDataset.get()) );
          
          if( rownames.size() < dims[1]){
              Rcpp::CharacterVector svrownames(1);
@@ -110,30 +115,22 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
              Rcpp::CharacterVector svrcolnames(1);
              dsdims->writeDimnames( svrcolnames, rownames );
          } else {
-             dsdims->writeDimnames( colnames, rownames);
+             //. 20260222 .//dsdims->writeDimnames( colnames, rownames);
+             dsdims->writeDimnames( rownames, colnames);
          }
-         
-         delete dsdims; dsdims = nullptr;
-         delete objDataset; objDataset = nullptr;
          
          lst_return["fn"] = filename;
          lst_return["dsrows"] = group + "/." + dataset + "/1";
          lst_return["dscols"] = group + "/." + dataset + "/2";
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         if(dsdims != nullptr) delete dsdims;
-         checkClose_file(objDataset);
-         Rf_error("c++ c++ exception bdWrite_hdf5_dimnames (File IException)");
+         Rcpp::stop("c++ c++ exception bdWrite_hdf5_dimnames (File IException)");
          return(lst_return);
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         if(dsdims != nullptr) delete dsdims;
-         checkClose_file(objDataset);
-         Rf_error( "c++ exception bdWrite_hdf5_dimnames (DataSet IException)");
+         Rcpp::stop("c++ exception bdWrite_hdf5_dimnames (DataSet IException)");
          return(lst_return);
      } catch(std::exception &ex) {
-         if(dsdims != nullptr) delete dsdims;
-         checkClose_file(objDataset);
-         Rf_error( "c++ exception bdWrite_hdf5_dimnames %s", ex.what());
+         Rcpp::stop("c++ exception bdWrite_hdf5_dimnames: " + std::string(ex.what()));
          return(lst_return);
      } 
      
