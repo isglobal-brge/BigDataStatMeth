@@ -100,6 +100,24 @@ statistical computing with HDF5 files.
 
 * Fixed error propagation in matrix multiplication and crossproduct
   paths.
+* Fixed signed integer overflow in Cholesky block-size computation:
+  `minimumBlockSize` promoted from `int` to `long` in
+  `Cholesky_decomposition_intermediate_hdf5` and
+  `Inverse_of_Cholesky_decomposition_intermediate_hdf5` to prevent
+  overflow before promotion to `double` for `sqrt()`. Detected by
+  gcc-ASAN on R-hub.
+* Fixed index bug in block SVD nzeros threshold loop
+  (`matrixSvdBlock.hpp`): wrong singular value was evaluated in the
+  rank-truncation check, causing incorrect nzeros counts.
+* Fixed thread-safety crash in multi-level block SVD (`H5SL_insert`
+  from `H5I_register`) when the number of hierarchical levels `q >= 2`:
+  `Next_level_SvdBlock_decomposition_hdf5` is now sequential; the outer
+  block loop already provides sufficient parallelism.
+* Fixed `nev` parameter not being applied to per-block truncation in
+  `First_level_SvdBlock_decomposition_hdf5`: the parameter was declared
+  in the function signature but never used, causing unnecessarily large
+  intermediate matrices and a final SVD over more components than
+  requested.
 * Fixed several HDF5 pointer, handle, and finalizer edge cases.
 * Fixed portability issues related to platform-specific memory queries.
 * Fixed several edge cases in diagonal operations, matrix-vector
