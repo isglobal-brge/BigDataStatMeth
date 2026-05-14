@@ -185,17 +185,17 @@ movement.
 using namespace BigDataStatMeth;
 
 // [[Rcpp::export]]
-void custom_analysis(std::string filename, std::string dataset) {
+void custom_analysis(std::string filename, std::string group, std::string dataset) {
 
     std::unique_ptr<BigDataStatMeth::hdf5Dataset> ds(nullptr);
-         
+
     ds.reset( new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false ) );
     ds->openDataset();
 
     // Block-wise processing using BigDataStatMeth routines
     // ...
 
-    delete ds;
+    // ds is automatically closed and released when it goes out of scope
 }
 ```
 
@@ -244,8 +244,8 @@ operations. Typical scenarios include:
   disk
 - **Statistical inference** — regression, Cholesky-based solvers, and correlation
   analysis at scale
-- **Multi-dataset integration** — canonical correlation analysis (CCA) across
-  multiple data sources
+- **Multi-dataset integration** — combining and analyzing matrices across
+  multiple data sources, with support for multi-omics workflows
 - **Method development** — building and prototyping new scalable statistical
   methods using the C++ infrastructure without reimplementing HDF5 management or
   block iteration
@@ -270,9 +270,9 @@ finalizers for objects that are no longer referenced.
 If you use BigDataStatMeth in your research, please cite:
 
 ```
-Pelegri-Siso D, Gonzalez JR (2024). BigDataStatMeth: Statistical Methods
+Pelegri-Siso D, Gonzalez JR (2026). BigDataStatMeth: Statistical Methods
 for Big Data Using Block-wise Algorithms and HDF5 Storage.
-R package version X.X.X, https://github.com/isglobal-brge/BigDataStatMeth
+R package version 2.0.0, https://github.com/isglobal-brge/BigDataStatMeth
 ```
 
 BibTeX entry:
@@ -281,8 +281,8 @@ BibTeX entry:
 @Manual{bigdatastatmeth,
   title  = {BigDataStatMeth: Statistical Methods for Big Data},
   author = {Dolors Pelegri-Siso and Juan R. Gonzalez},
-  year   = {2024},
-  note   = {R package version X.X.X},
+  year   = {2026},
+  note   = {R package version 2.0.0},
   url    = {https://github.com/isglobal-brge/BigDataStatMeth},
 }
 ```
