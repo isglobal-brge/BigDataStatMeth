@@ -1,8 +1,8 @@
 Package: BigDataStatMeth
 Type: Package
 Title: Title: Scalable Statistical Computing with HDF5-Backed Matrices
-Version: 2.0.0
-Date: 2026-05-14
+Version: 2.0.1
+Date: 2026-05-16
 Authors@R: 
     c(
         person( given = "Dolors", 
