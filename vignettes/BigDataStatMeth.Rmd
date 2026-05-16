@@ -204,23 +204,25 @@ allow this vignette to be tested against older source layouts in which
 the same file was stored elsewhere.
 
 ```{r import-tabular-data}
-csv_file <- system.file(
-  "extdata", "colesterol.csv",
-  package = "BigDataStatMeth"
+# Generate reproducible example data matching the cholesterol dataset structure
+set.seed(4214123)
+n <- 1000L
+
+colesterol <- data.frame(
+  TCholesterol = rnorm(n, mean = 195.8, sd = 30.1),
+  Age          = rnorm(n, mean = 58.4,  sd = 9.9),
+  Insulin      = rnorm(n, mean = 12.5,  sd = 7.4),
+  Creatinine   = rnorm(n, mean = 0.798, sd = 0.098),
+  BUN          = rnorm(n, mean = 14.6,  sd = 3.4),
+  LLDR         = rnorm(n, mean = 0.981, sd = 0.450),
+  Triglycerides= rnorm(n, mean = 136.6, sd = 55.1),
+  HDL_C        = rnorm(n, mean = 48.2,  sd = 9.2),
+  LDL_C        = rnorm(n, mean = 116.4, sd = 25.5),
+  Sex          = rbinom(n, 1, prob = 0.58)
 )
 
-if (!nzchar(csv_file)) {
-  csv_file <- system.file(
-    "data", "colesterol.csv",
-    package = "BigDataStatMeth"
-  )
-}
-
-if (!nzchar(csv_file) && file.exists("colesterol.csv")) {
-  csv_file <- "colesterol.csv"
-}
-
-stopifnot(nzchar(csv_file))
+csv_file <- tempfile(fileext = ".csv")
+write.csv(colesterol, csv_file, row.names = FALSE)
 
 h5_csv <- tempfile(fileext = ".h5")
 
