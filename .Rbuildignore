@@ -4,6 +4,7 @@
 ^Analyses\.*
 ^pkg\.*
 ^.*\.hdf5$
+^.*\.old$
 ^\.github$
 ^\.html$
 ^.*\ 2*
@@ -18,5 +19,4 @@
 ^Meta$
 ^vignettes/.*\.bck*$
 ^\.sync\.ffs_db$
-^fix_error_handling\.py$
 ^\.positai$

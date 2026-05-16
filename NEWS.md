@@ -1,3 +1,8 @@
+# BigDataStatMeth 2.0.1
+
+* Fixed vignette build failure on Debian: replaced external CSV file
+  with reproducible synthetic data in the `hdf5_import` example.
+
 # BigDataStatMeth 2.0.0
 
 This is a major release of BigDataStatMeth. It introduces a new
