@@ -142,7 +142,6 @@ std::vector<svdPositions> prepareForParallelization( T* dsA, int M, int k, bool 
 
 
     std::vector<svdPositions> pos;
-    // Rcpp::Rcout<<"\nAnem a preparar per paralelitzar... a veure que fem per aquí perquè no m'agrada massa... \n";
 
     try{
 
@@ -351,8 +350,6 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                     }
                 }
                 
-
-                // Rcpp::Rcout<<"\nPeta a l'step 1? - 1";
                 {
                     //    b) SVD for each block
                     svdeig retsvd;
@@ -371,11 +368,6 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
 
                     //    c)  U*d
                     // Create diagonal matrix from svd decomposition d
-                    //.. 2026/05/02 ..// int isize = (retsvd.d).size() - nzeros;
-
-                    //.. 2026/05/02 ..// if( isize < 2 ) {
-                    //.. 2026/05/02 ..//     isize = 2;
-                    //.. 2026/05/02 ..// }
 
                     int isize = (retsvd.d).size() - nzeros;
                     if( nev > 0 ) isize = std::min(isize, nev);   // ← añadir esta línea

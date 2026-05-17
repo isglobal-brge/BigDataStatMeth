@@ -244,9 +244,6 @@ namespace BigDataStatMeth {
         
         try{
 
-            // BigDataStatMeth::hdf5Dataset* dsnormalizedData = nullptr;
-            // BigDataStatMeth::hdf5Dataset* dsJoined = nullptr;
-            // BigDataStatMeth::hdf5DatasetInternal* dsnormalizedData_i = nullptr;
             std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsnormalizedData(nullptr);
             std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal> dsJoined(nullptr);
             std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal> dsnormalizedData_i(nullptr);
@@ -260,7 +257,7 @@ namespace BigDataStatMeth {
             Eigen::MatrixXd v;    
             bool transp = false;
             std::string strGroupName  = "tmpgroup",
-                strPrefix; // Outpu group name for temporal data
+                        strPrefix; // Outpu group name for temporal data
             
             Rcpp::CharacterVector strvmatnames = {"A","B","C","D","E","F","G","H","I","J","K",
                                                   "L","M","N","O","P","Q","R","S","T","U","V",
@@ -272,7 +269,6 @@ namespace BigDataStatMeth {
             }
             
             First_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, q, nev, bcenter, bscale, dthreshold, threads);
-            
             for(int j = 1; j < q; j++) { // For each decomposition level :
                 Next_level_SvdBlock_decomposition_hdf5( dsA, strGroupName, k, j, dthreshold, threads);
             }
@@ -299,73 +295,11 @@ namespace BigDataStatMeth {
             
             retsvd = RcppbdSVD_lapack(matlast, false, false, false);
             
-            
             // Write results to hdf5 file : in folder "SVD" and dataset "SVD".<name input dataset>
             dsd->inheritCompressionLevel(dsA->getCompressionLevel());
             dsd->createDataset( 1, retsvd.d.size(), "real");
             dsd->writeDataset( Rcpp::wrap(retsvd.d) );
             
-            // 3.- crossprod initial matrix and svdA$u
-/** 2026/05/03  < < = = = = =             
-            if( bcenter == true || bscale == true || (dsA->getGroupName().find("NORMALIZED_T") != std::string::npos) ) {
-                
-                if(bcenter == true || bscale == true) {
-                    
-                    // dsnormalizedData = new BigDataStatMeth::hdf5Dataset( dsA->getFullPath(), strGroupName, "normalmatrix", false);
-                    dsnormalizedData.reset( new BigDataStatMeth::hdf5Dataset( dsA->getFullPath(), strGroupName, "normalmatrix", false) );
-                    dsnormalizedData->openDataset();
-                    
-                    dims_out = dsnormalizedData->dim();
-                    
-                    Eigen::MatrixXd A = Eigen::MatrixXd::Zero(dims_out[1], dims_out[0]);
-                    dsnormalizedData->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, A.data() );
-                    
-                    // delete dsnormalizedData; dsnormalizedData = nullptr;
-                    
-                    if(transp == false) {
-                        v = A * retsvd.u;
-                    } else {
-                        v = A.transpose() * retsvd.u;
-                        // v = Rcpp_block_matrix_mul_parallel(A,v retsvd.u, false, false, R_NilValue, threads); // multiplication
-                    }
-                    
-                    // v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads);
-                    
-                } else {
-                    
-                    // dsnormalizedData_i = new BigDataStatMeth::hdf5DatasetInternal( dsA->getFullPath(), dsA->getGroupName(), dsA->getDatasetName(), false);
-                    dsnormalizedData_i.reset( new BigDataStatMeth::hdf5DatasetInternal( dsA->getFullPath(), dsA->getGroupName(), dsA->getDatasetName(), false) );
-                    dsnormalizedData_i->openDataset();
-                    
-                    dims_out = dsnormalizedData_i->dim();
-                    
-                    std::vector<double> vdA( dims_out[0] * dims_out[1] );
-                    dsnormalizedData_i->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdA.data() );
-                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A (vdA.data(), dims_out[0], dims_out[1]);
-                    // delete dsnormalizedData_i; dsnormalizedData_i= nullptr;
-                    
-                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads);
-                    
-                }
-                
-            } else {
-                
-                dims_out = dsA->dim();
-                Eigen::MatrixXd A;
-                std::vector<double> vdA( dims_out[0] * dims_out[1] );
-                dsA->readDatasetBlock( {0,0}, {dims_out[0], dims_out[1] }, stride, block, vdA.data() );
-                
-                A = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdA.data(), dims_out[1], dims_out[0] );
-                
-                if(transp == false) {
-                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, true, false, R_NilValue, threads); // crossprod
-                } else {
-                    v = Rcpp_block_matrix_mul_parallel(A, retsvd.u, false, false, R_NilValue, threads); // multiplication
-                }
-            }
- = = = = = > > */
-
-
             // 3.- Compute v = source * (u / d) block-wise — never loads full matrix into RAM
             {
                 // Pre-divide u by d (tiny operation, u is n_small × k)
@@ -415,6 +349,7 @@ namespace BigDataStatMeth {
                         multiplication( dsnormalizedData.get(), ds_udivd.get(), ds_vtmp.get(),
                                         false, false, R_NilValue, R_NilValue, threads );
                     } else {
+                        
                         // transp=true: multiplication() reads out of bounds for this storage convention.
                         // v = normalmatrix_R * u_div_d = (R_nrows × R_ncols) * (R_ncols × k).
                         // Read normalmatrix in row-blocks — never fully in RAM.
@@ -432,11 +367,22 @@ namespace BigDataStatMeth {
                         }
                     }
                 } else if( dsA->getGroupName().find("NORMALIZED_T") != std::string::npos ) {
+                    
+                    // hdf5Dataset ==> Mirall plot
                     dsnormalizedData_i.reset( new BigDataStatMeth::hdf5DatasetInternal( dsA->getFullPath(), dsA->getGroupName(), dsA->getDatasetName(), false) );
                     dsnormalizedData_i->openDataset();
-                    multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(),
-                                    false, false, R_NilValue, R_NilValue, threads );
+                    
+                    // hsize_t* tmp_dim = dsnormalizedData_i->dim();
+                    
+                    // std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsnormalizedData_ni(nullptr);
+                    // dsnormalizedData_ni.reset( new BigDataStatMeth::hdf5Dataset( dsA->getFullPath(), dsA->getGroupName(), dsA->getDatasetName(), false) );
+                    // dsnormalizedData_ni->openDataset();
+                    // 
+                    // tmp_dim = dsnormalizedData_ni->dim();
+                    
+                    multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(), true, false, R_NilValue, R_NilValue, threads );
                 } else {
+                    
                     multiplication( dsA, ds_udivd.get(), ds_vtmp.get(),
                                     !transp, false, R_NilValue, R_NilValue, threads );
                 }
@@ -451,7 +397,6 @@ namespace BigDataStatMeth {
                 
                 
             }
-
 
             // 4.- resuls / svdA$d
             // v = v.array().rowwise()/(retsvd.d).transpose().array();
@@ -541,13 +486,9 @@ namespace BigDataStatMeth {
         
         
         try {
-
+            
             H5::Exception::dontPrint();
-
-            // BigDataStatMeth::hdf5Dataset* dsA = nullptr;
-            // BigDataStatMeth::hdf5Dataset* dsu = nullptr;
-            // BigDataStatMeth::hdf5Dataset* dsv = nullptr;
-            // BigDataStatMeth::hdf5Dataset* dsd = nullptr;
+            
             std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(nullptr);
             std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsu(nullptr);
             std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsv(nullptr);
@@ -629,11 +570,6 @@ namespace BigDataStatMeth {
                     
                 } 
             } 
-            
-            // delete dsu; dsu = nullptr;
-            // delete dsv; dsv = nullptr;
-            // delete dsd; dsd = nullptr;
-            // delete dsA; dsA = nullptr;
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             throw std::runtime_error("c++ exception RcppbdSVD_hdf5 (File IException)");
