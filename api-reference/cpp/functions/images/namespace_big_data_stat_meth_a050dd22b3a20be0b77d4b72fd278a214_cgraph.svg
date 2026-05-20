@@ -49,7 +49,7 @@
 <script type="application/ecmascript">
 var viewWidth = 591;
 var viewHeight = 223;
-var sectionId = 'dynsection-137';
+var sectionId = 'dynsection-163';
 </script>
 <script type="application/ecmascript" xlink:href="../../../../assets/svg.min.js"/>
 <svg id="graph" class="graph">
@@ -58,7 +58,7 @@ var sectionId = 'dynsection-137';
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Eigenvalue decomposition using Spectra (compatible with BigDataStatMeth SVD version)">
+<g id="a_Node000001"><a xlink:title="Eigenvalue decomposition using Spectra (partial, k &lt; n)">
 <polygon fill="#999999" stroke="#666666" points="155.5,-116.5 0,-116.5 0,-86 155.5,-86 155.5,-116.5"/>
 <text xml:space="preserve" text-anchor="start" x="8" y="-103" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppbdEigen</text>
 <text xml:space="preserve" text-anchor="middle" x="77.75" y="-91.75" font-family="Helvetica,sans-Serif" font-size="10.00">_spectra</text>
@@ -106,7 +106,7 @@ var sectionId = 'dynsection-137';
 <!-- Node4 -->
 <g id="Node000004" class="node">
 <title>Node4</title>
-<g id="a_Node000004"><a xlink:href="namespace_big_data_stat_meth.html#a45e2b926781664ca98be48c1bce0379c" target="_top" xlink:title="Improved matrix symmetry detection for big&#45;omics data.">
+<g id="a_Node000004"><a xlink:href="namespace_big_data_stat_meth.html#a45e2b926781664ca98be48c1bce0379c" target="_top" xlink:title="Matrix symmetry detection.">
 <polygon fill="white" stroke="#666666" points="352.62,-116.5 221.12,-116.5 221.12,-86 352.62,-86 352.62,-116.5"/>
 <text xml:space="preserve" text-anchor="start" x="229.12" y="-103" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::isMatrix</text>
 <text xml:space="preserve" text-anchor="middle" x="286.88" y="-91.75" font-family="Helvetica,sans-Serif" font-size="10.00">Symmetric</text>

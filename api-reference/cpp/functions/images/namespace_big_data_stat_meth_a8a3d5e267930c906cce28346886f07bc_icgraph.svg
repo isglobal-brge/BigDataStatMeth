@@ -47,9 +47,9 @@
   </g>
 </defs>
 <script type="application/ecmascript">
-var viewWidth = 1093;
+var viewWidth = 1103;
 var viewHeight = 147;
-var sectionId = 'dynsection-40';
+var sectionId = 'dynsection-65';
 </script>
 <script type="application/ecmascript" xlink:href="../../../../assets/svg.min.js"/>
 <svg id="graph" class="graph">
@@ -59,9 +59,9 @@ var sectionId = 'dynsection-40';
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title="Detects available system memory using R&#45;compatible methods.">
-<polygon fill="#999999" stroke="#666666" points="1085.25,-90.12 935,-90.12 935,-59.62 1085.25,-59.62 1085.25,-90.12"/>
-<text xml:space="preserve" text-anchor="start" x="943" y="-76.62" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::getAvailable</text>
-<text xml:space="preserve" text-anchor="middle" x="1010.12" y="-65.38" font-family="Helvetica,sans-Serif" font-size="10.00">MemoryMB</text>
+<polygon fill="#999999" stroke="#666666" points="1095,-68.12 944.75,-68.12 944.75,-37.62 1095,-37.62 1095,-68.12"/>
+<text xml:space="preserve" text-anchor="start" x="952.75" y="-54.62" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::getAvailable</text>
+<text xml:space="preserve" text-anchor="middle" x="1019.88" y="-43.38" font-family="Helvetica,sans-Serif" font-size="10.00">MemoryMB</text>
 </a>
 </g>
 </g>
@@ -69,9 +69,9 @@ var sectionId = 'dynsection-40';
 <g id="Node000002" class="node">
 <title>Node2</title>
 <g id="a_Node000002"><a xlink:href="namespace_big_data_stat_meth.html#abcd544ed5db12dd03f79bca0a8f31ca5" target="_top" xlink:title="Calculates optimal block size for memory&#45;efficient matrix operations.">
-<polygon fill="white" stroke="#666666" points="899,-90.12 754.75,-90.12 754.75,-59.62 899,-59.62 899,-90.12"/>
-<text xml:space="preserve" text-anchor="start" x="762.75" y="-76.62" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::getOptimal</text>
-<text xml:space="preserve" text-anchor="middle" x="826.88" y="-65.38" font-family="Helvetica,sans-Serif" font-size="10.00">BlockElements</text>
+<polygon fill="white" stroke="#666666" points="903.88,-90.12 759.62,-90.12 759.62,-59.62 903.88,-59.62 903.88,-90.12"/>
+<text xml:space="preserve" text-anchor="start" x="767.62" y="-76.62" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::getOptimal</text>
+<text xml:space="preserve" text-anchor="middle" x="831.75" y="-65.38" font-family="Helvetica,sans-Serif" font-size="10.00">BlockElements</text>
 </a>
 </g>
 </g>
@@ -79,8 +79,26 @@ var sectionId = 'dynsection-40';
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node1&#45;&gt;Node2</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M923.37,-74.88C915.37,-74.88 907.32,-74.88 899.46,-74.88"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="923.11,-78.38 933.11,-74.88 923.11,-71.38 923.11,-78.38"/>
+<path fill="none" stroke="#63b8ff" d="M933.22,-63C923.54,-64.14 913.75,-65.3 904.27,-66.42"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="933.49,-66.49 943.01,-61.84 932.67,-59.54 933.49,-66.49"/>
+</a>
+</g>
+</g>
+<!-- Node11 -->
+<g id="Node000011" class="node">
+<title>Node11</title>
+<g id="a_Node000011"><a xlink:href="namespace_big_data_stat_meth.html#a0095d1d8bf48833bdd112590ed62db5d" target="_top" xlink:title="Main matrix multiplication function for HDF5 matrices.">
+<polygon fill="white" stroke="#666666" points="908.75,-41.5 754.75,-41.5 754.75,-22.25 908.75,-22.25 908.75,-41.5"/>
+<text xml:space="preserve" text-anchor="middle" x="831.75" y="-28" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::multiplication</text>
+</a>
+</g>
+</g>
+<!-- Node1&#45;&gt;Node11 -->
+<g id="edge13_Node000001_Node000011" class="edge">
+<title>Node1&#45;&gt;Node11</title>
+<g id="a_edge13_Node000001_Node000011"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M933.22,-43.21C925.18,-42.3 917.07,-41.39 909.13,-40.49"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="932.68,-46.67 943.01,-44.32 933.46,-39.72 932.68,-46.67"/>
 </a>
 </g>
 </g>
@@ -98,8 +116,8 @@ var sectionId = 'dynsection-40';
 <g id="edge2_Node000002_Node000003" class="edge">
 <title>Node2&#45;&gt;Node3</title>
 <g id="a_edge2_Node000002_Node000003"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M752.51,-93.33C733.09,-98.22 712.31,-103.45 693.53,-108.17"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="753.14,-96.78 761.98,-90.95 751.43,-90 753.14,-96.78"/>
+<path fill="none" stroke="#63b8ff" d="M755.83,-93.27C735.84,-98.17 714.43,-103.43 695.09,-108.17"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="756.42,-96.72 765.29,-90.94 754.75,-89.93 756.42,-96.72"/>
 </a>
 </g>
 </g>
@@ -117,8 +135,8 @@ var sectionId = 'dynsection-40';
 <g id="edge7_Node000002_Node000007" class="edge">
 <title>Node2&#45;&gt;Node7</title>
 <g id="a_edge7_Node000002_Node000007"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M742.99,-74.88C735.08,-74.88 727.04,-74.88 719.09,-74.88"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="742.95,-78.38 752.95,-74.88 742.95,-71.38 742.95,-78.38"/>
+<path fill="none" stroke="#63b8ff" d="M747.84,-74.88C738.39,-74.88 728.72,-74.88 719.21,-74.88"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="747.73,-78.38 757.73,-74.88 747.73,-71.38 747.73,-78.38"/>
 </a>
 </g>
 </g>
@@ -137,15 +155,15 @@ var sectionId = 'dynsection-40';
 <g id="edge10_Node000002_Node000009" class="edge">
 <title>Node2&#45;&gt;Node9</title>
 <g id="a_edge10_Node000002_Node000009"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M758.27,-56.13C740.22,-51.12 720.66,-45.7 702.43,-40.65"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="757.25,-59.48 767.83,-58.78 759.12,-52.73 757.25,-59.48"/>
+<path fill="none" stroke="#63b8ff" d="M761.68,-56.19C742.52,-51.01 721.68,-45.37 702.39,-40.15"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="760.71,-59.56 771.28,-58.79 762.54,-52.8 760.71,-59.56"/>
 </a>
 </g>
 </g>
 <!-- Node4 -->
 <g id="Node000004" class="node">
 <title>Node4</title>
-<g id="a_Node000004"><a xlink:href="namespace_big_data_stat_meth.html#aeb131468048bfb07917a48de0d19d17e" target="_top" xlink:title="Performs Cholesky decomposition with automatic algorithm selection.">
+<g id="a_Node000004"><a xlink:href="namespace_big_data_stat_meth.html#aab45c43d2e92d51d5ea45083e65a4177" target="_top" xlink:title="Performs Cholesky decomposition with automatic algorithm selection.">
 <polygon fill="white" stroke="#666666" points="490.5,-139.12 352.25,-139.12 352.25,-108.62 490.5,-108.62 490.5,-139.12"/>
 <text xml:space="preserve" text-anchor="start" x="360.25" y="-125.62" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::Cholesky</text>
 <text xml:space="preserve" text-anchor="middle" x="421.38" y="-114.38" font-family="Helvetica,sans-Serif" font-size="10.00">_decomposition_hdf5</text>

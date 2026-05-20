@@ -47,9 +47,9 @@
   </g>
 </defs>
 <script type="application/ecmascript">
-var viewWidth = 800;
+var viewWidth = 789;
 var viewHeight = 566;
-var sectionId = 'dynsection-135';
+var sectionId = 'dynsection-161';
 </script>
 <script type="application/ecmascript" xlink:href="../../../../assets/svg.min.js"/>
 <svg id="graph" class="graph">
@@ -59,18 +59,19 @@ var sectionId = 'dynsection-135';
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title="Block&#45;wise eigendecomposition for large HDF5 matrices using Spectra.">
-<polygon fill="#999999" stroke="#666666" points="155.5,-207.5 0,-207.5 0,-177 155.5,-177 155.5,-207.5"/>
-<text xml:space="preserve" text-anchor="start" x="8" y="-194" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppbdEigen</text>
-<text xml:space="preserve" text-anchor="middle" x="77.75" y="-182.75" font-family="Helvetica,sans-Serif" font-size="10.00">_hdf5_Block</text>
+<polygon fill="#999999" stroke="#666666" points="155.5,-140.5 0,-140.5 0,-110 155.5,-110 155.5,-140.5"/>
+<text xml:space="preserve" text-anchor="start" x="8" y="-127" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppbdEigen</text>
+<text xml:space="preserve" text-anchor="middle" x="77.75" y="-115.75" font-family="Helvetica,sans-Serif" font-size="10.00">_hdf5_Block</text>
 </a>
 </g>
 </g>
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="namespace_big_data_stat_meth.html#a304b42b14ec87d4acc6f34ff0231529d" target="_top" xlink:title="Safely close any number of dataset handles (C++17).">
-<polygon fill="white" stroke="#666666" points="358.25,-398.88 191.5,-398.88 191.5,-379.62 358.25,-379.62 358.25,-398.88"/>
-<text xml:space="preserve" text-anchor="middle" x="274.88" y="-385.38" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::checkClose_file</text>
+<g id="a_Node000002"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#a374a6cadcadfc23c1f5df858d31e20df" target="_top" xlink:title="Create a new dataset with optional compression.">
+<polygon fill="white" stroke="#666666" points="344.38,-385.5 194.12,-385.5 194.12,-355 344.38,-355 344.38,-385.5"/>
+<text xml:space="preserve" text-anchor="start" x="202.12" y="-372" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
+<text xml:space="preserve" text-anchor="middle" x="269.25" y="-360.75" font-family="Helvetica,sans-Serif" font-size="10.00">::createDataset</text>
 </a>
 </g>
 </g>
@@ -78,56 +79,56 @@ var sectionId = 'dynsection-135';
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node1&#45;&gt;Node2</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M83.91,-207.74C96.39,-242.68 131.65,-327.85 191.5,-370.25 193.59,-371.73 195.78,-373.1 198.05,-374.36"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="196.48,-377.5 207.02,-378.61 199.48,-371.17 196.48,-377.5"/>
+<path fill="none" stroke="#63b8ff" d="M90.89,-140.95C123.05,-182.52 210.59,-295.7 249.35,-345.82"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="246.4,-347.72 255.28,-353.48 251.93,-343.43 246.4,-347.72"/>
 </a>
 </g>
 </g>
-<!-- Node3 -->
-<g id="Node000003" class="node">
-<title>Node3</title>
-<g id="a_Node000003"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#ab19bac9a31efe4a733294c1c23ff5ef7" target="_top" xlink:title="Create a new dataset with optional compression.">
-<polygon fill="white" stroke="#666666" points="350,-361.5 199.75,-361.5 199.75,-331 350,-331 350,-361.5"/>
-<text xml:space="preserve" text-anchor="start" x="207.75" y="-348" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
-<text xml:space="preserve" text-anchor="middle" x="274.88" y="-336.75" font-family="Helvetica,sans-Serif" font-size="10.00">::createDataset</text>
+<!-- Node10 -->
+<g id="Node000010" class="node">
+<title>Node10</title>
+<g id="a_Node000010"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#acf9843abcb57a0090f1635cc69d95300" target="_top" xlink:title="Write data to the dataset.">
+<polygon fill="white" stroke="#666666" points="553.5,-263.5 403.25,-263.5 403.25,-233 553.5,-233 553.5,-263.5"/>
+<text xml:space="preserve" text-anchor="start" x="411.25" y="-250" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-238.75" font-family="Helvetica,sans-Serif" font-size="10.00">::writeDataset</text>
 </a>
 </g>
 </g>
-<!-- Node1&#45;&gt;Node3 -->
-<g id="edge2_Node000001_Node000003" class="edge">
-<title>Node1&#45;&gt;Node3</title>
-<g id="a_edge2_Node000001_Node000003"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M98.53,-207.86C133.16,-235.19 204.86,-291.78 245.02,-323.48"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="242.83,-326.21 252.85,-329.66 247.17,-320.71 242.83,-326.21"/>
+<!-- Node1&#45;&gt;Node10 -->
+<g id="edge24_Node000001_Node000010" class="edge">
+<title>Node1&#45;&gt;Node10</title>
+<g id="a_edge24_Node000001_Node000010"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M111.27,-141C133.51,-151.37 163.85,-164.73 191.5,-174.25 257.85,-197.1 334.97,-216.67 392.38,-229.93"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="391.59,-233.34 402.11,-232.16 393.15,-226.52 391.59,-233.34"/>
 </a>
 </g>
 </g>
-<!-- Node11 -->
-<g id="Node000011" class="node">
-<title>Node11</title>
-<g id="a_Node000011"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#acf9843abcb57a0090f1635cc69d95300" target="_top" xlink:title="Write data to the dataset.">
-<polygon fill="white" stroke="#666666" points="564.75,-263.5 414.5,-263.5 414.5,-233 564.75,-233 564.75,-263.5"/>
-<text xml:space="preserve" text-anchor="start" x="422.5" y="-250" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-238.75" font-family="Helvetica,sans-Serif" font-size="10.00">::writeDataset</text>
+<!-- Node13 -->
+<g id="Node000013" class="node">
+<title>Node13</title>
+<g id="a_Node000013"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#a8cce59e2884ad1ee3b67f281566780af" target="_top" xlink:title="Inherit the compression level from an input dataset if not already set.">
+<polygon fill="white" stroke="#666666" points="344.38,-165.5 194.12,-165.5 194.12,-135 344.38,-135 344.38,-165.5"/>
+<text xml:space="preserve" text-anchor="start" x="202.12" y="-152" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
+<text xml:space="preserve" text-anchor="middle" x="269.25" y="-140.75" font-family="Helvetica,sans-Serif" font-size="10.00">::inheritCompressionLevel</text>
 </a>
 </g>
 </g>
-<!-- Node1&#45;&gt;Node11 -->
-<g id="edge24_Node000001_Node000011" class="edge">
-<title>Node1&#45;&gt;Node11</title>
-<g id="a_edge24_Node000001_Node000011"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M155.84,-202.78C226.32,-212.41 330.37,-226.63 403.32,-236.59"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="402.41,-240 412.79,-237.89 403.36,-233.07 402.41,-240"/>
+<!-- Node1&#45;&gt;Node13 -->
+<g id="edge13_Node000001_Node000013" class="edge">
+<title>Node1&#45;&gt;Node13</title>
+<g id="a_edge13_Node000001_Node000013"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M155.83,-135.42C164.62,-136.58 173.62,-137.77 182.51,-138.94"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="181.82,-142.38 192.19,-140.22 182.74,-135.44 181.82,-142.38"/>
 </a>
 </g>
 </g>
 <!-- Node14 -->
 <g id="Node000014" class="node">
 <title>Node14</title>
-<g id="a_Node000014"><a xlink:href="namespace_big_data_stat_meth.html#a050dd22b3a20be0b77d4b72fd278a214" target="_top" xlink:title="Eigenvalue decomposition using Spectra (compatible with BigDataStatMeth SVD version)">
-<polygon fill="white" stroke="#666666" points="352.62,-134.5 197.12,-134.5 197.12,-104 352.62,-104 352.62,-134.5"/>
-<text xml:space="preserve" text-anchor="start" x="205.12" y="-121" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppbdEigen</text>
-<text xml:space="preserve" text-anchor="middle" x="274.88" y="-109.75" font-family="Helvetica,sans-Serif" font-size="10.00">_spectra</text>
+<g id="a_Node000014"><a xlink:href="namespace_big_data_stat_meth.html#a050dd22b3a20be0b77d4b72fd278a214" target="_top" xlink:title="Eigenvalue decomposition using Spectra (partial, k &lt; n)">
+<polygon fill="white" stroke="#666666" points="347,-116.5 191.5,-116.5 191.5,-86 347,-86 347,-116.5"/>
+<text xml:space="preserve" text-anchor="start" x="199.5" y="-103" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppbdEigen</text>
+<text xml:space="preserve" text-anchor="middle" x="269.25" y="-91.75" font-family="Helvetica,sans-Serif" font-size="10.00">_spectra</text>
 </a>
 </g>
 </g>
@@ -135,8 +136,8 @@ var sectionId = 'dynsection-135';
 <g id="edge14_Node000001_Node000014" class="edge">
 <title>Node1&#45;&gt;Node14</title>
 <g id="a_edge14_Node000001_Node000014"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M120.61,-176.59C150.19,-165.52 190.04,-150.61 221.69,-138.77"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="222.53,-142.2 230.67,-135.41 220.08,-135.64 222.53,-142.2"/>
+<path fill="none" stroke="#63b8ff" d="M155.83,-115.49C163.77,-114.48 171.88,-113.46 179.93,-112.44"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="180.26,-115.92 189.74,-111.19 179.38,-108.98 180.26,-115.92"/>
 </a>
 </g>
 </g>
@@ -144,8 +145,8 @@ var sectionId = 'dynsection-135';
 <g id="Node000018" class="node">
 <title>Node18</title>
 <g id="a_Node000018"><a xlink:href="namespace_big_data_stat_meth.html#a1cd3f5cf856a0d1bff9e1cf956f368fd" target="_top" xlink:title="Template function for normalizing data with pre&#45;computed statistics.">
-<polygon fill="white" stroke="#666666" points="585,-67.88 394.25,-67.88 394.25,-48.62 585,-48.62 585,-67.88"/>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-54.38" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppNormalize_Data</text>
+<polygon fill="white" stroke="#666666" points="573.75,-67.88 383,-67.88 383,-48.62 573.75,-48.62 573.75,-67.88"/>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-54.38" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppNormalize_Data</text>
 </a>
 </g>
 </g>
@@ -153,8 +154,8 @@ var sectionId = 'dynsection-135';
 <g id="edge22_Node000001_Node000018" class="edge">
 <title>Node1&#45;&gt;Node18</title>
 <g id="a_edge22_Node000001_Node000018"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M91.43,-176.66C110.53,-154.39 149.01,-114.08 191.5,-95.25 251.33,-68.74 324.16,-59.35 382.75,-56.66"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="382.52,-60.17 392.38,-56.28 382.25,-53.18 382.52,-60.17"/>
+<path fill="none" stroke="#63b8ff" d="M107.96,-109.58C130.2,-98.47 161.91,-84.32 191.5,-77.25 249.88,-63.31 316.74,-58.29 371.11,-56.88"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="371.08,-60.38 381.01,-56.66 370.93,-53.38 371.08,-60.38"/>
 </a>
 </g>
 </g>
@@ -162,9 +163,9 @@ var sectionId = 'dynsection-135';
 <g id="Node000021" class="node">
 <title>Node21</title>
 <g id="a_Node000021"><a xlink:href="namespace_big_data_stat_meth.html#afb53700b444c5257b41f07f12a84bdaa" target="_top" xlink:title="Validate and adjust Spectra parameters for convergence.">
-<polygon fill="white" stroke="#666666" points="555,-30.5 424.25,-30.5 424.25,0 555,0 555,-30.5"/>
-<text xml:space="preserve" text-anchor="start" x="432.25" y="-17" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::validate</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-5.75" font-family="Helvetica,sans-Serif" font-size="10.00">SpectraParams</text>
+<polygon fill="white" stroke="#666666" points="543.75,-30.5 413,-30.5 413,0 543.75,0 543.75,-30.5"/>
+<text xml:space="preserve" text-anchor="start" x="421" y="-17" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::validate</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-5.75" font-family="Helvetica,sans-Serif" font-size="10.00">SpectraParams</text>
 </a>
 </g>
 </g>
@@ -172,196 +173,196 @@ var sectionId = 'dynsection-135';
 <g id="edge23_Node000001_Node000021" class="edge">
 <title>Node1&#45;&gt;Node21</title>
 <g id="a_edge23_Node000001_Node000021"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M86.4,-176.57C101.74,-146.98 139.33,-83.3 191.5,-54.25 259.43,-16.42 349.31,-9.47 412.36,-10.23"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="412.23,-13.73 422.29,-10.43 412.36,-6.73 412.23,-13.73"/>
+<path fill="none" stroke="#63b8ff" d="M97.76,-109.66C119.16,-93.02 155.63,-67.29 191.5,-54.25 259.8,-29.41 342.5,-20.2 401.34,-16.88"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="401.46,-20.38 411.27,-16.37 401.1,-13.39 401.46,-20.38"/>
+</a>
+</g>
+</g>
+<!-- Node3 -->
+<g id="Node000003" class="node">
+<title>Node3</title>
+<g id="a_Node000003"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#ac7a7f23b7e22c9b56ca6ad86592f2d52" target="_top" xlink:title="Add an attribute to the dataset.">
+<polygon fill="white" stroke="#666666" points="553.5,-557.5 403.25,-557.5 403.25,-527 553.5,-527 553.5,-557.5"/>
+<text xml:space="preserve" text-anchor="start" x="411.25" y="-544" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-532.75" font-family="Helvetica,sans-Serif" font-size="10.00">::addAttribute</text>
+</a>
+</g>
+</g>
+<!-- Node2&#45;&gt;Node3 -->
+<g id="edge2_Node000002_Node000003" class="edge">
+<title>Node2&#45;&gt;Node3</title>
+<g id="a_edge2_Node000002_Node000003"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M277.75,-385.85C293.1,-416.07 331.07,-482.65 383,-517.25 386.1,-519.32 389.37,-521.21 392.75,-522.95"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="391.25,-526.12 401.8,-527.09 394.16,-519.75 391.25,-526.12"/>
 </a>
 </g>
 </g>
 <!-- Node4 -->
 <g id="Node000004" class="node">
 <title>Node4</title>
-<g id="a_Node000004"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#ac7a7f23b7e22c9b56ca6ad86592f2d52" target="_top" xlink:title="Add an attribute to the dataset.">
-<polygon fill="white" stroke="#666666" points="564.75,-557.5 414.5,-557.5 414.5,-527 564.75,-527 564.75,-557.5"/>
-<text xml:space="preserve" text-anchor="start" x="422.5" y="-544" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-532.75" font-family="Helvetica,sans-Serif" font-size="10.00">::addAttribute</text>
+<g id="a_Node000004"><a xlink:href="class_big_data_stat_meth_1_1hdf5_file.html#abfb73b5f1eb25ee00489485c8dc56a2a" target="_top" xlink:title="Close file and cleanup resources.">
+<polygon fill="white" stroke="#666666" points="544.12,-508.5 412.62,-508.5 412.62,-478 544.12,-478 544.12,-508.5"/>
+<text xml:space="preserve" text-anchor="start" x="420.62" y="-495" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5File</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-483.75" font-family="Helvetica,sans-Serif" font-size="10.00">::close_file</text>
 </a>
 </g>
 </g>
-<!-- Node3&#45;&gt;Node4 -->
-<g id="edge3_Node000003_Node000004" class="edge">
-<title>Node3&#45;&gt;Node4</title>
-<g id="a_edge3_Node000003_Node000004"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M347.9,-361.79C351.66,-364.22 355.16,-367.02 358.25,-370.25 404.77,-418.83 347.14,-469.24 394.25,-517.25 397.28,-520.33 400.64,-523.05 404.24,-525.45"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="402.49,-528.48 412.93,-530.32 405.91,-522.37 402.49,-528.48"/>
+<!-- Node2&#45;&gt;Node4 -->
+<g id="edge3_Node000002_Node000004" class="edge">
+<title>Node2&#45;&gt;Node4</title>
+<g id="a_edge3_Node000002_Node000004"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M283.91,-385.98C303.63,-407.7 342.21,-446.64 383,-468.25 389,-471.43 395.42,-474.22 402,-476.68"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="400.4,-479.82 410.99,-479.77 402.67,-473.21 400.4,-479.82"/>
 </a>
 </g>
 </g>
 <!-- Node5 -->
 <g id="Node000005" class="node">
 <title>Node5</title>
-<g id="a_Node000005"><a xlink:href="class_big_data_stat_meth_1_1hdf5_file.html#abfb73b5f1eb25ee00489485c8dc56a2a" target="_top" xlink:title="Close file and cleanup resources.">
-<polygon fill="white" stroke="#666666" points="555.38,-508.5 423.88,-508.5 423.88,-478 555.38,-478 555.38,-508.5"/>
-<text xml:space="preserve" text-anchor="start" x="431.88" y="-495" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5File</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-483.75" font-family="Helvetica,sans-Serif" font-size="10.00">::close_file</text>
+<g id="a_Node000005"><a xlink:href="class_big_data_stat_meth_1_1hdf5_group.html#a27cef4d33e46c72bfd792aa49fa621a3" target="_top" xlink:title="Create multiple nested groups.">
+<polygon fill="white" stroke="#666666" points="549.38,-459.5 407.38,-459.5 407.38,-429 549.38,-429 549.38,-459.5"/>
+<text xml:space="preserve" text-anchor="start" x="415.38" y="-446" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Group</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-434.75" font-family="Helvetica,sans-Serif" font-size="10.00">::create_HDF5_groups</text>
 </a>
 </g>
 </g>
-<!-- Node3&#45;&gt;Node5 -->
-<g id="edge4_Node000003_Node000005" class="edge">
-<title>Node3&#45;&gt;Node5</title>
-<g id="a_edge4_Node000003_Node000005"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M347.1,-361.98C351.11,-364.36 354.87,-367.1 358.25,-370.25 392.17,-401.92 359.95,-437 394.25,-468.25 399.81,-473.31 406.27,-477.37 413.16,-480.62"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="411.52,-483.73 422.1,-484.26 414.15,-477.25 411.52,-483.73"/>
-</a>
-</g>
-</g>
-<!-- Node6 -->
-<g id="Node000006" class="node">
-<title>Node6</title>
-<g id="a_Node000006"><a xlink:href="class_big_data_stat_meth_1_1hdf5_group.html#a27cef4d33e46c72bfd792aa49fa621a3" target="_top" xlink:title="Create multiple nested groups.">
-<polygon fill="white" stroke="#666666" points="560.62,-459.5 418.62,-459.5 418.62,-429 560.62,-429 560.62,-459.5"/>
-<text xml:space="preserve" text-anchor="start" x="426.62" y="-446" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Group</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-434.75" font-family="Helvetica,sans-Serif" font-size="10.00">::create_HDF5_groups</text>
-</a>
-</g>
-</g>
-<!-- Node3&#45;&gt;Node6 -->
-<g id="edge5_Node000003_Node000006" class="edge">
-<title>Node3&#45;&gt;Node6</title>
-<g id="a_edge5_Node000003_Node000006"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M343.67,-361.96C348.8,-364.34 353.73,-367.09 358.25,-370.25 380.39,-385.74 371.92,-404.03 394.25,-419.25 398.46,-422.12 402.98,-424.66 407.69,-426.91"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="406.26,-430.1 416.83,-430.79 408.99,-423.66 406.26,-430.1"/>
-</a>
-</g>
-</g>
-<!-- Node8 -->
-<g id="Node000008" class="node">
-<title>Node8</title>
-<g id="a_Node000008"><a xlink:href="namespace_big_data_stat_meth.html#a89d901ab4b5e01771f4e3fc7dc84e50e" target="_top" xlink:title="Checks if an HDF5 element (group or dataset) exists.">
-<polygon fill="white" stroke="#666666" points="551.25,-410.5 428,-410.5 428,-380 551.25,-380 551.25,-410.5"/>
-<text xml:space="preserve" text-anchor="start" x="436" y="-397" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::exists</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-385.75" font-family="Helvetica,sans-Serif" font-size="10.00">_HDF5_element</text>
-</a>
-</g>
-</g>
-<!-- Node3&#45;&gt;Node8 -->
-<g id="edge7_Node000003_Node000008" class="edge">
-<title>Node3&#45;&gt;Node8</title>
-<g id="a_edge7_Node000003_Node000008"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M344.07,-361.96C367.26,-367.3 393.24,-373.28 416.71,-378.69"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="415.64,-382.03 426.17,-380.87 417.21,-375.21 415.64,-382.03"/>
-</a>
-</g>
-</g>
-<!-- Node9 -->
-<g id="Node000009" class="node">
-<title>Node9</title>
-<g id="a_Node000009"><a xlink:href="class_big_data_stat_meth_1_1hdf5_group.html#a59995412538627e6c80f64b552c286f5" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="560.62,-361.5 418.62,-361.5 418.62,-331 560.62,-331 560.62,-361.5"/>
-<text xml:space="preserve" text-anchor="start" x="426.62" y="-348" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Group</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-336.75" font-family="Helvetica,sans-Serif" font-size="10.00">::getGroupName</text>
-</a>
-</g>
-</g>
-<!-- Node3&#45;&gt;Node9 -->
-<g id="edge9_Node000003_Node000009" class="edge">
-<title>Node3&#45;&gt;Node9</title>
-<g id="a_edge9_Node000003_Node000009"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M350.28,-346.25C368.54,-346.25 388.19,-346.25 406.77,-346.25"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="406.68,-349.75 416.68,-346.25 406.68,-342.75 406.68,-349.75"/>
-</a>
-</g>
-</g>
-<!-- Node10 -->
-<g id="Node000010" class="node">
-<title>Node10</title>
-<g id="a_Node000010"><a xlink:href="namespace_big_data_stat_meth.html#a3d06783149029f1df2853c472d401380" target="_top" xlink:title="Removes multiple elements from an HDF5 file.">
-<polygon fill="white" stroke="#666666" points="554.25,-312.5 425,-312.5 425,-282 554.25,-282 554.25,-312.5"/>
-<text xml:space="preserve" text-anchor="start" x="433" y="-299" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::remove</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-287.75" font-family="Helvetica,sans-Serif" font-size="10.00">_elements</text>
-</a>
-</g>
-</g>
-<!-- Node3&#45;&gt;Node10 -->
-<g id="edge10_Node000003_Node000010" class="edge">
-<title>Node3&#45;&gt;Node10</title>
-<g id="a_edge10_Node000003_Node000010"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M344.07,-330.54C366.32,-325.42 391.13,-319.7 413.84,-314.47"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="414.36,-317.95 423.32,-312.29 412.79,-311.12 414.36,-317.95"/>
-</a>
-</g>
-</g>
-<!-- Node3&#45;&gt;Node11 -->
-<g id="edge11_Node000003_Node000011" class="edge">
-<title>Node3&#45;&gt;Node11</title>
-<g id="a_edge11_Node000003_Node000011"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M296.65,-330.8C319.52,-314.44 357.87,-288.88 394.25,-273.25 399.06,-271.18 404.08,-269.25 409.19,-267.45"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="409.95,-270.89 418.34,-264.42 407.75,-264.25 409.95,-270.89"/>
+<!-- Node2&#45;&gt;Node5 -->
+<g id="edge4_Node000002_Node000005" class="edge">
+<title>Node2&#45;&gt;Node5</title>
+<g id="a_edge4_Node000002_Node000005"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M302.78,-385.95C325.03,-396.29 355.38,-409.65 383,-419.25 389.1,-421.37 395.48,-423.41 401.92,-425.36"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="400.73,-428.66 411.31,-428.1 402.69,-421.94 400.73,-428.66"/>
 </a>
 </g>
 </g>
 <!-- Node7 -->
 <g id="Node000007" class="node">
 <title>Node7</title>
-<g id="a_Node000007"><a xlink:href="namespace_big_data_stat_meth.html#abcaa4216cd52f03ebac42e4855ef846b" target="_top" xlink:title="Checks if a path exists in an HDF5 file.">
-<polygon fill="white" stroke="#666666" points="778.38,-428.88 634.88,-428.88 634.88,-409.62 778.38,-409.62 778.38,-428.88"/>
-<text xml:space="preserve" text-anchor="middle" x="706.62" y="-415.38" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::pathExists</text>
+<g id="a_Node000007"><a xlink:href="namespace_big_data_stat_meth.html#a89d901ab4b5e01771f4e3fc7dc84e50e" target="_top" xlink:title="Checks if an HDF5 element (group or dataset) exists.">
+<polygon fill="white" stroke="#666666" points="540,-410.5 416.75,-410.5 416.75,-380 540,-380 540,-410.5"/>
+<text xml:space="preserve" text-anchor="start" x="424.75" y="-397" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::exists</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-385.75" font-family="Helvetica,sans-Serif" font-size="10.00">_HDF5_element</text>
 </a>
 </g>
 </g>
-<!-- Node6&#45;&gt;Node7 -->
-<g id="edge6_Node000006_Node000007" class="edge">
-<title>Node6&#45;&gt;Node7</title>
-<g id="a_edge6_Node000006_Node000007"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M561.02,-436.06C580.97,-433.75 602.85,-431.2 623.43,-428.81"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="623.67,-432.3 633.2,-427.67 622.86,-425.35 623.67,-432.3"/>
+<!-- Node2&#45;&gt;Node7 -->
+<g id="edge6_Node000002_Node000007" class="edge">
+<title>Node2&#45;&gt;Node7</title>
+<g id="a_edge6_Node000002_Node000007"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M344.73,-379.24C364.42,-381.62 385.62,-384.18 405.18,-386.54"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="404.63,-389.99 414.98,-387.72 405.47,-383.05 404.63,-389.99"/>
 </a>
 </g>
 </g>
-<!-- Node8&#45;&gt;Node7 -->
-<g id="edge8_Node000008_Node000007" class="edge">
-<title>Node8&#45;&gt;Node7</title>
-<g id="a_edge8_Node000008_Node000007"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M551.66,-402.06C573.95,-404.55 599.55,-407.41 623.38,-410.07"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="622.72,-413.52 633.05,-411.15 623.5,-406.56 622.72,-413.52"/>
+<!-- Node8 -->
+<g id="Node000008" class="node">
+<title>Node8</title>
+<g id="a_Node000008"><a xlink:href="class_big_data_stat_meth_1_1hdf5_group.html#a59995412538627e6c80f64b552c286f5" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="549.38,-361.5 407.38,-361.5 407.38,-331 549.38,-331 549.38,-361.5"/>
+<text xml:space="preserve" text-anchor="start" x="415.38" y="-348" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Group</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-336.75" font-family="Helvetica,sans-Serif" font-size="10.00">::getGroupName</text>
+</a>
+</g>
+</g>
+<!-- Node2&#45;&gt;Node8 -->
+<g id="edge8_Node000002_Node000008" class="edge">
+<title>Node2&#45;&gt;Node8</title>
+<g id="a_edge8_Node000002_Node000008"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M344.73,-361.62C361.38,-359.69 379.12,-357.63 396.03,-355.68"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="395.97,-359.21 405.5,-354.58 395.17,-352.25 395.97,-359.21"/>
+</a>
+</g>
+</g>
+<!-- Node9 -->
+<g id="Node000009" class="node">
+<title>Node9</title>
+<g id="a_Node000009"><a xlink:href="namespace_big_data_stat_meth.html#a3d06783149029f1df2853c472d401380" target="_top" xlink:title="Removes multiple elements from an HDF5 file.">
+<polygon fill="white" stroke="#666666" points="543,-312.5 413.75,-312.5 413.75,-282 543,-282 543,-312.5"/>
+<text xml:space="preserve" text-anchor="start" x="421.75" y="-299" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::remove</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-287.75" font-family="Helvetica,sans-Serif" font-size="10.00">_elements</text>
+</a>
+</g>
+</g>
+<!-- Node2&#45;&gt;Node9 -->
+<g id="edge9_Node000002_Node000009" class="edge">
+<title>Node2&#45;&gt;Node9</title>
+<g id="a_edge9_Node000002_Node000009"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M303.31,-354.69C325.52,-344.61 355.63,-331.65 383,-322.25 389.21,-320.12 395.71,-318.06 402.26,-316.1"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="403.21,-319.46 411.84,-313.32 401.26,-312.74 403.21,-319.46"/>
+</a>
+</g>
+</g>
+<!-- Node2&#45;&gt;Node10 -->
+<g id="edge10_Node000002_Node000010" class="edge">
+<title>Node2&#45;&gt;Node10</title>
+<g id="a_edge10_Node000002_Node000010"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M283.95,-354.69C303.71,-333.2 342.33,-294.67 383,-273.25 386.48,-271.42 390.1,-269.71 393.82,-268.13"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="395.03,-271.41 403.07,-264.51 392.48,-264.89 395.03,-271.41"/>
+</a>
+</g>
+</g>
+<!-- Node6 -->
+<g id="Node000006" class="node">
+<title>Node6</title>
+<g id="a_Node000006"><a xlink:href="namespace_big_data_stat_meth.html#abcaa4216cd52f03ebac42e4855ef846b" target="_top" xlink:title="Checks if a path exists in an HDF5 file.">
+<polygon fill="white" stroke="#666666" points="767.12,-428.88 623.62,-428.88 623.62,-409.62 767.12,-409.62 767.12,-428.88"/>
+<text xml:space="preserve" text-anchor="middle" x="695.38" y="-415.38" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::pathExists</text>
+</a>
+</g>
+</g>
+<!-- Node5&#45;&gt;Node6 -->
+<g id="edge5_Node000005_Node000006" class="edge">
+<title>Node5&#45;&gt;Node6</title>
+<g id="a_edge5_Node000005_Node000006"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M549.77,-436.06C569.72,-433.75 591.6,-431.2 612.18,-428.81"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="612.42,-432.3 621.95,-427.67 611.61,-425.35 612.42,-432.3"/>
+</a>
+</g>
+</g>
+<!-- Node7&#45;&gt;Node6 -->
+<g id="edge7_Node000007_Node000006" class="edge">
+<title>Node7&#45;&gt;Node6</title>
+<g id="a_edge7_Node000007_Node000006"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M540.41,-402.06C562.7,-404.55 588.3,-407.41 612.13,-410.07"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="611.47,-413.52 621.8,-411.15 612.25,-406.56 611.47,-413.52"/>
+</a>
+</g>
+</g>
+<!-- Node11 -->
+<g id="Node000011" class="node">
+<title>Node11</title>
+<g id="a_Node000011"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#aba39e56a580d3b1fa7f1619fc72efa3e" target="_top" xlink:title="Close dataset and file.">
+<polygon fill="white" stroke="#666666" points="770.5,-238.5 620.25,-238.5 620.25,-208 770.5,-208 770.5,-238.5"/>
+<text xml:space="preserve" text-anchor="start" x="628.25" y="-225" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
+<text xml:space="preserve" text-anchor="middle" x="695.38" y="-213.75" font-family="Helvetica,sans-Serif" font-size="10.00">::close_dataset_file</text>
+</a>
+</g>
+</g>
+<!-- Node10&#45;&gt;Node11 -->
+<g id="edge11_Node000010_Node000011" class="edge">
+<title>Node10&#45;&gt;Node11</title>
+<g id="a_edge11_Node000010_Node000011"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M553.97,-239.58C571.56,-237.53 590.46,-235.33 608.5,-233.24"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="608.88,-236.71 618.41,-232.08 608.07,-229.76 608.88,-236.71"/>
 </a>
 </g>
 </g>
 <!-- Node12 -->
 <g id="Node000012" class="node">
 <title>Node12</title>
-<g id="a_Node000012"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#aba39e56a580d3b1fa7f1619fc72efa3e" target="_top" xlink:title="Close dataset and file.">
-<polygon fill="white" stroke="#666666" points="781.75,-238.5 631.5,-238.5 631.5,-208 781.75,-208 781.75,-238.5"/>
-<text xml:space="preserve" text-anchor="start" x="639.5" y="-225" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
-<text xml:space="preserve" text-anchor="middle" x="706.62" y="-213.75" font-family="Helvetica,sans-Serif" font-size="10.00">::close_dataset_file</text>
+<g id="a_Node000012"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#a94d81b72e92cb0230b4e64f37ea7d2e3" target="_top" xlink:title="Convert DataFrame to range list.">
+<polygon fill="white" stroke="#666666" points="781,-287.5 609.75,-287.5 609.75,-257 781,-257 781,-287.5"/>
+<text xml:space="preserve" text-anchor="start" x="617.75" y="-274" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
+<text xml:space="preserve" text-anchor="middle" x="695.38" y="-262.75" font-family="Helvetica,sans-Serif" font-size="10.00">::convert_DataFrame_to_RangeList</text>
 </a>
 </g>
 </g>
-<!-- Node11&#45;&gt;Node12 -->
-<g id="edge12_Node000011_Node000012" class="edge">
-<title>Node11&#45;&gt;Node12</title>
-<g id="a_edge12_Node000011_Node000012"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M565.22,-239.58C582.81,-237.53 601.71,-235.33 619.75,-233.24"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="620.13,-236.71 629.66,-232.08 619.32,-229.76 620.13,-236.71"/>
-</a>
-</g>
-</g>
-<!-- Node13 -->
-<g id="Node000013" class="node">
-<title>Node13</title>
-<g id="a_Node000013"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#a94d81b72e92cb0230b4e64f37ea7d2e3" target="_top" xlink:title="Convert DataFrame to range list.">
-<polygon fill="white" stroke="#666666" points="792.25,-287.5 621,-287.5 621,-257 792.25,-257 792.25,-287.5"/>
-<text xml:space="preserve" text-anchor="start" x="629" y="-274" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
-<text xml:space="preserve" text-anchor="middle" x="706.62" y="-262.75" font-family="Helvetica,sans-Serif" font-size="10.00">::convert_DataFrame_to_RangeList</text>
-</a>
-</g>
-</g>
-<!-- Node11&#45;&gt;Node13 -->
-<g id="edge13_Node000011_Node000013" class="edge">
-<title>Node11&#45;&gt;Node13</title>
-<g id="a_edge13_Node000011_Node000013"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M565.22,-256.58C579.52,-258.17 594.69,-259.87 609.56,-261.53"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="609.02,-264.99 619.34,-262.62 609.79,-258.03 609.02,-264.99"/>
+<!-- Node10&#45;&gt;Node12 -->
+<g id="edge12_Node000010_Node000012" class="edge">
+<title>Node10&#45;&gt;Node12</title>
+<g id="a_edge12_Node000010_Node000012"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M553.97,-256.58C568.27,-258.17 583.44,-259.87 598.31,-261.53"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="597.77,-264.99 608.09,-262.62 598.54,-258.03 597.77,-264.99"/>
 </a>
 </g>
 </g>
@@ -369,9 +370,9 @@ var sectionId = 'dynsection-135';
 <g id="Node000015" class="node">
 <title>Node15</title>
 <g id="a_Node000015"><a xlink:href="namespace_big_data_stat_meth.html#a5fd46170e425b1ced11e76acc7b84500" target="_top" xlink:title="Convert &#39;which&#39; string to Spectra SortRule for general matrices.">
-<polygon fill="white" stroke="#666666" points="561.75,-214.5 417.5,-214.5 417.5,-184 561.75,-184 561.75,-214.5"/>
-<text xml:space="preserve" text-anchor="start" x="425.5" y="-201" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::getGeneral</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-189.75" font-family="Helvetica,sans-Serif" font-size="10.00">SortRule</text>
+<polygon fill="white" stroke="#666666" points="550.5,-214.5 406.25,-214.5 406.25,-184 550.5,-184 550.5,-214.5"/>
+<text xml:space="preserve" text-anchor="start" x="414.25" y="-201" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::getGeneral</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-189.75" font-family="Helvetica,sans-Serif" font-size="10.00">SortRule</text>
 </a>
 </g>
 </g>
@@ -379,8 +380,8 @@ var sectionId = 'dynsection-135';
 <g id="edge15_Node000014_Node000015" class="edge">
 <title>Node14&#45;&gt;Node15</title>
 <g id="a_edge15_Node000014_Node000015"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M305.43,-134.76C329.01,-146.69 363.14,-163 394.25,-174.25 400.03,-176.34 406.06,-178.34 412.16,-180.23"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="411.15,-183.58 421.73,-183.08 413.15,-176.87 411.15,-183.58"/>
+<path fill="none" stroke="#63b8ff" d="M330.66,-116.91C336.43,-119.57 341.99,-122.66 347,-126.25 368.69,-141.77 360.89,-159.34 383,-174.25 386.95,-176.91 391.18,-179.3 395.56,-181.42"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="394.09,-184.6 404.66,-185.34 396.86,-178.17 394.09,-184.6"/>
 </a>
 </g>
 </g>
@@ -388,9 +389,9 @@ var sectionId = 'dynsection-135';
 <g id="Node000016" class="node">
 <title>Node16</title>
 <g id="a_Node000016"><a xlink:href="namespace_big_data_stat_meth.html#af5dbdeb2f9d2e495e161b05ff5d7f6f1" target="_top" xlink:title="Convert &#39;which&#39; string to Spectra SortRule for symmetric matrices.">
-<polygon fill="white" stroke="#666666" points="568.5,-165.5 410.75,-165.5 410.75,-135 568.5,-135 568.5,-165.5"/>
-<text xml:space="preserve" text-anchor="start" x="418.75" y="-152" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::getSymmetric</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-140.75" font-family="Helvetica,sans-Serif" font-size="10.00">SortRule</text>
+<polygon fill="white" stroke="#666666" points="557.25,-165.5 399.5,-165.5 399.5,-135 557.25,-135 557.25,-165.5"/>
+<text xml:space="preserve" text-anchor="start" x="407.5" y="-152" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::getSymmetric</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-140.75" font-family="Helvetica,sans-Serif" font-size="10.00">SortRule</text>
 </a>
 </g>
 </g>
@@ -398,18 +399,18 @@ var sectionId = 'dynsection-135';
 <g id="edge16_Node000014_Node000016" class="edge">
 <title>Node14&#45;&gt;Node16</title>
 <g id="a_edge16_Node000014_Node000016"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M352.98,-130.49C368.01,-132.67 383.87,-134.99 399.26,-137.23"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="398.45,-140.65 408.85,-138.63 399.46,-133.72 398.45,-140.65"/>
+<path fill="none" stroke="#63b8ff" d="M336.64,-116.96C356.8,-121.73 379.13,-127.01 399.95,-131.93"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="399,-135.3 409.53,-134.2 400.61,-128.49 399,-135.3"/>
 </a>
 </g>
 </g>
 <!-- Node17 -->
 <g id="Node000017" class="node">
 <title>Node17</title>
-<g id="a_Node000017"><a xlink:href="namespace_big_data_stat_meth.html#a45e2b926781664ca98be48c1bce0379c" target="_top" xlink:title="Improved matrix symmetry detection for big&#45;omics data.">
-<polygon fill="white" stroke="#666666" points="555.38,-116.5 423.88,-116.5 423.88,-86 555.38,-86 555.38,-116.5"/>
-<text xml:space="preserve" text-anchor="start" x="431.88" y="-103" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::isMatrix</text>
-<text xml:space="preserve" text-anchor="middle" x="489.62" y="-91.75" font-family="Helvetica,sans-Serif" font-size="10.00">Symmetric</text>
+<g id="a_Node000017"><a xlink:href="namespace_big_data_stat_meth.html#a45e2b926781664ca98be48c1bce0379c" target="_top" xlink:title="Matrix symmetry detection.">
+<polygon fill="white" stroke="#666666" points="544.12,-116.5 412.62,-116.5 412.62,-86 544.12,-86 544.12,-116.5"/>
+<text xml:space="preserve" text-anchor="start" x="420.62" y="-103" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::isMatrix</text>
+<text xml:space="preserve" text-anchor="middle" x="478.38" y="-91.75" font-family="Helvetica,sans-Serif" font-size="10.00">Symmetric</text>
 </a>
 </g>
 </g>
@@ -417,8 +418,8 @@ var sectionId = 'dynsection-135';
 <g id="edge17_Node000014_Node000017" class="edge">
 <title>Node14&#45;&gt;Node17</title>
 <g id="a_edge17_Node000014_Node000017"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M352.98,-112.73C372.28,-111.09 392.96,-109.34 412.22,-107.71"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="412.51,-111.2 422.18,-106.87 411.92,-104.23 412.51,-111.2"/>
+<path fill="none" stroke="#63b8ff" d="M347.38,-101.25C364.92,-101.25 383.56,-101.25 401.07,-101.25"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="400.89,-104.75 410.89,-101.25 400.89,-97.75 400.89,-104.75"/>
 </a>
 </g>
 </g>
@@ -426,8 +427,8 @@ var sectionId = 'dynsection-135';
 <g id="edge18_Node000014_Node000018" class="edge">
 <title>Node14&#45;&gt;Node18</title>
 <g id="a_edge18_Node000014_Node000018"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M320.79,-103.51C332.95,-99.23 346.11,-94.58 358.25,-90.25 374.27,-84.54 377.87,-81.83 394.25,-77.25 402.63,-74.91 411.49,-72.73 420.31,-70.76"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="420.9,-74.21 429.93,-68.68 419.42,-67.37 420.9,-74.21"/>
+<path fill="none" stroke="#63b8ff" d="M343.61,-85.51C356.72,-82.73 370.26,-79.89 383,-77.25 393.57,-75.06 404.81,-72.77 415.71,-70.56"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="416.31,-74.01 425.42,-68.6 414.93,-67.15 416.31,-74.01"/>
 </a>
 </g>
 </g>
@@ -435,8 +436,8 @@ var sectionId = 'dynsection-135';
 <g id="edge21_Node000014_Node000021" class="edge">
 <title>Node14&#45;&gt;Node21</title>
 <g id="a_edge21_Node000014_Node000021"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M294.35,-103.76C316.67,-85.78 356,-56.41 394.25,-39.25 400.23,-36.57 406.56,-34.15 413,-31.97"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="413.97,-35.34 422.46,-28.99 411.87,-28.66 413.97,-35.34"/>
+<path fill="none" stroke="#63b8ff" d="M294.44,-85.58C316.7,-71.75 351,-51.88 383,-39.25 389.04,-36.86 395.4,-34.65 401.84,-32.62"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="402.69,-36.02 411.27,-29.8 400.68,-29.31 402.69,-36.02"/>
 </a>
 </g>
 </g>
@@ -444,9 +445,9 @@ var sectionId = 'dynsection-135';
 <g id="Node000019" class="node">
 <title>Node19</title>
 <g id="a_Node000019"><a xlink:href="namespace_big_data_stat_meth.html#aaac3a1d91c92fdf91f7bbc256672b68e" target="_top" xlink:title="Column&#45;wise normalization with pre&#45;computed statistics.">
-<polygon fill="white" stroke="#666666" points="788.88,-48.5 624.38,-48.5 624.38,-18 788.88,-18 788.88,-48.5"/>
-<text xml:space="preserve" text-anchor="start" x="632.38" y="-35" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppNormalize</text>
-<text xml:space="preserve" text-anchor="middle" x="706.62" y="-23.75" font-family="Helvetica,sans-Serif" font-size="10.00">Colwise</text>
+<polygon fill="white" stroke="#666666" points="777.62,-48.5 613.12,-48.5 613.12,-18 777.62,-18 777.62,-48.5"/>
+<text xml:space="preserve" text-anchor="start" x="621.12" y="-35" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppNormalize</text>
+<text xml:space="preserve" text-anchor="middle" x="695.38" y="-23.75" font-family="Helvetica,sans-Serif" font-size="10.00">Colwise</text>
 </a>
 </g>
 </g>
@@ -454,8 +455,8 @@ var sectionId = 'dynsection-135';
 <g id="edge19_Node000018_Node000019" class="edge">
 <title>Node18&#45;&gt;Node19</title>
 <g id="a_edge19_Node000018_Node000019"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M577.45,-48.15C589.11,-46.8 601.11,-45.4 612.86,-44.04"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="613.01,-47.54 622.54,-42.91 612.2,-40.59 613.01,-47.54"/>
+<path fill="none" stroke="#63b8ff" d="M566.2,-48.15C577.86,-46.8 589.86,-45.4 601.61,-44.04"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="601.76,-47.54 611.29,-42.91 600.95,-40.59 601.76,-47.54"/>
 </a>
 </g>
 </g>
@@ -463,9 +464,9 @@ var sectionId = 'dynsection-135';
 <g id="Node000020" class="node">
 <title>Node20</title>
 <g id="a_Node000020"><a xlink:href="namespace_big_data_stat_meth.html#a44b65a910276a5b61d0c3877b810eaeb" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="788.88,-97.5 624.38,-97.5 624.38,-67 788.88,-67 788.88,-97.5"/>
-<text xml:space="preserve" text-anchor="start" x="632.38" y="-84" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppNormalize</text>
-<text xml:space="preserve" text-anchor="middle" x="706.62" y="-72.75" font-family="Helvetica,sans-Serif" font-size="10.00">Rowwise</text>
+<polygon fill="white" stroke="#666666" points="777.62,-97.5 613.12,-97.5 613.12,-67 777.62,-67 777.62,-97.5"/>
+<text xml:space="preserve" text-anchor="start" x="621.12" y="-84" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppNormalize</text>
+<text xml:space="preserve" text-anchor="middle" x="695.38" y="-72.75" font-family="Helvetica,sans-Serif" font-size="10.00">Rowwise</text>
 </a>
 </g>
 </g>
@@ -473,8 +474,8 @@ var sectionId = 'dynsection-135';
 <g id="edge20_Node000018_Node000020" class="edge">
 <title>Node18&#45;&gt;Node20</title>
 <g id="a_edge20_Node000018_Node000020"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M581.18,-68.36C591.63,-69.53 602.3,-70.72 612.78,-71.89"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="612.23,-75.35 622.56,-72.98 613.01,-68.39 612.23,-75.35"/>
+<path fill="none" stroke="#63b8ff" d="M569.93,-68.36C580.38,-69.53 591.05,-70.72 601.53,-71.89"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="600.98,-75.35 611.31,-72.98 601.76,-68.39 600.98,-75.35"/>
 </a>
 </g>
 </g>

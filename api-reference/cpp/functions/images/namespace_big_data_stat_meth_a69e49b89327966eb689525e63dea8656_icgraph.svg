@@ -49,7 +49,7 @@
 <script type="application/ecmascript">
 var viewWidth = 872;
 var viewHeight = 239;
-var sectionId = 'dynsection-80';
+var sectionId = 'dynsection-106';
 </script>
 <script type="application/ecmascript" xlink:href="../../../../assets/svg.min.js"/>
 <svg id="graph" class="graph">
@@ -163,7 +163,7 @@ var sectionId = 'dynsection-80';
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="namespace_big_data_stat_meth.html#a6e97263036358fe6af3072e23914381d" target="_top" xlink:title="Implementation of cross&#45;matrix correlation computation for HDF5 matrices &#45; OPTIMIZED.">
+<g id="a_Node000003"><a xlink:href="namespace_big_data_stat_meth.html#af724010f7232a698618f05378a0a2350" target="_top" xlink:title="Implementation of cross&#45;matrix correlation computation for HDF5 matrices &#45; OPTIMIZED.">
 <polygon fill="white" stroke="#666666" points="149.5,-208.5 0,-208.5 0,-178 149.5,-178 149.5,-208.5"/>
 <text xml:space="preserve" text-anchor="start" x="8" y="-195" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppbdCorr</text>
 <text xml:space="preserve" text-anchor="middle" x="74.75" y="-183.75" font-family="Helvetica,sans-Serif" font-size="10.00">_hdf5_cross</text>
@@ -182,7 +182,7 @@ var sectionId = 'dynsection-80';
 <!-- Node5 -->
 <g id="Node000005" class="node">
 <title>Node5</title>
-<g id="a_Node000005"><a xlink:href="namespace_big_data_stat_meth.html#ae21b46d571f53416eedeb2d80f9b83ac" target="_top" xlink:title="Implementation of single matrix correlation computation for HDF5 matrices &#45; OPTIMIZED.">
+<g id="a_Node000005"><a xlink:href="namespace_big_data_stat_meth.html#a52fbcbe3b989972b1475ffd71400dde2" target="_top" xlink:title="Implementation of single matrix correlation computation for HDF5 matrices &#45; OPTIMIZED.">
 <polygon fill="white" stroke="#666666" points="149.5,-52.5 0,-52.5 0,-22 149.5,-22 149.5,-52.5"/>
 <text xml:space="preserve" text-anchor="start" x="8" y="-39" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppbdCorr</text>
 <text xml:space="preserve" text-anchor="middle" x="74.75" y="-27.75" font-family="Helvetica,sans-Serif" font-size="10.00">_hdf5_single</text>

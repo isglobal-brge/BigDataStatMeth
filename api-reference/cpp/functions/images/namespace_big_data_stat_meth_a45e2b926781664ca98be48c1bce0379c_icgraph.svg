@@ -49,7 +49,7 @@
 <script type="application/ecmascript">
 var viewWidth = 738;
 var viewHeight = 60;
-var sectionId = 'dynsection-71';
+var sectionId = 'dynsection-96';
 </script>
 <script type="application/ecmascript" xlink:href="../../../../assets/svg.min.js"/>
 <svg id="graph" class="graph">
@@ -58,7 +58,7 @@ var sectionId = 'dynsection-71';
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Improved matrix symmetry detection for big&#45;omics data.">
+<g id="a_Node000001"><a xlink:title="Matrix symmetry detection.">
 <polygon fill="#999999" stroke="#666666" points="730,-51.5 598.5,-51.5 598.5,-21 730,-21 730,-51.5"/>
 <text xml:space="preserve" text-anchor="start" x="606.5" y="-38" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::isMatrix</text>
 <text xml:space="preserve" text-anchor="middle" x="664.25" y="-26.75" font-family="Helvetica,sans-Serif" font-size="10.00">Symmetric</text>
@@ -68,7 +68,7 @@ var sectionId = 'dynsection-71';
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="namespace_big_data_stat_meth.html#a050dd22b3a20be0b77d4b72fd278a214" target="_top" xlink:title="Eigenvalue decomposition using Spectra (compatible with BigDataStatMeth SVD version)">
+<g id="a_Node000002"><a xlink:href="namespace_big_data_stat_meth.html#a050dd22b3a20be0b77d4b72fd278a214" target="_top" xlink:title="Eigenvalue decomposition using Spectra (partial, k &lt; n)">
 <polygon fill="white" stroke="#666666" points="562.5,-51.5 407,-51.5 407,-21 562.5,-21 562.5,-51.5"/>
 <text xml:space="preserve" text-anchor="start" x="415" y="-38" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppbdEigen</text>
 <text xml:space="preserve" text-anchor="middle" x="484.75" y="-26.75" font-family="Helvetica,sans-Serif" font-size="10.00">_spectra</text>
@@ -87,7 +87,7 @@ var sectionId = 'dynsection-71';
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="namespace_big_data_stat_meth.html#a05652afd0a5a4a4afcda52b3d3bd2cc0" target="_top" xlink:title="Main eigenvalue decomposition function for HDF5 matrices using Spectra.">
+<g id="a_Node000003"><a xlink:href="namespace_big_data_stat_meth.html#a05652afd0a5a4a4afcda52b3d3bd2cc0" target="_top" xlink:title="Main eigenvalue decomposition for HDF5 matrices.">
 <polygon fill="white" stroke="#666666" points="179.5,-45.88 0,-45.88 0,-26.62 179.5,-26.62 179.5,-45.88"/>
 <text xml:space="preserve" text-anchor="middle" x="89.75" y="-32.38" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::RcppbdEigen_hdf5</text>
 </a>

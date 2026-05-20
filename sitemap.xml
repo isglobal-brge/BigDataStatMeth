@@ -6,15 +6,15 @@
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/workflows/implementing-cca.html</loc>
-    <lastmod>2025-12-15T18:37:09.741Z</lastmod>
+    <lastmod>2026-05-20T20:39:18.820Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/tutorials/working-hdf5-matrices.html</loc>
-    <lastmod>2025-12-12T15:37:12.000Z</lastmod>
+    <lastmod>2026-05-20T19:14:55.416Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/tutorials/getting-started.html</loc>
-    <lastmod>2025-12-12T15:37:12.000Z</lastmod>
+    <lastmod>2026-05-20T19:02:23.851Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/technical/performance.html</loc>
@@ -41,136 +41,396 @@
     <lastmod>2025-12-08T17:02:18.872Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/bdblockMult.html</loc>
-    <lastmod>2025-12-18T18:17:13.543Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/system_utils/system_info.html</loc>
+    <lastmod>2026-05-20T18:20:33.220Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdtCrossprod.html</loc>
-    <lastmod>2025-12-18T18:17:13.432Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/system_utils/index.html</loc>
+    <lastmod>2026-05-20T18:20:33.393Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bd_wproduct.html</loc>
-    <lastmod>2025-12-18T18:17:13.433Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/system_utils/get_recommended_threads.html</loc>
+    <lastmod>2026-05-20T18:20:33.190Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/system_utils/get_cpu_cores.html</loc>
+    <lastmod>2026-05-20T18:20:33.193Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/system_utils/can_allocate.html</loc>
+    <lastmod>2026-05-20T18:20:33.193Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/var.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.328Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/sweep.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.382Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/svd.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.338Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/split_dataset.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.387Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/sd.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/scale.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.283Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rownames.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.340Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rowSums.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.283Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rowSds.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.327Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rowMeans.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rowMaxs.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.326Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_write_dimnames.html</loc>
+    <lastmod>2026-05-20T18:20:33.276Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_write_all.html</loc>
+    <lastmod>2026-05-20T18:20:33.282Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_subtract.html</loc>
+    <lastmod>2026-05-20T18:20:33.229Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_scalar_var.html</loc>
+    <lastmod>2026-05-20T18:20:33.227Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_scalar_sd.html</loc>
+    <lastmod>2026-05-20T18:20:33.228Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_scalar_mean.html</loc>
+    <lastmod>2026-05-20T18:20:33.226Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_rowVars.html</loc>
+    <lastmod>2026-05-20T18:20:33.225Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_rowSds.html</loc>
+    <lastmod>2026-05-20T18:20:33.226Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_rowMeans.html</loc>
+    <lastmod>2026-05-20T18:20:33.223Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_read_dimnames.html</loc>
+    <lastmod>2026-05-20T18:20:33.275Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_open.html</loc>
+    <lastmod>2026-05-20T18:20:33.231Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_mul_ew.html</loc>
+    <lastmod>2026-05-20T18:20:33.230Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_info.html</loc>
+    <lastmod>2026-05-20T18:20:33.232Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_dim.html</loc>
+    <lastmod>2026-05-20T18:20:33.231Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_colVars.html</loc>
+    <lastmod>2026-05-20T18:20:33.222Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_colSds.html</loc>
+    <lastmod>2026-05-20T18:20:33.222Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_colMeans.html</loc>
+    <lastmod>2026-05-20T18:20:33.221Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_close.html</loc>
+    <lastmod>2026-05-20T18:20:33.276Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5_create_matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.283Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5_close_file_handles.html</loc>
+    <lastmod>2026-05-20T18:20:33.277Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5_close_all_registry.html</loc>
+    <lastmod>2026-05-20T18:20:33.231Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rbind.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.331Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/pseudoinverse.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.387Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/print.HDF5PCA.html</loc>
+    <lastmod>2026-05-20T18:20:33.338Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/object_size.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.333Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/mean.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.327Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/is_open.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.337Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/filter_maf.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.384Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/eigen.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.341Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/dimnames.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.340Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/diag_scale.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.339Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/diag.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.383Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/crossprod.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.328Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/cor.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.338Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/colVars.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.326Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/colSums.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/colMins.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.285Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/colMeans.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.285Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/close.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.337Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/as.matrix.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.332Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/apply_function.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.387Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/Ops.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.340Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/omics/impute_snps.html</loc>
+    <lastmod>2026-05-20T18:20:33.166Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/omics/filter_low_coverage.html</loc>
+    <lastmod>2026-05-20T18:20:33.166Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/matrix_utils/index.html</loc>
+    <lastmod>2026-05-20T18:20:33.393Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/matrix_utils/diag_op.html</loc>
+    <lastmod>2026-05-20T18:20:33.131Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/index.html</loc>
+    <lastmod>2026-05-20T18:20:33.393Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdpseudoinv_hdf5.html</loc>
+    <lastmod>2026-05-20T18:20:33.170Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdblockSum.html</loc>
+    <lastmod>2026-05-20T18:20:33.174Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdblockMult.html</loc>
+    <lastmod>2026-05-20T18:20:33.172Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdScalarwproduct.html</loc>
-    <lastmod>2025-12-18T18:17:13.431Z</lastmod>
+    <lastmod>2026-05-20T18:20:33.176Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdCrossprod.html</loc>
-    <lastmod>2025-12-18T18:17:13.430Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdCorr_matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.175Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/index.html</loc>
-    <lastmod>2025-12-18T18:17:13.554Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/show_hdf5matrix_options.html</loc>
+    <lastmod>2026-05-20T18:20:33.098Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_statistics/bdgetSDandMean_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.506Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/list_datasets.html</loc>
+    <lastmod>2026-05-20T18:20:33.111Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_statistics/bdRemovelowdata_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.508Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/index.html</loc>
+    <lastmod>2026-05-20T18:20:33.393Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_statistics/bdNormalize_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.498Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/hdf5_matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.094Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_statistics/bdCorr_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.503Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/hdf5_import.html</loc>
+    <lastmod>2026-05-20T18:20:33.096Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdsubset_hdf5_dataset.html</loc>
-    <lastmod>2025-12-18T18:17:13.540Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/hdf5_close_file.html</loc>
+    <lastmod>2026-05-20T18:20:33.093Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdgetDim_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.522Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/index.html</loc>
+    <lastmod>2026-05-20T18:20:33.393Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdgetDatasetsList_hdf5.html</loc>
+    <lastmod>2026-05-20T18:20:33.183Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdWrite_hdf5_dimnames.html</loc>
-    <lastmod>2025-12-18T18:17:13.541Z</lastmod>
-  </url>
-  <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdSort_hdf5_dataset.html</loc>
-    <lastmod>2025-12-18T18:17:13.536Z</lastmod>
-  </url>
-  <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdReduce_hdf5_dataset.html</loc>
-    <lastmod>2025-12-18T18:17:13.532Z</lastmod>
+    <lastmod>2026-05-20T18:20:33.188Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdImportTextFile_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.528Z</lastmod>
+    <lastmod>2026-05-20T18:20:33.184Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdCreate_hdf5_matrix.html</loc>
-    <lastmod>2025-12-18T18:17:13.520Z</lastmod>
+    <lastmod>2026-05-20T18:20:33.182Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdCreate_hdf5_emptyDataset.html</loc>
-    <lastmod>2025-12-18T18:17:13.516Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/tcrossprod.html</loc>
+    <lastmod>2026-05-20T18:20:33.114Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdBind_hdf5_datasets.html</loc>
-    <lastmod>2025-12-18T18:17:13.514Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/svd.html</loc>
+    <lastmod>2026-05-20T18:20:33.116Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdtCrossprod_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.453Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/solve.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.121Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdgetDiagonal_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.474Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/qr.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.119Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdWriteDiagonal_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.476Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/prcomp.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.118Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdSVD_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.441Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/eigen.html</loc>
+    <lastmod>2026-05-20T18:20:33.118Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdPCA_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.448Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/crossprod.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.114Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdEigen_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.470Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/var.html</loc>
+    <lastmod>2026-05-20T18:20:33.123Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdDiag_scalar_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.466Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/split_dataset.html</loc>
+    <lastmod>2026-05-20T18:20:33.128Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdDiag_divide_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.464Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/scale.html</loc>
+    <lastmod>2026-05-20T18:20:33.122Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdCrossprod_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.450Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/rowSums.html</loc>
+    <lastmod>2026-05-20T18:20:33.123Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdCholesky_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.436Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/rowMins.html</loc>
+    <lastmod>2026-05-20T18:20:33.124Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/blockwise_ops/bdcomputeMatrixVector_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.491Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/rowMaxs.html</loc>
+    <lastmod>2026-05-20T18:20:33.124Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/blockwise_ops/bdblockmult_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.485Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/index.html</loc>
+    <lastmod>2026-05-20T18:20:33.393Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/blockwise_ops/bdblockSum.html</loc>
-    <lastmod>2025-12-18T18:17:13.494Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/hdf5_apply.html</loc>
+    <lastmod>2026-05-20T18:20:33.131Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/blockwise_ops/bdblockSubstract.html</loc>
-    <lastmod>2025-12-18T18:17:13.493Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/colVars.html</loc>
+    <lastmod>2026-05-20T18:20:33.124Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/colSds.html</loc>
+    <lastmod>2026-05-20T18:20:33.125Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/colMeans.html</loc>
+    <lastmod>2026-05-20T18:20:33.123Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/apply_function.html</loc>
+    <lastmod>2026-05-20T18:20:33.127Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/index.html</loc>
@@ -178,923 +438,1283 @@
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/xwxt.html</loc>
-    <lastmod>2025-12-18T18:17:52.111Z</lastmod>
+    <lastmod>2026-05-20T18:21:07.358Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/writeDiagonalFromVector.html</loc>
-    <lastmod>2025-12-18T18:17:36.970Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.747Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/wdX_parallel.html</loc>
-    <lastmod>2025-12-18T18:17:53.460Z</lastmod>
+    <lastmod>2026-05-20T18:21:08.391Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/wX.html</loc>
-    <lastmod>2025-12-18T18:17:52.774Z</lastmod>
+    <lastmod>2026-05-20T18:21:07.863Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/validateVector.html</loc>
-    <lastmod>2025-12-18T18:17:46.565Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.770Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/transpose.html</loc>
-    <lastmod>2025-12-18T18:17:47.545Z</lastmod>
+    <lastmod>2026-05-20T18:21:03.860Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/t_distribution_cdf.html</loc>
-    <lastmod>2025-12-18T18:17:37.598Z</lastmod>
+    <lastmod>2026-05-20T18:20:55.648Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/spearman_correlation.html</loc>
-    <lastmod>2025-12-18T18:17:38.043Z</lastmod>
+    <lastmod>2026-05-20T18:20:55.992Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/setLowerTriangularMatrix.html</loc>
-    <lastmod>2025-12-18T18:17:44.024Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.805Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/scalarOperation.html</loc>
-    <lastmod>2025-12-18T18:17:37.309Z</lastmod>
+    <lastmod>2026-05-20T18:20:54.006Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/remove_elements.html</loc>
-    <lastmod>2025-12-18T18:17:50.042Z</lastmod>
+    <lastmod>2026-05-20T18:21:05.789Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/removeColumn.html</loc>
-    <lastmod>2025-12-18T18:17:50.890Z</lastmod>
+    <lastmod>2026-05-20T18:21:06.434Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/powerDiagonals.html</loc>
-    <lastmod>2025-12-18T18:17:37.261Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.971Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/pearson_correlation.html</loc>
-    <lastmod>2025-12-18T18:17:37.970Z</lastmod>
+    <lastmod>2026-05-20T18:20:55.935Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/mygetenv.html</loc>
-    <lastmod>2025-12-18T18:17:36.732Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.418Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/multiplicationSparse.html</loc>
-    <lastmod>2025-12-18T18:17:44.417Z</lastmod>
+    <lastmod>2026-05-20T18:21:01.115Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/join_datasets.html</loc>
-    <lastmod>2025-12-18T18:17:48.991Z</lastmod>
+    <lastmod>2026-05-20T18:21:04.965Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/isMatrixSymmetric.html</loc>
-    <lastmod>2025-12-18T18:17:39.475Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.101Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/initDTthreads.html</loc>
-    <lastmod>2025-12-18T18:17:36.720Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.409Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/imin.html</loc>
-    <lastmod>2025-12-18T18:17:58.107Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.818Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/hdf5_matrixVector_calculus.html</loc>
-    <lastmod>2025-12-18T18:17:46.498Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.720Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_threads.html</loc>
-    <lastmod>2025-12-18T18:17:57.888Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.654Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_data_as_Matrix.html</loc>
-    <lastmod>2025-12-18T18:17:48.347Z</lastmod>
+    <lastmod>2026-05-20T18:21:04.470Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_SplitData_in_vectorString.html</loc>
-    <lastmod>2025-12-18T18:17:47.744Z</lastmod>
+    <lastmod>2026-05-20T18:21:04.013Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_scalar_var.html</loc>
+    <lastmod>2026-05-20T18:20:55.441Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_scalar_sd.html</loc>
+    <lastmod>2026-05-20T18:20:55.507Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_scalar_mean.html</loc>
+    <lastmod>2026-05-20T18:20:55.253Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_rowVars.html</loc>
+    <lastmod>2026-05-20T18:20:55.091Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_rowSds.html</loc>
+    <lastmod>2026-05-20T18:20:55.135Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_rowMeans.html</loc>
+    <lastmod>2026-05-20T18:20:54.890Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_mean_sd_by_row.html</loc>
-    <lastmod>2025-12-18T18:17:42.793Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.836Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_colVars.html</loc>
+    <lastmod>2026-05-20T18:20:54.709Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_colSds.html</loc>
+    <lastmod>2026-05-20T18:20:54.770Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_colMeans.html</loc>
+    <lastmod>2026-05-20T18:20:54.552Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getVectorBlockSize.html</loc>
-    <lastmod>2025-12-18T18:17:57.181Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.108Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getSizetoRead.html</loc>
-    <lastmod>2025-12-18T18:17:57.799Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.587Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getOptimBlockSize.html</loc>
-    <lastmod>2025-12-18T18:17:56.771Z</lastmod>
+    <lastmod>2026-05-20T18:21:10.797Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getObjecDataType.html</loc>
-    <lastmod>2025-12-18T18:17:56.220Z</lastmod>
+    <lastmod>2026-05-20T18:21:10.385Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getMatrixBlockSize.html</loc>
-    <lastmod>2025-12-18T18:17:56.951Z</lastmod>
+    <lastmod>2026-05-20T18:21:10.931Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getInitialPosition.html</loc>
-    <lastmod>2025-12-18T18:17:57.359Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.245Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getDiagonalfromMatrix.html</loc>
-    <lastmod>2025-12-18T18:17:38.568Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.407Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getDTthreads.html</loc>
-    <lastmod>2025-12-18T18:17:36.725Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.413Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getBlockPositionsSizes_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:44.128Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.883Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getAvailableMemoryMB.html</loc>
-    <lastmod>2025-12-18T18:17:55.948Z</lastmod>
+    <lastmod>2026-05-20T18:21:10.171Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/extractDiagonalToVector.html</loc>
-    <lastmod>2025-12-18T18:17:36.924Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.711Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/estimateOptimalBlockSize.html</loc>
-    <lastmod>2025-12-18T18:17:47.525Z</lastmod>
+    <lastmod>2026-05-20T18:21:03.839Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/dscal_.html</loc>
-    <lastmod>2025-12-18T18:17:42.060Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.115Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/dgesvd_.html</loc>
-    <lastmod>2025-12-18T18:17:41.998Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.069Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/dgesdd_.html</loc>
-    <lastmod>2025-12-18T18:17:43.559Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.435Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/cumsum.html</loc>
-    <lastmod>2025-12-18T18:17:53.794Z</lastmod>
+    <lastmod>2026-05-20T18:21:08.547Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/createHardLink.html</loc>
-    <lastmod>2025-12-18T18:17:50.271Z</lastmod>
+    <lastmod>2026-05-20T18:21:05.966Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/compute_pvalues_optimized.html</loc>
-    <lastmod>2025-12-18T18:17:37.773Z</lastmod>
+    <lastmod>2026-05-20T18:20:55.789Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/closeAllHDF5Handles.html</loc>
+    <lastmod>2026-05-20T18:21:03.483Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/classify_matrix_type.html</loc>
-    <lastmod>2025-12-18T18:17:58.096Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.810Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/calculate_multiplication_blocks.html</loc>
-    <lastmod>2025-12-18T18:17:44.304Z</lastmod>
+    <lastmod>2026-05-20T18:21:01.026Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/bdtcrossproduct.html</loc>
-    <lastmod>2025-12-18T18:17:51.883Z</lastmod>
+    <lastmod>2026-05-20T18:21:07.188Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/avoid_openmp_hang_within_fork.html</loc>
-    <lastmod>2025-12-18T18:17:58.459Z</lastmod>
+    <lastmod>2026-05-20T18:21:12.093Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/agg_block_size.html</loc>
+    <lastmod>2026-05-20T18:20:54.400Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/addDiagonals.html</loc>
-    <lastmod>2025-12-18T18:17:37.066Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.825Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Xwd.html</loc>
-    <lastmod>2025-12-18T18:17:52.584Z</lastmod>
+    <lastmod>2026-05-20T18:21:07.710Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/VectortoOrderedMap_SNP_counts.html</loc>
-    <lastmod>2025-12-18T18:17:48.798Z</lastmod>
+    <lastmod>2026-05-20T18:21:04.815Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdSVD_lapack.html</loc>
-    <lastmod>2025-12-18T18:17:43.638Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.496Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdSVD_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:43.485Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.374Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdEigen_spectra.html</loc>
-    <lastmod>2025-12-18T18:17:39.530Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.140Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdEigen_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:39.695Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.270Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdCorr_matrix_cross.html</loc>
-    <lastmod>2025-12-18T18:17:38.186Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.105Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdCorr_hdf5_cross.html</loc>
-    <lastmod>2025-12-18T18:17:38.484Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.340Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdCorr_hdf5_Block_cross.html</loc>
-    <lastmod>2025-12-18T18:17:38.412Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.253Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_vector_subtract_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:46.733Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.899Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_vector_power_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:46.982Z</lastmod>
+    <lastmod>2026-05-20T18:21:03.078Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_vector_mult.html</loc>
-    <lastmod>2025-12-18T18:17:51.600Z</lastmod>
+    <lastmod>2026-05-20T18:21:06.967Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_vector_add_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:46.671Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.851Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_vector_blockSubstract.html</loc>
-    <lastmod>2025-12-18T18:17:54.671Z</lastmod>
+    <lastmod>2026-05-20T18:21:09.208Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_vect_sum.html</loc>
-    <lastmod>2025-12-18T18:17:55.367Z</lastmod>
+    <lastmod>2026-05-20T18:21:09.732Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_vect_mult.html</loc>
-    <lastmod>2025-12-18T18:17:51.356Z</lastmod>
+    <lastmod>2026-05-20T18:21:06.794Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_substract.html</loc>
-    <lastmod>2025-12-18T18:17:54.024Z</lastmod>
+    <lastmod>2026-05-20T18:21:08.719Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_blockSubstract.html</loc>
-    <lastmod>2025-12-18T18:17:54.572Z</lastmod>
+    <lastmod>2026-05-20T18:21:09.128Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorSum_byCol.html</loc>
-    <lastmod>2025-12-18T18:17:45.880Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.237Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorSubstract_byCol.html</loc>
-    <lastmod>2025-12-18T18:17:46.095Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.403Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorPow_byRow.html</loc>
-    <lastmod>2025-12-18T18:17:45.490Z</lastmod>
+    <lastmod>2026-05-20T18:21:01.936Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorMultiplication_byCol.html</loc>
-    <lastmod>2025-12-18T18:17:45.704Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.100Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorDivision_byCol.html</loc>
-    <lastmod>2025-12-18T18:17:46.273Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.539Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_block_matrix_vector_substract_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:43.033Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.029Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_block_matrix_sum_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:43.129Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.109Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_block_matrix_mul_parallel.html</loc>
-    <lastmod>2025-12-18T18:17:51.129Z</lastmod>
+    <lastmod>2026-05-20T18:21:06.620Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_Remove_MAF_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:47.091Z</lastmod>
+    <lastmod>2026-05-20T18:21:03.156Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_InvCholesky_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.110Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.590Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_Import_File_to_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:48.424Z</lastmod>
+    <lastmod>2026-05-20T18:21:04.527Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppTypifyNormalizeHdf5.html</loc>
-    <lastmod>2025-12-18T18:17:41.644Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.789Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSplit_matrix_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:49.681Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSplit_matrix_hdf5_internal.html</loc>
+    <lastmod>2026-05-20T18:21:05.576Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSolveHdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.006Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSort_dataset_hdf5.html</loc>
+    <lastmod>2026-05-20T18:21:05.455Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppRemove_hdf5_elements.html</loc>
-    <lastmod>2025-12-18T18:17:49.211Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSolve.html</loc>
+    <lastmod>2026-05-20T18:20:57.451Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppReduce_dataset_hdf5.html</loc>
+    <lastmod>2026-05-20T18:21:05.143Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppQRHdf5.html</loc>
-    <lastmod>2025-12-18T18:17:42.513Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.465Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppPseudoinvHdf5.html</loc>
-    <lastmod>2025-12-18T18:17:42.208Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.229Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppPCAHdf5.html</loc>
-    <lastmod>2025-12-18T18:17:41.880Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.979Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppNormalize_Data.html</loc>
-    <lastmod>2025-12-18T18:17:41.291Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.499Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppNormalizeHdf5.html</loc>
-    <lastmod>2025-12-18T18:17:41.565Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.726Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppGetPCAVariablesHdf5.html</loc>
-    <lastmod>2025-12-18T18:17:41.731Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.861Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppBind_datasets_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:47.242Z</lastmod>
+    <lastmod>2026-05-20T18:21:03.269Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Next_level_SvdBlock_decomposition_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:43.872Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.683Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Inverse_of_Cholesky_decomposition_intermediate_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.566Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.938Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Inverse_Matrix_Cholesky_outofcore_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.846Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.160Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Inverse_Matrix_Cholesky_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.392Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.798Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Cholesky_decomposition_outofcore_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.715Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.057Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Cholesky_decomposition_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.214Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.660Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/classes/index.html</loc>
-    <lastmod>2025-12-18T18:17:58.567Z</lastmod>
+    <lastmod>2026-05-20T18:21:12.178Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/classes/hdf5File.html</loc>
-    <lastmod>2025-12-18T18:17:36.112Z</lastmod>
+    <lastmod>2026-05-20T18:20:52.912Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/classes/hdf5DiagonalMatrix.html</loc>
-    <lastmod>2025-12-18T18:17:36.076Z</lastmod>
+    <lastmod>2026-05-20T18:20:52.885Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/classes/hdf5Dataset.html</loc>
-    <lastmod>2025-12-18T18:17:36.058Z</lastmod>
+    <lastmod>2026-05-20T18:20:52.868Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp-api.html</loc>
     <lastmod>2025-12-12T15:37:09.000Z</lastmod>
   </url>
   <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/classes/SystemInfo.html</loc>
+    <lastmod>2026-05-20T18:20:52.768Z</lastmod>
+  </url>
+  <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/classes/hdf5DatasetInternal.html</loc>
-    <lastmod>2025-12-18T18:17:35.981Z</lastmod>
+    <lastmod>2026-05-20T18:20:52.820Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/classes/hdf5Dims.html</loc>
-    <lastmod>2025-12-18T18:17:36.089Z</lastmod>
+    <lastmod>2026-05-20T18:20:52.895Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/classes/hdf5Group.html</loc>
-    <lastmod>2025-12-18T18:17:36.122Z</lastmod>
+    <lastmod>2026-05-20T18:20:52.922Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Bblock_matrix_mul_parallel.html</loc>
-    <lastmod>2025-12-18T18:17:44.192Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.931Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Cholesky_decomposition_intermediate_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.465Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.852Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/First_level_SvdBlock_decomposition_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:43.782Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.610Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Inverse_Matrix_Cholesky_intermediate_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.621Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.980Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Inverse_of_Cholesky_decomposition_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.285Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.715Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Inverse_of_Cholesky_decomposition_outofcore_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:40.774Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.103Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppApplyFunctionHdf5.html</loc>
-    <lastmod>2025-12-18T18:17:47.185Z</lastmod>
+    <lastmod>2026-05-20T18:21:03.228Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppGetPCAIndividualsHdf5.html</loc>
-    <lastmod>2025-12-18T18:17:41.783Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.899Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppNormalizeColwise.html</loc>
-    <lastmod>2025-12-18T18:17:41.053Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.318Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppNormalizeRowwise.html</loc>
-    <lastmod>2025-12-18T18:17:41.233Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.455Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppNormalize_Data_R_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:41.490Z</lastmod>
+    <lastmod>2026-05-20T18:20:58.667Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppPseudoinv.html</loc>
-    <lastmod>2025-12-18T18:17:42.120Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.160Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppQR.html</loc>
-    <lastmod>2025-12-18T18:17:42.437Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.403Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppReduce_dataset_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:49.100Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppQRHdf5_dispatch.html</loc>
+    <lastmod>2026-05-20T18:20:59.618Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSolve.html</loc>
-    <lastmod>2025-12-18T18:17:39.930Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppRemove_hdf5_elements.html</loc>
+    <lastmod>2026-05-20T18:21:05.228Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSort_dataset_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:49.588Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSolveHdf5.html</loc>
+    <lastmod>2026-05-20T18:20:57.509Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSplit_matrix_hdf5_internal.html</loc>
-    <lastmod>2025-12-18T18:17:49.743Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppSplit_matrix_hdf5.html</loc>
+    <lastmod>2026-05-20T18:21:05.529Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppTSQRHdf5.html</loc>
+    <lastmod>2026-05-20T18:20:59.534Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_FileExist.html</loc>
-    <lastmod>2025-12-18T18:17:57.588Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.424Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_Impute_snps_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:48.885Z</lastmod>
+    <lastmod>2026-05-20T18:21:04.885Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_Remove_Low_Data_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:49.307Z</lastmod>
+    <lastmod>2026-05-20T18:21:05.304Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_block_matrix_mul.html</loc>
-    <lastmod>2025-12-18T18:17:50.946Z</lastmod>
+    <lastmod>2026-05-20T18:21:06.478Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_block_matrix_substract_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:42.967Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.976Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_block_matrix_vector_substract.html</loc>
-    <lastmod>2025-12-18T18:17:54.906Z</lastmod>
+    <lastmod>2026-05-20T18:21:09.383Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_block_matrix_vector_sum_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:43.234Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.195Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorDivision_byRow.html</loc>
-    <lastmod>2025-12-18T18:17:45.269Z</lastmod>
+    <lastmod>2026-05-20T18:21:01.764Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorMultiplication_byRow.html</loc>
-    <lastmod>2025-12-18T18:17:44.683Z</lastmod>
+    <lastmod>2026-05-20T18:21:01.319Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorPower_byCol.html</loc>
-    <lastmod>2025-12-18T18:17:46.440Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.670Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorSubstract_byRow.html</loc>
-    <lastmod>2025-12-18T18:17:45.047Z</lastmod>
+    <lastmod>2026-05-20T18:21:01.599Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrixVectorSum_byRow.html</loc>
-    <lastmod>2025-12-18T18:17:44.852Z</lastmod>
+    <lastmod>2026-05-20T18:21:01.450Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_blockSum.html</loc>
-    <lastmod>2025-12-18T18:17:55.686Z</lastmod>
+    <lastmod>2026-05-20T18:21:09.974Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_sum.html</loc>
-    <lastmod>2025-12-18T18:17:55.136Z</lastmod>
+    <lastmod>2026-05-20T18:21:09.557Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_vect_substract.html</loc>
-    <lastmod>2025-12-18T18:17:54.255Z</lastmod>
+    <lastmod>2026-05-20T18:21:08.892Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_vector_blockMult.html</loc>
-    <lastmod>2025-12-18T18:17:51.697Z</lastmod>
+    <lastmod>2026-05-20T18:21:07.045Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_matrix_vector_blockSum.html</loc>
-    <lastmod>2025-12-18T18:17:55.749Z</lastmod>
+    <lastmod>2026-05-20T18:21:10.022Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_vector_divide_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:46.897Z</lastmod>
+    <lastmod>2026-05-20T18:21:03.012Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_vector_multiply_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:46.825Z</lastmod>
+    <lastmod>2026-05-20T18:21:02.955Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_vector_substract.html</loc>
-    <lastmod>2025-12-18T18:17:54.493Z</lastmod>
+    <lastmod>2026-05-20T18:21:09.069Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Rcpp_vector_sum.html</loc>
-    <lastmod>2025-12-18T18:17:55.604Z</lastmod>
+    <lastmod>2026-05-20T18:21:09.910Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdCorr_hdf5_Block_single.html</loc>
-    <lastmod>2025-12-18T18:17:38.242Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.148Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdCorr_hdf5_single.html</loc>
-    <lastmod>2025-12-18T18:17:38.349Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.203Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdCorr_matrix_single.html</loc>
-    <lastmod>2025-12-18T18:17:38.126Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.058Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdEigen_hdf5_Block.html</loc>
-    <lastmod>2025-12-18T18:17:39.641Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.225Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdSVD.html</loc>
-    <lastmod>2025-12-18T18:17:43.316Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.239Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/RcppbdSVD_hdf5_Block.html</loc>
-    <lastmod>2025-12-18T18:17:43.430Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.332Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/SplitElementName.html</loc>
-    <lastmod>2025-12-18T18:17:56.055Z</lastmod>
+    <lastmod>2026-05-20T18:21:10.256Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Xw.html</loc>
-    <lastmod>2025-12-18T18:17:52.664Z</lastmod>
+    <lastmod>2026-05-20T18:21:07.775Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/Xwd_parallel.html</loc>
-    <lastmod>2025-12-18T18:17:53.227Z</lastmod>
+    <lastmod>2026-05-20T18:21:08.211Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/after_fork.html</loc>
-    <lastmod>2025-12-18T18:17:58.347Z</lastmod>
+    <lastmod>2026-05-20T18:21:12.003Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/agg_make_blocks.html</loc>
+    <lastmod>2026-05-20T18:20:54.243Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/bdcrossproduct.html</loc>
-    <lastmod>2025-12-18T18:17:51.791Z</lastmod>
+    <lastmod>2026-05-20T18:21:07.117Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/calc_freq.html</loc>
-    <lastmod>2025-12-18T18:17:47.039Z</lastmod>
+    <lastmod>2026-05-20T18:21:03.116Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/checkClose_file.html</loc>
-    <lastmod>2025-12-18T18:17:47.291Z</lastmod>
+    <lastmod>2026-05-20T18:21:03.303Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/cleanup_temp_datasets.html</loc>
-    <lastmod>2025-12-18T18:17:36.874Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.674Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/closeHDF5HandlesForFile.html</loc>
+    <lastmod>2026-05-20T18:21:03.661Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/correlation_pvalue.html</loc>
-    <lastmod>2025-12-18T18:17:37.706Z</lastmod>
+    <lastmod>2026-05-20T18:20:55.732Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/crossprod.html</loc>
-    <lastmod>2025-12-18T18:17:37.409Z</lastmod>
+    <lastmod>2026-05-20T18:20:54.089Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/dgemm_.html</loc>
-    <lastmod>2025-12-18T18:17:41.939Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.025Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/dgesv_.html</loc>
-    <lastmod>2025-12-18T18:17:39.771Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.330Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/divideDiagonals.html</loc>
-    <lastmod>2025-12-18T18:17:37.211Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.933Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/dsysv_.html</loc>
-    <lastmod>2025-12-18T18:17:39.851Z</lastmod>
+    <lastmod>2026-05-20T18:20:57.389Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/exists_HDF5_element.html</loc>
-    <lastmod>2025-12-18T18:17:49.864Z</lastmod>
+    <lastmod>2026-05-20T18:21:05.653Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/find_all.html</loc>
-    <lastmod>2025-12-18T18:17:49.492Z</lastmod>
+    <lastmod>2026-05-20T18:21:05.380Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getBlockPositionsSizes.html</loc>
-    <lastmod>2025-12-18T18:17:53.575Z</lastmod>
+    <lastmod>2026-05-20T18:21:08.476Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getBlockPositionsSizes_mat.html</loc>
-    <lastmod>2025-12-18T18:17:51.046Z</lastmod>
+    <lastmod>2026-05-20T18:21:06.553Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getDTthreads_R.html</loc>
-    <lastmod>2025-12-18T18:17:36.738Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.423Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getGeneralSortRule.html</loc>
-    <lastmod>2025-12-18T18:17:39.063Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.791Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getIntEnv.html</loc>
-    <lastmod>2025-12-18T18:17:58.102Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.814Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getMaxBlockSize.html</loc>
-    <lastmod>2025-12-18T18:17:56.547Z</lastmod>
+    <lastmod>2026-05-20T18:21:10.632Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getObjectDims.html</loc>
-    <lastmod>2025-12-18T18:17:56.312Z</lastmod>
+    <lastmod>2026-05-20T18:21:10.455Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getOptimalBlockElements.html</loc>
-    <lastmod>2025-12-18T18:17:56.037Z</lastmod>
+    <lastmod>2026-05-20T18:21:10.242Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/getSymmetricSortRule.html</loc>
-    <lastmod>2025-12-18T18:17:38.876Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.649Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_colMaxs.html</loc>
+    <lastmod>2026-05-20T18:20:54.655Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_colMins.html</loc>
+    <lastmod>2026-05-20T18:20:54.605Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_colSums.html</loc>
+    <lastmod>2026-05-20T18:20:54.489Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_mean_sd_by_column.html</loc>
-    <lastmod>2025-12-18T18:17:42.869Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.896Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_rowMaxs.html</loc>
+    <lastmod>2026-05-20T18:20:55.012Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_rowMins.html</loc>
+    <lastmod>2026-05-20T18:20:54.971Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_rowSums.html</loc>
+    <lastmod>2026-05-20T18:20:54.812Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_scalar_max.html</loc>
+    <lastmod>2026-05-20T18:20:55.383Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_scalar_min.html</loc>
+    <lastmod>2026-05-20T18:20:55.302Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_HDF5_scalar_sum.html</loc>
+    <lastmod>2026-05-20T18:20:55.202Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_NewLineEnding.html</loc>
-    <lastmod>2025-12-18T18:17:47.926Z</lastmod>
+    <lastmod>2026-05-20T18:21:04.152Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_block_size.html</loc>
-    <lastmod>2025-12-18T18:17:42.716Z</lastmod>
+    <lastmod>2026-05-20T18:20:59.776Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_number_threads.html</loc>
-    <lastmod>2025-12-18T18:17:58.555Z</lastmod>
+    <lastmod>2026-05-20T18:21:12.169Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/get_value_to_impute_discrete.html</loc>
-    <lastmod>2025-12-18T18:17:48.599Z</lastmod>
+    <lastmod>2026-05-20T18:21:04.664Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/imax.html</loc>
-    <lastmod>2025-12-18T18:17:58.113Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.822Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/index.html</loc>
-    <lastmod>2025-12-18T18:17:58.595Z</lastmod>
+    <lastmod>2026-05-20T18:21:12.199Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/isDiagonalVector.html</loc>
-    <lastmod>2025-12-18T18:17:36.828Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.491Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/is_number.html</loc>
-    <lastmod>2025-12-18T18:17:48.163Z</lastmod>
+    <lastmod>2026-05-20T18:21:04.330Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/multiplication.html</loc>
-    <lastmod>2025-12-18T18:17:44.057Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.829Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/multiplyDiagonals.html</loc>
-    <lastmod>2025-12-18T18:17:37.160Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.898Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/pathExists.html</loc>
-    <lastmod>2025-12-18T18:17:49.786Z</lastmod>
+    <lastmod>2026-05-20T18:21:05.591Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/performMatrixDiagonalOperation.html</loc>
-    <lastmod>2025-12-18T18:17:37.014Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.785Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/prepareForParallelization.html</loc>
-    <lastmod>2025-12-18T18:17:43.702Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.546Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/removeRow.html</loc>
-    <lastmod>2025-12-18T18:17:50.690Z</lastmod>
+    <lastmod>2026-05-20T18:21:06.281Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/renameElement.html</loc>
-    <lastmod>2025-12-18T18:17:50.504Z</lastmod>
+    <lastmod>2026-05-20T18:21:06.139Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/setDiagonalMatrix.html</loc>
-    <lastmod>2025-12-18T18:17:38.656Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.479Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/setUpperTriangularMatrix.html</loc>
-    <lastmod>2025-12-18T18:17:43.964Z</lastmod>
+    <lastmod>2026-05-20T18:21:00.760Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/subtractDiagonals.html</loc>
-    <lastmod>2025-12-18T18:17:37.112Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.862Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/tcrossprod.html</loc>
-    <lastmod>2025-12-18T18:17:44.510Z</lastmod>
+    <lastmod>2026-05-20T18:21:01.189Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/validateSpectraParams.html</loc>
-    <lastmod>2025-12-18T18:17:39.287Z</lastmod>
+    <lastmod>2026-05-20T18:20:56.961Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/validateVectorDataset.html</loc>
-    <lastmod>2025-12-18T18:17:36.782Z</lastmod>
+    <lastmod>2026-05-20T18:20:53.456Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/wdX.html</loc>
-    <lastmod>2025-12-18T18:17:53.000Z</lastmod>
+    <lastmod>2026-05-20T18:21:08.036Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/when_fork.html</loc>
-    <lastmod>2025-12-18T18:17:58.229Z</lastmod>
+    <lastmod>2026-05-20T18:21:11.913Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/functions/xtwx.html</loc>
-    <lastmod>2025-12-18T18:17:52.345Z</lastmod>
+    <lastmod>2026-05-20T18:21:07.536Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/cpp/index.html</loc>
-    <lastmod>2025-12-18T18:17:58.566Z</lastmod>
+    <lastmod>2026-05-20T18:21:12.177Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r-functions.html</loc>
     <lastmod>2025-12-12T15:37:09.000Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/blockwise_ops/bdblockSubstract_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.489Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/colMaxs.html</loc>
+    <lastmod>2026-05-20T18:20:33.124Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/blockwise_ops/bdblockSum_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.483Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/colMins.html</loc>
+    <lastmod>2026-05-20T18:20:33.124Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/blockwise_ops/bdblockmult_sparse_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.487Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/colSums.html</loc>
+    <lastmod>2026-05-20T18:20:33.122Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/blockwise_ops/index.html</loc>
-    <lastmod>2025-12-18T18:17:13.553Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/cor.html</loc>
+    <lastmod>2026-05-20T18:20:33.126Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdCreate_diagonal_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.455Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/hdf5_reduce.html</loc>
+    <lastmod>2026-05-20T18:20:33.129Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdDiag_add_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.457Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/reduce.html</loc>
+    <lastmod>2026-05-20T18:20:33.127Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdDiag_multiply_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.462Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/rowMeans.html</loc>
+    <lastmod>2026-05-20T18:20:33.123Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdDiag_subtract_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.459Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/rowSds.html</loc>
+    <lastmod>2026-05-20T18:20:33.125Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdInvCholesky_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.472Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/rowVars.html</loc>
+    <lastmod>2026-05-20T18:20:33.125Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdQR_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.438Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/sd.html</loc>
+    <lastmod>2026-05-20T18:20:33.123Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdSolve_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.445Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/aggregations/sweep.html</loc>
+    <lastmod>2026-05-20T18:20:33.126Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdWriteOppsiteTriangularMatrix_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.481Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/chol.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.120Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/bdpseudoinv_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.478Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/crossprod.html</loc>
+    <lastmod>2026-05-20T18:20:33.112Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_algebra/index.html</loc>
-    <lastmod>2025-12-18T18:17:13.553Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/index.html</loc>
+    <lastmod>2026-05-20T18:20:33.393Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdCheckMatrix_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.525Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/pseudoinverse.html</loc>
+    <lastmod>2026-05-20T18:20:33.122Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/qr.html</loc>
+    <lastmod>2026-05-20T18:20:33.119Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/svd.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.116Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/decompositions/tcrossprod.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.115Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdCreate_hdf5_group.html</loc>
-    <lastmod>2025-12-18T18:17:13.519Z</lastmod>
+    <lastmod>2026-05-20T18:20:33.181Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdImportData_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.511Z</lastmod>
+    <lastmod>2026-05-20T18:20:33.179Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdIsLocked_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.521Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdReduce_hdf5_dataset.html</loc>
+    <lastmod>2026-05-20T18:20:33.187Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdRemove_hdf5_element.html</loc>
-    <lastmod>2025-12-18T18:17:13.533Z</lastmod>
-  </url>
-  <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdSplit_matrix_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.538Z</lastmod>
-  </url>
-  <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdgetDatasetsList_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.524Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdapply_Function_hdf5.html</loc>
+    <lastmod>2026-05-20T18:20:33.180Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/bdmove_hdf5_dataset.html</loc>
-    <lastmod>2025-12-18T18:17:13.530Z</lastmod>
+    <lastmod>2026-05-20T18:20:33.185Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_io_management/index.html</loc>
-    <lastmod>2025-12-18T18:17:13.554Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/hdf5_close_all.html</loc>
+    <lastmod>2026-05-20T18:20:33.068Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_statistics/bdImputeSNPs_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.501Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/hdf5_create_matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.095Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_statistics/bdRemoveMAF_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.510Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/hdf5_import_multiple.html</loc>
+    <lastmod>2026-05-20T18:20:33.097Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_statistics/bdapply_Function_hdf5.html</loc>
-    <lastmod>2025-12-18T18:17:13.496Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/hdf5matrix_options.html</loc>
+    <lastmod>2026-05-20T18:20:33.098Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5_statistics/index.html</loc>
-    <lastmod>2025-12-18T18:17:13.553Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/is_open.html</loc>
+    <lastmod>2026-05-20T18:20:33.110Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdCorr_matrix.html</loc>
-    <lastmod>2025-12-18T18:17:13.429Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/hdf5matrix_core/object_size.html</loc>
+    <lastmod>2026-05-20T18:20:33.109Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdQR.html</loc>
-    <lastmod>2025-12-18T18:17:13.425Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/index.html</loc>
+    <lastmod>2026-05-20T18:20:33.393Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdSolve.html</loc>
-    <lastmod>2025-12-18T18:17:13.426Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdCrossprod.html</loc>
+    <lastmod>2026-05-20T18:20:33.176Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bd_wproduct.html</loc>
+    <lastmod>2026-05-20T18:20:33.178Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdblockSubstract.html</loc>
+    <lastmod>2026-05-20T18:20:33.173Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdpseudoinv.html</loc>
-    <lastmod>2025-12-18T18:17:13.427Z</lastmod>
+    <lastmod>2026-05-20T18:20:33.168Z</lastmod>
   </url>
   <url>
-    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/index.html</loc>
-    <lastmod>2025-12-18T18:17:13.553Z</lastmod>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/linear_algebra/bdtCrossprod.html</loc>
+    <lastmod>2026-05-20T18:20:33.177Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/matrix_utils/diag.html</loc>
+    <lastmod>2026-05-20T18:20:33.133Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/matrix_utils/diag_scale.html</loc>
+    <lastmod>2026-05-20T18:20:33.132Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/matrix_utils/multiply_sparse.html</loc>
+    <lastmod>2026-05-20T18:20:33.165Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/omics/filter_maf.html</loc>
+    <lastmod>2026-05-20T18:20:33.167Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/omics/index.html</loc>
+    <lastmod>2026-05-20T18:20:33.393Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/Summary.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.327Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/as.data.frame.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.333Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/cbind.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.330Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/colMaxs.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.285Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/colMeans.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.283Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/colSds.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.327Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/colSums.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.283Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/colnames.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.341Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/cor.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.337Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/diag.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.383Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/diag_op.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.338Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/dim.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.333Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/eigen.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.341Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/filter_low_coverage.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.384Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/impute_snps.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.384Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/length.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.334Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/multiply_sparse.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.385Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/print.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.334Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/pseudoinverse.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.387Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/qr.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.381Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5_close_all_file_handles.html</loc>
+    <lastmod>2026-05-20T18:20:33.278Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5_close_at_paths.html</loc>
+    <lastmod>2026-05-20T18:20:33.277Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5_close_file_handles_safe.html</loc>
+    <lastmod>2026-05-20T18:20:33.277Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_add.html</loc>
+    <lastmod>2026-05-20T18:20:33.228Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_colMaxs.html</loc>
+    <lastmod>2026-05-20T18:20:33.222Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_colMins.html</loc>
+    <lastmod>2026-05-20T18:20:33.221Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_colSums.html</loc>
+    <lastmod>2026-05-20T18:20:33.221Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_crossprod.html</loc>
+    <lastmod>2026-05-20T18:20:33.279Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_div_ew.html</loc>
+    <lastmod>2026-05-20T18:20:33.230Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_is_valid.html</loc>
+    <lastmod>2026-05-20T18:20:33.274Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_multiply.html</loc>
+    <lastmod>2026-05-20T18:20:33.279Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_read_all.html</loc>
+    <lastmod>2026-05-20T18:20:33.281Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_rowMaxs.html</loc>
+    <lastmod>2026-05-20T18:20:33.225Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_rowMins.html</loc>
+    <lastmod>2026-05-20T18:20:33.225Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_rowSums.html</loc>
+    <lastmod>2026-05-20T18:20:33.223Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_scalar_max.html</loc>
+    <lastmod>2026-05-20T18:20:33.227Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_scalar_min.html</loc>
+    <lastmod>2026-05-20T18:20:33.227Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_scalar_sum.html</loc>
+    <lastmod>2026-05-20T18:20:33.226Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_subset.html</loc>
+    <lastmod>2026-05-20T18:20:33.281Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_tcrossprod.html</loc>
+    <lastmod>2026-05-20T18:20:33.280Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rcpp_hdf5dataset_write_block.html</loc>
+    <lastmod>2026-05-20T18:20:33.282Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/reduce.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.386Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rowMeans.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.285Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rowMins.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.285Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rowSums.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/rowVars.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.326Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/scale.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.384Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/sd.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.328Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/split.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.386Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/str.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.334Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/sweep.HDF5Matrix.html</loc>
+    <lastmod>2026-05-20T18:20:33.382Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/tcrossprod.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.328Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/other/var.default.html</loc>
+    <lastmod>2026-05-20T18:20:33.284Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/system_utils/get_available_ram.html</loc>
+    <lastmod>2026-05-20T18:20:33.192Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/system_utils/get_memory_thresholds.html</loc>
+    <lastmod>2026-05-20T18:20:33.189Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/system_utils/get_total_ram.html</loc>
+    <lastmod>2026-05-20T18:20:33.191Z</lastmod>
+  </url>
+  <url>
+    <loc>https://isglobal-brge.github.io/BigDataStatMeth/api-reference/r/system_utils/memory_info.html</loc>
+    <lastmod>2026-05-20T18:20:33.190Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/appendix/cpp_functions_table.html</loc>
@@ -1122,7 +1742,7 @@
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/tutorials/first-analysis.html</loc>
-    <lastmod>2025-12-12T15:37:12.000Z</lastmod>
+    <lastmod>2026-05-20T19:39:00.855Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/tutorials/index.html</loc>
@@ -1130,10 +1750,10 @@
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/workflows/cross-platform.html</loc>
-    <lastmod>2025-12-15T19:51:00.898Z</lastmod>
+    <lastmod>2026-05-20T20:36:33.537Z</lastmod>
   </url>
   <url>
     <loc>https://isglobal-brge.github.io/BigDataStatMeth/workflows/implementing-pca.html</loc>
-    <lastmod>2025-12-13T12:16:33.251Z</lastmod>
+    <lastmod>2026-05-20T21:01:22.890Z</lastmod>
   </url>
 </urlset>

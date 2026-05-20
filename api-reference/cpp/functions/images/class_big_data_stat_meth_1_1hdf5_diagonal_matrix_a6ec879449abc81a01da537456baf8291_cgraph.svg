@@ -68,7 +68,7 @@ var sectionId = 'dynsection-4';
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#ab19bac9a31efe4a733294c1c23ff5ef7" target="_top" xlink:title="Create a new dataset with optional compression.">
+<g id="a_Node000002"><a xlink:href="class_big_data_stat_meth_1_1hdf5_dataset.html#a374a6cadcadfc23c1f5df858d31e20df" target="_top" xlink:title="Create a new dataset with optional compression.">
 <polygon fill="white" stroke="#666666" points="357.12,-243.5 206.88,-243.5 206.88,-213 357.12,-213 357.12,-243.5"/>
 <text xml:space="preserve" text-anchor="start" x="214.88" y="-230" font-family="Helvetica,sans-Serif" font-size="10.00">BigDataStatMeth::hdf5Dataset</text>
 <text xml:space="preserve" text-anchor="middle" x="282" y="-218.75" font-family="Helvetica,sans-Serif" font-size="10.00">::createDataset</text>
