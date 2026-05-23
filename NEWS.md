@@ -1,3 +1,14 @@
+## BigDataStatMeth 2.0.2 (in development)
+
+### Documentation
+
+- Improved documentation for `split()`, `split_dataset()`, `reduce()`,
+  `hdf5_reduce()`, `apply_function()`, and `hdf5_apply()`: clarified
+  calling conventions, two-level access pattern (S3 on open object vs.
+  standalone by file path), and distinction from `base::apply()`.
+- Fixed legacy API call in `hdf5_apply()` example.
+- Added vignette section "Dataset operations: split, reduce, and apply".
+
 # BigDataStatMeth 2.0.1
 
 * Fixed vignette build failure on Debian: replaced external CSV file

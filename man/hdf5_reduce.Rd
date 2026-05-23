@@ -36,9 +36,17 @@ or \code{"-"}.}
 An \code{HDF5Matrix} pointing to the result dataset.
 }
 \description{
-Applies a binary reduction (\code{"+"} or \code{"-"}) across all
-datasets stored in a given HDF5 group and writes the result as a new
-dataset. Delegates to \code{bdReduce_hdf5_dataset()}.
+Standalone function that applies a binary reduction (\code{"+"} or
+\code{"-"}) across all datasets stored in a given HDF5 group and writes
+the accumulated result as a new dataset. No open \code{HDF5Matrix} object
+is required.
+}
+\details{
+Use \code{hdf5_reduce()} when you only have the file path and group name.
+If you already have an open \code{HDF5Matrix}, use
+\code{\link{reduce}(x, ...)} instead — both produce the same result.
+
+All datasets in \code{group} must have the same dimensions.
 }
 \examples{
 \donttest{

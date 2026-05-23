@@ -44,18 +44,37 @@ Named list of \code{HDF5Matrix} objects:
 }
 \description{
 S3 method of \code{base::split()} for \code{HDF5Matrix} objects.
-Divides the matrix into blocks along rows (default) or columns.
+Divides the matrix into equal-sized blocks along rows (default) or columns,
+storing each block as a separate dataset in the same HDF5 file.
 
 Provide exactly ONE of \code{n_blocks} or \code{block_size}.
 }
+\details{
+\strong{Calling convention:} use \code{split(x, n_blocks = 4)} after loading
+the package. The form \code{BigDataStatMeth::split()} produces an error
+because \code{split} is a \code{base} generic — this is normal R behaviour,
+identical to \code{BigDataStatMeth::cor()} or \code{BigDataStatMeth::svd()}.
+The S3 dispatch happens automatically when the package is loaded.
+
+\code{split_dataset()} is an alternative with a cleaner signature that
+omits the \code{f} and \code{drop} parameters inherited from
+\code{base::split} (which have no meaning for HDF5Matrix objects).
+Both functions produce identical results.
+}
 \examples{
 \donttest{
+fn     <- tempfile(fileext = ".h5")
+X      <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(2000), 20, 100))
+blocks <- split(X, n_blocks = 4)   # 4 row-blocks of 5 rows each
+length(blocks)                     # 4
+lapply(blocks, close)
 
-fn <- tempfile(fileext = ".h5")
-X  <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(2000000), 20000, 100))
-
-X      <- hdf5_matrix( fn, "data/X")   # 20000 × 1000
-blocks <- split(X, n_blocks = 4)             # 4 row-blocks of ~5000 rows each
+hdf5_close_all()
+unlink(fn)
 }
 
+}
+\seealso{
+\code{\link{split_dataset}} for the equivalent with a cleaner
+signature; \code{\link{hdf5_reduce}} to recombine blocks after processing.
 }

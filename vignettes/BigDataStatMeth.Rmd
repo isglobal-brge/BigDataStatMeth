@@ -100,7 +100,7 @@ in their corresponding help pages.
 | Matrix decompositions | `svd()`, `prcomp()`, `eigen()`, `pseudoinverse()` |
 | Factorizations and solvers | `qr()`, `chol()`, `solve()` |
 | Diagonal operations | `diag()`, `diag<-()`, `diag_op()`, `diag_scale()` |
-| Split, reduce, and apply | `split_dataset()`, `split()`, `reduce()`, `apply_function()` |
+| Split, reduce, and apply | `split()`, `split_dataset()`, `reduce()`, `hdf5_reduce()`, `apply_function()`, `hdf5_apply()` |
 | Resource management and options | `hdf5matrix_options()`, `show_hdf5matrix_options()`, `hdf5_close_all()` |
 | Specialized high-level helpers | selected `bd*` functions for utilities without a direct standard R generic, such as `bdCreate_hdf5_group()`, `bdmove_hdf5_dataset()`, and `bdWrite_hdf5_dimnames()` |
 
@@ -746,6 +746,88 @@ Pinv_h5 <- pseudoinverse(
 
 dim(Pinv_h5)
 ```
+
+# Dataset operations: split, reduce, and apply
+
+## Split
+
+`split()` divides an `HDF5Matrix` into equal-sized blocks stored as
+separate datasets in the same HDF5 file. Use `n_blocks` to specify the
+number of blocks, or `block_size` to specify the maximum number of rows
+(or columns, if `bycols = TRUE`) per block.
+
+```{r split-example, eval=FALSE}
+fn     <- tempfile(fileext = ".h5")
+X      <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(600), 60, 10))
+blocks <- split(X, n_blocks = 3)   # returns a named list: block_0, block_1, block_2
+dim(blocks[["block_0"]])           # 20 x 10
+lapply(blocks, close)
+close(X)
+hdf5_close_all()
+unlink(fn)
+```
+
+`split_dataset()` is an equivalent with a cleaner signature that omits
+the `f` and `drop` parameters inherited from `base::split`. Both
+produce identical results.
+
+Note: `BigDataStatMeth::split()` produces an error because `split` is
+a `base` generic — this is the same behaviour as
+`BigDataStatMeth::cor()` or `BigDataStatMeth::svd()`. The correct call
+is simply `split(X, n_blocks = 3)` after loading the package.
+
+## Reduce
+
+`reduce()` accumulates all datasets in the same HDF5 group as `x` into
+a single dataset using `"+"` or `"-"`. This is useful after a split
+operation or when partial results from parallel computation are stored
+as separate datasets in a group.
+
+```{r reduce-example, eval=FALSE}
+fn <- tempfile(fileext = ".h5")
+hdf5_create_matrix(fn, "parts/A", data = matrix(1:12, 3, 4))
+hdf5_create_matrix(fn, "parts/B", data = matrix(1:12, 3, 4))
+hdf5_create_matrix(fn, "parts/C", data = matrix(1:12, 3, 4))
+
+entry  <- hdf5_matrix(fn, "parts/A")
+result <- reduce(entry, func = "+")   # sums A + B + C
+as.matrix(result)                     # each element equals 3x the original
+hdf5_close_all()
+unlink(fn)
+```
+
+`hdf5_reduce(filename, group, ...)` provides the same operation when
+you only have the file path and group name, without needing an open
+`HDF5Matrix` object.
+
+## Apply function
+
+`apply_function()` applies a predefined algebraic or statistical
+operation to a named set of datasets within the HDF5 group of `x`.
+
+**This is not equivalent to `base::apply()`.** It does not apply an
+arbitrary R function row- or column-wise. Instead, it dispatches
+built-in C++ operations — QR decomposition, cross-products, Cholesky,
+and others — to a batch of datasets in the file. Support for
+row/column-wise application of arbitrary R functions
+(`apply.HDF5Matrix`) is planned for a future release.
+
+```{r apply-function-example, eval=FALSE}
+fn <- tempfile(fileext = ".h5")
+hdf5_create_matrix(fn, "data/A", data = matrix(rnorm(50), 5, 10))
+hdf5_create_matrix(fn, "data/B", data = matrix(rnorm(50), 5, 10))
+
+X   <- hdf5_matrix(fn, "data/A")
+res <- apply_function(X, datasets = c("A", "B"),
+                      func = "CrossProd", out_group = "RESULTS")
+hdf5_close_all()
+unlink(fn)
+```
+
+`hdf5_apply(filename, group, datasets, func, outgroup, ...)` provides
+the same operation when you only have the file path, without an open
+object.
+
 
 # Compression and HDF5 file space management
 

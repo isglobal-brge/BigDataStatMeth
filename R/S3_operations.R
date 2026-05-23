@@ -99,10 +99,23 @@ multiply_sparse.HDF5Matrix <- function(x, y,
 #'
 #' @description
 #' S3 method of \code{base::split()} for \code{HDF5Matrix} objects.
-#' Divides the matrix into blocks along rows (default) or columns.
+#' Divides the matrix into equal-sized blocks along rows (default) or columns,
+#' storing each block as a separate dataset in the same HDF5 file.
 #'
 #' Provide exactly ONE of \code{n_blocks} or \code{block_size}.
 #'
+#' @details
+#' \strong{Calling convention:} use \code{split(x, n_blocks = 4)} after loading
+#' the package. The form \code{BigDataStatMeth::split()} produces an error
+#' because \code{split} is a \code{base} generic — this is normal R behaviour,
+#' identical to \code{BigDataStatMeth::cor()} or \code{BigDataStatMeth::svd()}.
+#' The S3 dispatch happens automatically when the package is loaded.
+#'
+#' \code{split_dataset()} is an alternative with a cleaner signature that
+#' omits the \code{f} and \code{drop} parameters inherited from
+#' \code{base::split} (which have no meaning for HDF5Matrix objects).
+#' Both functions produce identical results.
+#' 
 #' @param x           An \code{HDF5Matrix}.
 #' @param f           Ignored (kept for S3 signature compatibility).
 #' @param n_blocks    Integer. Number of (roughly equal) blocks; -1 = unused.
@@ -118,14 +131,19 @@ multiply_sparse.HDF5Matrix <- function(x, y,
 #'
 #' @examples
 #' \donttest{
+#' fn     <- tempfile(fileext = ".h5")
+#' X      <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(2000), 20, 100))
+#' blocks <- split(X, n_blocks = 4)   # 4 row-blocks of 5 rows each
+#' length(blocks)                     # 4
+#' lapply(blocks, close)
 #' 
-#' fn <- tempfile(fileext = ".h5")
-#' X  <- hdf5_create_matrix(fn, "data/X", data = matrix(rnorm(2000000), 20000, 100))
-#' 
-#' X      <- hdf5_matrix( fn, "data/X")   # 20000 × 1000
-#' blocks <- split(X, n_blocks = 4)             # 4 row-blocks of ~5000 rows each
+#' hdf5_close_all()
+#' unlink(fn)
 #' }
 #'
+#' @seealso \code{\link{split_dataset}} for the equivalent with a cleaner
+#'   signature; \code{\link{hdf5_reduce}} to recombine blocks after processing.
+#'   
 #' @exportS3Method
 split.HDF5Matrix <- function( x,
                               f            = NULL,
@@ -151,9 +169,29 @@ split.HDF5Matrix <- function( x,
 #' Reduce a group of HDF5 datasets by accumulation (generic)
 #'
 #' @description
-#' Generic function for reducing (accumulating) all datasets in the same HDF5
-#' group as \code{x} into a single dataset using a binary operation.
+#' Generic S3 function for reducing (accumulating) all datasets in the same
+#' HDF5 group as \code{x} into a single dataset using a binary operation
+#' (\code{"+"} or \code{"-"}).
 #'
+#' This function operates on the \strong{group} that contains \code{x}, not
+#' on the matrix data of \code{x} itself. All datasets in the group must have
+#' the same dimensions.
+#'
+#' @details
+#' \strong{Two access patterns are available:}
+#' \itemize{
+#'   \item \code{reduce(x, ...)} — use when you already have an
+#'     \code{HDF5Matrix} object open. Operates on all datasets in its group.
+#'   \item \code{\link{hdf5_reduce}(filename, group, ...)} — use when you only
+#'     have the file path and group name, without needing to open an object.
+#' }
+#' This separation mirrors the pattern used by packages such as
+#' \pkg{DBI}/\pkg{RSQLite} (connection object vs. file path access).
+#'
+#' \strong{Note:} this is \emph{not} a row- or column-wise reduction (use
+#' \code{colSums()}, \code{rowMeans()}, etc. for those). It accumulates
+#' entire datasets element-wise.
+#' 
 #' @param x   An \code{HDF5Matrix}.
 #' @param ... Additional arguments forwarded to the method.
 #' @return A new \code{HDF5Matrix} containing the accumulated result.
@@ -204,9 +242,26 @@ reduce.HDF5Matrix <- function(x,
 #' Apply a statistical or algebraic function to HDF5 datasets (generic)
 #'
 #' @description
-#' Generic function that applies one of BigDataStatMeth's algebraic or
-#' statistical functions to a list of datasets in the same HDF5 group as
-#' \code{x}.
+#' Generic S3 function that applies a predefined algebraic or statistical
+#' operation to one or more \strong{named datasets within the HDF5 group} of
+#' \code{x}, writing the results to \code{out_group}.
+#'
+#' \strong{This function is not equivalent to \code{base::apply()}.}
+#' It does not apply an arbitrary R function row- or column-wise to the matrix
+#' data of \code{x}. Instead, it dispatches one of several built-in C++
+#' operations (QR, cross-product, Cholesky, etc.) to a batch of datasets
+#' stored in the HDF5 file, which need not be open as \code{HDF5Matrix}
+#' objects.
+#' 
+#' @details
+#' \strong{Two access patterns are available:}
+#' \itemize{
+#'   \item \code{apply_function(x, datasets = c("A","B"), func = "QR")} —
+#'     use when you have an open \code{HDF5Matrix}; \code{x} provides the
+#'     file and group context.
+#'   \item \code{\link{hdf5_apply}(filename, group, datasets, func)} —
+#'     use when you only have the file path and group name.
+#' }
 #'
 #' Valid \code{func} values: \code{"QR"}, \code{"CrossProd"},
 #' \code{"tCrossProd"}, \code{"invChol"}, \code{"blockmult"},
@@ -234,7 +289,9 @@ reduce.HDF5Matrix <- function(x,
 #' unlink(fn)
 #' }
 #'
-#' @seealso \code{hdf5_apply}
+#' @seealso \code{\link{hdf5_apply}} for the standalone file-path version;
+#'   \code{\link{crossprod.HDF5Matrix}}, \code{\link{qr.HDF5Matrix}} for
+#'   single-dataset S3 equivalents of the most common operations.
 #'
 #' @export
 apply_function <- function(x, ...) UseMethod("apply_function")

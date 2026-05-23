@@ -16,9 +16,26 @@ Named list with elements \code{filename}, \code{out_group},
 \code{func}, \code{datasets}.
 }
 \description{
-Generic function that applies one of BigDataStatMeth's algebraic or
-statistical functions to a list of datasets in the same HDF5 group as
-\code{x}.
+Generic S3 function that applies a predefined algebraic or statistical
+operation to one or more \strong{named datasets within the HDF5 group} of
+\code{x}, writing the results to \code{out_group}.
+
+\strong{This function is not equivalent to \code{base::apply()}.}
+It does not apply an arbitrary R function row- or column-wise to the matrix
+data of \code{x}. Instead, it dispatches one of several built-in C++
+operations (QR, cross-product, Cholesky, etc.) to a batch of datasets
+stored in the HDF5 file, which need not be open as \code{HDF5Matrix}
+objects.
+}
+\details{
+\strong{Two access patterns are available:}
+\itemize{
+\item \code{apply_function(x, datasets = c("A","B"), func = "QR")} —
+use when you have an open \code{HDF5Matrix}; \code{x} provides the
+file and group context.
+\item \code{\link{hdf5_apply}(filename, group, datasets, func)} —
+use when you only have the file path and group name.
+}
 
 Valid \code{func} values: \code{"QR"}, \code{"CrossProd"},
 \code{"tCrossProd"}, \code{"invChol"}, \code{"blockmult"},
@@ -43,5 +60,7 @@ unlink(fn)
 
 }
 \seealso{
-\code{hdf5_apply}
+\code{\link{hdf5_apply}} for the standalone file-path version;
+\code{\link{crossprod.HDF5Matrix}}, \code{\link{qr.HDF5Matrix}} for
+single-dataset S3 equivalents of the most common operations.
 }

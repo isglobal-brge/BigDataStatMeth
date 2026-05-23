@@ -15,8 +15,28 @@ reduce(x, ...)
 A new \code{HDF5Matrix} containing the accumulated result.
 }
 \description{
-Generic function for reducing (accumulating) all datasets in the same HDF5
-group as \code{x} into a single dataset using a binary operation.
+Generic S3 function for reducing (accumulating) all datasets in the same
+HDF5 group as \code{x} into a single dataset using a binary operation
+(\code{"+"} or \code{"-"}).
+
+This function operates on the \strong{group} that contains \code{x}, not
+on the matrix data of \code{x} itself. All datasets in the group must have
+the same dimensions.
+}
+\details{
+\strong{Two access patterns are available:}
+\itemize{
+\item \code{reduce(x, ...)} — use when you already have an
+\code{HDF5Matrix} object open. Operates on all datasets in its group.
+\item \code{\link{hdf5_reduce}(filename, group, ...)} — use when you only
+have the file path and group name, without needing to open an object.
+}
+This separation mirrors the pattern used by packages such as
+\pkg{DBI}/\pkg{RSQLite} (connection object vs. file path access).
+
+\strong{Note:} this is \emph{not} a row- or column-wise reduction (use
+\code{colSums()}, \code{rowMeans()}, etc. for those). It accumulates
+entire datasets element-wise.
 }
 \examples{
 \donttest{

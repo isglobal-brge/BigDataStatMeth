@@ -378,6 +378,7 @@ namespace BigDataStatMeth {
             std::string strPCAgroup = "PCA/" + strdataset;
             bool bexistsSVD, bexistsPCA;
                         
+                        
             // Check for svd decomposition (u, v and d matrices) in hdf5 file or if we 
             // need to compute again the SVD ( foce = true )
             // BigDataStatMeth::hdf5File* file = new BigDataStatMeth::hdf5File(filename, false);
@@ -457,6 +458,7 @@ namespace BigDataStatMeth {
             if( dsX->getDatasetptr() != nullptr && dsd->getDatasetptr() != nullptr && dsu->getDatasetptr() != nullptr) {
                 RcppGetPCAIndividualsHdf5( strPCAgroup, dsX.get(), dsd.get(), dsu.get(), bforce );
             }
+            
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             // checkClose_file(dsA, dsd, dsu, dsv, dsX);

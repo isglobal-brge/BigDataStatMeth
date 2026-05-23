@@ -6,13 +6,15 @@
 #' Split an HDF5Matrix into multiple block datasets
 #'
 #' @description
-#' Splits an \code{HDF5Matrix}into equal-sized sub-matrices
-#' stored as separate datasets in the same HDF5 file.
-#'
-#' Output datasets are named \code{<out_group>/<out_dataset>.0},
-#' \code{<out_group>/<out_dataset>.1}, \ldots (0-based index).
+#' Splits an \code{HDF5Matrix} into equal-sized sub-matrices stored as
+#' separate datasets in the same HDF5 file. This is the preferred form when
+#' you want an explicit, unambiguous call: unlike \code{split()}, it does not
+#' carry the \code{f} and \code{drop} parameters inherited from
+#' \code{base::split} that have no meaning for HDF5Matrix objects.
 #'
 #' Exactly one of \code{n_blocks} or \code{block_size} must be provided.
+#' Output datasets are named \code{<out_group>/<out_dataset>.0},
+#' \code{<out_group>/<out_dataset>.1}, \ldots (0-based index).
 #'
 #' @param x         An \code{HDF5Matrix}.
 #' @param n_blocks  Integer or \code{NULL}. Number of blocks.
@@ -35,7 +37,9 @@
 #' unlink(tmp)
 #' }
 #'
-#' @seealso \code{\link[BigDataStatMeth]{cbind.HDF5Matrix}}
+#' @seealso \code{\link{split.HDF5Matrix}} for the \code{base::split()} S3
+#'   dispatch equivalent; \code{\link{hdf5_reduce}} to recombine blocks.
+#'   
 #' @export
 split_dataset <- function(x, n_blocks = NULL, block_size = NULL,
                           bycols = FALSE, ...) UseMethod("split_dataset")
