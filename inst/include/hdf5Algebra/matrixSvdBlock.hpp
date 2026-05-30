@@ -242,7 +242,7 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
         // BigDataStatMeth::hdf5DatasetInternal* normalizedData = nullptr;
         // BigDataStatMeth::hdf5Dataset* unlimDataset = nullptr;
         std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  normalizedData(nullptr);
-        std::unique_ptr<BigDataStatMeth::hdf5Dataset> unlimDataset(nullptr);
+        // std::unique_ptr<BigDataStatMeth::hdf5Dataset> unlimDataset(nullptr);
         
         std::vector<svdPositions> paralPos;
         
@@ -297,6 +297,7 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
             for( int i = 0; i< M ; i++)  
             {
                 
+                std::unique_ptr<BigDataStatMeth::hdf5Dataset> unlimDataset(nullptr);
                 Eigen::MatrixXd restmp;
                 
                 // 1.- Get SVD from all blocks
@@ -305,10 +306,10 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                 Eigen::MatrixXd X;
                     
                 std::vector<double> vdX( paralPos[i].count[0] * paralPos[i].count[1] ); 
-                //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                //.. 20260325 - remove critical ..// {
+                #pragma omp critical(accessFile)
+                {
                 dsA->readDatasetBlock( {paralPos[i].totOffset[0], paralPos[i].totOffset[1]}, {paralPos[i].count[0], paralPos[i].count[1]}, paralPos[i].stride, paralPos[i].block, vdX.data() );
-                //.. 20260325 - remove critical ..// }
+                }
                 
                 if(transp==false){    
                     X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> (vdX.data(), paralPos[i].count[1], paralPos[i].count[0] );
@@ -331,10 +332,10 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                         // X = RcppNormalize_Data(X, bcenter, bscale, transp, datanormal.block(0, offset_tmp[1], 2, count_tmp[1]));
                         X = RcppNormalizeColwise(X, bcenter, bscale);
                         
-                        //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                        //.. 20260325 - remove critical ..// {   
+                        #pragma omp critical(accessFile)
+                        {   
                         normalizedData->writeDatasetBlock( Rcpp::wrap(X), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
-                        //.. 20260325 - remove critical ..// }
+                        }
                         
                     } else {
                         
@@ -343,10 +344,10 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                         count_tmp = {(unsigned long long)X.cols(), (unsigned long long)X.rows()};
                         offset_tmp = {paralPos[i].totOffset[1], paralPos[i].totOffset[0]};
                         
-                        //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                        //.. 20260325 - remove critical ..// {   
+                        #pragma omp critical(accessFile)
+                        {   
                         normalizedData->writeDatasetBlock( Rcpp::wrap(X.transpose()), offset_tmp, count_tmp, paralPos[i].stride, paralPos[i].block, false);
-                        //.. 20260325 - remove critical ..// }
+                        }
                     }
                 }
                 
@@ -394,7 +395,7 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                 //    d) Write results to hdf5 file
                 #pragma omp ordered
                 {
-                    //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                    #pragma omp critical(accessFile)
                     {
 
                         if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !exists_HDF5_element(dsA->getFileptr(),  paralPos[i].strDatasetName )) ) )
@@ -405,14 +406,14 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
                             unlimDataset->setCompressionLevel(0); 
                             unlimDataset->createUnlimitedDataset(paralPos[i].write_count[0], paralPos[i].write_count[1], "real");
                             // delete unlimDataset; unlimDataset = nullptr;
-
+                            
                             paralPos[i].write_offset = 0;
                         }
 
                         // unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true );
                         unlimDataset.reset( new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), paralPos[i].strDatasetName, true) );
                         unlimDataset->openDataset();
-
+                        
                         // Extend dataset before to put the data
                         if((i%(M/k)) != 0 && paralPos[i].write_offset > 0) {
                             unlimDataset->extendUnlimitedDataset(0, paralPos[i].write_count[1] );
@@ -420,7 +421,9 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
 
                         // std::vector<double> vtmpc(restmp.data(), restmp.data() + restmp.rows() * restmp.cols());
                         unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), {0, paralPos[i].write_offset}, paralPos[i].write_count, paralPos[i].stride, paralPos[i].block, false);
+                        unlimDataset.reset();  // close HDF5 handle inside critical 
                         // delete unlimDataset; unlimDataset = nullptr;
+                        
 
                         if( i<M-1 )
                             paralPos[i+1].write_offset = paralPos[i].write_offset + paralPos[i].write_count[1];
@@ -460,29 +463,29 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
 // results are saved in hdf5 datasets under temporal group to be processed if necessary
 template <class T>
 inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroupName, int k, int q, 
-                                                           double dthreshold, Rcpp::Nullable<int> threads = R_NilValue)
-    {
+                                                    double dthreshold, Rcpp::Nullable<int> threads = R_NilValue)
+{
     
     
     static_assert(std::is_same<T*, BigDataStatMeth::hdf5Dataset* >::value || 
                   std::is_same<T*, BigDataStatMeth::hdf5DatasetInternal* >::value,
                   "Error - type not allowed");
-
-
+    
+    
     
     
     try {
-
+        
         H5::Exception::dontPrint();
-
+        
         // BigDataStatMeth::hdf5Dataset* unlimDataset = nullptr;    
         // BigDataStatMeth::hdf5Dataset* dsCur = nullptr;
-
+        
         std::unique_ptr<BigDataStatMeth::hdf5DatasetInternal>  unlimDataset(nullptr);
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsCur(nullptr);
         
         int cummoffset = 0, M;
-            // ithreads,  M;
+        // ithreads,  M;
         
         std::vector<hsize_t> stride = {1, 1},
             block = {1, 1},
@@ -493,115 +496,117 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
                                               "I","J","K","L","M","N","O","P",
                                               "Q","R","S","T","U","V","W","X",
                                               "Y","Z"};
-
+        
         // Get dataset names
         Rcpp::StringVector joindata =  dsA->getDatasetNames(strGroupName, (std::string)strvmatnames[q-1], "");
         M = joindata.size();
         
         // ithreads = get_number_threads(threads, R_NilValue);
         
-        //.. 2026/05/02 ..// #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) )
-
-        //.. 2026/05/02 ..// // Get data from M blocks in initial matrix
-        //.. 2026/05/02 ..// #pragma omp for ordered schedule (dynamic)
-        for( int i = 0; i< M ; i++)
+        #pragma omp parallel num_threads( get_number_threads(threads, R_NilValue) )
         {
             
-            std::string strDatasetName = strGroupName + "/" + strvmatnames[q] + std::to_string(i/(M/k));
-            
-            Eigen::MatrixXd restmp;
-            Eigen::MatrixXd X;
-
-            //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+            // Get data from M blocks in initial matrix
+            #pragma omp for schedule(dynamic) ordered
+            for( int i = 0; i< M ; i++)
             {
-                //    a) Get dataset
-                // dsCur = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strGroupName + "/" + joindata[i], false);
-                dsCur.reset( new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strGroupName + "/" + joindata[i], false) );
-                dsCur->openDataset();
-                hsize_t* dims_out = dsCur->dim();
                 
-                std::vector<double> vdCurDataset( dims_out[0] * dims_out[1] ); 
-                dsCur->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdCurDataset.data() );
-                X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdCurDataset.data(), dims_out[0], dims_out[1] );
+                std::string strDatasetName = strGroupName + "/" + strvmatnames[q] + std::to_string(i/(M/k));
                 
-                // delete dsCur; dsCur = nullptr;
-            }
-
-            {
-                //    b) SVD for each block
-                svdeig retsvd;
-                retsvd = RcppbdSVD_lapack(X, false, false, false);
-            
-                int size_d = (retsvd.d).size();
-                int nzeros = 0;
-            
-                if( (retsvd.d)[size_d - 1] <= dthreshold ) {
-                    nzeros = 1;
-                    for( int j = (size_d - 2); ( j>1 && (retsvd.d)[i] <= dthreshold ); j-- ) {
-                        nzeros++;
-                    }
-                }
-            
-                //    c)  U*d
-                // Create diagonal matrix from svd decomposition d
-                int isize = (retsvd.d).size() - nzeros;
-                if( isize < 2 ) {
-                    isize = 2;
-                }
-            
-                Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
-                d.diagonal() = (retsvd.d).head(isize);
-            
-                Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
-            
-                // if( u.size() < MAXELEMSINBLOCK ) {
-                if (static_cast<hsize_t>(u.size()) < MAXELEMSINBLOCK) {
-                    restmp = u*d;
-                } else{
-                    restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);    
-                } 
-            }
-            
-            //    d) Write results to dataset
-            count[0] = restmp.rows();
-            count[1] = restmp.cols();
-
-            //.. 2026/05/02 ..// #pragma omp ordered
-            //.. 2026/05/02 ..// {
-                //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
+                Eigen::MatrixXd restmp;
+                Eigen::MatrixXd X;
+                
+                #pragma omp critical(accessFile)
                 {
+                    //    a) Get dataset
+                    // dsCur = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strGroupName + "/" + joindata[i], false);
+                    dsCur.reset( new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strGroupName + "/" + joindata[i], false) );
+                    dsCur->openDataset();
+                    hsize_t* dims_out = dsCur->dim();
                     
-                    if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !BigDataStatMeth::exists_HDF5_element(dsA->getFileptr(),  strDatasetName)) ) ) {
-                        // Create unlimited dataset in hdf5 file
+                    std::vector<double> vdCurDataset( dims_out[0] * dims_out[1] ); 
+                    dsCur->readDatasetBlock( {0, 0}, {dims_out[0], dims_out[1]}, stride, block, vdCurDataset.data() );
+                    X = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdCurDataset.data(), dims_out[0], dims_out[1] );
+                    dsCur.reset();  // close HDF5 handle inside critical section
+                    // delete dsCur; dsCur = nullptr;
+                }
+        
+                {
+                    //    b) SVD for each block
+                    svdeig retsvd;
+                    retsvd = RcppbdSVD_lapack(X, false, false, false);
+                    
+                    int size_d = (retsvd.d).size();
+                    int nzeros = 0;
+                    
+                    if( (retsvd.d)[size_d - 1] <= dthreshold ) {
+                        nzeros = 1;
+                        for( int j = (size_d - 2); ( j>1 && (retsvd.d)[j] <= dthreshold ); j-- ) {
+                            nzeros++;
+                        }
+                    }
+                    
+                    //    c)  U*d
+                    // Create diagonal matrix from svd decomposition d
+                    int isize = (retsvd.d).size() - nzeros;
+                    if( isize < 2 ) {
+                        isize = 2;
+                    }
+                    
+                    Eigen::MatrixXd d = Eigen::MatrixXd::Zero(isize, isize);
+                    d.diagonal() = (retsvd.d).head(isize);
+                    
+                    Eigen::MatrixXd u = (retsvd.u).block(0, 0, (retsvd.u).rows(), isize);
+                    
+                    // if( u.size() < MAXELEMSINBLOCK ) {
+                    if (static_cast<hsize_t>(u.size()) < MAXELEMSINBLOCK) {
+                        restmp = u*d;
+                    } else{
+                        restmp = Rcpp_block_matrix_mul( u, d, R_NilValue);    
+                    } 
+                }
+        
+                //    d) Write results to dataset
+                #pragma omp ordered
+                {
+                    count[0] = restmp.rows();
+                    count[1] = restmp.cols();
+                    
+                    #pragma omp critical(accessFile)
+                    {
+                        if( i%(M/k) == 0 || ( (i%(M/k) > 0 &&  !BigDataStatMeth::exists_HDF5_element(dsA->getFileptr(),  strDatasetName)) ) ) {
+                            // Create unlimited dataset in hdf5 file
+                            // unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true );
+                            unlimDataset.reset( new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true) );
+                            
+                            //.. 2026/05/02 ..//unlimDataset->inheritCompressionLevel(dsA->getCompressionLevel());
+                            unlimDataset->setCompressionLevel(0); 
+                            unlimDataset->createUnlimitedDataset(count[0], count[1], "real");
+                            // delete unlimDataset; unlimDataset = nullptr;
+                            
+                            cummoffset = 0;
+                        }
+                    
                         // unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true );
                         unlimDataset.reset( new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true) );
+                        unlimDataset->openDataset();
                         
-                        //.. 2026/05/02 ..//unlimDataset->inheritCompressionLevel(dsA->getCompressionLevel());
-                        unlimDataset->setCompressionLevel(0); 
-                        unlimDataset->createUnlimitedDataset(count[0], count[1], "real");
+                        // Get write position
+                        offset[1] = cummoffset;
+                        cummoffset = cummoffset + restmp.cols();
+                        
+                        // Extend dataset before put data
+                        if((i%(M/k)) != 0 && cummoffset > 0) {
+                            unlimDataset->extendUnlimitedDataset(0, count[1] );
+                        }
+                    
+                        unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), offset, count, stride, block, false);
+                        unlimDataset.reset();  // close HDF5 handle inside critical section
                         // delete unlimDataset; unlimDataset = nullptr;
-                        
-                        cummoffset = 0;
                     }
-                    
-                    // unlimDataset = new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true );
-                    unlimDataset.reset( new BigDataStatMeth::hdf5DatasetInternal(dsA->getFullPath(), strDatasetName, true) );
-                    unlimDataset->openDataset();
-                    
-                    // Get write position
-                    offset[1] = cummoffset;
-                    cummoffset = cummoffset + restmp.cols();
-                    
-                    // Extend dataset before put data
-                    if((i%(M/k)) != 0 && cummoffset > 0) {
-                        unlimDataset->extendUnlimitedDataset(0, count[1] );
-                    }
-                    
-                    unlimDataset->writeDatasetBlock( Rcpp::wrap(restmp), offset, count, stride, block, false);
-                    // delete unlimDataset; unlimDataset = nullptr;
                 }
             }
-        //.. 2026/05/02 ..// }
+        } // end omp parallel
 
     } catch( H5::FileIException& error ) { 
         throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (File IException)");
@@ -620,8 +625,9 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
     }
     
     return void();
-
+    
 }
+
 
 }
 

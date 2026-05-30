@@ -1309,15 +1309,13 @@ namespace BigDataStatMeth {
                 for (hsize_t i = 0; i < n_cols; ++i) {
                     std::vector<double> vec_i_data(n_rows);
                     
-                    // CRITICAL FIX: Transpose-aware I/O patterns for HDF5 data (R→HDF5 transposition)
-                    if (trans_x) {
-                        // User wants correlation between samples
-                        // In HDF5: samples are columns, so read column i
-                        dsA->readDatasetBlock({0, i}, {n_rows_hdf5, 1}, stride, block, vec_i_data.data());
-                    } else {
-                        // User wants correlation between variables (default)
-                        // In HDF5: variables are rows, so read row i
-                        dsA->readDatasetBlock({i, 0}, {1, n_cols_hdf5}, stride, block, vec_i_data.data());
+                    #pragma omp critical(FileAccess)
+                    {
+                        if (trans_x) {
+                            dsA->readDatasetBlock({0, i}, {n_rows_hdf5, 1}, stride, block, vec_i_data.data());
+                        } else {
+                            dsA->readDatasetBlock({i, 0}, {1, n_cols_hdf5}, stride, block, vec_i_data.data());
+                        }
                     }
                     
                     Eigen::VectorXd vec_i = Eigen::Map<Eigen::VectorXd>(vec_i_data.data(), n_rows);
@@ -1326,15 +1324,13 @@ namespace BigDataStatMeth {
                     for (hsize_t j = i + 1; j < n_cols; ++j) {
                         std::vector<double> vec_j_data(n_rows);
                         
-                        // Consistent reading for second vector (final correction)
-                        if (trans_x) {
-                            // User wants correlation between samples
-                            // Read column j (this currently gives correct cor(ds) result)
-                            dsA->readDatasetBlock({0, j}, {n_rows_hdf5, 1}, stride, block, vec_j_data.data());
-                        } else {
-                            // User wants correlation between variables (default - same as cor(ds))
-                            // Read row j (swap to make this give cor(ds) result)
-                            dsA->readDatasetBlock({j, 0}, {1, n_cols_hdf5}, stride, block, vec_j_data.data());
+                        #pragma omp critical(FileAccess)
+                        {
+                            if (trans_x) {
+                                dsA->readDatasetBlock({0, j}, {n_rows_hdf5, 1}, stride, block, vec_j_data.data());
+                            } else {
+                                dsA->readDatasetBlock({j, 0}, {1, n_cols_hdf5}, stride, block, vec_j_data.data());
+                            }
                         }
                         
                         Eigen::VectorXd vec_j = Eigen::Map<Eigen::VectorXd>(vec_j_data.data(), n_rows);

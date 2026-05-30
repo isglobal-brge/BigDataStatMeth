@@ -38,6 +38,7 @@
 #ifndef BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
 #define BIGDATASTATMETH_HDF5_MATRIXSNORMALIZATION_HPP
 
+#include "Utilities/system-utils.hpp"
 
 namespace BigDataStatMeth {
 
@@ -332,6 +333,30 @@ namespace BigDataStatMeth {
                 }    
             }
             
+            // PRELOAD
+            // If A fits within 20% of available RAM, read once, normalize with
+            // a single vectorised Eigen expression, write once.  Eliminates the
+            // per-block HDF5 gzip decompress + compress overhead of block-wise
+            const double mem_MB   = static_cast<double>(nrows) * ncols * 8.0 / (1024.0 * 1024.0);
+            const double avail_MB = std::max(512.0, static_cast<double>(getAvailableMemoryMB()));
+            
+            if (mem_MB <= avail_MB * 0.20) {
+                std::vector<double> vdFull( static_cast<std::size_t>(nrows) * ncols);
+                dsA->readDatasetBlock( {0, 0}, {nrows, ncols}, stride, block, vdFull.data());
+                
+                Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> A_full(vdFull.data(), static_cast<int>(nrows), static_cast<int>(ncols));
+                
+                A_full = RcppNormalize_Data_R_hdf5( A_full, bc, bs, bgetTransposed, datanormal);
+                
+                if (bcorrected) A_full *= correction;
+                
+                dsNormal->writeRowMajorDatasetBlock( A_full, {0, 0}, {nrows, ncols}, stride, block);
+                
+                return void();
+            }
+            
+            
+            // block-wise (matrix too large for preload) 
             //.. 20260224 ..// for(hsize_t i=0; i*blocksize <= nRowsCols ; i++)
             for(hsize_t i=0; i*blocksize < nRowsCols ; i++)
             {
@@ -373,22 +398,16 @@ namespace BigDataStatMeth {
             }
             
         }catch( H5::FileIException& error ) {
-            // checkClose_file(dsA, dsNormal);
             throw std::runtime_error("c++ exception RcppNormalizeHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            // checkClose_file(dsA, dsNormal);
             throw std::runtime_error("c++ exception RcppNormalizeHdf5 (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            // checkClose_file(dsA, dsNormal);
             throw std::runtime_error("c++ exception RcppNormalizeHdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-            // checkClose_file(dsA, dsNormal);
             throw std::runtime_error("c++ exception RcppNormalizeHdf5 (DataType IException)");
         } catch(std::exception &ex) {
-            // checkClose_file(dsA, dsNormal);
             throw std::runtime_error(std::string("C++ exception RcppNormalizeHdf5: ") + ex.what());
         } catch (...) {
-            // checkClose_file(dsA, dsNormal);
             throw std::runtime_error("C++ exception RcppNormalizeHdf5 (unknown reason)");
         }
         
@@ -406,10 +425,6 @@ namespace BigDataStatMeth {
         
         
         try{
-
-            // BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
-            // BigDataStatMeth::hdf5Dataset* dssd = nullptr;
-            // BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
 
             std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
             std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);
@@ -492,10 +507,6 @@ namespace BigDataStatMeth {
     {
         
         try{
-
-            // BigDataStatMeth::hdf5Dataset* dsmean = nullptr;
-            // BigDataStatMeth::hdf5Dataset* dssd = nullptr;
-            // BigDataStatMeth::hdf5Dataset* dsNormal = nullptr;
 
             std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsmean(nullptr);
             std::unique_ptr<BigDataStatMeth::hdf5Dataset> dssd(nullptr);

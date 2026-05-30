@@ -267,21 +267,56 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
     
     try{
         
-        int nrows = inDataset->nrows();
-        int ncols = inDataset->ncols();
+        const int n = static_cast<int>(inDataset->nrows()); // square: nrows() == ncols()
         
-        // Rcpp::Rcout<<"\nIniciem cholesky";
-        int res = Cholesky_decomposition_hdf5(inDataset, outDataset, nrows, ncols, dElementsBlock, false, threads);
+        // PRELOAD 
+        // If A fits within 20% of available RAM, read once and compute the
+        // inverse in memory with Eigen::LLT. Avoids per-block HDF5 I/O overhead
+        // and uses BLAS-3 triangular solve — LAPACK-competitive performance.
+        // outDataset is already created by the caller (rcpp_hdf5dataset_solve).
+        // Result is always full symmetric, so bfull is a no-op in this path.
+        const double mem_MB   = static_cast<double>(n) * n * 8.0 / (1024.0 * 1024.0);
+        const double avail_MB = std::max(512.0, static_cast<double>(getAvailableMemoryMB()));
         
-        if(res == 0)
-        {
-            // Rcpp::Rcout<<"\nDins res==0 -> anem Inverse_of_Cholesky_decomposition_hdf5...";
-            Inverse_of_Cholesky_decomposition_hdf5( outDataset, nrows, ncols, dElementsBlock, threads);
-            // Rcpp::Rcout<<"\nDins res==0 -> anem Inverse_Matrix_Cholesky_parallel...";
-            Inverse_Matrix_Cholesky_hdf5( outDataset, nrows, ncols, dElementsBlock, threads);
+        if (mem_MB <= avail_MB * 0.20) {
+            const std::vector<hsize_t> stride = {1, 1}, blk = {1, 1};
+            std::vector<double> vdA(static_cast<std::size_t>(n) * n);
+            inDataset->readDatasetBlock(
+            {0, 0},
+            {static_cast<hsize_t>(n), static_cast<hsize_t>(n)},
+            stride, blk, vdA.data());
             
-            if( bfull==true ) {
-                setUpperTriangularMatrix( outDataset, dElementsBlock);
+            // HDF5-native RowMajor map. For SPD matrices (A = A^T) this equals
+            // A_R directly, matching the convention in the block path below.
+            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic,
+                                     Eigen::Dynamic, Eigen::RowMajor>>
+                                         A(vdA.data(), n, n);
+            
+            Eigen::LLT<Eigen::MatrixXd> llt(A);
+            if (llt.info() != Eigen::Success)
+                throw std::runtime_error(
+                        "Rcpp_InvCholesky_hdf5 (preload): matrix is not positive definite");
+            
+            const Eigen::MatrixXd Ainv =
+                llt.solve(Eigen::MatrixXd::Identity(n, n));
+            
+            outDataset->writeDataset(Rcpp::wrap(Ainv));
+            return void();
+        }
+        
+        // block-wise algorithm (matrix does not fit in preload threshold)
+        const int nrows = n;
+        const int ncols = static_cast<int>(inDataset->ncols());
+        
+        int res = Cholesky_decomposition_hdf5(inDataset, outDataset, nrows, ncols,
+                                              dElementsBlock, false, threads);
+        if (res == 0) {
+            Inverse_of_Cholesky_decomposition_hdf5(outDataset, nrows, ncols,
+                                                   dElementsBlock, threads);
+            Inverse_Matrix_Cholesky_hdf5(outDataset, nrows, ncols,
+                                         dElementsBlock, threads);
+            if (bfull == true) {
+                setUpperTriangularMatrix(outDataset, dElementsBlock);
             }
         }
         
@@ -290,16 +325,10 @@ inline void Rcpp_InvCholesky_hdf5 ( BigDataStatMeth::hdf5Dataset* inDataset,
     } catch( H5::GroupIException & error ) { 
         throw std::runtime_error("c++ exception Rcpp_InvCholesky_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { 
-        // checkClose_file(inDataset, outDataset);
-        // inDataset = outDataset = nullptr;
         throw std::runtime_error("c++ exception Rcpp_InvCholesky_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        // checkClose_file(inDataset, outDataset);
-        // inDataset = outDataset = nullptr;
         throw std::runtime_error(std::string("c++ exception Rcpp_InvCholesky_hdf5: ") + ex.what());
     } catch (...) {
-        // checkClose_file(inDataset, outDataset);
-        // inDataset = outDataset = nullptr;
         throw std::runtime_error("C++ exception Rcpp_InvCholesky_hdf5 (unknown reason)");
     }
     
@@ -368,12 +397,9 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
             minimumBlockSize = dElementsBlock;
         }
         
-        // Rcpp::Rcout<<"\nDebug 2: minimumBlockSize=" << minimumBlockSize;
-        // Poso el codi per llegir els blocks aquí i desprès a dins hauria d'anar-hi la j
         if( idim0 == idim1)
         {
             
-            // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> idim0 == idim1";
             while ( readedRows < dimensionSize ) {
                 
                 rowstoRead = ( -2 * readedRows - 1 + std::sqrt( pow(2*readedRows, 2) - 4 * readedRows + 8 * minimumBlockSize + 1) ) / 2;
@@ -420,25 +446,19 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
                 
                 Eigen::MatrixXd A, L;
                 
-                // Rcpp::Rcout<<"\nDebug 7: A L";
-                
-                // CAMBIO QUIRÚRGICO: Verificar tamaño de bloque para big-matrix
                 size_t block_elements = static_cast<size_t>(count[0]) * static_cast<size_t>(count[1]);
                 // size_t max_elements = MAXCHOLBLOCKSIZE; // ~400 MB por vector, 800 MB total
                 
                 if (block_elements > MAXCHOLBLOCKSIZE) {
-                    // Recalcular rowstoRead para bloque más pequeño
                     rowstoRead = static_cast<int>(MAXCHOLBLOCKSIZE / count[0]);
                     if (rowstoRead < 1) rowstoRead = 1;
                     
-                    // Recalcular count[1]
                     if( readedRows == 0) {
                         count[1] = rowstoRead;
                     } else {
                         count[1] = readedRows + rowstoRead;
                     }
                     
-                    // Actualizar readedRows
                     readedRows = (readedRows > rowstoRead) ? (readedRows - rowstoRead + rowstoRead) : readedRows + rowstoRead;
                 }
                 
@@ -474,7 +494,7 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
                             if( j + static_cast<int>(offset[0]) > 0) {
                                 sum = (L.block(i, 0, 1, j + static_cast<int>(offset[0])).array() * L.block(j, 0, 1, j + static_cast<int>(offset[0])).array()).array().sum();
                                 if( sum != sum ) {
-                                    throw std::runtime_error("Can't get inverse matrix using Cholesky decomposition matrix is not positive definite");
+                                    // throw std::runtime_error("Can't get inverse matrix using Cholesky decomposition matrix is not positive definite");
                                     bcancel = true;
                                 }
                             } else {
@@ -500,11 +520,8 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
                     outDataset->writeDatasetBlock( Rcpp::wrap(L), offset, count, stride, block, false);
                 }
                 
-                // Rcpp::Rcout<<"\nDebug 13";
-                
                 offset[0] = offset[0] + count[0] - 1;
                 
-                // Rcpp::Rcout<<"\nDins Cholesky_decomposition -> Despres escriptura ";
             }
             
         } else {
@@ -515,24 +532,14 @@ inline int Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth::hdf5Datase
         
         
     } catch( H5::FileIException& error ) { 
-        // checkClose_file(inDataset, outDataset);
-        // inDataset = outDataset = nullptr;
         throw std::runtime_error("c++ exception Cholesky_decomposition_intermediate_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { 
-        // checkClose_file(inDataset, outDataset);
-        // inDataset = outDataset = nullptr;
         throw std::runtime_error("c++ exception Cholesky_decomposition_intermediate_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { 
-        // checkClose_file(inDataset, outDataset);
-        // inDataset = outDataset = nullptr;
         throw std::runtime_error("c++ exception Cholesky_decomposition_intermediate_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        // checkClose_file(inDataset, outDataset);
-        // inDataset = outDataset = nullptr;
         throw std::runtime_error(std::string("c++ exception Cholesky_decomposition_intermediate_hdf5: ") + ex.what());
     } catch (...) {
-        // checkClose_file(inDataset, outDataset);
-        // inDataset = outDataset = nullptr;
         throw std::runtime_error("C++ exception Cholesky_decomposition_intermediate_hdf5 (unknown reason)");
     }
     return(0);
@@ -734,30 +741,20 @@ inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth
                              stride = {1,1},
                              block = {1,1};
 
-        // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky_decomposition_intermediate_hdf5 -> Inici";
         // Set minimum elements in block (mandatory : minimum = 2 * longest line)
         if( dElementsBlock < dimensionSize * 2 ) {
-            // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> if(dElementsBlock < dimensionSize * 2)";
             minimumBlockSize = dimensionSize * 2;
         } else {
-            // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> else";
             minimumBlockSize = dElementsBlock;
         }
         
-        // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> getDiagonalfromMatrix(InOutDataset)";
         Eigen::VectorXd Diagonal = Rcpp::as<Eigen::VectorXd>(getDiagonalfromMatrix(InOutDataset));
         // Set the new diagonal in the result matrix
         setDiagonalMatrix( InOutDataset, Rcpp::wrap(Diagonal.cwiseInverse()) );
         
-        // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> Despres setDiagonal";
-        
         if( idim0 == idim1) {
             
-            // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> idim0 == idim1";
-            
             while ( readedCols < dimensionSize ) {
-                
-                // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> readedCols < dimensionSize";
                 
                 colstoRead = ( -2 * readedCols - 1 + std::sqrt( pow(2*readedCols, 2) - 4 * readedCols + 8 * minimumBlockSize + 1) ) / 2;
                 
@@ -848,26 +845,19 @@ inline void Inverse_of_Cholesky_decomposition_intermediate_hdf5( BigDataStatMeth
             throw std::range_error("non-conformable arguments");
         }
         
-        // Rcpp::Rcout<<"\nDins Inverse_of_Cholesky -> Bye Bye...";
-        
     } catch( H5::FileIException& error ) { 
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error("c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { 
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error("c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { 
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error("c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error(std::string("c++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5: ") + ex.what());
     } catch (...) {
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error("C++ exception Inverse_of_Cholesky_decomposition_intermediate_hdf5 (unknown reason)");
     }
@@ -981,22 +971,9 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
                              stride = {1,1},
                              block = {1,1};
         
-        // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_intermediate_hdf5 -> Hi...";
-        // Set minimum elements in block (mandatory : minimum = 2 * longest line)
-        //.. 20251121 ..// if( dElementsBlock < dimensionSize * 2 ) {
-        //.. 20251121 ..//     minimumBlockSize = dimensionSize * 2;
-        //.. 20251121 ..// } else {
-        //.. 20251121 ..//     minimumBlockSize = dElementsBlock;
-        //.. 20251121 ..// }
-        
         if( idim0 == idim1 )
         {
-            // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel -> idim0 == idim1";
             while ( readedCols < dimensionSize ) {
-                
-                // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel ->  readedCols < dimensionSize";
-                // Set minimum elements in block - prevent overflow and optimize for any matrix size
-                //.. 20251121 ..// minimumBlockSize = std::min(static_cast<long>(dElementsBlock), static_cast<long>(std::max(2000L, dimensionSize * 2L)));
                 
                 // Adaptive block size calculation for any matrix dimensions
                 // Target: ~50MB blocks for optimal cache usage and memory efficiency
@@ -1012,8 +989,6 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
                 
                 // Final safety check
                 if (colstoRead <= 0) colstoRead = 1;
-                
-                
                 
                 // colstoRead = ( -2 * readedCols - 1 + std::sqrt( pow(2*readedCols, 2) - 4 * readedCols + 8 * minimumBlockSize + 1) ) / 2;
                 if(colstoRead ==1) {
@@ -1049,7 +1024,7 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
                 // int max_i = std::min(static_cast<int>(colstoRead + offset[0]), static_cast<int>(count[1]));
                 
                 if (offset[0] > static_cast<hsize_t>(std::numeric_limits<Eigen::Index>::max())) {
-                    Rcpp::stop("offset[0] is too large to convert to Eigen::Index");
+                    Rf_error("offset[0] is too large to convert to Eigen::Index");
                 }
                 
                 #pragma omp parallel for num_threads( get_number_threads(threads, R_NilValue) ) shared (verticalData, colstoRead, offset) schedule(static) ordered
@@ -1083,10 +1058,8 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
                             }
                         }
                     }
-                   
                 }
                 
-                // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel ->  Fi volta, anem a escriure";
                 InOutDataset->writeDatasetBlock( Rcpp::wrap(verticalData), offset, count, stride, block, false);
                 
                 readedCols = readedCols + colstoRead; 
@@ -1101,23 +1074,18 @@ inline void Inverse_Matrix_Cholesky_intermediate_hdf5( BigDataStatMeth::hdf5Data
         // Rcpp::Rcout<<"\nDins Inverse_Matrix_Cholesky_parallel -> Bye Bye...";
         
     } catch( H5::FileIException& error ) { 
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error("c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (File IException)");
     } catch( H5::GroupIException & error ) { 
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error("c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { 
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error("c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error(std::string("c++ exception Inverse_Matrix_Cholesky_intermediate_hdf5: ") + ex.what());
     } catch (...) {
-        // checkClose_file(InOutDataset);
         InOutDataset = nullptr;
         throw std::runtime_error("C++ exception Inverse_Matrix_Cholesky_intermediate_hdf5 (unknown reason)");
     }

@@ -113,16 +113,92 @@ namespace BigDataStatMeth {
                 
                 dsC->inheritCompressionLevel(dsA->getCompressionLevel());
                 dsC->createDataset( N, M, "real");
-                
+
+                // ── Preload strategy ─────────────────────────────────────────
+                // Mirrors the approach in multiplication.hpp.
+                // If A (and B) fit within ~20% of available RAM, read them
+                // fully into memory and compute a single Eigen/BLAS multiply.
+                // This avoids per-block decompression overhead and lets BLAS
+                // manage its own thread parallelism over the full matrix.
+                // For matrices that exceed the threshold, fall through to the
+                // block-wise streaming path (PATH 2) below.
+                const double mem_A_MB  = static_cast<double>(N * K) * 8.0 / (1024.0 * 1024.0);
+                const double mem_B_MB  = static_cast<double>(M * L) * 8.0 / (1024.0 * 1024.0);
+                const double avail_MB  = std::max(512.0, static_cast<double>(getAvailableMemoryMB()));
+                const double thresh_MB = avail_MB * 0.20;
+
+                const bool preload_A = (mem_A_MB <= thresh_MB);
+                // For the symmetric case A == B, so preload_B follows preload_A.
+                const bool preload_B = isSymmetric ? preload_A : (mem_B_MB <= thresh_MB);
+
+                if (preload_A && preload_B) {
+                    // ── PATH 1: Preload ───────────────────────────────────────
+                    // Strategy: 1 HDF5 read per input + 1 BLAS multiply + blocked writes.
+                    //
+                    // HDF5/R coordinate convention for tcrossprod:
+                    //   A_R (nrows_R × ncols_R) stored in HDF5 as [ncols_R × nrows_R].
+                    //   Here K = dsA->nrows() = ncols_R, N = dsA->ncols() = nrows_R.
+                    //   Reading {K, N} gives A_eigen (K×N, RowMajor) = t(A_R) mathematically.
+                    //   A_R = A_eigen^T  (N×K in math).
+                    //
+                    // tcrossprod(A_R) = A_R * t(A_R) = A_eigen^T * A_eigen  (N×N symmetric)
+                    // tcrossprod(A_R, B_R) = A_R * t(B_R) = A_eigen^T * B_eigen  (N×M general)
+                    std::vector<hsize_t> stride = {1, 1};
+                    std::vector<hsize_t> block  = {1, 1};
+
+                    std::vector<double> vdA_full(K * N);
+                    dsA->readDatasetBlock({0, 0}, {K, N}, stride, block, vdA_full.data());
+                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic,
+                                            Eigen::Dynamic, Eigen::RowMajor>>
+                        A_full(vdA_full.data(), static_cast<int>(K), static_cast<int>(N));
+
+                    Eigen::MatrixXd C_full;
+                    if (isSymmetric) {
+                        // A_R * t(A_R) = A_eigen^T * A_eigen  (N×N)
+                        C_full = A_full.transpose() * A_full;
+                    } else {
+                        std::vector<double> vdB_full(L * M);
+                        dsB->readDatasetBlock({0, 0}, {L, M}, stride, block, vdB_full.data());
+                        Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic,
+                                                Eigen::Dynamic, Eigen::RowMajor>>
+                            B_full(vdB_full.data(), static_cast<int>(L), static_cast<int>(M));
+                        // A_R * t(B_R) = A_eigen^T * B_eigen  (N×M)
+                        C_full = A_full.transpose() * B_full;
+                    }
+
+                    // Write C to HDF5 in blocks aligned to hdf5_block.
+                    // Same offset convention as PATH 2: offset = {jj, ii}, count = {mj, ni}.
+                    for (hsize_t ii = 0; ii < N; ii += hdf5_block) {
+                        hsize_t ni = std::min(hdf5_block, N - ii);
+                        for (hsize_t jj = 0; jj < M; jj += hdf5_block) {
+                            hsize_t mj = std::min(hdf5_block, M - jj);
+                            Eigen::MatrixXd C_blk = C_full.block(
+                                static_cast<int>(ii), static_cast<int>(jj),
+                                static_cast<int>(ni), static_cast<int>(mj));
+                            std::vector<hsize_t> stride_w = {1, 1};
+                            std::vector<hsize_t> block_w  = {1, 1};
+                            dsC->writeDatasetBlock(Rcpp::wrap(C_blk),
+                                                   {jj, ii}, {mj, ni},
+                                                   stride_w, block_w, false);
+                        }
+                    }
+
+                } else {
+                    // ── PATH 2: Block-wise streaming ──────────────────────────
+                    // Matrices do not fit in the preload threshold.
+                    // HDF5 I/O is serialised with #pragma omp critical(accessFile)
+                    // to prevent concurrent file access; Eigen compute runs fully
+                    // parallel between I/O calls.
+
 #ifdef _OPENMP
 #pragma omp parallel for if(bparal) schedule(dynamic)
 #endif
                 for (hsize_t block_idx = 0; block_idx < total_blocks; ++block_idx)
                 {
                     // Convert linear index to (ii_idx, jj_idx)
-                    hsize_t ii_idx = 0, 
+                    hsize_t ii_idx = 0,
                             jj_idx = 0;
-                    
+
                     if (isSymmetric) {
                         // Convert to upper triangle coordinates
                         hsize_t remaining = block_idx;
@@ -166,29 +242,70 @@ namespace BigDataStatMeth {
                         
                         Eigen::MatrixXd A;
                         
+                        // {
+                        //     std::vector<double> vdA( Nii * Kkk);
+                        //     dsA->readDatasetBlock( {kk, ii}, {Kkk, Nii}, stride, block, vdA.data() );
+                        //     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> tmp_A (vdA.data(), Kkk, Nii );    
+                        //     A = tmp_A.transpose();
+                        // }
+                        // 
+                        // std::vector<double> vdB( Mjj * Kkk);
+                        // dsB->readDatasetBlock( {kk, jj}, { Kkk, Mjj}, stride, block, vdB.data() );
+                        
                         {
                             std::vector<double> vdA( Nii * Kkk);
+                            // Serialise HDF5 reads: concurrent reads of the same
+                            // B[kk,jj] block by threads sharing the same jj value
+                            // are a race condition without HDF5_ENABLE_THREADSAFE.
+                        #ifdef _OPENMP
+                        #pragma omp critical(accessFile)
+                        #endif
+                        {
                             dsA->readDatasetBlock( {kk, ii}, {Kkk, Nii}, stride, block, vdA.data() );
-                            Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> tmp_A (vdA.data(), Kkk, Nii );    
-                            A = tmp_A.transpose();
                         }
-                        
-                        std::vector<double> vdB( Mjj * Kkk);
-                        dsB->readDatasetBlock( {kk, jj}, { Kkk, Mjj}, stride, block, vdB.data() );
+                        Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> tmp_A (vdA.data(), Kkk, Nii );    
+                        A = tmp_A.transpose();
+                                                }
+                                                
+                                                std::vector<double> vdB( Mjj * Kkk);
+                        #ifdef _OPENMP
+                        #pragma omp critical(accessFile)
+                        #endif
+                        {
+                            dsB->readDatasetBlock( {kk, jj}, { Kkk, Mjj}, stride, block, vdB.data() );
+                        }
                         Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> B (vdB.data(), Kkk, Mjj);   
                         
                         C_accum.noalias() += A * B;
                     }
                     
-                    dsC->writeDatasetBlock(Rcpp::wrap(C_accum), offset, count, stride, block, false);
-                    
-                    // Symetric matrices
-                    if (isSymmetric && ii != jj) {
-                        std::vector<hsize_t> offset_sym = {ii, jj};
-                        std::vector<hsize_t> count_sym = {Nii, Mjj};
-                        dsC->writeDatasetBlock(Rcpp::wrap(C_accum.transpose()), offset_sym, count_sym, stride, block, false);
+                    // dsC->writeDatasetBlock(Rcpp::wrap(C_accum), offset, count, stride, block, false);
+                    // 
+                    // // Symetric matrices
+                    // if (isSymmetric && ii != jj) {
+                    //     std::vector<hsize_t> offset_sym = {ii, jj};
+                    //     std::vector<hsize_t> count_sym = {Nii, Mjj};
+                    //     dsC->writeDatasetBlock(Rcpp::wrap(C_accum.transpose()), offset_sym, count_sym, stride, block, false);
+                    // }
+                
+                    // Serialise writes: regions are non-overlapping per thread
+                    // but HDF5 file state is shared across threads.
+                    #ifdef _OPENMP
+                    #pragma omp critical(accessFile)
+                    #endif
+                    {
+                        dsC->writeDatasetBlock(Rcpp::wrap(C_accum), offset, count, stride, block, false);
+                        // Symmetric matrices: write the transposed block
+                        if (isSymmetric && ii != jj) {
+                            std::vector<hsize_t> offset_sym = {ii, jj};
+                            std::vector<hsize_t> count_sym = {Nii, Mjj};
+                            dsC->writeDatasetBlock(Rcpp::wrap(C_accum.transpose()), offset_sym, count_sym, stride, block, false);
+                        }
                     }
-                }
+                
+                } // end PATH 2 block-wise streaming (else of preload)
+                
+                } // end if(K == L)
                 
             } else {
                 throw std::range_error("non-conformable arguments");

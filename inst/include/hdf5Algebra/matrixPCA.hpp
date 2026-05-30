@@ -376,57 +376,42 @@ namespace BigDataStatMeth {
             std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsX(nullptr);
             
             std::string strPCAgroup = "PCA/" + strdataset;
-            bool bexistsSVD, bexistsPCA;
+            bool bexistsPCA;
                         
-                        
-            // Check for svd decomposition (u, v and d matrices) in hdf5 file or if we 
+            // Check for svd decomposition (u, v and d matrices) in hdf5 file or if we
             // need to compute again the SVD ( foce = true )
             // BigDataStatMeth::hdf5File* file = new BigDataStatMeth::hdf5File(filename, false);
             {
                std::unique_ptr<BigDataStatMeth::hdf5File> file(nullptr);
                 file.reset(  new BigDataStatMeth::hdf5File(filename, false) );
                 file->openFile("r");
-                
-                bexistsSVD = exists_HDF5_element(file->getFileptr(), strSVDgroup);
+
+                // bexistsSVD = exists_HDF5_element(file->getFileptr(), strSVDgroup);
                 bexistsPCA = exists_HDF5_element(file->getFileptr(), strPCAgroup);
             }
+
             
-            // {
-            //     // Open via hdf5Dataset (RDWR) — mirrors SVD path.
-            //     // Opening RDONLY when the file is already open RDWR in the same
-            //     // process fails on macOS; RDWR reuses the existing file ID correctly.
-            //     std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsTmp(
-            //             new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false));
-            //     bexistsSVD = exists_HDF5_element(dsTmp->getFileptr(), strSVDgroup);
-            //     bexistsPCA = exists_HDF5_element(dsTmp->getFileptr(), strPCAgroup);
-            // }
-            
-            if( bexistsSVD == 0 ||  bforce == true ) 
-            {
-            
-                // dsA = new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false);
+            // Always compute SVD and PCA — no caching, parameters (center/scale)
+            // are not encoded in HDF5 paths so caching silently returns wrong results.
+            if( bcenter || bscale ) {
+                // Normalize data then SVD on normalized matrix
                 dsA.reset( new BigDataStatMeth::hdf5Dataset(filename, strgroup, strdataset, false) );
                 dsA->openDataset();
-                if( dsA->getDatasetptr() != nullptr ) {
-                    RcppTypifyNormalizeHdf5( dsA.get(), bcenter, bscale, false); // Normalize and tipify data ( ((x-mu)/(sd)) * 1/sqrt(n-1) )
-                } else {
-                    // checkClose_file(dsA, dsd, dsu, dsv, dsX);
-                    return void();
-                }
-                
-                // delete dsA; dsA = nullptr;
+                if( dsA->getDatasetptr() == nullptr ) { return void(); }
+                RcppTypifyNormalizeHdf5( dsA.get(), bcenter, bscale, false); // Normalize and tipify data ( ((x-mu)/(sd)) * 1/sqrt(n-1) )
                 BigDataStatMeth::RcppbdSVD_hdf5( filename, "NORMALIZED_T/" + strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, method, ithreads );
-                strSVDgroup = "SVD/" +  strdataset;
-                
             } else {
-                strSVDgroup = strSVDgroup + strdataset;   // 20260227
+                // center=FALSE, scale=FALSE: SVD on raw data, no normalization
+                BigDataStatMeth::RcppbdSVD_hdf5( filename, strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, method, ithreads );
             }
+            strSVDgroup = "SVD/" + strdataset;
             
             // Check if PCA decomposition exists
             if( bexistsPCA != 0  && bforce == false) {
                 Rcpp::Rcout<<"PCA decomposition exits, please set overwrite = true to overwrite the existing results";
                 return void();
             }
+            
             
             // ------------ Variables ----------------
             

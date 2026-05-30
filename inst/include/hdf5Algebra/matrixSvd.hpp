@@ -379,8 +379,10 @@ namespace BigDataStatMeth {
                     // dsnormalizedData_ni->openDataset();
                     // 
                     // tmp_dim = dsnormalizedData_ni->dim();
-                    
-                    multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(), true, false, R_NilValue, R_NilValue, threads );
+
+                    //..2026/05/28 ..// multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(), true, false, R_NilValue, R_NilValue, threads );
+                    multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(), !transp, false, R_NilValue, R_NilValue, threads );
+
                 } else {
                     
                     multiplication( dsA, ds_udivd.get(), ds_vtmp.get(),

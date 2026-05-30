@@ -459,13 +459,25 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         const int safe_nthreads = (nthreads > 0) ? nthreads : 1;
         
         // ── Block size: each block needs at least n rows for a rank-n local QR ─
+        // int bsize;
+        // if (block_size.isNotNull()) {
+        //     bsize = std::max(n, Rcpp::as<int>(block_size));
+        // } else {
+        //     // Auto: spread m rows evenly across threads, min n rows per block
+        //     //.. 20260428 ..// bsize = std::max(n, static_cast<int>((m + nthreads - 1) / nthreads));
+        //     bsize = std::max(n, static_cast<int>((m + safe_nthreads - 1) / safe_nthreads));
+        // }
         int bsize;
         if (block_size.isNotNull()) {
             bsize = std::max(n, Rcpp::as<int>(block_size));
         } else {
-            // Auto: spread m rows evenly across threads, min n rows per block
-            //.. 20260428 ..// bsize = std::max(n, static_cast<int>((m + nthreads - 1) / nthreads));
-            bsize = std::max(n, static_cast<int>((m + safe_nthreads - 1) / safe_nthreads));
+            // Target ~4× more blocks than threads for dynamic load balancing.
+            // Minimum block size: 2·n rows — keeps each block cache-friendly
+            // and bounds R_stack (nblocks·n × n) to a fraction of the full matrix.
+            // Minimum 4 blocks total so TSQR is never degenerate with 1 thread.
+            const int target_blocks = std::max(4, safe_nthreads * 4);
+            bsize = std::max(2 * n,
+                             static_cast<int>((m + target_blocks - 1) / target_blocks));
         }
 
         const int nblocks = (m + bsize - 1) / bsize;
@@ -533,6 +545,7 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         // ── Step 3: assemble global thin Q (m×n) ─────────────────────────────
         // Q[block_b rows] = local_Q[b]  ·  Q_top[b·n : (b+1)·n, :]
         Eigen::MatrixXd Q_thin(m, n);
+        #pragma omp parallel for num_threads(safe_nthreads)
         for (int b = 0; b < nblocks; ++b) {
             const int row_start = b * bsize;
             const int brows     = std::min(bsize, m - row_start);

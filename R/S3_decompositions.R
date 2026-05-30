@@ -225,7 +225,6 @@ svd.HDF5Matrix <- function(x,
 prcomp.HDF5Matrix <- function(x,
                                retx          = TRUE,
                                center        = TRUE,
-                              
                                scale.        = FALSE,
                                tol           = NULL,
                                rank.         = NULL,       # base R alias -> ncomponents
