@@ -131,7 +131,9 @@ namespace BigDataStatMeth {
                 // For the symmetric case A == B, so preload_B follows preload_A.
                 const bool preload_B = isSymmetric ? preload_A : (mem_B_MB <= thresh_MB);
 
-                if (preload_A && preload_B) {
+                //.. 2026/06/01 let user decide ..// if (preload_A && preload_B) 
+                if (!bparal && preload_A && preload_B) 
+                {
                     // ── PATH 1: Preload ───────────────────────────────────────
                     // Strategy: 1 HDF5 read per input + 1 BLAS multiply + blocked writes.
                     //

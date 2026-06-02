@@ -831,8 +831,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_hdf5dataset_normalize
-Rcpp::List rcpp_hdf5dataset_normalize(std::string in_file, std::string in_group, std::string in_dataset, std::string out_file, std::string out_group, std::string out_dataset, bool center, bool scale, bool byrows, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> compression);
-RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_normalize(SEXP in_fileSEXP, SEXP in_groupSEXP, SEXP in_datasetSEXP, SEXP out_fileSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP centerSEXP, SEXP scaleSEXP, SEXP byrowsSEXP, SEXP wsizeSEXP, SEXP compressionSEXP) {
+Rcpp::List rcpp_hdf5dataset_normalize(std::string in_file, std::string in_group, std::string in_dataset, std::string out_file, std::string out_group, std::string out_dataset, bool center, bool scale, bool byrows, Rcpp::Nullable<int> wsize, Rcpp::Nullable<int> compression, Rcpp::Nullable<bool> paral, Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_normalize(SEXP in_fileSEXP, SEXP in_groupSEXP, SEXP in_datasetSEXP, SEXP out_fileSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP centerSEXP, SEXP scaleSEXP, SEXP byrowsSEXP, SEXP wsizeSEXP, SEXP compressionSEXP, SEXP paralSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -847,7 +847,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type byrows(byrowsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type wsize(wsizeSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_normalize(in_file, in_group, in_dataset, out_file, out_group, out_dataset, center, scale, byrows, wsize, compression));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type paral(paralSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_normalize(in_file, in_group, in_dataset, out_file, out_group, out_dataset, center, scale, byrows, wsize, compression, paral, threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1401,7 +1403,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_rcpp_hdf5dataset_multiply", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_multiply, 10},
     {"_BigDataStatMeth_rcpp_hdf5dataset_crossprod", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_crossprod, 8},
     {"_BigDataStatMeth_rcpp_hdf5dataset_tcrossprod", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_tcrossprod, 8},
-    {"_BigDataStatMeth_rcpp_hdf5dataset_normalize", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_normalize, 11},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_normalize", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_normalize, 13},
     {"_BigDataStatMeth_rcpp_hdf5dataset_impute_snps", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_impute_snps, 9},
     {"_BigDataStatMeth_rcpp_hdf5dataset_filter_low_coverage", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_filter_low_coverage, 9},
     {"_BigDataStatMeth_rcpp_hdf5dataset_filter_maf", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_filter_maf, 10},

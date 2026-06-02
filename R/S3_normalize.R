@@ -39,6 +39,15 @@
 #'   result datasets.  NULL uses the global option set by
 #'   \code{\link{hdf5matrix_options}} (default 6).  Use \code{0} to disable
 #'   compression (faster for benchmarks).
+#' @param paral   Logical or NULL. Enable OpenMP parallelism. \code{TRUE}
+#'   forces block-wise streaming (PATH 2) regardless of matrix size, so the
+#'   thread count is respected. \code{NULL} or \code{FALSE} uses the preload
+#'   path (PATH 1) when the matrix fits in RAM. Overrides the global option
+#'   set by \code{\link{hdf5matrix_options}}. Default \code{NULL}.
+#' @param threads Integer or NULL. Number of OpenMP threads when
+#'   \code{paral = TRUE}. Always capped by \code{OMP_THREAD_LIMIT}
+#'   (CRAN compliance). \code{NULL} uses the system default. Overrides
+#'   the global option set by \code{\link{hdf5matrix_options}}.
 #' @param ...         Ignored (for S3 compatibility).
 #'
 #' @details
@@ -49,9 +58,26 @@
 #' The returned \code{HDF5Matrix} carries \code{scaled:center} and
 #' \code{scaled:scale} attributes (numeric vectors), mirroring the behavior of
 #' \code{base::scale()}.
+#' 
+#' **Performance settings:**
+#'
+#' Parallelization and thread count can be set globally via
+#' \code{\link{hdf5matrix_options}} or passed explicitly via \code{paral}
+#' and \code{threads}. Explicit parameters take priority over global options.
+#' \preformatted{
+#' # Global configuration
+#' hdf5matrix_options(paral = TRUE, threads = 4)
+#' Xs <- scale(X)           # uses 4 threads
+#'
+#' # Explicit per-call override
+#' Xs <- scale(X, paral = TRUE, threads = 8)
+#' }
 #'
 #' @return An \code{HDF5Matrix} pointing to the normalized dataset on disk.
 #'
+#' @seealso
+#' \code{\link{hdf5matrix_options}} for global performance settings.
+#' 
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
@@ -67,12 +93,14 @@
 #' 
 #' @export
 scale.HDF5Matrix <- function(x,
-                              center      = TRUE,
-                              scale       = TRUE,
-                              byrows      = FALSE,
-                              wsize       = NULL,
-                              result_path = NULL,
-                              compression = NULL,
+                             center      = TRUE,
+                             scale       = TRUE,
+                             byrows      = FALSE,
+                             wsize       = NULL,
+                             result_path = NULL,
+                             compression = NULL,
+                             paral       = NULL,
+                             threads     = NULL,
                               ...) {
     if (!x$is_valid()) stop("HDF5Matrix is closed or invalid")
 
@@ -93,5 +121,7 @@ scale.HDF5Matrix <- function(x,
                 byrows      = isTRUE(byrows),
                 wsize       = wsize,
                 result_path = result_path,
-                compression = compression)
+                compression = compression,
+                paral       = paral,
+                threads     = threads)
 }

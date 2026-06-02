@@ -13,6 +13,8 @@
   wsize = NULL,
   result_path = NULL,
   compression = NULL,
+  paral = NULL,
+  threads = NULL,
   ...
 )
 }
@@ -41,6 +43,17 @@ result datasets.  NULL uses the global option set by
 \code{\link{hdf5matrix_options}} (default 6).  Use \code{0} to disable
 compression (faster for benchmarks).}
 
+\item{paral}{Logical or NULL. Enable OpenMP parallelism. \code{TRUE}
+forces block-wise streaming (PATH 2) regardless of matrix size, so the
+thread count is respected. \code{NULL} or \code{FALSE} uses the preload
+path (PATH 1) when the matrix fits in RAM. Overrides the global option
+set by \code{\link{hdf5matrix_options}}. Default \code{NULL}.}
+
+\item{threads}{Integer or NULL. Number of OpenMP threads when
+\code{paral = TRUE}. Always capped by \code{OMP_THREAD_LIMIT}
+(CRAN compliance). \code{NULL} uses the system default. Overrides
+the global option set by \code{\link{hdf5matrix_options}}.}
+
 \item{...}{Ignored (for S3 compatibility).}
 }
 \value{
@@ -59,6 +72,20 @@ not currently supported.  If a vector is supplied it is coerced to a logical
 The returned \code{HDF5Matrix} carries \code{scaled:center} and
 \code{scaled:scale} attributes (numeric vectors), mirroring the behavior of
 \code{base::scale()}.
+
+\strong{Performance settings:}
+
+Parallelization and thread count can be set globally via
+\code{\link{hdf5matrix_options}} or passed explicitly via \code{paral}
+and \code{threads}. Explicit parameters take priority over global options.
+\preformatted{
+# Global configuration
+hdf5matrix_options(paral = TRUE, threads = 4)
+Xs <- scale(X)           # uses 4 threads
+
+# Explicit per-call override
+Xs <- scale(X, paral = TRUE, threads = 8)
+}
 }
 \examples{
 \donttest{
@@ -70,4 +97,7 @@ cat("scaled:center[1]:", attr(Xs, "scaled:center")[1], "\n")
 X$close(); Xs$close(); unlink(tmp)
 }
 
+}
+\seealso{
+\code{\link{hdf5matrix_options}} for global performance settings.
 }

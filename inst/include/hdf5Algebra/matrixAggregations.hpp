@@ -114,8 +114,12 @@ inline hsize_t agg_block_size(Rcpp::Nullable<int> wsize,
  */
 inline bool agg_try_preload(BigDataStatMeth::hdf5Dataset* dsA,
                             hsize_t nHDF5rows, hsize_t nHDF5cols,
-                            std::vector<double>& vd)
+                            std::vector<double>& vd,
+                            bool bparal = false)
 {
+    
+    if (bparal) return false;  // force OMP → skip preload
+    
     const double mem_MB   = static_cast<double>(nHDF5rows) * nHDF5cols
     * 8.0 / (1024.0 * 1024.0);
     const double avail_MB = std::max(512.0,
@@ -172,7 +176,7 @@ inline Eigen::VectorXd get_HDF5_colSums(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.rowwise().sum();
             }
@@ -259,7 +263,7 @@ inline Eigen::VectorXd get_HDF5_colMeans(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.rowwise().mean();
             }
@@ -334,7 +338,7 @@ inline Eigen::VectorXd get_HDF5_colMins(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.rowwise().minCoeff();
             }
@@ -409,7 +413,7 @@ inline Eigen::VectorXd get_HDF5_colMaxs(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.rowwise().maxCoeff();
             }
@@ -495,7 +499,7 @@ inline Eigen::VectorXd get_HDF5_colVars(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 const double n         = static_cast<double>(nHDF5cols);
                 const Eigen::VectorXd colsum   = X.rowwise().sum();
@@ -607,7 +611,7 @@ inline Eigen::VectorXd get_HDF5_rowSums(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.colwise().sum().transpose();
             }
@@ -686,7 +690,7 @@ inline Eigen::VectorXd get_HDF5_rowMeans(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.colwise().mean().transpose();
             }
@@ -762,7 +766,7 @@ inline Eigen::VectorXd get_HDF5_rowMins(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.colwise().minCoeff().transpose();
             }
@@ -845,7 +849,7 @@ inline Eigen::VectorXd get_HDF5_rowMaxs(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.colwise().maxCoeff().transpose();
             }
@@ -934,7 +938,7 @@ inline Eigen::VectorXd get_HDF5_rowVars(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 const double n               = static_cast<double>(nHDF5rows);
                 const Eigen::RowVectorXd rs  = X.colwise().sum();
@@ -1048,7 +1052,7 @@ inline double get_HDF5_scalar_sum(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.sum();
             }
@@ -1146,7 +1150,7 @@ inline double get_HDF5_scalar_min(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.minCoeff();
             }
@@ -1218,7 +1222,7 @@ inline double get_HDF5_scalar_max(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 return X.maxCoeff();
             }
@@ -1299,7 +1303,7 @@ inline double get_HDF5_scalar_var(BigDataStatMeth::hdf5Dataset* dsA,
         // PRELOAD
         {
             std::vector<double> vd_full;
-            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full)) {
+            if (agg_try_preload(dsA, nHDF5rows, nHDF5cols, vd_full, bparal)) {
                 Eigen::Map<const RMMatd> X(vd_full.data(), nHDF5rows, nHDF5cols);
                 const double total_sum   = X.sum();
                 const double total_sumsq = X.array().square().sum();

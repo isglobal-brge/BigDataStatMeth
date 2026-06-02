@@ -33,6 +33,14 @@
  * @param scale      Divide by column/row standard deviations (default TRUE).
  * @param byrows     Normalize by rows if TRUE; by columns (default) if FALSE.
  * @param wsize      Block size for HDF5 reads (NULL = auto).
+ * @param compression gzip compression level 0-9 (NULL = inherit from input).
+ * @param paral      Logical or NULL. Enable OpenMP parallelism in block-wise
+ *                   processing. TRUE forces streaming path (PATH 2) regardless
+ *                   of matrix size. NULL or FALSE uses PATH 1 (preload + BLAS)
+ *                   when the matrix fits in RAM. Default NULL.
+ * @param threads    Integer or NULL. Number of OpenMP threads when paral = TRUE.
+ *                   Always capped by OMP_THREAD_LIMIT (CRAN compliance).
+ *                   NULL uses the system default. Ignored when paral is false.
  * @return Named list: \code{center} and \code{scale} numeric vectors so the
  *   R layer can attach them as \code{scaled:center} / \code{scaled:scale}.
  *
@@ -40,16 +48,18 @@
  */
 // [[Rcpp::export]]
 Rcpp::List rcpp_hdf5dataset_normalize(std::string in_file,
-                                       std::string in_group,
-                                       std::string in_dataset,
-                                       std::string out_file,
-                                       std::string out_group,
-                                       std::string out_dataset,
-                                       bool center = true,
-                                       bool scale  = true,
-                                       bool byrows = false,
-                                       Rcpp::Nullable<int> wsize       = R_NilValue,
-                                       Rcpp::Nullable<int> compression = R_NilValue)
+                                      std::string in_group,
+                                      std::string in_dataset,
+                                      std::string out_file,
+                                      std::string out_group,
+                                      std::string out_dataset,
+                                      bool center = true,
+                                      bool scale  = true,
+                                      bool byrows = false,
+                                      Rcpp::Nullable<int> wsize       = R_NilValue,
+                                      Rcpp::Nullable<int> compression = R_NilValue,
+                                      Rcpp::Nullable<bool> paral       = R_NilValue, // ..  added 2026/06/01 omp paral
+                                      Rcpp::Nullable<int>  threads     = R_NilValue) // ..  added 2026/06/01 omp paral
 {
     try {
         H5::Exception::dontPrint();
@@ -123,9 +133,16 @@ Rcpp::List rcpp_hdf5dataset_normalize(std::string in_file,
 
         // ── Normalize block-wise ──────────────────────────────────────────
         bool bcorrected = false;
+        const bool bparal = paral.isNotNull() && Rcpp::as<bool>(paral);
+        /*..  2026/06/01 omp paral .. 
         BigDataStatMeth::RcppNormalizeHdf5(dsA.get(), dsOut.get(),
                                             datanormal, wsize,
                                             center, scale, byrows, bcorrected);
+        */
+        BigDataStatMeth::RcppNormalizeHdf5(dsA.get(), dsOut.get(),
+                                           datanormal, wsize,
+                                           center, scale, byrows, bcorrected,
+                                           bparal, threads);
 
         // ── Return center and scale vectors to R ──────────────────────────
         Rcpp::NumericVector r_center = Rcpp::wrap(datanormal.row(0));

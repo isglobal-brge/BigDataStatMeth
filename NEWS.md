@@ -1,5 +1,48 @@
 ## BigDataStatMeth 2.0.2 (in development)
 
+### Performance — block-wise preload strategy (PATH 1)
+
+- Added PATH 1 preload strategy to `crossprod.hpp`, `tcrossprod.hpp`,
+  `matrixAggregations.hpp`, `matrixNormalization.hpp`, and
+  `matrixInvCholesky.hpp`. When the input matrix fits within 20% of
+  available RAM, data is read once into memory, computed with a single
+  BLAS/Eigen call, and written once. Reduces HDF5 I/O from O(nblocks)
+  round-trips to 1 read + 1 write. PATH 2 (block-wise streaming) is
+  unchanged as fallback for matrices that exceed the threshold.
+
+### Performance — platform-native memory detection
+
+- Replaced the hardcoded 4 GB fallback in `getAvailableMemoryMB()` with
+  platform-native detection: macOS uses `host_statistics64(HOST_VM_INFO64)`
+  (free + reclaimable inactive pages); Linux parses `/proc/meminfo` 
+  `MemAvailable:` (with `MemFree:` fallback for kernels < 3.14).
+  This allows the preload threshold and optimal block size to reflect
+  actual available memory on HPC servers (e.g. 256 GB) rather than
+  always using the conservative fallback.
+
+### Performance — TSQR improvements
+
+- TSQR (`matrixQR.hpp`): Step 3 Q-assembly loop is now parallel
+  (`#pragma omp parallel for`) — safe because row ranges are disjoint
+  across blocks.
+- TSQR block size formula decoupled from thread count:
+  `target_blocks = max(4, safe_nthreads * 4)` ensures at least 4 blocks
+  regardless of thread count, eliminating the degenerate single-block
+  case with 1 thread.
+
+### Correctness — thread safety
+
+- Restored `#pragma omp critical(accessFile)` around all HDF5 read and
+  write calls inside parallel regions in `crossprod.hpp`,
+  `tcrossprod.hpp`, and `matrixAggregations.hpp`. These had been removed
+  in an earlier commit, creating a race condition for multi-block matrices.
+- Added `#pragma omp critical(hdf5_corr_read)` around both HDF5 read
+  sites inside the parallel loop in `RcppbdCorr_hdf5_Block_single`
+  (activates for matrices > 500k elements).
+- Fixed SIGABRT on macOS ARM64 in `Cholesky_decomposition_intermediate_hdf5`:
+  removed `throw std::runtime_error` from inside the OpenMP parallel
+  region; the existing `bcancel=true` mechanism is used instead.
+
 ### Documentation
 
 - Improved documentation for `split()`, `split_dataset()`, `reduce()`,

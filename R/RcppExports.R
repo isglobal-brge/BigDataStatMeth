@@ -1170,8 +1170,8 @@ rcpp_hdf5dataset_tcrossprod <- function(ptr_a, ptr_b, paral = NULL, block_size =
     .Call('_BigDataStatMeth_rcpp_hdf5dataset_tcrossprod', PACKAGE = 'BigDataStatMeth', ptr_a, ptr_b, paral, block_size, threads, compression, outgroup, outdataset)
 }
 
-rcpp_hdf5dataset_normalize <- function(in_file, in_group, in_dataset, out_file, out_group, out_dataset, center = TRUE, scale = TRUE, byrows = FALSE, wsize = NULL, compression = NULL) {
-    .Call('_BigDataStatMeth_rcpp_hdf5dataset_normalize', PACKAGE = 'BigDataStatMeth', in_file, in_group, in_dataset, out_file, out_group, out_dataset, center, scale, byrows, wsize, compression)
+rcpp_hdf5dataset_normalize <- function(in_file, in_group, in_dataset, out_file, out_group, out_dataset, center = TRUE, scale = TRUE, byrows = FALSE, wsize = NULL, compression = NULL, paral = NULL, threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_normalize', PACKAGE = 'BigDataStatMeth', in_file, in_group, in_dataset, out_file, out_group, out_dataset, center, scale, byrows, wsize, compression, paral, threads)
 }
 
 rcpp_hdf5dataset_impute_snps <- function(in_file, in_group, in_dataset, out_group, out_dataset, by_cols = TRUE, threads = -1L, overwrite = FALSE, compression = NULL) {

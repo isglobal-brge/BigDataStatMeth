@@ -23,10 +23,16 @@ HDF5Matrix$set("public", "normalize",
 # @param scale    Logical. Divide by column/row SDs.  Default TRUE.
 # @param byrows   Logical. If TRUE normalize row-wise; otherwise column-wise.
 # @param wsize    Integer or NULL. Block size (NULL = auto).
-# @param result_path Where to write the output dataset:
-#   NULL (default): same file, path "NORMALIZED/<group>/<dataset>".
-#   Character string "group/dataset": same file, given path.
-#   Named list list(file="f.h5", path="group/ds"): different file.
+# @param result_path Where to write the output dataset: ...
+# @param compression Integer (0-9) or NULL. gzip compression level.
+# @param paral    Logical or NULL. Enable OpenMP parallelism. TRUE forces
+#                 block-wise streaming (PATH 2) regardless of matrix size,
+#                 giving full control over thread count. NULL or FALSE uses
+#                 the preload path (PATH 1) when the matrix fits in RAM.
+#                 Overrides the global option set by hdf5matrix_options().
+# @param threads  Integer or NULL. Number of OpenMP threads when paral = TRUE.
+#                 Capped at OMP_THREAD_LIMIT for CRAN compliance.
+#                 Overrides the global option set by hdf5matrix_options().
 # @return A new HDF5Matrix pointing to the normalized dataset, with
 #   scaled:center and scaled:scale attributes attached.
 function(center      = TRUE,
@@ -34,7 +40,9 @@ function(center      = TRUE,
          byrows      = FALSE,
          wsize       = NULL,
          result_path = NULL,
-         compression = NULL) {
+         compression = NULL,
+         paral       = NULL,
+         threads     = NULL) {
 
     if (!self$is_valid()) stop("HDF5Matrix is closed or invalid")
 
@@ -88,7 +96,9 @@ function(center      = TRUE,
         scale   = isTRUE(scale),
         byrows  = isTRUE(byrows),
         wsize   = wsize,
-        compression = .get_option("compression", default = NULL, override = compression)
+        compression = .get_option("compression", default = NULL, override = compression),
+        paral   = .get_option("paral",   default = NULL, override = paral), 
+        threads = .get_option("threads", default = NULL, override = threads)
     )
 
     # ── Reopen after C++ has finished and released all its handles ──────────
