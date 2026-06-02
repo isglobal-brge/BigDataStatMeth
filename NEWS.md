@@ -1,4 +1,6 @@
-## BigDataStatMeth 2.0.2 (in development)
+# BigDataStatMeth 2.0.2
+
+## Performance
 
 ### Performance — user-controlled parallel execution (PATH 1 / PATH 2)
 
@@ -59,7 +61,7 @@
   regardless of thread count, eliminating the degenerate single-block
   case with 1 thread.
 
-### Bug fix — `paral = FALSE` ignored in matrix multiplication PATH 2
+## Bug fix — `paral = FALSE` ignored in matrix multiplication PATH 2
 
 - Fixed `multiplication.hpp`: `bparal` was passed as `R_NilValue` (NULL)
   to `get_number_threads()` inside the OMP parallel region of the
@@ -68,7 +70,7 @@
   now forwarded correctly; `paral = FALSE` enforces single-thread
   execution in PATH 2/3 as documented.
 
-### Correctness — thread safety
+## Correctness — thread safety
 
 - Restored `#pragma omp critical(accessFile)` around all HDF5 read and
   write calls inside parallel regions in `crossprod.hpp`,
@@ -81,7 +83,7 @@
   removed `throw std::runtime_error` from inside the OpenMP parallel
   region; the existing `bcancel=true` mechanism is used instead.
 
-### Documentation
+## Documentation
 
 - Added `paral` and `threads` parameters to `scale.HDF5Matrix()`,
   `HDF5Matrix$normalize()`, and `rcpp_hdf5dataset_normalize()`, with
