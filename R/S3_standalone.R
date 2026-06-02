@@ -130,11 +130,13 @@ hdf5_reduce <- function(filename,
 #' @examples
 #' \donttest{
 #' tmp <- tempfile(fileext = ".h5")
-#' hdf5_create_matrix(tmp, "inp/A", data = matrix(rnorm(20), 4, 5))
-#' hdf5_create_matrix(tmp, "inp/B", data = matrix(rnorm(20), 4, 5))
-#' hdf5_apply(tmp, group = "inp", datasets = c("A", "B"),
-#'            func = "CrossProd", outgroup = "out")
-#' res_A <- hdf5_matrix(tmp, "out/CrossProd_A")
+#' A <- hdf5_create_matrix(tmp, "inp/A", data = matrix(rnorm(25), 5, 5))
+#' B <- hdf5_create_matrix(tmp, "inp/B", data = matrix(rnorm(25), 5, 5))
+#' hdf5_apply(tmp, group = "inp", datasets = c("A", "B"), 
+#' func = "CrossProd", outgroup = "out")
+#' res <- list_datasets(tmp)
+#' res
+#' res_A <- hdf5_matrix(tmp, res[3])
 #' dim(res_A)   # 5 x 5
 #' close(res_A)
 #' hdf5_close_all()

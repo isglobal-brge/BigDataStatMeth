@@ -108,10 +108,12 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
          // dsdims = new BigDataStatMeth::hdf5Dims(objDataset.get());
          dsdims.reset( new BigDataStatMeth::hdf5Dims(objDataset.get()) );
          
-         if( rownames.size() < dims[1]){
+         //.. 2026/06/02 r-cran checks..// if( rownames.size() < dims[1]){
+         if( rownames.size() < static_cast<R_xlen_t>(dims[1])){
              Rcpp::CharacterVector svrownames(1);
              dsdims->writeDimnames( Rcpp::wrap(colnames), Rcpp::wrap(svrownames) );
-         } else if(colnames.size() < dims[0]){
+        //.. 2026/06/02 r-cran checks..// } else if(colnames.size() < dims[0]){
+         } else if(colnames.size() < static_cast<R_xlen_t>(dims[0])){
              Rcpp::CharacterVector svrcolnames(1);
              dsdims->writeDimnames( svrcolnames, rownames );
          } else {
