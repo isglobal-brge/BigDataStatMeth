@@ -2,102 +2,43 @@
 
 ## Performance
 
-### Performance — user-controlled parallel execution (PATH 1 / PATH 2)
+- PATH 1 preload strategy added to `crossprod()`, `tcrossprod()`,
+  aggregation functions, `scale()`, and `solve()`: when input fits
+  within 20% of available RAM, a single HDF5 read + BLAS call + single
+  write replaces the block loop.
+- `scale()` PATH 2 (block-wise streaming) is now parallelized with OpenMP.
+- `hdf5matrix_options(paral = TRUE)` now forces PATH 2 (OMP streaming)
+  in `%*%`, `crossprod()`, `tcrossprod()`, aggregations, and `scale()`,
+  giving explicit thread control regardless of matrix size.
+- `getAvailableMemoryMB()` now uses platform-native detection (macOS:
+  `host_statistics64`; Linux: `/proc/meminfo`), replacing the hardcoded
+  4 GB fallback.
+- TSQR: Step 3 Q-assembly parallelized; block size decoupled from thread
+  count (`target_blocks = max(4, nthreads * 4)`).
 
-- `hdf5matrix_options(paral = TRUE)` now forces block-wise OMP streaming
-  (PATH 2) for `%*%`, `crossprod()`, `tcrossprod()`, all aggregation
-  functions (`colSums()`, `rowSums()`, `colMeans()`, `rowMeans()`,
-  `colVars()`, `rowVars()`, `colSds()`, `rowSds()`, `colMins()`,
-  `rowMins()`, `colMaxs()`, `rowMaxs()`), and `scale()`. Previously,
-  `paral = TRUE` was silently ignored whenever both input matrices fit
-  within the RAM threshold and the system selected PATH 1 (preload +
-  BLAS). Setting `paral = TRUE` now gives the user explicit control over
-  thread count via `threads = N`, regardless of matrix size.
-- `paral = NULL` (default): system selects PATH 1 (preload + BLAS,
-  fastest for medium matrices) or PATH 2 (block-wise streaming + OMP)
-  based on available RAM. Default behaviour is unchanged.
-- `paral = FALSE`: forces serial execution (1 thread) in PATH 2; PATH 1
-  is used when matrices fit in RAM.
-- Affected headers: `multiplication.hpp`, `crossprod.hpp`,
-  `tcrossprod.hpp`, `matrixAggregations.hpp`, `matrixNormalization.hpp`.
+## Bug fixes
 
-### Performance — block-wise preload strategy (PATH 1)
+- `rbind()` and `cbind()` with 3 or more `HDF5Matrix` arguments no
+  longer produce dataset names exceeding 1400 characters. Auto-generated
+  names are now `rbind_N_<uid>` with a random 8-character identifier,
+  also preventing "dataset already exists" collisions. Two-argument
+  calls are unchanged (`A_rbind_B`).
+- Fixed `paral = FALSE` being silently ignored in `multiplication()`
+  PATH 2/3.
 
-- Added PATH 1 preload strategy to `crossprod.hpp`, `tcrossprod.hpp`,
-  `matrixAggregations.hpp`, `matrixNormalization.hpp`, and
-  `matrixInvCholesky.hpp`. When the input matrix fits within 20% of
-  available RAM, data is read once into memory, computed with a single
-  BLAS/Eigen call, and written once. Reduces HDF5 I/O from O(nblocks)
-  round-trips to 1 read + 1 write. PATH 2 (block-wise streaming) is
-  unchanged as fallback for matrices that exceed the threshold.
+## Correctness
 
-### Performance — `scale()` parallelized in PATH 2
-
-- `scale.HDF5Matrix()` and `$normalize()` now accept `paral` and
-  `threads` parameters (explicit or via `hdf5matrix_options()`). The
-  block-wise streaming path (PATH 2) is now parallelized with OpenMP —
-  previously it ran sequentially regardless of `paral` or `threads`.
-  The block loop has been refactored to canonical form (`i < nBlocks`)
-  required for `#pragma omp parallel for`, with `#pragma omp
-  critical(accessFile)` around HDF5 reads and writes.
-
-### Performance — platform-native memory detection
-
-- Replaced the hardcoded 4 GB fallback in `getAvailableMemoryMB()` with
-  platform-native detection: macOS uses `host_statistics64(HOST_VM_INFO64)`
-  (free + reclaimable inactive pages); Linux parses `/proc/meminfo`
-  `MemAvailable:` (with `MemFree:` fallback for kernels < 3.14).
-  This allows the preload threshold and optimal block size to reflect
-  actual available memory on HPC servers (e.g. 256 GB) rather than
-  always using the conservative fallback.
-
-### Performance — TSQR improvements
-
-- TSQR (`matrixQR.hpp`): Step 3 Q-assembly loop is now parallel
-  (`#pragma omp parallel for`) — safe because row ranges are disjoint
-  across blocks.
-- TSQR block size formula decoupled from thread count:
-  `target_blocks = max(4, safe_nthreads * 4)` ensures at least 4 blocks
-  regardless of thread count, eliminating the degenerate single-block
-  case with 1 thread.
-
-## Bug fix — `paral = FALSE` ignored in matrix multiplication PATH 2
-
-- Fixed `multiplication.hpp`: `bparal` was passed as `R_NilValue` (NULL)
-  to `get_number_threads()` inside the OMP parallel region of the
-  streaming path (PATH 2/3), causing `paral = FALSE` to be silently
-  ignored and the operation to always use maximum threads.  `bparal` is
-  now forwarded correctly; `paral = FALSE` enforces single-thread
-  execution in PATH 2/3 as documented.
-
-## Correctness — thread safety
-
-- Restored `#pragma omp critical(accessFile)` around all HDF5 read and
-  write calls inside parallel regions in `crossprod.hpp`,
-  `tcrossprod.hpp`, and `matrixAggregations.hpp`. These had been removed
-  in an earlier commit, creating a race condition for multi-block matrices.
-- Added `#pragma omp critical(hdf5_corr_read)` around both HDF5 read
-  sites inside the parallel loop in `RcppbdCorr_hdf5_Block_single`
-  (activates for matrices > 500k elements).
-- Fixed SIGABRT on macOS ARM64 in `Cholesky_decomposition_intermediate_hdf5`:
-  removed `throw std::runtime_error` from inside the OpenMP parallel
-  region; the existing `bcancel=true` mechanism is used instead.
+- Restored `#pragma omp critical(accessFile)` in `crossprod()`,
+  `tcrossprod()`, and aggregation PATH 2 (race condition fix).
+- Fixed SIGABRT in `Cholesky_decomposition_intermediate_hdf5` on
+  macOS ARM64 (removed `throw` from OpenMP parallel region).
 
 ## Documentation
 
-- Added `paral` and `threads` parameters to `scale.HDF5Matrix()`,
-  `HDF5Matrix$normalize()`, and `rcpp_hdf5dataset_normalize()`, with
-  Roxygen, R6, and Doxygen documentation respectively.
-- Added `@details` section to `scale.HDF5Matrix()` describing PATH 1 /
-  PATH 2 selection and global option interaction, following the same
-  pattern as `%*%`, `crossprod()`, and `tcrossprod()`.
-- Added `@seealso \code{\link{hdf5matrix_options}}` to
-  `scale.HDF5Matrix()`.
-- Improved documentation for `split()`, `split_dataset()`, `reduce()`,
-  `hdf5_reduce()`, `apply_function()`, and `hdf5_apply()`: clarified
-  calling conventions, two-level access pattern (S3 on open object vs.
-  standalone by file path), and distinction from `base::apply()`.
-- Fixed legacy API call in `hdf5_apply()` example.
+- `scale()`: added `paral`, `threads` parameters; PATH 1/PATH 2
+  `@details`; `@seealso hdf5matrix_options()`.
+- `split()`, `hdf5_apply()`, `hdf5_reduce()`: clarified calling
+  conventions and two-level access pattern. Fixed legacy example.
 - Added vignette section "Dataset operations: split, reduce, and apply".
 
 # BigDataStatMeth 2.0.1
