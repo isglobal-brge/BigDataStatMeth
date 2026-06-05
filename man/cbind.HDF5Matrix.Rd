@@ -26,7 +26,10 @@ written to a temporary HDF5 dataset automatically.}
 
 \item{out_group}{Output group.   \code{NULL} = \code{"BIND"}.}
 
-\item{out_dataset}{Output dataset. \code{NULL} = auto-generated name.}
+\item{out_dataset}{Output dataset name. \\code{NULL} = auto-generated:
+for two inputs the name is \\code{"A_cbind_B"}; for three or more inputs
+it is \\code{"cbind_N"} where \\code{N} is the number of inputs, to
+prevent unbounded name growth.}
 
 \item{block_rows}{Integer. Rows per I/O block (default 1000).}
 
