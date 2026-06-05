@@ -32,9 +32,9 @@
 #' @param deparse.level Ignored (for S3 compatibility with base::cbind).
 #' @param out_file     Output HDF5 file. \code{NULL} = same file as first argument.
 #' @param out_group    Output group.   \code{NULL} = \code{"BIND"}.
-#' @param out_dataset  Output dataset name. \\code{NULL} = auto-generated:
-#'   for two inputs the name is \\code{"A_cbind_B"}; for three or more inputs
-#'   it is \\code{"cbind_N"} where \\code{N} is the number of inputs, to
+#' @param out_dataset  Output dataset name. \code{NULL} = auto-generated:
+#'   for two inputs the name is \code{"A_cbind_B"}; for three or more inputs
+#'   it is \code{"cbind_N"} where \code{N} is the number of inputs, to
 #'   prevent unbounded name growth.
 #' @param block_rows   Integer. Rows per I/O block (default 1000).
 #' @param overwrite    Logical. Overwrite existing output. Default \code{FALSE}.
@@ -168,9 +168,9 @@ cbind.HDF5Matrix <- function(...,
 #' @param deparse.level Ignored (for S3 compatibility with base::rbind).
 #' @param out_file     Output HDF5 file. \code{NULL} = same file as first argument.
 #' @param out_group    Output group.   \code{NULL} = \code{"BIND"}.
-#' @param out_dataset  Output dataset name. \\code{NULL} = auto-generated:
-#'   for two inputs the name is \\code{"A_rbind_B"}; for three or more inputs
-#'   it is \\code{"rbind_N"} where \\code{N} is the number of inputs, to
+#' @param out_dataset  Output dataset name. \code{NULL} = auto-generated:
+#'   for two inputs the name is \code{"A_rbind_B"}; for three or more inputs
+#'   it is \code{"rbind_N"} where \code{N} is the number of inputs, to
 #'   prevent unbounded name growth.
 #' @param block_rows   Integer. Rows per I/O block (default 1000).
 #' @param overwrite    Logical. Overwrite existing output. Default \code{FALSE}.
