@@ -34,10 +34,14 @@ compression (faster for benchmarks).}
 \item{...}{Ignored (for S3 compatibility).}
 }
 \value{
-\code{HDF5Matrix} containing the Cholesky factor L.
+\code{HDF5Matrix} containing the upper-triangular Cholesky factor U
+such that \code{t(U) \%*\% U == A} (consistent with \code{base::chol()}).
 }
 \description{
-Computes the lower-triangular Cholesky factor L such that A = L L'.
+Computes the Cholesky factor and returns it as an upper-triangular matrix U
+such that \code{t(U) \%*\% U == A}, consistent with \code{base::chol()}.
+The internal C++ algorithm computes the lower-triangular factor L (A = L L');
+the R/HDF5 transposition convention means the user receives L' = U.
 The input matrix must be square and symmetric positive-definite.
 }
 \examples{

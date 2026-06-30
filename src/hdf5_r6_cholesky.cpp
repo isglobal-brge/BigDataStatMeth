@@ -13,7 +13,9 @@
  *                     (inst/include/hdf5Algebra/matrixInvCholesky.hpp)
  *
  * Output layout in the HDF5 file (defaults, same group as input):
- *   rcpp_hdf5dataset_chol  → <group>/chol_<dataset>   (lower-triangular L)
+ *   rcpp_hdf5dataset_chol  → <group>/chol_<dataset>   (upper-triangular U as seen from R;
+ *                              internally stored as lower-triangular L in HDF5, transposed
+ *                              by the R/HDF5 storage convention on read-back)
  *   rcpp_hdf5dataset_solve → <group>/inv_<dataset>    (full inverse A⁻¹)
  */
 
@@ -23,14 +25,16 @@
  * @brief Compute the Cholesky decomposition of a symmetric positive-definite
  *        HDF5 matrix.
  *
- * Computes the lower-triangular factor L such that A = L L'.
+ * Returns an upper-triangular matrix U such that t(U) %*% U == A (as seen from R).
+ * Internally computes the lower-triangular factor L (A = L L'); the R/HDF5 transposition
+ * convention means the user receives L' = U when reading back from R.
  * Delegates to \c BigDataStatMeth::Cholesky_decomposition_hdf5() from
  * \c inst/include/hdf5Algebra/matrixInvCholesky.hpp.
  *
  * @param filename    Path to the HDF5 file.
  * @param group       Group path of the input dataset.
  * @param dataset     Dataset name within the group.
- * @param full_matrix If true, return the full symmetric matrix (L + L').
+ * @param full_matrix If true, return the full symmetric matrix (reconstructed from U + U').
  *                    Default false (lower-triangular L only).
  * @param overwrite   If true, overwrite existing result.  Default false.
  * @param threads     Number of OpenMP threads (-1 = auto).
@@ -38,7 +42,7 @@
  *                    -1 = auto (MAXELEMSINBLOCK).
  * @return Named list:
  *   \c file   — full path to the HDF5 file,
- *   \c path_L — full HDF5 path to the Cholesky factor.
+ *   \c path_L — full HDF5 path to the Cholesky factor (upper-triangular U as seen from R).
  *
  * @export
  */

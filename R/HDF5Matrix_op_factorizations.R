@@ -110,7 +110,10 @@ HDF5Matrix$set("public", "chol",
 # @description
 # Cholesky decomposition of a symmetric positive-definite HDF5Matrix.
 #'
-# Computes the lower-triangular factor L such that A = L L'.
+# Computes the Cholesky factor and returns it as an upper-triangular matrix U
+# such that t(U) %*% U == A, consistent with base::chol().
+# The internal C++ algorithm computes L (A = L L'); the R/HDF5 transposition
+# convention means the user receives L' = U.
 # The input matrix must be square and symmetric positive-definite.
 #'
 # @param full_matrix Logical. If \code{TRUE}, return the full symmetric matrix
@@ -120,7 +123,8 @@ HDF5Matrix$set("public", "chol",
 #   (<group>/chol_<dataset>) is automatically closed and invalidated.
 # @param threads     Integer. OpenMP threads (-1 = auto).
 # @param block_size  Integer or NULL. Elements per block.  NULL = auto.
-# @return \code{HDF5Matrix} containing the Cholesky factor L.
+# @return \code{HDF5Matrix} containing the upper-triangular Cholesky factor U
+#   such that t(U) %*% U == A (consistent with base::chol()).
 function(full_matrix = FALSE,
          overwrite   = FALSE,
          threads     = -1L,

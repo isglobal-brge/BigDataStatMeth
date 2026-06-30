@@ -128,7 +128,10 @@ qr.HDF5Matrix <- function(x,
 #' Cholesky decomposition of a symmetric positive-definite HDF5Matrix
 #'
 #' @description
-#' Computes the lower-triangular Cholesky factor L such that A = L L'.
+#' Computes the Cholesky factor and returns it as an upper-triangular matrix U
+#' such that \code{t(U) \%*\% U == A}, consistent with \code{base::chol()}.
+#' The internal C++ algorithm computes the lower-triangular factor L (A = L L');
+#' the R/HDF5 transposition convention means the user receives L' = U.
 #' The input matrix must be square and symmetric positive-definite.
 #'
 #' @param x          An \code{HDF5Matrix}.
@@ -142,7 +145,8 @@ qr.HDF5Matrix <- function(x,
 #'   \code{\link{hdf5matrix_options}} (default 6).  Use \code{0} to disable
 #'   compression (faster for benchmarks).
 #' @param ...        Ignored (for S3 compatibility).
-#' @return \code{HDF5Matrix} containing the Cholesky factor L.
+#' @return \code{HDF5Matrix} containing the upper-triangular Cholesky factor U
+#'   such that \code{t(U) \%*\% U == A} (consistent with \code{base::chol()}).
 #'
 #' @examples
 #' \donttest{

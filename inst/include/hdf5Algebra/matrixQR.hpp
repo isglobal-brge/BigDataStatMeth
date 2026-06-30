@@ -480,7 +480,20 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
                              static_cast<int>((m + target_blocks - 1) / target_blocks));
         }
 
-        const int nblocks = (m + bsize - 1) / bsize;
+        //.. 2026/06/27 ..// const int nblocks = (m + bsize - 1) / bsize;
+        int nblocks = (m + bsize - 1) / bsize;
+        // Guard: the last block must have at least n rows for matrixQR().topRows(n)
+        // to be in-bounds and for the local thin QR to be well-posed.
+        // If the residual (m mod bsize) is in (0, n-1), merge the last block into
+        // the previous one by decrementing nblocks.  The merged block has
+        // bsize + residual rows >= 2n >= n, so it is always valid.
+        // The guard nblocks > 1 prevents decrement below 1 (single-block case).
+        if (nblocks > 1) {
+            const int last_block_rows = m - (nblocks - 1) * bsize;
+            if (last_block_rows > 0 && last_block_rows < n) {
+                --nblocks;
+            }
+        }
 
         // ── Storage for local Q and R factors ─────────────────────────────────
         std::vector<Eigen::MatrixXd> local_R(nblocks);
@@ -493,7 +506,8 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         #pragma omp parallel for num_threads(safe_nthreads) schedule(dynamic)
         for (int b = 0; b < nblocks; ++b) {
             const int row_start = b * bsize;
-            const int brows     = std::min(bsize, m - row_start);
+            //.. 2026/06/27 ..// const int brows = std::min(bsize, m - row_start);
+            const int brows = (b == nblocks - 1) ? (m - row_start) : bsize;
 
             // Read block A[row_start : row_start+brows, :]  from HDF5.
             // In HDF5 storage (transposed): columns are R rows, rows are R cols.
@@ -548,7 +562,8 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         #pragma omp parallel for num_threads(safe_nthreads)
         for (int b = 0; b < nblocks; ++b) {
             const int row_start = b * bsize;
-            const int brows     = std::min(bsize, m - row_start);
+            // const int brows = std::min(bsize, m - row_start);
+            const int brows = (b == nblocks - 1) ? (m - row_start) : bsize;
             Q_thin.block(row_start, 0, brows, n) =
                 local_Q[b] * Q_top.block(b * n, 0, n, n);
         }
