@@ -75,26 +75,37 @@
  // [[Rcpp::export]]
  Eigen::MatrixXd bd_wproduct(Rcpp::RObject X, Rcpp::RObject w, std::string op)
  {
-     
      Eigen::MatrixXd A;
      Eigen::MatrixXd W;
      
-     try{  
-         A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
-         W = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(w);
+     try {
+         
+         try {
+             A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(X);
+             W = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(w);
+         } catch(std::exception &ex) {
+             throw std::runtime_error(
+                     std::string("bd_wproduct: failed to convert X or w to Eigen format: ") + ex.what());
+         }
+         
+         if(op == "XwXt" || op == "xwxt") {
+             return(BigDataStatMeth::xwxt(A,W)) ;
+         } else if (op == "XtwX" || op == "xtwx") {
+             return(BigDataStatMeth::xtwx(A,W));
+         } else if (op == "Xw" || op == "xw") {
+             return(BigDataStatMeth::Xw(A,W));
+         } else if (op == "wX" || op == "wx" ) {
+             return(BigDataStatMeth::wX(A,W));
+         } else {
+             throw std::runtime_error(
+                     "bd_wproduct: invalid option, valid options: 'xtwx' and 'xwxt' for weighted cross product or 'Xw' and 'wX' for weighted product");
+         }
+         
+     } catch(std::exception &ex) {
+         Rf_error("c++ exception bd_wproduct: %s", ex.what());
+     } catch (...) {
+         Rf_error("c++ exception bd_wproduct (unknown reason)");
      }
-     catch(std::exception &ex) { }
      
-     if(op == "XwXt" || op == "xwxt") {
-         return(BigDataStatMeth::xwxt(A,W)) ;
-     }else if (op == "XtwX" || op == "xtwx") {
-         return(BigDataStatMeth::xtwx(A,W));
-     }else if (op == "Xw" || op == "xw") {
-         return(BigDataStatMeth::Xw(A,W));
-     }else if (op == "wX" || op == "wx" ) {
-         return(BigDataStatMeth::wX(A,W));
-     } else
-     {
-         throw("Invalid option, valid options : 'xtwx' and 'xwxt' for weighted cross product or 'Xw' and 'wX' for weighted product");
-     }
+     return Eigen::MatrixXd();  // unreachable; Rf_error() does not return, but keeps compiler happy
  }

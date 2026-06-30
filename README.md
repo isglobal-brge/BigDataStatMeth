@@ -272,7 +272,7 @@ If you use BigDataStatMeth in your research, please cite:
 ```
 Pelegri-Siso D, Gonzalez JR (2026). BigDataStatMeth: Statistical Methods
 for Big Data Using Block-wise Algorithms and HDF5 Storage.
-R package version 2.0.0, https://github.com/isglobal-brge/BigDataStatMeth
+R package version 2.0.3, https://github.com/isglobal-brge/BigDataStatMeth
 ```
 
 BibTeX entry:
@@ -282,7 +282,7 @@ BibTeX entry:
   title  = {BigDataStatMeth: Statistical Methods for Big Data},
   author = {Dolors Pelegri-Siso and Juan R. Gonzalez},
   year   = {2026},
-  note   = {R package version 2.0.0},
+  note   = {R package version 2.0.3},
   url    = {https://github.com/isglobal-brge/BigDataStatMeth},
 }
 ```

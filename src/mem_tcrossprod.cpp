@@ -142,7 +142,7 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
             } catch(std::exception &ex) { Rcpp::stop("bdtCrossprod: %s", ex.what()); }
             
         } else {
-            throw("Matrix A is not numeric - Only numeric matrix allowed");
+            throw std::runtime_error("bdtCrossprod: Matrix A is not numeric - Only numeric matrix allowed");
         }
         
         if(B.isNull()) {
@@ -155,7 +155,7 @@ Eigen::MatrixXd bdtCrossprod( Rcpp::RObject A, Rcpp::Nullable<Rcpp::RObject> B =
                 }
                 catch(std::exception &ex) {  Rcpp::stop("bdtCrossprod: %s", ex.what()); }
             } else {
-                throw("Matrix B is not numeric - Only numeric matrix allowed");
+                throw std::runtime_error("bdtCrossprod: Matrix B is not numeric - Only numeric matrix allowed");
             }
             
             Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> > mTrans(mB.data(), mB.cols(), mB.rows());

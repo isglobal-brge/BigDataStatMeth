@@ -1263,7 +1263,7 @@ namespace BigDataStatMeth {
             hsize_t n_cols = trans_x ? n_obs_real : n_vars_real;   // Effective variables after user transpose
             
             // Strategy: Read entire matrix if possible (most cases)
-            const hsize_t MEMORY_LIMIT = 500000; // 500K elements ~ 4GB for double
+            const hsize_t MEMORY_LIMIT = 500000; // 500K elements ~ 4MB for double
             
             if (n_rows_hdf5 * n_cols_hdf5 < MEMORY_LIMIT) {
                 
@@ -1362,9 +1362,7 @@ namespace BigDataStatMeth {
             
             
         } catch(std::exception &ex) {
-            // // checkClose_file(dsA, dsCorr, dsPval);
             throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_Block_single: ") + ex.what());
-            throw;
         }
     }
     
@@ -1835,9 +1833,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception &ex) {
-            // checkClose_file(dsA, dsB, dsCorr, dsPval);
             throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_Block_cross: ") + ex.what());
-            throw;
         }
     }
     
