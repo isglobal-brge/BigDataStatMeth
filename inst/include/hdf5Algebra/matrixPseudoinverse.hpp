@@ -114,10 +114,12 @@ inline Eigen::MatrixXd RcppPseudoinv(Eigen::MatrixXd* A,
 #pragma omp parallel for num_threads(get_number_threads(threads, R_NilValue))
     for (int i = 0; i < k; i++){
         double tempS;
-        if(s[i] > 1.0e-9)
+        if(s[i] > 1.0e-9) {
             tempS = 1.0/s[i];
-        else
-            tempS = s[i];
+        } else {
+            //.. 20260630 ..// tempS = s[i];
+            tempS = 0; // Moore-Penrose: zero out singular values at or below tolerance
+        }
         
         // zscal_ (int* N, double* DA, double* DX, int* INCX )
         dscal_( &m, &tempS, &(u(i*ldu)), &ione );
@@ -186,10 +188,12 @@ inline void RcppPseudoinvHdf5( BigDataStatMeth::hdf5Dataset* dsA,
 #pragma omp parallel for num_threads(get_number_threads(threads, R_NilValue))
     for (int i = 0; i < k; i++){
         double tempS;
-        if(s[i] > 1.0e-9)
+        if(s[i] > 1.0e-9) {
             tempS = 1.0/s[i];
-        else
-            tempS = s[i];
+        } else{
+            //.. 20260630 ..// tempS = s[i];
+            tempS = 0.0;   // Moore-Penrose: zero out singular values at or below tolerance
+        }
         
         dscal_( &m, &tempS, &(u(i*ldu)), &ione );
     }

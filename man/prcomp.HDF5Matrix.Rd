@@ -35,7 +35,10 @@ coordinates (\code{x} slot).  If \code{FALSE} the \code{x} slot is
 
 \item{tol}{Ignored (present for interface compatibility with \code{prcomp()}).}
 
-\item{rank.}{Ignored. Present for compatibility with \code{stats::prcomp}.}
+\item{rank.}{Integer. Number of principal components to compute. When
+supplied (non-\code{NULL}), takes precedence over \code{ncomponents}.
+Present for compatibility with \code{stats::prcomp()}; unlike the base R
+method, it is not ignored here.}
 
 \item{ncomponents}{Integer.  Number of PCs to compute (0 = all, default).}
 
@@ -85,6 +88,20 @@ pca <- prcomp(X, center = TRUE, scale. = FALSE)
 cat("Variance explained (PC1-3):", pca$cumvar[1:3], "\n")
 dim(pca$rotation)   # 10 x nPC
 dim(pca$x)          # 100 x nPC
+
+# rank. takes precedence over ncomponents when both are supplied.
+# NOTE: this reuses the same output location as the call above, so it
+# must come after pca's results have already been read/used -- once
+# overwrite = TRUE recreates the output datasets, any earlier
+# HDF5Matrix handle pointing at that location (here, pca$rotation and
+# pca$x) becomes invalid by design (see HDF5Matrix lifecycle, Section
+# 5.3.3): the package proactively clears stale external pointers when
+# overwriting to convert what would otherwise be a memory-unsafe crash
+# into a clean R-level error.
+
+pca5 <- prcomp(X, rank. = 5, ncomponents = 10, overwrite = TRUE)
+dim(pca5$rotation)   # 10 x 5 -- rank. (5) was used, not ncomponents (10)
+
 hdf5_close_all()
 unlink(tmp)
 }

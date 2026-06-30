@@ -37,26 +37,28 @@ List with components. If an error occurs, all string values are returned as empt
 }
 }
 \description{
-Computes the Moore-Penrose pseudoinverse of a matrix stored in HDF5 format.
-The implementation is designed for large matrices, using block-based processing
-and efficient I/O operations.
+Computes the Moore-Penrose pseudoinverse of a matrix stored in HDF5 format
+and writes the result back to HDF5.
 }
 \details{
-This function provides an HDF5-based implementation for computing pseudoinverses
-of large matrices. Key features:
+This function reads the complete input dataset into memory, computes the
+pseudoinverse via a direct LAPACK SVD, and writes the full result to HDF5.
+The computation is HDF5-backed for input and output, but it is not
+block-wise: both the input matrix and its pseudoinverse must fit in
+available RAM during the computation. For matrices that exceed available
+memory, this function is not currently suitable.
+
+Key features:
 \itemize{
 \item HDF5 Integration:
 \itemize{
-\item Efficient reading of input matrix
-\item Block-based processing for large matrices
-\item Memory-efficient computation
+\item Reads the complete input matrix in a single call
 \item Direct output to HDF5 format
 }
 \item Implementation Features:
 \itemize{
-\item SVD-based computation
-\item Parallel processing support
-\item Automatic memory management
+\item SVD-based computation via direct LAPACK calls
+\item Parallel processing support for the singular-value scaling step
 \item Flexible output options
 }
 }
@@ -64,7 +66,6 @@ of large matrices. Key features:
 The function handles:
 \itemize{
 \item Data validation
-\item Memory management
 \item Error handling
 \item HDF5 file operations
 }

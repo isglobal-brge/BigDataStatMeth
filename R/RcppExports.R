@@ -475,29 +475,29 @@ bdpseudoinv <- function(X, threads = NULL) {
 #' Compute Matrix Pseudoinverse (HDF5-Stored)
 #'
 #' @description
-#' Computes the Moore-Penrose pseudoinverse of a matrix stored in HDF5 format.
-#' The implementation is designed for large matrices, using block-based processing
-#' and efficient I/O operations.
+#' Computes the Moore-Penrose pseudoinverse of a matrix stored in HDF5 format
+#' and writes the result back to HDF5.
 #'
 #' @details
-#' This function provides an HDF5-based implementation for computing pseudoinverses
-#' of large matrices. Key features:
-#' 
+#' This function reads the complete input dataset into memory, computes the
+#' pseudoinverse via a direct LAPACK SVD, and writes the full result to HDF5.
+#' The computation is HDF5-backed for input and output, but it is not
+#' block-wise: both the input matrix and its pseudoinverse must fit in
+#' available RAM during the computation. For matrices that exceed available
+#' memory, this function is not currently suitable.
+#'
+#' Key features:
 #' * HDF5 Integration:
-#'   - Efficient reading of input matrix
-#'   - Block-based processing for large matrices
-#'   - Memory-efficient computation
+#'   - Reads the complete input matrix in a single call
 #'   - Direct output to HDF5 format
-#' 
+#'
 #' * Implementation Features:
-#'   - SVD-based computation
-#'   - Parallel processing support
-#'   - Automatic memory management
+#'   - SVD-based computation via direct LAPACK calls
+#'   - Parallel processing support for the singular-value scaling step
 #'   - Flexible output options
 #'
 #' The function handles:
 #' * Data validation
-#' * Memory management
 #' * Error handling
 #' * HDF5 file operations
 #'
