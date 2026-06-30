@@ -1,3 +1,34 @@
+# BigDataStatMeth 2.0.3
+
+### Bug fixes
+
+- `qr(..., method = "tsqr")`: fixed incorrect results (loss of orthogonality
+  in Q) when the last row-block had fewer rows than columns (`m mod block_size
+  < n`). The last block is now merged with the previous one, guaranteeing all
+  blocks satisfy the rank condition required by the local Householder QR step.
+  Affected configurations: any (m, n, threads) where `m mod max(2n, ceil(m /
+  max(4, threads * 4))) < n`. Discovered via a systematic regression test
+  covering 202 (m, n, threads, block_size) combinations.
+  
+- `pseudoinverse()` now correctly zeroes singular values at or below the
+  tolerance (1e-9), fixing incorrect results for rank-deficient or
+  near-singular matrices.
+- Fixed silent failure on matrix conversion errors in `bdCrossprod()`,
+  `bdtCrossprod()`, and `bd_wproduct()`; these now raise informative errors.
+- Removed unreachable code in the correlation HDF5 backend (no functional
+  effect).
+
+## New features
+
+* Added `pseudoinverse.matrix()` for consistent in-memory support alongside
+  the existing `HDF5Matrix` method.
+
+## Documentation
+
+- Corrected `pseudoinverse()` and `prcomp(rank. =)` documentation to match
+  actual behavior.
+- Updated package description and citation metadata.
+
 # BigDataStatMeth 2.0.2
 
 ## Performance
