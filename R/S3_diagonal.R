@@ -108,61 +108,9 @@ diag_scale.HDF5Matrix <- function(x, scalar,
 }
 
 
-# ── Ops.HDF5Matrix — extended with diagonal auto-detection ───────────────────
+# ── Ops.HDF5Matrix ───────────────────────────────────────────────────────────
 #
-# Supersedes the definition in S3_arithmetic.R.
-# When one operand is a 1-row or 1-column HDF5Matrix the diagonal path
-# is used; otherwise the standard element-wise path is used.
-
-#' @export
-Ops.HDF5Matrix <- function(e1, e2) {
-
-    if (!inherits(e1, "HDF5Matrix") || !inherits(e2, "HDF5Matrix"))
-        stop("Both operands must be HDF5Matrix objects")
-    if (!e1$is_valid()) stop("e1 is closed or invalid")
-    if (!e2$is_valid()) stop("e2 is closed or invalid")
-
-    d1 <- dim(e1)
-    d2 <- dim(e2)
-    e1_is_diag <- (d1[1] == 1L || d1[2] == 1L)
-    e2_is_diag <- (d2[1] == 1L || d2[2] == 1L)
-
-    if (e1_is_diag || e2_is_diag) {
-        mat  <- if (e1_is_diag) e2 else e1
-        diag <- if (e1_is_diag) e1 else e2
-        return(mat$diag_op(diag,
-                           op          = .Generic,
-                           threads     = .get_option("threads"),
-                           compression = .get_option("compression",
-                                                     default = NULL)))
-    }
-
-    switch(.Generic,
-        "+" = e1$add(e2,
-                     paral       = .get_option("paral"),
-                     block_size  = .get_option("block_size"),
-                     threads     = .get_option("threads"),
-                     compression = .get_option("compression", default = NULL)),
-
-        "-" = e1$subtract(e2,
-                          paral       = .get_option("paral"),
-                          block_size  = .get_option("block_size"),
-                          threads     = .get_option("threads"),
-                          compression = .get_option("compression", default = NULL)),
-
-        "*" = e1$multiply_ew(e2,
-                             paral       = .get_option("paral"),
-                             block_size  = .get_option("block_size"),
-                             threads     = .get_option("threads"),
-                             compression = .get_option("compression", default = NULL)),
-
-        "/" = e1$divide_ew(e2,
-                           paral       = .get_option("paral"),
-                           block_size  = .get_option("block_size"),
-                           threads     = .get_option("threads"),
-                           compression = .get_option("compression", default = NULL)),
-
-        stop(paste0("operator '", .Generic,
-                    "' is not supported for HDF5Matrix objects"))
-    )
-}
+# The single definition of Ops.HDF5Matrix (element-wise arithmetic plus
+# 1xn / nx1 diagonal-broadcast auto-detection) lives in S3_arithmetic.R,
+# together with its roxygen documentation. It calls diag_op() (defined above)
+# for the broadcast path.

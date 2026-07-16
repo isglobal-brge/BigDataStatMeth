@@ -427,16 +427,16 @@ namespace BigDataStatMeth {
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             // checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
-            throw std::runtime_error("c++ exception RcppbdSVD_hdf5_Block (File IException)");
+            throw std::runtime_error("RcppbdSVD_hdf5_Block (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
             // checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
-            throw std::runtime_error("c++ exception RcppbdSVD_hdf5_Block (DataSet IException)");
+            throw std::runtime_error("RcppbdSVD_hdf5_Block (DataSet IException)");
         } catch(std::exception &ex) {
             // checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
-            throw std::runtime_error(std::string("C++ exception RcppbdSVD_hdf5_Block: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdSVD_hdf5_Block: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsA, dsd, dsu, dsv, dsnormalizedData, dsJoined, dsnormalizedData_i);
-            throw std::runtime_error("C++ exception RcppbdSVD_hdf5_Block (unknown reason)");
+            throw std::runtime_error("RcppbdSVD_hdf5_Block (unknown reason)");
         }
         
         return void();
@@ -574,13 +574,13 @@ namespace BigDataStatMeth {
             } 
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            throw std::runtime_error("c++ exception RcppbdSVD_hdf5 (File IException)");
+            throw std::runtime_error("RcppbdSVD_hdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception RcppbdSVD_hdf5 (DataSet IException)");
+            throw std::runtime_error("RcppbdSVD_hdf5 (DataSet IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception RcppbdSVD_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdSVD_hdf5: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppbdSVD_hdf5 (unknown reason)");
+            throw std::runtime_error("RcppbdSVD_hdf5 (unknown reason)");
         }
         
         return void();

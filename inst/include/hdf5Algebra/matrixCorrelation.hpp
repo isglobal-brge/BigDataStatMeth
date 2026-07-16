@@ -937,7 +937,7 @@ namespace BigDataStatMeth {
             result.bcomputed = true;
             
         } catch (std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_matrix_single: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdCorr_matrix_single: ") + ex.what());
             result.bcomputed = false;
         }
         
@@ -1147,7 +1147,7 @@ namespace BigDataStatMeth {
             result.bcomputed = true;
             
         } catch (std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_matrix_cross: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdCorr_matrix_cross: ") + ex.what());
             result.bcomputed = false;
         }
         
@@ -1362,7 +1362,7 @@ namespace BigDataStatMeth {
             
             
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_Block_single: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdCorr_hdf5_Block_single: ") + ex.what());
         }
     }
     
@@ -1558,16 +1558,16 @@ namespace BigDataStatMeth {
             
         } catch(H5::FileIException& error) {
             // checkClose_file(dsA, dsCorr, dsPval);
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_single (File IException): ") + error.getDetailMsg());
+            throw std::runtime_error(std::string("RcppbdCorr_hdf5_single (File IException): ") + error.getDetailMsg());
         } catch(H5::DataSetIException& error) {
             // checkClose_file(dsA, dsCorr, dsPval);
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_single (DataSet IException): ") + error.getDetailMsg());
+            throw std::runtime_error(std::string("RcppbdCorr_hdf5_single (DataSet IException): ") + error.getDetailMsg());
         } catch(std::exception &ex) {
             // checkClose_file(dsA, dsCorr, dsPval);
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_single: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdCorr_hdf5_single: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsA, dsCorr, dsPval);
-            throw std::runtime_error("C++ exception RcppbdCorr_hdf5_single (unknown reason)");
+            throw std::runtime_error("RcppbdCorr_hdf5_single (unknown reason)");
         }
     }
     
@@ -1833,7 +1833,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_Block_cross: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdCorr_hdf5_Block_cross: ") + ex.what());
         }
     }
     
@@ -2050,13 +2050,13 @@ namespace BigDataStatMeth {
             );
             
         } catch(H5::FileIException& error) {
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_cross (File IException): ") + error.getDetailMsg());
+            throw std::runtime_error(std::string("RcppbdCorr_hdf5_cross (File IException): ") + error.getDetailMsg());
         } catch(H5::DataSetIException& error) {
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_cross (DataSet IException): ") + error.getDetailMsg());
+            throw std::runtime_error(std::string("RcppbdCorr_hdf5_cross (DataSet IException): ") + error.getDetailMsg());
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppbdCorr_hdf5_cross: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdCorr_hdf5_cross: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppbdCorr_hdf5_cross (unknown reason)");
+            throw std::runtime_error("RcppbdCorr_hdf5_cross (unknown reason)");
         }
     }
     

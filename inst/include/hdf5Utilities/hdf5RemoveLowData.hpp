@@ -191,25 +191,25 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error) { // catch failure caused by the H5File operations
             // checkClose_file(dsIn, dsOut);
-            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (File IException)");
+            throw std::runtime_error("Rcpp_Remove_Low_Data_hdf5 (File IException)");
         } catch( H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             // checkClose_file(dsIn, dsOut);
-            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSet IException)");
+            throw std::runtime_error("Rcpp_Remove_Low_Data_hdf5 (DataSet IException)");
         } catch( H5::GroupIException& error) { // catch failure caused by the Group operations
             // checkClose_file(dsIn, dsOut);
-            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (Group IException)");
+            throw std::runtime_error("Rcpp_Remove_Low_Data_hdf5 (Group IException)");
         } catch( H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsIn, dsOut);
-            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (DataSpace IException)");
+            throw std::runtime_error("Rcpp_Remove_Low_Data_hdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsIn, dsOut);
-            throw std::runtime_error("c++ exception Rcpp_Remove_Low_Data_hdf5 (Data TypeIException)");
+            throw std::runtime_error("Rcpp_Remove_Low_Data_hdf5 (Data TypeIException)");
         } catch(std::exception &ex) {
             // checkClose_file(dsIn, dsOut);
-            throw std::runtime_error(std::string("c++ exception Rcpp_Remove_Low_Data_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("Rcpp_Remove_Low_Data_hdf5: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsIn, dsOut);
-            throw std::runtime_error("C++ exception Rcpp_Remove_Low_Data_hdf5 (unknown reason)");
+            throw std::runtime_error("Rcpp_Remove_Low_Data_hdf5 (unknown reason)");
         }
         
         return(itotrem);

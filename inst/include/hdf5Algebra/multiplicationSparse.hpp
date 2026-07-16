@@ -174,7 +174,7 @@ inline BigDataStatMeth::hdf5Dataset* multiplicationSparse( BigDataStatMeth::hdf5
             }
             
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception multiplicationSparse: ") + ex.what());
+            throw std::runtime_error(std::string("multiplicationSparse: ") + ex.what());
         }
         
         return(dsC);

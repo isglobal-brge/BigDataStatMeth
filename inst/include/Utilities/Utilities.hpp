@@ -153,7 +153,7 @@ namespace BigDataStatMeth {
                 strtype = "unknown";
             }
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception getObjecDataType: ") + ex.what());
+            throw std::runtime_error(std::string("getObjecDataType: ") + ex.what());
         }
         
         return(strtype);
@@ -221,7 +221,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception getObjecDataType: ") + ex.what());
+            throw std::runtime_error(std::string("getObjecDataType: ") + ex.what());
         }
         
         return(dims);
@@ -272,7 +272,7 @@ namespace BigDataStatMeth {
             }
                 
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception getObjecDataType: ") + ex.what());
+            throw std::runtime_error(std::string("getObjecDataType: ") + ex.what());
         }
         
         return(iblock_size);
@@ -310,7 +310,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception getOptimBlockSize: ") + ex.what());
+            throw std::runtime_error(std::string("getOptimBlockSize: ") + ex.what());
         }
         
         return(currentSize);
@@ -372,7 +372,7 @@ namespace BigDataStatMeth {
             blockSize[1] = maxCols;
             
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception getMatrixBlockSize: ") + ex.what());
+            throw std::runtime_error(std::string("getMatrixBlockSize: ") + ex.what());
         }
         
         return(blockSize);
@@ -408,7 +408,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception getVectorBlockSize: ") + ex.what());
+            throw std::runtime_error(std::string("getVectorBlockSize: ") + ex.what());
         }
         
         return(blockSize);

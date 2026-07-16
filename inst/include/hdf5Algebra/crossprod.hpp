@@ -328,7 +328,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception crossprod: ") + ex.what());
+            throw std::runtime_error(std::string("crossprod: ") + ex.what());
         }
         
         return(dsC);

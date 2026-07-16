@@ -47,11 +47,11 @@ namespace BigDataStatMeth {
                 groupname = group;
                 
             } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-                throw std::runtime_error("c++ exception hdf5Group (File IException)");
+                throw std::runtime_error("hdf5Group (File IException)");
             } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-                throw std::runtime_error("c++ exception hdf5Group (DataSet IException)");
+                throw std::runtime_error("hdf5Group (DataSet IException)");
             } catch(std::exception &ex) {
-                throw std::runtime_error(std::string("c++ exception hdf5Group: ") + ex.what());
+                throw std::runtime_error(std::string("hdf5Group: ") + ex.what());
             } 
             
         }
@@ -72,18 +72,18 @@ namespace BigDataStatMeth {
                 groupname = group;          //..2025/08/13..// 
                 
             } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-                throw std::runtime_error("c++ exception hdf5Group (File IException)");
+                throw std::runtime_error("hdf5Group (File IException)");
             } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-                throw std::runtime_error("c++ exception hdf5Group (DataSet IException)");
+                throw std::runtime_error("hdf5Group (DataSet IException)");
             } catch(std::exception &ex) {
-                throw std::runtime_error(std::string("c++ exception hdf5Group: ") + ex.what());
+                throw std::runtime_error(std::string("hdf5Group: ") + ex.what());
             } 
             
             //..2025/08/13..// if( pfile != nullptr ){
             //..2025/08/13..//     openFile("rw");
             //..2025/08/13..//     groupname = group;
             //..2025/08/13..// } else {
-            //..2025/08/13..//     Rf_error("c++ exception Please create or close the file before proceeding");
+            //..2025/08/13..//     Rf_error("Please create or close the file before proceeding");
             //..2025/08/13..// }
         }
         
@@ -102,14 +102,14 @@ namespace BigDataStatMeth {
             if( pfile != nullptr ){
                 openFile("rw");
             } else {
-                throw std::runtime_error("c++ exception Please create or close the file before proceeding.");
+                throw std::runtime_error("Please create or close the file before proceeding.");
             }
             
             if( exists_HDF5_element(pfile, group) ) {
                 if( forceGroup == true) {
                     remove_elements(pfile, getGroupName(), {}); 
                 } else {
-                    throw std::runtime_error("c++ exception. Data already exists in the file. Please set overwrite = true to proceed.");
+                    throw std::runtime_error("Data already exists in the file. Please set overwrite = true to proceed.");
                 }
                 
             }
@@ -134,7 +134,7 @@ namespace BigDataStatMeth {
         //.. 20260426 ..//     if( pfile != nullptr ){
         //.. 20260426 ..//         openFile("rw");
         //.. 20260426 ..//     } else {
-        //.. 20260426 ..//         throw std::runtime_error("c++ exception Please create file before proceed");
+        //.. 20260426 ..//         throw std::runtime_error("Please create file before proceed");
         //.. 20260426 ..//     }
         //.. 20260426 ..//     
         //.. 20260426 ..//     if( !exists_HDF5_element(pfile, group) ) {
@@ -150,7 +150,7 @@ namespace BigDataStatMeth {
             // pfile is already set from objFile — do NOT call openFile()
             // bOwnsFile = false is already set by the hdf5File constructor above
             if( pfile == nullptr ){
-                throw std::runtime_error("c++ exception: file pointer is null");
+                throw std::runtime_error("file pointer is null");
             }
             if( !exists_HDF5_element(pfile, group) ) {
                 create_HDF5_groups(group);    
@@ -195,10 +195,10 @@ namespace BigDataStatMeth {
                 
             } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
                 // pfile->close();
-                throw std::runtime_error("c++ exception create_HDF5_groups_ptr (File IException)");
+                throw std::runtime_error("create_HDF5_groups_ptr (File IException)");
             } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
                 // pfile->close();
-                throw std::runtime_error("c++ exception create_HDF5_groups_ptr (Group IException)");
+                throw std::runtime_error("create_HDF5_groups_ptr (Group IException)");
             } 
             
             groupname = mGroup;

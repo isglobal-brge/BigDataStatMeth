@@ -152,11 +152,11 @@ Rcpp::List rcpp_hdf5dataset_bind(
         );
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_bind (File): %s", e.getCDetailMsg());
+        Rf_error("rcpp_hdf5dataset_bind (File): %s", e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_bind (DataSet): %s", e.getCDetailMsg());
+        Rf_error("rcpp_hdf5dataset_bind (DataSet): %s", e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_bind: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_bind: %s", e.what());
     }
     return R_NilValue;
 }

@@ -170,9 +170,9 @@ namespace BigDataStatMeth {
             reteig.bcomputevectors = true;
             
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppbdEigen_spectra: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdEigen_spectra: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppbdEigen_spectra (unknown reason)");
+            throw std::runtime_error("RcppbdEigen_spectra (unknown reason)");
         }
         return reteig;
     }
@@ -252,15 +252,15 @@ namespace BigDataStatMeth {
                 }
             }
         } catch(H5::FileIException& error) {
-            throw std::runtime_error("c++ exception RcppbdEigen_hdf5_Block (File IException)");
+            throw std::runtime_error("RcppbdEigen_hdf5_Block (File IException)");
         } catch(H5::DataSetIException& error) {
-            throw std::runtime_error("c++ exception RcppbdEigen_hdf5_Block (DataSet IException)");
+            throw std::runtime_error("RcppbdEigen_hdf5_Block (DataSet IException)");
         } catch(H5::GroupIException& error) {
-            throw std::runtime_error("c++ exception RcppbdEigen_hdf5_Block (Group IException)");
+            throw std::runtime_error("RcppbdEigen_hdf5_Block (Group IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppbdEigen_hdf5_Block: ") + ex.what());
+            throw std::runtime_error(std::string("RcppbdEigen_hdf5_Block: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppbdEigen_hdf5_Block (unknown reason)");
+            throw std::runtime_error("RcppbdEigen_hdf5_Block (unknown reason)");
         }
     }
     
@@ -420,16 +420,16 @@ namespace BigDataStatMeth {
             }
             
         } catch(H5::FileIException& error) {
-            throw std::runtime_error("c++ exception RcppbdEigen_hdf5 (File IException)");
+            throw std::runtime_error("RcppbdEigen_hdf5 (File IException)");
         } catch(H5::DataSetIException& error) {
             throw std::runtime_error(
-                std::string("c++ exception RcppbdEigen_hdf5 (DataSet IException): ")
+                std::string("RcppbdEigen_hdf5 (DataSet IException): ")
                 + error.getDetailMsg());
         } catch(std::exception &ex) {
             throw std::runtime_error(
-                std::string("c++ exception RcppbdEigen_hdf5: ") + ex.what());
+                std::string("RcppbdEigen_hdf5: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppbdEigen_hdf5 (unknown reason)");
+            throw std::runtime_error("RcppbdEigen_hdf5 (unknown reason)");
         }
     }
 

@@ -132,13 +132,13 @@ Rcpp::List rcpp_hdf5dataset_multiply_sparse(SEXP ptr_a,
         lst["path"] = out_grp + "/" + out_name;
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_multiply_sparse (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_multiply_sparse (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_multiply_sparse (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_multiply_sparse (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_multiply_sparse: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_multiply_sparse: %s", e.what());
     }
 
     return lst;

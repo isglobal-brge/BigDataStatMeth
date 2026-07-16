@@ -214,11 +214,11 @@ public:
             addAttribute( "internal", Rcpp::wrap("1") );
             
         } catch(H5::FileIException& error) {
-            throw std::runtime_error("c++ exception createDataset_int (File IException)");
+            throw std::runtime_error("createDataset_int (File IException)");
         } catch(H5::GroupIException& error) {
-            throw std::runtime_error("c++ exception createDataset_int (Group IException)");
+            throw std::runtime_error("createDataset_int (Group IException)");
         } catch(H5::DataSetIException& error) {
-            throw std::runtime_error("c++ exception createDataset_int (DataSet IException)");
+            throw std::runtime_error("createDataset_int (DataSet IException)");
         } 
         return void();
     }
@@ -238,11 +238,11 @@ public:
     //         createDataset( dsLike->nrows(), dsLike->ncols(), strdatatype);
     //         
     //     } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-    //         Rcpp::Rcerr<<"\nc++ exception createDataset (File IException)";
+    //         Rcpp::Rcerr<<"\ncreateDataset (File IException)";
     //     } catch(H5::GroupIException& error) { // catch failure caused by the H5File operations
-    //         Rcpp::Rcerr<<"\nc++ exception createDataset (Group IException)";
+    //         Rcpp::Rcerr<<"\ncreateDataset (Group IException)";
     //     } catch(H5::DataSetIException& error) { // catch failure caused by the H5File operations
-    //         Rcpp::Rcerr<<"\nc++ exception createDataset (DataSet IException)";
+    //         Rcpp::Rcerr<<"\ncreateDataset (DataSet IException)";
     //     } 
     //     
     //     return void();
@@ -262,11 +262,11 @@ public:
         try{
             createDataset( dsLike->nrows(), dsLike->ncols(), strdatatype, compression_level);
         } catch(H5::FileIException& error) {
-            throw std::runtime_error("c++ exception createDataset (File IException)");
+            throw std::runtime_error("createDataset (File IException)");
         } catch(H5::GroupIException& error) {
-            throw std::runtime_error("c++ exception createDataset (Group IException)");
+            throw std::runtime_error("createDataset (Group IException)");
         } catch(H5::DataSetIException& error) {
-            throw std::runtime_error("c++ exception createDataset (DataSet IException)");
+            throw std::runtime_error("createDataset (DataSet IException)");
         } 
         
         return void();
@@ -320,7 +320,7 @@ public:
             status = H5Pset_chunk( cparms, RANK2, chunk_dims);
             
             if(status<0) {
-                throw std::runtime_error("c++ exception createUnlimitedDataset (setting chunk IException)");
+                throw std::runtime_error("createUnlimitedDataset (setting chunk IException)");
             }
             
             // Configure compression
@@ -356,11 +356,11 @@ public:
             addAttribute( "internal", Rcpp::wrap("1") );
             
         } catch(H5::FileIException& error) {
-            throw std::runtime_error("c++ exception createUnlimitedDataset_internal (File IException)");
+            throw std::runtime_error("createUnlimitedDataset_internal (File IException)");
         } catch(H5::GroupIException& error) {
-            throw std::runtime_error("c++ exception createUnlimitedDataset_internal (Group IException)");
+            throw std::runtime_error("createUnlimitedDataset_internal (Group IException)");
         } catch(H5::DataSetIException& error) {
-            throw std::runtime_error("c++ exception createUnlimitedDataset_internal (Dataset IException)");
+            throw std::runtime_error("createUnlimitedDataset_internal (Dataset IException)");
         } 
         return void();
     }
@@ -404,9 +404,9 @@ public:
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            throw std::runtime_error("c++ exception extend_HDF5_matrix_subset_ptr (File IException)");
+            throw std::runtime_error("extend_HDF5_matrix_subset_ptr (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception extend_HDF5_matrix_subset_ptr (DataSet IException)");
+            throw std::runtime_error("extend_HDF5_matrix_subset_ptr (DataSet IException)");
         }
         return void();
     }
@@ -493,19 +493,19 @@ public:
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_dataset_file();
-            throw std::runtime_error("c++ exception writeDataset_Internal (File IException)");
+            throw std::runtime_error("writeDataset_Internal (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             close_dataset_file();
-            throw std::runtime_error("c++ exception writeDataset_Internal (DataSet IException)");
+            throw std::runtime_error("writeDataset_Internal (DataSet IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             close_dataset_file();
-            throw std::runtime_error("c++ exception writeDataset_Internal (Group IException)");
+            throw std::runtime_error("writeDataset_Internal (Group IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             close_dataset_file();
-            throw std::runtime_error("c++ exception writeDataset_Internal (DataSpace IException)");
+            throw std::runtime_error("writeDataset_Internal (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             close_dataset_file();
-            throw std::runtime_error("c++ exception writeDataset_Internal (Data TypeIException)");
+            throw std::runtime_error("writeDataset_Internal (Data TypeIException)");
         }
         return void();
     }
@@ -638,23 +638,23 @@ public:
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (File IException)");
+            Rcpp::stop("\nwriteDatasetBlock_Internal (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (DataSet IException)");
+            Rcpp::stop("\nwriteDatasetBlock_Internal (DataSet IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (Group IException)");
+            Rcpp::stop("\nwriteDatasetBlock_Internal (Group IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (DataSpace IException)");
+            Rcpp::stop("\nwriteDatasetBlock_Internal (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_Internal (Data TypeIException)");
+            Rcpp::stop("\nwriteDatasetBlock_Internal (Data TypeIException)");
         }
         return void();
     }
@@ -715,23 +715,23 @@ public:
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (File IException)");
+            Rcpp::stop("\nwriteDatasetBlock_internal std::vector (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (DataSet IException)");
+            Rcpp::stop("\nwriteDatasetBlock_internal std::vector (DataSet IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (Group IException)");
+            Rcpp::stop("\nwriteDatasetBlock_internal std::vector (Group IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (DataSpace IException)");
+            Rcpp::stop("\nwriteDatasetBlock_internal std::vector (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             close_dataset();
             close_dataset_file();
-            Rcpp::stop("\nc++ exception writeDatasetBlock_internal std::vector (Data TypeIException)");
+            Rcpp::stop("\nwriteDatasetBlock_internal std::vector (Data TypeIException)");
         }
         return void();
     }
@@ -785,7 +785,7 @@ public:
             if( type_class == H5T_INTEGER || type_class == H5T_FLOAT ) {
                 pdataset->read( rdatablock, H5::PredType::NATIVE_DOUBLE, memspace, dataspace );
             } else {
-                throw std::runtime_error("c++ exception readDatasetBlock (Data type not allowed, maybe are trying to read string matrix?)");
+                throw std::runtime_error("readDatasetBlock (Data type not allowed, maybe are trying to read string matrix?)");
             }// else if (type_class == H5T_FLOAT) {
             //     pdataset->read( rdatablock, H5::PredType::NATIVE_DOUBLE, memspace, dataspace );
             // } 
@@ -795,23 +795,23 @@ public:
             
         } catch( H5::FileIException& error) { 
             close_dataset_file();
-            throw std::runtime_error("c++ exception readDatasetBlock_Internal (File IException)");
+            throw std::runtime_error("readDatasetBlock_Internal (File IException)");
             // return void();
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            throw std::runtime_error("c++ exception readDatasetBlock_Internal (DataSet IException)");
+            throw std::runtime_error("readDatasetBlock_Internal (DataSet IException)");
             // return void();
         } catch(H5::GroupIException& error) { 
             close_dataset_file();
-            throw std::runtime_error("c++ exception readDatasetBlock_Internal (Group IException)");
+            throw std::runtime_error("readDatasetBlock_Internal (Group IException)");
             // return void();
         } catch(H5::DataSpaceIException& error) { 
             close_dataset_file();
-            throw std::runtime_error("c++ exception readDatasetBlock_Internal (DataSpace IException)");
+            throw std::runtime_error("readDatasetBlock_Internal (DataSpace IException)");
             // return void();
         } catch(H5::DataTypeIException& error) { 
             close_dataset_file();
-            throw std::runtime_error("c++ exception readDatasetBlock_Internal (Data TypeIException)");
+            throw std::runtime_error("readDatasetBlock_Internal (Data TypeIException)");
             // return void();
         }
         return(rdatablock);
@@ -956,13 +956,13 @@ private:
             }
             
         } catch( H5::FileIException& error) { 
-            throw std::runtime_error("c++ exception getDimensExistingDataset (File IException)");
+            throw std::runtime_error("getDimensExistingDataset (File IException)");
         } catch(H5::DataSetIException& error) { 
-            throw std::runtime_error("c++ exception getDimensExistingDataset (DataSet IException)");
+            throw std::runtime_error("getDimensExistingDataset (DataSet IException)");
         } catch(H5::GroupIException& error) { 
-            throw std::runtime_error("c++ exception getDimensExistingDataset (Group IException)");
+            throw std::runtime_error("getDimensExistingDataset (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
-            throw std::runtime_error("c++ exception getDimensExistingDataset (DataSpace IException)");
+            throw std::runtime_error("getDimensExistingDataset (DataSpace IException)");
         } 
         
         return void();

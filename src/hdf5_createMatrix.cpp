@@ -97,13 +97,13 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
         
         if ( object.sexp_type()==0 ) {
             // throw std::range_error("Unknown data type");
-            Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
+            Rf_error("bdCreate_hdf5_matrix - Unknown data type");
             return(lst_return);
         }
         
         if ( object.sexp_type()==0  ) {
             // throw std::range_error("Data matrix must exsits and mustn't be null");
-            Rf_error("c++ exception bdCreate_hdf5_matrix - Data matrix must exsits and mustn't be null");
+            Rf_error("bdCreate_hdf5_matrix - Data matrix must exsits and mustn't be null");
             return(lst_return);
         }
         
@@ -130,13 +130,13 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
                 //.. 20260426 ..//     if ( Rf_isMatrix(mat) ){
                 //.. 20260426 ..//     objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(mat));
                 //.. 20260426 ..// } else{
-                //.. 20260426 ..//     Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
+                //.. 20260426 ..//     Rf_error("bdCreate_hdf5_matrix - Unknown data type");
                 //.. 20260426 ..// }
                 Rcpp::RObject matObj = Rcpp::Language("as.matrix", object).eval();
                 if (Rcpp::is<Rcpp::NumericMatrix>(matObj) || Rcpp::is<Rcpp::IntegerMatrix>(matObj)){
                     objDataset->writeDataset(Rcpp::as<Rcpp::NumericMatrix>(matObj));
                 } else{
-                    Rf_error("c++ exception bdCreate_hdf5_matrix - Unknown data type");
+                    Rf_error("bdCreate_hdf5_matrix - Unknown data type");
                 }
             } else{
                 objDataset->writeDataset(object); 
@@ -179,19 +179,19 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
         if(objFile != nullptr) delete objFile;
         if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
-        Rf_error("c++ c++ exception bdCreate_hdf5_matrix (File IException)");
+        Rf_error("bdCreate_hdf5_matrix (File IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         if(objFile != nullptr) delete objFile;
         if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
-        Rf_error( "c++ exception bdCreate_hdf5_matrix (DataSet IException)");
+        Rf_error( "bdCreate_hdf5_matrix (DataSet IException)");
         return(lst_return);
     } catch(std::exception &ex) {
         if(objFile != nullptr) delete objFile;
         if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
-        Rf_error( "c++ exception bdCreate_hdf5_matrix %s", ex.what());
+        Rf_error( "bdCreate_hdf5_matrix %s", ex.what());
         return(lst_return);
     } 
 

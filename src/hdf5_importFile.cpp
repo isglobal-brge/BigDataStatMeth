@@ -188,12 +188,12 @@ Rcpp::List bdImportTextFile_hdf5( std::string filename,
                 Rcpp_Import_File_to_hdf5( filename, datasetOut.get(), sep, header, rownames, paral, threads) ;
                 
             } else {
-                Rcpp::stop("c++ exception bdImportTextFile_hdf5 Error opening file");
+                Rcpp::stop("bdImportTextFile_hdf5 Error opening file");
                 return(lst_return);
             }
 
         } else {
-            Rf_error("c++ exception bdImportTextFile_hdf5 File doesn't exists, please, review location");
+            Rf_error("bdImportTextFile_hdf5 File doesn't exists, please, review location");
             return(lst_return);
         }
         
@@ -209,13 +209,13 @@ Rcpp::List bdImportTextFile_hdf5( std::string filename,
         }
 
     } catch(const std::runtime_error& re) {
-        Rcpp::stop("c++ exception bdImportTextFile_hdf5 - Runtime error: " + std::string(re.what()));
+        Rcpp::stop("bdImportTextFile_hdf5 - Runtime error: " + std::string(re.what()));
         return(lst_return);
     } catch(const std::exception& ex) {
-        Rcpp::stop("c++ exception bdImportTextFile_hdf5 - Error occurred: " + std::string(ex.what()));
+        Rcpp::stop("bdImportTextFile_hdf5 - Error occurred: " + std::string(ex.what()));
         return(lst_return);
     } catch(...) {
-        Rcpp::stop("c++ exception bdImportTextFile_hdf5 - Unknown failure occurred. Possible memory corruption");
+        Rcpp::stop("bdImportTextFile_hdf5 - Unknown failure occurred. Possible memory corruption");
         return(lst_return);
     }
     

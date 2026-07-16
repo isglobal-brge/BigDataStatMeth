@@ -33,6 +33,12 @@ Supported operators:
 All operations use block-wise processing and optional OpenMP parallelisation,
 controlled via \code{\link{hdf5matrix_options}}.
 
+\strong{Broadcasting:} if one operand is a \eqn{1 \times n} or \eqn{n \times 1}
+\code{HDF5Matrix} it is treated as a diagonal/vector operand and the
+operation is broadcast row- or column-wise (via \code{\link{diag_op}})
+rather than applied element-wise. Both operands must be \code{HDF5Matrix}
+objects: scalar arithmetic such as \code{A + 5} is not supported.
+
 \strong{Performance settings:}
 
 Global options set via \code{\link{hdf5matrix_options}} are applied.

@@ -28,6 +28,12 @@
 #' All operations use block-wise processing and optional OpenMP parallelisation,
 #' controlled via \code{\link{hdf5matrix_options}}.
 #'
+#' **Broadcasting:** if one operand is a \eqn{1 \times n} or \eqn{n \times 1}
+#' \code{HDF5Matrix} it is treated as a diagonal/vector operand and the
+#' operation is broadcast row- or column-wise (via \code{\link{diag_op}})
+#' rather than applied element-wise. Both operands must be \code{HDF5Matrix}
+#' objects: scalar arithmetic such as \code{A + 5} is not supported.
+#'
 #' **Performance settings:**
 #'
 #' Global options set via \code{\link{hdf5matrix_options}} are applied.
@@ -60,30 +66,47 @@ Ops.HDF5Matrix <- function(e1, e2) {
 
     if (!inherits(e1, "HDF5Matrix") || !inherits(e2, "HDF5Matrix"))
         stop("Both operands must be HDF5Matrix objects")
+    if (!e1$is_valid()) stop("e1 is closed or invalid")
+    if (!e2$is_valid()) stop("e2 is closed or invalid")
+
+    d1 <- dim(e1)
+    d2 <- dim(e2)
+    e1_is_diag <- (d1[1] == 1L || d1[2] == 1L)
+    e2_is_diag <- (d2[1] == 1L || d2[2] == 1L)
+
+    if (e1_is_diag || e2_is_diag) {
+        mat  <- if (e1_is_diag) e2 else e1
+        diag <- if (e1_is_diag) e1 else e2
+        return(mat$diag_op(diag,
+                           op          = .Generic,
+                           threads     = .get_option("threads"),
+                           compression = .get_option("compression",
+                                                     default = NULL)))
+    }
 
     switch(.Generic,
         "+" = e1$add(e2,
-                     paral      = .get_option("paral"),
-                     block_size = .get_option("block_size"),
-                     threads    = .get_option("threads"),
+                     paral       = .get_option("paral"),
+                     block_size  = .get_option("block_size"),
+                     threads     = .get_option("threads"),
                      compression = .get_option("compression", default = NULL)),
 
         "-" = e1$subtract(e2,
-                          paral      = .get_option("paral"),
-                          block_size = .get_option("block_size"),
-                          threads    = .get_option("threads"),
+                          paral       = .get_option("paral"),
+                          block_size  = .get_option("block_size"),
+                          threads     = .get_option("threads"),
                           compression = .get_option("compression", default = NULL)),
 
         "*" = e1$multiply_ew(e2,
-                             paral      = .get_option("paral"),
-                             block_size = .get_option("block_size"),
-                             threads    = .get_option("threads"),
+                             paral       = .get_option("paral"),
+                             block_size  = .get_option("block_size"),
+                             threads     = .get_option("threads"),
                              compression = .get_option("compression", default = NULL)),
 
         "/" = e1$divide_ew(e2,
-                           paral      = .get_option("paral"),
-                           block_size = .get_option("block_size"),
-                           threads    = .get_option("threads"),
+                           paral       = .get_option("paral"),
+                           block_size  = .get_option("block_size"),
+                           threads     = .get_option("threads"),
                            compression = .get_option("compression", default = NULL)),
 
         stop(paste0("operator '", .Generic,

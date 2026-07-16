@@ -173,13 +173,13 @@ Rcpp::List rcpp_hdf5dataset_cor(std::string in_file_x,
         );
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_cor (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_cor (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_cor (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_cor (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_cor: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_cor: %s", e.what());
     }
     return R_NilValue;
 }

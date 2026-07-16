@@ -97,13 +97,13 @@ Rcpp::List rcpp_hdf5dataset_eigen(std::string filename,
         lst["path_vectors"] = path_vectors;
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_eigen (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_eigen (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_eigen (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_eigen (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_eigen: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_eigen: %s", e.what());
     }
 
     return lst;

@@ -112,13 +112,13 @@ Rcpp::List rcpp_hdf5dataset_qr(std::string filename,
         );
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_qr (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_qr (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_qr (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_qr (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_qr: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_qr: %s", e.what());
     }
     return R_NilValue;
 }

@@ -439,7 +439,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception Rcpp_matrix_vector_blockSubstract: ") + ex.what());
+            throw std::runtime_error(std::string("Rcpp_matrix_vector_blockSubstract: ") + ex.what());
         }
         
         if(btransposed == true){

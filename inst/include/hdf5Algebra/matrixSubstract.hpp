@@ -167,19 +167,19 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error ) { 
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_block_matrix_substract_hdf5 (File IException)");
+            throw std::runtime_error("Rcpp_block_matrix_substract_hdf5 (File IException)");
         } catch( H5::GroupIException & error ) { 
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_block_matrix_substract_hdf5 (Group IException)");
+            throw std::runtime_error("Rcpp_block_matrix_substract_hdf5 (Group IException)");
         } catch( H5::DataSetIException& error ) { 
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_block_matrix_substract_hdf5 (DataSet IException)");
+            throw std::runtime_error("Rcpp_block_matrix_substract_hdf5 (DataSet IException)");
         } catch(std::exception& ex) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error(std::string("c++ exception Rcpp_block_matrix_substract_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("Rcpp_block_matrix_substract_hdf5: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("C++ exception Rcpp_block_matrix_substract_hdf5 (unknown reason)");
+            throw std::runtime_error("Rcpp_block_matrix_substract_hdf5 (unknown reason)");
         }
         
         return(dsC);
@@ -325,19 +325,19 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error ) { 
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_block_matrix_vector_substract_hdf5 (File IException)");
+            throw std::runtime_error("Rcpp_block_matrix_vector_substract_hdf5 (File IException)");
         } catch( H5::GroupIException & error ) { 
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_block_matrix_vector_substract_hdf5 (Group IException)");
+            throw std::runtime_error("Rcpp_block_matrix_vector_substract_hdf5 (Group IException)");
         } catch( H5::DataSetIException& error ) { 
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_block_matrix_vector_substract_hdf5 (DataSet IException)");
+            throw std::runtime_error("Rcpp_block_matrix_vector_substract_hdf5 (DataSet IException)");
         } catch(std::exception& ex) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error(std::string("c++ exception Rcpp_block_matrix_vector_substract_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("Rcpp_block_matrix_vector_substract_hdf5: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("C++ exception Rcpp_block_matrix_vector_substract_hdf5 (unknown reason)");
+            throw std::runtime_error("Rcpp_block_matrix_vector_substract_hdf5 (unknown reason)");
         }
         
         return(dsC);

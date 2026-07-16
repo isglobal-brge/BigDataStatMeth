@@ -140,13 +140,13 @@ Rcpp::List rcpp_hdf5dataset_sweep(SEXP ptr_mat,
         lst["path"] = "OUTPUT/" + out_name;
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_sweep (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_sweep (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_sweep (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_sweep (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_sweep: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_sweep: %s", e.what());
     }
 
     return lst;
@@ -195,7 +195,7 @@ Rcpp::NumericVector rcpp_hdf5dataset_diag_get(SEXP ptr_mat)
         return BigDataStatMeth::getDiagonalfromMatrix(raw);
         
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_diag_get: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_diag_get: %s", e.what());
     }
     return Rcpp::NumericVector(0);  // unreachable
 }
@@ -233,7 +233,7 @@ bool rcpp_hdf5dataset_diag_set(SEXP ptr_mat, Rcpp::NumericVector values)
         return true;
 
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_diag_set: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_diag_set: %s", e.what());
     }
     return false;
 
@@ -335,13 +335,13 @@ Rcpp::List rcpp_hdf5dataset_diag_op(SEXP ptr_a,
         lst["path"] = out_grp + "/" + out_name;
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_diag_op (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_diag_op (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_diag_op (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_diag_op (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_diag_op: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_diag_op: %s", e.what());
     }
 
     return lst;
@@ -495,13 +495,13 @@ Rcpp::List rcpp_hdf5dataset_diag_scale(SEXP ptr_mat,
         lst["path"] = out_grp + "/" + out_name;
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_diag_scale (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_diag_scale (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_diag_scale (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_diag_scale (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_diag_scale: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_diag_scale: %s", e.what());
     }
 
     return lst;

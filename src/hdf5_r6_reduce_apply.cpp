@@ -131,13 +131,13 @@ Rcpp::List rcpp_hdf5dataset_reduce(std::string filename,
         lst["path"]     = out_group + "/" + out_dataset;
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_reduce (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_reduce (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_reduce (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_reduce (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_reduce: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_reduce: %s", e.what());
     }
 
     return lst;
@@ -261,13 +261,13 @@ Rcpp::List rcpp_hdf5dataset_apply_function(
         }
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_apply_function (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_apply_function (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_apply_function (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_apply_function (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_apply_function: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_apply_function: %s", e.what());
     }
 
     return lst;

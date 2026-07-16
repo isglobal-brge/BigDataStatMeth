@@ -1,3 +1,35 @@
+# BigDataStatMeth 2.0.4
+
+## Bug fixes
+
+- `bdCorr_matrix()`: fixed a C++ exception (`Expecting a single value:
+  [extent=0]`) that could abort the R session under recent Rcpp versions.
+  The returned list evaluated an optional `Nullable<bool>` argument in a
+  boolean context, which now resolves to `as<bool>(NULL)`; the unwrapped
+  logical values are used instead. This resolves the CRAN r-devel example
+  check failure.
+
+## Error reporting / CRAN compliance
+
+- Removed the literal `"c++ exception"` prefix from all error messages so
+  failures surface as ordinary R errors rather than text that reads like a
+  leaked C++ exception (per CRAN request). Error-handling control flow is
+  unchanged.
+
+## Documentation
+
+- `cbind()` / `rbind()`: documentation no longer states that plain R matrices
+  are accepted and auto-converted (they are not). Convert inputs first with
+  `hdf5_matrix()` / `hdf5_create_matrix()`.
+- Removed `RSpectra` from the README system-requirements list (it is not a
+  package dependency; the bundled C++ Spectra library is used internally).
+- Consolidated the duplicate `Ops.HDF5Matrix` definition into a single
+  documented method and documented the 1xn / nx1 broadcast behavior.
+
+## Internal
+
+- Removed stale backup and superseded source files from the tree.
+
 # BigDataStatMeth 2.0.3
 
 ### Bug fixes

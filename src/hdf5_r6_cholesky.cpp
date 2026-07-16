@@ -108,13 +108,13 @@ Rcpp::List rcpp_hdf5dataset_chol(std::string filename,
         );
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_chol (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_chol (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_chol (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_chol (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_chol: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_chol: %s", e.what());
     }
     return R_NilValue;
 }
@@ -197,13 +197,13 @@ Rcpp::List rcpp_hdf5dataset_solve(std::string filename,
         );
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_solve (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_solve (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_solve (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_solve (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_solve: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_solve: %s", e.what());
     }
     return R_NilValue;
 }

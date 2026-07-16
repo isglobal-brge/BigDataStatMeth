@@ -443,19 +443,19 @@ void bdapply_Function_hdf5( std::string filename,
                 }    
                 
             } else {
-                Rcpp::stop("c++ exception bdapply_Function_hdf5 error with dataset");
+                Rcpp::stop("bdapply_Function_hdf5 error with dataset");
             }
             
         }
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::stop("c++ exception bdapply_Function_hdf5 (File IException)");
+        Rcpp::stop("bdapply_Function_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::stop("c++ exception bdapply_Function_hdf5 (DataSet IException)");
+        Rcpp::stop("bdapply_Function_hdf5 (DataSet IException)");
     } catch(std::exception &ex) {
-        Rcpp::stop("c++ exception bdapply_Function_hdf5");
+        Rcpp::stop("bdapply_Function_hdf5");
     } catch (...) {
-        Rcpp::stop("C++ exception bdapply_Function_hdf5 (unknown reason)");
+        Rcpp::stop("bdapply_Function_hdf5 (unknown reason)");
     }
     
     // Rcpp::Rcout<< func <<" function has been computed in all blocks\n";  

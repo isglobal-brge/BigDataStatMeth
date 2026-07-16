@@ -467,17 +467,17 @@ namespace BigDataStatMeth {
             }
             
         }catch( H5::FileIException& error ) {
-            throw std::runtime_error("c++ exception RcppNormalizeHdf5 (File IException)");
+            throw std::runtime_error("RcppNormalizeHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception RcppNormalizeHdf5 (DataSet IException)");
+            throw std::runtime_error("RcppNormalizeHdf5 (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception RcppNormalizeHdf5 (DataSpace IException)");
+            throw std::runtime_error("RcppNormalizeHdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception RcppNormalizeHdf5 (DataType IException)");
+            throw std::runtime_error("RcppNormalizeHdf5 (DataType IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppNormalizeHdf5: ") + ex.what());
+            throw std::runtime_error(std::string("RcppNormalizeHdf5: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppNormalizeHdf5 (unknown reason)");
+            throw std::runtime_error("RcppNormalizeHdf5 (unknown reason)");
         }
         
         return void();
@@ -545,23 +545,23 @@ namespace BigDataStatMeth {
             if( dsA->getDatasetptr() != nullptr && dsNormal->getDatasetptr() != nullptr){
                 BigDataStatMeth::RcppNormalizeHdf5( dsA, dsNormal.get(), datanormal, wsize, bc, bs, bbyrows, bcorrected);
             } else {
-                Rcpp::stop("C++ exception bdNormalize_hdf5: failed to create output dataset");
+                Rcpp::stop("bdNormalize_hdf5: failed to create output dataset");
             }
             
             // delete dsNormal; dsNormal = nullptr;
             
         } catch( H5::FileIException& error ) {
-            throw std::runtime_error("c++ exception RcppNormalizeHdf5_F (File IException)");
+            throw std::runtime_error("RcppNormalizeHdf5_F (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception RcppNormalizeHdf5_F (DataSet IException)");
+            throw std::runtime_error("RcppNormalizeHdf5_F (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception RcppNormalizeHdf5_F (DataSpace IException)");
+            throw std::runtime_error("RcppNormalizeHdf5_F (DataSpace IException)");
         } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception RcppNormalizeHdf5_F (DataType IException)");
+            throw std::runtime_error("RcppNormalizeHdf5_F (DataType IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppNormalizeHdf5_F: ") + ex.what());
+            throw std::runtime_error(std::string("RcppNormalizeHdf5_F: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppNormalizeHdf5_F (unknown reason)");
+            throw std::runtime_error("RcppNormalizeHdf5_F (unknown reason)");
         }
         
         return void();
@@ -629,17 +629,17 @@ namespace BigDataStatMeth {
             // delete dsNormal; dsNormal = nullptr;
             
         } catch( H5::FileIException& error ) {
-            throw std::runtime_error("c++ exception RcppTypifyNormalizeHdf5 (File IException)");
+            throw std::runtime_error("RcppTypifyNormalizeHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception RcppTypifyNormalizeHdf5 (DataSet IException)");
+            throw std::runtime_error("RcppTypifyNormalizeHdf5 (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception RcppTypifyNormalizeHdf5 (DataSpace IException)");
+            throw std::runtime_error("RcppTypifyNormalizeHdf5 (DataSpace IException)");
         } catch( H5::DataTypeIException& error ) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception RcppTypifyNormalizeHdf5 (DataType IException)");
+            throw std::runtime_error("RcppTypifyNormalizeHdf5 (DataType IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("C++ exception RcppTypifyNormalizeHdf5: ") + ex.what());
+            throw std::runtime_error(std::string("RcppTypifyNormalizeHdf5: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppTypifyNormalizeHdf5 (unknown reason)");
+            throw std::runtime_error("RcppTypifyNormalizeHdf5 (unknown reason)");
         }
         
         return void();

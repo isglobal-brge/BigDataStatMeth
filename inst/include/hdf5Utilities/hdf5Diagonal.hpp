@@ -536,7 +536,7 @@ namespace BigDataStatMeth {
                 } catch(H5::Exception& error) {
                     throw std::runtime_error(std::string("HDF5 exception in writeDiagonal: ") + error.getCDetailMsg());
                 } catch(std::exception& ex) {
-                    throw std::runtime_error(std::string("C++ exception in writeDiagonal: ") + ex.what());
+                    throw std::runtime_error(std::string("in writeDiagonal: ") + ex.what());
                 }
             }
             
@@ -580,7 +580,7 @@ namespace BigDataStatMeth {
                     writeDatasetBlock(scaled_values, {0, 0}, {1, size}, stride, block);
                     
                 } catch(std::exception& ex) {
-                    throw std::runtime_error(std::string("C++ exception in writeVectorDiagonal: ") + ex.what());
+                    throw std::runtime_error(std::string("in writeVectorDiagonal: ") + ex.what());
                 }
             }
             

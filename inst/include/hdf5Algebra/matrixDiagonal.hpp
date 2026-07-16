@@ -72,8 +72,8 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::stop ("c++ exception getDiagonalfromMatrix: %s", ex.what());
-            // Rcpp::Rcout << "c++ exception getDiagonalfromMatrix: " << ex.what();
+            Rcpp::stop ("getDiagonalfromMatrix: %s", ex.what());
+            // Rcpp::Rcout << "getDiagonalfromMatrix: " << ex.what();
         }
         
         return diagonal;
@@ -131,7 +131,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            Rcpp::stop("c++ exception setDiagonalMatrix: "+ std::string(ex.what()));
+            Rcpp::stop("setDiagonalMatrix: "+ std::string(ex.what()));
         }
     }
 

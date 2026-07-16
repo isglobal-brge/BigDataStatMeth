@@ -303,13 +303,13 @@ inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         }
         
     } catch( H5::FileIException& error ) {
-        throw std::runtime_error("c++ exception RcppQRHdf5 (File IException)");
+        throw std::runtime_error("RcppQRHdf5 (File IException)");
     } catch( H5::GroupIException & error ) {
-        throw std::runtime_error("c++ exception RcppQRHdf5 (Group IException)");
+        throw std::runtime_error("RcppQRHdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) {
-        throw std::runtime_error("c++ exception RcppQRHdf5 (DataSet IException)");
+        throw std::runtime_error("RcppQRHdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        throw std::runtime_error(std::string("c++ exception RcppQRHdf5: ") + ex.what());
+        throw std::runtime_error(std::string("RcppQRHdf5: ") + ex.what());
     }
     /**
     
@@ -392,13 +392,13 @@ inline void RcppQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         //. 2026/03/02 .//  }
         
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        throw std::runtime_error("c++ exception RcppQRHdf5 (File IException)");
+        throw std::runtime_error("RcppQRHdf5 (File IException)");
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        throw std::runtime_error("c++ exception RcppQRHdf5 (Group IException)");
+        throw std::runtime_error("RcppQRHdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        throw std::runtime_error("c++ exception RcppQRHdf5 (DataSet IException)");
+        throw std::runtime_error("RcppQRHdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        throw std::runtime_error(std::string("c++ exception RcppQRHdf5: ") + ex.what());
+        throw std::runtime_error(std::string("RcppQRHdf5: ") + ex.what());
     }
      **/
     
@@ -659,13 +659,13 @@ inline void RcppTSQRHdf5( BigDataStatMeth::hdf5Dataset* dsA,
         // }
 
     } catch( H5::FileIException& error ) {
-        throw std::runtime_error("c++ exception RcppTSQRHdf5 (File IException)");
+        throw std::runtime_error("RcppTSQRHdf5 (File IException)");
     } catch( H5::GroupIException& error ) {
-        throw std::runtime_error("c++ exception RcppTSQRHdf5 (Group IException)");
+        throw std::runtime_error("RcppTSQRHdf5 (Group IException)");
     } catch( H5::DataSetIException& error ) {
-        throw std::runtime_error("c++ exception RcppTSQRHdf5 (DataSet IException)");
+        throw std::runtime_error("RcppTSQRHdf5 (DataSet IException)");
     } catch(std::exception& ex) {
-        throw std::runtime_error(std::string("c++ exception RcppTSQRHdf5: ") + ex.what());
+        throw std::runtime_error(std::string("RcppTSQRHdf5: ") + ex.what());
     }
 
     return void();

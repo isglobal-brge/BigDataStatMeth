@@ -151,7 +151,7 @@ namespace BigDataStatMeth {
 
                 if( dsIn->getDatasetptr() == nullptr) {
                     // checkClose_file(dsIn);
-                    throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (Dataset IException )");
+                    throw std::runtime_error("RcppReduce_dataset_hdf5 (Dataset IException )");
                 }
                 
                 dims_out =   dsIn->dim();
@@ -219,7 +219,7 @@ namespace BigDataStatMeth {
                 //     dsOut->writeDataset(Rcpp::wrap(fullReduced));
                 // } else {
                 //     checkClose_file(dsOut);
-                //     Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
+                //     Rcpp::Rcerr<< "RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
                 //     return void();
                 // }
             } else {
@@ -232,7 +232,7 @@ namespace BigDataStatMeth {
                 //     dsOut->writeDataset(Rcpp::wrap(fullReduced));
                 // } else {
                 //     checkClose_file(dsOut);
-                //     Rcpp::Rcerr<< "c++ exception RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
+                //     Rcpp::Rcerr<< "RcppReduce_dataset_hdf5 (Dataset IException )" << std::endl;
                 //     return void();
                 // }
             }
@@ -242,23 +242,23 @@ namespace BigDataStatMeth {
                 dsOut->writeDataset(Rcpp::wrap(fullReduced));
             } else {
                 // checkClose_file(dsOut);
-                throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (Dataset IException )");
+                throw std::runtime_error("RcppReduce_dataset_hdf5 (Dataset IException )");
             }
             
             // delete dsOut; dsOut = nullptr;
             
         }catch( H5::FileIException& error ) {
             // checkClose_file(dsIn, dsOut);
-            // ::Rf_error( "c++ exception RcppReduce_dataset_hdf5 (File IException )" );
-            throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (File IException )");
+            // ::Rf_error( "RcppReduce_dataset_hdf5 (File IException )" );
+            throw std::runtime_error("RcppReduce_dataset_hdf5 (File IException )");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
             // checkClose_file(dsIn, dsOut);
-            // ::Rf_error( "c++ exception RcppReduce_dataset_hdf5 (dstosplit IException )" );
-            throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (dstosplit IException )");
+            // ::Rf_error( "RcppReduce_dataset_hdf5 (dstosplit IException )" );
+            throw std::runtime_error("RcppReduce_dataset_hdf5 (dstosplit IException )");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsIn, dsOut);
-            // ::Rf_error( "c++ exception RcppReduce_dataset_hdf5 (DataSpace IException )" );
-            throw std::runtime_error("c++ exception RcppReduce_dataset_hdf5 (DataSpace IException )");
+            // ::Rf_error( "RcppReduce_dataset_hdf5 (DataSpace IException )" );
+            throw std::runtime_error("RcppReduce_dataset_hdf5 (DataSpace IException )");
         } 
         return void();
     }

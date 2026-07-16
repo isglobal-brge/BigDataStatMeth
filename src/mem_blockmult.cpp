@@ -179,9 +179,9 @@ Rcpp::RObject bdblockMult(Rcpp::RObject A, Rcpp::RObject B,
         
         
     } catch(std::exception &ex) {
-        Rcpp::stop("c++ exception bdblockMult: " + std::string(ex.what()));
+        Rcpp::stop("bdblockMult: " + std::string(ex.what()));
     } catch (...) {
-        Rcpp::stop("c++ exception bdblockMult (unknown reason)");
+        Rcpp::stop("bdblockMult (unknown reason)");
         
     }
 

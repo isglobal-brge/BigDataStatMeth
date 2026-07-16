@@ -129,19 +129,19 @@ inline void RcppSplit_matrix_hdf5 ( BigDataStatMeth::hdf5Dataset* dstosplit, boo
         
     } catch( H5::FileIException& error ) {
         // checkClose_file(dstosplit, dsOut);
-        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5(File IException )");
+        throw std::runtime_error("RcppSplit_matrix_hdf5(File IException )");
     } catch( H5::DataSetIException& error ) { 
         // checkClose_file(dstosplit, dsOut);
-        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5 (DataSet IException )");
+        throw std::runtime_error("RcppSplit_matrix_hdf5 (DataSet IException )");
     } catch( H5::DataSpaceIException& error ) { 
         // checkClose_file(dstosplit, dsOut);
-        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5 (DataSpace IException )");
+        throw std::runtime_error("RcppSplit_matrix_hdf5 (DataSpace IException )");
     } catch(std::exception &ex) {
         // checkClose_file(dstosplit, dsOut);
-        throw std::runtime_error(std::string("C++ exception RcppSplit_matrix_hdf5: ") + ex.what());
+        throw std::runtime_error(std::string("RcppSplit_matrix_hdf5: ") + ex.what());
     } catch (...) {
         // checkClose_file(dstosplit, dsOut);
-        throw std::runtime_error("C++ exception RcppSplit_matrix_hdf5 (unknown reason)");
+        throw std::runtime_error("RcppSplit_matrix_hdf5 (unknown reason)");
     }
     
     return void();
@@ -288,19 +288,19 @@ inline void RcppSplit_matrix_hdf5_internal ( BigDataStatMeth::hdf5Dataset* dstos
         
     } catch( H5::FileIException& error ) {
         checkClose_file(dsOut);
-        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5_internal(File IException )");
+        throw std::runtime_error("RcppSplit_matrix_hdf5_internal(File IException )");
     } catch( H5::DataSetIException& error ) { 
         checkClose_file(dsOut);
-        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5_internal (DataSet IException )");
+        throw std::runtime_error("RcppSplit_matrix_hdf5_internal (DataSet IException )");
     } catch( H5::DataSpaceIException& error ) { 
         checkClose_file(dsOut);
-        throw std::runtime_error("c++ exception RcppSplit_matrix_hdf5_internal (DataSpace IException )");
+        throw std::runtime_error("RcppSplit_matrix_hdf5_internal (DataSpace IException )");
     } catch(std::exception &ex) {
         checkClose_file(dsOut);
-        throw std::runtime_error(std::string("C++ exception RcppSplit_matrix_hdf5_internal: ") + ex.what());
+        throw std::runtime_error(std::string("RcppSplit_matrix_hdf5_internal: ") + ex.what());
     } catch (...) {
         checkClose_file(dsOut);
-        throw std::runtime_error("C++ exception RcppSplit_matrix_hdf5_internal (unknown reason)");
+        throw std::runtime_error("RcppSplit_matrix_hdf5_internal (unknown reason)");
     }
     
     return void();

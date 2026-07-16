@@ -85,13 +85,13 @@ Rcpp::List rcpp_hdf5dataset_impute_snps(
         );
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_impute_snps (File): %s",
+        Rf_error("rcpp_hdf5dataset_impute_snps (File): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_impute_snps (DataSet): %s",
+        Rf_error("rcpp_hdf5dataset_impute_snps (DataSet): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_impute_snps: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_impute_snps: %s", e.what());
     }
     return R_NilValue;
 }
@@ -156,13 +156,13 @@ Rcpp::List rcpp_hdf5dataset_filter_low_coverage(
         );
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_filter_low_coverage (File): %s",
+        Rf_error("rcpp_hdf5dataset_filter_low_coverage (File): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_filter_low_coverage (DataSet): %s",
+        Rf_error("rcpp_hdf5dataset_filter_low_coverage (DataSet): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_filter_low_coverage: %s",
+        Rf_error("rcpp_hdf5dataset_filter_low_coverage: %s",
                  e.what());
     }
     return R_NilValue;
@@ -230,13 +230,13 @@ Rcpp::List rcpp_hdf5dataset_filter_maf(
         );
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_filter_maf (File): %s",
+        Rf_error("rcpp_hdf5dataset_filter_maf (File): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_filter_maf (DataSet): %s",
+        Rf_error("rcpp_hdf5dataset_filter_maf (DataSet): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_filter_maf: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_filter_maf: %s", e.what());
     }
     return R_NilValue;
 }

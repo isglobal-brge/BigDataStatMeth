@@ -156,19 +156,19 @@ namespace BigDataStatMeth {
             
         } catch(H5::FileIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_add_hdf5 (File IException)");
+            throw std::runtime_error("Rcpp_vector_add_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_add_hdf5 (DataSet IException)");
+            throw std::runtime_error("Rcpp_vector_add_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error(std::string("c++ exception Rcpp_vector_add_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("Rcpp_vector_add_hdf5: ") + ex.what());
             // return dsC;
         } catch (...) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("C++ exception Rcpp_vector_add_hdf5 (unknown reason)");
+            throw std::runtime_error("Rcpp_vector_add_hdf5 (unknown reason)");
             // return dsC;
         }
         
@@ -233,15 +233,15 @@ namespace BigDataStatMeth {
             
         } catch(H5::FileIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_subtract_hdf5 (File IException)");
+            throw std::runtime_error("Rcpp_vector_subtract_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_subtract_hdf5 (DataSet IException)");
+            throw std::runtime_error("Rcpp_vector_subtract_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error(std::string("c++ exception Rcpp_vector_subtract_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("Rcpp_vector_subtract_hdf5: ") + ex.what());
             // return dsC;
         }
         
@@ -306,15 +306,15 @@ namespace BigDataStatMeth {
             
         } catch(H5::FileIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_multiply_hdf5 (File IException)");
+            throw std::runtime_error("Rcpp_vector_multiply_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_multiply_hdf5 (DataSet IException)");
+            throw std::runtime_error("Rcpp_vector_multiply_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error(std::string("c++ exception Rcpp_vector_multiply_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("Rcpp_vector_multiply_hdf5: ") + ex.what());
             // return dsC;
         }
         
@@ -381,15 +381,15 @@ namespace BigDataStatMeth {
             
         } catch(H5::FileIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_divide_hdf5 (File IException)");
+            throw std::runtime_error("Rcpp_vector_divide_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_divide_hdf5 (DataSet IException)");
+            throw std::runtime_error("Rcpp_vector_divide_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error(std::string("c++ exception Rcpp_vector_divide_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("Rcpp_vector_divide_hdf5: ") + ex.what());
             // return dsC;
         }
         
@@ -458,15 +458,15 @@ namespace BigDataStatMeth {
             
         } catch(H5::FileIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_power_hdf5 (File IException)");
+            throw std::runtime_error("Rcpp_vector_power_hdf5 (File IException)");
             // return dsC;
         } catch(H5::DataSetIException& error) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception Rcpp_vector_power_hdf5 (DataSet IException)");
+            throw std::runtime_error("Rcpp_vector_power_hdf5 (DataSet IException)");
             // return dsC;
         } catch(std::exception& ex) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error(std::string("c++ exception Rcpp_vector_power_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("Rcpp_vector_power_hdf5: ") + ex.what());
             // return dsC;
         }
         

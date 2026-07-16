@@ -324,14 +324,14 @@ inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
         // error.printErrorStack();
         // checkClose_file(dsA, dsB, dsC);
-        throw std::runtime_error("c++ exception hdf5_matrixVector_calculus (File IException)");
+        throw std::runtime_error("hdf5_matrixVector_calculus (File IException)");
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
         // error.printErrorStack();
         // checkClose_file(dsA, dsB, dsC);
-        throw std::runtime_error("c++ exception hdf5_matrixVector_calculus (DataSet IException)");
+        throw std::runtime_error("hdf5_matrixVector_calculus (DataSet IException)");
     } catch(std::exception& error) {
         // checkClose_file(dsA, dsB, dsC);
-        throw std::runtime_error(std::string("c++ exception vector-matrix functions: ") + error.what());
+        throw std::runtime_error(std::string("vector-matrix functions: ") + error.what());
         // return(dsC);
     }
     
@@ -670,14 +670,14 @@ inline BigDataStatMeth::hdf5Dataset* hdf5_matrixVector_calculus(
 //     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
 //         // error.printErrorStack();
 //         // checkClose_file(dsA, dsB, dsC);
-//         throw std::runtime_error("c++ exception hdf5_matrixVector_calculus (File IException)");
+//         throw std::runtime_error("hdf5_matrixVector_calculus (File IException)");
 //     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
 //         // error.printErrorStack();
 //         // checkClose_file(dsA, dsB, dsC);
-//         throw std::runtime_error("c++ exception hdf5_matrixVector_calculus (DataSet IException)");
+//         throw std::runtime_error("hdf5_matrixVector_calculus (DataSet IException)");
 //     } catch(std::exception& error) {
 //         // checkClose_file(dsA, dsB, dsC);
-//         throw std::runtime_error(std::string("c++ exception vector-matrix functions: ") + error.what());
+//         throw std::runtime_error(std::string("vector-matrix functions: ") + error.what());
 //         // return(dsC);
 //     }
 //     

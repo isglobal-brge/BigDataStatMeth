@@ -80,7 +80,7 @@ Rcpp::List bdCorr_matrix(Rcpp::RObject X,
          Eigen::MatrixXd eigen_X = Rcpp::as<Eigen::MatrixXd>(X);
          
          // Determine correlation type based on Y parameter
-         bool is_cross_correlation = (Y != R_NilValue);
+         bool is_cross_correlation = Y.isNotNull();
          
          // // Convert threads parameter
          // Nullable<int> num_threads = (threads == -1) ? R_NilValue : wrap(threads);
@@ -142,9 +142,9 @@ Rcpp::List bdCorr_matrix(Rcpp::RObject X,
                  Named("n_observations") = result.n_obs,
                  Named("n_variables_x") = result.n_vars_x,
                  Named("n_variables_y") = result.n_vars_y,
-                 Named("use_complete_obs") = use_complete_obs,
-                 Named("pvalues") = result.has_pvalues && compute_pvalues ? wrap(result.pvalues) : R_NilValue,
-                 Named("has_pvalues") = result.has_pvalues && compute_pvalues
+                 Named("use_complete_obs") = buse_complete_obs,
+                 Named("pvalues") = (result.has_pvalues && bcompute_pvalues) ? wrap(result.pvalues) : R_NilValue,
+                 Named("has_pvalues") = result.has_pvalues && bcompute_pvalues
              );
              
          } else {
@@ -167,16 +167,16 @@ Rcpp::List bdCorr_matrix(Rcpp::RObject X,
                  Named("transposed") = result.trans_x,
                  Named("n_observations") = result.n_obs,
                  Named("n_variables") = result.n_vars_x,
-                 Named("use_complete_obs") = use_complete_obs,
-                 Named("pvalues") = result.has_pvalues && compute_pvalues ? wrap(result.pvalues) : R_NilValue,
-                 Named("has_pvalues") = result.has_pvalues && compute_pvalues
+                 Named("use_complete_obs") = buse_complete_obs,
+                 Named("pvalues") = (result.has_pvalues && bcompute_pvalues) ? wrap(result.pvalues) : R_NilValue,
+                 Named("has_pvalues") = result.has_pvalues && bcompute_pvalues
              );
          }
          
      } catch(std::exception &ex) {
-         Rf_error("c++ exception bdCorr_matrix: %s", ex.what());
+         Rf_error("bdCorr_matrix: %s", ex.what());
      } catch(...) {
-         Rf_error("c++ exception bdCorr_matrix (unknown reason)");
+         Rf_error("bdCorr_matrix (unknown reason)");
      }
      
      return List::create(
@@ -246,7 +246,7 @@ Rcpp::List bdCorr_matrix(Rcpp::RObject X,
 //      } catch(std::exception &ex) {
 //          forward_exception_to_r(ex);
 //      } catch(...) {
-//          ::Rf_error("C++ exception bdCorr_matrix_single (unknown reason)");
+//          ::Rf_error("bdCorr_matrix_single (unknown reason)");
 //      }
 //  }
 // 
@@ -319,6 +319,6 @@ Rcpp::List bdCorr_matrix(Rcpp::RObject X,
 //      } catch(std::exception &ex) {
 //          forward_exception_to_r(ex);
 //      } catch(...) {
-//          ::Rf_error("C++ exception bdCorr_matrix_cross (unknown reason)");
+//          ::Rf_error("bdCorr_matrix_cross (unknown reason)");
 //      }
 //  }

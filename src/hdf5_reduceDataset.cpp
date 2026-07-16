@@ -163,16 +163,16 @@ Rcpp::List bdReduce_hdf5_dataset( std::string filename, std::string group,
         lst_return["func"] = reducefunction;
         
     } catch( H5::FileIException& error ) {  
-        Rcpp::stop("c++ exception bdReduce_hdf5_dataset (File IException)");
+        Rcpp::stop("bdReduce_hdf5_dataset (File IException)");
         return(lst_return);
     } catch( H5::GroupIException & error ) { 
-        Rcpp::stop("c++ exception bdReduce_hdf5_dataset (Group IException)");
+        Rcpp::stop("bdReduce_hdf5_dataset (Group IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::stop("c++ exception bdReduce_hdf5_dataset (DataSet IException)");
+        Rcpp::stop("bdReduce_hdf5_dataset (DataSet IException)");
         return(lst_return);
     } catch(std::exception& ex) {
-        Rcpp::stop("c++ exception bdReduce_hdf5_dataset: " + std::string(ex.what()));
+        Rcpp::stop("bdReduce_hdf5_dataset: " + std::string(ex.what()));
         return(lst_return);
     }
     

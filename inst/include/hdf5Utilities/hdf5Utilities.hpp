@@ -42,11 +42,11 @@ namespace BigDataStatMeth {
         try {
             return H5Lexists( id, path.c_str(), H5P_DEFAULT ) > 0;    
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            throw std::runtime_error("c++ exception pathExists (File IException)");
+            throw std::runtime_error("pathExists (File IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception pathExists: ") + ex.what());
+            throw std::runtime_error(std::string("pathExists: ") + ex.what());
         }  catch (...) {
-            throw std::runtime_error("C++ exception pathExists (unknown reason)");
+            throw std::runtime_error("pathExists (unknown reason)");
         }
         
     }
@@ -79,11 +79,11 @@ namespace BigDataStatMeth {
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             file->close();
-            throw std::runtime_error("c++ exception exists_HDF5_element (File IException)");
+            throw std::runtime_error("exists_HDF5_element (File IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception exists_HDF5_element: ") + ex.what());
+            throw std::runtime_error(std::string("exists_HDF5_element: ") + ex.what());
         }  catch (...) {
-            throw std::runtime_error("C++ exception exists_HDF5_element (unknown reason)");
+            throw std::runtime_error("exists_HDF5_element (unknown reason)");
         }   
         return bexists;
     }
@@ -137,17 +137,17 @@ namespace BigDataStatMeth {
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            throw std::runtime_error("c++ exception remove_HDF5_multiple_elements_ptr (File IException)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (File IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-            throw std::runtime_error("c++ exception remove_HDF5_multiple_elements_ptr (Group IException)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (Group IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception remove_HDF5_multiple_elements_ptr (DataSet IException)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (DataSet IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception remove_HDF5_multiple_elements_ptr (DataSpace IException)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (DataSpace IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception remove_HDF5_multiple_elements_ptr: ") + ex.what());
+            throw std::runtime_error(std::string("remove_HDF5_multiple_elements_ptr: ") + ex.what());
         }  catch (...) {
-            throw std::runtime_error("C++ exception remove_HDF5_multiple_elements_ptr (unknown reason)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (unknown reason)");
         }
         
         return(bremok);
@@ -186,17 +186,17 @@ namespace BigDataStatMeth {
             } 
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            throw std::runtime_error("c++ exception remove_HDF5_multiple_elements_ptr (File IException)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (File IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-            throw std::runtime_error("c++ exception remove_HDF5_multiple_elements_ptr (Group IException)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (Group IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception remove_HDF5_multiple_elements_ptr (DataSet IException)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (DataSet IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception remove_HDF5_multiple_elements_ptr (DataSpace IException)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (DataSpace IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception remove_HDF5_multiple_elements_ptr: ") + ex.what());
+            throw std::runtime_error(std::string("remove_HDF5_multiple_elements_ptr: ") + ex.what());
         }  catch (...) {
-            throw std::runtime_error("C++ exception remove_HDF5_multiple_elements_ptr (unknown reason)");
+            throw std::runtime_error("remove_HDF5_multiple_elements_ptr (unknown reason)");
         }
         
         return(bremok);
@@ -233,19 +233,19 @@ namespace BigDataStatMeth {
             herr_t status = H5Lcreate_hard(file->getId(), charOriginal, file->getId(), charLink, H5P_DEFAULT, H5P_DEFAULT);
             
             if(status<0) {
-                throw std::runtime_error("c++ exception createHardLink (create_hard IException)");
+                throw std::runtime_error("createHardLink (create_hard IException)");
             }
             
         } catch(H5::FileIException& error) { 
-            throw std::runtime_error("c++ exception createHardLink (File IException)");
+            throw std::runtime_error("createHardLink (File IException)");
         } catch(H5::DataSetIException& error) { 
-            throw std::runtime_error("c++ exception createHardLink (DataSet IException)");
+            throw std::runtime_error("createHardLink (DataSet IException)");
         } catch(H5::GroupIException& error) { 
-            throw std::runtime_error("c++ exception createHardLink (Group IException)");
+            throw std::runtime_error("createHardLink (Group IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception createHardLink: ") + ex.what());
+            throw std::runtime_error(std::string("createHardLink: ") + ex.what());
         }  catch (...) {
-            throw std::runtime_error("C++ exception createHardLink (unknown reason)");
+            throw std::runtime_error("createHardLink (unknown reason)");
         }
         
         return void();
@@ -279,20 +279,20 @@ namespace BigDataStatMeth {
             herr_t status = H5Lmove(file->getId(), charOriginal, file->getId(), charLink, H5P_DEFAULT, H5P_DEFAULT);
             
             if(status<0) {
-                throw std::runtime_error("c++ exception renameElement (rename_element IException)");
+                throw std::runtime_error("renameElement (rename_element IException)");
             } 
             
             
         } catch(H5::FileIException& error) { 
-            throw std::runtime_error("c++ exception renameElement (File IException)");
+            throw std::runtime_error("renameElement (File IException)");
         } catch(H5::DataSetIException& error) { 
-            throw std::runtime_error("c++ exception renameElement (DataSet IException)");
+            throw std::runtime_error("renameElement (DataSet IException)");
         } catch(H5::GroupIException& error) { 
-            throw std::runtime_error("c++ exception renameElement (Group IException)");
+            throw std::runtime_error("renameElement (Group IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception renameElement: ") + ex.what());
+            throw std::runtime_error(std::string("renameElement: ") + ex.what());
         }  catch (...) {
-            throw std::runtime_error("C++ exception renameElement (unknown reason)");
+            throw std::runtime_error("renameElement (unknown reason)");
         }
         
         return void();

@@ -154,16 +154,16 @@ Rcpp::List rcpp_hdf5dataset_normalize(std::string in_file,
         );
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_normalize (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_normalize (File IException): %s",
                  e.getDetailMsg().c_str());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_normalize (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_normalize (DataSet IException): %s",
                  e.getDetailMsg().c_str());
     } catch (H5::DataSpaceIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_normalize (DataSpace IException): %s",
+        Rf_error("rcpp_hdf5dataset_normalize (DataSpace IException): %s",
                  e.getDetailMsg().c_str());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_normalize: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_normalize: %s", e.what());
     }
     return R_NilValue;
 }

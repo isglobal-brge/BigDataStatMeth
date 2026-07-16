@@ -158,7 +158,7 @@ public:
             }    
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            Rf_error("c++ exception hdf5File (File IException) " );
+            Rf_error("hdf5File (File IException) " );
         } 
         
         return(iExec);
@@ -358,7 +358,7 @@ public:
             pfile->close();
         } catch(std::exception& ex) {
             
-            Rcpp::Rcerr<< "c++ exception close_file (err FileException)";
+            Rcpp::Rcerr<< "close_file (err FileException)";
         }
         
         return void();
@@ -503,13 +503,13 @@ private:
                 if (H5::H5File::isHdf5(fullPath)) {
                     is_accessible = true;
                 } else {
-                    Rf_error("c++ exception File is not in HDF5 format" );
+                    Rf_error("File is not in HDF5 format" );
                 }
             } catch (const H5::FileIException& e) {
-                error_message = "c++ exception File access error: " + std::string(e.getCDetailMsg());
+                error_message = "File access error: " + std::string(e.getCDetailMsg());
                 Rf_error("%s", error_message.c_str() );
             } catch (const H5::Exception& e) {
-                error_message = "c++ exception HDF5 Exception during accessibility check: " + std::string(e.getCDetailMsg());
+                error_message = "HDF5 Exception during accessibility check: " + std::string(e.getCDetailMsg());
                 Rf_error("%s", error_message.c_str() );
             }
             
@@ -527,10 +527,10 @@ private:
                         root_group.close();
                         
                     } catch (const H5::GroupIException& e) {
-                        error_message =  "c++ exception (checkHDF5File) Root group access failed: " + std::string(e.getCDetailMsg());
+                        error_message =  "(checkHDF5File) Root group access failed: " + std::string(e.getCDetailMsg());
                         Rf_error("%s", error_message.c_str() );
                     } catch (const H5::Exception& e) {
-                        error_message =  "c++ exception (checkHDF5File) Structure validation failed: " + std::string(e.getCDetailMsg() );
+                        error_message =  "(checkHDF5File) Structure validation failed: " + std::string(e.getCDetailMsg() );
                         Rf_error("%s", error_message.c_str() );
                     }
                     
@@ -539,23 +539,23 @@ private:
                     delete file;
                     
                 } catch (const H5::FileIException& e) {
-                    error_message = "c++ exception (checkHDF5File) Cannot open file: " + std::string(e.getCDetailMsg());
+                    error_message = "(checkHDF5File) Cannot open file: " + std::string(e.getCDetailMsg());
                     Rf_error("%s", error_message.c_str() );
                 } catch (const H5::Exception& e) {
-                    error_message ="c++ exception HDF5 Exception during file opening: " + std::string(e.getCDetailMsg() );
+                    error_message ="HDF5 Exception during file opening: " + std::string(e.getCDetailMsg() );
                     Rf_error("%s", error_message.c_str() );
                 }
             }
             
         } catch (const std::exception& e) {
-            error_message = "c++ exception (checkHDF5File): " + std::string(e.what());
+            error_message = "(checkHDF5File): " + std::string(e.what());
             Rf_error("%s", error_message.c_str() );
             // ::Rf_error( error_message.c_str() );
             
             // error_message = "Standard exception: " + std::string(e.what());
             // is_corrupt = true;
         } catch (...) {
-            error_message = "c++ exception (checkHDF5File): Unknown exception occurred" ;
+            error_message = "(checkHDF5File): Unknown exception occurred" ;
             Rf_error("%s", error_message.c_str() );
         }
         
@@ -749,7 +749,7 @@ private:
             // get dataset names inside group
             err = H5Gget_num_objs(gid, &nobj);
             if(err<0 ) {
-                Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (err IException)\n";
+                Rcpp::Rcerr<<"\nget_dataset_names_from_group (err IException)\n";
                 return -1;
             } else {
                 for (unsigned int i = 0; i < nobj; i++) 
@@ -757,7 +757,7 @@ private:
                     len = H5Gget_objname_by_idx(gid, (hsize_t)i, memb_name, (size_t)MAX_NAME );
                     
                     if(len == 0) {
-                        Rcpp::Rcerr<<"c++ exception get_dataset_names_from_group (len IException)\n";
+                        Rcpp::Rcerr<<"get_dataset_names_from_group (len IException)\n";
                         return -1;
                     }
                     
@@ -785,19 +785,19 @@ private:
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (File IException)\n";
+            Rcpp::Rcerr<<"\nget_dataset_names_from_group (File IException)\n";
             return -1;
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (DataSet IException)\n";
+            Rcpp::Rcerr<<"\nget_dataset_names_from_group (DataSet IException)\n";
             return -1;
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (Group IException)\n";
+            Rcpp::Rcerr<<"\nget_dataset_names_from_group (Group IException)\n";
             return -1;
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (DataSpace IException)\n";
+            Rcpp::Rcerr<<"\nget_dataset_names_from_group (DataSpace IException)\n";
             return -1;
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
-            Rcpp::Rcerr<<"\nc++ exception get_dataset_names_from_group (Data TypeIException)\n";
+            Rcpp::Rcerr<<"\nget_dataset_names_from_group (Data TypeIException)\n";
             return -1;
         }
         return(datasetnames);

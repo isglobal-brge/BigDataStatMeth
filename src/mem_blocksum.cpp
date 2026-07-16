@@ -183,7 +183,7 @@ Rcpp::RObject bdblockSum(Rcpp::RObject A, Rcpp::RObject B,
         }
         
     } catch(std::exception &ex) {
-        Rcpp::stop("c++ exception bdblockSum: " + std::string(ex.what()));
+        Rcpp::stop("bdblockSum: " + std::string(ex.what()));
         Rcpp::Rcout<< ex.what();
         return(R_NilValue);
     }

@@ -145,19 +145,19 @@ namespace BigDataStatMeth
 
             } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
                 close_datasets();
-                throw std::runtime_error("c++ exception writeDimnames (File IException)");
+                throw std::runtime_error("writeDimnames (File IException)");
             } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
                 close_datasets();
-                throw std::runtime_error("c++ exception writeDimnames (DataSet IException)");
+                throw std::runtime_error("writeDimnames (DataSet IException)");
             } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
                 close_datasets();
-                throw std::runtime_error("c++ exception writeDimnames (Group IException)");
+                throw std::runtime_error("writeDimnames (Group IException)");
             } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
                 close_datasets();
-                throw std::runtime_error("c++ exception writeDimnames (DataSpace IException)");
+                throw std::runtime_error("writeDimnames (DataSpace IException)");
             } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
                 close_datasets();
-                throw std::runtime_error("c++ exception writeDimnames (Data TypeIException)");
+                throw std::runtime_error("writeDimnames (Data TypeIException)");
             }
 
           return void();
@@ -197,13 +197,13 @@ namespace BigDataStatMeth
         //         cn = readStringDataset(path_cols);
         // 
         //     } catch (H5::FileIException& error) {
-        //         throw std::runtime_error("c++ exception readDimnames (File IException)");
+        //         throw std::runtime_error("readDimnames (File IException)");
         //     } catch (H5::DataSetIException& error) {
-        //         throw std::runtime_error("c++ exception readDimnames (DataSet IException)");
+        //         throw std::runtime_error("readDimnames (DataSet IException)");
         //     } catch (H5::GroupIException& error) {
-        //         throw std::runtime_error("c++ exception readDimnames (Group IException)");
+        //         throw std::runtime_error("readDimnames (Group IException)");
         //     } catch (std::exception& ex) {
-        //         throw std::runtime_error(std::string("c++ exception readDimnames: ") + ex.what());
+        //         throw std::runtime_error(std::string("readDimnames: ") + ex.what());
         //     }
         // 
         //     return Rcpp::List::create(Rcpp::Named("rownames") = rn,
@@ -463,17 +463,17 @@ namespace BigDataStatMeth
                 }
             } 
             catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-                throw std::runtime_error("c++ exception write_hdf5_string_vector (File IException)");
+                throw std::runtime_error("write_hdf5_string_vector (File IException)");
             } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-                throw std::runtime_error("c++ exception write_hdf5_string_vector (DataSet IException)");
+                throw std::runtime_error("write_hdf5_string_vector (DataSet IException)");
             } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-                throw std::runtime_error("c++ exception write_hdf5_string_vector (Group IException)");
+                throw std::runtime_error("write_hdf5_string_vector (Group IException)");
             } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-                throw std::runtime_error("c++ exception write_hdf5_string_vector (DataSpace IException)");
+                throw std::runtime_error("write_hdf5_string_vector (DataSpace IException)");
             } catch(std::exception &ex) {
-                throw std::runtime_error(std::string("c++ exception write_hdf5_string_vector: ") + ex.what());
+                throw std::runtime_error(std::string("write_hdf5_string_vector: ") + ex.what());
             } catch (...) {
-                throw std::runtime_error("C++ exception write_hdf5_string_vector (unknown reason)");
+                throw std::runtime_error("write_hdf5_string_vector (unknown reason)");
             }
             
             dataset->close();

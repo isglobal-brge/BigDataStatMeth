@@ -160,15 +160,15 @@ namespace BigDataStatMeth {
             }
             
         } catch( H5::FileIException& error ) {
-            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5 (File IException)");
+            throw std::runtime_error("RcppBind_datasets_hdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the dstosplit operations
-            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5 (dstosplit IException)");
+            throw std::runtime_error("RcppBind_datasets_hdf5 (dstosplit IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5 (DataSpace IException)");
+            throw std::runtime_error("RcppBind_datasets_hdf5 (DataSpace IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception RcppBind_datasets_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("RcppBind_datasets_hdf5: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppBind_datasets_hdf5 (unknown reason)");
+            throw std::runtime_error("RcppBind_datasets_hdf5 (unknown reason)");
         } 
         
         return void();
@@ -240,15 +240,15 @@ namespace BigDataStatMeth {
             // delete dsOut; dsOut = nullptr;
             
         } catch( H5::FileIException& error ) { 
-            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5_ (File IException)");
+            throw std::runtime_error("RcppBind_datasets_hdf5_ (File IException)");
         } catch( H5::GroupIException & error ) { 
-            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5_ (Group IException)");
+            throw std::runtime_error("RcppBind_datasets_hdf5_ (Group IException)");
         } catch( H5::DataSetIException& error ) { 
-            throw std::runtime_error("c++ exception RcppBind_datasets_hdf5_ (DataSet IException)");
+            throw std::runtime_error("RcppBind_datasets_hdf5_ (DataSet IException)");
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception RcppBind_datasets_hdf5_: ") + ex.what());
+            throw std::runtime_error(std::string("RcppBind_datasets_hdf5_: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppBind_datasets_hdf5_ (unknown reason)");
+            throw std::runtime_error("RcppBind_datasets_hdf5_ (unknown reason)");
         }
         
         return void();

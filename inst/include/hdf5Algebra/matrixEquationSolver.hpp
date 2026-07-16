@@ -197,15 +197,15 @@ namespace BigDataStatMeth {
             dsX->writeDataset(b.data());
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            throw std::runtime_error("c++ exception RcppSolveHdf5 (File IException)");
+            throw std::runtime_error("RcppSolveHdf5 (File IException)");
         } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception RcppSolveHdf5 (Group IException)");
+            throw std::runtime_error("RcppSolveHdf5 (Group IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception RcppSolveHdf5 (DataSet IException)");
+            throw std::runtime_error("RcppSolveHdf5 (DataSet IException)");
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception RcppSolveHdf5: ") + ex.what());
+            throw std::runtime_error(std::string("RcppSolveHdf5: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppSolveHdf5 (unknown reason)");
+            throw std::runtime_error("RcppSolveHdf5 (unknown reason)");
         }
         
         return void();

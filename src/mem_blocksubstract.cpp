@@ -178,7 +178,7 @@ Rcpp::RObject bdblockSubstract(Rcpp::RObject A, Rcpp::RObject B,
         }
         
     } catch(std::exception &ex) {
-        Rcpp::stop("c++ exception bdblockSubstract: " + std::string(ex.what()));
+        Rcpp::stop("bdblockSubstract: " + std::string(ex.what()));
     }
 
     // return(Rcpp::wrap(C));

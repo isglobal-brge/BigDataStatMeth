@@ -121,11 +121,11 @@ namespace BigDataStatMeth {
             
         }
         catch( H5::FileIException& error ) {
-            throw std::runtime_error("c++ exception setUpperTriangularMatrix (File IException)");
+            throw std::runtime_error("setUpperTriangularMatrix (File IException)");
         } catch( H5::DataSetIException& error ) {
-            throw std::runtime_error("c++ exception setUpperTriangularMatrix (DataSet IException)");
+            throw std::runtime_error("setUpperTriangularMatrix (DataSet IException)");
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception setUpperTriangularMatrix: ") + ex.what());
+            throw std::runtime_error(std::string("setUpperTriangularMatrix: ") + ex.what());
         }
         
         return void();
@@ -211,11 +211,11 @@ namespace BigDataStatMeth {
             }
         }
         catch( H5::FileIException& error ) {
-            throw std::runtime_error("c++ exception setLowerTriangularMatrix (File IException)");
+            throw std::runtime_error("setLowerTriangularMatrix (File IException)");
         } catch( H5::DataSetIException& error ) {
-            throw std::runtime_error("c++ exception setLowerTriangularMatrix (DataSet IException)");
+            throw std::runtime_error("setLowerTriangularMatrix (DataSet IException)");
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception setLowerTriangularMatrix: ") + ex.what());
+            throw std::runtime_error(std::string("setLowerTriangularMatrix: ") + ex.what());
         }
         
         return void();

@@ -119,9 +119,9 @@ inline svdeig RcppbdSVD_lapack( T X, bool bcenter, bool bscale, bool complete ) 
         retsvd.v = vt.transpose();
         
     } catch(std::exception &ex) {
-        throw std::runtime_error(std::string("C++ exception RcppbdSVD_lapack: ") + ex.what());
+        throw std::runtime_error(std::string("RcppbdSVD_lapack: ") + ex.what());
     } catch (...) {
-        throw std::runtime_error("C++ exception RcppbdSVD_lapack (unknown reason)");
+        throw std::runtime_error("RcppbdSVD_lapack (unknown reason)");
     }
     
     return retsvd;
@@ -199,19 +199,19 @@ std::vector<svdPositions> prepareForParallelization( T* dsA, int M, int k, bool 
 
 
     } catch( H5::FileIException& error ) {
-        throw std::runtime_error("c++ exception prepareForParallelization (File IException)");
+        throw std::runtime_error("prepareForParallelization (File IException)");
     } catch( H5::DataSetIException& error ) {
-        throw std::runtime_error("c++ exception prepareForParallelization (DataSet IException)");
+        throw std::runtime_error("prepareForParallelization (DataSet IException)");
     } catch( H5::GroupIException& error ) {
-        throw std::runtime_error("c++ exception prepareForParallelization (Group IException)");
+        throw std::runtime_error("prepareForParallelization (Group IException)");
     } catch( H5::DataTypeIException& error ) {
-        throw std::runtime_error("c++ exception prepareForParallelization (DataType IException)");
+        throw std::runtime_error("prepareForParallelization (DataType IException)");
     } catch( H5::DataSpaceIException& error ) {
-        throw std::runtime_error("c++ exception prepareForParallelization (DataSpace IException)");
+        throw std::runtime_error("prepareForParallelization (DataSpace IException)");
     } catch(std::exception &ex) {
-        throw std::runtime_error(std::string("c++ exception prepareForParallelization: ") + ex.what());
+        throw std::runtime_error(std::string("prepareForParallelization: ") + ex.what());
     } catch (...) {
-        throw std::runtime_error("C++ exception prepareForParallelization (unknown reason)");
+        throw std::runtime_error("prepareForParallelization (unknown reason)");
     }
 
 
@@ -438,19 +438,19 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
         // }
         
     } catch( H5::FileIException& error ) { 
-        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (File IException)");
+        throw std::runtime_error("First_level_SvdBlock_decomposition_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { 
-        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSet IException)");
+        throw std::runtime_error("First_level_SvdBlock_decomposition_hdf5 (DataSet IException)");
     } catch( H5::GroupIException& error ) { 
-        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (Group IException)");
+        throw std::runtime_error("First_level_SvdBlock_decomposition_hdf5 (Group IException)");
     } catch( H5::DataTypeIException& error ) { 
-        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (DataType IException)");
+        throw std::runtime_error("First_level_SvdBlock_decomposition_hdf5 (DataType IException)");
     } catch( H5::DataSpaceIException& error ) { 
-        throw std::runtime_error("c++ exception First_level_SvdBlock_decomposition_hdf5 (DataSpace IException)");
+        throw std::runtime_error("First_level_SvdBlock_decomposition_hdf5 (DataSpace IException)");
     } catch(std::exception &ex) {
-        throw std::runtime_error(std::string("c++ exception First_level_SvdBlock_decomposition_hdf5: ") + ex.what());
+        throw std::runtime_error(std::string("First_level_SvdBlock_decomposition_hdf5: ") + ex.what());
     } catch (...) {
-        throw std::runtime_error("C++ exception First_level_SvdBlock_decomposition_hdf5 (unknown reason)");
+        throw std::runtime_error("First_level_SvdBlock_decomposition_hdf5 (unknown reason)");
     }
     
     return void();
@@ -609,19 +609,19 @@ inline void Next_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGroup
         } // end omp parallel
 
     } catch( H5::FileIException& error ) { 
-        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (File IException)");
+        throw std::runtime_error("Next_level_SvdBlock_decomposition_hdf5 (File IException)");
     } catch( H5::DataSetIException& error ) { 
-        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (DataSet IException)");
+        throw std::runtime_error("Next_level_SvdBlock_decomposition_hdf5 (DataSet IException)");
     } catch( H5::GroupIException& error ) { 
-        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (Group IException)");
+        throw std::runtime_error("Next_level_SvdBlock_decomposition_hdf5 (Group IException)");
     } catch( H5::DataTypeIException& error ) { 
-        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (DataType IException)");
+        throw std::runtime_error("Next_level_SvdBlock_decomposition_hdf5 (DataType IException)");
     } catch( H5::DataSpaceIException& error ) { 
-        throw std::runtime_error("c++ exception Next_level_SvdBlock_decomposition_hdf5 (DataSpace IException)");
+        throw std::runtime_error("Next_level_SvdBlock_decomposition_hdf5 (DataSpace IException)");
     } catch(std::exception &ex) {
-        throw std::runtime_error(std::string("c++ exception Next_level_SvdBlock_decomposition_hdf5: ") + ex.what());
+        throw std::runtime_error(std::string("Next_level_SvdBlock_decomposition_hdf5: ") + ex.what());
     } catch (...) {
-        throw std::runtime_error("C++ exception Next_level_SvdBlock_decomposition_hdf5 (unknown reason)");
+        throw std::runtime_error("Next_level_SvdBlock_decomposition_hdf5 (unknown reason)");
     }
     
     return void();

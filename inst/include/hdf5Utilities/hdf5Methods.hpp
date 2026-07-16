@@ -153,25 +153,25 @@ namespace BigDataStatMeth {
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
             // checkClose_file(dsJoined);
-            throw std::runtime_error("c++ exception join_datasets (File IException)");
+            throw std::runtime_error("join_datasets (File IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
             // checkClose_file(dsJoined);
-            throw std::runtime_error("c++ exception join_datasets (DataSet IException)");
+            throw std::runtime_error("join_datasets (DataSet IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
             // checkClose_file(dsJoined);
-            throw std::runtime_error("c++ exception join_datasets (Group IException)");
+            throw std::runtime_error("join_datasets (Group IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsJoined);
-            throw std::runtime_error("c++ exception join_datasets (DataSpace IException)");
+            throw std::runtime_error("join_datasets (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsJoined);
-            throw std::runtime_error("c++ exception join_datasets (Data TypeIException)");
+            throw std::runtime_error("join_datasets (Data TypeIException)");
         } catch(std::exception &ex) {
             // checkClose_file(dsJoined);
-            throw std::runtime_error(std::string("c++ exception join_datasets: ") + ex.what());
+            throw std::runtime_error(std::string("join_datasets: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsJoined);
-            throw std::runtime_error("C++ exception join_datasets (unknown reason)");
+            throw std::runtime_error("join_datasets (unknown reason)");
         }
         return(0);
     }

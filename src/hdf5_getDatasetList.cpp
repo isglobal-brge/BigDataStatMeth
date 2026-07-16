@@ -132,20 +132,20 @@ Rcpp::RObject bdgetDatasetsList_hdf5(std::string filename,
             groupDatasets = fQuery->getAllDatasetNames(strgroup, strprefix, brecursive);
         } else {
             delete fQuery; fQuery = nullptr;
-            Rcpp::stop("c++ exception bdgetDatasetsList_hdf5 File does not exist");
+            Rcpp::stop("bdgetDatasetsList_hdf5 File does not exist");
             return(R_NilValue);
         }
         
         delete fQuery; fQuery = nullptr;
         
     } catch( H5::FileIException& error ) { 
-        Rcpp::stop("c++ exception bdgetDatasetsList_hdf5 (File IException)");
+        Rcpp::stop("bdgetDatasetsList_hdf5 (File IException)");
         return(R_NilValue);
     } catch( H5::DataSetIException& error ) { 
-        Rcpp::stop("c++ exception bdgetDatasetsList_hdf5 (DataSet IException)");
+        Rcpp::stop("bdgetDatasetsList_hdf5 (DataSet IException)");
         return(R_NilValue);
     } catch(std::exception &ex) {
-        Rcpp::stop("c++ exception bdgetDatasetsList_hdf5: " + std::string(ex.what()));
+        Rcpp::stop("bdgetDatasetsList_hdf5: " + std::string(ex.what()));
         return(R_NilValue);
     }
     

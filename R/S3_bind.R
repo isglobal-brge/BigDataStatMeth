@@ -5,9 +5,10 @@
 # cbind and rbind are internal generics in R, so S3 dispatch works automatically
 # when cbind.HDF5Matrix / rbind.HDF5Matrix are exported.
 #
-# Both methods accept one or more HDF5Matrix arguments plus standard R
-# objects (plain matrices are written to a temp HDF5 dataset first).
-# At least the first argument must be an HDF5Matrix.
+# Both methods require every argument to be an HDF5Matrix. Plain R matrices
+# are not auto-converted; convert them first with hdf5_matrix() /
+# hdf5_create_matrix(). Dimensions must be conformable (same number of rows
+# for cbind, same number of columns for rbind).
 
 
 # Internal helper: 6-char hex hash of input dataset names.
@@ -27,8 +28,9 @@
 #' operation is performed block-wise on disk.
 #'
 #' @param ...          One or more \code{HDF5Matrix} objects (all with the
-#'   same number of rows). Plain R matrices are also accepted and will be
-#'   written to a temporary HDF5 dataset automatically.
+#'   same number of rows). Every argument must be an \code{HDF5Matrix};
+#'   plain R matrices are not accepted -- convert them first with
+#'   \code{\link{hdf5_matrix}} or \code{\link{hdf5_create_matrix}}.
 #' @param deparse.level Ignored (for S3 compatibility with base::cbind).
 #' @param out_file     Output HDF5 file. \code{NULL} = same file as first argument.
 #' @param out_group    Output group.   \code{NULL} = \code{"BIND"}.

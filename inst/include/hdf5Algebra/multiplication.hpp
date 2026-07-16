@@ -232,7 +232,7 @@ namespace BigDataStatMeth {
             }
             
         } catch(std::exception& ex) {
-            throw std::runtime_error(std::string("c++ exception Bblock_matrix_mul_parallel: ") + ex.what());
+            throw std::runtime_error(std::string("Bblock_matrix_mul_parallel: ") + ex.what());
         }
         
         return(C);
@@ -570,19 +570,19 @@ namespace BigDataStatMeth {
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ c++ exception multiplication (File IException)");
+            throw std::runtime_error("multiplication (File IException)");
             // return void();
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("c++ exception multiplication (DataSet IException)");
+            throw std::runtime_error("multiplication (DataSet IException)");
             // return void();
         } catch(std::exception &ex) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error(std::string("c++ exception multiplication: ") + ex.what());
+            throw std::runtime_error(std::string("multiplication: ") + ex.what());
             // return void();
         }  catch (...) {
             // checkClose_file(dsA, dsB, dsC);
-            throw std::runtime_error("C++ exception multiplication (unknown reason)");
+            throw std::runtime_error("multiplication (unknown reason)");
             // return void();
         }
         

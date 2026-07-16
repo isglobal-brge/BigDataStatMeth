@@ -158,19 +158,19 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error ) { 
             // checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
-            throw std::runtime_error("c++ exception RcppGetPCAVariablesHdf5 (File IException)");
+            throw std::runtime_error("RcppGetPCAVariablesHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { 
             // checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
-            throw std::runtime_error("c++ exception RcppGetPCAVariablesHdf5 (DataSet IException)");
+            throw std::runtime_error("RcppGetPCAVariablesHdf5 (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { 
             // checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
-            throw std::runtime_error("c++ exception RcppGetPCAVariablesHdf5 (DataSpace IException)");
+            throw std::runtime_error("RcppGetPCAVariablesHdf5 (DataSpace IException)");
         } catch(std::exception &ex) {
             // checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
-            throw std::runtime_error(std::string("c++ exception RcppGetPCAVariablesHdf5: ") + ex.what());
+            throw std::runtime_error(std::string("RcppGetPCAVariablesHdf5: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsd, dsv, dslambda, dsvar, dscumvar, dscoord, dscos2);
-            throw std::runtime_error("C++ exception RcppGetPCAVariablesHdf5 (unknown reason)");
+            throw std::runtime_error("RcppGetPCAVariablesHdf5 (unknown reason)");
         }
         
         
@@ -315,19 +315,19 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             // checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
-            throw std::runtime_error("c++ exception RcppGetPCAIndividualsHdf5 (File IException)");
+            throw std::runtime_error("RcppGetPCAIndividualsHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
             // checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
-            throw std::runtime_error("c++ exception RcppGetPCAIndividualsHdf5 (DataSet IException)");
+            throw std::runtime_error("RcppGetPCAIndividualsHdf5 (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
             // checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
-            throw std::runtime_error("c++ exception RcppGetPCAIndividualsHdf5 (DataSpace IException)");
+            throw std::runtime_error("RcppGetPCAIndividualsHdf5 (DataSpace IException)");
         } catch(std::exception &ex) {
             // checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
-            throw std::runtime_error(std::string("c++ exception RcppGetPCAIndividualsHdf5: ") + ex.what());
+            throw std::runtime_error(std::string("RcppGetPCAIndividualsHdf5: ") + ex.what());
         } catch (...) {
             // checkClose_file( dsX, dsd, dsu, dsdist2, dsComp, dscoord, dscos2, dscontrib);
-            throw std::runtime_error("C++ exception RcppGetPCAIndividualsHdf5 (unknown reason)");
+            throw std::runtime_error("RcppGetPCAIndividualsHdf5 (unknown reason)");
         }
         
         return void();
@@ -447,19 +447,19 @@ namespace BigDataStatMeth {
             
         } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
             // checkClose_file(dsA, dsd, dsu, dsv, dsX);
-            throw std::runtime_error("c++ exception RcppPCAHdf5 (File IException)");
+            throw std::runtime_error("RcppPCAHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
             // checkClose_file(dsA, dsd, dsu, dsv, dsX);
-            throw std::runtime_error("c++ exception RcppPCAHdf5 (DataSet IException)");
+            throw std::runtime_error("RcppPCAHdf5 (DataSet IException)");
         } catch( H5::DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
             // checkClose_file(dsA, dsd, dsu, dsv, dsX);
-            throw std::runtime_error("c++ exception RcppPCAHdf5 (DataSpace IException)");
+            throw std::runtime_error("RcppPCAHdf5 (DataSpace IException)");
         } catch(std::exception &ex) {
             // checkClose_file(dsA, dsd, dsu, dsv, dsX);
-            throw std::runtime_error(std::string("c++ exception RcppPCAHdf5: ") + ex.what());
+            throw std::runtime_error(std::string("RcppPCAHdf5: ") + ex.what());
         } catch (...) {
             // checkClose_file(dsA, dsd, dsu, dsv, dsX);
-            throw std::runtime_error("C++ exception RcppPCAHdf5 (unknown reason)");
+            throw std::runtime_error("RcppPCAHdf5 (unknown reason)");
         }
         
         return void();

@@ -348,18 +348,18 @@ namespace BigDataStatMeth {
                     
                 } else {
                     // checkClose_file(dsA);        
-                    throw std::runtime_error("c++ exception RcppApplyFunctionHdf5 error with dataset");
+                    throw std::runtime_error("RcppApplyFunctionHdf5 error with dataset");
                 }
             }
             
         }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-            throw std::runtime_error("c++ exception RcppApplyFunctionHdf5 (File IException)");
+            throw std::runtime_error("RcppApplyFunctionHdf5 (File IException)");
         } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception RcppApplyFunctionHdf5 (DataSet IException)");
+            throw std::runtime_error("RcppApplyFunctionHdf5 (DataSet IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception blockmult_hdf5: ") + ex.what());
+            throw std::runtime_error(std::string("blockmult_hdf5: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppApplyFunctionHdf5 (unknown reason)");
+            throw std::runtime_error("RcppApplyFunctionHdf5 (unknown reason)");
         }
         
         // Rcpp::Rcout<< func <<" function has been computed in all blocks\n";  

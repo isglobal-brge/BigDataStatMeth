@@ -102,9 +102,9 @@
          }
          
      } catch(std::exception &ex) {
-         Rf_error("c++ exception bd_wproduct: %s", ex.what());
+         Rf_error("bd_wproduct: %s", ex.what());
      } catch (...) {
-         Rf_error("c++ exception bd_wproduct (unknown reason)");
+         Rf_error("bd_wproduct (unknown reason)");
      }
      
      return Eigen::MatrixXd();  // unreachable; Rf_error() does not return, but keeps compiler happy

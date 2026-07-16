@@ -17,8 +17,9 @@
 }
 \arguments{
 \item{...}{One or more \code{HDF5Matrix} objects (all with the
-same number of rows). Plain R matrices are also accepted and will be
-written to a temporary HDF5 dataset automatically.}
+same number of rows). Every argument must be an \code{HDF5Matrix};
+plain R matrices are not accepted -- convert them first with
+\code{\link{hdf5_matrix}} or \code{\link{hdf5_create_matrix}}.}
 
 \item{deparse.level}{Ignored (for S3 compatibility with base::cbind).}
 

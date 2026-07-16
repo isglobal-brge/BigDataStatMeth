@@ -127,19 +127,19 @@ Rcpp::List bdCreate_hdf5_group(std::string filename, std::string group)
          lst_return["gr"] = group;
          
      } catch( H5::FileIException& error ) { 
-         Rcpp::stop("c++ exception bdCreate_hdf5_group (File IException)");
+         Rcpp::stop("bdCreate_hdf5_group (File IException)");
          return(lst_return);
      } catch( H5::GroupIException & error ) { 
-         Rcpp::stop("c++ exception bdCreate_hdf5_group (Group IException)");
+         Rcpp::stop("bdCreate_hdf5_group (Group IException)");
          return(lst_return);
      } catch( H5::DataSetIException& error ) { 
-         Rcpp::stop("c++ exception bdCreate_hdf5_group (DataSet IException)");
+         Rcpp::stop("bdCreate_hdf5_group (DataSet IException)");
          return(lst_return);
      } catch(std::exception& ex) {
-         Rcpp::stop("c++ exception bdCreate_hdf5_group: " + std::string(ex.what()));
+         Rcpp::stop("bdCreate_hdf5_group: " + std::string(ex.what()));
          return(lst_return);
      } catch (...) {
-         Rcpp::stop("c++ exception bdCreate_hdf5_group (unknown reason)");
+         Rcpp::stop("bdCreate_hdf5_group (unknown reason)");
          return(lst_return);
      }
      

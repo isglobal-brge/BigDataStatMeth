@@ -135,7 +135,7 @@ Rcpp::RObject bdpseudoinv( Rcpp::RObject X,
         return(Rcpp::wrap(pinv));
         
     } catch(std::exception &ex) {
-        Rcpp::stop("c++ exception bdpseudoinv: " + std::string(ex.what()));
+        Rcpp::stop("bdpseudoinv: " + std::string(ex.what()));
         return Rcpp::wrap(-1);
     }
     
@@ -288,7 +288,7 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
             RcppPseudoinvHdf5(dsA.get(), dsRes.get(), threads);
         } else {
             // checkClose_file(dsA, dsRes);
-            Rcpp::stop("c++ exception bdPseudoinv_hdf5 Error opening dataset");
+            Rcpp::stop("bdPseudoinv_hdf5 Error opening dataset");
             return(lst_return);
         }
 
@@ -302,16 +302,16 @@ Rcpp::List bdpseudoinv_hdf5(std::string filename, std::string group, std::string
         // delete dsRes; dsRes = nullptr;
          
     } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        Rcpp::stop("c++ exception bdCholesky_hdf5 (File IException)");
+        Rcpp::stop("bdCholesky_hdf5 (File IException)");
         return(lst_return);
     } catch( H5::GroupIException & error ) { // catch failure caused by the DataSet operations
-        Rcpp::stop("c++ exception bdCholesky_hdf5 (Group IException)");
+        Rcpp::stop("bdCholesky_hdf5 (Group IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        Rcpp::stop("c++ exception bdCholesky_hdf5 (DataSet IException)");
+        Rcpp::stop("bdCholesky_hdf5 (DataSet IException)");
         return(lst_return);
     } catch(std::exception& ex) {
-        Rcpp::stop("c++ exception bdCholesky_hdf5: " + std::string(ex.what()));
+        Rcpp::stop("bdCholesky_hdf5: " + std::string(ex.what()));
         return(lst_return);
     }
     

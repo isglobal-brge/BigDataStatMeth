@@ -83,13 +83,13 @@ Rcpp::List rcpp_hdf5dataset_pseudoinv(std::string filename,
         lst["path"] = out_group + "/" + out_dataset;
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_pseudoinv (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_pseudoinv (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_pseudoinv (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_pseudoinv (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_pseudoinv: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_pseudoinv: %s", e.what());
     }
 
     return lst;

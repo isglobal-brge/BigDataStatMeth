@@ -126,13 +126,13 @@ Rcpp::List bdWrite_hdf5_dimnames( std::string filename,
          lst_return["dscols"] = group + "/." + dataset + "/2";
          
      } catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-         Rcpp::stop("c++ c++ exception bdWrite_hdf5_dimnames (File IException)");
+         Rcpp::stop("bdWrite_hdf5_dimnames (File IException)");
          return(lst_return);
      } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-         Rcpp::stop("c++ exception bdWrite_hdf5_dimnames (DataSet IException)");
+         Rcpp::stop("bdWrite_hdf5_dimnames (DataSet IException)");
          return(lst_return);
      } catch(std::exception &ex) {
-         Rcpp::stop("c++ exception bdWrite_hdf5_dimnames: " + std::string(ex.what()));
+         Rcpp::stop("bdWrite_hdf5_dimnames: " + std::string(ex.what()));
          return(lst_return);
      } 
      

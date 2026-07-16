@@ -111,13 +111,13 @@ Rcpp::List rcpp_hdf5dataset_split(SEXP        ptr,
         lst["n_blocks"]    = actual_blocks;
 
     } catch (H5::FileIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_split (File IException): %s",
+        Rf_error("rcpp_hdf5dataset_split (File IException): %s",
                  e.getCDetailMsg());
     } catch (H5::DataSetIException& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_split (DataSet IException): %s",
+        Rf_error("rcpp_hdf5dataset_split (DataSet IException): %s",
                  e.getCDetailMsg());
     } catch (std::exception& e) {
-        Rf_error("c++ exception rcpp_hdf5dataset_split: %s", e.what());
+        Rf_error("rcpp_hdf5dataset_split: %s", e.what());
     }
 
     return lst;

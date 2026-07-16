@@ -389,11 +389,11 @@ namespace BigDataStatMeth {
             // delete dsdims;
 
         } catch( H5::FileIException& error ) {
-            throw std::runtime_error("c++ exception Convert_text_to_HDF5 (File IException)");
+            throw std::runtime_error("Convert_text_to_HDF5 (File IException)");
         } catch( H5::GroupIException& error ) {
-            throw std::runtime_error("c++ exception Convert_text_to_HDF5 (Group IException)");
+            throw std::runtime_error("Convert_text_to_HDF5 (Group IException)");
         } catch( H5::DataSetIException& error ) {
-            throw std::runtime_error("c++ exception Convert_text_to_HDF5 (DataSet IException)");
+            throw std::runtime_error("Convert_text_to_HDF5 (DataSet IException)");
         } catch(const std::runtime_error& re) {
             throw std::runtime_error(std::string("Runtime error: ") + re.what());
         } catch(const std::exception& ex) {

@@ -268,7 +268,7 @@ Rcpp::List rcpp_hdf5_create_matrix(std::string filename,
         if (dsdims)   { delete dsdims;   dsdims   = nullptr; }
         if (objFile)  { delete objFile;  objFile  = nullptr; }
         BigDataStatMeth::checkClose_file(objDataset);
-        Rf_error("c++ exception (unknown reason) in rcpp_hdf5_create_matrix");
+        Rf_error("(unknown reason) in rcpp_hdf5_create_matrix");
     }
 
     return lst;

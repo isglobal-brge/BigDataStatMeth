@@ -72,11 +72,11 @@ devtools::install_github("isglobal-brge/BigDataStatMeth")
 
 ### System Requirements
 
-**R packages:**
-
-- `Matrix`
-- `RcppEigen`
-- `RSpectra`
+**R packages:** installed automatically as dependencies (`Imports`):
+`data.table`, `Rcpp`, `RCurl`, `utils`, `R6`. The C++ backend is compiled
+against `Rcpp`, `RcppEigen` and `Rhdf5lib` (`LinkingTo`). Optional
+(`Suggests`, used by the vignette/examples): `Matrix`, `BiocStyle`,
+`knitr`, `rmarkdown`, `ggplot2`, `MASS`.
 
 **System dependencies:**
 

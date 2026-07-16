@@ -333,13 +333,13 @@ public:
             
         } catch(H5::FileIException& error) { 
             close_file();
-            Rf_error("c++ exception createDataset (File IException)");
+            Rf_error("createDataset (File IException)");
         } catch(H5::GroupIException& error) { 
             close_file();
-            Rf_error("c++ exception createDataset (Group IException)");
+            Rf_error("createDataset (Group IException)");
         } catch(H5::DataSetIException& error) { 
             close_file();
-            Rf_error("c++ exception createDataset (DataSet IException)");
+            Rf_error("createDataset (DataSet IException)");
         } 
         return void();
     }
@@ -382,13 +382,13 @@ public:
             createDataset( dsLike->ncols(), dsLike->nrows(), strdatatype, compression_level);
         } catch(H5::FileIException& error) {
             close_file();
-            Rf_error("c++ exception createDataset (File IException)");
+            Rf_error("createDataset (File IException)");
         } catch(H5::GroupIException& error) {
             close_file();
-            Rf_error("c++ exception createDataset (Group IException)");
+            Rf_error("createDataset (Group IException)");
         } catch(H5::DataSetIException& error) {
             close_file();
-            Rf_error("c++ exception createDataset (DataSet IException)");
+            Rf_error("createDataset (DataSet IException)");
         } 
         
         return void();
@@ -474,7 +474,7 @@ public:
             status = H5Pset_chunk( cparms, RANK2, chunk_dims);
             
             if(status<0) {
-                Rf_error("c++ exception createUnlimitedDataset (setting chunk IException)");
+                Rf_error("createUnlimitedDataset (setting chunk IException)");
                 return void();
             }
             
@@ -515,13 +515,13 @@ public:
             
         } catch(H5::FileIException& error) {
             close_file();
-            Rf_error("c++ exception createUnlimitedDataset (File IException)");
+            Rf_error("createUnlimitedDataset (File IException)");
         } catch(H5::GroupIException& error) {
             close_file();
-            Rf_error("c++ exception createUnlimitedDataset (Group IException)");
+            Rf_error("createUnlimitedDataset (Group IException)");
         } catch(H5::DataSetIException& error) {
             close_file();
-            Rf_error("c++ exception createUnlimitedDataset (DataSet IException)");
+            Rf_error("createUnlimitedDataset (DataSet IException)");
         } 
         return void();
     }
@@ -565,10 +565,10 @@ public:
             
         } catch(H5::FileIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception extendUnlimitedDataset (File IException)");
+            Rf_error("extendUnlimitedDataset (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception extendUnlimitedDataset (DataSet IException)");
+            Rf_error("extendUnlimitedDataset (DataSet IException)");
         }
         return void();
     }
@@ -584,7 +584,7 @@ public:
             
             // Check if file pointer != nullptr
             if( !pfile)  {
-                Rf_error("c++ exception Please create file before proceed");
+                Rf_error("Please create file before proceed");
             } else { 
                 
                 H5::Exception::dontPrint();
@@ -639,21 +639,21 @@ public:
                     
                 } else {
                     close_file();
-                    // std::cerr<<"\nc++ exception, please create Dataset before proceed\n";
-                    Rf_error("c++ exception, please create Dataset before proceed");
+                    // std::cerr<<"\nplease create Dataset before proceed\n";
+                    Rf_error("please create Dataset before proceed");
                     // return(pdataset);
                 }
             }
             
         } catch(H5::FileIException& error) {
             close_file();
-            Rf_error("c++ exception openDataset (File IException)");
+            Rf_error("openDataset (File IException)");
         } catch(H5::GroupIException& error) {
             close_file();
-            Rf_error("c++ exception openDataset (File GroupIException)");
+            Rf_error("openDataset (File GroupIException)");
         } catch(H5::DataSetIException& error) {
             close_file();
-            Rf_error("c++ exception openDataset (File DataSetIException)");
+            Rf_error("openDataset (File DataSetIException)");
         } 
         
         return(pdataset);
@@ -747,19 +747,19 @@ public:
             
         } catch(H5::FileIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (File IException)");
+            Rf_error("writeDataset (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (DataSet IException)");
+            Rf_error("writeDataset (DataSet IException)");
         } catch(H5::GroupIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (Group IException)");
+            Rf_error("writeDataset (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (DataSpace IException)");
+            Rf_error("writeDataset (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (Data TypeIException)");
+            Rf_error("writeDataset (Data TypeIException)");
         }
         
         return void();
@@ -804,19 +804,19 @@ public:
             
         } catch(H5::FileIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (File IException)");
+            Rf_error("writeDataset (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (DataSet IException)");
+            Rf_error("writeDataset (DataSet IException)");
         } catch(H5::GroupIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (Group IException)");
+            Rf_error("writeDataset (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (DataSpace IException)");
+            Rf_error("writeDataset (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeDataset (Data TypeIException)");
+            Rf_error("writeDataset (Data TypeIException)");
         }
         return void();
     }
@@ -884,19 +884,19 @@ public:
                 
         } catch(H5::FileIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception writeRowMajorDatasetBlock (File IException)");
+            Rf_error("writeRowMajorDatasetBlock (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeRowMajorDatasetBlock (DataSet IException)");
+            Rf_error("writeRowMajorDatasetBlock (DataSet IException)");
         } catch(H5::GroupIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeRowMajorDatasetBlock (Group IException)");
+            Rf_error("writeRowMajorDatasetBlock (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeRowMajorDatasetBlock (DataSpace IException)");
+            Rf_error("writeRowMajorDatasetBlock (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeRowMajorDatasetBlock (Data TypeIException)");
+            Rf_error("writeRowMajorDatasetBlock (Data TypeIException)");
         }
         return void();
     }
@@ -956,19 +956,19 @@ public:
             
         } catch(H5::FileIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception writeColMajorDatasetBlock (File IException)");
+            Rf_error("writeColMajorDatasetBlock (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeColMajorDatasetBlock (DataSet IException)");
+            Rf_error("writeColMajorDatasetBlock (DataSet IException)");
         } catch(H5::GroupIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeColMajorDatasetBlock (Group IException)");
+            Rf_error("writeColMajorDatasetBlock (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeColMajorDatasetBlock (DataSpace IException)");
+            Rf_error("writeColMajorDatasetBlock (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception writeColMajorDatasetBlock (Data TypeIException)");
+            Rf_error("writeColMajorDatasetBlock (Data TypeIException)");
         }
         return void();
     }
@@ -1097,23 +1097,23 @@ public:
         } catch(H5::FileIException& error) {
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock (File IException)");
+            Rf_error("writeDatasetBlock (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock (DataSet IException)");
+            Rf_error("writeDatasetBlock (DataSet IException)");
         } catch(H5::GroupIException& error) { 
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock (Group IException)");
+            Rf_error("writeDatasetBlock (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock (DataSpace IException)");
+            Rf_error("writeDatasetBlock (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { 
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock (Data TypeIException)");
+            Rf_error("writeDatasetBlock (Data TypeIException)");
         }
         return void();
     }
@@ -1174,23 +1174,23 @@ public:
         } catch(H5::FileIException& error) {
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock std::vector (File IException)");
+            Rf_error("writeDatasetBlock std::vector (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock std::vector (DataSet IException)");
+            Rf_error("writeDatasetBlock std::vector (DataSet IException)");
         } catch(H5::GroupIException& error) { 
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock std::vector (Group IException)");
+            Rf_error("writeDatasetBlock std::vector (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock std::vector (DataSpace IException)");
+            Rf_error("writeDatasetBlock std::vector (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { 
             close_dataset();
             close_dataset_file();
-            Rf_error("c++ exception writeDatasetBlock std::vector (Data TypeIException)");
+            Rf_error("writeDatasetBlock std::vector (Data TypeIException)");
         }
         return void();
     }
@@ -1249,16 +1249,16 @@ public:
             
         } catch (H5::FileIException& e) {
             groupname = orig_groupname;                     // ← AÑADIR: restaura en error también
-            Rf_error("c++ exception hdf5Dataset::writeDimnames (File IException)");
+            Rf_error("hdf5Dataset::writeDimnames (File IException)");
         } catch (H5::DataSetIException& e) {
             groupname = orig_groupname;
-            Rf_error("c++ exception hdf5Dataset::writeDimnames (DataSet IException)");
+            Rf_error("hdf5Dataset::writeDimnames (DataSet IException)");
         } catch (H5::GroupIException& e) {
             groupname = orig_groupname;
-            Rf_error("c++ exception hdf5Dataset::writeDimnames (Group IException)");
+            Rf_error("hdf5Dataset::writeDimnames (Group IException)");
         } catch (std::exception& e) {
             groupname = orig_groupname;
-            Rf_error("c++ exception hdf5Dataset::writeDimnames: %s", e.what());
+            Rf_error("hdf5Dataset::writeDimnames: %s", e.what());
         }
     }
     
@@ -1297,11 +1297,11 @@ public:
                 Rcpp::Named("colnames") = readStringDataset(path_col));
             
         } catch (H5::FileIException& e) {
-            Rf_error("c++ exception hdf5Dataset::readDimnames (File IException)");
+            Rf_error("hdf5Dataset::readDimnames (File IException)");
         } catch (H5::DataSetIException& e) {
-            Rf_error("c++ exception hdf5Dataset::readDimnames (DataSet IException)");
+            Rf_error("hdf5Dataset::readDimnames (DataSet IException)");
         } catch (std::exception& e) {
-            Rf_error("c++ exception hdf5Dataset::readDimnames: %s", e.what());
+            Rf_error("hdf5Dataset::readDimnames: %s", e.what());
         }
         
         // Fallback — only reached if Rf_error somehow doesn't throw
@@ -1415,7 +1415,7 @@ public:
             
         } catch (H5::DataSetIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception createSubsetDataset (DataSet IException)");
+            Rf_error("createSubsetDataset (DataSet IException)");
         }
         
         return void();
@@ -1469,7 +1469,7 @@ public:
             if( type_class == H5T_INTEGER || type_class == H5T_FLOAT ) {
                 pdataset->read( rdatablock, H5::PredType::NATIVE_DOUBLE, memspace, dataspace );
             } else {
-                Rf_error("c++ exception readDatasetBlock (Data type not allowed, maybe are trying to read string matrix?)");
+                Rf_error("readDatasetBlock (Data type not allowed, maybe are trying to read string matrix?)");
                 return void();
             }
             
@@ -1478,25 +1478,25 @@ public:
             
         } catch( H5::FileIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception readDatasetBlock (File IException)");
+            Rf_error("readDatasetBlock (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception readDatasetBlock (DataSet IException)");
+            Rf_error("readDatasetBlock (DataSet IException)");
         } catch(H5::GroupIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception readDatasetBlock (Group IException)");
+            Rf_error("readDatasetBlock (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception readDatasetBlock (DataSpace IException)");
+            Rf_error("readDatasetBlock (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception readDatasetBlock (Data TypeIException)");
+            Rf_error("readDatasetBlock (Data TypeIException)");
         } catch(std::exception &ex) {
             close_dataset_file();
-            Rf_error("c++ exception readDatasetBlock: %s", ex.what());
+            Rf_error("readDatasetBlock: %s", ex.what());
         } catch (...) {
             close_dataset_file();
-            Rf_error("C++ exception readDatasetBlock (unknown reason)");
+            Rf_error("readDatasetBlock (unknown reason)");
         }
         return void();
     }
@@ -1574,19 +1574,19 @@ public:
         
         catch( H5::DataSpaceIException& error ) {
             // error.printErrorStack();
-             Rf_error("c++ exception addAttribute (DataSpace IException)");
+             Rf_error("addAttribute (DataSpace IException)");
             return -1;
         } catch( H5::AttributeIException& error ) {
             // error.printErrorStack();
-            Rf_error("c++ exception addAttribute (Attribute IException)");
+            Rf_error("addAttribute (Attribute IException)");
             return -1;
         } catch( H5::DataSetIException& error ) { 
             // error.printErrorStack();
-            Rf_error("c++ exception addAttribute (DataSet IException)");
+            Rf_error("addAttribute (DataSet IException)");
             return -1;
         } catch( H5::FileIException& error ) {
             // error.printErrorStack();
-            Rf_error("c++ exception addAttribute (File IException)");
+            Rf_error("addAttribute (File IException)");
             return -1;
         }
         
@@ -1643,19 +1643,19 @@ public:
             
         } catch( H5::FileIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception getAttribute (File IException)");
+            Rf_error("getAttribute (File IException)");
         } catch(H5::DataSetIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception getAttribute (DataSet IException)");
+            Rf_error("getAttribute (DataSet IException)");
         } catch(H5::GroupIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception getAttribute (Group IException)");
+            Rf_error("getAttribute (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception getAttribute (DataSpace IException)");
+            Rf_error("getAttribute (DataSpace IException)");
         } catch(H5::DataTypeIException& error) { 
             close_dataset_file();
-            Rf_error("c++ exception getAttribute (Data TypeIException)");
+            Rf_error("getAttribute (Data TypeIException)");
         }
         return void();
     }
@@ -1829,19 +1829,19 @@ public:
             
         } catch (H5::FileIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception moveDataset (File IException)");
+            Rf_error("moveDataset (File IException)");
         } catch (H5::DataSetIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception moveDataset (DataSet IException)");
+            Rf_error("moveDataset (DataSet IException)");
         } catch (H5::GroupIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception moveDataset (Group IException)");
+            Rf_error("moveDataset (Group IException)");
         } catch (H5::DataSpaceIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception moveDataset (DataSpace IException)");
+            Rf_error("moveDataset (DataSpace IException)");
         } catch (H5::DataTypeIException& error) {
             close_dataset_file();
-            Rf_error("c++ exception moveDataset (Data TypeIException)");
+            Rf_error("moveDataset (Data TypeIException)");
         }
         
         return void();
@@ -1914,16 +1914,16 @@ public:
             }
             
         } catch (H5::FileIException& error) {
-            Rf_error("c++ exception copyToFile (File IException): %s",
+            Rf_error("copyToFile (File IException): %s",
                      error.getCDetailMsg());
         } catch (H5::DataSetIException& error) {
-            Rf_error("c++ exception copyToFile (DataSet IException): %s",
+            Rf_error("copyToFile (DataSet IException): %s",
                      error.getCDetailMsg());
         } catch (H5::DataSpaceIException& error) {
-            Rf_error("c++ exception copyToFile (DataSpace IException): %s",
+            Rf_error("copyToFile (DataSpace IException): %s",
                      error.getCDetailMsg());
         } catch (std::exception& ex) {
-            Rf_error("c++ exception copyToFile: %s", ex.what());
+            Rf_error("copyToFile: %s", ex.what());
         }
         return void();
     }
@@ -2293,13 +2293,13 @@ protected:
             }
             
         } catch( H5::FileIException& error) { 
-            Rf_error("c++ exception getDimensExistingDataset (File IException)");
+            Rf_error("getDimensExistingDataset (File IException)");
         } catch(H5::DataSetIException& error) { 
-            Rf_error("c++ exception getDimensExistingDataset (DataSet IException)");
+            Rf_error("getDimensExistingDataset (DataSet IException)");
         } catch(H5::GroupIException& error) { 
-            Rf_error("c++ exception getDimensExistingDataset (Group IException)");
+            Rf_error("getDimensExistingDataset (Group IException)");
         } catch(H5::DataSpaceIException& error) { 
-            Rf_error("c++ exception getDimensExistingDataset (DataSpace IException)");
+            Rf_error("getDimensExistingDataset (DataSpace IException)");
         } 
         
         return void();
@@ -2374,13 +2374,13 @@ private:
             return cv;
             
         } catch (H5::FileIException& e) {
-            throw std::runtime_error( "c++ exception readStringDataset (File IException): " + e.getDetailMsg());
+            throw std::runtime_error( "readStringDataset (File IException): " + e.getDetailMsg());
         } catch (H5::DataSetIException& e) {
-            throw std::runtime_error( "c++ exception readStringDataset (DataSet IException): " + e.getDetailMsg());
+            throw std::runtime_error( "readStringDataset (DataSet IException): " + e.getDetailMsg());
         } catch (H5::DataSpaceIException& e) {
-            throw std::runtime_error( "c++ exception readStringDataset (DataSpace IException): " + e.getDetailMsg());
+            throw std::runtime_error( "readStringDataset (DataSpace IException): " + e.getDetailMsg());
         } catch (std::exception& e) {
-            throw std::runtime_error( std::string("c++ exception readStringDataset: ") + e.what());
+            throw std::runtime_error( std::string("readStringDataset: ") + e.what());
         }
     }
     
@@ -2436,15 +2436,15 @@ private:
             spc.close();
             
         } catch (H5::FileIException& e) {
-            throw std::runtime_error(  "c++ exception writeStringDataset (File IException): " + e.getDetailMsg());
+            throw std::runtime_error(  "writeStringDataset (File IException): " + e.getDetailMsg());
         } catch (H5::DataSetIException& e) {
-            throw std::runtime_error( "c++ exception writeStringDataset (DataSet IException): " + e.getDetailMsg());
+            throw std::runtime_error( "writeStringDataset (DataSet IException): " + e.getDetailMsg());
         } catch (H5::DataSpaceIException& e) {
-            throw std::runtime_error( "c++ exception writeStringDataset (DataSpace IException): " + e.getDetailMsg());
+            throw std::runtime_error( "writeStringDataset (DataSpace IException): " + e.getDetailMsg());
         } catch (H5::DataTypeIException& e) {
-            throw std::runtime_error( "c++ exception writeStringDataset (DataType IException): " + e.getDetailMsg());
+            throw std::runtime_error( "writeStringDataset (DataType IException): " + e.getDetailMsg());
         } catch (std::exception& e) {
-            throw std::runtime_error( std::string("c++ exception writeStringDataset: ") + e.what());
+            throw std::runtime_error( std::string("writeStringDataset: ") + e.what());
         }
     }
     

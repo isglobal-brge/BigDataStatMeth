@@ -85,17 +85,17 @@ namespace BigDataStatMeth {
             }
             
         } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-            throw std::runtime_error("c++ exception RcppRemove_hdf5_elements (File IException)");
+            throw std::runtime_error("RcppRemove_hdf5_elements (File IException)");
         } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-            throw std::runtime_error("c++ exception RcppRemove_hdf5_elements (Group IException)");
+            throw std::runtime_error("RcppRemove_hdf5_elements (Group IException)");
         } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-            throw std::runtime_error("c++ exception RcppRemove_hdf5_elements (DataSet IException)");
+            throw std::runtime_error("RcppRemove_hdf5_elements (DataSet IException)");
         } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-            throw std::runtime_error("c++ exception RcppRemove_hdf5_elements (DataSpace IException)");
+            throw std::runtime_error("RcppRemove_hdf5_elements (DataSpace IException)");
         } catch(std::exception &ex) {
-            throw std::runtime_error(std::string("c++ exception RcppRemove_hdf5_elements: ") + ex.what());
+            throw std::runtime_error(std::string("RcppRemove_hdf5_elements: ") + ex.what());
         } catch (...) {
-            throw std::runtime_error("C++ exception RcppRemove_hdf5_elements (unknown reason)");
+            throw std::runtime_error("RcppRemove_hdf5_elements (unknown reason)");
         }
         
         return void();

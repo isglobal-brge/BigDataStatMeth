@@ -208,13 +208,13 @@ inline Eigen::VectorXd get_HDF5_colSums(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colSums (File IException): "
+        throw std::runtime_error("get_HDF5_colSums (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colSums (DataSet IException): "
+        throw std::runtime_error("get_HDF5_colSums (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_colSums: ")
+        throw std::runtime_error(std::string("get_HDF5_colSums: ")
                                  + e.what());
     }
 }
@@ -297,13 +297,13 @@ inline Eigen::VectorXd get_HDF5_colMeans(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colMeans (File IException): "
+        throw std::runtime_error("get_HDF5_colMeans (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colMeans (DataSet IException): "
+        throw std::runtime_error("get_HDF5_colMeans (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_colMeans: ")
+        throw std::runtime_error(std::string("get_HDF5_colMeans: ")
                                  + e.what());
     }
 }
@@ -372,13 +372,13 @@ inline Eigen::VectorXd get_HDF5_colMins(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colMins (File IException): "
+        throw std::runtime_error("get_HDF5_colMins (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colMins (DataSet IException): "
+        throw std::runtime_error("get_HDF5_colMins (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_colMins: ")
+        throw std::runtime_error(std::string("get_HDF5_colMins: ")
                                  + e.what());
     }
 }
@@ -447,13 +447,13 @@ inline Eigen::VectorXd get_HDF5_colMaxs(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colMaxs (File IException): "
+        throw std::runtime_error("get_HDF5_colMaxs (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colMaxs (DataSet IException): "
+        throw std::runtime_error("get_HDF5_colMaxs (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_colMaxs: ")
+        throw std::runtime_error(std::string("get_HDF5_colMaxs: ")
                                  + e.what());
     }
 }
@@ -538,13 +538,13 @@ inline Eigen::VectorXd get_HDF5_colVars(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colVars (File IException): "
+        throw std::runtime_error("get_HDF5_colVars (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_colVars (DataSet IException): "
+        throw std::runtime_error("get_HDF5_colVars (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_colVars: ")
+        throw std::runtime_error(std::string("get_HDF5_colVars: ")
                                  + e.what());
     }
 }
@@ -568,7 +568,7 @@ inline Eigen::VectorXd get_HDF5_colSds(BigDataStatMeth::hdf5Dataset* dsA,
     try {
         return get_HDF5_colVars(dsA, bparal, wsize, threads).array().sqrt();
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_colSds: ")
+        throw std::runtime_error(std::string("get_HDF5_colSds: ")
                                  + e.what());
     }
 }
@@ -644,13 +644,13 @@ inline Eigen::VectorXd get_HDF5_rowSums(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowSums (File IException): "
+        throw std::runtime_error("get_HDF5_rowSums (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowSums (DataSet IException): "
+        throw std::runtime_error("get_HDF5_rowSums (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_rowSums: ")
+        throw std::runtime_error(std::string("get_HDF5_rowSums: ")
                                  + e.what());
     }
 }
@@ -725,13 +725,13 @@ inline Eigen::VectorXd get_HDF5_rowMeans(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowMeans (File IException): "
+        throw std::runtime_error("get_HDF5_rowMeans (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowMeans (DataSet IException): "
+        throw std::runtime_error("get_HDF5_rowMeans (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_rowMeans: ")
+        throw std::runtime_error(std::string("get_HDF5_rowMeans: ")
                                  + e.what());
     }
 }
@@ -808,13 +808,13 @@ inline Eigen::VectorXd get_HDF5_rowMins(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowMins (File IException): "
+        throw std::runtime_error("get_HDF5_rowMins (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowMins (DataSet IException): "
+        throw std::runtime_error("get_HDF5_rowMins (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_rowMins: ")
+        throw std::runtime_error(std::string("get_HDF5_rowMins: ")
                                  + e.what());
     }
 }
@@ -886,13 +886,13 @@ inline Eigen::VectorXd get_HDF5_rowMaxs(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowMaxs (File IException): "
+        throw std::runtime_error("get_HDF5_rowMaxs (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowMaxs (DataSet IException): "
+        throw std::runtime_error("get_HDF5_rowMaxs (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_rowMaxs: ")
+        throw std::runtime_error(std::string("get_HDF5_rowMaxs: ")
                                  + e.what());
     }
 }
@@ -981,13 +981,13 @@ inline Eigen::VectorXd get_HDF5_rowVars(BigDataStatMeth::hdf5Dataset* dsA,
         return result;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowVars (File IException): "
+        throw std::runtime_error("get_HDF5_rowVars (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_rowVars (DataSet IException): "
+        throw std::runtime_error("get_HDF5_rowVars (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_rowVars: ")
+        throw std::runtime_error(std::string("get_HDF5_rowVars: ")
                                  + e.what());
     }
 }
@@ -1011,7 +1011,7 @@ inline Eigen::VectorXd get_HDF5_rowSds(BigDataStatMeth::hdf5Dataset* dsA,
     try {
         return get_HDF5_rowVars(dsA, bparal, wsize, threads).array().sqrt();
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_rowSds: ")
+        throw std::runtime_error(std::string("get_HDF5_rowSds: ")
                                  + e.what());
     }
 }
@@ -1083,13 +1083,13 @@ inline double get_HDF5_scalar_sum(BigDataStatMeth::hdf5Dataset* dsA,
         return total_sum;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_scalar_sum (File IException): "
+        throw std::runtime_error("get_HDF5_scalar_sum (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_scalar_sum (DataSet IException): "
+        throw std::runtime_error("get_HDF5_scalar_sum (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_scalar_sum: ")
+        throw std::runtime_error(std::string("get_HDF5_scalar_sum: ")
                                  + e.what());
     }
 }
@@ -1115,7 +1115,7 @@ inline double get_HDF5_scalar_mean(BigDataStatMeth::hdf5Dataset* dsA,
                          static_cast<double>(dsA->ncols());
         return get_HDF5_scalar_sum(dsA, bparal, wsize, threads) / N;
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_scalar_mean: ")
+        throw std::runtime_error(std::string("get_HDF5_scalar_mean: ")
                                  + e.what());
     }
 }
@@ -1181,13 +1181,13 @@ inline double get_HDF5_scalar_min(BigDataStatMeth::hdf5Dataset* dsA,
         return global_min;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_scalar_min (File IException): "
+        throw std::runtime_error("get_HDF5_scalar_min (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_scalar_min (DataSet IException): "
+        throw std::runtime_error("get_HDF5_scalar_min (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_scalar_min: ")
+        throw std::runtime_error(std::string("get_HDF5_scalar_min: ")
                                  + e.what());
     }
 }
@@ -1253,13 +1253,13 @@ inline double get_HDF5_scalar_max(BigDataStatMeth::hdf5Dataset* dsA,
         return global_max;
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_scalar_max (File IException): "
+        throw std::runtime_error("get_HDF5_scalar_max (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_scalar_max (DataSet IException): "
+        throw std::runtime_error("get_HDF5_scalar_max (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_scalar_max: ")
+        throw std::runtime_error(std::string("get_HDF5_scalar_max: ")
                                  + e.what());
     }
 }
@@ -1340,13 +1340,13 @@ inline double get_HDF5_scalar_var(BigDataStatMeth::hdf5Dataset* dsA,
         return (total_sumsq - total_sum * total_sum / N) / (N - 1.0);
 
     } catch (H5::FileIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_scalar_var (File IException): "
+        throw std::runtime_error("get_HDF5_scalar_var (File IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (H5::DataSetIException& e) {
-        throw std::runtime_error("c++ exception get_HDF5_scalar_var (DataSet IException): "
+        throw std::runtime_error("get_HDF5_scalar_var (DataSet IException): "
                                  + std::string(e.getDetailMsg()));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_scalar_var: ")
+        throw std::runtime_error(std::string("get_HDF5_scalar_var: ")
                                  + e.what());
     }
 }
@@ -1370,7 +1370,7 @@ inline double get_HDF5_scalar_sd(BigDataStatMeth::hdf5Dataset* dsA,
     try {
         return std::sqrt(get_HDF5_scalar_var(dsA, bparal, wsize, threads));
     } catch (std::exception& e) {
-        throw std::runtime_error(std::string("c++ exception get_HDF5_scalar_sd: ")
+        throw std::runtime_error(std::string("get_HDF5_scalar_sd: ")
                                  + e.what());
     }
 }
