@@ -88,7 +88,11 @@ Rcpp::List rcpp_hdf5dataset_pca(std::string filename,
         Rcpp::Nullable<int> n_threads =
             (threads < 0) ? R_NilValue : Rcpp::wrap(threads);
         
-        // Delegate — all HDF5 I/O happens inside the header
+        // Delegate — all HDF5 I/O happens inside the header.
+        // used_method receives the SVD path actually taken underneath the PCA
+        // ("full" = exact LAPACK, "blocks" = hierarchical approximation).
+        std::string used_method;
+
         BigDataStatMeth::RcppPCAHdf5(
             filename, group, dataset,
             svdgroup,
@@ -99,7 +103,8 @@ Rcpp::List rcpp_hdf5dataset_pca(std::string filename,
             overwrite,
             /*asRowMajor=*/false,
             n_method,
-            n_threads
+            n_threads,
+            &used_method
         );
         
         // Build output paths (mirrors hdf5_bdPCA.cpp convention)
@@ -116,7 +121,9 @@ Rcpp::List rcpp_hdf5dataset_pca(std::string filename,
             Rcpp::Named("path_components")= pca_root + "components",
             Rcpp::Named("path_ind_coord") = pca_root + "ind.coord",
             Rcpp::Named("path_ind_cos2")  = pca_root + "ind.cos2",
-            Rcpp::Named("path_ind_contrib")= pca_root + "ind.contrib"
+            Rcpp::Named("path_ind_contrib")= pca_root + "ind.contrib",
+            Rcpp::Named("used_method")     = used_method,
+            Rcpp::Named("exact")           = (used_method == "full")
         );
 
     } catch (H5::FileIException& e) {

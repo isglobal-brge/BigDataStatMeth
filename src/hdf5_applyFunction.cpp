@@ -249,11 +249,19 @@ void bdapply_Function_hdf5( std::string filename,
                         // dsOut = new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce);
                         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsOut( new BigDataStatMeth::hdf5Dataset(filename, outgroup, Rcpp::as<std::string>(datasets(i)) , bforce) );
                         
-                        // int iblock_size = BigDataStatMeth::getMaxBlockSize( dsA->nrows(), dsA->ncols(), dsA->nrows(), dsA->ncols(), 4, R_NilValue);
-                        // int memory_block = iblock_size/2;
-                        int iblock_size = 0,
-                            memory_block = 0;
-                        
+                        // Block size for the streaming path. It MUST be > 0:
+                        // crossprod()/tcrossprod() derive their block counts as
+                        // (N + hdf5_block - 1) / hdf5_block, so a zero block size
+                        // yields zero blocks and the freshly created output dataset
+                        // is left filled with zeros without any error being raised.
+                        // Same factor (2) as the crossprod/tcrossprod R6 bindings.
+                        const int iblockfactor = 2;
+                        int iblock_size = BigDataStatMeth::getMaxBlockSize(
+                                              dsA->nrows(), dsA->ncols(),
+                                              dsA->nrows(), dsA->ncols(),
+                                              iblockfactor, R_NilValue);
+                        int memory_block = iblock_size / 2;
+
                         bool bparal = true,
                              isSymetric = true;
                         

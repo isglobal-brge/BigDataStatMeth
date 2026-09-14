@@ -18,7 +18,8 @@ impute_snps(x, ...)
 )
 }
 \arguments{
-\item{x}{An \code{HDF5Matrix} containing SNP data with NAs.}
+\item{x}{An \code{HDF5Matrix} containing SNP data with missing
+values coded as \code{3}.}
 
 \item{...}{Ignored.}
 
@@ -33,14 +34,21 @@ impute_snps(x, ...)
 \item{overwrite}{Logical. Overwrite existing output. Default \code{FALSE}.}
 }
 \value{
-\code{HDF5Matrix} pointing to the imputed dataset.
+\code{HDF5Matrix} pointing to the imputed dataset, carrying the
+dimension names of \code{x}.
 }
 \description{
-Fills NA entries in SNP data by computing column or row means of non-missing
-values. Intended for 0/1/2-coded diploid genotype matrices.
+Fills the missing entries of SNP data by computing column or row means of the
+non-missing values. Intended for 0/1/2-coded diploid genotype matrices in
+which missing genotypes are stored as the value \code{3}; \code{NA} values
+must be recoded to \code{3} before calling this function.
+
+Row and column names of \code{x}, when present, are carried over to the
+result.
 }
 \examples{
 \donttest{
+set.seed(42)
 tmp <- tempfile(fileext = ".h5")
 
 # SNP data: 0/1/2 coded, 3 = missing (not NA)

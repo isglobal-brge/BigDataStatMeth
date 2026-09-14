@@ -173,6 +173,7 @@ diag.HDF5Matrix <- function(x, ...) {
 #' @param x A matrix or \code{HDF5Matrix} object.
 #' @param value Numeric vector of replacement values for the diagonal.
 #' @return The modified object with the diagonal replaced.
+#' @usage diag(x) <- value
 #' @name diag<-
 #' @rdname diag-replace
 #' @rawNamespace export("diag<-")

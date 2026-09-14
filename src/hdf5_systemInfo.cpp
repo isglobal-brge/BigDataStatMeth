@@ -255,3 +255,77 @@ Rcpp::List system_info() {
         Rcpp::Named("cpu_cores") = cores
     );
 }
+
+
+// =============================================================================
+// Internal probes for the memory-detection regression test
+// -----------------------------------------------------------------------------
+// getAvailableMemoryMB() / getOptimalBlockElements() (Utilities/system-utils.hpp)
+// drive the adaptive block-size and preload thresholds of every block-wise
+// algorithm, but were previously unreachable from R, so a platform-specific
+// detection failure could not be tested.  These three probes exist purely so
+// tests_regression/test_memory_detection.R can assert the invariants.  They are
+// deliberately NOT exported in NAMESPACE -- reach them with ':::'.
+// =============================================================================
+
+// Memory budget used by the block-sizing heuristics (internal)
+//
+// @return Detected available memory in MB, as used by block-wise algorithms.
+// @keywords internal
+// [[Rcpp::export]]
+double get_block_memory_budget_mb() {
+    return static_cast<double>(BigDataStatMeth::getAvailableMemoryMB());
+}
+
+// Validity guard applied to every detected memory figure (internal)
+//
+// @param mb Raw memory figure in MB (may be non-finite or implausible).
+// @return The sanitized figure in MB; the conservative fallback when invalid.
+// @keywords internal
+// [[Rcpp::export]]
+double sanitize_memory_mb(double mb) {
+    return static_cast<double>(BigDataStatMeth::sanitizeAvailableMemoryMB(mb));
+}
+
+// Block size (in elements) derived from the detected memory budget (internal)
+//
+// @return Number of double-precision elements per processing block.
+// @keywords internal
+// [[Rcpp::export]]
+double get_optimal_block_elements() {
+    return static_cast<double>(BigDataStatMeth::getOptimalBlockElements());
+}
+
+
+// Package default gzip level, read from the C++ single source of truth
+// (DEFAULT_COMPRESSION_LEVEL in BigDataStatMeth.hpp) so the R layer and the
+// C++ layer cannot disagree about it.  Not exported in NAMESPACE.
+// [[Rcpp::export]]
+int rcpp_default_compression_level() {
+    return DEFAULT_COMPRESSION_LEVEL;
+}
+
+
+// =============================================================================
+// Effective thread count, read from the C++ single source of truth
+// -----------------------------------------------------------------------------
+// get_number_threads() (Utilities/openme-utils.hpp) silently discards a
+// requested thread count that exceeds what this system allows: OMP_THREAD_LIMIT
+// and OMP_NUM_THREADS are honoured, and by default only 50% of the detected
+// cores are usable (R_DATATABLE_NUM_PROCS_PERCENT).  A caller asking for more
+// therefore got fewer threads with no indication at all.  Exposing the same
+// function the algorithms call lets the R layer report the discrepancy instead
+// of hiding it, without duplicating the ceiling logic in R.
+//
+// Not exported in NAMESPACE -- reach it with ':::'.
+// =============================================================================
+
+// Number of threads that would actually be used for a requested count (internal)
+//
+// @param threads Requested thread count, or NULL for the system default.
+// @return The thread count get_number_threads() would return.
+// @keywords internal
+// [[Rcpp::export]]
+int rcpp_effective_threads(Rcpp::Nullable<int> threads = R_NilValue) {
+    return static_cast<int>(get_number_threads(threads, R_NilValue));
+}

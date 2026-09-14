@@ -901,19 +901,33 @@ private:
             isizetoWrite = dimDataset[0] * dimDataset[1]; } 
         
         names *names_list = new names[isizetoWrite];  // Convert to range list
-        
-        // Write data to dataset, if data to write is smaller than dataset then empty positions='\0' 
+
+        // Write data to dataset, if data to write is smaller than dataset then empty positions='\0'
+        size_t ntrunc = 0, maxlen = 0;
         for( int i = 0; i < isizetoWrite; i++ ) {
             int j = 0;
             if(i< datarows) {
                 Rcpp::String wchrom = Rcpp::as<Rcpp::StringVector>(DatasetValues)(i);
                 std::string word = wchrom.get_cstring();
-                
+
                 for( j = 0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ) {
-                    names_list[i].chr[j] = word[j]; 
+                    names_list[i].chr[j] = word[j];
+                }
+                if( word.size() > (size_t)(MAXSTRING-1) ) {
+                    ntrunc++;
+                    if( word.size() > maxlen ) maxlen = word.size();
                 }
             }
             names_list[i].chr[j] = '\0'; // insert hdf5 end of string
+        }
+        if( ntrunc > 0 ) {
+            Rcpp::warning(
+                "convert_DataFrame_to_RangeList: " + std::to_string(ntrunc) +
+                " string(s) exceeded the maximum stored length of " +
+                std::to_string(MAXSTRING - 1) +
+                " characters and were truncated (longest = " +
+                std::to_string(maxlen) + "). Increase MAXSTRING in"
+                " BigDataStatMeth.hpp to store them in full.");
         }
         return(names_list);
     }

@@ -41,6 +41,12 @@ namespace BigDataStatMeth {
      * @param bycols If true, process by columns; if false, process by rows
      * @param pcent MAF threshold percentage (0.0 to 1.0)
      * @param blocksize Number of rows/columns to process in each block
+     * @param keptIndices Optional output vector. When not @c nullptr it is cleared
+     *        and filled with the 0-based indices, along the filtered axis, of the
+     *        elements that survived the filter, in increasing order. The axis is
+     *        HDF5 dimension 0 when @p bycols is true and HDF5 dimension 1
+     *        otherwise, i.e. exactly the axis whose extent shrinks. Callers use it
+     *        to carry metadata (e.g. dimension names) over to the output dataset.
      * @return int Number of removed rows/columns (negative) or error code
      *
      * @details Implementation approach:
@@ -84,13 +90,18 @@ namespace BigDataStatMeth {
      */
     inline int Rcpp_Remove_MAF_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, 
                             BigDataStatMeth::hdf5Dataset* dsOut, 
-                            bool bycols, double pcent, int blocksize)
+                            bool bycols, double pcent, int blocksize,
+                            std::vector<hsize_t>* keptIndices = nullptr)
     {
-        
+
         int itotrem = 0;
-        
+
+        if( keptIndices != nullptr) {
+            keptIndices->clear();
+        }
+
         try{
-        
+
             bool bcreated = false;    
             int ilimit;
             
@@ -135,6 +146,15 @@ namespace BigDataStatMeth {
                 dsIn->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdCurDataset.data() );
                 Eigen::MatrixXd data = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdCurDataset.data(), count[0], count[1] );
                 
+                // Survivor mask for the current block, only built when the caller
+                // asked for the kept indices. Removal below walks the block
+                // backwards, so the loop variable is always the index the element
+                // had in the unfiltered block.
+                std::vector<bool> bkeep;
+                if( keptIndices != nullptr) {
+                    bkeep.assign(iread, true);
+                }
+
                 if(bycols == true) // We have to do it by rows
                 {
                     int readedrows = data.rows();
@@ -143,21 +163,31 @@ namespace BigDataStatMeth {
                         if( calc_freq(Rcpp::wrap(data.row(row))) <= pcent ) {
                             removeRow(data, row);
                             iblockrem = iblockrem + 1;
-                        } 
+                            if( keptIndices != nullptr) bkeep[row] = false;
+                        }
                     }
-                    
+
                 } else {
-                    
+
                     int readedcols = data.cols();
                     for( int col = readedcols-1 ; col>=0; col--)
-                    { 
+                    {
                         if( calc_freq(Rcpp::wrap(data.col(col))) <= pcent ) {
                             removeColumn(data, col);
                             iblockrem = iblockrem + 1;
-                        } 
+                            if( keptIndices != nullptr) bkeep[col] = false;
+                        }
                     }
                 }
-                
+
+                if( keptIndices != nullptr) {
+                    for( int k = 0; k < iread; k++) {
+                        if( bkeep[k] ) {
+                            keptIndices->push_back( (hsize_t)(i*blocksize + k) );
+                        }
+                    }
+                }
+
                 int extendcols = data.cols();
                 int extendrows = data.rows();
                 

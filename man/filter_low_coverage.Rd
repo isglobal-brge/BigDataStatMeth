@@ -18,7 +18,8 @@ filter_low_coverage(x, ...)
 )
 }
 \arguments{
-\item{x}{An \code{HDF5Matrix} containing SNP data.}
+\item{x}{An \code{HDF5Matrix} containing SNP data with missing
+values coded as \code{3}.}
 
 \item{...}{Ignored.}
 
@@ -26,35 +27,48 @@ filter_low_coverage(x, ...)
 
 \item{out_dataset}{Output dataset name. \code{NULL} (default) = input name + \code{"_filtered"}.}
 
-\item{pcent}{Numeric in [0,1]. Maximum allowed NA proportion
-(default \code{0.05}). Features above this are removed.}
+\item{pcent}{Numeric in [0,1]. Missing-data threshold
+(default \code{0.05}). Features whose proportion of \code{3}s reaches this
+value are removed.}
 
 \item{by_cols}{Logical. Filter columns (\code{TRUE}, default) or rows.}
 
 \item{overwrite}{Logical. Overwrite existing output. Default \code{FALSE}.}
 }
 \value{
-\code{HDF5Matrix} pointing to the filtered dataset.
+\code{HDF5Matrix} pointing to the filtered dataset, carrying the
+dimension names of the surviving elements.
 }
 \description{
-Removes columns (SNPs) or rows (samples) whose proportion of missing values
-(NAs) exceeds \code{pcent}. Writes result to a new dataset.
+Removes columns (SNPs) or rows (samples) that carry too many missing values.
+Writes the result to a new dataset.
+
+Missing values are the entries equal to \code{3}, the missing-data code of
+the 0/1/2/3 genotype encoding shared by the omics functions; \code{NA} or
+\code{NaN} entries are \strong{not} counted, so recode them to \code{3}
+beforehand. A column (or row) is removed when its proportion of \code{3}s is
+greater than or equal to \code{pcent}.
+
+Row and column names of \code{x}, when present, are carried over to the
+result: the names of the filtered axis are subset to the surviving elements.
 
 When \code{out_group}/\code{out_dataset} are \code{NULL} (default) the result
 is written alongside the input dataset with the suffix \code{"_filtered"}.
 }
 \examples{
 \donttest{
+set.seed(42)
 fn <- tempfile(fileext = ".h5")
-snps <- matrix(sample(c(0, 1, 2, NA), 200, replace = TRUE,
-                       prob = c(.25, .25, .25, .25)), 20, 10)
+# 0/1/2 genotypes with about 10\% missing values, coded as 3
+snps <- matrix(sample(c(0, 1, 2, 3), 200, replace = TRUE,
+                       prob = c(.3, .3, .3, .1)), 20, 10)
 X   <- hdf5_create_matrix(fn, "geno/raw", data = snps)
 
 # Filter with auto output path (adds "_filtered" suffix)
-out <- filter_low_coverage(X, pcent = 0.1)
+out <- filter_low_coverage(X, pcent = 0.2)
 
 # Filter with explicit output
-out2 <- filter_low_coverage(X, out_group = "geno",
+out2 <- filter_low_coverage(X, pcent = 0.2, out_group = "geno",
                              out_dataset = "filtered", overwrite = TRUE)
 hdf5_close_all()
 unlink(fn)

@@ -98,32 +98,33 @@ namespace BigDataStatMeth {
                     getBlockPositionsSizes( N, hdf5_block, vstart, vsizetoRead );
                     // int chunks = vstart.size()/ithreads;
                     
+                    //.. 20260912 - restore critical: HDF5 is not threadsafe, dataset I/O must be serialised ..//
                     #pragma omp parallel num_threads( get_threads(bparal, threads) ) shared(dsA, dsB, dsC) //, chunks)
                     {
                     #pragma omp for schedule (dynamic)
                         for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                         {
-                            
-                            std::vector<double> vdA( K * vsizetoRead[ii] ); 
-                            //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                            //.. 20260325 - remove critical ..// {
-                            dsA->readDatasetBlock( {0, vstart[ii]}, { K, vsizetoRead[ii]}, stride, block, vdA.data() );
-                            //.. 20260325 - remove critical ..// }
-                            
-                            std::vector<double> vdB( K * vsizetoRead[ii] ); 
-                            //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                            //.. 20260325 - remove critical ..// {
-                            dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
-                            //.. 20260325 - remove critical ..// }
+
+                            std::vector<double> vdA( K * vsizetoRead[ii] );
+                            #pragma omp critical(accessFile)
+                            {
+                                dsA->readDatasetBlock( {0, vstart[ii]}, { K, vsizetoRead[ii]}, stride, block, vdA.data() );
+                            }
+
+                            std::vector<double> vdB( K * vsizetoRead[ii] );
+                            #pragma omp critical(accessFile)
+                            {
+                                dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
+                            }
                             std::transform (vdA.begin(), vdA.end(),
                                             vdB.begin(), vdA.begin(), std::plus<double>());
-                            
+
                             std::vector<hsize_t> offset = { 0, vstart[ii] };
                             std::vector<hsize_t> count = { K, vsizetoRead[ii] };
-                            //.. 20260325 - remove critical ..// #pragma omp critical(accessFile) 
-                            //.. 20260325 - remove critical ..// {
-                            dsC->writeDatasetBlock(vdA, offset, count, stride, block);
-                            //.. 20260325 - remove critical ..// }
+                            #pragma omp critical(accessFile)
+                            {
+                                dsC->writeDatasetBlock(vdA, offset, count, stride, block);
+                            }
                         }
                     }
                     
@@ -132,32 +133,33 @@ namespace BigDataStatMeth {
                     getBlockPositionsSizes( K, hdf5_block, vstart, vsizetoRead );
                     // int chunks = vstart.size()/ithreads;
                     
+                    //.. 20260912 - restore critical: HDF5 is not threadsafe, dataset I/O must be serialised ..//
                     #pragma omp parallel num_threads( get_threads(bparal, threads) ) shared(dsA, dsB, dsC) //, chunks)
                     {
                     #pragma omp for schedule (dynamic)
                         for (hsize_t ii = 0; ii < vstart.size(); ii++)
                         {
-                            std::vector<double> vdA( vsizetoRead[ii] * N ); 
-                            //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                            //.. 20260325 - remove critical ..// {
-                            dsA->readDatasetBlock( {vstart[ii], 0}, { vsizetoRead[ii], N}, stride, block, vdA.data() );
-                            //.. 20260325 - remove critical ..// }
-                            
-                            std::vector<double> vdB( vsizetoRead[ii] * N); 
-                            //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                            //.. 20260325 - remove critical ..// {
-                            dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], N}, stride, block, vdB.data() );
-                            //.. 20260325 - remove critical ..// }
-                            
+                            std::vector<double> vdA( vsizetoRead[ii] * N );
+                            #pragma omp critical(accessFile)
+                            {
+                                dsA->readDatasetBlock( {vstart[ii], 0}, { vsizetoRead[ii], N}, stride, block, vdA.data() );
+                            }
+
+                            std::vector<double> vdB( vsizetoRead[ii] * N);
+                            #pragma omp critical(accessFile)
+                            {
+                                dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], N}, stride, block, vdB.data() );
+                            }
+
                             std::transform (vdA.begin(), vdA.end(),
                                             vdB.begin(), vdA.begin(), std::plus<double>());
-                            
+
                             std::vector<hsize_t> offset = { vstart[ii], 0 };
                             std::vector<hsize_t> count = { vsizetoRead[ii], N };
-                            //.. 20260325 - remove critical ..// #pragma omp critical 
-                            //.. 20260325 - remove critical ..// {
-                            dsC->writeDatasetBlock(vdA, offset, count, stride, block);
-                            //.. 20260325 - remove critical ..// }
+                            #pragma omp critical(accessFile)
+                            {
+                                dsC->writeDatasetBlock(vdA, offset, count, stride, block);
+                            }
                         }
                     }
                 }
@@ -247,10 +249,10 @@ namespace BigDataStatMeth {
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( K * vsizetoRead[ii] );
-                        //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                        //.. 20260325 - remove critical ..// {
-                        dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
-                        //.. 20260325 - remove critical ..// }
+                        #pragma omp critical(accessFile)
+                        {
+                            dsB->readDatasetBlock( {0, vstart[ii]}, {K, vsizetoRead[ii]}, stride, block, vdB.data() );
+                        }
                         
                         // Duplicate vector
                         std::size_t const no_of_duplicates = (K * vsizetoRead[ii]) / vdA.size();
@@ -268,11 +270,11 @@ namespace BigDataStatMeth {
                         
                         std::vector<hsize_t> offset = { 0, vstart[ii]};
                         std::vector<hsize_t> count = { K, vsizetoRead[ii]};
-                        
-                        //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                        //.. 20260325 - remove critical ..// {
-                        dsC->writeDatasetBlock( vdB, offset, count, stride, block);
-                        //.. 20260325 - remove critical ..// }
+
+                        #pragma omp critical(accessFile)
+                        {
+                            dsC->writeDatasetBlock( vdB, offset, count, stride, block);
+                        }
                     }
                 }
                 
@@ -288,10 +290,10 @@ namespace BigDataStatMeth {
                     for (hsize_t ii = 0; ii < vstart.size(); ii ++)
                     {
                         std::vector<double> vdB( L * vsizetoRead[ii] );
-                        //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
-                        //.. 20260325 - remove critical ..// {
-                        dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], K}, stride, block, vdB.data() );
-                        //.. 20260325 - remove critical ..// }
+                        #pragma omp critical(accessFile)
+                        {
+                            dsB->readDatasetBlock( {vstart[ii], 0}, {vsizetoRead[ii], K}, stride, block, vdB.data() );
+                        }
                         Rcpp::NumericMatrix B (vsizetoRead[ii], K, vdB.begin());
                         
                         Rcpp::transpose(B);
@@ -312,11 +314,11 @@ namespace BigDataStatMeth {
                     
                         std::vector<hsize_t> offset = { vstart[ii], 0};
                         std::vector<hsize_t> count = { vsizetoRead[ii], K};
-                        
-                        //.. 20260325 - remove critical ..// #pragma omp critical (accessFile)
-                        //.. 20260325 - remove critical ..// {
-                        dsC->writeDatasetBlock( vdB, offset, count, stride, block);
-                        //.. 20260325 - remove critical ..// }
+
+                        #pragma omp critical(accessFile)
+                        {
+                            dsC->writeDatasetBlock( vdB, offset, count, stride, block);
+                        }
                     }
                 }
             } else {

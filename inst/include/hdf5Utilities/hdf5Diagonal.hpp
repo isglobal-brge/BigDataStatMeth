@@ -107,7 +107,7 @@ namespace BigDataStatMeth {
                                             double scalar, 
                                             const std::vector<double>& diagonal_vector,
                                             hsize_t block_size_hint = 1024,
-                                            int compression_level = 6,
+                                            int compression_level = DEFAULT_COMPRESSION_LEVEL,
                                             Rcpp::Nullable<int> threads = R_NilValue,
                                             std::string output_type = "matrix")
             {
@@ -167,7 +167,7 @@ namespace BigDataStatMeth {
             void createScalarIdentityMatrix(hsize_t size, 
                                             double scalar,
                                             hsize_t block_size_hint = 1024,
-                                            int compression_level = 6,
+                                            int compression_level = DEFAULT_COMPRESSION_LEVEL,
                                             Rcpp::Nullable<int> threads = R_NilValue,
                                             std::string output_type = "matrix")
             {

@@ -903,6 +903,32 @@ rcpp_hdf5dataset_diag_scale <- function(ptr_mat, scalar, op_code = 2L, paral = N
     .Call('_BigDataStatMeth_rcpp_hdf5dataset_diag_scale', PACKAGE = 'BigDataStatMeth', ptr_mat, scalar, op_code, paral, threads, compression, outgroup, outdataset)
 }
 
+#' Remove (unlink) a dataset from an HDF5 file (R6 wrapper)
+#'
+#' @description
+#' Opens a dataset by \code{(filename, group, dataset)} and unlinks it from
+#' the HDF5 file. Backs the R-level \code{\link{hdf5_remove}} function and the
+#' \code{HDF5Matrix$remove()} method.
+#'
+#' @details
+#' \code{openDataset()} both opens the file handle required by
+#' \code{hdf5Dataset::remove()} and validates that the dataset actually
+#' exists, throwing if it does not. HDF5 then only removes the \emph{link} to
+#' the dataset — the disk space it occupied is NOT reclaimed until the file is
+#' rewritten (e.g. with \code{h5repack}). See \code{\link{hdf5_remove}} for
+#' the user-facing caveat.
+#'
+#' @param filename Path to the HDF5 file.
+#' @param group    Group path containing the dataset (e.g. \code{"data"}).
+#' @param dataset  Dataset name within the group (e.g. \code{"matrix"}).
+#'
+#' @return \code{TRUE} on success.
+#'
+#' @keywords internal
+rcpp_hdf5_remove_dataset <- function(filename, group, dataset) {
+    .Call('_BigDataStatMeth_rcpp_hdf5_remove_dataset', PACKAGE = 'BigDataStatMeth', filename, group, dataset)
+}
+
 #' Close all open HDF5Dataset objects and HDF5 handles
 #'
 #' @description
@@ -1247,6 +1273,10 @@ rcpp_hdf5dataset_read_all <- function(ptr_sexp) {
 
 rcpp_hdf5dataset_svd <- function(filename, group, dataset, k = 2L, q = 1L, nev = 0L, bcenter = TRUE, bscale = TRUE, rankthreshold = 0.0, overwrite = FALSE, method = "auto", threads = -1L) {
     .Call('_BigDataStatMeth_rcpp_hdf5dataset_svd', PACKAGE = 'BigDataStatMeth', filename, group, dataset, k, q, nev, bcenter, bscale, rankthreshold, overwrite, method, threads)
+}
+
+rcpp_svd_auto_threshold <- function() {
+    .Call('_BigDataStatMeth_rcpp_svd_auto_threshold', PACKAGE = 'BigDataStatMeth')
 }
 
 #' Write data block to HDF5 dataset (R6 wrapper)
@@ -1601,6 +1631,26 @@ get_cpu_cores <- function() {
 #' @export
 system_info <- function() {
     .Call('_BigDataStatMeth_system_info', PACKAGE = 'BigDataStatMeth')
+}
+
+get_block_memory_budget_mb <- function() {
+    .Call('_BigDataStatMeth_get_block_memory_budget_mb', PACKAGE = 'BigDataStatMeth')
+}
+
+sanitize_memory_mb <- function(mb) {
+    .Call('_BigDataStatMeth_sanitize_memory_mb', PACKAGE = 'BigDataStatMeth', mb)
+}
+
+get_optimal_block_elements <- function() {
+    .Call('_BigDataStatMeth_get_optimal_block_elements', PACKAGE = 'BigDataStatMeth')
+}
+
+rcpp_default_compression_level <- function() {
+    .Call('_BigDataStatMeth_rcpp_default_compression_level', PACKAGE = 'BigDataStatMeth')
+}
+
+rcpp_effective_threads <- function(threads = NULL) {
+    .Call('_BigDataStatMeth_rcpp_effective_threads', PACKAGE = 'BigDataStatMeth', threads)
 }
 
 #' Write dimnames to an HDF5 dataset

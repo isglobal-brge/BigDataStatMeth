@@ -108,8 +108,8 @@ Rcpp::List rcpp_hdf5dataset_normalize(std::string in_file,
         }
 
         // ── Pre-create output file if it is different from the input file ────
-        // hdf5Dataset constructor calls checkHDF5File() -> H5::H5File::isHdf5()
-        // which throws when the file does not exist yet.  Creating it here with
+        // hdf5Dataset constructor calls checkHDF5File() -> H5Fis_accessible()/H5Fis_hdf5()
+        // which returns false when the file does not exist yet.  Creating it here with
         // H5F_ACC_TRUNC is safe: if the file already exists it is simply opened.
         if (out_file != in_file) {
             std::ifstream probe(out_file);

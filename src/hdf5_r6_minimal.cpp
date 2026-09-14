@@ -84,6 +84,65 @@ namespace {
 
 
 
+//' Remove (unlink) a dataset from an HDF5 file (R6 wrapper)
+//'
+//' @description
+//' Opens a dataset by \code{(filename, group, dataset)} and unlinks it from
+//' the HDF5 file. Backs the R-level \code{\link{hdf5_remove}} function and the
+//' \code{HDF5Matrix$remove()} method.
+//'
+//' @details
+//' \code{openDataset()} both opens the file handle required by
+//' \code{hdf5Dataset::remove()} and validates that the dataset actually
+//' exists, throwing if it does not. HDF5 then only removes the \emph{link} to
+//' the dataset — the disk space it occupied is NOT reclaimed until the file is
+//' rewritten (e.g. with \code{h5repack}). See \code{\link{hdf5_remove}} for
+//' the user-facing caveat.
+//'
+//' @param filename Path to the HDF5 file.
+//' @param group    Group path containing the dataset (e.g. \code{"data"}).
+//' @param dataset  Dataset name within the group (e.g. \code{"matrix"}).
+//'
+//' @return \code{TRUE} on success.
+//'
+//' @keywords internal
+// [[Rcpp::export]]
+bool rcpp_hdf5_remove_dataset(std::string filename,
+                              std::string group,
+                              std::string dataset)
+{
+    try {
+        H5::Exception::dontPrint();
+
+        // Open from the dataset's own file. openDataset() opens the file
+        // handle (needed by remove()) AND validates that the dataset exists,
+        // throwing "please create Dataset before proceed" otherwise.
+        std::unique_ptr<BigDataStatMeth::hdf5Dataset> ds(
+            new BigDataStatMeth::hdf5Dataset(filename, group, dataset, false));
+        ds->openDataset();
+
+        if (ds->getDatasetptr() == nullptr) {
+            std::string msg = "Failed to open dataset for removal: "
+                              + group + "/" + dataset;
+            throw std::runtime_error(msg);
+        }
+
+        // Unlink the dataset. HDF5 removes the link but does not reclaim the
+        // file space until the file is rewritten (h5repack).
+        ds->remove();
+
+    } catch (H5::FileIException& e) {
+        Rf_error("HDF5 file error removing dataset: %s", e.getDetailMsg().c_str());
+    } catch (H5::DataSetIException& e) {
+        Rf_error("HDF5 dataset error removing dataset: %s", e.getDetailMsg().c_str());
+    } catch (std::exception& e) {
+        Rf_error("Error removing dataset: %s", e.what());
+    }
+
+    return true;
+}
+
+
 //' Close all open HDF5Dataset objects and HDF5 handles
 //'
 //' @description

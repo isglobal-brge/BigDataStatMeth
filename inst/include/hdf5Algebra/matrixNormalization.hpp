@@ -603,7 +603,22 @@ namespace BigDataStatMeth {
                 datanormal = Eigen::MatrixXd::Zero(2,ncols);
                 get_HDF5_mean_sd_by_row( dsA, datanormal, true, true, wsize);
             }
-            
+
+            // Zero-variance guard.  This routine is the normalization step of
+            // the PCA flow (RcppPCAHdf5) and of nothing else, so the guard can
+            // live here: RcppNormalizeHdf5(), which backs scale(), is left
+            // untouched and keeps mimicking base::scale() by producing NaN for
+            // a constant column.  A decomposition cannot survive that NaN - it
+            // spreads and every singular value comes back as 0 - so it must be
+            // reported instead.  Checked before any output dataset is created,
+            // so a rejected call leaves nothing behind.  get_HDF5_mean_sd_by_column()
+            // works along HDF5 dimension 0 (the R column axis) and
+            // get_HDF5_mean_sd_by_row() along HDF5 dimension 1 (the R row axis),
+            // hence the axis noun below.
+            if( bs == true ) {
+                checkNonZeroVariance( datanormal, bbyrows == false ? "column" : "row" );
+            }
+
             // dsmean = new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout_ms, strdatasetmean, true);
             dsmean.reset(new BigDataStatMeth::hdf5Dataset(dsA->getFullPath(), strgroupout_ms, strdatasetmean, true));
             dsmean->inheritCompressionLevel(dsA->getCompressionLevel());

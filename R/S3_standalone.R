@@ -185,3 +185,79 @@ hdf5_apply <- function(filename,
 
     invisible(NULL)
 }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+#   hdf5_remove() — delete a dataset from an HDF5 file by path.
+# ──────────────────────────────────────────────────────────────────────────────
+
+#' Remove (delete) a dataset from an HDF5 file
+#'
+#' @description
+#' Deletes a dataset from an HDF5 file, given the file path and the full
+#' internal dataset path (\code{"group/name"}). No open \code{HDF5Matrix}
+#' object is required. If you already have an open \code{HDF5Matrix}, you can
+#' equivalently call its \code{$remove()} method.
+#'
+#' @details
+#' \strong{Space is not reclaimed.} HDF5 only \emph{unlinks} the dataset: the
+#' link is removed so the dataset can no longer be opened, but the disk space
+#' it occupied is \strong{not} returned to the operating system until the file
+#' is rewritten. To physically reclaim the space, repack the file with the
+#' HDF5 command-line tool, e.g. \code{h5repack old.h5 new.h5}, or copy the
+#' datasets you want to keep into a fresh file. Consequently, repeatedly
+#' creating and removing datasets in the same file can make it grow on disk
+#' even though the logical contents shrink.
+#'
+#' Removing a dataset that does not exist raises an error.
+#'
+#' @param filename Path to the HDF5 file.
+#' @param dataset  Full internal path of the dataset to remove, in the form
+#'   \code{"group/name"} (e.g. \code{"data/matrix"} or
+#'   \code{"grp/sub/matrix"}).
+#'
+#' @return \code{TRUE} invisibly on success.
+#'
+#' @examples
+#' \donttest{
+#' fn <- tempfile(fileext = ".h5")
+#' hdf5_create_matrix(fn, "grp/keep", data = matrix(1:6, 2, 3))
+#' hdf5_create_matrix(fn, "grp/tmp",  data = matrix(1:6, 2, 3))
+#' hdf5_remove(fn, "grp/tmp")
+#' list_datasets(fn, group = "grp")   # only "keep" remains
+#' hdf5_close_all()
+#' unlink(fn)
+#' }
+#'
+#' @seealso \code{\link{hdf5_matrix}}, \code{\link{hdf5_create_matrix}},
+#'   \code{\link{list_datasets}}
+#' @export
+hdf5_remove <- function(filename, dataset) {
+    if (!is.character(filename) || length(filename) != 1) {
+        stop("filename must be a single string")
+    }
+    if (!is.character(dataset) || length(dataset) != 1) {
+        stop("dataset must be a single string")
+    }
+    if (!file.exists(filename)) {
+        stop("File does not exist: ", filename)
+    }
+
+    parts <- strsplit(dataset, "/")[[1]]
+    parts <- parts[nzchar(parts)]
+    if (length(parts) < 2) {
+        stop("dataset must be in the format 'group/name' or ",
+             "'group/subgroup/name'")
+    }
+    name  <- parts[length(parts)]
+    group <- paste(parts[-length(parts)], collapse = "/")
+
+    # Best-effort: invalidate any live HDF5Matrix handles pointing at this
+    # dataset so their is_valid() flips to FALSE after the unlink.
+    tryCatch(
+        rcpp_hdf5_close_at_paths(filename, paste(group, name, sep = "/")),
+        error = function(e) NULL
+    )
+
+    invisible(rcpp_hdf5_remove_dataset(filename, group, name))
+}

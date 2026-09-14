@@ -642,6 +642,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_hdf5_remove_dataset
+bool rcpp_hdf5_remove_dataset(std::string filename, std::string group, std::string dataset);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_remove_dataset(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5_remove_dataset(filename, group, dataset));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hdf5_close_all_registry
 SEXP rcpp_hdf5_close_all_registry();
 RcppExport SEXP _BigDataStatMeth_rcpp_hdf5_close_all_registry() {
@@ -1093,6 +1106,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_svd_auto_threshold
+double rcpp_svd_auto_threshold();
+RcppExport SEXP _BigDataStatMeth_rcpp_svd_auto_threshold() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(rcpp_svd_auto_threshold());
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hdf5dataset_write_block
 void rcpp_hdf5dataset_write_block(SEXP ptr_sexp, Rcpp::RObject value, int row_offset, int col_offset, int nrows, int ncols);
 RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_write_block(SEXP ptr_sexpSEXP, SEXP valueSEXP, SEXP row_offsetSEXP, SEXP col_offsetSEXP, SEXP nrowsSEXP, SEXP ncolsSEXP) {
@@ -1205,6 +1228,58 @@ BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     rcpp_result_gen = Rcpp::wrap(system_info());
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_block_memory_budget_mb
+double get_block_memory_budget_mb();
+RcppExport SEXP _BigDataStatMeth_get_block_memory_budget_mb() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(get_block_memory_budget_mb());
+    return rcpp_result_gen;
+END_RCPP
+}
+// sanitize_memory_mb
+double sanitize_memory_mb(double mb);
+RcppExport SEXP _BigDataStatMeth_sanitize_memory_mb(SEXP mbSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type mb(mbSEXP);
+    rcpp_result_gen = Rcpp::wrap(sanitize_memory_mb(mb));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_optimal_block_elements
+double get_optimal_block_elements();
+RcppExport SEXP _BigDataStatMeth_get_optimal_block_elements() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(get_optimal_block_elements());
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_default_compression_level
+int rcpp_default_compression_level();
+RcppExport SEXP _BigDataStatMeth_rcpp_default_compression_level() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(rcpp_default_compression_level());
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpp_effective_threads
+int rcpp_effective_threads(Rcpp::Nullable<int> threads);
+RcppExport SEXP _BigDataStatMeth_rcpp_effective_threads(SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_effective_threads(threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1388,6 +1463,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_rcpp_hdf5dataset_diag_set", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_diag_set, 2},
     {"_BigDataStatMeth_rcpp_hdf5dataset_diag_op", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_diag_op, 8},
     {"_BigDataStatMeth_rcpp_hdf5dataset_diag_scale", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_diag_scale, 8},
+    {"_BigDataStatMeth_rcpp_hdf5_remove_dataset", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_remove_dataset, 3},
     {"_BigDataStatMeth_rcpp_hdf5_close_all_registry", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_close_all_registry, 0},
     {"_BigDataStatMeth_rcpp_hdf5dataset_open", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_open, 3},
     {"_BigDataStatMeth_rcpp_hdf5dataset_dim", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_dim, 1},
@@ -1417,6 +1493,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_rcpp_hdf5dataset_subset", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_subset, 3},
     {"_BigDataStatMeth_rcpp_hdf5dataset_read_all", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_read_all, 1},
     {"_BigDataStatMeth_rcpp_hdf5dataset_svd", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_svd, 12},
+    {"_BigDataStatMeth_rcpp_svd_auto_threshold", (DL_FUNC) &_BigDataStatMeth_rcpp_svd_auto_threshold, 0},
     {"_BigDataStatMeth_rcpp_hdf5dataset_write_block", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_write_block, 6},
     {"_BigDataStatMeth_rcpp_hdf5dataset_write_all", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_write_all, 2},
     {"_BigDataStatMeth_rcpp_hdf5_create_matrix", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5_create_matrix, 10},
@@ -1426,6 +1503,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_can_allocate", (DL_FUNC) &_BigDataStatMeth_can_allocate, 2},
     {"_BigDataStatMeth_get_cpu_cores", (DL_FUNC) &_BigDataStatMeth_get_cpu_cores, 0},
     {"_BigDataStatMeth_system_info", (DL_FUNC) &_BigDataStatMeth_system_info, 0},
+    {"_BigDataStatMeth_get_block_memory_budget_mb", (DL_FUNC) &_BigDataStatMeth_get_block_memory_budget_mb, 0},
+    {"_BigDataStatMeth_sanitize_memory_mb", (DL_FUNC) &_BigDataStatMeth_sanitize_memory_mb, 1},
+    {"_BigDataStatMeth_get_optimal_block_elements", (DL_FUNC) &_BigDataStatMeth_get_optimal_block_elements, 0},
+    {"_BigDataStatMeth_rcpp_default_compression_level", (DL_FUNC) &_BigDataStatMeth_rcpp_default_compression_level, 0},
+    {"_BigDataStatMeth_rcpp_effective_threads", (DL_FUNC) &_BigDataStatMeth_rcpp_effective_threads, 1},
     {"_BigDataStatMeth_bdWrite_hdf5_dimnames", (DL_FUNC) &_BigDataStatMeth_bdWrite_hdf5_dimnames, 5},
     {"_BigDataStatMeth_bdblockMult", (DL_FUNC) &_BigDataStatMeth_bdblockMult, 6},
     {"_BigDataStatMeth_bdblockSubstract", (DL_FUNC) &_BigDataStatMeth_bdblockSubstract, 6},

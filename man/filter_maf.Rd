@@ -28,26 +28,37 @@ filter_maf(x, ...)
 \item{out_dataset}{Output dataset name. \code{NULL} (default) = input name + \code{"_maf_filtered"}.}
 
 \item{maf_threshold}{Numeric in [0, 0.5]. MAF threshold (default \code{0.05}).
-SNPs with MAF \strong{above} this value are removed.}
+SNPs with MAF at or \strong{below} this value are removed.}
 
-\item{by_cols}{Logical. Process by columns (\code{FALSE}, default) or rows.}
+\item{by_cols}{Logical. Treat SNPs as columns (\code{TRUE}) or as rows
+(\code{FALSE}, default).}
 
 \item{block_size}{Integer. Block size for I/O. Default \code{100L}.}
 
 \item{overwrite}{Logical. Overwrite existing output. Default \code{FALSE}.}
 }
 \value{
-\code{HDF5Matrix} pointing to the filtered dataset.
+\code{HDF5Matrix} pointing to the filtered dataset, carrying the
+dimension names of the surviving elements.
 }
 \description{
-Removes columns or rows whose Minor Allele Frequency (MAF) exceeds
-\code{maf_threshold}. Designed for 0/1/2-coded diploid genotype matrices.
+Removes the columns or rows whose Minor Allele Frequency (MAF) is at or below
+\code{maf_threshold}, the usual way of dropping rare variants. Designed for
+0/1/2-coded diploid genotype matrices.
+
+MAF is computed as \code{maf = n0/n + 0.5 * n1/n}, taking \code{1 - maf} when
+that value exceeds 0.5, where \code{n0} and \code{n1} count the 0s and 1s of
+the feature. Only features with \code{maf > maf_threshold} are kept.
+
+Row and column names of \code{x}, when present, are carried over to the
+result: the names of the filtered axis are subset to the surviving elements.
 
 When \code{out_group}/\code{out_dataset} are \code{NULL} (default) the
 result is written alongside the input dataset with suffix \code{"_maf_filtered"}.
 }
 \examples{
 \donttest{
+set.seed(42)
 fn <- tempfile(fileext = ".h5")
 snps <- matrix(sample(c(0, 1, 2), 200, replace = TRUE,
                        prob = c(.6, .3, .1)), 20, 10)

@@ -38,7 +38,13 @@ namespace BigDataStatMeth {
      * @param dsOut Pointer to output HDF5 dataset where filtered data will be stored
      * @param bycols If true, process by columns; if false, process by rows
      * @param pcent Threshold percentage (0.0-1.0) of missing data to trigger removal
-     * 
+     * @param keptIndices Optional output vector. When not @c nullptr it is cleared
+     *        and filled with the 0-based indices, along the filtered axis, of the
+     *        elements that survived the filter, in increasing order. The axis is
+     *        HDF5 dimension 0 when @p bycols is true and HDF5 dimension 1
+     *        otherwise, i.e. exactly the axis whose extent shrinks. Callers use it
+     *        to carry metadata (e.g. dimension names) over to the output dataset.
+     *
      * @return int Number of rows/columns removed (negative) or error code
      * 
      * @throws H5::FileIException on file operation errors
@@ -71,13 +77,18 @@ namespace BigDataStatMeth {
      * int removed = Rcpp_Remove_Low_Data_hdf5(input, output, true, 0.5);
      * @endcode
      */
-    inline int Rcpp_Remove_Low_Data_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5Dataset* dsOut, bool bycols, double pcent)
+    inline int Rcpp_Remove_Low_Data_hdf5( BigDataStatMeth::hdf5Dataset* dsIn, BigDataStatMeth::hdf5Dataset* dsOut, bool bycols, double pcent,
+                                          std::vector<hsize_t>* keptIndices = nullptr)
     {
-        
+
         int itotrem = 0;
-        
+
+        if( keptIndices != nullptr) {
+            keptIndices->clear();
+        }
+
         try{
-        
+
             int ilimit,
                 blocksize = 1000;
             
@@ -122,35 +133,53 @@ namespace BigDataStatMeth {
                 std::vector<double> vdCurDataset( count[0] * count[1] ); 
                 dsIn->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdCurDataset.data() );
                 Eigen::MatrixXd data = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdCurDataset.data(), count[0], count[1] );
-                
-                
+
+                // Survivor mask for the current block, only built when the caller
+                // asked for the kept indices. Removal below walks the block
+                // backwards, so the loop variable is always the index the element
+                // had in the unfiltered block.
+                std::vector<bool> bkeep;
+                if( keptIndices != nullptr) {
+                    bkeep.assign(iread, true);
+                }
+
                 if(bycols == true) // We have to do it by rows
                 {
                     int readedrows = data.rows();
-                    
+
                     for( int row = readedrows-1 ; row>=0; row--)  // COMPLETE EXECUTION
                     {
                         if((data.row(row).array() == 3).count()/(double)count[1]>= pcent )
                         {
                             removeRow(data, row);
                             iblockrem = iblockrem + 1;
-                        } 
+                            if( keptIndices != nullptr) bkeep[row] = false;
+                        }
                     }
-                    
+
                 } else {
-                    
+
                     int readedcols = data.cols();
-                    
+
                     for( int col = readedcols-1 ; col>=0; col--)  // COMPLETE EXECUTION
-                    { 
+                    {
                         if((data.col(col).array() == 3).count()/(double)count[0]>=pcent )
                         {
                             removeColumn(data, col);
                             iblockrem = iblockrem + 1;
-                        } 
+                            if( keptIndices != nullptr) bkeep[col] = false;
+                        }
                     }
                 }
-                
+
+                if( keptIndices != nullptr) {
+                    for( int k = 0; k < iread; k++) {
+                        if( bkeep[k] ) {
+                            keptIndices->push_back( (hsize_t)(i*blocksize + k) );
+                        }
+                    }
+                }
+
                 int extendcols = data.cols();
                 int extendrows = data.rows();
                 

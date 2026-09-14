@@ -135,3 +135,45 @@ HDF5Matrix$set("public", "close", function() {
   # }
   invisible(self)
 })
+
+
+# @description Delete this dataset from its HDF5 file.
+#
+# @details
+# Closes the object's own handle and then unlinks the dataset from the file.
+# After \code{remove()} the object is invalid (\code{is_valid()} is
+# \code{FALSE}) and the dataset can no longer be opened.
+#
+# \strong{Space is not reclaimed:} HDF5 only removes the link. The disk space
+# stays allocated until the file is rewritten (e.g. \code{h5repack}). See
+# \code{\link{hdf5_remove}}.
+#
+# @return Invisible \code{TRUE}.
+#
+# @examples
+# \donttest{
+# tmp <- tempfile(fileext = ".h5")
+# hdf5_create_matrix(tmp, "data/X", data = matrix(1:100, 10, 10))
+# X <- hdf5_matrix(tmp, "data/X")
+# X$remove()
+# X$is_valid()  # FALSE
+# unlink(tmp)
+# }
+HDF5Matrix$set("public", "remove", function() {
+  filename <- private$filename
+  group    <- private$group
+  dataset  <- private$dataset
+
+  # Close our own handle first so the unlink is clean.
+  if (!is.null(private$ptr)) {
+      rcpp_hdf5dataset_close(private$ptr)
+      private$ptr <- NULL
+  }
+  # Invalidate any other live handles pointing at this dataset.
+  tryCatch(
+      rcpp_hdf5_close_at_paths(filename, paste(group, dataset, sep = "/")),
+      error = function(e) NULL
+  )
+
+  invisible(rcpp_hdf5_remove_dataset(filename, group, dataset))
+})

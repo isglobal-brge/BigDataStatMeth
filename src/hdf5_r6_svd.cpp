@@ -41,7 +41,10 @@
  *   \c file    — path to the HDF5 file (same as input),
  *   \c path_d  — full HDF5 path to singular values  (SVD/<dataset>/d),
  *   \c path_u  — full HDF5 path to left  vectors    (SVD/<dataset>/u),
- *   \c path_v  — full HDF5 path to right vectors    (SVD/<dataset>/v).
+ *   \c path_v  — full HDF5 path to right vectors    (SVD/<dataset>/v),
+ *   \c used_method — path actually taken: "full" (exact LAPACK) or "blocks"
+ *                    (hierarchical approximation),
+ *   \c exact   — TRUE when used_method == "full".
  *
  * @export
  */
@@ -74,7 +77,12 @@ Rcpp::List rcpp_hdf5dataset_svd(std::string filename,
         Rcpp::Nullable<int> n_threads =
             (threads < 0) ? R_NilValue : Rcpp::wrap(threads);
 
-        // Delegate — all HDF5 I/O happens inside the header
+        // Delegate — all HDF5 I/O happens inside the header.
+        // used_method receives the path actually taken ("full" = exact LAPACK,
+        // "blocks" = hierarchical approximation), which under method = "auto"
+        // is otherwise invisible to the caller.
+        std::string used_method;
+
         BigDataStatMeth::RcppbdSVD_hdf5(
             filename, group, dataset,
             k, q, nev,
@@ -83,17 +91,20 @@ Rcpp::List rcpp_hdf5dataset_svd(std::string filename,
             overwrite,
             /*asRowMajor=*/false,
             n_method,
-            n_threads
+            n_threads,
+            &used_method
         );
 
         // Build output paths (mirrors hdf5_SVD.cpp convention)
         const std::string svd_root = "SVD/" + dataset + "/";
 
         return Rcpp::List::create(
-            Rcpp::Named("file")   = filename,
-            Rcpp::Named("path_d") = svd_root + "d",
-            Rcpp::Named("path_u") = svd_root + "u",
-            Rcpp::Named("path_v") = svd_root + "v"
+            Rcpp::Named("file")        = filename,
+            Rcpp::Named("path_d")      = svd_root + "d",
+            Rcpp::Named("path_u")      = svd_root + "u",
+            Rcpp::Named("path_v")      = svd_root + "v",
+            Rcpp::Named("used_method") = used_method,
+            Rcpp::Named("exact")       = (used_method == "full")
         );
 
     } catch (H5::FileIException& e) {
@@ -106,4 +117,20 @@ Rcpp::List rcpp_hdf5dataset_svd(std::string filename,
         Rf_error("rcpp_hdf5dataset_svd: %s", e.what());
     }
     return R_NilValue;
+}
+
+
+// =============================================================================
+// Automatic path-selection boundary, read from the C++ single source of truth
+// -----------------------------------------------------------------------------
+// svd()/prcomp() on an HDF5Matrix with method = "auto" compute an EXACT LAPACK
+// decomposition below this element count and switch to the hierarchical block
+// APPROXIMATION at or above it.  Exposing the constant (rather than hard-coding
+// it again in R) keeps the documented boundary and the implemented boundary
+// from drifting apart.  Not exported in NAMESPACE — reach it with ':::'.
+// =============================================================================
+
+// [[Rcpp::export]]
+double rcpp_svd_auto_threshold() {
+    return static_cast<double>(BigDataStatMeth::SVD_EXACT_MAX_ELEMENTS);
 }

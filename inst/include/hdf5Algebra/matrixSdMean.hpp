@@ -40,14 +40,146 @@
 
 #include <RcppEigen.h>
 #include "H5Cpp.h"
+#include <cmath>
+#include <sstream>
+#include <string>
+#include <vector>
 
 namespace BigDataStatMeth {
+
+/**
+ * @brief Maximum number of example indices listed in a zero-variance report
+ */
+const int ZERO_VARIANCE_MAX_EXAMPLES = 5;
+
+/**
+ * @brief Build the message reported for constant (zero-variance) rows/columns
+ * @details Wording follows the precedent set by base R's prcomp(), which stops
+ * with "cannot rescale a constant/zero column to unit variance", and adds the
+ * information a user needs to fix the input: how many rows/columns are
+ * affected and a few of their positions.
+ *
+ * @param examples Positions of the offending rows/columns, 1-based, as seen
+ *        from R, at most ZERO_VARIANCE_MAX_EXAMPLES of them
+ * @param nzero Total number of offending rows/columns
+ * @param axis Noun used in the message, "column" or "row"
+ * @return The complete message
+ */
+inline std::string zeroVarianceMessage( const std::vector<hsize_t>& examples,
+                                        hsize_t nzero,
+                                        const std::string& axis )
+{
+    std::ostringstream msg;
+
+    msg << "cannot rescale a constant/zero " << axis << " to unit variance: "
+        << nzero << " " << axis << (nzero == 1 ? " has" : "s have")
+        << " zero or non-finite variance (";
+
+    if( (hsize_t)examples.size() < nzero ) { msg << "e.g. "; }
+    msg << axis << (examples.size() == 1 ? " " : "s ");
+
+    for( std::size_t i = 0; i < examples.size(); i++ ) {
+        if( i > 0 ) { msg << ", "; }
+        msg << examples[i];
+    }
+    msg << ")";
+
+    return msg.str();
+}
+
+/**
+ * @brief Guard a vector of standard deviations against zero variance
+ * @details Throws when any standard deviation is exactly zero or not finite,
+ * i.e. when scaling would divide by zero. Used by the SVD/PCA flow, where a
+ * silent 0/0 turns the whole decomposition into NaN and every singular value
+ * is reported as 0 with no indication of what went wrong.
+ *
+ * @param sd Standard deviations, one per row/column of the matrix as seen
+ *        from R, in R order
+ * @param axis Noun used in the message, "column" or "row"
+ * @throws std::runtime_error when at least one value is zero or not finite
+ */
+inline void checkNonZeroVarianceSd( const Eigen::RowVectorXd& sd,
+                                    const std::string& axis = "column" )
+{
+    std::vector<hsize_t> examples;
+    hsize_t nzero = 0;
+
+    for( Eigen::Index i = 0; i < sd.size(); i++ ) {
+        if( !std::isfinite(sd(i)) || sd(i) == 0.0 ) {
+            nzero++;
+            if( (int)examples.size() < ZERO_VARIANCE_MAX_EXAMPLES ) {
+                examples.push_back( (hsize_t)(i + 1) );   // 1-based, R convention
+            }
+        }
+    }
+
+    if( nzero > 0 ) {
+        throw std::runtime_error( zeroVarianceMessage(examples, nzero, axis) );
+    }
+
+    return void();
+}
+
+/**
+ * @brief Guard pre-computed mean/sd statistics against zero variance
+ * @details Convenience overload for the 2 x n layout produced by
+ * get_HDF5_mean_sd_by_row() and get_HDF5_mean_sd_by_column(): row 0 holds the
+ * means and row 1 the standard deviations.
+ *
+ * @param normalize 2 x n matrix of pre-computed statistics
+ * @param axis Noun used in the message, "column" or "row"
+ * @throws std::runtime_error when at least one standard deviation is zero or
+ *         not finite
+ */
+inline void checkNonZeroVariance( const Eigen::MatrixXd& normalize,
+                                  const std::string& axis = "column" )
+{
+    if( normalize.rows() < 2 ) { return void(); }
+    checkNonZeroVarianceSd( normalize.row(1), axis );
+    return void();
+}
+
+/**
+ * @brief Guard an in-memory matrix against constant columns before scaling
+ * @details Recomputes the column standard deviations exactly as
+ * RcppNormalizeColwise() does - centred when @p bcenter is true, root mean
+ * square otherwise, which is also what base::scale() does - so the guard fires
+ * precisely when the subsequent division would be by zero.
+ *
+ * @tparam M Eigen matrix or mapped matrix type
+ * @param X Matrix whose columns are about to be scaled
+ * @param bcenter Whether the data will also be centred
+ * @param axis Noun used in the message, "column" or "row", i.e. what a column
+ *        of @p X is from the point of view of the R caller
+ * @throws std::runtime_error when at least one column has zero or non-finite
+ *         standard deviation
+ */
+template< typename M>
+inline void checkNonZeroVarianceColwise( const M& X, bool bcenter,
+                                         const std::string& axis = "column" )
+{
+    if( X.rows() < 2 ) { return void(); }   // sd undefined, nothing to assert
+
+    Eigen::RowVectorXd sd;
+
+    if( bcenter ) {
+        Eigen::RowVectorXd mean = X.colwise().mean();
+        sd = ((X.rowwise() - mean).array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+    } else {
+        sd = (X.array().square().colwise().sum() / (X.rows() - 1)).sqrt();
+    }
+
+    checkNonZeroVarianceSd( sd, axis );
+
+    return void();
+}
 
 /**
  * @brief Calculate optimal block size for processing
  * @details Determines the optimal block size for processing based on matrix
  * dimensions and memory constraints.
- * 
+ *
  * @param wsize User-specified block size (optional)
  * @param reference_size Primary dimension size
  * @param alternative_size Secondary dimension size

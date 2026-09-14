@@ -3,6 +3,9 @@
 \name{diag<-}
 \alias{diag<-}
 \title{Set diagonal of an HDF5Matrix (generic)}
+\usage{
+diag(x) <- value
+}
 \arguments{
 \item{x}{A matrix or \code{HDF5Matrix} object.}
 

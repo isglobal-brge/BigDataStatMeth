@@ -362,7 +362,8 @@ namespace BigDataStatMeth {
                              bool bcenter, bool bscale, double dthreshold, 
                              bool bforce, bool asRowMajor, 
                              Rcpp::Nullable<Rcpp::CharacterVector> method = R_NilValue,
-                             Rcpp::Nullable<int> ithreads = R_NilValue)
+                             Rcpp::Nullable<int> ithreads = R_NilValue,
+                             std::string* usedMethod = nullptr)
     {
         
         try{
@@ -399,10 +400,10 @@ namespace BigDataStatMeth {
                 dsA->openDataset();
                 if( dsA->getDatasetptr() == nullptr ) { return void(); }
                 RcppTypifyNormalizeHdf5( dsA.get(), bcenter, bscale, false); // Normalize and tipify data ( ((x-mu)/(sd)) * 1/sqrt(n-1) )
-                BigDataStatMeth::RcppbdSVD_hdf5( filename, "NORMALIZED_T/" + strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, method, ithreads );
+                BigDataStatMeth::RcppbdSVD_hdf5( filename, "NORMALIZED_T/" + strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, method, ithreads, usedMethod );
             } else {
                 // center=FALSE, scale=FALSE: SVD on raw data, no normalization
-                BigDataStatMeth::RcppbdSVD_hdf5( filename, strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, method, ithreads );
+                BigDataStatMeth::RcppbdSVD_hdf5( filename, strgroup, strdataset, k, q, nev, false, false, dthreshold, bforce, asRowMajor, method, ithreads, usedMethod );
             }
             strSVDgroup = "SVD/" + strdataset;
             

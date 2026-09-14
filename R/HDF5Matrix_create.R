@@ -119,9 +119,11 @@ hdf5_create_matrix <- function(filename,
             stop("nrow and ncol must be >= 1")
     }
 
-    # --- compression: override > global option > 6 ---
-    compression_eff <- as.integer(.get_option("compression", default = 6L,
-                                               override = compression))
+    # --- compression: override > global option > package default ---
+    compression_eff <- as.integer(
+        .get_option("compression",
+                    default  = rcpp_default_compression_level(),
+                    override = compression))
 
     # --- dtype mapping ---
     dtype_bd <- switch(dtype,

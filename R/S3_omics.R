@@ -1,9 +1,12 @@
 # S3_omics.R
 #
 # S3 generics and HDF5Matrix methods for omics-specific operations (Phase 12):
-#   impute_snps()         — fill NAs in SNP data
+#   impute_snps()         — fill missing values in SNP data
 #   filter_low_coverage() — remove high-missingness features
 #   filter_maf()          — remove low-MAF SNPs
+#
+# Missing values follow the 0/1/2/3 genotype encoding of the omics layer:
+# the value 3 marks a missing entry, R NAs are not recognised as such.
 
 
 # ── impute_snps() ────────────────────────────────────────────────────────────
@@ -11,22 +14,30 @@
 #' Impute missing SNP values in an HDF5Matrix
 #'
 #' @description
-#' Fills NA entries in SNP data by computing column or row means of non-missing
-#' values. Intended for 0/1/2-coded diploid genotype matrices.
+#' Fills the missing entries of SNP data by computing column or row means of the
+#' non-missing values. Intended for 0/1/2-coded diploid genotype matrices in
+#' which missing genotypes are stored as the value \code{3}; \code{NA} values
+#' must be recoded to \code{3} before calling this function.
 #'
-#' @param x           An \code{HDF5Matrix} containing SNP data with NAs.
+#' Row and column names of \code{x}, when present, are carried over to the
+#' result.
+#'
+#' @param x           An \code{HDF5Matrix} containing SNP data with missing
+#'   values coded as \code{3}.
 #' @param out_group   Output group. \code{NULL} = same as input (default).
 #' @param out_dataset Output dataset name. \code{NULL} = same as input (default, in-place).
 #' @param by_cols     Logical. Impute by columns (\code{TRUE}, default) or rows.
 #' @param threads     Integer. Number of threads (-1 = auto).
 #' @param overwrite   Logical. Overwrite existing output. Default \code{FALSE}.
 #' @param ...         Ignored.
-#' @return \code{HDF5Matrix} pointing to the imputed dataset.
+#' @return \code{HDF5Matrix} pointing to the imputed dataset, carrying the
+#'   dimension names of \code{x}.
 #'
 #' @examples
 #' \donttest{
+#' set.seed(42)
 #' tmp <- tempfile(fileext = ".h5")
-#' 
+#'
 #' # SNP data: 0/1/2 coded, 3 = missing (not NA)
 #' snps <- matrix(sample(c(0L, 1L, 2L, 3L), 100 * 20,
 #'                        replace = TRUE,
@@ -66,34 +77,48 @@ impute_snps.HDF5Matrix <- function(x,
 #' Remove high-missingness features from an HDF5Matrix
 #'
 #' @description
-#' Removes columns (SNPs) or rows (samples) whose proportion of missing values
-#' (NAs) exceeds \code{pcent}. Writes result to a new dataset.
+#' Removes columns (SNPs) or rows (samples) that carry too many missing values.
+#' Writes the result to a new dataset.
+#'
+#' Missing values are the entries equal to \code{3}, the missing-data code of
+#' the 0/1/2/3 genotype encoding shared by the omics functions; \code{NA} or
+#' \code{NaN} entries are \strong{not} counted, so recode them to \code{3}
+#' beforehand. A column (or row) is removed when its proportion of \code{3}s is
+#' greater than or equal to \code{pcent}.
+#'
+#' Row and column names of \code{x}, when present, are carried over to the
+#' result: the names of the filtered axis are subset to the surviving elements.
 #'
 #' When \code{out_group}/\code{out_dataset} are \code{NULL} (default) the result
 #' is written alongside the input dataset with the suffix \code{"_filtered"}.
 #'
-#' @param x           An \code{HDF5Matrix} containing SNP data.
+#' @param x           An \code{HDF5Matrix} containing SNP data with missing
+#'   values coded as \code{3}.
 #' @param out_group   Output group. \code{NULL} (default) = same group as input.
 #' @param out_dataset Output dataset name. \code{NULL} (default) = input name + \code{"_filtered"}.
-#' @param pcent       Numeric in \[0,1\]. Maximum allowed NA proportion
-#'   (default \code{0.05}). Features above this are removed.
+#' @param pcent       Numeric in \[0,1\]. Missing-data threshold
+#'   (default \code{0.05}). Features whose proportion of \code{3}s reaches this
+#'   value are removed.
 #' @param by_cols     Logical. Filter columns (\code{TRUE}, default) or rows.
 #' @param overwrite   Logical. Overwrite existing output. Default \code{FALSE}.
 #' @param ...         Ignored.
-#' @return \code{HDF5Matrix} pointing to the filtered dataset.
+#' @return \code{HDF5Matrix} pointing to the filtered dataset, carrying the
+#'   dimension names of the surviving elements.
 #'
 #' @examples
 #' \donttest{
+#' set.seed(42)
 #' fn <- tempfile(fileext = ".h5")
-#' snps <- matrix(sample(c(0, 1, 2, NA), 200, replace = TRUE,
-#'                        prob = c(.25, .25, .25, .25)), 20, 10)
+#' # 0/1/2 genotypes with about 10% missing values, coded as 3
+#' snps <- matrix(sample(c(0, 1, 2, 3), 200, replace = TRUE,
+#'                        prob = c(.3, .3, .3, .1)), 20, 10)
 #' X   <- hdf5_create_matrix(fn, "geno/raw", data = snps)
-#' 
+#'
 #' # Filter with auto output path (adds "_filtered" suffix)
-#' out <- filter_low_coverage(X, pcent = 0.1)
-#' 
+#' out <- filter_low_coverage(X, pcent = 0.2)
+#'
 #' # Filter with explicit output
-#' out2 <- filter_low_coverage(X, out_group = "geno",
+#' out2 <- filter_low_coverage(X, pcent = 0.2, out_group = "geno",
 #'                              out_dataset = "filtered", overwrite = TRUE)
 #' hdf5_close_all()
 #' unlink(fn)
@@ -127,8 +152,16 @@ filter_low_coverage.HDF5Matrix <- function(x,
 #' Remove SNPs by Minor Allele Frequency from an HDF5Matrix
 #'
 #' @description
-#' Removes columns or rows whose Minor Allele Frequency (MAF) exceeds
-#' \code{maf_threshold}. Designed for 0/1/2-coded diploid genotype matrices.
+#' Removes the columns or rows whose Minor Allele Frequency (MAF) is at or below
+#' \code{maf_threshold}, the usual way of dropping rare variants. Designed for
+#' 0/1/2-coded diploid genotype matrices.
+#'
+#' MAF is computed as \code{maf = n0/n + 0.5 * n1/n}, taking \code{1 - maf} when
+#' that value exceeds 0.5, where \code{n0} and \code{n1} count the 0s and 1s of
+#' the feature. Only features with \code{maf > maf_threshold} are kept.
+#'
+#' Row and column names of \code{x}, when present, are carried over to the
+#' result: the names of the filtered axis are subset to the surviving elements.
 #'
 #' When \code{out_group}/\code{out_dataset} are \code{NULL} (default) the
 #' result is written alongside the input dataset with suffix \code{"_maf_filtered"}.
@@ -137,15 +170,18 @@ filter_low_coverage.HDF5Matrix <- function(x,
 #' @param out_group     Output group. \code{NULL} (default) = same group as input.
 #' @param out_dataset   Output dataset name. \code{NULL} (default) = input name + \code{"_maf_filtered"}.
 #' @param maf_threshold Numeric in \[0, 0.5\]. MAF threshold (default \code{0.05}).
-#'   SNPs with MAF **above** this value are removed.
-#' @param by_cols       Logical. Process by columns (\code{FALSE}, default) or rows.
+#'   SNPs with MAF at or **below** this value are removed.
+#' @param by_cols       Logical. Treat SNPs as columns (\code{TRUE}) or as rows
+#'   (\code{FALSE}, default).
 #' @param block_size    Integer. Block size for I/O. Default \code{100L}.
 #' @param overwrite     Logical. Overwrite existing output. Default \code{FALSE}.
 #' @param ...           Ignored.
-#' @return \code{HDF5Matrix} pointing to the filtered dataset.
+#' @return \code{HDF5Matrix} pointing to the filtered dataset, carrying the
+#'   dimension names of the surviving elements.
 #'
 #' @examples
 #' \donttest{
+#' set.seed(42)
 #' fn <- tempfile(fileext = ".h5")
 #' snps <- matrix(sample(c(0, 1, 2), 200, replace = TRUE,
 #'                        prob = c(.6, .3, .1)), 20, 10)

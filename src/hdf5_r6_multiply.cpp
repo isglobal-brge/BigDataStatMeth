@@ -109,7 +109,12 @@ Rcpp::List rcpp_hdf5dataset_multiply(SEXP ptr_a,
             throw std::runtime_error("Dataset is closed");
 
         //.. 20260304 ..// const std::string filename = dsA_raw->getFileName();
-        const std::string filename = dsA_raw->getFullPath();
+        // Each operand is opened from its OWN file (fileA / fileB). The result
+        // is written to A's file (fileA) BY DESIGN: a caller may pass a small or
+        // temporary matrix as A and a large read-only matrix as B, and expects
+        // the output to land next to A, never inside B's file.
+        const std::string fileA    = dsA_raw->getFullPath();
+        const std::string fileB    = dsB_raw->getFullPath();
         const std::string groupA   = dsA_raw->getGroup();
         const std::string nameA    = dsA_raw->getDatasetName();
         const std::string groupB   = dsB_raw->getGroup();
@@ -121,11 +126,11 @@ Rcpp::List rcpp_hdf5dataset_multiply(SEXP ptr_a,
             throw std::runtime_error("Non-conformable matrices");
 
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, nameA, false));
+            new BigDataStatMeth::hdf5Dataset(fileA, groupA, nameA, false));
         dsA->openDataset();
 
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(
-            new BigDataStatMeth::hdf5Dataset(filename, groupB, nameB, false));
+            new BigDataStatMeth::hdf5Dataset(fileB, groupB, nameB, false));
         dsB->openDataset();
 
         if (dsA->getDatasetptr() == nullptr || dsB->getDatasetptr() == nullptr)
@@ -138,14 +143,14 @@ Rcpp::List rcpp_hdf5dataset_multiply(SEXP ptr_a,
             ? (nameA + "_x_" + nameB)
             : Rcpp::as<std::string>(outdataset);
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-                new BigDataStatMeth::hdf5Dataset(filename, out_group, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(fileA, out_group, result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         BigDataStatMeth::multiplication(dsA.get(), dsB.get(), dsC.get(),
                                         transpose_a, transpose_b,
                                         paral, block_size, threads);
 
-        lst["filename"] = filename;
+        lst["filename"] = fileA;
         lst["path"] = out_group + "/" + result_name;
 
     } catch (H5::FileIException& e) {
@@ -208,20 +213,25 @@ Rcpp::List rcpp_hdf5dataset_crossprod(SEXP ptr_a,
             throw std::runtime_error("Invalid external pointer");
 
         //.. 20260304 ..// const std::string filename = dsA_raw->getFileName();
-        const std::string filename = dsA_raw->getFullPath();
+        // Each operand is opened from its OWN file (fileA / fileB). The result
+        // is written to A's file (fileA) BY DESIGN: a caller may pass a small or
+        // temporary matrix as A and a large read-only matrix as B, and expects
+        // the output to land next to A, never inside B's file.
+        const std::string fileA    = dsA_raw->getFullPath();
+        const std::string fileB    = dsB_raw->getFullPath();
         const std::string groupA   = dsA_raw->getGroup();
         const std::string nameA    = dsA_raw->getDatasetName();
         const std::string groupB   = dsB_raw->getGroup();
         const std::string nameB    = dsB_raw->getDatasetName();
 
-        const bool bisSymetric = (groupA == groupB && nameA == nameB);
+        const bool bisSymetric = (fileA == fileB && groupA == groupB && nameA == nameB);
 
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, nameA, false));
+            new BigDataStatMeth::hdf5Dataset(fileA, groupA, nameA, false));
         dsA->openDataset();
         
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(
-            new BigDataStatMeth::hdf5Dataset(filename, groupB, nameB, false));
+            new BigDataStatMeth::hdf5Dataset(fileB, groupB, nameB, false));
         dsB->openDataset();
 
         if (dsA->getDatasetptr() == nullptr || dsB->getDatasetptr() == nullptr)
@@ -243,7 +253,7 @@ Rcpp::List rcpp_hdf5dataset_crossprod(SEXP ptr_a,
                    : ("CrossProd_" + nameA + "_x_" + nameB))
             : Rcpp::as<std::string>(outdataset);
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-                new BigDataStatMeth::hdf5Dataset(filename, out_group, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(fileA, out_group, result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         bool bparal = false;
@@ -260,7 +270,7 @@ Rcpp::List rcpp_hdf5dataset_crossprod(SEXP ptr_a,
                                        false, true, threads);
         }
 
-        lst["filename"] = filename;
+        lst["filename"] = fileA;
         lst["path"] = out_group + "/" + result_name;
 
     } catch (H5::FileIException& e) {
@@ -322,20 +332,25 @@ Rcpp::List rcpp_hdf5dataset_tcrossprod(SEXP ptr_a,
             throw std::runtime_error("Invalid external pointer");
 
         //.. 20260304 ..// const std::string filename = dsA_raw->getFileName();
-        const std::string filename = dsA_raw->getFullPath();
+        // Each operand is opened from its OWN file (fileA / fileB). The result
+        // is written to A's file (fileA) BY DESIGN: a caller may pass a small or
+        // temporary matrix as A and a large read-only matrix as B, and expects
+        // the output to land next to A, never inside B's file.
+        const std::string fileA    = dsA_raw->getFullPath();
+        const std::string fileB    = dsB_raw->getFullPath();
         const std::string groupA   = dsA_raw->getGroup();
         const std::string nameA    = dsA_raw->getDatasetName();
         const std::string groupB   = dsB_raw->getGroup();
         const std::string nameB    = dsB_raw->getDatasetName();
 
-        const bool bisSymetric = (groupA == groupB && nameA == nameB);
+        const bool bisSymetric = (fileA == fileB && groupA == groupB && nameA == nameB);
 
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsA(
-            new BigDataStatMeth::hdf5Dataset(filename, groupA, nameA, false));
+            new BigDataStatMeth::hdf5Dataset(fileA, groupA, nameA, false));
         dsA->openDataset();
         
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsB(
-            new BigDataStatMeth::hdf5Dataset(filename, groupB, nameB, false));
+            new BigDataStatMeth::hdf5Dataset(fileB, groupB, nameB, false));
         dsB->openDataset();
 
         if (dsA->getDatasetptr() == nullptr || dsB->getDatasetptr() == nullptr)
@@ -357,7 +372,7 @@ Rcpp::List rcpp_hdf5dataset_tcrossprod(SEXP ptr_a,
                    : ("tCrossProd_" + nameA + "_x_" + nameB))
             : Rcpp::as<std::string>(outdataset);
         std::unique_ptr<BigDataStatMeth::hdf5Dataset> dsC(
-                new BigDataStatMeth::hdf5Dataset(filename, out_group, result_name, true));
+                new BigDataStatMeth::hdf5Dataset(fileA, out_group, result_name, true));
         dsC->setCompressionLevel(compression.isNotNull() ? Rcpp::as<int>(compression) : dsA->getCompressionLevel());
 
         bool bparal = false;
@@ -374,7 +389,7 @@ Rcpp::List rcpp_hdf5dataset_tcrossprod(SEXP ptr_a,
                                         false, true, threads);
         }
 
-        lst["filename"] = filename;
+        lst["filename"] = fileA;
         lst["path"] = out_group + "/" + result_name;
 
     } catch (H5::FileIException& e) {

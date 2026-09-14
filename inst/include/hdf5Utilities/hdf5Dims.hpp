@@ -324,6 +324,21 @@ namespace BigDataStatMeth
                     Rcpp::String wchrom = Rcpp::as<Rcpp::StringVector>(DatasetValues)(i);
                     std::string word = wchrom.get_cstring();
 
+                    // Identifiers must never be truncated (see writeStringVector):
+                    // a truncated id can silently collide with another. Byte count.
+                    if( word.size() > (size_t)(MAXSTRING-1) ) {
+                        std::string preview = word.substr(0, 40);
+                        if( word.size() > 40 ) preview += "...";
+                        throw std::runtime_error(
+                            "dimname/identifier at position " +
+                            std::to_string(i + 1) + " is " +
+                            std::to_string(word.size()) + " bytes ('" + preview +
+                            "'), exceeding the maximum storable identifier length "
+                            "of " + std::to_string(MAXSTRING - 1) + " bytes. "
+                            "Identifiers are never truncated; shorten the id or "
+                            "raise MAXSTRING in BigDataStatMeth.hpp.");
+                    }
+
                     for( j = 0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ) {
                         names_list[i].chr[j] = word[j];
                     }
@@ -368,7 +383,36 @@ namespace BigDataStatMeth
                 if (Rcpp::is<Rcpp::StringVector>(DatasetValues))
                 {
                     vectorsize = DatasetValues.length();
-                    
+
+                    // Fail-fast on over-long identifiers. dimnames (row/col
+                    // names) are IDENTIFIERS: a silently truncated id can
+                    // collide with another and corrupt cross-layer sample
+                    // matching, so we ABORT the write instead of truncating.
+                    // Measured in BYTES (std::string::size()), matching the
+                    // fixed on-disk store, so multibyte ids are handled
+                    // correctly. Validated up front, before the dataset is
+                    // created, so a failure leaves no partial dataset behind.
+                    for (hsize_t k = 0; k < vectorsize; k++) {
+                        Rcpp::String ws = Rcpp::as<Rcpp::StringVector>(DatasetValues)(k);
+                        std::string w = ws.get_cstring();
+                        w.erase(std::remove(w.begin(), w.end(), '"'), w.end());
+                        if (w.size() > (size_t)(MAXSTRING - 1)) {
+                            std::string preview = w.substr(0, 40);
+                            if (w.size() > 40) preview += "...";
+                            throw std::runtime_error(
+                                "dimname/identifier at position " +
+                                std::to_string((long)(k + 1)) + " is " +
+                                std::to_string(w.size()) + " bytes ('" + preview +
+                                "'), exceeding the maximum storable identifier "
+                                "length of " + std::to_string(MAXSTRING - 1) +
+                                " bytes. Identifiers are never truncated (a "
+                                "truncated id could silently collide with "
+                                "another and corrupt cross-layer matching); "
+                                "shorten the id or raise MAXSTRING in "
+                                "BigDataStatMeth.hpp.");
+                        }
+                    }
+
                     // Define hdf5 dataspace size
                     hsize_t dims[] = {vectorsize};
                     H5::DataSpace dataspace(RANK1, dims);
@@ -410,7 +454,7 @@ namespace BigDataStatMeth
                                 int j=0;
                                 for( j = 0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ){
                                     names_list[row].chr[j] = word[j]; }
-                                
+
                                 names_list[row].chr[j] = '\0'; // insert hdf5 end of string
                             }
                             
@@ -450,14 +494,14 @@ namespace BigDataStatMeth
                             for( j=0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ) {
                                         names_list[i].chr[j] = word[j];
                             }
-                            
+
                             names_list[i].chr[j] = '\0'; // insert hdf5 end of string
                         }
-                        
+
                         dataset->write(names_list, mtype);
                         delete[] names_list;
                     }
-                    
+
                     // Release resources
                     dataspace.close();
                 }

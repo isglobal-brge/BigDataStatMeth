@@ -20,7 +20,7 @@
  * - Automatic resource management
  * 
  * Compression level management:
- * - Each dataset instance tracks its own compression level (default = 6, gzip balanced)
+ * - Each dataset instance tracks its own compression level (default = DEFAULT_COMPRESSION_LEVEL = 6)
  * - When creating a new dataset, compression_level controls gzip compression (0 = none, 1-9)
  * - When opening an existing dataset via openDataset(), the actual compression level is
  *   read from the HDF5 dataset creation property list (dcpl) and stored in compression_level.
@@ -162,7 +162,7 @@ public:
      * @details Sets the compression level used by createDataset() when no explicit
      * compression_level argument is passed. Call this before createDataset() to
      * propagate compression settings from an input dataset to an output dataset.
-     * @param level Compression level 0-9 (0 = no compression, 6 = balanced default)
+     * @param level Compression level 0-9 (0 = no compression, 6 = package default)
      */
     void setCompressionLevel(int level) {
         compression_level = level;
@@ -181,7 +181,7 @@ public:
      *   1. Explicit user value via setCompressionLevel()
      *   2. Global option passed by the R6 wrapper via setCompressionLevel()
      *   3. Inherited from input dataset via inheritCompressionLevel()  ← this function
-     *   4. Built-in default (6) applied in createDataset() when level is still -1
+     *   4. Built-in default (DEFAULT_COMPRESSION_LEVEL = 6) applied in createDataset() when level is still -1
      *
      * Use this instead of setCompressionLevel() inside algorithm headers:
      * @code
@@ -230,7 +230,7 @@ public:
     * @param rows Number of rows
     * @param cols Number of columns  
     * @param strdatatype Data type ("int", "numeric", "real", or "string")
-    * @param compression_level Compression level (0=none, 1-9=gzip level, 6=balanced default)
+    * @param compression_level Compression level (0=none, 1-9=gzip level, 6=package default)
     *                         Higher values = better compression, more CPU usage
     * 
     * @throws H5::FileIException if file operations fail
@@ -240,7 +240,8 @@ public:
     * @note Compression is applied only at dataset creation time
     * @note Chunking is automatically configured when compression > 0
     * @note All subsequent read/write operations are transparent regardless of compression
-    * @note Typical space savings: 60-80% with compression_level=6
+    * @note Typical space savings on compressible data: ~90% at level 1, ~95% at level 6
+    * @note On continuous (e.g. Gaussian) data deflate finds almost nothing at any level
     * 
     * @since Added compression support in version X.X.X
     */
@@ -254,7 +255,7 @@ public:
             bool bRemoved = false;
             
             int eff_compression = (compression_level < 0) ? this->compression_level : compression_level;
-            if (eff_compression < 0) eff_compression = 6;  // default if eff_compression not setted
+            if (eff_compression < 0) eff_compression = DEFAULT_COMPRESSION_LEVEL;  // default if eff_compression not setted
             
             // dataset dimensions
             dimDataset[0] = cols;
@@ -359,7 +360,7 @@ public:
      * 
      * @param dsLike Reference dataset to copy dimensions from
      * @param strdatatype Data type for the new dataset ("int", "numeric", "real", "string")
-     * @param compression_level Compression level (0=none, 1-9=gzip level, 6=balanced default)
+     * @param compression_level Compression level (0=none, 1-9=gzip level, 6=package default)
      *                         0 = No compression
      *                         1-3 = Light compression (fast)
      *                         4-6 = Balanced compression (recommended)
@@ -419,7 +420,7 @@ public:
      * @param cols Initial number of columns (used as chunk size)  
      * @param strdatatype Data type for the dataset ("int", "numeric")
      *                    Note: String type not supported for unlimited datasets
-     * @param compression_level Compression level (0=none, 1-9=gzip level, 6=balanced default)
+     * @param compression_level Compression level (0=none, 1-9=gzip level, 6=package default)
      *                         Recommended: 4-6 for unlimited datasets to balance 
      *                         compression ratio with extension performance
      * 
@@ -448,7 +449,7 @@ public:
             std::string fullDatasetPath = groupname + "/" + name;
             
             int eff_compression = (compression_level < 0) ? this->compression_level : compression_level;
-            if (eff_compression < 0) eff_compression = 6;  // default si nadie lo fijó
+            if (eff_compression < 0) eff_compression = DEFAULT_COMPRESSION_LEVEL;  // default si nadie lo fijó
             
             // dataset dimensions
             dimDataset[0] = cols;
@@ -2233,19 +2234,33 @@ protected:
             isizetoWrite = dimDataset[0] * dimDataset[1]; } 
         
         names *names_list = new names[isizetoWrite];  // Convert to range list
-        
-        // Write data to dataset, if data to write is smaller than dataset then empty positions='\0' 
+
+        // Write data to dataset, if data to write is smaller than dataset then empty positions='\0'
+        size_t ntrunc = 0, maxlen = 0;
         for( int i = 0; i < isizetoWrite; i++ ) {
             int j = 0;
             if(i< datarows) {
                 Rcpp::String wchrom = Rcpp::as<Rcpp::StringVector>(DatasetValues)(i);
                 std::string word = wchrom.get_cstring();
-                
+
                 for( j = 0; (unsigned)j < word.size() && j < (MAXSTRING-1); j++ ) {
-                    names_list[i].chr[j] = word[j]; 
+                    names_list[i].chr[j] = word[j];
+                }
+                if( word.size() > (size_t)(MAXSTRING-1) ) {
+                    ntrunc++;
+                    if( word.size() > maxlen ) maxlen = word.size();
                 }
             }
             names_list[i].chr[j] = '\0'; // insert hdf5 end of string
+        }
+        if( ntrunc > 0 ) {
+            Rcpp::warning(
+                "convert_DataFrame_to_RangeList: " + std::to_string(ntrunc) +
+                " string(s) exceeded the maximum stored length of " +
+                std::to_string(MAXSTRING - 1) +
+                " characters and were truncated (longest = " +
+                std::to_string(maxlen) + "). Increase MAXSTRING in"
+                " BigDataStatMeth.hpp to store them in full.");
         }
         return(names_list);
     }
@@ -2348,29 +2363,50 @@ private:
                 return Rcpp::CharacterVector(0);
             
             typedef struct name_t { char chr[MAXSTRING]; } name_t;
-            
+
             H5::DataSet   hds  = pfile->openDataSet(path);
             H5::DataSpace spc  = hds.getSpace();
             hsize_t       dims[1] = {0};
             spc.getSimpleExtentDims(dims);
-            
+
             if (dims[0] == 0) {
                 hds.close();
                 return Rcpp::CharacterVector(0);
             }
-            
+
             H5::CompType mtype(sizeof(name_t));
             mtype.insertMember("chr", HOFFSET(name_t, chr),
                                H5::StrType(H5::PredType::C_S1, MAXSTRING));
-            
-            std::vector<name_t> buf(dims[0]);
-            hds.read(buf.data(), mtype);
+
+            const hsize_t n = dims[0];
+            Rcpp::CharacterVector cv(n);
+
+            // Block-wise read: never materialize n * MAXSTRING bytes at once.
+            // Peak RAM is bounded by MAXSTRBLOCK * MAXSTRING, independent of the
+            // number of names, so a wide dimension (e.g. hundreds of thousands
+            // of colnames) stays memory-safe even with a larger MAXSTRING.
+            // Mirrors the block-wise write in hdf5Dims::writeStringVector().
+            std::vector<name_t> buf(n < MAXSTRBLOCK ? n : MAXSTRBLOCK);
+            for (hsize_t offset = 0; offset < n; offset += MAXSTRBLOCK) {
+                hsize_t remaining = n - offset;
+                hsize_t ilength = remaining < MAXSTRBLOCK ? remaining : MAXSTRBLOCK;
+
+                hsize_t count[1] = { ilength };
+                hsize_t start[1] = { offset };
+                spc.selectHyperslab(H5S_SELECT_SET, count, start);
+
+                H5::DataSpace memspace(RANK1, count, NULL);
+                hds.read(buf.data(), mtype, memspace, spc);
+                memspace.close();
+
+                for (hsize_t i = 0; i < ilength; ++i) {
+                    // Guard against a non-null-terminated exact-length string.
+                    buf[i].chr[MAXSTRING - 1] = '\0';
+                    cv[static_cast<int>(offset + i)] = std::string(buf[i].chr);
+                }
+            }
             hds.close();
-            
-            Rcpp::CharacterVector cv(dims[0]);
-            for (hsize_t i = 0; i < dims[0]; ++i)
-                cv[static_cast<int>(i)] = std::string(buf[i].chr);
-            
+
             return cv;
             
         } catch (H5::FileIException& e) {
@@ -2419,18 +2455,36 @@ private:
             mtype.insertMember("chr", HOFFSET(name_t, chr),
                                H5::StrType(H5::PredType::C_S1, MAXSTRING));
             
-            H5::DataSet hds = pfile->createDataSet(path, mtype, spc);
-            
+            // Fail-fast: these datasets hold IDENTIFIERS (row/col names); a
+            // silently truncated id can collide with another and corrupt
+            // cross-layer matching. Validate in BYTES and build the buffer
+            // BEFORE creating the dataset, so a failure leaves no partial
+            // dataset behind.
             std::vector<name_t> buf(n);
             for (hsize_t i = 0; i < n; ++i) {
                 std::string word = Rcpp::as<std::string>(
                     values[static_cast<int>(i)]);
+                if (word.size() > (size_t)(MAXSTRING - 1)) {
+                    std::string preview = word.substr(0, 40);
+                    if (word.size() > 40) preview += "...";
+                    throw std::runtime_error(
+                        "dimname/identifier at position " +
+                        std::to_string((long)(i + 1)) + " is " +
+                        std::to_string(word.size()) + " bytes ('" + preview +
+                        "'), exceeding the maximum storable identifier length "
+                        "of " + std::to_string(MAXSTRING - 1) + " bytes. "
+                        "Identifiers are never truncated (a truncated id could "
+                        "silently collide with another and corrupt cross-layer "
+                        "matching); shorten the id or raise MAXSTRING in "
+                        "BigDataStatMeth.hpp.");
+                }
                 hsize_t j = 0;
                 for (; j < word.size() && j < MAXSTRING - 1; ++j)
                     buf[i].chr[j] = word[j];
                 buf[i].chr[j] = '\0';
             }
-            
+
+            H5::DataSet hds = pfile->createDataSet(path, mtype, spc);
             hds.write(buf.data(), mtype);
             hds.close();
             spc.close();

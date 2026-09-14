@@ -29,6 +29,21 @@
 
 // Platform-specific headers
 #ifdef _WIN32
+    // Must precede <windows.h>: keep the Windows headers minimal and stop them
+    // from defining ERROR (collides with R) and min/max (collide with the
+    // std::min / std::max used throughout the package).  Same convention HDF5
+    // itself uses in H5private.h.  SystemInfo.hpp is the first header in the
+    // package that pulls <windows.h> in, so the guards belong here as well as
+    // in system-utils.hpp.
+    #ifndef WIN32_LEAN_AND_MEAN
+    #define WIN32_LEAN_AND_MEAN
+    #endif
+    #ifndef NOGDI
+    #define NOGDI
+    #endif
+    #ifndef NOMINMAX
+    #define NOMINMAX
+    #endif
     #include <windows.h>
 #elif defined(__linux__)
     #include <unistd.h>

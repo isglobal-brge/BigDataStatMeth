@@ -70,7 +70,7 @@ qr.default <- function(x, tol = 1e-07, LAPACK = FALSE, ...) {
 #'   }
 #' @param compression Integer (0-9) or NULL. gzip compression level for the
 #'   result datasets.  NULL uses the global option set by
-#'   \code{\link{hdf5matrix_options}} (default 6).  Use \code{0} to disable
+#'   \code{\link{hdf5matrix_options}} (default 1).  Use \code{0} to disable
 #'   compression (faster for benchmarks).
 #' @param ...        Ignored (for S3 compatibility).
 #' @return Named list: \code{Q} (\code{HDF5Matrix}), \code{R} (\code{HDF5Matrix}).
@@ -142,7 +142,7 @@ qr.HDF5Matrix <- function(x,
 #' @param block_size Integer or NULL. Elements per block.  NULL = auto.
 #' @param compression Integer (0-9) or NULL. gzip compression level for the
 #'   result dataset.  NULL uses the global option set by
-#'   \code{\link{hdf5matrix_options}} (default 6).  Use \code{0} to disable
+#'   \code{\link{hdf5matrix_options}} (default 1).  Use \code{0} to disable
 #'   compression (faster for benchmarks).
 #' @param ...        Ignored (for S3 compatibility).
 #' @return \code{HDF5Matrix} containing the upper-triangular Cholesky factor U
@@ -200,7 +200,7 @@ chol.HDF5Matrix <- function(x,
 #' @param block_size Integer or NULL. Elements per block.  NULL = auto.
 #' @param compression Integer (0-9) or NULL. gzip compression level for the
 #'   result dataset.  NULL uses the global option set by
-#'   \code{\link{hdf5matrix_options}} (default 6).  Use \code{0} to disable
+#'   \code{\link{hdf5matrix_options}} (default 1).  Use \code{0} to disable
 #'   compression (faster for benchmarks).
 #' @param ...        Ignored (for S3 compatibility).
 #' @return \code{HDF5Matrix} containing the matrix inverse.

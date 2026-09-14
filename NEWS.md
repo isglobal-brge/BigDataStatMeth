@@ -1,3 +1,82 @@
+# BigDataStatMeth 2.0.5
+
+## Bug fixes
+
+- Windows memory detection: `memory.size()` is defunct since R 4.2.0 and
+  returned `Inf`, silently inflating the block-size / preload budget. Windows
+  now uses `GlobalMemoryStatusEx()`, and every platform sanitises the detected
+  value before use.
+
+- Row and column names were silently truncated to 19 characters (long ids
+  could collide). Ids up to 63 bytes now round-trip exactly; longer ids raise
+  an error instead of being truncated.
+
+- `svd()` / `prcomp()` with `scale = TRUE` returned all-zero singular values
+  on a constant column, silently. They now stop with
+  `"cannot rescale a constant/zero column to unit variance"`, matching
+  `stats::prcomp()`. `scale()` is unchanged (returns `NaN`, like base R).
+
+- The `threads` argument of `svd()` / `prcomp()` had no effect on the internal
+  matrix products; it is now honoured. The default (`threads = NULL`) keeps
+  the previous behaviour exactly.
+
+- `hdf5_apply()` with `"CrossProd"` / `"tCrossProd"` returned a correctly
+  shaped but all-zero result for inputs of 1,048,576 elements or more: the
+  streaming branch passed a zero block size, so the block loop never ran.
+  Fixed; a zero block size is now an explicit error.
+
+- Restored the OpenMP serialisation of HDF5 I/O that had been disabled in
+  March 2026. Without it, `impute_snps()` on matrices with more than 4000
+  columns could crash, deadlock or silently corrupt its output (the R API was
+  being called from concurrent threads). Verified with a 37-scenario stress
+  campaign; no measurable overhead. Correlation now uses the same lock as the
+  rest of the package.
+
+- `impute_snps()`, `filter_low_coverage()` and `filter_maf()` now propagate
+  the dimnames of the input; the filters keep the names of the surviving
+  rows/columns.
+
+- `filter_low_coverage()` / `filter_maf()` now stop with a clear, actionable
+  error when the filter removes every row/column, instead of the internal
+  "please create Dataset before proceed" message.
+
+- Cross-file algebra: `crossprod()`, `%*%` and `tcrossprod()` between
+  `HDF5Matrix` objects in different `.h5` files failed; each operand now opens
+  from its own file. The result stays in the first operand's file (by design).
+
+## Portability / build
+
+- `checkHDF5File()` no longer uses the deprecated `H5::H5File::isHdf5()`
+  (unlinkable against Rhdf5lib >= 1.32); it uses the portable C API
+  (`H5Fis_accessible()` / `H5Fis_hdf5()`). Fixes a downstream `methylclock`
+  link failure.
+
+## Documentation
+
+- `filter_low_coverage()`: `pcent` counts entries equal to `3` (the missing
+  code of the 0/1/2/3 encoding), not `NA`, and the comparison is `>=`.
+
+- `filter_maf()`: the documented threshold direction was inverted — variants
+  with MAF at or below the threshold are removed.
+
+## New features
+
+- `svd()` / `prcomp()` warn when the requested `threads` exceeds what the
+  system allows, stating how many can actually be used.
+
+- The exact/approximate regime of `svd()` / `prcomp()` is now visible: the
+  result carries attributes (`method`, `exact`, `truncated`, `nev`,
+  `blocking`, `elements`, `auto_threshold`, `rank`), a `message()` is emitted
+  when a call enters an approximate regime the user did not request, and the
+  new helper `svd_auto_threshold()` returns the size boundary. Accuracy note:
+  crossing the size boundary is nearly free; requesting fewer singular
+  triplets than `min(dim(x))` is what costs accuracy (see `?svd.HDF5Matrix`).
+
+- `hdf5_remove(filename, dataset)` and `HDF5Matrix$remove()`: delete a dataset
+  from an HDF5 file (HDF5 reclaims the space only after `h5repack`).
+
+
+
 # BigDataStatMeth 2.0.4
 
 ## Bug fixes

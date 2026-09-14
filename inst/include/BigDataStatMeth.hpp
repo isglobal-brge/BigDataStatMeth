@@ -154,9 +154,19 @@
     const int DIM2 = 2;
     const int DIM3 = 3;
     
-    const int MAXSTRING = 20;
+    // MAXSTRING is the fixed on-disk length (bytes) of the compound string
+    // member `char chr[MAXSTRING]` used to store dimnames / string vectors.
+    // Stored strings are truncated to MAXSTRING-1 chars (plus the '\0').
+    // Raised from 20 to 64 so real sample ids (e.g. a 28-char TCGA barcode
+    // TCGA-OR-A5J1-01A-11R-A29S-07 plus aliquot/margin, or HELIX ids) survive
+    // the HDF5 round-trip intact. The full-materialization string reads are
+    // block-wise (see readStringDataset), so a larger MAXSTRING on a wide
+    // dimension never allocates n_names * MAXSTRING bytes at once.
+    // NOTE: changing this changes the on-disk compound layout for NEW files;
+    // see NEWS.md. Do NOT change MAXSTRBLOCK (the string read/write block size).
+    const int MAXSTRING = 64;
     const hsize_t MAXSTRBLOCK = 1 << 5;
-    
+
     /**
      * @brief Maximum number of elements in a block for HDF5 operations
      * @details This constant defines the maximum number of elements that can be processed
@@ -164,6 +174,20 @@
      * efficient memory usage while maintaining performance.
      */
     const hsize_t MAXELEMSINBLOCK = ((2 << 29) - 1);
+
+    /**
+     * @brief Default gzip level applied to datasets created by the package
+     *
+     * @details Level 6, gzip's balanced default: a compromise between file
+     * size and write/read cost that suits most workflows. Levels 0-9 remain
+     * available per call or globally via hdf5matrix_options(compression = ).
+     * Note that level 0 also disables chunking (contiguous layout), which is
+     * a layout change, not just a filter change.
+     *
+     * Single source of truth: the R layer reads this value through
+     * rcpp_default_compression_level(), so the two cannot drift apart.
+     */
+    const int DEFAULT_COMPRESSION_LEVEL = 6;
     
     /**
      * @brief Maximum block size for matrix operations

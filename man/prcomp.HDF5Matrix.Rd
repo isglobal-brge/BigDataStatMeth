@@ -55,7 +55,12 @@ or \code{"full"}.}
 
 \item{overwrite}{Logical.  Recompute even if PCA results exist (default \code{FALSE}).}
 
-\item{threads}{Integer.  OpenMP threads (\code{-1} = auto-detect).}
+\item{threads}{Integer.  OpenMP threads (\code{-1} = auto-detect).  The
+effective number may be lower than requested: the system ceiling
+(\code{OMP_NUM_THREADS}, \code{OMP_THREAD_LIMIT} and, by default, half of
+the detected cores) is applied silently by the OpenMP runtime.  Requesting
+more than that is not an error, but it now emits a warning stating how
+many threads can actually be used.}
 
 \item{...}{Ignored (S3 compatibility).}
 }
@@ -74,12 +79,38 @@ An object of class \code{c("HDF5PCA", "list")} with elements:
 \item{\code{ind.contrib}}{HDF5Matrix.  Contributions of individuals to PCs.}
 \item{\code{file}}{Character.  Path to the HDF5 file with all results.}
 }
+The object also carries the attributes \code{method}, \code{exact},
+\code{elements}, \code{auto_threshold}, \code{blocking} and \code{rank},
+recording which decomposition path was actually taken; \code{print()}
+shows them.
 }
 \description{
 Block-wise PCA entirely on disk, equivalent to \code{\link{prcomp}()}.
 Implements the same interface as \code{stats::prcomp()} but operates on
 data stored in an HDF5 file without loading it into RAM.
 }
+\details{
+\strong{Constant columns and \code{scale. = TRUE}.} As in
+\code{stats::prcomp()}, a column with zero variance cannot be rescaled to
+unit variance and the call stops with an error reporting how many columns
+are affected and a few of their positions. Previously the division by zero
+propagated silently and the whole decomposition degenerated to zeros. Either
+leave \code{scale. = FALSE} (the default) or remove the constant columns
+first.
+}
+\section{Exact versus approximate decomposition}{
+
+PCA runs on the same machinery as \code{\link{svd.HDF5Matrix}} and inherits
+both of its silent approximations. Read that help page before interpreting a
+large PCA. In particular, supplying \code{ncomponents} or \code{rank.}
+below \code{min(dim(x))} switches on per-block rank truncation, which is
+the larger error source and can perturb even the first principal component
+by a few percent; asking for a generously oversampled number of components
+and discarding the extra ones is much more accurate than asking for exactly
+the few you want. Check \code{attr(pca, "exact")} and
+\code{attr(pca, "truncated")}; \code{print()} shows both.
+}
+
 \examples{
 \donttest{
 tmp <- tempfile(fileext = ".h5")

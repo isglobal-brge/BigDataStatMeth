@@ -42,7 +42,12 @@ threshold (default 0).}
 
 \item{overwrite}{Logical.  Overwrite existing SVD results (default \code{FALSE}).}
 
-\item{threads}{Integer.  OpenMP threads (\code{-1} = auto-detect).}
+\item{threads}{Integer.  OpenMP threads (\code{-1} = auto-detect).  The
+effective number may be lower than requested: the system ceiling
+(\code{OMP_NUM_THREADS}, \code{OMP_THREAD_LIMIT} and, by default, half of
+the detected cores) is applied silently by the OpenMP runtime.  Requesting
+more than that is not an error, but it now emits a warning stating how
+many threads can actually be used.}
 
 \item{...}{Ignored (S3 compatibility).}
 }
@@ -53,6 +58,28 @@ Named list with:
 \item{\code{u}}{HDF5Matrix of left  singular vectors, \code{nrow(x) x nu}.}
 \item{\code{v}}{HDF5Matrix of right singular vectors, \code{ncol(x) x nv}.}
 }
+The list carries attributes describing what was actually computed:
+\describe{
+\item{\code{method}}{\code{"full"} (exact LAPACK) or \code{"blocks"}
+(hierarchical block algorithm).}
+\item{\code{exact}}{\code{TRUE} when the exact LAPACK algorithm was
+used, i.e. \code{method == "full"} and no per-block truncation. It
+reports the \emph{algorithm}, not a measured accuracy: the block path
+at full rank is not exact by construction, though in our tests it
+agreed with LAPACK to ~1e-15 (see below).}
+\item{\code{nev}}{Per-block truncation rank actually applied
+(\code{0} = none). Requesting fewer vectors below the boundary does
+not truncate anything: the exact path runs and the reduction happens
+afterwards in R, losslessly.}
+\item{\code{truncated}}{\code{TRUE} when per-block truncation was
+applied, which is the dominant source of error (see below).}
+\item{\code{elements}}{\code{nrow(x) * ncol(x)}, the quantity compared
+against the boundary.}
+\item{\code{auto_threshold}}{The boundary itself, see
+\code{\link{svd_auto_threshold}}.}
+\item{\code{blocking}}{The \code{k} and \code{q} actually used.}
+\item{\code{rank}}{Number of singular values returned.}
+}
 }
 \description{
 Block-wise SVD entirely on disk.  The matrix \code{x} is decomposed
@@ -62,7 +89,79 @@ into \code{x = u \%*\% diag(d) \%*\% t(v)}.
 Singular values \code{d} are loaded into a plain numeric vector
 (they are always small: at most \code{min(nrow(x), ncol(x))} values).
 \code{u} and \code{v} are returned as \code{HDF5Matrix} objects.
+
+\strong{Constant columns and \code{scale = TRUE}.} A column with zero
+variance cannot be rescaled to unit variance, so the call stops with an
+error reporting how many columns are affected and a few of their positions
+-- the same contract as \code{stats::prcomp(x, scale. = TRUE)}. Previously
+the division by zero propagated silently and every singular value came back
+as \code{0}. Either pass \code{scale = FALSE} or remove the constant columns
+first. \code{\link{scale.HDF5Matrix}} is deliberately unaffected: like
+\code{base::scale()} it still returns \code{NaN} for such a column.
 }
+\section{Exact versus approximate decomposition}{
+
+This is the most important behavioural difference from \code{base::svd()}.
+\strong{Two independent things} can make the result approximate, and they
+are not equally dangerous.
+
+\strong{1. The algorithm (minor).} \code{method = "full"} reads the whole
+matrix into RAM and computes an exact LAPACK SVD, needing
+\code{nrow * ncol * 8} bytes. \code{method = "blocks"} computes a
+hierarchical block SVD entirely on disk. \code{method = "auto"} (the
+default) picks \code{"full"} while
+\code{nrow * ncol < svd_auto_threshold()} (currently 53,687,091 elements,
+about 410 MB of doubles) and \code{"blocks"} at or above it. When the full
+rank is requested, the block path is essentially exact: relative errors of
+order 1e-15 across the whole spectrum, independent of \code{k} and
+\code{q}, in our measurements. Crossing the boundary is, on its own, not a
+numerical event.
+
+\strong{2. Per-block rank truncation (major).} Asking for fewer singular
+triplets than \code{min(dim(x))} -- \code{nu} or \code{nv} below full rank,
+or \code{ncomponents}/\code{rank.} in \code{\link{prcomp.HDF5Matrix}} --
+switches on truncation of every \emph{local} block SVD to that rank before
+the blocks are merged. That is what actually costs accuracy, and it
+compounds with blocking depth. On a 1600 x 200 matrix with a decaying
+spectrum, relative error in the singular values:
+
+\tabular{lrrr}{
+\strong{requested rank} \tab \strong{k, q} \tab \strong{leading} \tab \strong{trailing} \cr
+200 (full) \tab 2, 1 \tab 3e-16 \tab 7e-15 \cr
+200 (full) \tab 4, 3 \tab 1e-15 \tab 4e-15 \cr
+50        \tab 2, 1 \tab 7e-06 \tab 8e-02 \cr
+50        \tab 2, 3 \tab 5e-05 \tab 1e-01 \cr
+10        \tab 2, 1 \tab 2e-03 \tab 1e-01 \cr
+10        \tab 2, 3 \tab 1e-02 \tab 2e-01
+}
+
+Note that the error is not confined to the tail: at rank 10 even the
+\emph{leading} singular value was wrong by 1-3\\%. If you need a small number
+of accurate components, ask for a generously oversampled rank and discard
+the extra ones -- in the table above, computing 50 and keeping 10 is about
+250 times more accurate in the leading value than computing 10 directly --
+or request the full rank when you can afford it.
+
+\strong{Detecting it.} Both switches are silent by default, so the result
+records them: check \code{attr(res, "exact")}, \code{attr(res, "truncated")}
+and \code{attr(res, "method")}. \code{svd()} also emits a \code{message()}
+when \code{"auto"} falls through to the block path and when per-block
+truncation is applied (silence with \code{suppressMessages()}).
+
+There is no cheap residual diagnostic: verifying a decomposition means
+reconstructing \code{u \%*\% diag(d) \%*\% t(v)} and comparing it with
+\code{x}, another full pass over the data. The practical checks are to
+recompute with a larger requested rank, or with \code{method = "full"} on a
+subset, and see whether the leading components move.
+
+There is no cheap residual diagnostic: verifying the decomposition means
+reconstructing \code{u \%*\% diag(d) \%*\% t(v)} and comparing it with
+\code{x}, which costs another full pass over the data. When accuracy
+matters, the practical check is to recompute a small trailing portion with
+\code{method = "full"} on a subset, or to compare across two values of
+\code{q}.
+}
+
 \examples{
 \donttest{
 tmp <- tempfile(fileext = ".h5")

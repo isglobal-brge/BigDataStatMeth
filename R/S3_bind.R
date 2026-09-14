@@ -42,7 +42,7 @@
 #' @param overwrite    Logical. Overwrite existing output. Default \code{FALSE}.
 #' @param compression Integer (0-9) or NULL. gzip compression level for the
 #'   result datasets.  NULL uses the global option set by
-#'   \code{\link{hdf5matrix_options}} (default 6).  Use \code{0} to disable
+#'   \code{\link{hdf5matrix_options}} (default 1).  Use \code{0} to disable
 #'   compression (faster for benchmarks).
 #' @return \code{HDF5Matrix} pointing to the combined dataset.
 #'
@@ -178,7 +178,7 @@ cbind.HDF5Matrix <- function(...,
 #' @param overwrite    Logical. Overwrite existing output. Default \code{FALSE}.
 #' @param compression Integer (0-9) or NULL. gzip compression level for the
 #'   result datasets.  NULL uses the global option set by
-#'   \code{\link{hdf5matrix_options}} (default 6).  Use \code{0} to disable
+#'   \code{\link{hdf5matrix_options}} (default 1).  Use \code{0} to disable
 #'   compression (faster for benchmarks).
 #' @return \code{HDF5Matrix} pointing to the combined dataset.
 #'

@@ -21,6 +21,132 @@
 #     var.cos2 (HDF5Matrix), ind.cos2 (HDF5Matrix), ind.contrib (HDF5Matrix)
 
 
+# ── SVD path metadata ────────────────────────────────────────────────────────
+#
+# svd()/prcomp() on an HDF5Matrix silently switch between two algorithms:
+#
+#   "full"   exact LAPACK SVD of the whole matrix held in RAM
+#   "blocks" hierarchical (incremental) block SVD — an APPROXIMATION whose
+#            accuracy degrades with blocking depth, most visibly in the
+#            trailing singular values
+#
+# With method = "auto" the switch happens at an internal element-count
+# boundary, so the same call can be exact or approximate depending only on the
+# size of the input.  Downstream code cannot detect this from the result alone,
+# which is what these helpers fix: the boundary is read from C++ (single source
+# of truth) and the path actually taken is attached to the returned object.
+
+#' Element-count boundary of the automatic SVD/PCA path selection
+#'
+#' @description
+#' Number of matrix elements (\code{nrow * ncol}) at or above which
+#' \code{method = "auto"} stops computing an exact decomposition and switches
+#' to the hierarchical block approximation.
+#'
+#' @return Numeric scalar: the element-count boundary.
+#'
+#' @details
+#' The value is read from the C++ constant \code{SVD_EXACT_MAX_ELEMENTS} so
+#' that documentation and implementation cannot drift apart. It currently
+#' corresponds to 53,687,091 elements, about 410 MB of double-precision data.
+#'
+#' @examples
+#' svd_auto_threshold()
+#'
+#' @seealso \code{\link{svd.HDF5Matrix}}, \code{\link{prcomp.HDF5Matrix}}
+#' @export
+svd_auto_threshold <- function() rcpp_svd_auto_threshold()
+
+
+# ── Effective thread count ──────────────────────────────────────────────────
+#
+# The C++ thread ceiling silently discards a requested count it cannot honour:
+# OMP_THREAD_LIMIT and OMP_NUM_THREADS are respected, and by default only half
+# of the detected cores are usable.  Asking for more than that used to be a
+# no-op with no indication whatsoever, so `threads = 32` on a 4-core machine
+# looked like it had been applied.  These two helpers make the requested value
+# explicit and report the gap once, per call.
+
+# Bring `threads` to the single integer the C++ layer expects.  A negative
+# value (the documented -1 default) and NULL both mean "let the system decide".
+.normalize_threads <- function(threads) {
+    if (is.null(threads) || length(threads) != 1L) return(-1L)
+    n <- suppressWarnings(as.integer(threads))
+    if (is.na(n)) return(-1L)
+    n
+}
+
+# Warn once when fewer threads than requested can actually be used.  Says
+# nothing when no count was requested, so the default path stays silent.
+.warn_threads_capped <- function(threads) {
+    req <- .normalize_threads(threads)
+    if (req <= 0L) return(invisible(NULL))
+
+    eff <- rcpp_effective_threads(req)
+    if (!is.na(eff) && eff < req)
+        warning(sprintf(
+            paste0("requested threads = %d, but only %d can be used on this ",
+                   "system (limited by OMP_NUM_THREADS / available cores)"),
+            req, eff), call. = FALSE)
+
+    invisible(NULL)
+}
+
+# Attach the path metadata to a decomposition result, and warn once about each
+# of the two things that can make it approximate without the user asking:
+#
+#   (1) method = "auto" falling through to the block algorithm above the
+#       element-count boundary;
+#   (2) per-block rank truncation, which is switched on by requesting fewer
+#       singular triplets than min(dim(x)).  This one is by far the larger
+#       error source in practice -- see ?svd.HDF5Matrix.
+.attach_svd_path_info <- function(res, x, used_method, exact,
+                                  method_requested, k, q,
+                                  rank = NULL, nev = 0L) {
+
+    n_elem     <- prod(as.numeric(dim(x)))
+    thr        <- rcpp_svd_auto_threshold()
+    nev        <- as.integer(nev)
+    truncated  <- identical(used_method, "blocks") && nev > 0L
+
+    attr(res, "method")         <- used_method
+    attr(res, "exact")          <- isTRUE(exact) && !truncated
+    attr(res, "path")           <- used_method
+    attr(res, "elements")       <- n_elem
+    attr(res, "auto_threshold") <- thr
+    attr(res, "blocking")       <- c(k = as.integer(k), q = as.integer(q))
+    # Report the truncation that was APPLIED, not the one that was requested:
+    # below the auto boundary the exact LAPACK path runs and the reduction to
+    # `nev` columns happens afterwards, losslessly, in R.
+    attr(res, "nev")            <- if (truncated) nev else 0L
+    attr(res, "truncated")      <- truncated
+    if (!is.null(rank)) attr(res, "rank") <- as.integer(rank)
+
+    if (!isTRUE(exact) && identical(method_requested, "auto"))
+        message(sprintf(
+            paste0("BigDataStatMeth: %s x %s (%.3g elements) is at or above the ",
+                   "exact/approximate boundary (%.3g elements), so an APPROXIMATE ",
+                   "hierarchical block decomposition was used (k = %d, q = %d). ",
+                   "See attr(., \"method\") and ?svd.HDF5Matrix; ",
+                   "method = \"full\" forces the exact path (needs the whole ",
+                   "matrix in RAM)."),
+            nrow(x), ncol(x), n_elem, thr, as.integer(k), as.integer(q)))
+
+    if (truncated)
+        message(sprintf(
+            paste0("BigDataStatMeth: %d of %d singular triplets requested, so each ",
+                   "local block was truncated to rank %d before merging. The result ",
+                   "is an APPROXIMATION -- relative errors of 1e-3 to 1e-1 have been ",
+                   "measured in this regime, including in the LEADING singular value. ",
+                   "attr(., \"truncated\") records it. Request the full ",
+                   "min(dim(x)) = %d triplets (or a generously oversampled rank) for ",
+                   "an accurate decomposition. See ?svd.HDF5Matrix."),
+            nev, min(dim(x)), nev, min(dim(x))))
+
+    res
+}
+
+
 # ── $svd() ──────────────────────────────────────────────────────────────────
 
 HDF5Matrix$set("public", "svd",
@@ -61,6 +187,11 @@ function(k             = 2,
          threads       = -1L) {
 
     if (!self$is_valid()) stop("HDF5Matrix is closed or invalid")
+
+    # Report a requested thread count this system cannot honour, then carry on
+    # with whatever it can give.
+    threads <- .normalize_threads(threads)
+    .warn_threads_capped(threads)
 
     # When overwrite=TRUE, close any live handles pointing to output paths
     if (isTRUE(overwrite)) {
@@ -104,11 +235,18 @@ function(k             = 2,
     d_vec <- as.numeric(as.matrix(d_tmp))
     close(d_tmp)
 
-    list(
+    out <- list(
         d = d_vec,
         u = hdf5_matrix(res$file, res$path_u),
         v = hdf5_matrix(res$file, res$path_v)
     )
+
+    .attach_svd_path_info(out, self,
+                          used_method      = res$used_method,
+                          exact            = res$exact,
+                          method_requested = as.character(method),
+                          k = k, q = q, rank = length(d_vec),
+                          nev = nev)
 
 })
 
@@ -150,6 +288,10 @@ HDF5Matrix$set("public", "pca",
 #     \item{ind.contrib}{HDF5Matrix. Contributions of individuals to PCs.}
 #     \item{file}{Character. Path to the HDF5 file containing all results.}
 #   }
+#   The object also carries the exact/approximate path metadata described in
+#   \code{?svd.HDF5Matrix} (attributes \code{method}, \code{exact},
+#   \code{elements}, \code{auto_threshold}, \code{blocking}, \code{rank}),
+#   because PCA is computed through the same SVD machinery.
 function(ncomponents   = 0L,
          center        = FALSE,
          scale         = FALSE,
@@ -162,6 +304,16 @@ function(ncomponents   = 0L,
          threads       = -1L) {
 
     if (!self$is_valid()) stop("HDF5Matrix is closed or invalid")
+
+    # Report a requested thread count this system cannot honour, then carry on
+    # with whatever it can give.
+    threads <- .normalize_threads(threads)
+    .warn_threads_capped(threads)
+
+    # Blocking parameters, kept aside: the truncation block below reuses `k`
+    # for the component count.
+    k_blocking <- as.integer(k)
+    q_blocking <- as.integer(q)
 
     # When overwrite=TRUE, close any live handles pointing to PCA output paths.
     # PCA also uses SVD internally, so close those paths too.
@@ -246,5 +398,14 @@ function(ncomponents   = 0L,
     )
 
     class(result) <- c("HDF5PCA", "list")
-    result
+
+    # PCA runs an SVD underneath and inherits its exact/approximate switch —
+    # record which path was taken (see .attach_svd_path_info above).
+    .attach_svd_path_info(result, self,
+                          used_method      = res$used_method,
+                          exact            = res$exact,
+                          method_requested = as.character(method),
+                          k = k_blocking, q = q_blocking,
+                          rank = length(sdev),
+                          nev = ncomponents)
 })

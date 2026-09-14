@@ -16,7 +16,7 @@
 # @param block_size Integer or NULL. Number of elements per processing block.
 # @param threads Integer or NULL. Number of OpenMP threads.
 # @param compression Integer (0-9) or NULL. gzip compression level for the
-#   result dataset. NULL uses the global option (default 6). Use 0 to disable.
+#   result dataset. NULL uses the global option (default 1). Use 0 to disable.
 #
 # @return HDF5Matrix pointing to the result in group "OUTPUT",
 #   dataset named "A_x_B" where A and B are the input dataset names.

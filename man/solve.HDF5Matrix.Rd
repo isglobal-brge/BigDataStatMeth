@@ -30,7 +30,7 @@
 
 \item{compression}{Integer (0-9) or NULL. gzip compression level for the
 result dataset.  NULL uses the global option set by
-\code{\link{hdf5matrix_options}} (default 6).  Use \code{0} to disable
+\code{\link{hdf5matrix_options}} (default 1).  Use \code{0} to disable
 compression (faster for benchmarks).}
 
 \item{...}{Ignored (for S3 compatibility).}

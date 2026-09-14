@@ -499,8 +499,23 @@ private:
             
             // Method 1: Check if file is accessible
             try {
-                // Try to check if file exists and is HDF5 format
-                if (H5::H5File::isHdf5(fullPath)) {
+                // Try to check if file exists and is HDF5 format.
+                //
+                // We use the HDF5 C API here rather than the C++ wrapper
+                // H5::H5File::isHdf5(). On HDF5 1.14 (bundled by Rhdf5lib >= 1.32)
+                // the deprecated C++ symbol H5::H5File::isHdf5 is no longer
+                // exported, so a downstream package LinkingTo BigDataStatMeth
+                // fails to link ("symbol not found ... H5File6isHdf5E..."). The
+                // C API is version-portable:
+                //   - HDF5 >= 1.12: H5Fis_accessible() (non-deprecated replacement)
+                //   - older HDF5  : H5Fis_hdf5() (H5Fis_accessible not yet present)
+                // Both return htri_t: >0 = is HDF5, 0 = not, <0 = error.
+#if H5_VERSION_GE(1, 12, 0)
+                htri_t is_hdf5 = H5Fis_accessible(fullPath.c_str(), H5P_DEFAULT);
+#else
+                htri_t is_hdf5 = H5Fis_hdf5(fullPath.c_str());
+#endif
+                if (is_hdf5 > 0) {
                     is_accessible = true;
                 } else {
                     Rf_error("File is not in HDF5 format" );

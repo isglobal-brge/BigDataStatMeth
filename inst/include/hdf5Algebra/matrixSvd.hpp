@@ -46,6 +46,25 @@
 #include "Spectra/SymEigsSolver.h"
 
 namespace BigDataStatMeth {
+
+/**
+ * @brief Element-count boundary of the automatic SVD path selection
+ *
+ * @details With method = "auto", RcppbdSVD_hdf5() computes an EXACT LAPACK SVD
+ * when nrow * ncol is strictly below this many elements, and switches to the
+ * hierarchical block algorithm (an APPROXIMATION whose accuracy degrades with
+ * blocking depth, most visibly in the trailing singular values) at or above it.
+ *
+ * Value: MAXELEMSINBLOCK / 20 = 53,687,091 elements, i.e. ~410 MB of doubles.
+ *
+ * This is the single source of truth for the boundary: the R layer reads it
+ * through rcpp_svd_auto_threshold() so that the documented number and the
+ * implemented number cannot drift apart.
+ *
+ * @see RcppbdSVD_hdf5
+ */
+const hsize_t SVD_EXACT_MAX_ELEMENTS = MAXELEMSINBLOCK / 20;
+
     
     /**
      * @brief Compute SVD decomposition using Spectra eigenvalue solver
@@ -263,7 +282,26 @@ namespace BigDataStatMeth {
                                                   "L","M","N","O","P","Q","R","S","T","U","V",
                                                   "W","X","Y","Z"};
             strPrefix = strvmatnames[q-1];
-            
+
+            // Parallelism intent for the internal products below.
+            //
+            // multiplication() only enters its OpenMP streaming path when
+            // bparal is explicitly TRUE; with bparal = NULL it decides on its
+            // own whether to preload both operands into RAM and let the BLAS
+            // backend thread, in which case the requested thread count is
+            // simply never consulted.  So `threads = N` reached the bottom of
+            // the call stack and changed nothing.
+            //
+            // TRUE is propagated ONLY when the caller actually asked for a
+            // thread count.  With threads = NULL nothing changes: the default
+            // remains bit-for-bit the previous path selection, which is what
+            // keeps the numbers and the timings of every caller that does not
+            // request threads exactly as they were.
+            Rcpp::Nullable<bool> bparal_mult = R_NilValue;
+            if( threads.isNotNull() ) {
+                bparal_mult = Rcpp::wrap(true);
+            }
+
             if(irows >= icols) {
                 transp = true;
             }
@@ -347,7 +385,7 @@ namespace BigDataStatMeth {
                     if( transp == false ) {
                         // normalmatrix dims [R_nrows, R_ncols] — multiplication() works correctly here
                         multiplication( dsnormalizedData.get(), ds_udivd.get(), ds_vtmp.get(),
-                                        false, false, R_NilValue, R_NilValue, threads );
+                                        false, false, bparal_mult, R_NilValue, threads );
                     } else {
                         
                         // transp=true: multiplication() reads out of bounds for this storage convention.
@@ -381,12 +419,12 @@ namespace BigDataStatMeth {
                     // tmp_dim = dsnormalizedData_ni->dim();
 
                     //..2026/05/28 ..// multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(), true, false, R_NilValue, R_NilValue, threads );
-                    multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(), !transp, false, R_NilValue, R_NilValue, threads );
+                    multiplication( dsnormalizedData_i.get(), ds_udivd.get(), ds_vtmp.get(), !transp, false, bparal_mult, R_NilValue, threads );
 
                 } else {
                     
                     multiplication( dsA, ds_udivd.get(), ds_vtmp.get(),
-                                    !transp, false, R_NilValue, R_NilValue, threads );
+                                    !transp, false, bparal_mult, R_NilValue, threads );
                 }
                 
                 // Read result back from ds_vtmp — only when populated by multiplication()
@@ -462,6 +500,11 @@ namespace BigDataStatMeth {
      * @param asRowMajor Whether to interpret matrix as row-major
      * @param method Computation method ("auto", "blocks", "full")
      * @param ithreads Number of parallel threads (optional)
+     * @param usedMethod Optional out-parameter.  If non-null, receives the path
+     *        actually taken: "full" (exact LAPACK) or "blocks" (hierarchical
+     *        approximation).  Callers need this because under method = "auto"
+     *        the switch is silent and the two paths differ in accuracy.
+     *        @see SVD_EXACT_MAX_ELEMENTS
      * 
      * @throws H5::FileIException for HDF5 file operation errors
      * @throws H5::DataSetIException for HDF5 dataset operation errors
@@ -482,7 +525,8 @@ namespace BigDataStatMeth {
                                 int k, int q, int nev, bool bcenter, bool bscale, double dthreshold, 
                                 bool bforce, bool asRowMajor, 
                                 Rcpp::Nullable<Rcpp::CharacterVector> method = R_NilValue,
-                                Rcpp::Nullable<int> ithreads = R_NilValue)
+                                Rcpp::Nullable<int> ithreads = R_NilValue,
+                                std::string* usedMethod = nullptr)
     {
         
         
@@ -521,7 +565,15 @@ namespace BigDataStatMeth {
                 count = { dims_out[0], dims_out[1]};
                 
                 // Small matrices ==> Direct SVD (lapack)
-                if( (dims_out[0] * dims_out[1] < (MAXELEMSINBLOCK / 20) && strMethod == "auto") || strMethod == "full" ) {
+                // Path selection.  "full" = exact LAPACK SVD of the whole matrix
+                // in RAM; "blocks" = hierarchical block SVD, an approximation.
+                // Under "auto" the boundary is SVD_EXACT_MAX_ELEMENTS.
+                const bool bExact =
+                    ( dims_out[0] * dims_out[1] < SVD_EXACT_MAX_ELEMENTS && strMethod == "auto" )
+                    || strMethod == "full";
+                if( usedMethod != nullptr ) *usedMethod = bExact ? "full" : "blocks";
+                
+                if( bExact ) {
                     
                     // Rcpp::Rcout<<"\nEste, aquÃ­ - 1";
                     Eigen::MatrixXd X;
@@ -530,11 +582,22 @@ namespace BigDataStatMeth {
                     std::vector<double> vdA( count[0] * count[1] ); 
                     dsA->readDatasetBlock( {offset[0], offset[1]}, {count[0], count[1]}, stride, block, vdA.data() );
                     
+                    // Zero-variance guard, only on the scaling path.  It lives
+                    // here and not inside RcppNormalizeColwise() because that
+                    // routine also backs scale(), which must keep mimicking
+                    // base::scale() and return NaN for a constant column.  A
+                    // decomposition, on the other hand, cannot survive it: the
+                    // NaN spreads and every singular value comes back as 0.
+                    // The Eigen matrix below is the R matrix when
+                    // asRowMajor = false and its transpose otherwise, so the
+                    // reported axis follows suit.
                     if(asRowMajor == true) {
-                        Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdA.data(), count[0], count[1] );    
+                        Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> X (vdA.data(), count[0], count[1] );
+                        if( bscale == true ) { checkNonZeroVarianceColwise(X, bcenter, "row"); }
                         retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
                     } else {
                         Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>> X (vdA.data(), count[1], count[0] );
+                        if( bscale == true ) { checkNonZeroVarianceColwise(X, bcenter, "column"); }
                         retsvd = RcppbdSVD_lapack(X, bcenter, bscale, false);
                     }
                     

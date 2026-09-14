@@ -69,9 +69,16 @@ namespace BigDataStatMeth {
             
             hsize_t N = dsA->ncols();  
             hsize_t K = dsA->nrows();  
-            hsize_t M = dsB->ncols();  
-            hsize_t L = dsB->nrows();  
-            
+            hsize_t M = dsB->ncols();
+            hsize_t L = dsB->nrows();
+
+            // A zero block size would make the block counts below evaluate to
+            // zero (integer division by zero), silently leaving the output
+            // dataset filled with zeros. Fail loudly instead.
+            if (hdf5_block == 0) {
+                throw std::range_error("tcrossprod: hdf5_block must be greater than zero");
+            }
+
             if (K != L) {
                 throw std::range_error("non-conformable arguments");
             }

@@ -1309,7 +1309,8 @@ namespace BigDataStatMeth {
                 for (hsize_t i = 0; i < n_cols; ++i) {
                     std::vector<double> vec_i_data(n_rows);
                     
-                    #pragma omp critical(FileAccess)
+                    //.. 20260912 - unify lock name: all HDF5 I/O must share the accessFile critical ..//
+                    #pragma omp critical(accessFile)
                     {
                         if (trans_x) {
                             dsA->readDatasetBlock({0, i}, {n_rows_hdf5, 1}, stride, block, vec_i_data.data());
@@ -1324,7 +1325,8 @@ namespace BigDataStatMeth {
                     for (hsize_t j = i + 1; j < n_cols; ++j) {
                         std::vector<double> vec_j_data(n_rows);
                         
-                        #pragma omp critical(FileAccess)
+                        //.. 20260912 - unify lock name: all HDF5 I/O must share the accessFile critical ..//
+                        #pragma omp critical(accessFile)
                         {
                             if (trans_x) {
                                 dsA->readDatasetBlock({0, j}, {n_rows_hdf5, 1}, stride, block, vec_j_data.data());
@@ -1745,8 +1747,12 @@ namespace BigDataStatMeth {
                         for (hsize_t b_idx = 0; b_idx < batch_cols_a; ++b_idx) {
                             hsize_t actual_i = i_start + b_idx;
                             std::vector<double> col_data(n_rows_a);
-                            dsA->readDatasetBlock({0, actual_i}, {n_rows_a_hdf5, 1}, stride, block, col_data.data());
-                            std::copy(col_data.begin(), col_data.end(), 
+                            //.. 20260912 - restore critical: HDF5 is not threadsafe, dataset I/O must be serialised ..//
+                            #pragma omp critical(accessFile)
+                            {
+                                dsA->readDatasetBlock({0, actual_i}, {n_rows_a_hdf5, 1}, stride, block, col_data.data());
+                            }
+                            std::copy(col_data.begin(), col_data.end(),
                                       batch_a_data.begin() + b_idx * n_rows_a);
                         }
                     } else {
@@ -1755,8 +1761,12 @@ namespace BigDataStatMeth {
                         for (hsize_t b_idx = 0; b_idx < batch_cols_a; ++b_idx) {
                             hsize_t actual_i = i_start + b_idx;
                             std::vector<double> row_data(n_rows_a);
-                            dsA->readDatasetBlock({actual_i, 0}, {1, n_cols_a_hdf5}, stride, block, row_data.data());
-                            std::copy(row_data.begin(), row_data.end(), 
+                            //.. 20260912 - restore critical: HDF5 is not threadsafe, dataset I/O must be serialised ..//
+                            #pragma omp critical(accessFile)
+                            {
+                                dsA->readDatasetBlock({actual_i, 0}, {1, n_cols_a_hdf5}, stride, block, row_data.data());
+                            }
+                            std::copy(row_data.begin(), row_data.end(),
                                       batch_a_data.begin() + b_idx * n_rows_a);
                         }
                     }
@@ -1776,8 +1786,12 @@ namespace BigDataStatMeth {
                             for (hsize_t b_idx = 0; b_idx < batch_cols_b; ++b_idx) {
                                 hsize_t actual_j = j_start + b_idx;
                                 std::vector<double> col_data(n_rows_b);
-                                dsB->readDatasetBlock({0, actual_j}, {n_rows_b_hdf5, 1}, stride, block, col_data.data());
-                                std::copy(col_data.begin(), col_data.end(), 
+                                //.. 20260912 - restore critical: HDF5 is not threadsafe, dataset I/O must be serialised ..//
+                                #pragma omp critical(accessFile)
+                                {
+                                    dsB->readDatasetBlock({0, actual_j}, {n_rows_b_hdf5, 1}, stride, block, col_data.data());
+                                }
+                                std::copy(col_data.begin(), col_data.end(),
                                           batch_b_data.begin() + b_idx * n_rows_b);
                             }
                         } else {
@@ -1786,8 +1800,12 @@ namespace BigDataStatMeth {
                             for (hsize_t b_idx = 0; b_idx < batch_cols_b; ++b_idx) {
                                 hsize_t actual_j = j_start + b_idx;
                                 std::vector<double> row_data(n_rows_b);
-                                dsB->readDatasetBlock({actual_j, 0}, {1, n_cols_b_hdf5}, stride, block, row_data.data());
-                                std::copy(row_data.begin(), row_data.end(), 
+                                //.. 20260912 - restore critical: HDF5 is not threadsafe, dataset I/O must be serialised ..//
+                                #pragma omp critical(accessFile)
+                                {
+                                    dsB->readDatasetBlock({actual_j, 0}, {1, n_cols_b_hdf5}, stride, block, row_data.data());
+                                }
+                                std::copy(row_data.begin(), row_data.end(),
                                           batch_b_data.begin() + b_idx * n_rows_b);
                             }
                         }

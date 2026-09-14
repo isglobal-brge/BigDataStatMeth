@@ -270,7 +270,16 @@ inline void First_level_SvdBlock_decomposition_hdf5( T* dsA, std::string strGrou
         
         Eigen::MatrixXd datanormal = Eigen::MatrixXd::Zero(2, normalsize);
         get_HDF5_mean_sd_by_column(dsA, datanormal, true, true, wsize);
-        
+
+        // Zero-variance guard for the block (out-of-core) regime.  datanormal
+        // row 1 holds one standard deviation per column of the matrix as R sees
+        // it - get_HDF5_mean_sd_by_column() works along HDF5 dimension 0, which
+        // is the R column axis - for both the transposed and the untransposed
+        // layout below, so the reported indices need no remapping.  The check
+        // is free: the statistics have just been computed block-wise, and it
+        // runs before any division takes place.
+        if( bscale == true ) { checkNonZeroVariance(datanormal, "column"); }
+
         M = pow(k, q);
         if(M>p)
             throw std::runtime_error("k^q must not be greater than the number of columns in the matrix");

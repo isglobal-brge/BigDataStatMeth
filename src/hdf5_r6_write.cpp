@@ -166,7 +166,7 @@ Rcpp::List rcpp_hdf5_create_matrix(std::string filename,
                                     std::string dtype                   = "real",
                                     bool overwrite_file                 = false,
                                     bool overwrite_dataset              = false,
-                                    int compression                     = 6)
+                                    int compression                     = 6)   // = DEFAULT_COMPRESSION_LEVEL
 {
     Rcpp::List lst = Rcpp::List::create( 
         Rcpp::Named("filename") = "",

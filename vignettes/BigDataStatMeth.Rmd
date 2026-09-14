@@ -540,11 +540,9 @@ parameters should be selected according to the matrix dimensions and the
 available hardware. The argument `threads` controls the number of
 threads used by parallel parts of the computation.
 
-The arguments `nu` and `nv` follow the same idea as in `base::svd()`: 
-`nu` controls how many left singular vectors are returned, and `nv`
-controls how many right singular vectors are returned. Requesting only
-the leading components is useful when the complete set of singular
-vectors is not needed.
+The arguments `nu` and `nv` control how many left and right singular
+vectors are returned. Unlike `base::svd()`, however, they also change
+*how* the decomposition is computed --- see the next section.
 
 ```{r block-svd-example}
 svd_blk_h5 <- svd(
@@ -561,6 +559,70 @@ head(svd_blk_h5$d)
 dim(svd_blk_h5$u)
 dim(svd_blk_h5$v)
 ```
+
+### When the decomposition is exact, and when it is not
+
+`svd()` on an `HDF5Matrix` does not always return an exact decomposition,
+and the result records which regime it is in. Two independent things
+matter, and they are not equally important.
+
+**The algorithm.** `method = "full"` reads the whole matrix into RAM and
+runs an exact LAPACK SVD. `method = "blocks"` runs a hierarchical block
+SVD entirely on disk. `method = "auto"` (the default) uses `"full"` while
+`nrow * ncol` stays below `svd_auto_threshold()` and `"blocks"` at or
+above it:
+
+```{r svd-threshold}
+svd_auto_threshold()                       # element-count boundary
+svd_auto_threshold() * 8 / 2^20            # ... in MB of doubles
+attr(svd_h5, "method")                     # path actually taken
+attr(svd_h5, "exact")                      # is this an exact result?
+```
+
+Crossing that boundary is, by itself, not much of a numerical event: at
+full rank the block path agreed with LAPACK to relative errors around
+`1e-15` across the whole spectrum in our tests, regardless of `k` and `q`.
+
+**The requested rank.** This is the one to watch. Asking for fewer
+singular triplets than `min(dim(x))` --- through `nu`, `nv`, or
+`ncomponents`/`rank.` in `prcomp()` --- truncates *every local block SVD*
+to that rank before the blocks are merged, and the truncation compounds
+across levels. On a 1600 x 200 matrix with a decaying spectrum, relative
+error in the singular values:
+
+| requested rank | k, q | leading | trailing |
+|---------------:|-----:|--------:|---------:|
+| 200 (full)     | 2, 1 |   3e-16 |    7e-15 |
+| 200 (full)     | 4, 3 |   1e-15 |    4e-15 |
+| 50             | 2, 1 |   7e-06 |    8e-02 |
+| 50             | 2, 3 |   5e-05 |    1e-01 |
+| 10             | 2, 1 |   2e-03 |    1e-01 |
+| 10             | 2, 3 |   1e-02 |    2e-01 |
+
+The error is not confined to the tail: at rank 10 even the *leading*
+singular value was off by 1--3%. If you need a handful of accurate
+components, compute a generously oversampled rank and discard the extra
+ones --- computing 50 and keeping 10 was about 250 times more accurate in
+the leading value than computing 10 directly.
+
+Both switches are silent by default, so check them on the result:
+
+```{r svd-regime}
+attr(svd_blk_h5, "method")      # which algorithm ran
+attr(svd_blk_h5, "truncated")   # was per-block truncation applied?
+attr(svd_blk_h5, "nev")         # the truncation rank applied (0 = none)
+attr(svd_blk_h5, "blocking")    # k and q actually used
+```
+
+In this small example `truncated` is `FALSE` even though only five singular
+vectors were requested: the matrix is far below the boundary, so the exact
+LAPACK path ran on the whole matrix and the reduction to five columns happened
+afterwards, losslessly. The truncation only bites once the block algorithm is
+in play.
+
+`svd()` also emits a `message()` whenever it enters either approximate
+regime; wrap the call in `suppressMessages()` in scripted pipelines that
+have already accounted for it.
 
 ## Principal component analysis
 

@@ -232,10 +232,11 @@ namespace BigDataStatMeth {
                     
                     // read block
                     std::vector<double> vdIn( count[0] * count[1] ); 
-                    //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                    //.. 20260325 - remove critical ..// {
+                    //.. 20260912 - restore critical: HDF5 not threadsafe + R API (Rcpp::wrap) must not run concurrently; empirically verified crash without it ..//
+                    #pragma omp critical(accessFile)
+                    {
                         dsIn->readDatasetBlock( { offset[0], offset[1]}, { count[0], count[1]}, stride, block, vdIn.data() );
-                    //.. 20260325 - remove critical ..// }
+                    }
                     Eigen::MatrixXd data = Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> (vdIn.data(), count[0], count[1] );
                     
                     //.. 20260304 ..//
@@ -287,10 +288,11 @@ namespace BigDataStatMeth {
                         }
                     }
                     
-                    //.. 20260325 - remove critical ..// #pragma omp critical(accessFile)
-                    //.. 20260325 - remove critical ..// {
+                    //.. 20260912 - restore critical: HDF5 not threadsafe + R API (Rcpp::wrap) must not run concurrently; empirically verified crash without it ..//
+                    #pragma omp critical(accessFile)
+                    {
                         dsOut->writeDatasetBlock( Rcpp::wrap(data), offset, count, stride, block, false);
-                    //.. 20260325 - remove critical ..// }
+                    }
                 }
                 
             }
