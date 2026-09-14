@@ -72,3 +72,4 @@ src/Makevars
 inst/cc
 .positai
 *.html
+cran-comments.md
