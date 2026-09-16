@@ -11,7 +11,8 @@ NULL
 #' Dimensions of an HDF5Matrix
 #'
 #' @param x An \code{HDF5Matrix} object
-#' @return Integer vector \code{c(nrows, ncols)}
+#' @return Integer vector \code{c(nrows, ncols)}, or \code{NULL} if the
+#'   dataset has been closed
 #'
 #' @examples
 #' \donttest{
@@ -30,6 +31,9 @@ NULL
 #'
 #' @export
 dim.HDF5Matrix <- function(x) {
+  # NULL (as base R for objects without dimensions) rather than an error, so
+  # a closed object can sit in a workspace without IDE panes reporting errors
+  if (!x$is_valid()) return(NULL)
   x$dim()
 }
 
@@ -53,6 +57,7 @@ dim.HDF5Matrix <- function(x) {
 #'
 #' @export
 length.HDF5Matrix <- function(x) {
+    if (!x$is_valid()) return(0L)
     prod(dim(x))
 }
 

@@ -141,12 +141,12 @@ public:
                 {
                     H5::FileCreatPropList fcpl;
                     fcpl.setFileSpaceStrategy(H5F_FSPACE_STRATEGY_FSM_AGGR, true, (hsize_t)0);
-                    pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC, fcpl );
+                    pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC, fcpl, strongCloseFapl() );
                 }
                 #else
-                pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC );
+                pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC, H5::FileCreatPropList::DEFAULT, strongCloseFapl() );
                 #endif
-                
+
                 bOwnsFile = true;
                 iExec = EXEC_OK; //.. 2025/08/13 ..//
             } else if ( bFileExists && !boverwrite){
@@ -220,21 +220,21 @@ public:
             // If already open in this process, skip checkHDF5File() entirely —
             // it tries H5F_ACC_RDONLY which fails on Windows when file is open RDWR.
             if (isOpenInCurrentProcess()) {
-                pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
+                pfile = new H5::H5File( fullPath, H5F_ACC_RDWR, H5::FileCreatPropList::DEFAULT, strongCloseFapl() );
                 bOwnsFile = true;
                 return pfile;
             }
             
             if( checkHDF5File() ) {
                 if(opentype == "r") {
-                    pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
+                    pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, strongCloseFapl() );
                     bOwnsFile = true;
                 } else {
                     // No pre-flight lock probe (unsound on Windows: the probe
                     // itself opens the file and can take/poison a mandatory
                     // lock). Attempt the real open; if the file is genuinely
                     // held elsewhere, the H5 exception below reports it.
-                    pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
+                    pfile = new H5::H5File( fullPath, H5F_ACC_RDWR, H5::FileCreatPropList::DEFAULT, strongCloseFapl() );
                     bOwnsFile = true;
                 }
             } else {
@@ -246,10 +246,10 @@ public:
                 {
                     H5::FileCreatPropList fcpl;
                     fcpl.setFileSpaceStrategy(H5F_FSPACE_STRATEGY_FSM_AGGR, true, (hsize_t)0);
-                    pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC, fcpl );
+                    pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC, fcpl, strongCloseFapl() );
                 }
                 #else
-                pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC);
+                pfile = new H5::H5File(fullPath, H5F_ACC_TRUNC, H5::FileCreatPropList::DEFAULT, strongCloseFapl());
                 #endif
                 bOwnsFile = true;
             }
@@ -438,9 +438,24 @@ private:
         }
     #endif
     
+    /**
+     * @brief File-access property list with a strong file-close degree.
+     * @details Closing the last file id of a file force-closes any object
+     *          still open on it, so a dataset leaked past its file id (e.g.
+     *          by an error longjmp) cannot keep the file alive and block a
+     *          later reopen on Windows. HDF5 rejects an open whose close
+     *          degree differs from the one the file is already open with,
+     *          so this fapl must be used on EVERY open in this instance.
+     */
+    static H5::FileAccPropList strongCloseFapl() {
+        H5::FileAccPropList fapl;
+        fapl.setFcloseDegree(H5F_CLOSE_STRONG);
+        return fapl;
+    }
+
     // Function
-    
-    #if __cplusplus >= 201703L // C++17 and later 
+
+    #if __cplusplus >= 201703L // C++17 and later
     #include <string_view>
         
         /**
@@ -535,7 +550,7 @@ private:
             // Method 2: Try to open the file if accessible
             if (is_accessible) {
                 try {
-                    H5::H5File* file = new H5::H5File(fullPath, H5F_ACC_RDONLY);
+                    H5::H5File* file = new H5::H5File(fullPath, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, strongCloseFapl());
                     // is_open = true;
                     
                     // Method 3: Validate file structure
@@ -599,6 +614,7 @@ private:
         H5::Exception::dontPrint();
         enable_hdf5_locking_once();
         hid_t fapl = H5Pcreate(H5P_FILE_ACCESS);
+        H5Pset_fclose_degree(fapl, H5F_CLOSE_STRONG);
 
         #if H5_VERSION_GE(1,12,0)
                 H5Pset_file_locking(fapl, 0 , 1 );

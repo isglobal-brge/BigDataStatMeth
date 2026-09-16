@@ -89,17 +89,13 @@ hdf5_close_all <- function(envir = .GlobalEnv, verbose = TRUE) {
     gc()
     
     # Report
-    if (verbose) {
-        if (closed_count > 0) {
-            message("Closed ", closed_count, " HDF5Matrix object(s)")
-            unique_files <- unique(closed_files)
-            if (length(unique_files) <= 5) {
-                message("Files: ", paste(basename(unique_files), collapse = ", "))
-            } else {
-                message("Files: ", length(unique_files), " unique file(s)")
-            }
+    if (verbose && closed_count > 0) {
+        message("Closed ", closed_count, " HDF5Matrix object(s)")
+        unique_files <- unique(closed_files)
+        if (length(unique_files) <= 5) {
+            message("Files: ", paste(basename(unique_files), collapse = ", "))
         } else {
-            message("No open HDF5Matrix objects found")
+            message("Files: ", length(unique_files), " unique file(s)")
         }
     }
     

@@ -3,9 +3,8 @@
 # -----------------------------------------------------------------------------
 # THE BUG THIS PINS DOWN. Any downstream package performing a rapid sequence of
 # close/reopen cycles on one HDF5 file failed on Windows with "HDF5 file is in
-# use by another process" (reported from the mgcca Bioconductor submission:
-# deterministic, first fit of a fresh session, no other process involved;
-# FAIL 20 | PASS 943 on the Windows builders). openFile()/createFile() gated
+# use by another process" (deterministic, first run of a fresh session, no
+# other process involved). openFile()/createFile() gated
 # the real open behind lockedByOtherProcess(), a probe that tests the lock BY
 # OPENING THE FILE. Windows file locks are mandatory and their release after
 # H5Fclose is not immediate, so the probe could collide with the lock left by
@@ -31,8 +30,8 @@
 # that the churn patterns that triggered it keep working, that no code path
 # still emits the retired "in use by another process" gate error, and that the
 # session stays healthy through error paths and live-handle scenarios.
-# The Windows-side validation lives in the mgcca submission thread
-# (scripts/04_candidate_fix_patch_and_validate.R: patch, rebuild, fit).
+# The Windows-side validation was done rebuilding the reporting downstream
+# package against the patched headers and re-running its failing tests.
 #
 # It lives in tests_regression/, git-tracked but excluded from the built
 # tarball via .Rbuildignore (^test\.*), so it does not run in R CMD check.
@@ -55,7 +54,7 @@ mk  <- function(p, tag) matrix(rnorm(40 * p), 40, p,
                                dimnames = list(ids, paste0(tag, "_v", seq_len(p))))
 
 # -----------------------------------------------------------------------------
-# 1. mgcca-style churn: many close-then-reopen transitions on ONE file
+# 1. Downstream-style churn: many close-then-reopen transitions on ONE file
 # -----------------------------------------------------------------------------
 test_that("rapid close/reopen churn on one file never hits the retired gate", {
     f <- tempfile(fileext = ".h5")
@@ -156,6 +155,10 @@ test_that("hdf5_close_all() then immediate reopen and compute", {
     h <- hdf5_matrix(f, "data/F")
     hdf5_close_all()
     expect_false(is_open(h))
+    # a closed object must be inspectable without errors (IDE panes call these)
+    expect_null(dim(h))
+    expect_identical(length(h), 0L)
+    expect_output(print(h), "CLOSED")
 
     X <- hdf5_matrix(f, "data/F")
     res <- tcrossprod(X, outgroup = "res", outdataset = "FFt")

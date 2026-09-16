@@ -10,7 +10,8 @@
 \item{x}{An \code{HDF5Matrix} object}
 }
 \value{
-Integer vector \code{c(nrows, ncols)}
+Integer vector \code{c(nrows, ncols)}, or \code{NULL} if the
+dataset has been closed
 }
 \description{
 Dimensions of an HDF5Matrix
