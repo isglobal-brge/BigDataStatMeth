@@ -176,24 +176,26 @@ Rcpp::List bdCreate_hdf5_matrix(std::string filename,
         } 
         
     }  catch( H5::FileIException& error ) { // catch failure caused by the H5File operations
-        if(objFile != nullptr) delete objFile;
-        if(dsdims != nullptr) delete dsdims;
+        // Close the dataset (which borrows objFile's file id) BEFORE deleting
+        // objFile, whose destructor closes that shared id.
         checkClose_file(objDataset);
+        if(dsdims != nullptr) delete dsdims;
+        if(objFile != nullptr) delete objFile;
         Rf_error("bdCreate_hdf5_matrix (File IException)");
         return(lst_return);
     } catch( H5::DataSetIException& error ) { // catch failure caused by the DataSet operations
-        if(objFile != nullptr) delete objFile;
-        if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
+        if(dsdims != nullptr) delete dsdims;
+        if(objFile != nullptr) delete objFile;
         Rf_error( "bdCreate_hdf5_matrix (DataSet IException)");
         return(lst_return);
     } catch(std::exception &ex) {
-        if(objFile != nullptr) delete objFile;
-        if(dsdims != nullptr) delete dsdims;
         checkClose_file(objDataset);
+        if(dsdims != nullptr) delete dsdims;
+        if(objFile != nullptr) delete objFile;
         Rf_error( "bdCreate_hdf5_matrix %s", ex.what());
         return(lst_return);
-    } 
+    }
 
     return(lst_return);
     

@@ -129,16 +129,14 @@ public:
             enable_hdf5_locking_once();
             
             bool bFileExists = ResFileExist_filestream();
-            bool bInUse = bFileExists ? lockedByOtherProcess() : false;
 
-            
+            // No pre-flight lock probe: probing by opening the file is unsound on
+            // Windows (the probe itself takes a mandatory lock and can poison the
+            // next open). If the file is genuinely held by another process, the
+            // H5F_ACC_TRUNC open below fails and the real HDF5 error is reported.
             if( !bFileExists || ( bFileExists && boverwrite) ) {
-                
-                if (bInUse) {
-                    Rf_error("HDF5 file is in use by another process; cannot overwrite.");
-                }
-                
-                //.. 2026/05/02 ..// pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC ); 
+
+                //.. 2026/05/02 ..// pfile = new H5::H5File( fullPath, H5F_ACC_TRUNC );
                 #if H5_VERSION_GE(1, 10, 1)
                 {
                     H5::FileCreatPropList fcpl;
@@ -232,10 +230,10 @@ public:
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY );
                     bOwnsFile = true;
                 } else {
-                    // Check if already open in THIS process before lock check
-                    if (!isOpenInCurrentProcess() && lockedByOtherProcess()) {
-                        Rf_error("HDF5 file is in use by another process.");
-                    }
+                    // No pre-flight lock probe (unsound on Windows: the probe
+                    // itself opens the file and can take/poison a mandatory
+                    // lock). Attempt the real open; if the file is genuinely
+                    // held elsewhere, the H5 exception below reports it.
                     pfile = new H5::H5File( fullPath, H5F_ACC_RDWR );
                     bOwnsFile = true;
                 }
@@ -422,8 +420,14 @@ private:
     
     #ifdef _WIN32
     #include <cstdlib>
+        // Windows file locks are mandatory and their release after H5Fclose is
+        // not immediate, so with locking enabled a rapid close/reopen sequence
+        // on one file can fail ("file is in use") with no other process around.
+        // Disable HDF5 file locking on Windows. Note the env var is process
+        // global: any statically linked HDF5 copy in a downstream package reads
+        // it at its own library init.
         static inline void enable_hdf5_locking_once() {
-            static bool done = (_putenv_s("HDF5_USE_FILE_LOCKING","TRUE"), true);
+            static bool done = (_putenv_s("HDF5_USE_FILE_LOCKING","FALSE"), true);
             (void)done;
         }
     #else
@@ -581,20 +585,23 @@ private:
     
     /**
      * @brief Return true if existing HDF5 file appears locked/busy.
-     * @note Requires HDF5 file locking enabled (env var set above).
+     * @note Advisory only: no longer used to gate openFile()/createFile().
+     *       The probe must not itself take a lock (locking off, ignore
+     *       disabled locks), otherwise on Windows the probe poisons the
+     *       next open of the same file.
      */
     bool lockedByOtherProcess() {
-        
+
         if (!ResFileExist_filestream()) {
-            return false;    
+            return false;
         }
-        
+
         H5::Exception::dontPrint();
         enable_hdf5_locking_once();
         hid_t fapl = H5Pcreate(H5P_FILE_ACCESS);
-        
+
         #if H5_VERSION_GE(1,12,0)
-                H5Pset_file_locking(fapl, 1 , 0 );
+                H5Pset_file_locking(fapl, 0 , 1 );
         #endif
                 
         hid_t fid = H5Fopen(fullPath.c_str(), H5F_ACC_RDWR, fapl);

@@ -248,26 +248,28 @@ Rcpp::List rcpp_hdf5_create_matrix(std::string filename,
         lst["path"]     = group + "/" + dataset;
 
     } catch (H5::FileIException& e) {
+        // Close the dataset (which borrows objFile's file id) BEFORE deleting
+        // objFile, whose destructor closes that shared id.
+        BigDataStatMeth::checkClose_file(objDataset);
         if (dsdims)   { delete dsdims;   dsdims   = nullptr; }
         if (objFile)  { delete objFile;  objFile  = nullptr; }
-        BigDataStatMeth::checkClose_file(objDataset);
         Rf_error("HDF5 file error (rcpp_hdf5_create_matrix): %s",
                  e.getDetailMsg().c_str());
     } catch (H5::DataSetIException& e) {
+        BigDataStatMeth::checkClose_file(objDataset);
         if (dsdims)   { delete dsdims;   dsdims   = nullptr; }
         if (objFile)  { delete objFile;  objFile  = nullptr; }
-        BigDataStatMeth::checkClose_file(objDataset);
         Rf_error("HDF5 dataset error (rcpp_hdf5_create_matrix): %s",
                  e.getDetailMsg().c_str());
     } catch (std::exception& e) {
+        BigDataStatMeth::checkClose_file(objDataset);
         if (dsdims)   { delete dsdims;   dsdims   = nullptr; }
         if (objFile)  { delete objFile;  objFile  = nullptr; }
-        BigDataStatMeth::checkClose_file(objDataset);
         Rf_error("Error (rcpp_hdf5_create_matrix): %s", e.what());
     } catch (...) {
+        BigDataStatMeth::checkClose_file(objDataset);
         if (dsdims)   { delete dsdims;   dsdims   = nullptr; }
         if (objFile)  { delete objFile;  objFile  = nullptr; }
-        BigDataStatMeth::checkClose_file(objDataset);
         Rf_error("(unknown reason) in rcpp_hdf5_create_matrix");
     }
 

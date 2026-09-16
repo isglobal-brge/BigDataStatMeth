@@ -1,3 +1,15 @@
+# BigDataStatMeth 2.0.6
+
+## Bug fixes
+
+- Windows: rapid close/reopen cycles on one HDF5 file no longer fail with
+  "HDF5 file is in use by another process". The pre-flight lock check has
+  been removed from the file open/create path (a genuine conflict is now
+  reported through the actual HDF5 error), and HDF5 file locking is no
+  longer forced on Windows. Linux and macOS behaviour is unchanged.
+- Fixed the order in which HDF5 handles are released in the error paths of
+  `bdCreate_hdf5_matrix()`.
+
 # BigDataStatMeth 2.0.5
 
 ## Bug fixes
