@@ -1,3 +1,11 @@
+# BigDataStatMeth 2.0.7
+
+## Bug fixes
+
+- Windows: fixed an intermittent "(checkHDF5File) Cannot open file: H5Fopen
+  failed" error when reopening an HDF5 file.
+- Files requested in read-only mode are now always opened read-only.
+
 # BigDataStatMeth 2.0.6
 
 ## Bug fixes

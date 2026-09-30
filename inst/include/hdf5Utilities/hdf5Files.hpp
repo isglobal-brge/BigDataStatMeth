@@ -217,25 +217,39 @@ public:
             H5::Exception::dontPrint();
             enable_hdf5_locking_once();
             
-            // If already open in this process, skip checkHDF5File() entirely —
-            // it tries H5F_ACC_RDONLY which fails on Windows when file is open RDWR.
+            // If already open in this process, open it directly.
             if (isOpenInCurrentProcess()) {
-                pfile = new H5::H5File( fullPath, H5F_ACC_RDWR, H5::FileCreatPropList::DEFAULT, strongCloseFapl() );
+                // Honour the requested mode: an "r" caller must not receive a
+                // writable handle, and requesting RDWR on a file this process
+                // already holds RDONLY fails outright.
+                unsigned flags = (opentype == "r") ? H5F_ACC_RDONLY : H5F_ACC_RDWR;
+                pfile = new H5::H5File( fullPath, flags, H5::FileCreatPropList::DEFAULT, strongCloseFapl() );
                 bOwnsFile = true;
                 return pfile;
             }
-            
-            if( checkHDF5File() ) {
-                if(opentype == "r") {
-                    pfile = new H5::H5File( fullPath, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, strongCloseFapl() );
+
+            const bool bFileExists = ResFileExist_filestream();
+
+            if( bFileExists ) {
+                // Try the real open FIRST. No pre-flight open of any kind (no
+                // lock probe, no format probe): on Windows every extra open is
+                // another chance for a reopen to fail, and a file this process
+                // holds through a different (statically linked) HDF5 instance
+                // is invisible to isOpenInCurrentProcess() above. If the file
+                // is genuinely held elsewhere, the H5 exception reports it.
+                unsigned flags = (opentype == "r") ? H5F_ACC_RDONLY : H5F_ACC_RDWR;
+                try {
+                    pfile = new H5::H5File( fullPath, flags, H5::FileCreatPropList::DEFAULT, strongCloseFapl() );
                     bOwnsFile = true;
-                } else {
-                    // No pre-flight lock probe (unsound on Windows: the probe
-                    // itself opens the file and can take/poison a mandatory
-                    // lock). Attempt the real open; if the file is genuinely
-                    // held elsewhere, the H5 exception below reports it.
-                    pfile = new H5::H5File( fullPath, H5F_ACC_RDWR, H5::FileCreatPropList::DEFAULT, strongCloseFapl() );
-                    bOwnsFile = true;
+                    return pfile;
+                } catch (const H5::Exception& e) {
+                    // The open failed for real. Only now is it worth an extra
+                    // touch of the file to say why (not an HDF5 file at all,
+                    // vs. a genuine access failure).
+                    pfile = nullptr;
+                    checkHDF5File();    // raises the specific error if it can
+                    // checkHDF5File() found nothing wrong: report the real open.
+                    Rf_error("%s", (std::string("openFile HDF5 error: ") + e.getDetailMsg()).c_str());
                 }
             } else {
                 if (opentype == "r") {
@@ -529,8 +543,17 @@ private:
                 //   - HDF5 >= 1.12: H5Fis_accessible() (non-deprecated replacement)
                 //   - older HDF5  : H5Fis_hdf5() (H5Fis_accessible not yet present)
                 // Both return htri_t: >0 = is HDF5, 0 = not, <0 = error.
+                //
+                // The fapl must carry the same (strong) close degree as every
+                // real open in this instance: HDF5 refuses to open a file
+                // already open with a different close degree, and
+                // H5Fis_accessible() does open the file. A named local keeps
+                // the property list alive for the duration of the call (do NOT
+                // write strongCloseFapl().getId() inline: the temporary is
+                // destroyed before H5Fis_accessible runs).
 #if H5_VERSION_GE(1, 12, 0)
-                htri_t is_hdf5 = H5Fis_accessible(fullPath.c_str(), H5P_DEFAULT);
+                H5::FileAccPropList fapl = strongCloseFapl();
+                htri_t is_hdf5 = H5Fis_accessible(fullPath.c_str(), fapl.getId());
 #else
                 htri_t is_hdf5 = H5Fis_hdf5(fullPath.c_str());
 #endif
@@ -547,40 +570,14 @@ private:
                 Rf_error("%s", error_message.c_str() );
             }
             
-            // Method 2: Try to open the file if accessible
-            if (is_accessible) {
-                try {
-                    H5::H5File* file = new H5::H5File(fullPath, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, strongCloseFapl());
-                    // is_open = true;
-                    
-                    // Method 3: Validate file structure
-                    try {
-                        // Try to access root group
-                        H5::Group root_group = file->openGroup("/");
-                        
-                        root_group.close();
-                        
-                    } catch (const H5::GroupIException& e) {
-                        error_message =  "(checkHDF5File) Root group access failed: " + std::string(e.getCDetailMsg());
-                        Rf_error("%s", error_message.c_str() );
-                    } catch (const H5::Exception& e) {
-                        error_message =  "(checkHDF5File) Structure validation failed: " + std::string(e.getCDetailMsg() );
-                        Rf_error("%s", error_message.c_str() );
-                    }
-                    
-                    // Close the file
-                    file->close();
-                    delete file;
-                    
-                } catch (const H5::FileIException& e) {
-                    error_message = "(checkHDF5File) Cannot open file: " + std::string(e.getCDetailMsg());
-                    Rf_error("%s", error_message.c_str() );
-                } catch (const H5::Exception& e) {
-                    error_message ="HDF5 Exception during file opening: " + std::string(e.getCDetailMsg() );
-                    Rf_error("%s", error_message.c_str() );
-                }
-            }
-            
+            // Method 2 (the RDONLY probe open and the root-group structure
+            // check) removed in 2.0.7: it opened the file purely to ask a
+            // question, immediately before the real open, and on Windows that
+            // extra open is the last remaining way for a reopen to fail. The
+            // real open in openFile()/createFile() now reports genuine errors
+            // through its own catch clauses.
+            (void)is_accessible;
+
         } catch (const std::exception& e) {
             error_message = "(checkHDF5File): " + std::string(e.what());
             Rf_error("%s", error_message.c_str() );
