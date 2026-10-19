@@ -480,6 +480,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpp_hdf5dataset_bind_multi
+Rcpp::List rcpp_hdf5dataset_bind_multi(Rcpp::StringVector files, Rcpp::StringVector groups, Rcpp::StringVector datasets, std::string out_file, std::string out_group, std::string out_dataset, std::string func, bool overwrite, int block_rows, Rcpp::Nullable<int> compression);
+RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_bind_multi(SEXP filesSEXP, SEXP groupsSEXP, SEXP datasetsSEXP, SEXP out_fileSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP funcSEXP, SEXP overwriteSEXP, SEXP block_rowsSEXP, SEXP compressionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type files(filesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type groups(groupsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type datasets(datasetsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_file(out_fileSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type func(funcSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< int >::type block_rows(block_rowsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type compression(compressionSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpp_hdf5dataset_bind_multi(files, groups, datasets, out_file, out_group, out_dataset, func, overwrite, block_rows, compression));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rcpp_hdf5dataset_chol
 Rcpp::List rcpp_hdf5dataset_chol(std::string filename, std::string group, std::string dataset, bool full_matrix, bool overwrite, int threads, long block_size, Rcpp::Nullable<int> compression);
 RcppExport SEXP _BigDataStatMeth_rcpp_hdf5dataset_chol(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP full_matrixSEXP, SEXP overwriteSEXP, SEXP threadsSEXP, SEXP block_sizeSEXP, SEXP compressionSEXP) {
@@ -1454,6 +1474,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BigDataStatMeth_rcpp_hdf5dataset_mul_ew", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_mul_ew, 6},
     {"_BigDataStatMeth_rcpp_hdf5dataset_div_ew", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_div_ew, 6},
     {"_BigDataStatMeth_rcpp_hdf5dataset_bind", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_bind, 13},
+    {"_BigDataStatMeth_rcpp_hdf5dataset_bind_multi", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_bind_multi, 10},
     {"_BigDataStatMeth_rcpp_hdf5dataset_chol", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_chol, 8},
     {"_BigDataStatMeth_rcpp_hdf5dataset_solve", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_solve, 8},
     {"_BigDataStatMeth_rcpp_hdf5dataset_cor", (DL_FUNC) &_BigDataStatMeth_rcpp_hdf5dataset_cor, 17},

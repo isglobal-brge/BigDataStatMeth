@@ -29,8 +29,8 @@ plain R matrices are not accepted -- convert them first with
 
 \item{out_dataset}{Output dataset name. \code{NULL} = auto-generated:
 for two inputs the name is \code{"A_cbind_B"}; for three or more inputs
-it is \code{"cbind_N"} where \code{N} is the number of inputs, to
-prevent unbounded name growth.}
+it is \code{"cbind_N_<id>"} where \code{N} is the number of inputs
+and \code{<id>} a random 8-character suffix.}
 
 \item{block_rows}{Integer. Rows per I/O block (default 1000).}
 

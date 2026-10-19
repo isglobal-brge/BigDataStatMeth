@@ -36,8 +36,8 @@
 #' @param out_group    Output group.   \code{NULL} = \code{"BIND"}.
 #' @param out_dataset  Output dataset name. \code{NULL} = auto-generated:
 #'   for two inputs the name is \code{"A_cbind_B"}; for three or more inputs
-#'   it is \code{"cbind_N"} where \code{N} is the number of inputs, to
-#'   prevent unbounded name growth.
+#'   it is \code{"cbind_N_<id>"} where \code{N} is the number of inputs
+#'   and \code{<id>} a random 8-character suffix.
 #' @param block_rows   Integer. Rows per I/O block (default 1000).
 #' @param overwrite    Logical. Overwrite existing output. Default \code{FALSE}.
 #' @param compression Integer (0-9) or NULL. gzip compression level for the
@@ -85,7 +85,7 @@ cbind.HDF5Matrix <- function(...,
     
     if (length(args) == 1L) return(args[[1L]])
     
-    # Same strategy as rbind: compact step names to prevent quadratic growth.
+    # Same strategy as rbind: compact result name for N > 2 arguments.
     n_args   <- length(args)
     
     # final_ds <- if (!is.null(out_dataset)) out_dataset
@@ -102,8 +102,22 @@ cbind.HDF5Matrix <- function(...,
     final_ds <- if (!is.null(out_dataset)) out_dataset
     else if (n_args > 2L)      paste0("cbind_", n_args, "_", uid)
     else                       NULL
+    # 3+ arguments: single pass, no intermediate datasets.
+    if (n_args > 2L) {
+        return(args[[1L]]$bind_multi(
+            args[-1L],
+            func        = "cbind",
+            out_file    = out_file,
+            out_group   = out_group,
+            out_dataset = final_ds,
+            block_rows  = block_rows,
+            overwrite   = overwrite,
+            compression = compression
+        ))
+    }
+
     first_ds <- if (n_args > 2L) paste0("cbind_", n_args, "_", uid, "_s1") else final_ds
-    
+
     result <- args[[1L]]$cbind(
         args[[2L]],
         out_file    = out_file,
@@ -113,23 +127,25 @@ cbind.HDF5Matrix <- function(...,
         overwrite   = overwrite,
         compression = compression
     )
-    
-    if (n_args > 2L) {
-        for (i in seq(3L, length(args))) {
-            step_ds <- if (i == n_args) final_ds
-            else             paste0("cbind_", n_args, "_s", i - 1L)
-            result <- result$cbind(args[[i]],
-                                   out_file    = out_file,
-                                   out_group   = out_group,
-                                   out_dataset = step_ds,
-                                   block_rows  = block_rows,
-                                   overwrite   = TRUE,
-                                   compression = compression)
-        }
-    }
-    
+
+    # Chained binary binds, replaced by $bind_multi() above (they left
+    # intermediate "_sK" datasets in the output group):
+    # if (n_args > 2L) {
+    #     for (i in seq(3L, length(args))) {
+    #         step_ds <- if (i == n_args) final_ds
+    #         else             paste0("cbind_", n_args, "_s", i - 1L)
+    #         result <- result$cbind(args[[i]],
+    #                                out_file    = out_file,
+    #                                out_group   = out_group,
+    #                                out_dataset = step_ds,
+    #                                block_rows  = block_rows,
+    #                                overwrite   = TRUE,
+    #                                compression = compression)
+    #     }
+    # }
+
     result
-    
+
     
     # result <- args[[1L]]$cbind(
     #     args[[2L]],
@@ -172,8 +188,8 @@ cbind.HDF5Matrix <- function(...,
 #' @param out_group    Output group.   \code{NULL} = \code{"BIND"}.
 #' @param out_dataset  Output dataset name. \code{NULL} = auto-generated:
 #'   for two inputs the name is \code{"A_rbind_B"}; for three or more inputs
-#'   it is \code{"rbind_N"} where \code{N} is the number of inputs, to
-#'   prevent unbounded name growth.
+#'   it is \code{"rbind_N_<id>"} where \code{N} is the number of inputs
+#'   and \code{<id>} a random 8-character suffix.
 #' @param block_rows   Integer. Rows per I/O block (default 1000).
 #' @param overwrite    Logical. Overwrite existing output. Default \code{FALSE}.
 #' @param compression Integer (0-9) or NULL. gzip compression level for the
@@ -221,11 +237,10 @@ rbind.HDF5Matrix <- function(...,
 
     if (length(args) == 1L) return(args[[1L]])
     
-    # When binding N > 2 arguments, the auto-generated name would grow
-    # quadratically because each step prepends the accumulated result name.
-    # Instead: use compact step names "rbind_N_sK" for intermediates and
-    # "rbind_N" for the final result.  The 2-arg case keeps the old behaviour
-    # (user-supplied out_dataset or R6 auto "A_rbind_B").
+    # When binding N > 2 arguments, the result is auto-named "rbind_N_<uid>"
+    # (unless out_dataset is given) and built in a single pass by
+    # $bind_multi().  The 2-arg case keeps the old behaviour (user-supplied
+    # out_dataset or R6 auto "A_rbind_B").
     n_args   <- length(args)
     
     # final_ds <- if (!is.null(out_dataset)) out_dataset
@@ -242,8 +257,22 @@ rbind.HDF5Matrix <- function(...,
     final_ds <- if (!is.null(out_dataset)) out_dataset
     else if (n_args > 2L)      paste0("rbind_", n_args, "_", uid)
     else                       NULL
+    # 3+ arguments: single pass, no intermediate datasets.
+    if (n_args > 2L) {
+        return(args[[1L]]$bind_multi(
+            args[-1L],
+            func        = "rbind",
+            out_file    = out_file,
+            out_group   = out_group,
+            out_dataset = final_ds,
+            block_rows  = block_rows,
+            overwrite   = overwrite,
+            compression = compression
+        ))
+    }
+
     first_ds <- if (n_args > 2L) paste0("rbind_", n_args, "_", uid, "_s1") else final_ds
-    
+
     result <- args[[1L]]$rbind(
         args[[2L]],
         out_file    = out_file,
@@ -253,21 +282,23 @@ rbind.HDF5Matrix <- function(...,
         overwrite   = overwrite,
         compression = compression
     )
-    
-    if (n_args > 2L) {
-        for (i in seq(3L, n_args)) {
-            step_ds <- if (i == n_args) final_ds
-            else             paste0("rbind_", n_args, "_s", i - 1L)
-            result <- result$rbind(args[[i]],
-                                   out_file    = out_file,
-                                   out_group   = out_group,
-                                   out_dataset = step_ds,
-                                   block_rows  = block_rows,
-                                   overwrite   = TRUE,
-                                   compression = compression)
-        }
-    }
-    
+
+    # Chained binary binds, replaced by $bind_multi() above (they left
+    # intermediate "_sK" datasets in the output group):
+    # if (n_args > 2L) {
+    #     for (i in seq(3L, n_args)) {
+    #         step_ds <- if (i == n_args) final_ds
+    #         else             paste0("rbind_", n_args, "_s", i - 1L)
+    #         result <- result$rbind(args[[i]],
+    #                                out_file    = out_file,
+    #                                out_group   = out_group,
+    #                                out_dataset = step_ds,
+    #                                block_rows  = block_rows,
+    #                                overwrite   = TRUE,
+    #                                compression = compression)
+    #     }
+    # }
+
     result
 
     # result <- args[[1L]]$rbind(

@@ -83,6 +83,21 @@ namespace BigDataStatMeth {
 
 
     /**
+     * @brief Reads a line from a stream, dropping the trailing '\r' of CRLF files
+     *
+     * @param in Input stream
+     * @param line Output string with the line content (no '\n', no trailing '\r')
+     * @return std::istream& The input stream, as std::getline
+     */
+    inline std::istream& getline_noCR(std::istream& in, std::string& line)
+    {
+        std::getline(in, line, '\n');
+        if (!line.empty() && line.back() == '\r') line.pop_back();
+        return in;
+    }
+
+
+    /**
      * @brief Checks if a file ends with a newline character
      * 
      * @param filename Path to the file to check
@@ -95,7 +110,7 @@ namespace BigDataStatMeth {
         FILE *f = fopen(filename, "rb");  /* binary mode */
         if (f == NULL) return false;
         const bool empty_file = fseek(f, 0, SEEK_END) == 0 && ftell(f) == 0;
-        const bool result = !empty_file ||
+        const bool result = empty_file ||
             (fseek(f, -1, SEEK_END) == 0 && fgetc(f) == LINE_FEED);
         fclose(f);
         return result;
@@ -205,7 +220,7 @@ namespace BigDataStatMeth {
             std::string line;
 
             std::ifstream inFile(path.c_str()); //Opens the file. c_str is mandatory here so that ifstream accepts the string path
-            std::getline(inFile,line,'\n'); //skip the first line (col names in our case). Remove those lines if note necessary
+            getline_noCR(inFile,line); //skip the first line (col names in our case). Remove those lines if note necessary
 
             // Number of columns
             std::ptrdiff_t const icols(std::distance(
@@ -217,7 +232,7 @@ namespace BigDataStatMeth {
             if(Rcpp::as<bool>(rownames) == true) {
                 // Read next line and count number of columns again depending on how file is created we can have
                 // one empty space for rownames or not, then colnames will be different (-1 difference)
-                std::getline(inFile,line,'\n'); //skip the first line (col names in our case). Remove those lines if not necessary
+                getline_noCR(inFile,line); //skip the first line (col names in our case). Remove those lines if not necessary
 
                 // Number of columns
                 std::ptrdiff_t const icols2(std::distance(
@@ -245,17 +260,26 @@ namespace BigDataStatMeth {
             //. 2025/01/15.//                        std::istreambuf_iterator<char>(), '\n') + 1 ;
             
             
-            // Get number of rows 
+            // If the lines read above already reached the end of the file, the
+            // last line (without \n) has been consumed and counted below
+            bool bConsumedAll = inFile.eof();
+
+            // Get number of rows
             int irows = std::count(std::istreambuf_iterator<char>(inFile),
                                    std::istreambuf_iterator<char>(), '\n') ;
-            
+
             // +1 to take in to account the last line without \n
-            if( get_NewLineEnding(path.c_str()) == false ) {
+            if( bConsumedAll == false && get_NewLineEnding(path.c_str()) == false ) {
                 irows = irows + 1;
             }
-            
+
             // Restore counter after read first line to get number of cols
             if( Rcpp::as<bool>(header)==false ){
+                irows = irows + 1;
+            }
+
+            // The rownames-column check consumed one extra data row before counting; add it back.
+            if( Rcpp::as<bool>(rownames) == true ) {
                 irows = irows + 1;
             }
 
@@ -270,18 +294,21 @@ namespace BigDataStatMeth {
 
             // If data contains header :  Store first row as a colnames and reads next line
             if(Rcpp::as<bool>(header) == true) {
-                std::getline(inFile,line,'\n');
+                getline_noCR(inFile,line);
                 svrcolnames = Rcpp::wrap( get_SplitData_in_vectorString(line, reg_expres));
                 // If rownames then remove first column from header (belonging to the rownames)
                 if(Rcpp::as<bool>(rownames) == true) {
                     // if( incols ==  svrcolnames.size() || incols ==  (svrcolnames.size()-1)){
-                    if (incols == static_cast<hsize_t>(svrcolnames.size()) ||
-                        incols == static_cast<hsize_t>(svrcolnames.size() - 1)) {
+                    // (only when the header has a field for the rownames column)
+                    if (incols == static_cast<hsize_t>(svrcolnames.size() - 1)) {
                         svrcolnames.erase(0);}
                 }
                 // Read next line
                 line.clear();
-                std::getline(inFile,line,'\n');
+                getline_noCR(inFile,line);
+            } else {
+                // No header: first line is already data
+                getline_noCR(inFile,line);
             }
 
             dsOut->createDataset( (hsize_t)irows, (hsize_t)incols, "real");
@@ -295,7 +322,8 @@ namespace BigDataStatMeth {
             bool btowrite = false;
             std::vector<std::string> strValues;
             
-            while( !inFile.eof()  )
+            // Also process the last line when the file does not end with \n
+            while( !inFile.eof() || !line.empty() )
             {
                 
                 std::stringstream is(line); // take the line into a stringstream
@@ -308,7 +336,8 @@ namespace BigDataStatMeth {
                 
                 strValues.clear();
                 std::string::size_type start = 0, pos = 0;
-                while ((pos = line.find_first_of(delim, start)) != std::string::npos) {
+                // Split on the separator itself (not on the characters of the regex in 'delim')
+                while ((pos = line.find_first_of(stdsep, start)) != std::string::npos) {
                     if (pos > start)             // token_compress_on: skip empty
                         strValues.push_back(line.substr(start, pos - start));
                     start = pos + 1;
@@ -351,7 +380,7 @@ namespace BigDataStatMeth {
 
                 // Clear Buffer and Read next line
                 line.clear();
-                std::getline(inFile,line,'\n');
+                getline_noCR(inFile,line);
 
                 // Increment counter
                 counter++;

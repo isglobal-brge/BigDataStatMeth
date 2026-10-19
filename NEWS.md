@@ -5,6 +5,18 @@
 - Windows: fixed an intermittent "(checkHDF5File) Cannot open file: H5Fopen
   failed" error when reopening an HDF5 file.
 - Files requested in read-only mode are now always opened read-only.
+- `bdImportTextFile_hdf5()`: imports with `rownames = TRUE` no longer fail or
+  crash, files without a trailing newline no longer lose their last row, and
+  a header without a field for the row-names column keeps all column names.
+  CRLF files no longer leave a trailing `\r` in the last column name.
+- `bdImportTextFile_hdf5()`: values in scientific notation (e.g. `1.5e+02`)
+  and row names containing `+`, `[`, `]` or `^` are no longer split, which
+  imported wrong values or failed.
+- `cbind()`/`rbind()` with three or more matrices now build the result in a
+  single pass; intermediate `/BIND` datasets, which could collide between
+  concurrent executions and were left behind in the file, are no longer
+  created, and `overwrite = FALSE` now also applies to the result. An error
+  during a bind no longer leaves the first matrix closed and unusable.
 
 # BigDataStatMeth 2.0.6
 

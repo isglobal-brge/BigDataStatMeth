@@ -867,6 +867,10 @@ rcpp_hdf5dataset_bind <- function(file_a, group_a, dataset_a, file_b, group_b, d
     .Call('_BigDataStatMeth_rcpp_hdf5dataset_bind', PACKAGE = 'BigDataStatMeth', file_a, group_a, dataset_a, file_b, group_b, dataset_b, out_file, out_group, out_dataset, func, overwrite, block_rows, compression)
 }
 
+rcpp_hdf5dataset_bind_multi <- function(files, groups, datasets, out_file, out_group, out_dataset, func, overwrite = FALSE, block_rows = 1000L, compression = NULL) {
+    .Call('_BigDataStatMeth_rcpp_hdf5dataset_bind_multi', PACKAGE = 'BigDataStatMeth', files, groups, datasets, out_file, out_group, out_dataset, func, overwrite, block_rows, compression)
+}
+
 rcpp_hdf5dataset_chol <- function(filename, group, dataset, full_matrix = FALSE, overwrite = FALSE, threads = -1L, block_size = -1L, compression = NULL) {
     .Call('_BigDataStatMeth_rcpp_hdf5dataset_chol', PACKAGE = 'BigDataStatMeth', filename, group, dataset, full_matrix, overwrite, threads, block_size, compression)
 }
