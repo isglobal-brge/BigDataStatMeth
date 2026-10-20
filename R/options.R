@@ -10,7 +10,7 @@
 # Set defaults
 .hdf5matrix_options$paral       <- NULL  # NULL = auto-detect
 .hdf5matrix_options$block_size  <- NULL  # NULL = auto-calculate
-.hdf5matrix_options$threads     <- NULL  # NULL = use all available
+.hdf5matrix_options$threads     <- NULL  # NULL = default count (50% of logical CPUs)
 .hdf5matrix_options$compression <- NULL  # NULL = use default (6)
 
 
@@ -25,7 +25,10 @@
 #'   \itemize{
 #'     \item \code{TRUE}: Force parallel execution
 #'     \item \code{FALSE}: Force serial execution
-#'     \item \code{NULL}: Let BigDataStatMeth auto-detect (default)
+#'     \item \code{NULL}: Use each operation's default (default): cross-products
+#'       (\code{crossprod}, \code{tcrossprod}) run single-threaded; general
+#'       multiplication and the block SVD parallelize with the default thread
+#'       count (see \code{threads})
 #'   }
 #' @param block_size Integer or NULL. Number of elements per block for
 #'   block-wise processing.
@@ -36,14 +39,16 @@
 #' @param threads Integer or NULL. Number of OpenMP threads to use.
 #'   \itemize{
 #'     \item Integer > 0: Use this many threads
-#'     \item \code{NULL}: Use all available threads (default)
+#'     \item \code{NULL}: Use the default thread count: 50% of logical
+#'       processors (data.table convention; raise it by setting the
+#'       \code{R_DATATABLE_NUM_THREADS} environment variable) (default)
 #'   }
 #' @param compression Integer (0-9) or NULL. gzip compression level for
 #'   created datasets.
 #'   \itemize{
 #'     \item \code{0}: No compression (fastest, largest files)
 #'     \item \code{1-3}: Light compression (fast, moderate savings)
-#'     \item \code{6}: Balanced compression (default, 60-80\% space savings)
+#'     \item \code{6}: Balanced compression (default, 60-80% space savings)
 #'     \item \code{7-9}: Maximum compression (slowest, best ratio)
 #'     \item \code{NULL}: Use built-in default of 6
 #'   }
@@ -63,11 +68,14 @@
 #' **OpenMP parallelization:**
 #' Operations are distributed across CPU cores. The \code{paral} and \code{threads}
 #' parameters control this. Parallelization provides near-linear speedup for
-#' compute-intensive operations.
+#' compute-intensive operations. With both left as \code{NULL}, defaults are
+#' deliberately conservative and differ by operation: cross-products stream
+#' single-threaded, while general multiplication and the block SVD parallelize
+#' with the default thread count (50% of logical processors).
 #'
 #' **Compression:**
 #' Datasets are created with gzip compression (level 6 by default). This reduces
-#' disk usage by 60-80\% at the cost of additional CPU time for compress/decompress.
+#' disk usage by 60-80% at the cost of additional CPU time for compress/decompress.
 #' For benchmarks or workflows where speed is critical, set \code{compression = 0}.
 #' For long-term storage or large datasets, keep the default.
 #'

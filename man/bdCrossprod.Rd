@@ -23,10 +23,12 @@ bdCrossprod(
 \item{block_size}{Integer. Block size for computation. If NULL, uses optimal
 block size based on matrix dimensions and cache size.}
 
-\item{paral}{Logical. If TRUE, enables parallel computation.}
+\item{paral}{Logical. If TRUE, enables parallel computation. Defaults to
+serial execution.}
 
-\item{threads}{Integer. Number of threads for parallel computation. If NULL,
-uses all available threads.}
+\item{threads}{Integer. Number of threads for parallel computation; only
+used when \code{paral = TRUE}. If NULL, uses the default thread count
+(50\% of logical processors, data.table convention).}
 }
 \value{
 Numeric matrix containing the cross-product result.

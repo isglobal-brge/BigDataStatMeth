@@ -1,5 +1,12 @@
 # BigDataStatMeth 2.0.7
 
+## Documentation
+
+- The help for `hdf5matrix_options()`, `bdCrossprod()` and `bdtCrossprod()`
+  now states the real threading defaults: cross-products run single-threaded
+  unless `paral = TRUE`, and operations that parallelize use 50% of logical
+  processors by default. 
+
 ## Bug fixes
 
 - Windows: fixed an intermittent "(checkHDF5File) Cannot open file: H5Fopen

@@ -2008,9 +2008,11 @@ bdCorr_matrix <- function(X, Y = NULL, trans_x = NULL, trans_y = NULL, method = 
 #' @param transposed Logical. If TRUE, uses transposed input matrix.
 #' @param block_size Integer. Block size for computation. If NULL, uses optimal
 #'   block size based on matrix dimensions and cache size.
-#' @param paral Logical. If TRUE, enables parallel computation.
-#' @param threads Integer. Number of threads for parallel computation. If NULL,
-#'   uses all available threads.
+#' @param paral Logical. If TRUE, enables parallel computation. Defaults to
+#'   serial execution.
+#' @param threads Integer. Number of threads for parallel computation; only
+#'   used when \code{paral = TRUE}. If NULL, uses the default thread count
+#'   (50% of logical processors, data.table convention).
 #'
 #' @return Numeric matrix containing the cross-product result.
 #'
@@ -2105,9 +2107,11 @@ bdScalarwproduct <- function(A, w) {
 #' @param transposed Logical. If TRUE, uses transposed input matrix.
 #' @param block_size Integer. Block size for computation. If NULL, uses optimal
 #'   block size based on matrix dimensions and cache size.
-#' @param paral Logical. If TRUE, enables parallel computation.
-#' @param threads Integer. Number of threads for parallel computation. If NULL,
-#'   uses all available threads.
+#' @param paral Logical. If TRUE, enables parallel computation. Defaults to
+#'   serial execution.
+#' @param threads Integer. Number of threads for parallel computation; only
+#'   used when \code{paral = TRUE}. If NULL, uses the default thread count
+#'   (50% of logical processors, data.table convention).
 #'
 #' @return Numeric matrix containing the transposed cross-product result.
 #'
